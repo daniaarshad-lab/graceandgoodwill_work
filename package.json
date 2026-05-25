@@ -1,0 +1,44 @@
+{
+  "name": "care-platform-web",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Next.js frontend for Care Management System",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx}\" \"**/*.{md,json}\"",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
+  },
+  "dependencies": {
+    "next": "^15.3.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.0.0",
+    "@testing-library/react": "^14.0.0",
+    "@testing-library/user-event": "^14.0.0",
+    "@types/jest": "^29.5.3",
+    "@types/node": "^20.14.2",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@typescript-eslint/eslint-plugin": "^7.4.0",
+    "@typescript-eslint/parser": "^7.4.0",
+    "autoprefixer": "^10.4.20",
+    "babel-jest": "^29.7.0",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "^15.3.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.1.5",
+    "jest": "^29.7.0",
+    "postcss": "^8.4.35",
+    "prettier": "^3.0.0",
+    "tailwindcss": "^3.4.4",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.6.0"
+  }
+}

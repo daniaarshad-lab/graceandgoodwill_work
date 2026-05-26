@@ -9,7 +9,7 @@ import Card from "@/components/Card";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import { validateLoginForm, LoginFormErrors } from "@/lib/validation";
-import { authService } from "@/services/auth/auth.service";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -18,6 +18,7 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   const router = useRouter();
+  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,13 +39,14 @@ export default function LoginPage() {
     try {
       console.log("Login attempt:", { email });
       
-      const response = await authService.login({
+      const response = await login({
         email,
         password,
       });
 
       console.log("LOGIN SUCCESS", response);
 
+      // Perform smart redirect to home which will dynamically navigate based on portal link
       router.push("/");
       router.refresh();
     } catch (error: any) {

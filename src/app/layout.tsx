@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 export const metadata: Metadata = {
   title: "Grace & Goodwill",
@@ -17,9 +18,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-navy-950 text-gold-100 flex flex-col min-h-screen">
-        <SiteHeader />
-        <div className="flex-grow">{children}</div>
-        <SiteFooter />
+        <AuthProvider>
+          <SiteHeader />
+          <div className="flex-grow">{children}</div>
+          <SiteFooter />
+        </AuthProvider>
       </body>
     </html>
   );

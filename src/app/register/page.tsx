@@ -8,9 +8,10 @@ import Card from "@/components/Card";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import { validateRegisterForm, RegisterFormErrors } from "@/lib/validation";
-import { authService } from "@/services/auth/auth.service";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function RegisterPage() {
+  const { register } = useAuth();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -46,8 +47,8 @@ export default function RegisterPage() {
     try {
       console.log("Register attempt with payload:", { firstName, lastName, email, phone, password });
       
-      // Attempt registration using authService
-      await authService.register({
+      // Attempt registration using useAuth register wrapper
+      await register({
         firstName,
         lastName,
         email,

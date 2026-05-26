@@ -12,6 +12,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 export default function RegisterPage() {
   const { register } = useAuth();
+  const [role, setRole] = useState<"CLIENT" | "CARER" | string>("CLIENT");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -45,8 +46,15 @@ export default function RegisterPage() {
     setIsLoading(true);
 
     try {
-      console.log("Register attempt with payload:", { firstName, lastName, email, phone, password });
-      
+      console.log("Register attempt with payload:", {
+        firstName,
+        lastName,
+        email,
+        phone,
+        password,
+        role,
+      });
+
       // Attempt registration using useAuth register wrapper
       await register({
         firstName,
@@ -54,12 +62,15 @@ export default function RegisterPage() {
         email,
         phone,
         password,
+        role,
       });
 
       setIsSuccess(true);
     } catch (error: any) {
       console.error("Register error:", error);
-      setApiError(error.message || "An unexpected error occurred. Please try again.");
+      setApiError(
+        error.message || "An unexpected error occurred. Please try again.",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -88,11 +99,14 @@ export default function RegisterPage() {
               ></path>
             </svg>
           </div>
-          
+
           <div className="space-y-2">
-            <h3 className="text-xl font-semibold text-gold-200">Registration Successful!</h3>
+            <h3 className="text-xl font-semibold text-gold-200">
+              Registration Successful!
+            </h3>
             <p className="text-sm text-gold-100/70">
-              Welcome to Grace & Goodwill. You have successfully created your account.
+              Welcome to Grace & Goodwill. You have successfully created your
+              account.
             </p>
           </div>
 
@@ -119,6 +133,37 @@ export default function RegisterPage() {
               {apiError}
             </div>
           )}
+
+          {/* Premium Segmented Role Selection */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gold-200">
+              I want to register as a:
+            </label>
+            <div className="grid grid-cols-2 gap-3 p-1 rounded-xl bg-navy-950/40 border border-gold-300/10">
+              <button
+                type="button"
+                onClick={() => setRole("CLIENT")}
+                className={`py-2.5 text-xs font-semibold rounded-lg transition-all duration-300 ${
+                  role === "CLIENT"
+                    ? "bg-gold text-navy-950 shadow-soft"
+                    : "text-gold-200/60 hover:text-gold-50"
+                }`}
+              >
+                Family / Client
+              </button>
+              <button
+                type="button"
+                onClick={() => setRole("CARER")}
+                className={`py-2.5 text-xs font-semibold rounded-lg transition-all duration-300 ${
+                  role === "CARER"
+                    ? "bg-gold text-navy-950 shadow-soft"
+                    : "text-gold-200/60 hover:text-gold-50"
+                }`}
+              >
+                Professional Carer
+              </button>
+            </div>
+          </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input

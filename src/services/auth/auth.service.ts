@@ -6,6 +6,7 @@ export interface RegisterPayload {
   lastName: string;
   phone: string;
   password?: string;
+  role?: string;
 }
 
 export interface LoginPayload {
@@ -57,7 +58,10 @@ export const authService = {
   },
 
   async getMe() {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) {
       return null;
     }

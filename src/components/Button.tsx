@@ -11,32 +11,37 @@ export default function Button({
   variant = "primary",
   size = "md",
   disabled,
+  className = "",
+  style,
   ...props
 }: ButtonProps) {
   const baseStyles =
-    "rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed";
+    "inline-flex items-center justify-center rounded-xl font-semibold transition-all duration-300 ease-out transform outline-none cursor-pointer " +
+    "focus:ring-2 focus:ring-gold-muted/50 focus:ring-offset-2 focus:ring-offset-navy-950 " +
+    "disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:hover:translate-y-0 disabled:shadow-none";
 
   const variants = {
     primary:
-      "bg-gold-muted text-navy-950 hover:bg-[#b8915e] disabled:hover:bg-gold-muted",
+      "bg-gold-muted text-navy-950 hover:bg-[#b59469] hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(160,128,84,0.24)] active:translate-y-0 active:shadow-none",
     secondary:
-      "bg-secondary text-secondary-foreground hover:opacity-90 disabled:hover:opacity-50",
+      "bg-navy-950/40 border border-gold-muted/20 text-[#fde6c4] hover:bg-gold-muted/10 hover:border-gold-muted/40 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(160,128,84,0.10)] active:translate-y-0 active:shadow-none",
     outline:
-      "border border-gold-muted text-gold-muted hover:bg-gold-muted/10 disabled:hover:bg-transparent",
+      "border border-gold-muted text-gold-muted hover:bg-gold-muted/10 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(160,128,84,0.12)] active:translate-y-0 active:shadow-none",
   };
 
   const sizes = {
-    sm: "px-3 py-2 text-sm",
-    md: "px-4 py-3 w-full",
-    lg: "px-6 py-4 text-lg w-full",
+    sm: "px-4 py-2 text-xs",
+    md: "px-5 py-3 text-sm w-full",
+    lg: "px-6 py-4 text-base w-full",
   };
 
   return (
     <button
       type="submit"
-      {...props}
       disabled={disabled}
-      className={`${baseStyles} ${variants[variant]} ${sizes[size]}`}
+      className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`}
+      style={style}
+      {...props}
     >
       {text}
     </button>

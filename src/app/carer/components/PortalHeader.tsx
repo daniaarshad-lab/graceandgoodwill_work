@@ -17,7 +17,7 @@ export default function PortalHeader({
   phone,
   profilePhoto,
   photoUploading,
-  photoProgress,
+  photoProgress: _photoProgress,
   handlePhotoChange,
   logout,
 }: PortalHeaderProps) {

@@ -44,7 +44,10 @@ export default function ForgotPasswordPage() {
       setSubmitted(true);
     } catch (error: any) {
       console.error("Forgot password error:", error);
-      setApiError(error.message || "Something went wrong. Please check your network and try again.");
+      setApiError(
+        error.message ||
+          "Something went wrong. Please check your network and try again.",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -58,8 +61,8 @@ export default function ForgotPasswordPage() {
       >
         <div className="space-y-4 text-center">
           <p className="text-sm text-gold-100/70">
-            If an account exists for <strong>{email}</strong>, you will
-            receive an email with instructions to reset your password.
+            If an account exists for <strong>{email}</strong>, you will receive
+            an email with instructions to reset your password.
           </p>
           <p className="text-sm text-gold-100/70">
             If you don&apos;t see the email, please check your spam folder.

@@ -1,7 +1,18 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { authService, RegisterPayload, LoginPayload, AuthResponse } from "@/services/auth/auth.service";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import {
+  authService,
+  RegisterPayload,
+  LoginPayload,
+  AuthResponse,
+} from "@/services/auth/auth.service";
 
 export interface User {
   id: string;
@@ -33,7 +44,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     async function initializeAuth() {
       try {
-        const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+        const token =
+          typeof window !== "undefined"
+            ? localStorage.getItem("accessToken")
+            : null;
         if (token) {
           const userData = await authService.getMe();
           if (userData && userData.user) {
@@ -101,12 +115,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const hasRole = (allowedRoles: string[]) => {
     if (!user || !user.role) return false;
-    return allowedRoles.map(r => r.toLowerCase()).includes(user.role.toLowerCase());
+    return allowedRoles
+      .map((r) => r.toLowerCase())
+      .includes(user.role.toLowerCase());
   };
 
   const refreshUser = async () => {
     try {
-      const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+      const token =
+        typeof window !== "undefined"
+          ? localStorage.getItem("accessToken")
+          : null;
       if (token) {
         const userData = await authService.getMe();
         if (userData && userData.user) {

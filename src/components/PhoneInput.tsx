@@ -246,7 +246,9 @@ export default function PhoneInput({
             backgroundColor: "transparent",
             color: "inherit",
             borderRadius: "12px",
-            border: error ? "1px solid rgba(239, 68, 68, 0.55)" : "1px solid rgba(160, 128, 84, 0.22)",
+            border: error
+              ? "1px solid rgba(239, 68, 68, 0.55)"
+              : "1px solid rgba(160, 128, 84, 0.22)",
             fontSize: "0.875rem",
             outline: "none",
             paddingLeft: "58px",

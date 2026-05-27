@@ -30,7 +30,9 @@ function ResetPasswordForm() {
     setApiError(null);
 
     if (!token) {
-      setApiError("Invalid password reset session. Missing token. Please request a new link.");
+      setApiError(
+        "Invalid password reset session. Missing token. Please request a new link.",
+      );
       return;
     }
 
@@ -54,7 +56,10 @@ function ResetPasswordForm() {
       setSubmitted(true);
     } catch (error: any) {
       console.error("Reset password error:", error);
-      setApiError(error.message || "Your password reset link is invalid or has expired. Please try again.");
+      setApiError(
+        error.message ||
+          "Your password reset link is invalid or has expired. Please try again.",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -95,8 +100,14 @@ function ResetPasswordForm() {
 
         {!token && (
           <div className="rounded-xl border border-gold-muted/25 bg-gold-muted/8 p-3 body-small text-gold-muted space-y-2">
-            <p>Warning: No password reset token found in your browser URL query parameters.</p>
-            <Link href="/forgot-password" className="block text-xs font-semibold underline hover:opacity-85">
+            <p>
+              Warning: No password reset token found in your browser URL query
+              parameters.
+            </p>
+            <Link
+              href="/forgot-password"
+              className="block text-xs font-semibold underline hover:opacity-85"
+            >
               Request new password reset link
             </Link>
           </div>
@@ -141,13 +152,18 @@ function ResetPasswordForm() {
 
 export default function ResetPasswordPage() {
   return (
-    <Suspense fallback={
-      <AuthSplitLayout title="Loading Session..." subtitle="Please wait while we set up password reset form.">
-        <div className="flex items-center justify-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gold-muted"></div>
-        </div>
-      </AuthSplitLayout>
-    }>
+    <Suspense
+      fallback={
+        <AuthSplitLayout
+          title="Loading Session..."
+          subtitle="Please wait while we set up password reset form."
+        >
+          <div className="flex items-center justify-center py-12">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gold-muted"></div>
+          </div>
+        </AuthSplitLayout>
+      }
+    >
       <ResetPasswordForm />
     </Suspense>
   );

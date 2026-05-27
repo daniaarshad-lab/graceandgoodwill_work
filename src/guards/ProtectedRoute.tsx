@@ -9,7 +9,10 @@ interface ProtectedRouteProps {
   allowedRoles?: string[];
 }
 
-export default function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
+export default function ProtectedRoute({
+  children,
+  allowedRoles,
+}: ProtectedRouteProps) {
   const { user, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
 
@@ -17,7 +20,14 @@ export default function ProtectedRoute({ children, allowedRoles }: ProtectedRout
     if (!isLoading) {
       if (!isAuthenticated) {
         router.push("/login");
-      } else if (allowedRoles && (!user || !user.role || !allowedRoles.map(r => r.toLowerCase()).includes(user.role.toLowerCase()))) {
+      } else if (
+        allowedRoles &&
+        (!user ||
+          !user.role ||
+          !allowedRoles
+            .map((r) => r.toLowerCase())
+            .includes(user.role.toLowerCase()))
+      ) {
         router.push("/unauthorized");
       }
     }
@@ -29,7 +39,9 @@ export default function ProtectedRoute({ children, allowedRoles }: ProtectedRout
       <div className="min-h-screen flex flex-col items-center justify-center bg-navy-950 text-gold-100">
         <div className="flex flex-col items-center space-y-4">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold-DEFAULT"></div>
-          <p className="text-sm tracking-wider text-gold-200">Verifying session...</p>
+          <p className="text-sm tracking-wider text-gold-200">
+            Verifying session...
+          </p>
         </div>
       </div>
     );
@@ -40,7 +52,14 @@ export default function ProtectedRoute({ children, allowedRoles }: ProtectedRout
     return null;
   }
 
-  if (allowedRoles && (!user || !user.role || !allowedRoles.map(r => r.toLowerCase()).includes(user.role.toLowerCase()))) {
+  if (
+    allowedRoles &&
+    (!user ||
+      !user.role ||
+      !allowedRoles
+        .map((r) => r.toLowerCase())
+        .includes(user.role.toLowerCase()))
+  ) {
     return null;
   }
 

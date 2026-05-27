@@ -29,9 +29,13 @@ export default function UnauthorizedPage() {
         </div>
 
         <div className="space-y-2">
-          <h3 className="text-xl font-semibold text-gold-200">Restricted Route</h3>
+          <h3 className="text-xl font-semibold text-gold-200">
+            Restricted Route
+          </h3>
           <p className="text-sm text-gold-100/70">
-            This portal is restricted to authorized credentials only. If you believe this is an error, please log out and sign in with the correct account.
+            This portal is restricted to authorized credentials only. If you
+            believe this is an error, please log out and sign in with the
+            correct account.
           </p>
         </div>
 

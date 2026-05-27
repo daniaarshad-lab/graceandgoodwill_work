@@ -106,8 +106,8 @@ export default function RegisterPage() {
               Registration Successful!
             </h3>
             <p className="body-small text-gold-muted/50">
-              Welcome to Grace &amp; Goodwill. You have successfully created your
-              account.
+              Welcome to Grace &amp; Goodwill. You have successfully created
+              your account.
             </p>
           </div>
 
@@ -146,7 +146,7 @@ export default function RegisterPage() {
               className={`py-2.5 text-xs font-semibold rounded-lg transition-all duration-300 ${
                 role === "CLIENT"
                   ? "bg-gold-muted/90 text-[#0a1128] border border-gold-muted/60 shadow-[0_2px_12px_rgba(160,128,84,0.30),inset_0_1px_0_rgba(255,255,255,0.10)]"
-                  : "bg-transparent text-gold-muted/45 border border-transparent hover:text-white"
+                  : "bg-transparent text-gold-muted/45 border border-transparent hover:bg-gold-muted/10 hover:text-white"
               }`}
             >
               Family / Client
@@ -157,7 +157,7 @@ export default function RegisterPage() {
               className={`py-2.5 text-xs font-semibold rounded-lg transition-all duration-300 ${
                 role === "CARER"
                   ? "bg-gold-muted/90 text-[#0a1128] border border-gold-muted/60 shadow-[0_2px_12px_rgba(160,128,84,0.30),inset_0_1px_0_rgba(255,255,255,0.10)]"
-                  : "bg-transparent text-gold-muted/45 border border-transparent hover:text-white"
+                  : "bg-transparent text-gold-muted/45 border border-transparent hover:bg-gold-muted/10 hover:text-white"
               }`}
             >
               Professional Carer

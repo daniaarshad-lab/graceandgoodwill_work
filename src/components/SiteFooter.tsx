@@ -140,7 +140,6 @@ export default function SiteFooter() {
           </div>
         </div>
       </section>
-
     </footer>
   );
 }

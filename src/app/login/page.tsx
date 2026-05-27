@@ -50,7 +50,9 @@ export default function LoginPage() {
       router.refresh();
     } catch (error: any) {
       console.error(error);
-      setApiError(error.message || "Invalid email or password. Please try again.");
+      setApiError(
+        error.message || "Invalid email or password. Please try again.",
+      );
     } finally {
       setIsLoading(false);
     }

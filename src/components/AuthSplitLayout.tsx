@@ -1,5 +1,4 @@
 import { ReactNode } from "react";
-import authBg from "@/assets/auth/auth-bg.png";
 import authHero from "@/assets/auth/auth-hero.png";
 
 interface AuthSplitLayoutProps {
@@ -36,9 +35,7 @@ export default function AuthSplitLayout({
               <h1 className="asl-title">{title}</h1>
               {subtitle && <p className="asl-subtitle">{subtitle}</p>}
             </div>
-            <div className="asl-body">
-              {children}
-            </div>
+            <div className="asl-body">{children}</div>
           </div>
         </div>
       </div>

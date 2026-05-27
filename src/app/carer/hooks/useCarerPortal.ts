@@ -45,11 +45,11 @@ export function useCarerPortal({ user }: UseCarerPortalProps) {
   const [profileSuccessMsg, setProfileSuccessMsg] = useState(false);
 
   // Mock State 2: Application Review Status & Membership Card
-  const [applicationStatus, setApplicationStatus] = useState<
-    "pending" | "approved" | "rejected"
-  >("pending");
-  const [membershipActive, setMembershipActive] = useState(true);
-  const [membershipExpiry, setMembershipExpiry] = useState("2027-05-25");
+  const [applicationStatus] = useState<"pending" | "approved" | "rejected">(
+    "pending",
+  );
+  const [membershipActive] = useState(true);
+  const [membershipExpiry] = useState("2027-05-25");
 
   // Mock State 3: Compliance Documents Vault
   const [complianceDocs, setComplianceDocs] = useState<ComplianceDoc[]>(

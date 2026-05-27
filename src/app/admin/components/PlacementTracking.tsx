@@ -198,7 +198,7 @@ export default function PlacementTracking({
                                     {event.timestamp}
                                   </p>
                                   <p className="text-[11px] text-gold-100/60 italic mt-1">
-                                    "{event.description}"
+                                    &ldquo;{event.description}&rdquo;
                                   </p>
                                 </div>
                               </div>
@@ -272,7 +272,7 @@ export default function PlacementTracking({
 
         {filteredPlacements.length === 0 && (
           <div className="rounded-2xl border border-gold-300/10 p-12 text-center text-gold-100/50">
-            No placements found matching the '{filter}' filter.
+            No placements found matching the &apos;{filter}&apos; filter.
           </div>
         )}
       </div>

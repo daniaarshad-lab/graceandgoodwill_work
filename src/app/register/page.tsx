@@ -7,6 +7,7 @@ import CenteredLayout from "@/components/CenteredLayout";
 import Card from "@/components/Card";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
+import PhoneInput from "@/components/PhoneInput";
 import { validateRegisterForm, RegisterFormErrors } from "@/lib/validation";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -66,10 +67,11 @@ export default function RegisterPage() {
       });
 
       setIsSuccess(true);
-    } catch (error: any) {
+    } catch (error) {
       console.error("Register error:", error);
+      const err = error as { message?: string };
       setApiError(
-        error.message || "An unexpected error occurred. Please try again.",
+        err.message || "An unexpected error occurred. Please try again.",
       );
     } finally {
       setIsLoading(false);
@@ -192,12 +194,11 @@ export default function RegisterPage() {
             error={errors.email}
           />
 
-          <Input
+          <PhoneInput
             label="Phone Number"
-            type="tel"
             placeholder="Enter your phone number"
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            onChange={setPhone}
             error={errors.phone}
           />
 

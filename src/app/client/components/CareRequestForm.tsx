@@ -1,6 +1,7 @@
 import SectionCard from "./shared/SectionCard";
 import Input from "@/components/Input";
 import Select from "@/components/Select";
+import PhoneInput from "@/components/PhoneInput";
 
 interface CareRequestFormProps {
   fullName: string;
@@ -25,7 +26,9 @@ interface CareRequestFormProps {
   isSubmitting: boolean;
   success: boolean;
   onSubmit: (e: React.FormEvent) => void;
-  setActiveTab: (tab: any) => void;
+  setActiveTab: (
+    tab: "overview" | "request" | "carers" | "tracking" | "enquiry",
+  ) => void;
 }
 
 export default function CareRequestForm({
@@ -90,12 +93,11 @@ export default function CareRequestForm({
             error={errors.email}
           />
 
-          <Input
+          <PhoneInput
             label="Contact Phone"
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            onChange={setPhone}
             placeholder="Enter phone number"
-            type="tel"
             error={errors.phone}
           />
 

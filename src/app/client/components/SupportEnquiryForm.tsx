@@ -15,7 +15,9 @@ interface SupportEnquiryFormProps {
   success: boolean;
   onSubmit: (e: React.FormEvent) => void;
   enquiries: Enquiry[];
-  setActiveTab: (tab: any) => void;
+  setActiveTab: (
+    tab: "overview" | "request" | "carers" | "tracking" | "enquiry",
+  ) => void;
 }
 
 export default function SupportEnquiryForm({

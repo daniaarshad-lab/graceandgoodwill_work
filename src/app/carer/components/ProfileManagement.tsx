@@ -2,6 +2,7 @@ import { ChangeEvent, FormEvent } from "react";
 import SectionCard from "./shared/SectionCard";
 import Input from "@/components/Input";
 import UploadPhotoSection from "./UploadPhotoSection";
+import PhoneInput from "@/components/PhoneInput";
 
 interface ProfileManagementProps {
   firstName: string;
@@ -30,7 +31,9 @@ interface ProfileManagementProps {
   successMsg: boolean;
   isProfileSaving: boolean;
   onSubmit: (e: FormEvent) => void;
-  setActiveTab: (tab: any) => void;
+  setActiveTab: (
+    tab: "overview" | "profile" | "compliance" | "availability",
+  ) => void;
 }
 
 export default function ProfileManagement({
@@ -105,12 +108,11 @@ export default function ProfileManagement({
             error={errors.email}
           />
 
-          <Input
+          <PhoneInput
             label="Phone Number"
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            onChange={setPhone}
             placeholder="Enter phone number"
-            type="tel"
             error={errors.phone}
           />
 
@@ -139,8 +141,9 @@ export default function ProfileManagement({
             value={bio}
             onChange={(e) => setBio(e.target.value)}
             placeholder="Write a warm, compassionate bio for matching with care recipients..."
-            className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 text-sm ${errors.bio ? "border-red-500" : "border-gray-300/20"
-              }`}
+            className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 text-sm ${
+              errors.bio ? "border-red-500" : "border-gray-300/20"
+            }`}
           ></textarea>
           {errors.bio && (
             <p className="text-xs text-red-500 font-medium">{errors.bio}</p>

@@ -161,7 +161,7 @@ export default function MatchingPanel({
                   {selectedRequest.location}
                 </div>
                 <div className="rounded-lg bg-navy-950 p-2.5 border border-gold-300/5 text-gold-200/90 italic">
-                  "{selectedRequest.notes}"
+                  &ldquo;{selectedRequest.notes}&rdquo;
                 </div>
               </div>
             </SectionCard>

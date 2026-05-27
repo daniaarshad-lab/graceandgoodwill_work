@@ -5,14 +5,12 @@ import { CarerApplication } from "../types/admin.types";
 
 interface CarerApplicationsProps {
   carers: CarerApplication[];
-  onApprove: (id: string) => void;
   onReject: (id: string) => void;
   setSelectedCarerForApproval: (carer: CarerApplication | null) => void;
 }
 
 export default function CarerApplications({
   carers,
-  onApprove,
   onReject,
   setSelectedCarerForApproval,
 }: CarerApplicationsProps) {
@@ -174,7 +172,7 @@ export default function CarerApplications({
 
         {filteredCarers.length === 0 && (
           <div className="col-span-2 rounded-2xl border border-gold-300/10 p-12 text-center text-gold-100/50">
-            No carers found in the '{filter}' category.
+            No carers found in the &apos;{filter}&apos; category.
           </div>
         )}
       </div>

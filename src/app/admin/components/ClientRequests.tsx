@@ -123,7 +123,7 @@ export default function ClientRequests({
                   Family Notes & Custom Needs
                 </p>
                 <p className="text-xs text-gold-100/70 italic bg-navy-950/30 p-2.5 rounded-lg border border-gold-300/5 leading-relaxed">
-                  "{req.notes}"
+                  &ldquo;{req.notes}&rdquo;
                 </p>
               </div>
             </div>
@@ -153,7 +153,7 @@ export default function ClientRequests({
 
         {filteredRequests.length === 0 && (
           <div className="col-span-2 rounded-2xl border border-gold-300/10 p-12 text-center text-gold-100/50">
-            No client requests found in the '{filter}' category.
+            No client requests found in the &apos;{filter}&apos; category.
           </div>
         )}
       </div>

@@ -1,6 +1,5 @@
 import { useState, useMemo } from "react";
 import SectionCard from "./shared/SectionCard";
-import StatusBadge from "./shared/StatusBadge";
 import { ClientRequest, CarerApplication } from "../types/admin.types";
 
 interface EmergencyCasesProps {
@@ -95,7 +94,7 @@ export default function EmergencyCases({
                   </p>
 
                   <p className="mt-3 text-xs text-gold-100/70 italic bg-navy-950/40 p-2.5 rounded-lg border border-gold-300/5 line-clamp-3">
-                    "{req.notes}"
+                    &ldquo;{req.notes}&rdquo;
                   </p>
 
                   <div className="mt-4 flex justify-end text-xs font-bold text-rose-400">

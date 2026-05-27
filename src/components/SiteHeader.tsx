@@ -43,7 +43,7 @@ export default function SiteHeader() {
             alt="Grace & Goodwill logo"
             className="h-12 w-12 rounded-md border border-gold-400 bg-navy-900 p-1"
           />
-          <span className="text-lg font-semibold tracking-[0.08em] text-gold-100">
+          <span className="body-base-medium tracking-[0.08em] text-gold-100">
             Grace & Goodwill
           </span>
         </Link>
@@ -53,7 +53,7 @@ export default function SiteHeader() {
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-gold-200 transition hover:text-gold-50"
+              className="body-small font-medium text-gold-200 transition hover:text-gold-50"
             >
               {link.label}
             </Link>
@@ -63,7 +63,7 @@ export default function SiteHeader() {
           {portalLink && (
             <Link
               href={portalLink.href}
-              className="text-sm font-semibold text-gold-DEFAULT transition hover:text-gold-200"
+              className="body-small font-semibold text-gold-DEFAULT transition hover:text-gold-200"
             >
               {portalLink.label}
             </Link>
@@ -73,7 +73,7 @@ export default function SiteHeader() {
           {isAuthenticated ? (
             <button
               onClick={handleLogout}
-              className="bg-transparent text-sm font-semibold text-gold-DEFAULT border border-gold-DEFAULT/30 hover:border-gold-DEFAULT hover:bg-gold-DEFAULT/10 px-4 py-2 rounded-xl transition-all duration-300"
+              className="bg-transparent body-small font-semibold text-gold-DEFAULT border border-gold-DEFAULT/30 hover:border-gold-DEFAULT hover:bg-gold-DEFAULT/10 px-4 py-2 rounded-xl transition-all duration-300"
             >
               Logout
             </button>
@@ -81,13 +81,13 @@ export default function SiteHeader() {
             <div className="flex items-center gap-3">
               <Link
                 href="/login"
-                className="text-sm font-semibold text-gold-200 hover:text-gold-50"
+                className="body-small font-semibold text-gold-200 hover:text-gold-50"
               >
                 Login
               </Link>
               <Link
                 href="/register"
-                className="bg-gold-DEFAULT text-navy-950 px-4 py-2 rounded-xl text-sm font-semibold shadow-elegant hover:bg-gold-300 transition-all duration-300"
+                className="bg-gold-DEFAULT text-navy-950 px-4 py-2 rounded-xl body-small font-semibold shadow-elegant hover:bg-gold-300 transition-all duration-300"
               >
                 Register
               </Link>

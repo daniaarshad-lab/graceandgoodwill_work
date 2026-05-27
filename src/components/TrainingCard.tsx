@@ -39,11 +39,11 @@ export default function TrainingCard({
         </div>
 
         <div className="grow">
-          <h3 className="text-lg font-semibold mb-1">{title}</h3>
-          <p className="text-sm text-muted-foreground mb-3">{description}</p>
+          <h3 className="mb-1">{title}</h3>
+          <p className="body-small text-muted-foreground mb-3">{description}</p>
 
           {bullets.length > 0 && (
-            <ul className="mb-4 ml-4 list-disc text-sm text-muted-foreground">
+            <ul className="mb-4 ml-4 list-disc body-small text-muted-foreground">
               {bullets.map((b, i) => (
                 <li key={i}>{b}</li>
               ))}

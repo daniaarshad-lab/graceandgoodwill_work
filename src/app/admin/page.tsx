@@ -42,7 +42,7 @@ export default function AdminDashboard() {
               <span className="rounded-full bg-gold/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-gold border border-gold/20">
                 Administrative Control Panel
               </span>
-              <h1 className="text-2xl font-bold tracking-tight text-gold-200 sm:text-3xl">
+              <h1 className="text-2xl tracking-tight text-gold-200 sm:text-3xl">
                 Grace & Goodwill Admin Portal
               </h1>
               <p className="text-sm text-gold-100/50">
@@ -105,7 +105,6 @@ export default function AdminDashboard() {
           {portal.activeTab === "carers" && (
             <CarerApplications
               carers={portal.carers}
-              onApprove={portal.handleApproveCarer}
               onReject={portal.handleRejectCarer}
               setSelectedCarerForApproval={portal.setSelectedCarerForApproval}
             />

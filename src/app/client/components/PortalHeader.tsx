@@ -16,10 +16,10 @@ export default function PortalHeader({ user, logout }: PortalHeaderProps) {
           <p className="text-xs uppercase tracking-[0.3em] text-gold-300">
             Family & Client Portal
           </p>
-          <h1 className="text-3xl font-semibold text-gold-50 mt-1">
+          <h1 className="text-3xl text-gold-50 mt-1">
             Welcome back, {user?.firstName || "Family"} {user?.lastName || ""}
           </h1>
-          <p className="text-sm text-gold-100/60 mt-1">{user?.email}</p>
+          <p className="body-small text-gold-100/60 mt-1">{user?.email}</p>
         </div>
       </div>
 

@@ -54,10 +54,10 @@ export default function PortalHeader({
           <p className="text-xs uppercase tracking-[0.3em] text-gold-300">
             Carer Dashboard
           </p>
-          <h1 className="text-3xl font-semibold text-gold-50 mt-1">
+          <h1 className="text-3xl text-gold-50 mt-1">
             {firstName} {lastName}
           </h1>
-          <p className="text-sm text-gold-100/60 mt-1">
+          <p className="body-small text-gold-100/60 mt-1">
             {email} • {phone}
           </p>
         </div>

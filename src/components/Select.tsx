@@ -14,7 +14,7 @@ export default function Select({
 }: SelectProps) {
   return (
     <div className="space-y-2">
-      <label className="text-sm font-medium">{label}</label>
+      <label className="form-label">{label}</label>
 
       <select
         {...props}
@@ -29,7 +29,7 @@ export default function Select({
         ))}
       </select>
 
-      {error && <p className="text-xs text-red-500">{error}</p>}
+      {error && <p className="form-help text-red-500">{error}</p>}
     </div>
   );
 }

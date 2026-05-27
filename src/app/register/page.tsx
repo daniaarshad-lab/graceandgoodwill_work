@@ -3,8 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 
-import CenteredLayout from "@/components/CenteredLayout";
-import Card from "@/components/Card";
+import AuthSplitLayout from "@/components/AuthSplitLayout";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import PhoneInput from "@/components/PhoneInput";
@@ -80,12 +79,12 @@ export default function RegisterPage() {
 
   if (isSuccess) {
     return (
-      <CenteredLayout
+      <AuthSplitLayout
         title="Account Created"
         subtitle="Your care management account is ready."
       >
-        <Card className="text-center space-y-6">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gold/10 text-gold">
+        <div className="text-center space-y-6">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gold-muted/10 text-gold-muted">
             <svg
               className="h-8 w-8"
               fill="none"
@@ -103,130 +102,128 @@ export default function RegisterPage() {
           </div>
 
           <div className="space-y-2">
-            <h3 className="text-xl font-semibold text-gold-200">
+            <h3 className="text-xl font-semibold text-gold-muted">
               Registration Successful!
             </h3>
-            <p className="text-sm text-gold-100/70">
-              Welcome to Grace & Goodwill. You have successfully created your
+            <p className="body-small text-gold-muted/50">
+              Welcome to Grace &amp; Goodwill. You have successfully created your
               account.
             </p>
           </div>
 
           <Link
             href="/login"
-            className="inline-flex w-full items-center justify-center rounded-xl bg-gold px-4 py-3 text-sm font-semibold text-navy-950 shadow-elegant transition hover:opacity-90 hover:translate-y-[-2px]"
+            className="inline-flex w-full items-center justify-center rounded-xl bg-gold-muted px-4 py-3 body-small font-semibold text-navy-950 shadow-elegant transition hover:bg-[#b8915e] hover:translate-y-[-2px]"
           >
             Go to Login
           </Link>
-        </Card>
-      </CenteredLayout>
+        </div>
+      </AuthSplitLayout>
     );
   }
 
   return (
-    <CenteredLayout
+    <AuthSplitLayout
       title="Create Account"
       subtitle="Register to access the care management platform."
     >
-      <Card>
-        <form className="space-y-5" onSubmit={handleSubmit}>
-          {apiError && (
-            <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-500">
-              {apiError}
-            </div>
-          )}
-
-          {/* Premium Segmented Role Selection */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gold-200">
-              I want to register as a:
-            </label>
-            <div className="grid grid-cols-2 gap-3 p-1 rounded-xl bg-navy-950/40 border border-gold-300/10">
-              <button
-                type="button"
-                onClick={() => setRole("CLIENT")}
-                className={`py-2.5 text-xs font-semibold rounded-lg transition-all duration-300 ${
-                  role === "CLIENT"
-                    ? "bg-gold text-navy-950 shadow-soft"
-                    : "text-gold-200/60 hover:text-gold-50"
-                }`}
-              >
-                Family / Client
-              </button>
-              <button
-                type="button"
-                onClick={() => setRole("CARER")}
-                className={`py-2.5 text-xs font-semibold rounded-lg transition-all duration-300 ${
-                  role === "CARER"
-                    ? "bg-gold text-navy-950 shadow-soft"
-                    : "text-gold-200/60 hover:text-gold-50"
-                }`}
-              >
-                Professional Carer
-              </button>
-            </div>
+      <form className="space-y-5" onSubmit={handleSubmit}>
+        {apiError && (
+          <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-500">
+            {apiError}
           </div>
+        )}
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Input
-              label="First Name"
-              placeholder="First name"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              error={errors.firstName}
-            />
-
-            <Input
-              label="Last Name"
-              placeholder="Last name"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              error={errors.lastName}
-            />
-          </div>
-
-          <Input
-            label="Email"
-            type="email"
-            placeholder="Enter your email address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            error={errors.email}
-          />
-
-          <PhoneInput
-            label="Phone Number"
-            placeholder="Enter your phone number"
-            value={phone}
-            onChange={setPhone}
-            error={errors.phone}
-          />
-
-          <Input
-            label="Password"
-            type="password"
-            placeholder="Create a strong password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            error={errors.password}
-          />
-
-          <Button
-            text={isLoading ? "Creating Account..." : "Create Account"}
-            disabled={isLoading}
-          />
-
-          <p className="text-center text-sm">
-            Already have an account?{" "}
-            <Link
-              href="/login"
-              className="text-primary font-medium hover:underline"
+        {/* Premium Segmented Role Selection */}
+        <div className="space-y-2">
+          <label className="form-label text-gold-muted/80">
+            I want to register as a:
+          </label>
+          <div className="grid grid-cols-2 gap-2 p-1.5 rounded-xl bg-navy-950/60 border border-gold-muted/20 backdrop-blur-sm">
+            <button
+              type="button"
+              onClick={() => setRole("CLIENT")}
+              className={`py-2.5 text-xs font-semibold rounded-lg transition-all duration-300 ${
+                role === "CLIENT"
+                  ? "bg-gold-muted/90 text-[#0a1128] border border-gold-muted/60 shadow-[0_2px_12px_rgba(160,128,84,0.30),inset_0_1px_0_rgba(255,255,255,0.10)]"
+                  : "bg-transparent text-gold-muted/45 border border-transparent hover:text-white"
+              }`}
             >
-              Login
-            </Link>
-          </p>
-        </form>
-      </Card>
-    </CenteredLayout>
+              Family / Client
+            </button>
+            <button
+              type="button"
+              onClick={() => setRole("CARER")}
+              className={`py-2.5 text-xs font-semibold rounded-lg transition-all duration-300 ${
+                role === "CARER"
+                  ? "bg-gold-muted/90 text-[#0a1128] border border-gold-muted/60 shadow-[0_2px_12px_rgba(160,128,84,0.30),inset_0_1px_0_rgba(255,255,255,0.10)]"
+                  : "bg-transparent text-gold-muted/45 border border-transparent hover:text-white"
+              }`}
+            >
+              Professional Carer
+            </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Input
+            label="First Name"
+            placeholder="First name"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            error={errors.firstName}
+          />
+
+          <Input
+            label="Last Name"
+            placeholder="Last name"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            error={errors.lastName}
+          />
+        </div>
+
+        <Input
+          label="Email"
+          type="email"
+          placeholder="Enter your email address"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          error={errors.email}
+        />
+
+        <PhoneInput
+          label="Phone Number"
+          placeholder="Enter your phone number"
+          value={phone}
+          onChange={setPhone}
+          error={errors.phone}
+        />
+
+        <Input
+          label="Password"
+          type="password"
+          placeholder="Create a strong password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          error={errors.password}
+        />
+
+        <Button
+          text={isLoading ? "Creating Account..." : "Create Account"}
+          disabled={isLoading}
+        />
+
+        <p className="text-center text-sm">
+          Already have an account?{" "}
+          <Link
+            href="/login"
+            className="text-gold-muted font-medium hover:text-[#b8915e] hover:underline"
+          >
+            Login
+          </Link>
+        </p>
+      </form>
+    </AuthSplitLayout>
   );
 }

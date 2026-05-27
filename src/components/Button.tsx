@@ -18,11 +18,11 @@ export default function Button({
 
   const variants = {
     primary:
-      "bg-primary text-primary-foreground hover:opacity-90 disabled:hover:opacity-50",
+      "bg-gold-muted text-navy-950 hover:bg-[#b8915e] disabled:hover:bg-gold-muted",
     secondary:
       "bg-secondary text-secondary-foreground hover:opacity-90 disabled:hover:opacity-50",
     outline:
-      "border border-primary text-primary hover:bg-primary/10 disabled:hover:bg-transparent",
+      "border border-gold-muted text-gold-muted hover:bg-gold-muted/10 disabled:hover:bg-transparent",
   };
 
   const sizes = {

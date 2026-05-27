@@ -21,7 +21,7 @@ export default function Input({
 
   return (
     <div className="space-y-2">
-      <label className="text-sm font-medium">{label}</label>
+      <label className="form-label">{label}</label>
 
       <div className="relative">
         <input
@@ -87,7 +87,7 @@ export default function Input({
         )}
       </div>
 
-      {error && <p className="text-xs text-red-500">{error}</p>}
+      {error && <p className="form-help text-red-500">{error}</p>}
     </div>
   );
 }

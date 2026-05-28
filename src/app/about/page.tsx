@@ -1,6 +1,6 @@
 export default function AboutPage() {
   return (
-    <main className="mx-auto flex min-h-screen max-w-6xl flex-col gap-10 px-6 py-16">
+    <main className="container-wrapper flex min-h-screen flex-col gap-10 py-16">
       <section className="rounded-2xl bg-navy-950 text-gold-50 shadow-lg ring-1 ring-navy-900/40 p-12">
         <div className="mx-auto max-w-5xl flex flex-col gap-8 md:flex-row md:items-center">
           <div className="md:w-2/3">
@@ -50,7 +50,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl">
+      <section className="w-full">
         <h2 className="mt-8 mb-6 text-2xl font-semibold text-navy-950">
           Our values
         </h2>

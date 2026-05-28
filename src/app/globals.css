@@ -98,19 +98,24 @@
     font: var(--text-h1);
     color: var(--color-gold-muted);
   }
+
   h2 {
     font: var(--text-h2);
     color: var(--color-gold-muted);
   }
+
   h3 {
     font: var(--text-h3);
     color: var(--color-gold-muted);
   }
+
   h4 {
     font: var(--text-h4);
     color: var(--color-gold-muted);
   }
-  h5, h6 {
+
+  h5,
+  h6 {
     color: var(--color-gold-muted);
     font-weight: 700;
   }
@@ -120,32 +125,49 @@
   .body-base {
     font: var(--text-body-base-regular);
   }
+
   .body-base-medium {
     font: var(--text-body-base-medium);
   }
+
   .body-small {
     font: var(--text-body-small-regular);
   }
+
   .body-small-medium {
     font: var(--text-body-small-medium);
   }
+
   .caption {
     font: var(--text-body-caption-regular);
   }
+
   .button-text {
     font: var(--text-button-default);
   }
+
   .button-small {
     font: var(--text-button-small);
   }
+
   .form-label {
     font: var(--text-form-label);
   }
+
   .form-input {
     font: var(--text-form-input);
   }
+
   .form-help {
     font: var(--text-form-help);
+  }
+
+  .container-wrapper {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding-left: 24px;
+    padding-right: 24px;
   }
 }
 
@@ -182,28 +204,20 @@
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(
-      160deg,
+    linear-gradient(160deg,
       rgba(250, 243, 228, 0.38) 0%,
       rgba(252, 247, 236, 0.28) 45%,
-      rgba(245, 236, 216, 0.34) 100%
-    ),
-    radial-gradient(
-      ellipse 120% 110% at 50% 50%,
+      rgba(245, 236, 216, 0.34) 100%),
+    radial-gradient(ellipse 120% 110% at 50% 50%,
       transparent 30%,
       rgba(18, 12, 6, 0.28) 70%,
-      rgba(10, 8, 4, 0.52) 100%
-    ),
-    radial-gradient(
-      ellipse 70% 60% at 50% 50%,
+      rgba(10, 8, 4, 0.52) 100%),
+    radial-gradient(ellipse 70% 60% at 50% 50%,
       rgba(255, 248, 228, 0.22) 0%,
-      transparent 65%
-    ),
-    radial-gradient(
-      ellipse at 15% 80%,
+      transparent 65%),
+    radial-gradient(ellipse at 15% 80%,
       rgba(212, 175, 55, 0.07) 0%,
-      transparent 50%
-    );
+      transparent 50%);
 }
 
 .asl-wrapper {
@@ -264,19 +278,15 @@
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(
-      to right,
+    linear-gradient(to right,
       rgba(5, 8, 20, 0.25) 0%,
       rgba(5, 8, 20, 0.10) 60%,
-      rgba(9, 14, 32, 0.45) 100%
-    ),
-    linear-gradient(
-      to bottom,
+      rgba(9, 14, 32, 0.45) 100%),
+    linear-gradient(to bottom,
       rgba(5, 8, 20, 0.30) 0%,
       transparent 30%,
       transparent 70%,
-      rgba(5, 8, 20, 0.40) 100%
-    );
+      rgba(5, 8, 20, 0.40) 100%);
 }
 
 .asl-left::after {
@@ -286,13 +296,11 @@
   right: 0;
   height: 84%;
   width: 1px;
-  background: linear-gradient(
-    to bottom,
-    transparent 0%,
-    rgba(160, 128, 84, 0.30) 25%,
-    rgba(160, 128, 84, 0.30) 75%,
-    transparent 100%
-  );
+  background: linear-gradient(to bottom,
+      transparent 0%,
+      rgba(160, 128, 84, 0.30) 25%,
+      rgba(160, 128, 84, 0.30) 75%,
+      transparent 100%);
   z-index: 2;
 }
 
@@ -399,6 +407,7 @@
   color: rgba(160, 128, 84, 0.50) !important;
   transition: color 0.2s ease !important;
 }
+
 .asl-right [role="button"]:hover {
   color: rgba(160, 128, 84, 0.85) !important;
 }

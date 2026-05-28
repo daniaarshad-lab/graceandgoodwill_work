@@ -161,12 +161,12 @@ const modules = [
 
 export default function TrainingPage() {
   return (
-    <main className="relative min-h-[calc(100vh-80px)] overflow-hidden bg-navy-950 px-6 py-20 text-gold-100/90">
+    <main className="relative min-h-[calc(100vh-80px)] overflow-hidden bg-navy-950 py-20 text-gold-100/90">
       {/* Decorative Blur Orbs */}
       <div className="pointer-events-none absolute left-1/2 top-0 h-[400px] w-[600px] -translate-x-1/2 rounded-full bg-gold-500/5 blur-[120px]" />
       <div className="pointer-events-none absolute -left-40 bottom-10 h-[300px] w-[500px] rounded-full bg-navy-800/20 blur-[100px]" />
 
-      <div className="mx-auto max-w-6xl">
+      <div className="container-wrapper">
         {/* Header Section */}
         <section className="mb-20 text-center">
           <p className="inline-block rounded-full border border-gold-500/25 bg-gold-500/5 px-4 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-gold-300">

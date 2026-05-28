@@ -5,7 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 
 const navLinks = [
-  { href: "/about", label: "About" },
+  { href: "/about", label: "About Us" },
   { href: "/services", label: "Services" },
   { href: "/training", label: "Training" },
   { href: "/how-it-works", label: "How it works" },
@@ -35,8 +35,8 @@ export default function SiteHeader() {
   const portalLink = getPortalLink();
 
   return (
-    <header className="sticky top-0 z-30 border-b border-navy-800 bg-navy-950/95 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+    <header className="sticky top-0 z-30 w-full h-20 border-b border-navy-800 bg-navy-950/95 backdrop-blur flex items-center">
+      <div className="container-wrapper flex items-center justify-between py-4">
         <Link href="/" className="flex items-center gap-3 text-white">
           <img
             src="/logo.svg"

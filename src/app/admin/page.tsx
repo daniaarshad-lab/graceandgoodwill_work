@@ -33,8 +33,8 @@ export default function AdminDashboard() {
   };
 
   return (
-    <main className="min-h-screen bg-navy-950 px-4 py-10 md:px-8 text-gold-100">
-      <div className="mx-auto max-w-6xl space-y-8">
+    <main className="min-h-screen bg-navy-950 py-10 text-gold-100">
+      <div className="container-wrapper space-y-8">
         {/* --- PREMIUM PORTAL HEADER --- */}
         <header className="rounded-2xl border border-gold-300/10 bg-gradient-to-r from-navy-900 via-navy-950 to-navy-900 p-6 shadow-soft backdrop-blur-md">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

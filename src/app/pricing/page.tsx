@@ -18,7 +18,7 @@ const plans = [
 
 export default function PricingPage() {
   return (
-    <main className="mx-auto min-h-screen max-w-6xl px-6 py-12 text-slate-900">
+    <main className="container-wrapper min-h-screen py-12 text-slate-900">
       <section className="rounded-[2rem] bg-white/95 p-10 shadow-soft ring-1 ring-slate-200">
         <h1 className="text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl">
           Pricing & Membership

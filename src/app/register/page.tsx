@@ -111,12 +111,9 @@ export default function RegisterPage() {
             </p>
           </div>
 
-          <Link
-            href="/login"
-            className="inline-flex w-full items-center justify-center rounded-xl bg-gold-muted px-4 py-3 body-small font-semibold text-navy-950 shadow-elegant transition hover:bg-[#b8915e] hover:translate-y-[-2px]"
-          >
-            Go to Login
-          </Link>
+          <Button asChild>
+            <Link href="/login">Go to Login</Link>
+          </Button>
         </div>
       </AuthSplitLayout>
     );

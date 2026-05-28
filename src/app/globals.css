@@ -69,7 +69,7 @@
   }
 
   html {
-    min-height: 100%;
+    height: 100%;
   }
 
   body {
@@ -150,13 +150,16 @@
 }
 
 .asl-root {
-  position: relative;
-  min-height: 100vh;
+  position: fixed;
+  top: 80px;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px 16px;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 .asl-bg {
@@ -208,12 +211,13 @@
   z-index: 1;
   width: 100%;
   max-width: 1100px;
+  height: min(760px, calc(100vh - 80px - 48px));
 }
 
 .asl-card {
   display: flex;
   flex-direction: row;
-  height: 760px;
+  height: 100%;
   border-radius: 28px;
   overflow: hidden;
   background: rgba(8, 13, 30, 0.82);
@@ -226,7 +230,7 @@
     0 8px 24px rgba(0, 0, 0, 0.22),
     0 0 100px rgba(160, 128, 84, 0.07),
     0 0 180px rgba(160, 128, 84, 0.04);
-  transition: box-shadow 0.4s ease, transform 0.4s ease;
+  transition: box-shadow 0.4s ease;
 }
 
 .asl-card:hover {
@@ -237,7 +241,6 @@
     0 12px 32px rgba(0, 0, 0, 0.28),
     0 0 120px rgba(160, 128, 84, 0.10),
     0 0 200px rgba(160, 128, 84, 0.06);
-  transform: translateY(-3px);
 }
 
 .asl-left {
@@ -255,11 +258,6 @@
   object-fit: cover;
   object-position: center top;
   display: block;
-  transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.asl-card:hover .asl-left-img {
-  transform: scale(1.04);
 }
 
 .asl-left-overlay {
@@ -302,34 +300,19 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   padding: 48px 52px;
   background-color: var(--color-navy-900);
   position: relative;
   z-index: 10;
-  overflow-y: visible;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
   scrollbar-width: thin;
   scrollbar-color: rgba(160, 128, 84, 0.18) transparent;
 }
 
-.asl-right::-webkit-scrollbar {
-  width: 6px;
-}
-
-.asl-right::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.asl-right::-webkit-scrollbar-thumb {
-  background-color: rgba(160, 128, 84, 0.18);
-  border-radius: 20px;
-}
-
-.asl-right::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(160, 128, 84, 0.36);
-}
-
 .asl-header {
+  flex-shrink: 0;
   margin-bottom: 28px;
 }
 
@@ -359,6 +342,23 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+.asl-right::-webkit-scrollbar {
+  width: 6px;
+}
+
+.asl-right::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.asl-right::-webkit-scrollbar-thumb {
+  background-color: rgba(160, 128, 84, 0.18);
+  border-radius: 20px;
+}
+
+.asl-right::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(160, 128, 84, 0.36);
 }
 
 .asl-right input {
@@ -419,6 +419,13 @@
   .asl-root {
     padding: 24px 16px;
     align-items: center;
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+
+  .asl-wrapper {
+    height: auto;
   }
 
   .asl-card {

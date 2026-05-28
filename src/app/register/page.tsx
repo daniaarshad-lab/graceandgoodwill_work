@@ -124,7 +124,7 @@ export default function RegisterPage() {
       title="Create Account"
       subtitle="Register to access the care management platform."
     >
-      <form className="space-y-5" onSubmit={handleSubmit}>
+      <form className="space-y-5 pb-16" onSubmit={handleSubmit}>
         {apiError && (
           <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-500">
             {apiError}

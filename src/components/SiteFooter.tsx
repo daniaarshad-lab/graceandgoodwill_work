@@ -140,6 +140,14 @@ export default function SiteFooter() {
           </div>
         </div>
       </section>
+      {/* 2. COPYRIGHT SECTION */}
+      <section className="py-6 text-center border-t border-navy-900/20 bg-navy-950/20">
+        <div className="container-wrapper">
+          <p className="text-[10px] sm:text-[11px] text-gold-200/40 font-light tracking-widest uppercase">
+            © Grace & Goodwill 2026. All rights reserved.
+          </p>
+        </div>
+      </section>
     </footer>
   );
 }

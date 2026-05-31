@@ -3,25 +3,23 @@
 import {
   createContext,
   useContext,
-  useState,
   useEffect,
   ReactNode,
 } from "react";
 import {
-  authService,
   RegisterPayload,
   LoginPayload,
   AuthResponse,
-} from "@/services/auth/auth.service";
-
-export interface User {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  phone: string;
-  role?: string;
-}
+  User,
+} from "@/types/auth.types";
+import { useAppSelector, useAppDispatch } from "@/store/hooks";
+import {
+  login as loginThunk,
+  register as registerThunk,
+  getProfile,
+  logout as logoutThunk,
+  loadPersistedAuth,
+} from "@/store/slices/authSlice";
 
 interface AuthContextType {
   user: User | null;
@@ -37,80 +35,35 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const dispatch = useAppDispatch();
+  const { user, isAuthenticated, loading: isLoading } = useAppSelector((state) => state.auth);
 
   // Initialize and validate session on mount
   useEffect(() => {
-    async function initializeAuth() {
-      try {
-        const token =
-          typeof window !== "undefined"
-            ? localStorage.getItem("accessToken")
-            : null;
-        if (token) {
-          const userData = await authService.getMe();
-          if (userData && userData.user) {
-            setUser(userData.user);
-          } else if (userData) {
-            // Support direct user shape returning from API
-            setUser(userData);
-          }
-        }
-      } catch (error) {
-        console.error("Auth initialization failed:", error);
-        // Tokens are already wiped by authService.getMe() catch block, so just set user to null
-        setUser(null);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    initializeAuth();
-  }, []);
+    dispatch(loadPersistedAuth());
+    dispatch(getProfile());
+  }, [dispatch]);
 
   const login = async (payload: LoginPayload) => {
-    setIsLoading(true);
-    try {
-      const response = await authService.login(payload);
-      if (response && response.user) {
-        setUser(response.user);
-      }
-      return response;
-    } catch (error) {
-      setUser(null);
-      throw error;
-    } finally {
-      setIsLoading(false);
+    const resultAction = await dispatch(loginThunk(payload));
+    if (loginThunk.fulfilled.match(resultAction)) {
+      return resultAction.payload;
+    } else {
+      throw new Error((resultAction.payload as string) || "Login failed");
     }
   };
 
   const register = async (payload: RegisterPayload) => {
-    setIsLoading(true);
-    try {
-      const response = await authService.register(payload);
-      if (response && response.user) {
-        setUser(response.user);
-      }
-      return response;
-    } catch (error) {
-      setUser(null);
-      throw error;
-    } finally {
-      setIsLoading(false);
+    const resultAction = await dispatch(registerThunk(payload));
+    if (registerThunk.fulfilled.match(resultAction)) {
+      return resultAction.payload;
+    } else {
+      throw new Error((resultAction.payload as string) || "Registration failed");
     }
   };
 
   const logout = async () => {
-    setIsLoading(true);
-    try {
-      await authService.logout();
-      setUser(null);
-    } catch (error) {
-      console.error("Logout failed:", error);
-    } finally {
-      setIsLoading(false);
-    }
+    await dispatch(logoutThunk());
   };
 
   const hasRole = (allowedRoles: string[]) => {
@@ -121,30 +74,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const refreshUser = async () => {
-    try {
-      const token =
-        typeof window !== "undefined"
-          ? localStorage.getItem("accessToken")
-          : null;
-      if (token) {
-        const userData = await authService.getMe();
-        if (userData && userData.user) {
-          setUser(userData.user);
-        } else if (userData) {
-          setUser(userData);
-        }
-      }
-    } catch (error) {
-      console.error("Failed to refresh user context:", error);
-      setUser(null);
-    }
+    await dispatch(getProfile());
   };
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        isAuthenticated: !!user,
+        isAuthenticated,
         isLoading,
         login,
         register,
@@ -165,3 +102,4 @@ export function useAuth() {
   }
   return context;
 }
+

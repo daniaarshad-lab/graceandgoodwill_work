@@ -3,6 +3,7 @@ import "./globals.css";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import { AuthProvider } from "@/contexts/AuthContext";
+import ReduxProvider from "@/store/ReduxProvider";
 
 export const metadata: Metadata = {
   title: "Grace & Goodwill",
@@ -30,11 +31,13 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-navy-950 text-gold-100 flex flex-col min-h-screen">
-        <AuthProvider>
-          <SiteHeader />
-          <div className="flex-grow">{children}</div>
-          <SiteFooter />
-        </AuthProvider>
+        <ReduxProvider>
+          <AuthProvider>
+            <SiteHeader />
+            <div className="flex-grow">{children}</div>
+            <SiteFooter />
+          </AuthProvider>
+        </ReduxProvider>
       </body>
     </html>
   );

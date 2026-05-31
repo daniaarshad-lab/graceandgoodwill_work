@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { fetchCarerDocuments, fetchCarerProfile } from "@/store/slices/carerSlice";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCarerPortal } from "./hooks/useCarerPortal";
 
@@ -19,18 +21,47 @@ export default function CarerDashboard() {
   const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState<TabType>("overview");
 
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(fetchCarerProfile());
+    dispatch(fetchCarerDocuments());
+  }, [dispatch]);
+
+  // Select profile state from Redux store first
+  const {
+    profile,
+    documents,
+    loading,
+    error,
+  } = useAppSelector(
+    (state) => state.carer
+  );
+  const profileUser = profile?.user;
+
   // Custom hook containing state + handlers
-  const portal = useCarerPortal({ user });
+  const portal = useCarerPortal({
+    user,
+    profile,
+    documents,
+  });
+
+  useEffect(() => {
+    console.log("Carer Profile:", profile);
+    console.log("Loading:", loading);
+    console.log("Error:", error);
+  }, [profile, loading, error]);
+
 
   return (
     <main className="min-h-screen bg-navy-950 py-10 text-gold-100">
       <div className="container-wrapper space-y-8">
         {/* Header Hero Section */}
         <PortalHeader
-          firstName={portal.firstName}
-          lastName={portal.lastName}
-          email={portal.email}
-          phone={portal.phone}
+          firstName={profileUser?.firstName || portal.firstName}
+          lastName={profileUser?.lastName || portal.lastName}
+          email={profileUser?.email || portal.email}
+          phone={profileUser?.phoneNumber || portal.phone}
           profilePhoto={portal.profilePhoto}
           photoUploading={portal.photoUploading}
           photoProgress={portal.photoProgress}

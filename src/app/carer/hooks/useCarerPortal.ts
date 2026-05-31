@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { defaultComplianceDocs } from "../data/mockCompliance";
+import { useEffect, useState } from "react";
 import { defaultAvailability } from "../data/mockAvailability";
 import {
   defaultBio,
@@ -7,21 +6,26 @@ import {
   defaultExperience,
   defaultAddress,
 } from "../data/mockProfile";
-import { ComplianceDoc, WeeklyAvailability } from "../types/carer.types";
+import { CarerDocument, ComplianceDoc, WeeklyAvailability } from "../types/carer.types";
 import {
   validateProfileForm,
   validateAvailabilitySchedule,
 } from "../utils/validation";
+import { useAppDispatch } from "@/store/hooks";
+import { fetchCarerDocuments, updateCarerProfile } from "@/store/slices/carerSlice";
+import { carerService } from "@/services/carer/carer.service";
+import { CarerProfile } from "@/types/carer.types";
 
 interface UseCarerPortalProps {
   user: any;
+  profile: CarerProfile | null;
+  documents: CarerDocument[];
 }
 
-export function useCarerPortal({ user }: UseCarerPortalProps) {
-  // Mock State 1: Profile Information
+export function useCarerPortal({ user, profile, documents }: UseCarerPortalProps) {
   const [firstName, setFirstName] = useState(user?.firstName || "Alex");
   const [lastName, setLastName] = useState(user?.lastName || "Mercer");
-  const [phone, setPhone] = useState(user?.phone || "+1 (555) 123-4567");
+  const [phone, setPhone] = useState(user?.phoneNumber || "+1 (555) 123-4567");
   const [email, setEmail] = useState(
     user?.email || "alex.mercer@graceandgoodwill.com",
   );
@@ -29,6 +33,15 @@ export function useCarerPortal({ user }: UseCarerPortalProps) {
   const [specialties, setSpecialties] = useState(defaultSpecialties);
   const [experience, setExperience] = useState(defaultExperience);
   const [address, setAddress] = useState(defaultAddress);
+
+  useEffect(() => {
+    if (profile) {
+      setBio(profile.bio ?? "");
+      setSpecialties(profile.careSpecialties ?? "");
+      setExperience(profile.experience ?? "");
+      setAddress(profile.address ?? "");
+    }
+  }, [profile]);
 
   // States for Profile photo upload
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
@@ -44,17 +57,27 @@ export function useCarerPortal({ user }: UseCarerPortalProps) {
   const [isProfileSaving, setIsProfileSaving] = useState(false);
   const [profileSuccessMsg, setProfileSuccessMsg] = useState(false);
 
-  // Mock State 2: Application Review Status & Membership Card
-  const [applicationStatus] = useState<"pending" | "approved" | "rejected">(
-    "pending",
-  );
+  // Application status — mock until API is available
+  const [applicationStatus] = useState<"pending" | "approved" | "rejected">("pending");
   const [membershipActive] = useState(true);
   const [membershipExpiry] = useState("2027-05-25");
 
-  // Mock State 3: Compliance Documents Vault
-  const [complianceDocs, setComplianceDocs] = useState<ComplianceDoc[]>(
-    () => defaultComplianceDocs,
-  );
+  // Compliance documents — derived from Redux documents state
+  const complianceDocs: ComplianceDoc[] = documents.map((doc) => ({
+      id: doc.id,
+      name: doc.fileName,
+      type: doc.fileCategory,
+      uploadDate: doc.createdAt,
+      status:
+        doc.status === "VERIFIED"
+          ? "verified"
+          : doc.status === "FAILED"
+            ? "failed"
+            : "pending",
+      size: `${(doc.fileSize / (1024 * 1024)).toFixed(1)} MB`,
+      previewUrl: doc.fileUrl,
+  }));
+
   const [uploadingDocType, setUploadingDocType] = useState<string | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [previewDoc, setPreviewDoc] = useState<ComplianceDoc | null>(null);
@@ -66,7 +89,7 @@ export function useCarerPortal({ user }: UseCarerPortalProps) {
   );
   const [docToDelete, setDocToDelete] = useState<string | null>(null);
 
-  // Mock State 4: Weekly Availability Grid
+  // Availability — mock until API is available
   const [availability, setAvailability] = useState<WeeklyAvailability>(
     () => defaultAvailability,
   );
@@ -78,17 +101,15 @@ export function useCarerPortal({ user }: UseCarerPortalProps) {
   const [availabilitySuccess, setAvailabilitySuccess] = useState(false);
   const [isAvailabilitySaving, setIsAvailabilitySaving] = useState(false);
 
+  const dispatch = useAppDispatch();
+
   // Action 1: Save Profile Form Changes
-  const handleSaveProfile = (e: React.FormEvent) => {
+  const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     setProfileErrorMsg(null);
     setProfileSuccessMsg(false);
 
     const formData = {
-      firstName,
-      lastName,
-      email,
-      phone,
       experience,
       bio,
       address,
@@ -105,16 +126,29 @@ export function useCarerPortal({ user }: UseCarerPortalProps) {
     }
 
     setProfileErrors({});
-    setIsProfileSaving(true);
 
-    setTimeout(() => {
-      setIsProfileSaving(false);
+    const payload = {
+      bio,
+      careSpecialties: specialties,
+      experience,
+      address,
+    };
+
+    try {
+      setIsProfileSaving(true);
+      await dispatch(updateCarerProfile(payload)).unwrap();
       setProfileSuccessMsg(true);
-      setTimeout(() => setProfileSuccessMsg(false), 4000);
-    }, 1200);
+      setTimeout(() => {
+        setProfileSuccessMsg(false);
+      }, 4000);
+    } catch (error) {
+      console.error(error);
+      setProfileErrorMsg("Failed to update profile.");
+    } finally {
+      setIsProfileSaving(false);
+    }
   };
 
-  // Action 2: Simulate Photo Upload with Validation
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     setPhotoError(null);
@@ -151,71 +185,73 @@ export function useCarerPortal({ user }: UseCarerPortalProps) {
     }
   };
 
-  // Action 3: Document Upload Simulator with Validation
-  const handleDocUpload = (
+  const handleDocUpload = async (
     type: string,
     e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = e.target.files?.[0];
+
     setComplianceError(null);
     setComplianceSuccess(null);
 
-    if (file) {
-      if (
-        file.type !== "application/pdf" &&
-        !file.name.toLowerCase().endsWith(".pdf")
-      ) {
-        setComplianceError(
-          "Invalid file type. Only PDF document uploads are allowed.",
-        );
-        return;
-      }
+    if (!file) return;
 
-      const maxDocSize = 10 * 1024 * 1024; // 10 MB
-      if (file.size > maxDocSize) {
-        setComplianceError(
-          `File "${file.name}" is too large. Maximum allowed size is 10 MB.`,
-        );
-        return;
-      }
+    if (
+      file.type !== "application/pdf" &&
+      !file.name.toLowerCase().endsWith(".pdf")
+    ) {
+      setComplianceError(
+        "Invalid file type. Only PDF document uploads are allowed.",
+      );
+      return;
+    }
 
+    const maxDocSize = 10 * 1024 * 1024;
+
+    if (file.size > maxDocSize) {
+      setComplianceError(
+        `File "${file.name}" is too large. Maximum allowed size is 10 MB.`,
+      );
+      return;
+    }
+
+    const categoryMap: Record<string, string> = {
+      "Driver's License": "DRIVERS_LICENSE",
+      "Criminal Record Check": "CRIMINAL_RECORD_CHECK",
+      "Dementia Support Certificate": "DEMENTIA_SUPPORT",
+      "Nurses Registry License": "NURSES_REGISTRY",
+    };
+
+    try {
       setUploadingDocType(type);
-      setUploadProgress(0);
 
-      const interval = setInterval(() => {
-        setUploadProgress((prev) => {
-          if (prev >= 100) {
-            clearInterval(interval);
-            setUploadingDocType(null);
+      const category = categoryMap[type];
 
-            const newDoc: ComplianceDoc = {
-              id: `doc-${Date.now()}`,
-              name: file.name,
-              type: type,
-              uploadDate: new Date().toISOString().split("T")[0],
-              status: "pending",
-              size: `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
-              previewUrl: "/api/placeholder/custom",
-            };
-            setComplianceDocs((prevDocs) => [...prevDocs, newDoc]);
-            setComplianceSuccess(
-              `Document "${file.name}" uploaded successfully!`,
-            );
-            setTimeout(() => setComplianceSuccess(null), 4000);
-            return 100;
-          }
-          return prev + 25;
-        });
-      }, 200);
+      await carerService.uploadDocument(file, category);
+
+      // Refresh documents list from Redux after successful upload
+      dispatch(fetchCarerDocuments());
+
+      setComplianceSuccess(
+        `Document "${file.name}" uploaded successfully!`,
+      );
+
+      setTimeout(() => {
+        setComplianceSuccess(null);
+      }, 4000);
+    } catch (error) {
+      console.error(error);
+
+      setComplianceError("Failed to upload document.");
+    } finally {
+      setUploadingDocType(null);
     }
   };
-
-  // Action 4: Delete Document
-  const handleDeleteDoc = (id: string) => {
-    setComplianceDocs((prev) => prev.filter((doc) => doc.id !== id));
+  // TODO: Integrate DELETE API — placeholder until endpoint is available
+  const handleDeleteDoc = (_id: string) => {
+    console.warn("Delete document API not yet integrated. ID:", _id);
   };
 
-  // Action 5: Save Availability Schedule with Validation
   const handleSaveAvailability = (e: React.FormEvent) => {
     e.preventDefault();
     setAvailabilityError(null);
@@ -239,7 +275,6 @@ export function useCarerPortal({ user }: UseCarerPortalProps) {
     }, 1200);
   };
 
-  // Action 6: Toggle Day Availability
   const handleToggleDay = (day: string) => {
     setAvailability((prev) => ({
       ...prev,
@@ -253,7 +288,6 @@ export function useCarerPortal({ user }: UseCarerPortalProps) {
     }));
   };
 
-  // Action 7: Toggle Day Shift Slot
   const handleToggleShift = (
     day: string,
     shift: "morning" | "afternoon" | "night",

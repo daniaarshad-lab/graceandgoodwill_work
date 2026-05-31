@@ -20,3 +20,58 @@ export interface DayAvailability {
 export interface WeeklyAvailability {
   [key: string]: DayAvailability;
 }
+
+export interface AvailabilitySlot {
+  shiftType: string;
+  startTime: string;
+  endTime: string;
+}
+
+export interface AvailabilityDay {
+  dayOfWeek: number;
+  enabled: boolean;
+  slots: AvailabilitySlot[];
+}
+
+export interface UpdateCarerProfilePayload {
+  bio: string;
+  experienceYears: number;
+  hourlyRate: number;
+
+  postcode: string;
+  city: string;
+  address: string;
+
+  availability: AvailabilityDay[];
+
+  careTypes: string[];
+
+  profilePhotoUrl: string;
+
+  careSpecialties: string;
+  experience: string;
+  summary: string;
+
+  state: string;
+  pincode: string;
+}
+
+export type DocumentCategory =
+  | "DRIVERS_LICENSE"
+  | "CRIMINAL_RECORD_CHECK"
+  | "DEMENTIA_SUPPORT"
+  | "NURSES_REGISTRY";
+
+
+export interface CarerDocument {
+  id: string;
+  carerProfileId: string;
+  fileName: string;
+  fileUrl: string;
+  fileSize: number;
+  fileCategory: string;
+  fileType: string;
+  status: "PENDING" | "VERIFIED" | "FAILED";
+  createdAt: string;
+  updatedAt: string;
+}

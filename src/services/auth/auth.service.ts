@@ -1,31 +1,5 @@
 import { apiFetch } from "@/lib/api";
-
-export interface RegisterPayload {
-  email: string;
-  firstName: string;
-  lastName: string;
-  phone: string;
-  password?: string;
-  role?: string;
-}
-
-export interface LoginPayload {
-  email: string;
-  password?: string;
-}
-
-export interface AuthResponse {
-  accessToken: string;
-  refreshToken: string;
-  user: {
-    id: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-    phone: string;
-    role?: string;
-  };
-}
+import { RegisterPayload, LoginPayload, AuthResponse } from "@/types/auth.types";
 
 export const authService = {
   async register(payload: RegisterPayload): Promise<AuthResponse> {

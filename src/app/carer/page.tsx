@@ -28,35 +28,18 @@ export default function CarerDashboard() {
     dispatch(fetchCarerDocuments());
   }, [dispatch]);
 
-  // Select profile state from Redux store first
-  const {
-    profile,
-    documents,
-    loading,
-    error,
-  } = useAppSelector(
-    (state) => state.carer
-  );
+  const { profile, documents } = useAppSelector((state) => state.carer);
   const profileUser = profile?.user;
 
-  // Custom hook containing state + handlers
   const portal = useCarerPortal({
     user,
     profile,
     documents,
   });
 
-  useEffect(() => {
-    console.log("Carer Profile:", profile);
-    console.log("Loading:", loading);
-    console.log("Error:", error);
-  }, [profile, loading, error]);
-
-
   return (
     <main className="min-h-screen bg-navy-950 py-10 text-gold-100">
       <div className="container-wrapper space-y-8">
-        {/* Header Hero Section */}
         <PortalHeader
           firstName={profileUser?.firstName || portal.firstName}
           lastName={profileUser?.lastName || portal.lastName}
@@ -69,12 +52,9 @@ export default function CarerDashboard() {
           logout={logout}
         />
 
-        {/* Tabbed Menu Navigation */}
         <PortalTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
-        {/* Dynamic Panels */}
         <div className="transition-all duration-500">
-          {/* TAB 1: OVERVIEW PANEL */}
           {activeTab === "overview" && (
             <DashboardOverview
               applicationStatus={portal.applicationStatus}
@@ -86,7 +66,6 @@ export default function CarerDashboard() {
             />
           )}
 
-          {/* TAB 2: PROFILE PANEL */}
           {activeTab === "profile" && (
             <ProfileManagement
               firstName={portal.firstName}
@@ -119,7 +98,6 @@ export default function CarerDashboard() {
             />
           )}
 
-          {/* TAB 3: COMPLIANCE VAULT PANEL */}
           {activeTab === "compliance" && (
             <ComplianceVault
               complianceDocs={portal.complianceDocs}
@@ -133,7 +111,6 @@ export default function CarerDashboard() {
             />
           )}
 
-          {/* TAB 4: AVAILABILITY Grid Management */}
           {activeTab === "availability" && (
             <AvailabilitySchedule
               availability={portal.availability}
@@ -148,7 +125,6 @@ export default function CarerDashboard() {
         </div>
       </div>
 
-      {/* --- CONFIRMATION & PREVIEW MODALS --- */}
       <UploadDocumentModal
         previewDoc={portal.previewDoc}
         setPreviewDoc={portal.setPreviewDoc}

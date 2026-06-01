@@ -132,6 +132,7 @@ function ResetPasswordForm() {
         />
 
         <Button
+          type="submit"
           text={isLoading ? "Updating..." : "Update Password"}
           disabled={isLoading || !token}
         />

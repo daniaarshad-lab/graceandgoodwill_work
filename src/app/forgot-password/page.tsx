@@ -100,6 +100,7 @@ export default function ForgotPasswordPage() {
         />
 
         <Button
+          type="submit"
           text={isLoading ? "Sending..." : "Send Reset Link"}
           disabled={isLoading}
         />

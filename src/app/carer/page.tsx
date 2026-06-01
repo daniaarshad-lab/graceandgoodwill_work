@@ -2,7 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { fetchCarerDocuments, fetchCarerProfile } from "@/store/slices/carerSlice";
+import {
+  fetchCarerDocuments,
+  fetchCarerProfile,
+} from "@/store/slices/carerSlice";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCarerPortal } from "./hooks/useCarerPortal";
 

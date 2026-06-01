@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import SectionCard from "./shared/SectionCard";
 import { ClientRequest, CarerApplication } from "../types/admin.types";
 import { UseAdminPortalReturn } from "../hooks/useAdminPortal";
+import Button from "@/components/Button";
 
 interface MatchingPanelProps {
   requests: ClientRequest[];
@@ -106,19 +107,19 @@ export default function MatchingPanel({
             ) : (
               <div className="space-y-3">
                 {unmatchedRequests.map((req) => (
-                  <button
+                  <Button
                     key={req.id}
                     onClick={() => {
                       setSelectedRequest(req);
                       setSelectedCarerId(null);
                     }}
-                    className={`w-full rounded-xl p-3 border text-left transition-all ${
-                      selectedRequest?.id === req.id
-                        ? "border-gold bg-gold/10 shadow-elegant"
-                        : "border-gold-300/10 bg-navy-950 hover:border-gold-300/30"
-                    }`}
+                    variant="selectable"
+                    isSelected={selectedRequest?.id === req.id}
+                    size="custom"
+                    fullWidth
+                    className="p-3 text-left items-start flex-col gap-1"
                   >
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between w-full">
                       <span className="text-xs font-bold text-gold-200 truncate block max-w-[150px]">
                         {req.clientName}
                       </span>
@@ -132,10 +133,10 @@ export default function MatchingPanel({
                         {req.urgency}
                       </span>
                     </div>
-                    <p className="text-[10px] text-gold-100/50 mt-1">
+                    <p className="text-[10px] text-gold-100/50">
                       {req.careType} • {req.location}
                     </p>
-                  </button>
+                  </Button>
                 ))}
               </div>
             )}
@@ -256,18 +257,20 @@ export default function MatchingPanel({
 
                         {/* Action buttons */}
                         <div className="flex flex-col gap-2">
-                          <button
+                          <Button
                             onClick={() => setSelectedCarerId(carer.id)}
-                            className={`rounded-lg px-4 py-2 text-xs font-semibold transition-all ${
+                            variant={
                               selectedCarerId === carer.id
-                                ? "bg-emerald-500 text-white shadow-[0_0_15px_rgba(16,185,129,0.3)]"
-                                : "bg-gold text-navy-950 hover:opacity-90"
-                            }`}
+                                ? "whatsapp"
+                                : "primary"
+                            }
+                            size="sm"
+                            fullWidth={false}
                           >
                             {selectedCarerId === carer.id
                               ? "Selected Candidate"
                               : "Choose Carer"}
-                          </button>
+                          </Button>
                         </div>
                       </div>
                     </div>
@@ -276,14 +279,16 @@ export default function MatchingPanel({
                 {/* Big Pair Trigger button */}
                 {selectedCarerId && (
                   <div className="border-t border-gold-300/10 pt-4 flex justify-end">
-                    <button
+                    <Button
                       onClick={() => {
                         onCreateMatch(selectedRequest.id, selectedCarerId);
                       }}
-                      className="rounded-xl bg-gold px-6 py-3 text-xs font-bold text-navy-950 shadow-elegant hover:scale-[1.01] hover:opacity-90 transition-all"
+                      variant="primary"
+                      size="sm"
+                      fullWidth={false}
                     >
                       Confirm Placement Assignment ✓
-                    </button>
+                    </Button>
                   </div>
                 )}
               </div>

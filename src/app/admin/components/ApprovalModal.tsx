@@ -1,4 +1,5 @@
 import { CarerApplication } from "../types/admin.types";
+import Button from "@/components/Button";
 
 interface ApprovalModalProps {
   carer: CarerApplication;
@@ -66,18 +67,17 @@ export default function ApprovalModal({
         </div>
 
         <div className="flex gap-4 border-t border-gold-300/10 pt-4">
-          <button
+          <Button
             onClick={() => onConfirm(carer.id)}
-            className="w-full rounded-xl bg-gold px-4 py-3 text-sm font-bold text-navy-950 shadow-elegant hover:opacity-90 transition-all"
+            variant="primary"
+            size="md"
+            fullWidth
           >
             Confirm & Approve ✓
-          </button>
-          <button
-            onClick={onCancel}
-            className="w-full rounded-xl border border-gold-300/10 bg-navy-950 px-4 py-3 text-sm font-semibold text-gold-200 hover:border-gold-300/20 transition-all"
-          >
+          </Button>
+          <Button onClick={onCancel} variant="ghost-gold" size="md" fullWidth>
             Cancel
-          </button>
+          </Button>
         </div>
       </div>
     </div>

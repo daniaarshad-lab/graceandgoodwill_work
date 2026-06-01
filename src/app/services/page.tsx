@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Button from "@/components/Button";
 
 const coreServices = [
   {
@@ -240,18 +241,24 @@ export default function ServicesPage() {
             answer your questions, and design a supportive care arrangement.
           </p>
           <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
-            <Link
-              href="/contact"
-              className="inline-flex items-center justify-center rounded-full bg-gold-500 px-8 py-3.5 text-sm font-semibold text-navy-950 shadow-elegant transition duration-300 hover:bg-gold-400 hover:scale-[1.02]"
+            <Button
+              asChild
+              variant="primary"
+              size="md"
+              fullWidth={false}
+              className="px-8 py-3.5"
             >
-              Get In Touch
-            </Link>
-            <Link
-              href="/about"
-              className="inline-flex items-center justify-center rounded-full border border-gold-300/30 px-8 py-3.5 text-sm font-semibold text-gold-200 transition duration-300 hover:bg-navy-900/50 hover:border-gold-300/60"
+              <Link href="/contact">Get In Touch</Link>
+            </Button>
+            <Button
+              asChild
+              variant="outline"
+              size="md"
+              fullWidth={false}
+              className="px-8 py-3.5"
             >
-              About Our Care
-            </Link>
+              <Link href="/about">About Our Care</Link>
+            </Button>
           </div>
         </section>
       </div>

@@ -25,7 +25,7 @@ export const carerService = {
   },
 
   async updateProfile(
-    payload: UpdateCarerProfilePayload
+    payload: UpdateCarerProfilePayload,
   ): Promise<CarerProfile> {
     const token =
       typeof window !== "undefined"
@@ -45,10 +45,7 @@ export const carerService = {
     });
   },
 
-  async uploadDocument(
-    file: File,
-    category: string
-  ) {
+  async uploadDocument(file: File, category: string) {
     const token =
       typeof window !== "undefined"
         ? localStorage.getItem("accessToken")
@@ -89,7 +86,9 @@ export const carerService = {
     });
   },
 
-  async updateAvailability(payload: UpdateAvailabilityPayload): Promise<CarerProfile> {
+  async updateAvailability(
+    payload: UpdateAvailabilityPayload,
+  ): Promise<CarerProfile> {
     const token =
       typeof window !== "undefined"
         ? localStorage.getItem("accessToken")

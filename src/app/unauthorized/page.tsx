@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import CenteredLayout from "@/components/CenteredLayout";
-import Card from "@/components/Card";
+import Button from "@/components/Button";
 
 export default function UnauthorizedPage() {
   return (
@@ -10,7 +10,7 @@ export default function UnauthorizedPage() {
       title="Access Denied"
       subtitle="You do not have the required permissions to view this resource."
     >
-      <Card className="text-center space-y-6">
+      <div className="border rounded-2xl p-6 shadow-sm bg-card text-center space-y-6">
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-500/10 text-red-500">
           <svg
             className="h-8 w-8"
@@ -39,21 +39,15 @@ export default function UnauthorizedPage() {
           </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4">
-          <Link
-            href="/"
-            className="inline-flex w-full items-center justify-center rounded-xl border border-gold-DEFAULT/30 text-gold-DEFAULT px-4 py-3 text-sm font-semibold transition hover:bg-gold-DEFAULT/10 hover:border-gold-DEFAULT"
-          >
-            Go to Home
-          </Link>
-          <Link
-            href="/login"
-            className="inline-flex w-full items-center justify-center rounded-xl bg-gold-DEFAULT px-4 py-3 text-sm font-semibold text-navy-950 shadow-elegant transition hover:bg-gold-300"
-          >
-            Login Page
-          </Link>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <Button asChild variant="outline" className="w-full sm:w-auto">
+            <Link href="/">Go to Home</Link>
+          </Button>
+          <Button asChild variant="primary" className="w-full sm:w-auto">
+            <Link href="/login">Login Page</Link>
+          </Button>
         </div>
-      </Card>
+      </div>
     </CenteredLayout>
   );
 }

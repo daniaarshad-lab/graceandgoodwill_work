@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAdminPortal, AdminTabType } from "./hooks/useAdminPortal";
+import Button from "@/components/Button";
 
 // Subcomponents
 import AdminOverview from "./components/AdminOverview";
@@ -51,12 +52,15 @@ export default function AdminDashboard() {
               </p>
             </div>
 
-            <button
+            <Button
               onClick={logout}
-              className="inline-flex items-center justify-center rounded-xl border border-gold-300/10 bg-navy-950/60 px-4 py-2.5 text-xs font-bold text-gold-200 transition-all hover:border-gold-300/30 hover:bg-navy-950"
+              variant="ghost-gold"
+              size="sm"
+              fullWidth={false}
+              className="inline-flex items-center justify-center border border-gold-300/10 bg-navy-950/60 px-4 py-2.5 font-bold text-gold-200 hover:bg-navy-950 hover:border-gold-300/30"
             >
               Secure Logout ➔
-            </button>
+            </Button>
           </div>
         </header>
 

@@ -8,16 +8,17 @@ const initialState: AdminState = {
   error: null,
 };
 
-export const fetchAdminDashboardStats = createAsyncThunk<AdminDashboardStats, void, { rejectValue: string }>(
-  "admin/fetchStats",
-  async (_, { rejectWithValue }) => {
-    try {
-      return await adminService.getDashboardStats();
-    } catch (error: any) {
-      return rejectWithValue(error?.message || "Failed to fetch admin stats");
-    }
+export const fetchAdminDashboardStats = createAsyncThunk<
+  AdminDashboardStats,
+  void,
+  { rejectValue: string }
+>("admin/fetchStats", async (_, { rejectWithValue }) => {
+  try {
+    return await adminService.getDashboardStats();
+  } catch (error: any) {
+    return rejectWithValue(error?.message || "Failed to fetch admin stats");
   }
-);
+});
 
 const adminSlice = createSlice({
   name: "admin",
@@ -33,10 +34,13 @@ const adminSlice = createSlice({
       state.loading = true;
       state.error = null;
     });
-    builder.addCase(fetchAdminDashboardStats.fulfilled, (state, action: PayloadAction<AdminDashboardStats>) => {
-      state.loading = false;
-      state.stats = action.payload;
-    });
+    builder.addCase(
+      fetchAdminDashboardStats.fulfilled,
+      (state, action: PayloadAction<AdminDashboardStats>) => {
+        state.loading = false;
+        state.stats = action.payload;
+      },
+    );
     builder.addCase(fetchAdminDashboardStats.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload || "Failed to fetch admin stats";

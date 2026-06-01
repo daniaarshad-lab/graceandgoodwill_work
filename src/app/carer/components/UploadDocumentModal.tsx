@@ -1,4 +1,5 @@
 import { ComplianceDoc } from "../types/carer.types";
+import Button from "@/components/Button";
 
 interface UploadDocumentModalProps {
   previewDoc: ComplianceDoc | null;
@@ -58,12 +59,14 @@ export default function UploadDocumentModal({
             </div>
 
             <div className="flex justify-end pt-2">
-              <button
+              <Button
                 onClick={() => setPreviewDoc(null)}
-                className="rounded-xl bg-gold-DEFAULT px-5 py-2.5 text-xs font-semibold text-navy-950 hover:bg-gold-300 transition duration-300 shadow-elegant"
+                variant="primary"
+                size="sm"
+                fullWidth={false}
               >
                 Close Preview
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -81,18 +84,22 @@ export default function UploadDocumentModal({
               document? This action cannot be undone.
             </p>
             <div className="flex justify-end gap-3 pt-2">
-              <button
+              <Button
                 onClick={() => setDocToDelete(null)}
-                className="rounded-xl border border-gold-300/20 text-gold-200 px-4 py-2 text-xs font-semibold hover:bg-gold-300/10"
+                variant="ghost-gold"
+                size="sm"
+                fullWidth={false}
               >
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={confirmDelete}
-                className="rounded-xl bg-red-600 px-4 py-2 text-xs font-semibold text-white hover:bg-red-500 transition duration-300"
+                variant="danger"
+                size="sm"
+                fullWidth={false}
               >
                 Delete
-              </button>
+              </Button>
             </div>
           </div>
         </div>

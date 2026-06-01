@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Button from "@/components/Button";
 
 const modules = [
   {
@@ -219,9 +220,9 @@ export default function TrainingPage() {
               </div>
 
               <div className="mt-8">
-                <button className="inline-flex w-full items-center justify-center rounded-xl border border-gold-300/20 px-4 py-2.5 text-xs font-semibold text-gold-200 transition duration-300 hover:bg-navy-950 hover:border-gold-300/50">
+                <Button variant="ghost-gold" size="sm" fullWidth>
                   {m.cta}
-                </button>
+                </Button>
               </div>
             </div>
           ))}

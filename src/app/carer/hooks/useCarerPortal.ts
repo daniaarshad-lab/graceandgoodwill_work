@@ -6,15 +6,28 @@ import {
   defaultExperience,
   defaultAddress,
 } from "../data/mockProfile";
-import { CarerDocument, ComplianceDoc, WeeklyAvailability } from "../types/carer.types";
+import {
+  CarerDocument,
+  ComplianceDoc,
+  WeeklyAvailability,
+} from "../types/carer.types";
 import {
   validateProfileForm,
   validateAvailabilitySchedule,
 } from "../utils/validation";
 import { useAppDispatch } from "@/store/hooks";
-import { fetchCarerDocuments, updateCarerProfile, updateCarerAvailability, deleteCarerDocument } from "@/store/slices/carerSlice";
+import {
+  fetchCarerDocuments,
+  updateCarerProfile,
+  updateCarerAvailability,
+  deleteCarerDocument,
+} from "@/store/slices/carerSlice";
 import { carerService } from "@/services/carer/carer.service";
-import { CarerProfile, AvailabilityDay, AvailabilitySlot } from "@/types/carer.types";
+import {
+  CarerProfile,
+  AvailabilityDay,
+  AvailabilitySlot,
+} from "@/types/carer.types";
 
 interface UseCarerPortalProps {
   user: any;
@@ -22,7 +35,11 @@ interface UseCarerPortalProps {
   documents: CarerDocument[];
 }
 
-export function useCarerPortal({ user, profile, documents }: UseCarerPortalProps) {
+export function useCarerPortal({
+  user,
+  profile,
+  documents,
+}: UseCarerPortalProps) {
   const [firstName, setFirstName] = useState(user?.firstName || "Alex");
   const [lastName, setLastName] = useState(user?.lastName || "Mercer");
   const [phone, setPhone] = useState(user?.phoneNumber || "+1 (555) 123-4567");
@@ -58,7 +75,9 @@ export function useCarerPortal({ user, profile, documents }: UseCarerPortalProps
   const [profileSuccessMsg, setProfileSuccessMsg] = useState(false);
 
   // Application status — mock until API is available
-  const [applicationStatus] = useState<"pending" | "approved" | "rejected">("pending");
+  const [applicationStatus] = useState<"pending" | "approved" | "rejected">(
+    "pending",
+  );
   const [membershipActive] = useState(true);
   const [membershipExpiry] = useState("2027-05-25");
 
@@ -222,24 +241,39 @@ export function useCarerPortal({ user, profile, documents }: UseCarerPortalProps
       "Nurses Registry License": "NURSES_REGISTRY",
     };
 
+    let progressInterval: any;
     try {
       setUploadingDocType(type);
+      setUploadProgress(0);
+
+      progressInterval = setInterval(() => {
+        setUploadProgress((prev) => {
+          if (prev >= 90) {
+            clearInterval(progressInterval);
+            return 90;
+          }
+          return prev + 10;
+        });
+      }, 100);
 
       const category = categoryMap[type];
 
       await carerService.uploadDocument(file, category);
 
+      clearInterval(progressInterval);
+      setUploadProgress(100);
+
       // Refresh documents list from Redux after successful upload
       dispatch(fetchCarerDocuments());
 
-      setComplianceSuccess(
-        `Document "${file.name}" uploaded successfully!`,
-      );
+      setComplianceSuccess(`Document "${file.name}" uploaded successfully!`);
 
       setTimeout(() => {
         setComplianceSuccess(null);
+        setUploadProgress(0);
       }, 4000);
     } catch (error) {
+      clearInterval(progressInterval);
       console.error(error);
 
       setComplianceError("Failed to upload document.");
@@ -295,8 +329,8 @@ export function useCarerPortal({ user, profile, documents }: UseCarerPortalProps
     return Object.entries(weekly).map(([day, config]) => {
       const slots: AvailabilitySlot[] = config.enabled
         ? (["morning", "afternoon", "night"] as const)
-          .filter((shift) => config.shifts[shift])
-          .map((shift) => SHIFT_SLOTS[shift])
+            .filter((shift) => config.shifts[shift])
+            .map((shift) => SHIFT_SLOTS[shift])
         : [];
 
       return {

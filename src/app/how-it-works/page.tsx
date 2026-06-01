@@ -1,3 +1,4 @@
+import Button from "@/components/Button";
 import Link from "next/link";
 
 const steps = [
@@ -194,18 +195,12 @@ export default function HowItWorksPage() {
             can focus on what truly matters.
           </p>
           <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
-            <Link
-              href="/register"
-              className="inline-flex items-center justify-center rounded-full bg-gold-500 px-8 py-3.5 text-sm font-semibold text-navy-950 shadow-elegant transition duration-300 hover:bg-gold-400 hover:scale-[1.02]"
-            >
-              Get Started
-            </Link>
-            <Link
-              href="/faq"
-              className="inline-flex items-center justify-center rounded-full border border-gold-300/30 px-8 py-3.5 text-sm font-semibold text-gold-200 transition duration-300 hover:bg-navy-900/50 hover:border-gold-300/60"
-            >
-              Read FAQs
-            </Link>
+            <Button asChild variant="navy">
+              <Link href="/register">Get Started</Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link href="/faq">Read FAQs</Link>
+            </Button>
           </div>
         </section>
       </div>

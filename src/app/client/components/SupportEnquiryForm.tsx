@@ -1,6 +1,7 @@
 import SectionCard from "./shared/SectionCard";
 import Input from "@/components/Input";
 import Select from "@/components/Select";
+import Button from "@/components/Button";
 import { Enquiry } from "../types/client.types";
 
 interface SupportEnquiryFormProps {
@@ -95,20 +96,24 @@ export default function SupportEnquiryForm({
           />
 
           <div className="flex justify-end gap-3 pt-2">
-            <button
+            <Button
               type="button"
               onClick={() => setActiveTab("overview")}
-              className="rounded-xl border border-gold-DEFAULT/20 px-6 py-3 text-xs font-semibold text-gold-DEFAULT hover:bg-gold-DEFAULT/10"
+              variant="ghost-gold"
+              size="sm"
+              fullWidth={false}
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
               disabled={isSubmitting}
-              className="rounded-xl bg-gold-DEFAULT px-6 py-3 text-xs font-semibold text-navy-950 hover:bg-gold-300 transition duration-300 shadow-elegant disabled:opacity-50 disabled:cursor-not-allowed"
+              variant="primary"
+              size="sm"
+              fullWidth={false}
             >
               {isSubmitting ? "Transmitting..." : "Send Enquiry"}
-            </button>
+            </Button>
           </div>
         </form>
       </SectionCard>

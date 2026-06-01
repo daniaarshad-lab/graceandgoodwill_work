@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
+import Button from "./Button";
 
 const navLinks = [
   { href: "/about", label: "About Us" },
@@ -71,12 +72,14 @@ export default function SiteHeader() {
 
           {/* Authentication Actions */}
           {isAuthenticated ? (
-            <button
+            <Button
               onClick={handleLogout}
-              className="bg-transparent body-small font-semibold text-gold-DEFAULT border border-gold-DEFAULT/30 hover:border-gold-DEFAULT hover:bg-gold-DEFAULT/10 px-4 py-2 rounded-xl transition-all duration-300"
+              variant="ghost-gold"
+              size="sm"
+              fullWidth={false}
             >
               Logout
-            </button>
+            </Button>
           ) : (
             <div className="flex items-center gap-3">
               <Link
@@ -85,7 +88,6 @@ export default function SiteHeader() {
               >
                 Login
               </Link>
-
             </div>
           )}
         </nav>

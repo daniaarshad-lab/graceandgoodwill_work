@@ -2,6 +2,7 @@ import { useState } from "react";
 import SectionCard from "./shared/SectionCard";
 import StatusBadge from "./shared/StatusBadge";
 import { CarerApplication } from "../types/admin.types";
+import Button from "@/components/Button";
 
 interface CarerApplicationsProps {
   carers: CarerApplication[];
@@ -40,19 +41,19 @@ export default function CarerApplications({
           </p>
         </div>
 
-        <div className="flex rounded-xl bg-navy-950 p-1 border border-gold-300/10">
+        <div className="flex rounded-xl bg-navy-950 p-1 border border-gold-300/10 gap-1">
           {(["All", "Pending", "Approved", "Rejected"] as const).map((tab) => (
-            <button
+            <Button
               key={tab}
               onClick={() => setFilter(tab)}
-              className={`rounded-lg px-4 py-1.5 text-xs font-semibold tracking-wide transition-all ${
-                filter === tab
-                  ? "bg-gold text-navy-950 shadow-elegant"
-                  : "text-gold-100/60 hover:text-gold-200"
-              }`}
+              variant="selectable"
+              isSelected={filter === tab}
+              size="sm"
+              fullWidth={false}
+              className="rounded-lg px-4 py-1.5 text-xs tracking-wide"
             >
               {tab}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -141,29 +142,37 @@ export default function CarerApplications({
 
             {/* Actions Bar */}
             <div className="flex items-center gap-3 border-t border-gold-300/5 pt-4">
-              <button
+              <Button
                 onClick={() => setSelectedCarer(carer)}
-                className="flex-1 rounded-xl bg-navy-950 px-4 py-2.5 text-xs font-semibold text-gold-200 border border-gold-300/10 hover:border-gold-300/30 transition-all text-center"
+                variant="ghost-gold"
+                size="sm"
+                fullWidth
+                className="text-center"
               >
                 View Details
-              </button>
+              </Button>
 
               {carer.status === "Pending" && (
                 <>
-                  <button
+                  <Button
                     onClick={() => {
                       setSelectedCarerForApproval(carer);
                     }}
-                    className="flex-1 rounded-xl bg-gold px-4 py-2.5 text-xs font-bold text-navy-950 shadow-elegant hover:opacity-90 hover:translate-y-[-1px] transition-all"
+                    variant="primary"
+                    size="sm"
+                    fullWidth
                   >
                     Approve Carer
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={() => onReject(carer.id)}
-                    className="rounded-xl border border-rose-500/20 bg-rose-500/5 px-3 py-2.5 text-xs font-bold text-rose-400 hover:bg-rose-500/10 transition-all"
+                    variant="danger"
+                    size="sm"
+                    fullWidth={false}
+                    className="px-3"
                   >
                     Reject
-                  </button>
+                  </Button>
                 </>
               )}
             </div>
@@ -278,12 +287,14 @@ export default function CarerApplications({
             </div>
 
             <div className="flex gap-4 border-t border-gold-300/10 pt-4">
-              <button
+              <Button
                 onClick={() => setSelectedCarer(null)}
-                className="w-full rounded-xl bg-gold px-4 py-3 text-sm font-semibold text-navy-950 shadow-elegant hover:opacity-90 transition-all"
+                variant="primary"
+                size="md"
+                fullWidth
               >
                 Close Dossier
-              </button>
+              </Button>
             </div>
           </div>
         </div>

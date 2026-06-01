@@ -1,5 +1,6 @@
 import SectionCard from "./shared/SectionCard";
 import { ComplianceDoc } from "../types/carer.types";
+import Button from "@/components/Button";
 
 interface ComplianceVaultProps {
   complianceDocs: ComplianceDoc[];
@@ -88,15 +89,22 @@ export default function ComplianceVault({
                     </span>
                   </div>
                 ) : (
-                  <label className="inline-flex cursor-pointer items-center justify-center rounded-xl bg-gold-DEFAULT/10 border border-gold-DEFAULT/20 px-3.5 py-1.5 text-xs font-semibold text-gold-DEFAULT hover:bg-gold-DEFAULT/20 transition-all duration-300">
-                    Upload PDF
-                    <input
-                      type="file"
-                      accept=".pdf"
-                      className="hidden"
-                      onChange={(e) => handleDocUpload(docType, e)}
-                    />
-                  </label>
+                  <Button
+                    asChild
+                    variant="ghost-gold"
+                    size="sm"
+                    fullWidth={false}
+                  >
+                    <label className="cursor-pointer">
+                      Upload PDF
+                      <input
+                        type="file"
+                        accept=".pdf"
+                        className="hidden"
+                        onChange={(e) => handleDocUpload(docType, e)}
+                      />
+                    </label>
+                  </Button>
                 )}
               </div>
             );

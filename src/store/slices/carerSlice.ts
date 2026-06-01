@@ -1,10 +1,10 @@
-import {
-  createAsyncThunk,
-  createSlice,
-  PayloadAction,
-} from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { carerService } from "@/services/carer/carer.service";
-import { CarerProfile, UpdateCarerProfilePayload, UpdateAvailabilityPayload } from "@/types/carer.types";
+import {
+  CarerProfile,
+  UpdateCarerProfilePayload,
+  UpdateAvailabilityPayload,
+} from "@/types/carer.types";
 import { CarerDocument } from "@/app/carer/types/carer.types";
 
 interface CarerState {
@@ -26,89 +26,66 @@ export const fetchCarerProfile = createAsyncThunk<
   CarerProfile,
   void,
   { rejectValue: string }
->(
-  "carer/fetchProfile",
-  async (_, { rejectWithValue }) => {
-    try {
-      return await carerService.getProfile();
-    } catch (error: any) {
-      return rejectWithValue(
-        error?.response?.data?.message ||
+>("carer/fetchProfile", async (_, { rejectWithValue }) => {
+  try {
+    return await carerService.getProfile();
+  } catch (error: any) {
+    return rejectWithValue(
+      error?.response?.data?.message ||
         error?.message ||
-        "Failed to fetch carer profile"
-      );
-    }
+        "Failed to fetch carer profile",
+    );
   }
-);
+});
 
 export const updateCarerProfile = createAsyncThunk<
   CarerProfile,
   UpdateCarerProfilePayload,
   { rejectValue: string }
->(
-  "carer/updateProfile",
-  async (payload, { rejectWithValue }) => {
-    try {
-      return await carerService.updateProfile(payload);
-    } catch (error: any) {
-      return rejectWithValue(
-        error?.message || "Failed to update carer profile"
-      );
-    }
+>("carer/updateProfile", async (payload, { rejectWithValue }) => {
+  try {
+    return await carerService.updateProfile(payload);
+  } catch (error: any) {
+    return rejectWithValue(error?.message || "Failed to update carer profile");
   }
-);
+});
 
 export const fetchCarerDocuments = createAsyncThunk<
   CarerDocument[],
   void,
   { rejectValue: string }
->(
-  "carer/fetchDocuments",
-  async (_, { rejectWithValue }) => {
-    try {
-      return await carerService.getDocuments();
-    } catch (error: any) {
-      return rejectWithValue(
-        error?.message || "Failed to fetch documents"
-      );
-    }
+>("carer/fetchDocuments", async (_, { rejectWithValue }) => {
+  try {
+    return await carerService.getDocuments();
+  } catch (error: any) {
+    return rejectWithValue(error?.message || "Failed to fetch documents");
   }
-);
+});
 
 export const updateCarerAvailability = createAsyncThunk<
   CarerProfile,
   UpdateAvailabilityPayload,
   { rejectValue: string }
->(
-  "carer/updateAvailability",
-  async (payload, { rejectWithValue }) => {
-    try {
-      return await carerService.updateAvailability(payload);
-    } catch (error: any) {
-      return rejectWithValue(
-        error?.message || "Failed to update availability"
-      );
-    }
+>("carer/updateAvailability", async (payload, { rejectWithValue }) => {
+  try {
+    return await carerService.updateAvailability(payload);
+  } catch (error: any) {
+    return rejectWithValue(error?.message || "Failed to update availability");
   }
-);
+});
 
 export const deleteCarerDocument = createAsyncThunk<
   string,
   string,
   { rejectValue: string }
->(
-  "carer/deleteDocument",
-  async (id, { rejectWithValue }) => {
-    try {
-      await carerService.deleteDocument(id);
-      return id;
-    } catch (error: any) {
-      return rejectWithValue(
-        error?.message || "Failed to delete document"
-      );
-    }
+>("carer/deleteDocument", async (id, { rejectWithValue }) => {
+  try {
+    await carerService.deleteDocument(id);
+    return id;
+  } catch (error: any) {
+    return rejectWithValue(error?.message || "Failed to delete document");
   }
-);
+});
 
 const carerSlice = createSlice({
   name: "carer",
@@ -130,12 +107,11 @@ const carerSlice = createSlice({
         (state, action: PayloadAction<CarerProfile>) => {
           state.loading = false;
           state.profile = action.payload;
-        }
+        },
       )
       .addCase(fetchCarerProfile.rejected, (state, action) => {
         state.loading = false;
-        state.error =
-          action.payload || "Failed to fetch carer profile";
+        state.error = action.payload || "Failed to fetch carer profile";
       })
 
       .addCase(updateCarerProfile.pending, (state) => {
@@ -147,12 +123,11 @@ const carerSlice = createSlice({
         (state, action: PayloadAction<CarerProfile>) => {
           state.loading = false;
           state.profile = action.payload;
-        }
+        },
       )
       .addCase(updateCarerProfile.rejected, (state, action) => {
         state.loading = false;
-        state.error =
-          action.payload || "Failed to update carer profile";
+        state.error = action.payload || "Failed to update carer profile";
       })
       .addCase(fetchCarerDocuments.pending, (state) => {
         state.loading = true;
@@ -164,13 +139,12 @@ const carerSlice = createSlice({
         (state, action: PayloadAction<CarerDocument[]>) => {
           state.loading = false;
           state.documents = action.payload;
-        }
+        },
       )
 
       .addCase(fetchCarerDocuments.rejected, (state, action) => {
         state.loading = false;
-        state.error =
-          action.payload || "Failed to fetch documents";
+        state.error = action.payload || "Failed to fetch documents";
       })
 
       .addCase(updateCarerAvailability.pending, (state) => {
@@ -182,12 +156,11 @@ const carerSlice = createSlice({
         (state, action: PayloadAction<CarerProfile>) => {
           state.loading = false;
           state.profile = action.payload;
-        }
+        },
       )
       .addCase(updateCarerAvailability.rejected, (state, action) => {
         state.loading = false;
-        state.error =
-          action.payload || "Failed to update availability";
+        state.error = action.payload || "Failed to update availability";
       })
 
       .addCase(deleteCarerDocument.pending, (state) => {
@@ -197,16 +170,15 @@ const carerSlice = createSlice({
         deleteCarerDocument.fulfilled,
         (state, action: PayloadAction<string>) => {
           state.documents = state.documents.filter(
-            (doc) => doc.id !== action.payload
+            (doc) => doc.id !== action.payload,
           );
-        }
+        },
       )
       .addCase(deleteCarerDocument.rejected, (state, action) => {
-        state.error =
-          action.payload || "Failed to delete document";
+        state.error = action.payload || "Failed to delete document";
       });
   },
-})
+});
 
 export const { clearCarerProfile } = carerSlice.actions;
 

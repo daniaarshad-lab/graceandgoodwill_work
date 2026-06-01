@@ -114,7 +114,6 @@ export default function RegisterPage() {
           <Button asChild className="hover:text-[#0a1128]">
             <Link href="/login">Go to Login</Link>
           </Button>
-
         </div>
       </AuthSplitLayout>
     );
@@ -138,26 +137,28 @@ export default function RegisterPage() {
             I want to register as a:
           </label>
           <div className="grid grid-cols-2 gap-2 p-1.5 rounded-xl bg-navy-950/60 border border-gold-muted/20 backdrop-blur-sm">
-            <button
+            <Button
               type="button"
               onClick={() => setRole("CLIENT")}
-              className={`py-2.5 text-xs font-semibold rounded-lg transition-all duration-300 ${role === "CLIENT"
-                  ? "bg-gold-muted/90 text-[#0a1128] border border-gold-muted/60 shadow-[0_2px_12px_rgba(160,128,84,0.30),inset_0_1px_0_rgba(255,255,255,0.10)]"
-                  : "bg-transparent text-gold-muted/45 border border-transparent hover:bg-gold-muted/10 hover:text-white"
-                }`}
+              variant="selectable"
+              isSelected={role === "CLIENT"}
+              size="sm"
+              fullWidth
+              className="py-2.5 rounded-lg font-semibold"
             >
               Family / Client
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               onClick={() => setRole("CARER")}
-              className={`py-2.5 text-xs font-semibold rounded-lg transition-all duration-300 ${role === "CARER"
-                  ? "bg-gold-muted/90 text-[#0a1128] border border-gold-muted/60 shadow-[0_2px_12px_rgba(160,128,84,0.30),inset_0_1px_0_rgba(255,255,255,0.10)]"
-                  : "bg-transparent text-gold-muted/45 border border-transparent hover:bg-gold-muted/10 hover:text-white"
-                }`}
+              variant="selectable"
+              isSelected={role === "CARER"}
+              size="sm"
+              fullWidth
+              className="py-2.5 rounded-lg font-semibold"
             >
               Professional Carer
-            </button>
+            </Button>
           </div>
         </div>
 

@@ -3,6 +3,7 @@ import SectionCard from "./shared/SectionCard";
 import StatusBadge from "./shared/StatusBadge";
 import { Placement, CarerApplication } from "../types/admin.types";
 import { UseAdminPortalReturn } from "../hooks/useAdminPortal";
+import Button from "@/components/Button";
 
 interface PlacementTrackingProps {
   placements: Placement[];
@@ -52,19 +53,19 @@ export default function PlacementTracking({
           </p>
         </div>
 
-        <div className="flex rounded-xl bg-navy-950 p-1 border border-gold-300/10">
+        <div className="flex rounded-xl bg-navy-950 p-1 border border-gold-300/10 gap-1">
           {(["All", "Active", "Matched", "Completed"] as const).map((tab) => (
-            <button
+            <Button
               key={tab}
               onClick={() => setFilter(tab)}
-              className={`rounded-lg px-4 py-1.5 text-xs font-semibold tracking-wide transition-all ${
-                filter === tab
-                  ? "bg-gold text-navy-950 shadow-elegant"
-                  : "text-gold-100/60 hover:text-gold-200"
-              }`}
+              variant="selectable"
+              isSelected={filter === tab}
+              size="sm"
+              fullWidth={false}
+              className="rounded-lg px-4 py-1.5 text-xs tracking-wide"
             >
               {tab}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -97,14 +98,16 @@ export default function PlacementTracking({
 
                 <div className="flex items-center gap-3">
                   <StatusBadge status={place.status} />
-                  <button
+                  <Button
                     onClick={() =>
                       setExpandedPlacementId(isExpanded ? null : place.id)
                     }
-                    className="rounded-lg bg-navy-950 px-3 py-1.5 text-xs text-gold-200 border border-gold-300/10 hover:border-gold-300/20 transition"
+                    variant="ghost-gold"
+                    size="sm"
+                    fullWidth={false}
                   >
                     {isExpanded ? "Hide Details ▲" : "Expand Details ▼"}
-                  </button>
+                  </Button>
                 </div>
               </div>
 
@@ -154,18 +157,18 @@ export default function PlacementTracking({
                     </div>
 
                     {/* Authorization Toggle button */}
-                    <button
+                    <Button
                       onClick={() => onToggleContactRelease(place.id)}
-                      className={`w-full rounded-xl py-2.5 text-xs font-bold border transition ${
-                        place.contactDetailsReleased
-                          ? "border-rose-500/30 text-rose-400 bg-rose-500/5 hover:bg-rose-500/10"
-                          : "border-gold text-gold bg-gold/10 hover:bg-gold/20"
-                      }`}
+                      variant={
+                        place.contactDetailsReleased ? "danger" : "primary"
+                      }
+                      size="sm"
+                      fullWidth
                     >
                       {place.contactDetailsReleased
                         ? "Revoke Details Visibility Gate"
                         : "Approve Contact Release"}
-                    </button>
+                    </Button>
                   </div>
 
                   {/* Operational Tracker Timeline */}
@@ -234,7 +237,7 @@ export default function PlacementTracking({
                         ))}
                     </select>
 
-                    <button
+                    <Button
                       onClick={() => {
                         if (selectedNewCarerId) {
                           onReassignCarer(place.id, selectedNewCarerId);
@@ -243,27 +246,34 @@ export default function PlacementTracking({
                         }
                       }}
                       disabled={!selectedNewCarerId}
-                      className="rounded-lg bg-gold px-4 py-2 text-xs font-bold text-navy-950 shadow-elegant disabled:opacity-50"
+                      variant="primary"
+                      size="sm"
+                      fullWidth={false}
                     >
                       Reassign
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       onClick={() => {
                         setReassignPlacementId(null);
                         setSelectedNewCarerId("");
                       }}
-                      className="rounded-lg border border-gold-300/10 bg-navy-950 px-3 py-2 text-xs text-gold-200"
+                      variant="ghost-gold"
+                      size="sm"
+                      fullWidth={false}
                     >
                       Cancel
-                    </button>
+                    </Button>
                   </div>
                 ) : (
-                  <button
+                  <Button
                     onClick={() => setReassignPlacementId(place.id)}
-                    className="rounded-xl border border-gold-300/15 bg-navy-950/40 px-4 py-2 text-xs font-bold text-gold-200 hover:border-gold-300/30 transition-all"
+                    variant="ghost-gold"
+                    size="sm"
+                    fullWidth={false}
+                    className="font-bold bg-navy-950/40 border border-gold-300/15"
                   >
                     Manual Override (Reassign Carer)
-                  </button>
+                  </Button>
                 )}
               </div>
             </SectionCard>

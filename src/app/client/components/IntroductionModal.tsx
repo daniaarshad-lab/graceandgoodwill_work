@@ -1,4 +1,5 @@
 import { Carer } from "../types/client.types";
+import Button from "@/components/Button";
 
 interface IntroductionModalProps {
   carer: Carer;
@@ -43,20 +44,24 @@ export default function IntroductionModal({
         </div>
 
         <div className="flex justify-end gap-3 pt-2">
-          <button
+          <Button
             type="button"
             onClick={onCancel}
-            className="rounded-xl border border-gold-DEFAULT/20 px-5 py-2.5 text-xs font-semibold text-gold-DEFAULT hover:bg-gold-DEFAULT/10"
+            variant="ghost-gold"
+            size="sm"
+            fullWidth={false}
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             onClick={onConfirm}
-            className="rounded-xl bg-gold-DEFAULT px-5 py-2.5 text-xs font-semibold text-navy-950 hover:bg-gold-300 transition duration-300 shadow-elegant"
+            variant="primary"
+            size="sm"
+            fullWidth={false}
           >
             Confirm Request
-          </button>
+          </Button>
         </div>
       </div>
     </div>

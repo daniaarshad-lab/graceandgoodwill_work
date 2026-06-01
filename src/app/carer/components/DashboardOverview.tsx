@@ -1,6 +1,7 @@
 import SectionCard from "./shared/SectionCard";
 import StatusBadge from "./shared/StatusBadge";
 import { ComplianceDoc, WeeklyAvailability } from "../types/carer.types";
+import Button from "@/components/Button";
 
 interface DashboardOverviewProps {
   applicationStatus: "pending" | "approved" | "rejected";
@@ -103,14 +104,16 @@ export default function DashboardOverview({
           </div>
         </div>
 
-        <button
+        <Button
           onClick={() =>
             alert("Billing portal connection is in mockup simulation state.")
           }
-          className="w-full text-center rounded-xl bg-gold-DEFAULT py-3 text-xs font-semibold text-navy-950 hover:bg-gold-300 transition duration-300 shadow-elegant"
+          variant="primary"
+          size="sm"
+          fullWidth
         >
           Renew / Review Plan
-        </button>
+        </Button>
       </SectionCard>
 
       {/* Profile completeness Quick Stats widget */}

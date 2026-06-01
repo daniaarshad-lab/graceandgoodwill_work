@@ -1,5 +1,7 @@
 import SectionCard from "./shared/SectionCard";
 import { WeeklyAvailability } from "../types/carer.types";
+import Button from "@/components/Button";
+import Toggle from "@/components/Toggle";
 
 interface AvailabilityScheduleProps {
   availability: WeeklyAvailability;
@@ -35,13 +37,15 @@ export default function AvailabilitySchedule({
             assignment.
           </p>
         </div>
-        <button
+        <Button
           onClick={handleSaveAvailability}
           disabled={isAvailabilitySaving}
-          className="rounded-xl bg-gold-DEFAULT px-5 py-2.5 text-xs font-semibold text-navy-950 hover:bg-gold-300 transition duration-300 shadow-elegant disabled:opacity-50 disabled:cursor-not-allowed"
+          variant="primary"
+          size="sm"
+          fullWidth={false}
         >
           {isAvailabilitySaving ? "Saving..." : "Save Schedule"}
-        </button>
+        </Button>
       </div>
 
       {availabilityError && (
@@ -71,19 +75,11 @@ export default function AvailabilitySchedule({
             >
               {/* Day and Toggle switch */}
               <div className="flex items-center gap-4 min-w-[150px]">
-                <button
+                <Toggle
+                  checked={dayData.enabled}
                   disabled={isAvailabilitySaving}
-                  onClick={() => handleToggleDay(day)}
-                  className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out ${
-                    dayData.enabled ? "bg-gold-DEFAULT" : "bg-navy-800"
-                  }`}
-                >
-                  <span
-                    className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-navy-950 shadow ring-0 transition duration-200 ease-in-out ${
-                      dayData.enabled ? "translate-x-5" : "translate-x-0"
-                    }`}
-                  ></span>
-                </button>
+                  onChange={() => handleToggleDay(day)}
+                />
                 <div>
                   <h4 className="text-sm font-semibold text-gold-50">{day}</h4>
                   <p className="text-[10px] text-gold-100/40">
@@ -104,23 +100,19 @@ export default function AvailabilitySchedule({
                       shift.id as "morning" | "afternoon" | "night"
                     ];
                   return (
-                    <button
+                    <Button
                       key={shift.id}
+                      variant="selectable"
+                      isSelected={isSelected}
                       disabled={!dayData.enabled || isAvailabilitySaving}
                       onClick={() => handleToggleShift(day, shift.id as any)}
-                      className={`p-3 rounded-xl border text-center transition-all duration-300 select-none ${
-                        !dayData.enabled
-                          ? "border-gold-300/5 bg-transparent cursor-not-allowed text-gold-100/20"
-                          : isSelected
-                            ? "border-gold-DEFAULT bg-gold-DEFAULT/10 text-gold-DEFAULT"
-                            : "border-gold-300/10 bg-navy-900/40 text-gold-200/60 hover:border-gold-DEFAULT/40"
-                      }`}
+                      size="custom"
+                      fullWidth
+                      className="p-3 select-none flex-col items-center justify-center text-center gap-0.5"
                     >
                       <h5 className="text-xs font-semibold">{shift.label}</h5>
-                      <p className="text-[9px] mt-0.5 opacity-60">
-                        {shift.time}
-                      </p>
-                    </button>
+                      <p className="text-[9px] opacity-60">{shift.time}</p>
+                    </Button>
                   );
                 })}
               </div>

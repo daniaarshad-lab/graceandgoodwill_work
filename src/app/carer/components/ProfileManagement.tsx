@@ -3,6 +3,7 @@ import SectionCard from "./shared/SectionCard";
 import Input from "@/components/Input";
 import UploadPhotoSection from "./UploadPhotoSection";
 import PhoneInput from "@/components/PhoneInput";
+import Button from "@/components/Button";
 
 interface ProfileManagementProps {
   firstName: string;
@@ -171,20 +172,24 @@ export default function ProfileManagement({
         )}
 
         <div className="flex justify-end gap-3 pt-2">
-          <button
+          <Button
             type="button"
             onClick={() => setActiveTab("overview")}
-            className="rounded-xl border border-gold-DEFAULT/20 px-6 py-3 text-xs font-semibold text-gold-DEFAULT hover:bg-gold-DEFAULT/10"
+            variant="ghost-gold"
+            size="sm"
+            fullWidth={false}
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
             type="submit"
             disabled={isProfileSaving}
-            className="rounded-xl bg-gold-DEFAULT px-6 py-3 text-xs font-semibold text-navy-950 hover:bg-gold-300 transition duration-300 shadow-elegant disabled:opacity-50 disabled:cursor-not-allowed"
+            variant="primary"
+            size="sm"
+            fullWidth={false}
           >
             {isProfileSaving ? "Saving..." : "Save Changes"}
-          </button>
+          </Button>
         </div>
       </form>
     </SectionCard>

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Button from "@/components/Button";
 
 const faqs = [
   {
@@ -137,18 +138,12 @@ export default function FAQPage() {
             matching, pricing, or custom care workflows.
           </p>
           <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
-            <Link
-              href="/contact"
-              className="inline-flex items-center justify-center rounded-full bg-gold-500 px-8 py-3.5 text-sm font-semibold text-navy-950 shadow-elegant transition duration-300 hover:bg-gold-400 hover:scale-[1.02]"
-            >
-              Ask Us Directly
-            </Link>
-            <Link
-              href="/how-it-works"
-              className="inline-flex items-center justify-center rounded-full border border-gold-300/30 px-8 py-3.5 text-sm font-semibold text-gold-200 transition duration-300 hover:bg-navy-900/50 hover:border-gold-300/60"
-            >
-              See How It Works
-            </Link>
+            <Button asChild variant="navy">
+              <Link href="/contact">Ask Us Directly</Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link href="/how-it-works">See How It Works</Link>
+            </Button>
           </div>
         </section>
       </div>

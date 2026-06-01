@@ -1,5 +1,6 @@
 import SectionCard from "./shared/SectionCard";
 import { Carer } from "../types/client.types";
+import Button from "@/components/Button";
 
 interface CarerProfilesProps {
   carers: Carer[];
@@ -75,12 +76,14 @@ export default function CarerProfiles({
               </p>
             </div>
 
-            <button
+            <Button
               onClick={() => onRequestIntro(carer)}
-              className="w-full text-center rounded-xl bg-gold-DEFAULT/10 border border-gold-DEFAULT/20 py-2.5 text-xs font-semibold text-gold-DEFAULT hover:bg-gold-DEFAULT/20 transition duration-300"
+              variant="secondary"
+              size="sm"
+              fullWidth
             >
               Request Introduction
-            </button>
+            </Button>
           </SectionCard>
         ))}
       </div>

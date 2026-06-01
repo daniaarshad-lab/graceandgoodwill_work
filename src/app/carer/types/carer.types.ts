@@ -62,7 +62,6 @@ export type DocumentCategory =
   | "DEMENTIA_SUPPORT"
   | "NURSES_REGISTRY";
 
-
 export interface CarerDocument {
   id: string;
   carerProfileId: string;

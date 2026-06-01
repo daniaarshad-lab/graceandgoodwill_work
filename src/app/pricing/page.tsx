@@ -58,23 +58,23 @@ const plans = [
 export default function PricingPage() {
   return (
     <main className="min-h-[calc(100vh-80px)] bg-navy-950 text-gold-100 pb-24">
-
       {/* ── Hero Section ── */}
       <section className="relative overflow-hidden pt-20 pb-16">
-
         {/* Radial ambient glow */}
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 flex items-start justify-center"
         >
           <div
-          className="h-[480px] w-[900px] rounded-full opacity-[0.09] blur-[140px]"
-            style={{ background: "radial-gradient(ellipse, #A08054 0%, transparent 70%)" }}
+            className="h-[480px] w-[900px] rounded-full opacity-[0.09] blur-[140px]"
+            style={{
+              background:
+                "radial-gradient(ellipse, #A08054 0%, transparent 70%)",
+            }}
           />
         </div>
 
         <div className="container-wrapper relative z-10 text-center">
-
           {/* Eyebrow label */}
           <p className="text-xs uppercase tracking-[0.45em] text-gold-400 mb-4">
             Grace &amp; Goodwill · Membership Plans
@@ -98,8 +98,8 @@ export default function PricingPage() {
           </h1>
 
           <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-gold-200/70 sm:text-lg">
-            Every plan includes secure case management, team workflows, compliance
-            tools, and live support. No hidden fees. Cancel any time.
+            Every plan includes secure case management, team workflows,
+            compliance tools, and live support. No hidden fees. Cancel any time.
           </p>
         </div>
       </section>
@@ -219,7 +219,8 @@ export default function PricingPage() {
           {/* Shield Check Icon */}
           <ShieldCheck className="h-4 w-4 shrink-0 text-gold-DEFAULT/80" />
           <span className="text-xs font-medium tracking-wide text-gold-200/80">
-            14-day free trial &nbsp;·&nbsp; No credit card required &nbsp;·&nbsp; Cancel any time
+            14-day free trial &nbsp;·&nbsp; No credit card required
+            &nbsp;·&nbsp; Cancel any time
           </span>
         </div>
       </section>

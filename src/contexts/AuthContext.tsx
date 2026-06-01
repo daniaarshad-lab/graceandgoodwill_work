@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  createContext,
-  useContext,
-  useEffect,
-  ReactNode,
-} from "react";
+import { createContext, useContext, useEffect, ReactNode } from "react";
 import {
   RegisterPayload,
   LoginPayload,
@@ -36,7 +31,11 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const dispatch = useAppDispatch();
-  const { user, isAuthenticated, loading: isLoading } = useAppSelector((state) => state.auth);
+  const {
+    user,
+    isAuthenticated,
+    loading: isLoading,
+  } = useAppSelector((state) => state.auth);
 
   // Initialize and validate session on mount
   useEffect(() => {
@@ -58,7 +57,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (registerThunk.fulfilled.match(resultAction)) {
       return resultAction.payload;
     } else {
-      throw new Error((resultAction.payload as string) || "Registration failed");
+      throw new Error(
+        (resultAction.payload as string) || "Registration failed",
+      );
     }
   };
 
@@ -102,4 +103,3 @@ export function useAuth() {
   }
   return context;
 }
-

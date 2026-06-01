@@ -1,5 +1,9 @@
 import { apiFetch } from "@/lib/api";
-import { RegisterPayload, LoginPayload, AuthResponse } from "@/types/auth.types";
+import {
+  RegisterPayload,
+  LoginPayload,
+  AuthResponse,
+} from "@/types/auth.types";
 
 export const authService = {
   async register(payload: RegisterPayload): Promise<AuthResponse> {

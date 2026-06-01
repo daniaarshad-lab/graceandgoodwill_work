@@ -3,6 +3,7 @@ import SectionCard from "./shared/SectionCard";
 import StatusBadge from "./shared/StatusBadge";
 import { ClientRequest } from "../types/admin.types";
 import { UseAdminPortalReturn } from "../hooks/useAdminPortal";
+import Button from "@/components/Button";
 
 interface ClientRequestsProps {
   requests: ClientRequest[];
@@ -40,20 +41,20 @@ export default function ClientRequests({
           </p>
         </div>
 
-        <div className="flex rounded-xl bg-navy-950 p-1 border border-gold-300/10">
+        <div className="flex rounded-xl bg-navy-950 p-1 border border-gold-300/10 gap-1">
           {(["All", "Unmatched", "Matched", "Emergency"] as const).map(
             (tab) => (
-              <button
+              <Button
                 key={tab}
                 onClick={() => setFilter(tab)}
-                className={`rounded-lg px-4 py-1.5 text-xs font-semibold tracking-wide transition-all ${
-                  filter === tab
-                    ? "bg-gold text-navy-950 shadow-elegant"
-                    : "text-gold-100/60 hover:text-gold-200"
-                }`}
+                variant="selectable"
+                isSelected={filter === tab}
+                size="sm"
+                fullWidth={false}
+                className="rounded-lg px-4 py-1.5 text-xs tracking-wide"
               >
                 {tab}
-              </button>
+              </Button>
             ),
           )}
         </div>
@@ -130,19 +131,17 @@ export default function ClientRequests({
 
             {/* Match trigger button */}
             {req.status !== "Matched" ? (
-              <button
+              <Button
                 onClick={() => {
                   setSelectedRequestForMatching(req);
                   setActiveTab("matching");
                 }}
-                className={`w-full rounded-xl py-3 text-xs font-bold transition-all hover:scale-[1.01] ${
-                  req.urgency === "Emergency"
-                    ? "bg-rose-500 text-white shadow-[0_0_20px_rgba(244,63,94,0.3)] hover:opacity-90"
-                    : "bg-gold text-navy-950 shadow-elegant hover:opacity-90"
-                }`}
+                variant={req.urgency === "Emergency" ? "danger" : "primary"}
+                size="sm"
+                fullWidth
               >
                 Match Available Carer ➔
-              </button>
+              </Button>
             ) : (
               <div className="flex items-center justify-center rounded-xl bg-emerald-500/10 p-3 text-center border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
                 ✓ Placement Assigned & Tracked

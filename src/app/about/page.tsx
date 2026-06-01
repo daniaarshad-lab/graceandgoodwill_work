@@ -55,7 +55,7 @@ export default function AboutPage() {
           Our values
         </h2>
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {/* <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           <div className="rounded-xl bg-white p-6 shadow-sm border-l-4 border-gold-400">
             <div className="flex items-start gap-4">
               <div className="h-12 w-12 rounded-md bg-gold-50/10 flex items-center justify-center text-gold-400">
@@ -163,7 +163,7 @@ export default function AboutPage() {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
       </section>
     </main>
   );

@@ -12,9 +12,9 @@ import {
   validateAvailabilitySchedule,
 } from "../utils/validation";
 import { useAppDispatch } from "@/store/hooks";
-import { fetchCarerDocuments, updateCarerProfile } from "@/store/slices/carerSlice";
+import { fetchCarerDocuments, updateCarerProfile, updateCarerAvailability, deleteCarerDocument } from "@/store/slices/carerSlice";
 import { carerService } from "@/services/carer/carer.service";
-import { CarerProfile } from "@/types/carer.types";
+import { CarerProfile, AvailabilityDay, AvailabilitySlot } from "@/types/carer.types";
 
 interface UseCarerPortalProps {
   user: any;
@@ -64,18 +64,18 @@ export function useCarerPortal({ user, profile, documents }: UseCarerPortalProps
 
   // Compliance documents — derived from Redux documents state
   const complianceDocs: ComplianceDoc[] = documents.map((doc) => ({
-      id: doc.id,
-      name: doc.fileName,
-      type: doc.fileCategory,
-      uploadDate: doc.createdAt,
-      status:
-        doc.status === "VERIFIED"
-          ? "verified"
-          : doc.status === "FAILED"
-            ? "failed"
-            : "pending",
-      size: `${(doc.fileSize / (1024 * 1024)).toFixed(1)} MB`,
-      previewUrl: doc.fileUrl,
+    id: doc.id,
+    name: doc.fileName,
+    type: doc.fileCategory,
+    uploadDate: doc.createdAt,
+    status:
+      doc.status === "VERIFIED"
+        ? "verified"
+        : doc.status === "FAILED"
+          ? "failed"
+          : "pending",
+    size: `${(doc.fileSize / (1024 * 1024)).toFixed(1)} MB`,
+    previewUrl: doc.fileUrl,
   }));
 
   const [uploadingDocType, setUploadingDocType] = useState<string | null>(null);
@@ -247,12 +247,67 @@ export function useCarerPortal({ user, profile, documents }: UseCarerPortalProps
       setUploadingDocType(null);
     }
   };
-  // TODO: Integrate DELETE API — placeholder until endpoint is available
-  const handleDeleteDoc = (_id: string) => {
-    console.warn("Delete document API not yet integrated. ID:", _id);
+  const handleDeleteDoc = async (id: string) => {
+    setComplianceError(null);
+    setComplianceSuccess(null);
+
+    try {
+      await dispatch(deleteCarerDocument(id)).unwrap();
+      setComplianceSuccess("Document successfully deleted.");
+      setTimeout(() => setComplianceSuccess(null), 4000);
+    } catch (error) {
+      console.error(error);
+      setComplianceError("Failed to delete document. Please try again.");
+    }
   };
 
-  const handleSaveAvailability = (e: React.FormEvent) => {
+  const DAY_OF_WEEK: Record<string, number> = {
+    Monday: 1,
+    Tuesday: 2,
+    Wednesday: 3,
+    Thursday: 4,
+    Friday: 5,
+    Saturday: 6,
+    Sunday: 7,
+  };
+
+  const SHIFT_SLOTS = {
+    morning: {
+      shiftType: "morning",
+      startTime: "08:00",
+      endTime: "12:00",
+    },
+    afternoon: {
+      shiftType: "afternoon",
+      startTime: "12:00",
+      endTime: "17:00",
+    },
+    night: {
+      shiftType: "night",
+      startTime: "17:00",
+      endTime: "22:00",
+    },
+  };
+
+  function buildAvailabilityPayload(
+    weekly: typeof availability,
+  ): AvailabilityDay[] {
+    return Object.entries(weekly).map(([day, config]) => {
+      const slots: AvailabilitySlot[] = config.enabled
+        ? (["morning", "afternoon", "night"] as const)
+          .filter((shift) => config.shifts[shift])
+          .map((shift) => SHIFT_SLOTS[shift])
+        : [];
+
+      return {
+        dayOfWeek: DAY_OF_WEEK[day],
+        enabled: config.enabled,
+        slots,
+      };
+    });
+  }
+
+  const handleSaveAvailability = async (e: React.FormEvent) => {
     e.preventDefault();
     setAvailabilityError(null);
     setAvailabilitySuccess(false);
@@ -266,13 +321,19 @@ export function useCarerPortal({ user, profile, documents }: UseCarerPortalProps
       return;
     }
 
-    setIsAvailabilitySaving(true);
+    const payload = buildAvailabilityPayload(availability);
 
-    setTimeout(() => {
-      setIsAvailabilitySaving(false);
+    try {
+      setIsAvailabilitySaving(true);
+      await dispatch(updateCarerAvailability(payload)).unwrap();
       setAvailabilitySuccess(true);
       setTimeout(() => setAvailabilitySuccess(false), 4000);
-    }, 1200);
+    } catch (error) {
+      console.error(error);
+      setAvailabilityError("Failed to save availability. Please try again.");
+    } finally {
+      setIsAvailabilitySaving(false);
+    }
   };
 
   const handleToggleDay = (day: string) => {

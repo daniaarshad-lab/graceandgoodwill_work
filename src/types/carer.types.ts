@@ -72,3 +72,5 @@ export interface UpdateCarerProfilePayload {
   state?: string;
   pincode?: string;
 }
+
+export type UpdateAvailabilityPayload = AvailabilityDay[];

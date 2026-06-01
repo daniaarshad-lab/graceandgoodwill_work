@@ -2,6 +2,7 @@ import { apiFetch } from "@/lib/api";
 import {
   CarerProfile,
   UpdateCarerProfilePayload,
+  UpdateAvailabilityPayload,
 } from "@/types/carer.types";
 
 export const carerService = {
@@ -86,5 +87,42 @@ export const carerService = {
         Authorization: `Bearer ${token}`,
       },
     });
-  }
+  },
+
+  async updateAvailability(payload: UpdateAvailabilityPayload): Promise<CarerProfile> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch("/carer/profile/availability", {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async deleteDocument(id: string): Promise<void> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch(`/carer/profile/document/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
 };

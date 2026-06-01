@@ -4,7 +4,7 @@ import {
   PayloadAction,
 } from "@reduxjs/toolkit";
 import { carerService } from "@/services/carer/carer.service";
-import { CarerProfile, UpdateCarerProfilePayload } from "@/types/carer.types";
+import { CarerProfile, UpdateCarerProfilePayload, UpdateAvailabilityPayload } from "@/types/carer.types";
 import { CarerDocument } from "@/app/carer/types/carer.types";
 
 interface CarerState {
@@ -75,6 +75,41 @@ export const fetchCarerDocuments = createAsyncThunk<
   }
 );
 
+export const updateCarerAvailability = createAsyncThunk<
+  CarerProfile,
+  UpdateAvailabilityPayload,
+  { rejectValue: string }
+>(
+  "carer/updateAvailability",
+  async (payload, { rejectWithValue }) => {
+    try {
+      return await carerService.updateAvailability(payload);
+    } catch (error: any) {
+      return rejectWithValue(
+        error?.message || "Failed to update availability"
+      );
+    }
+  }
+);
+
+export const deleteCarerDocument = createAsyncThunk<
+  string,
+  string,
+  { rejectValue: string }
+>(
+  "carer/deleteDocument",
+  async (id, { rejectWithValue }) => {
+    try {
+      await carerService.deleteDocument(id);
+      return id;
+    } catch (error: any) {
+      return rejectWithValue(
+        error?.message || "Failed to delete document"
+      );
+    }
+  }
+);
+
 const carerSlice = createSlice({
   name: "carer",
   initialState,
@@ -136,6 +171,39 @@ const carerSlice = createSlice({
         state.loading = false;
         state.error =
           action.payload || "Failed to fetch documents";
+      })
+
+      .addCase(updateCarerAvailability.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(
+        updateCarerAvailability.fulfilled,
+        (state, action: PayloadAction<CarerProfile>) => {
+          state.loading = false;
+          state.profile = action.payload;
+        }
+      )
+      .addCase(updateCarerAvailability.rejected, (state, action) => {
+        state.loading = false;
+        state.error =
+          action.payload || "Failed to update availability";
+      })
+
+      .addCase(deleteCarerDocument.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(
+        deleteCarerDocument.fulfilled,
+        (state, action: PayloadAction<string>) => {
+          state.documents = state.documents.filter(
+            (doc) => doc.id !== action.payload
+          );
+        }
+      )
+      .addCase(deleteCarerDocument.rejected, (state, action) => {
+        state.error =
+          action.payload || "Failed to delete document";
       });
   },
 })

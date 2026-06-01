@@ -111,27 +111,28 @@ export default function PricingPage() {
             <div
               key={plan.name}
               className={[
-                "relative flex flex-col rounded-2xl p-8",
-                "border backdrop-blur-sm",
+                "relative flex flex-col rounded-3xl p-8 border group transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] transform",
                 plan.featured
-                  ? "border-gold-muted/50 shadow-elegant pg-card--featured"
-                  : "border-gold-muted/20 pg-card",
+                  ? "border-gold/50 shadow-[0_20px_50px_rgba(212,175,55,0.15)] ring-1 ring-gold-muted/20 scale-[1.02] z-10 md:-translate-y-3 " +
+                    "hover:scale-[1.04] hover:-translate-y-4 hover:shadow-[0_30px_70px_rgba(212,175,55,0.28)] hover:border-gold"
+                  : "border-gold-muted/15 shadow-md scale-100 opacity-80 md:translate-y-0 " +
+                    "hover:scale-[1.01] hover:-translate-y-1 hover:opacity-100 hover:border-gold-muted/40 hover:shadow-[0_12px_40px_rgba(160,128,84,0.08)]",
               ].join(" ")}
               style={{
                 background: plan.featured
-                  ? "linear-gradient(145deg, rgba(15,26,51,0.98) 0%, rgba(10,17,40,0.98) 100%)"
-                  : "rgba(10,17,40,0.72)",
-                boxShadow: plan.featured
-                  ? "0 0 0 1px rgba(212,175,55,0.22), 0 24px 60px rgba(0,0,0,0.38), 0 0 80px rgba(212,175,55,0.07)"
-                  : "0 0 0 1px rgba(160,128,84,0.12), 0 8px 32px rgba(0,0,0,0.20)",
+                  ? "linear-gradient(145deg, rgba(20,33,61,0.99) 0%, rgba(10,17,40,0.99) 100%)"
+                  : "rgba(10,17,40,0.65)",
               }}
             >
               {/* Recommended badge */}
               {plan.featured && (
-                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20">
                   <span
-                    className="inline-flex items-center rounded-full px-4 py-1 text-[11px] font-semibold uppercase tracking-widest text-navy-950"
-                    style={{ background: "#d4af37" }}
+                    className="inline-flex items-center rounded-full px-5 py-1.5 text-[10px] font-bold uppercase tracking-widest text-navy-950 shadow-[0_0_20px_rgba(212,175,55,0.3)] border border-gold-300/30"
+                    style={{
+                      background:
+                        "linear-gradient(135deg, #e8ba7a 0%, #d4af37 100%)",
+                    }}
                   >
                     Recommended
                   </span>
@@ -141,8 +142,12 @@ export default function PricingPage() {
               {/* Plan name & tagline */}
               <div className="mb-6">
                 <h2
-                  className="text-lg font-semibold tracking-wide"
-                  style={{ color: plan.featured ? "#d4af37" : "#e8ba7a" }}
+                  className={[
+                    "text-lg font-bold tracking-wide transition-colors duration-500",
+                    plan.featured
+                      ? "text-gold-100 group-hover:text-white"
+                      : "text-gold-300 group-hover:text-gold-200",
+                  ].join(" ")}
                 >
                   {plan.name}
                 </h2>
@@ -154,8 +159,12 @@ export default function PricingPage() {
               {/* Price */}
               <div className="mb-7 flex items-end gap-1.5">
                 <span
-                  className="text-5xl font-bold tracking-tight leading-none"
-                  style={{ color: plan.featured ? "#d4af37" : "#e8ba7a" }}
+                  className={[
+                    "text-5xl font-bold tracking-tight leading-none transition-colors duration-500",
+                    plan.featured
+                      ? "text-gold-100 group-hover:text-white"
+                      : "text-gold-300 group-hover:text-gold-200",
+                  ].join(" ")}
                 >
                   {plan.price}
                 </span>
@@ -204,7 +213,7 @@ export default function PricingPage() {
               {/* CTA button */}
               <Button
                 asChild
-                variant={plan.featured ? "navy" : "ghost-gold"}
+                variant={plan.featured ? "primary" : "ghost-gold"}
                 fullWidth
               >
                 <Link href={plan.href}>{plan.cta}</Link>

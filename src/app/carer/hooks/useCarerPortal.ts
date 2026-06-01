@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { defaultAvailability } from "../data/mockAvailability";
 import {
   defaultBio,
   defaultSpecialties,
@@ -9,6 +8,7 @@ import {
 import {
   CarerDocument,
   ComplianceDoc,
+  DayAvailability,
   WeeklyAvailability,
 } from "../types/carer.types";
 import {
@@ -35,6 +35,37 @@ interface UseCarerPortalProps {
   documents: CarerDocument[];
 }
 
+const DAY_NUMBER_TO_NAME: Record<number, string> = {
+  1: "Monday",
+  2: "Tuesday",
+  3: "Wednesday",
+  4: "Thursday",
+  5: "Friday",
+  6: "Saturday",
+  7: "Sunday",
+};
+
+const DAYS_OF_WEEK = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday",
+];
+
+const emptyAvailability: WeeklyAvailability = Object.fromEntries(
+  DAYS_OF_WEEK.map((day) => [
+    day,
+    {
+      enabled: false,
+      shifts: { morning: false, afternoon: false, night: false },
+    } as DayAvailability,
+  ]),
+);
+
+
 export function useCarerPortal({
   user,
   profile,
@@ -57,6 +88,31 @@ export function useCarerPortal({
       setSpecialties(profile.careSpecialties ?? "");
       setExperience(profile.experience ?? "");
       setAddress(profile.address ?? "");
+
+      // Hydrate availability from API — convert AvailabilityDay[] → WeeklyAvailability
+      const apiAvailability = profile.availability;
+      if (apiAvailability && apiAvailability.length > 0) {
+        const weekly: WeeklyAvailability = Object.fromEntries(
+          ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map(
+            (day) => [
+              day,
+              { enabled: false, shifts: { morning: false, afternoon: false, night: false } } as DayAvailability,
+            ],
+          ),
+        );
+        for (const apiDay of apiAvailability) {
+          const dayName = DAY_NUMBER_TO_NAME[apiDay.dayOfWeek];
+          if (!dayName) continue;
+          const shifts = { morning: false, afternoon: false, night: false };
+          for (const slot of apiDay.slots ?? []) {
+            const shift = slot.shiftType as "morning" | "afternoon" | "night";
+            if (shift in shifts) shifts[shift] = true;
+          }
+          weekly[dayName] = { enabled: apiDay.enabled, shifts };
+        }
+        setAvailability(weekly);
+      }
+      // If availability is null/empty from API, state stays as all-disabled (emptyAvailability)
     }
   }, [profile]);
 
@@ -108,10 +164,8 @@ export function useCarerPortal({
   );
   const [docToDelete, setDocToDelete] = useState<string | null>(null);
 
-  // Availability — mock until API is available
-  const [availability, setAvailability] = useState<WeeklyAvailability>(
-    () => defaultAvailability,
-  );
+  const [availability, setAvailability] = useState<WeeklyAvailability>(emptyAvailability);
+
 
   // Availability Save Validation States
   const [availabilityError, setAvailabilityError] = useState<string | null>(

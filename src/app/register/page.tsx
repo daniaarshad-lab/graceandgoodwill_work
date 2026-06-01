@@ -207,6 +207,7 @@ export default function RegisterPage() {
         />
 
         <Button
+          type="submit"
           text={isLoading ? "Creating Account..." : "Create Account"}
           disabled={isLoading}
         />

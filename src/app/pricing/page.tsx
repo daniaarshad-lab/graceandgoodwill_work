@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Check } from "lucide-react";
+import { Check, ShieldCheck } from "lucide-react";
 import Button from "@/components/Button";
 
 const plans = [
@@ -214,10 +214,14 @@ export default function PricingPage() {
         </div>
       </section>
 
-      <section className="container-wrapper mt-14 text-center">
-        <p className="text-xs tracking-wide" style={{ color: "rgba(160,128,84,0.42)" }}>
-          14-day free trial &nbsp;·&nbsp; No credit card required &nbsp;·&nbsp; Cancel any time
-        </p>
+      <section className="container-wrapper mt-12 mb-8 flex justify-center">
+        <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full border border-gold-muted/20 bg-gold-muted/5 backdrop-blur-sm shadow-md">
+          {/* Shield Check Icon */}
+          <ShieldCheck className="h-4 w-4 shrink-0 text-gold-DEFAULT/80" />
+          <span className="text-xs font-medium tracking-wide text-gold-200/80">
+            14-day free trial &nbsp;·&nbsp; No credit card required &nbsp;·&nbsp; Cancel any time
+          </span>
+        </div>
       </section>
     </main>
   );

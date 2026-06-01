@@ -38,13 +38,13 @@ export default function SiteHeader() {
   return (
     <header className="sticky top-0 z-30 w-full h-20 border-b border-navy-800 bg-navy-950/95 backdrop-blur flex items-center">
       <div className="container-wrapper flex items-center justify-between py-4">
-        <Link href="/" className="flex items-center gap-3 text-white">
+        <Link href="/" className="flex items-center gap-3 text-white group">
           <img
-            src="/logo.svg"
+            src="/Icon_logo.png"
             alt="Grace & Goodwill logo"
-            className="h-12 w-12 rounded-md border border-gold-400 bg-navy-900 p-1"
+            className="h-10 w-10 sm:h-12 sm:w-12 object-contain drop-shadow-elegant transition-transform duration-300 group-hover:scale-105"
           />
-          <span className="body-base-medium tracking-[0.08em] text-gold-100">
+          <span className="body-base-medium tracking-[0.08em] text-gold-100 transition-colors group-hover:text-gold-50">
             Grace & Goodwill
           </span>
         </Link>

@@ -3,151 +3,72 @@ import React from "react";
 const values = [
   {
     title: "INTEGRITY",
-    text: "Morally guided.",
-    icon: (
-      <svg
-        className="w-8 h-8 text-gold-400 group-hover:text-gold-300 transition-colors duration-300"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-        <path d="M12 8v9" />
-        <path d="M12 8c-1.5-1.5-1.5-3 0-4.5 1.5 1.5 1.5 3 0 4.5z" />
-        <path d="M12 12c-2.5-0.5-3-2-2.5-3.5 1.5 0.5 2 2 2.5 3.5z" />
-        <path d="M12 12c2.5-0.5 3-2 2.5-3.5-1.5 0.5-2 2-2.5 3.5z" />
-      </svg>
-    ),
+    text: "Rooted in law,\nguided by ethics.",
+    icon: "/Integrity.png",
   },
   {
     title: "COMPASSION",
-    text: "A duty to care.",
-    icon: (
-      <svg
-        className="w-8 h-8 text-gold-400 group-hover:text-gold-300 transition-colors duration-300"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M12 11.5a2.5 2.5 0 0 0-4-2c-1.5 1.5 0 4 4 6.5 4-2.5 5.5-5 4-6.5a2.5 2.5 0 0 0-4 2z" />
-        <path d="M4 14a8 8 0 0 0 16 0" />
-        <path d="M7 12a5 5 0 0 0 10 0" />
-      </svg>
-    ),
+    text: "A duty to care,\na promise to serve.",
+    icon: "/Compassion.png",
   },
   {
     title: "TRUST",
-    text: "Strengthened reliability.",
-    icon: (
-      <svg
-        className="w-8 h-8 text-gold-400 group-hover:text-gold-300 transition-colors duration-300"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M4 4h16" />
-        <path d="M5 7h14" />
-        <path d="M7 7v11" />
-        <path d="M12 7v11" />
-        <path d="M17 7v11" />
-        <path d="M5 18h14" />
-        <path d="M3 21h18" />
-        <path d="M6 4c0 1.5-1 3-2 3" />
-        <path d="M18 4c0 1.5 1 3 2 3" />
-      </svg>
-    ),
-  },
-  {
-    title: "RESPECT",
-    text: "Support with dignity.",
-    icon: (
-      <svg
-        className="w-8 h-8 text-gold-400 group-hover:text-gold-300 transition-colors duration-300"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M12 21a8 8 0 0 1-8-8 8.5 8.5 0 0 1 2-5" />
-        <path d="M12 21a8 8 0 0 0 8-8 8.5 8.5 0 0 0-2-5" />
-        <path d="M4.5 16.5c-1-1.5 0-3 1.5-2.5" />
-        <path d="M3.5 12.5c-1.5-1 0-3 1.5-2.5" />
-        <path d="M4.5 8.5c-1.5-1 .5-3 2-2" />
-        <path d="M7 5.5c-1-1.5 1.5-2.5 2.5-1.5" />
-        <path d="M19.5 16.5c1-1.5 0-3-1.5-2.5" />
-        <path d="M20.5 12.5c1.5-1 0-3-1.5-2.5" />
-        <path d="M19.5 8.5c1.5-1-.5-3-2-2" />
-        <path d="M17 5.5c1-1.5-1.5-2.5-2.5-1.5" />
-      </svg>
-    ),
+    text: "Built on honesty,\nstrengthened by\nreliability.",
+    icon: "/Trust.png",
   },
   {
     title: "PURPOSE",
-    text: "Care with meaning.",
-    icon: (
-      <svg
-        className="w-8 h-8 text-gold-400 group-hover:text-gold-300 transition-colors duration-300"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <circle cx="12" cy="12" r="10" />
-        <path d="M12 4l1.5 6.5 6.5 1.5-6.5 1.5-1.5 6.5-1.5-6.5-6.5-1.5 6.5-1.5Z" />
-        <path d="m5.64 5.64 12.72 12.72" />
-        <path d="m18.36 5.64-12.72 12.72" />
-      </svg>
-    ),
+    text: "Care with meaning,\nimpact that lasts.",
+    icon: null, // Custom SVG for Wreath
   },
 ];
 
 export default function SiteFooter() {
   return (
-    <footer className="border-t border-navy-800 bg-navy-950 text-gold-100">
-      {/* 1. VALUES SECTION (Super Compact & Premium) */}
-      <section className="border-b border-navy-800/40 py-6 sm:py-8">
-        <div className="mx-auto max-w-5xl px-2 sm:px-6">
-          <div className="grid grid-cols-5 divide-x divide-gold-400/10">
-            {values.map((val) => (
-              <div
-                key={val.title}
-                className="group flex flex-col items-center text-center px-1 sm:px-2 transition-all duration-300"
-              >
-                <div className="flex items-center justify-center mb-2 transition-transform duration-500 group-hover:scale-110">
-                  {val.icon}
-                </div>
-                <h3 className="text-[9px] sm:text-[11px] font-serif font-semibold tracking-[0.1em] sm:tracking-[0.2em] text-gold-100 uppercase mb-0.5 group-hover:text-gold-50 transition-colors duration-300">
+    <footer className="bg-navy-950 py-6 sm:py-8 border-t border-navy-800">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col md:flex-row justify-center items-center md:items-stretch divide-y md:divide-y-0 md:divide-x divide-navy-800">
+          {values.map((val, idx) => (
+            <div
+              key={idx}
+              className={`flex items-center space-x-4 sm:space-x-5 flex-1 ${
+                idx === 0
+                  ? "md:pr-6 lg:pr-8 pb-6 md:pb-0"
+                  : idx === values.length - 1
+                  ? "md:pl-6 lg:pl-8 pt-6 md:pt-0"
+                  : "md:px-6 lg:px-8 py-6 md:py-0"
+              }`}
+            >
+              <div className="flex-shrink-0">
+                {val.icon ? (
+                  <img
+                    src={val.icon}
+                    alt={`${val.title} icon`}
+                    className="w-12 h-12 lg:w-16 lg:h-16 object-contain drop-shadow-elegant"
+                  />
+                ) : (
+                  <svg
+                    className="w-12 h-12 lg:w-16 lg:h-16 text-gold-DEFAULT drop-shadow-elegant"
+                    viewBox="0 0 512 512"
+                    fill="currentColor"
+                  >
+                    <path d="M495.9,228.6c-13.6-43.1-39.7-78.5-74.8-101.4c-6.8-4.4-15.8-2.5-20.2,4.3c-4.4,6.8-2.5,15.8,4.3,20.2 c29.1,19,50.7,48.4,62.2,84.4c5.3,16.7,8,34.4,8,52.4c0,34.7-10.4,67.8-29.9,96c-15.5,22.3-36.2,40.4-60.6,52.7 C355,452.4,321.2,459,286,459c-10.6,0-19.3,8.6-19.3,19.3c0,10.6,8.6,19.3,19.3,19.3c40.9,0,79.9-7.7,114.7-22.3 c28.3-11.9,52.5-29,71.2-50.5l19.5,18.8c5.4,5.2,14.1,5,19.3-0.4c5.2-5.4,5-14.1-0.4-19.3l-18.7-18.1 c17.9-25.7,27.3-56.1,27.3-88C519,283.4,511.2,254.4,495.9,228.6z" />
+                    <path d="M226,459c-35.2,0-69-6.6-98.8-19.3c-24.5-10.4-45.2-25.1-60.6-43.2c-19.6-22.9-30-51-30-80c0-18,2.7-35.7,8-52.4 c11.5-36,33.1-65.5,62.2-84.4c6.8-4.4,8.8-13.4,4.3-20.2c-4.4-6.8-13.4-8.8-20.2-4.3C55.8,178.1,29.7,213.5,16.1,256.6 c-6.4,20-9.6,41.2-9.6,63c0,33.5,12.1,65.8,35.1,92.8c18.5,21.7,42.4,39,70.5,50.9c34.8,14.6,73.8,22.3,114.7,22.3 c10.6,0,19.3-8.6,19.3-19.3C245.3,467.6,236.6,459,226,459z" />
+                  </svg>
+                )}
+              </div>
+              <div className="flex flex-col justify-center">
+                <h3 className="text-[13px] lg:text-[15px] font-serif text-gold-100 tracking-widest mb-1.5">
                   {val.title}
                 </h3>
-                <p className="text-[8px] sm:text-[10px] text-gold-200/60 max-w-[130px] leading-relaxed font-light tracking-wide">
+                <p className="text-[11px] lg:text-[13px] text-gold-200/70 font-sans font-light leading-[1.6] whitespace-pre-line">
                   {val.text}
                 </p>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
-      </section>
-      {/* 2. COPYRIGHT SECTION */}
-      <section className="py-6 text-center border-t border-navy-900/20 bg-navy-950/20">
-        <div className="container-wrapper">
-          <p className="text-[10px] sm:text-[11px] text-gold-200/40 font-light tracking-widest uppercase">
-            © Grace & Goodwill 2026. All rights reserved.
-          </p>
-        </div>
-      </section>
+      </div>
     </footer>
   );
 }

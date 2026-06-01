@@ -25,11 +25,13 @@ export default function AboutPage() {
           <div className="md:w-1/3">
             <div className="rounded-xl bg-navy-900/60 border border-navy-800 p-6">
               <div className="flex items-center gap-4">
-                <img
-                  src="/logo.svg"
-                  alt="Grace & Goodwill logo"
-                  className="h-12 w-12 rounded-md border border-gold-400 p-1 bg-navy-900"
-                />
+                <div className="flex h-24 w-24 items-center justify-center rounded-3xl border border-gold-400 bg-navy-950 p-3 shadow-[0_0_0_1px_rgba(255,214,120,0.08)] flex-shrink-0">
+                  <img
+                    src="/Icon_logo.png"
+                    alt="Grace & Goodwill logo"
+                    className="h-full w-full object-contain"
+                  />
+                </div>
                 <div>
                   <p className="text-sm uppercase tracking-widest text-gold-200">
                     Grace & Goodwill

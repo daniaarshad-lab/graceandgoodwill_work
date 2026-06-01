@@ -2,7 +2,7 @@ import React, { ButtonHTMLAttributes } from "react";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   text?: string;
-  variant?: "primary" | "secondary" | "outline" | "navy" | "gold" | "whatsapp";
+  variant?: "primary" | "secondary" | "outline" | "navy" | "gold" | "whatsapp" | "ghost-gold";
   size?: "sm" | "md" | "lg";
   asChild?: boolean;
   fullWidth?: boolean;
@@ -39,6 +39,8 @@ export default function Button({
       "bg-transparent text-white border-2 border-gold-muted hover:bg-gold-muted hover:border-gold-muted hover:text-white hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(160,128,84,0.2)] active:translate-y-0 active:shadow-none",
     whatsapp:
       "border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(16,185,129,0.15)] active:translate-y-0 active:shadow-none",
+    "ghost-gold":
+      "border border-gold-muted/30 bg-transparent text-gold-300 hover:border-gold-muted/60 hover:bg-gold-muted/10 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(160,128,84,0.12)] active:translate-y-0 active:shadow-none",
   };
 
   const sizes = {

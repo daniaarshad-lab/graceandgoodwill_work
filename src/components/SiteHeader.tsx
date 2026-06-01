@@ -85,12 +85,7 @@ export default function SiteHeader() {
               >
                 Login
               </Link>
-              <Link
-                href="/register"
-                className="bg-gold-DEFAULT text-navy-950 px-4 py-2 rounded-xl body-small font-semibold shadow-elegant hover:bg-gold-300 transition-all duration-300"
-              >
-                Register
-              </Link>
+
             </div>
           )}
         </nav>

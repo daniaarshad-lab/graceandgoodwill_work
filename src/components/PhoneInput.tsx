@@ -32,6 +32,7 @@ export default function PhoneInput({
     .phone-input-container {
       width: 100% !important;
       position: relative;
+      z-index: 30;
     }
     
     /* Match the exact background, border, typography, and height of standard Input components */
@@ -113,6 +114,8 @@ export default function PhoneInput({
        ========================================================================= */
        
     .phone-input-container .phone-input-dropdown {
+      position: absolute !important;
+      left: -1px !important;
       background-color: #0f1a33 !important; /* bg-navy-900 */
       border: 1px solid rgba(160, 128, 84, 0.22) !important; /* gold outline border */
       border-radius: 12px !important;
@@ -125,7 +128,17 @@ export default function PhoneInput({
       overflow-y: auto !important; /* enable scroll directly on the dropdown */
       padding: 0 !important;
       width: 290px !important;
+      max-width: calc(100vw - 80px) !important;
       list-style: none !important;
+    }
+
+    /* If inside AuthSplitLayout (.asl-right), position the dropdown upwards to prevent clipping at the bottom of the card */
+    .asl-right .phone-input-container .phone-input-dropdown {
+      bottom: 100% !important;
+      top: auto !important;
+      margin-bottom: 4px !important;
+      margin-top: 0 !important;
+      box-shadow: 0 -12px 40px rgba(5, 8, 22, 0.6) !important; /* elegant upwards shadow */
     }
 
     /* Custom Scrollbar for Country List */

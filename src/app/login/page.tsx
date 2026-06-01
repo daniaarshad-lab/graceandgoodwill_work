@@ -98,6 +98,7 @@ export default function LoginPage() {
         </div>
 
         <Button
+          type="submit"
           text={isLoading ? "Logging in..." : "Login"}
           disabled={isLoading}
         />

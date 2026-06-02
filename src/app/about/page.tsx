@@ -27,7 +27,7 @@ export default function AboutPage() {
               <div className="flex items-center gap-4">
                 <div className="flex h-24 w-24 items-center justify-center rounded-3xl border border-gold-400 bg-navy-950 p-3 shadow-[0_0_0_1px_rgba(255,214,120,0.08)] flex-shrink-0">
                   <img
-                    src="/Icon_logo.png"
+                    src="/Icon_logo1.png"
                     alt="Grace & Goodwill logo"
                     className="h-full w-full object-contain"
                   />

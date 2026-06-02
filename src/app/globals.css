@@ -11,7 +11,8 @@
     --color-navy-900: #0f1a33;
     --color-gold-default: #d4af37;
     --color-gold-light: #e8ba7a;
-    --color-gold-muted: #A08054;
+    --color-gold-muted: #d1b481;
+    --color-gold-darker: #d1a555a3;
 
     /* Scalable Global Typography Tokens */
     --font-family-poppins: 'Poppins', 'Segoe UI', Inter, sans-serif;
@@ -74,9 +75,11 @@
 
   body {
     margin: 0;
-    min-height: 100%;
+    min-height: 100vh;
     font-family: var(--font-family-poppins);
     background: linear-gradient(135deg, #0a1128 0%, #0f1a33 100%);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
     color: #e8ba7a;
   }
 

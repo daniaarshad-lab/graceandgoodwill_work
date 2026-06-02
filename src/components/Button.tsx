@@ -3,15 +3,16 @@ import React, { ButtonHTMLAttributes } from "react";
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   text?: string;
   variant?:
-    | "primary"
-    | "secondary"
-    | "outline"
-    | "navy"
-    | "gold"
-    | "whatsapp"
-    | "ghost-gold"
-    | "danger"
-    | "selectable";
+  | "primary"
+  | "secondary"
+  | "outline"
+  | "navy"
+  | "gold"
+  | "goldDarker"
+  | "whatsapp"
+  | "ghost-gold"
+  | "danger"
+  | "selectable";
   isSelected?: boolean;
   size?: "sm" | "md" | "lg" | "custom";
   asChild?: boolean;
@@ -47,6 +48,7 @@ export default function Button({
       "border border-gold-muted text-gold-200 hover:bg-gold-muted/10 hover:text-white hover:-translate-y-[1px] hover:shadow-[0_8px_24px_rgba(160,128,84,0.12)] active:translate-y-0 active:shadow-none",
     navy: "bg-navy-900 text-gold-100 border border-gold-muted/30 hover:bg-navy-800 hover:border-gold-muted/50 hover:text-white hover:-translate-y-[1px] hover:shadow-[0_8px_30px_rgba(15,26,51,0.3)] active:translate-y-0 active:shadow-none",
     gold: "bg-transparent text-gold-100 border-2 border-gold-muted hover:bg-gold-muted hover:text-white hover:-translate-y-[1px] hover:shadow-[0_8px_30px_rgba(160,128,84,0.2)] active:translate-y-0 active:shadow-none",
+    goldDarker: "bg-gold-darker text-white border-2 border-[#a08054] hover:bg-[#a08054] hover:text-white hover:-translate-y-[1px] hover:shadow-[0_8px_30px_rgba(160,128,84,0.2)] active:translate-y-0 active:shadow-none",
     whatsapp:
       "border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 hover:text-white hover:-translate-y-[1px] hover:shadow-[0_8px_24px_rgba(16,185,129,0.15)] active:translate-y-0 active:shadow-none",
     "ghost-gold":
@@ -65,9 +67,8 @@ export default function Button({
     custom: "",
   };
 
-  const combinedClassName = `${baseStyles} ${variants[variant]} ${sizes[size]} ${
-    fullWidth ? "w-full" : ""
-  } ${className}`;
+  const combinedClassName = `${baseStyles} ${variants[variant]} ${sizes[size]} ${fullWidth ? "w-full" : ""
+    } ${className}`;
 
   if (asChild && React.isValidElement(children)) {
     return React.cloneElement(children, {

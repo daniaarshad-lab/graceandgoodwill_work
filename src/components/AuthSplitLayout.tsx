@@ -1,5 +1,7 @@
 import { ReactNode } from "react";
+import Image from "next/image";
 import authHero from "@/assets/auth/auth-hero.png";
+import authBg from "@/assets/auth/auth-bg.png";
 
 interface AuthSplitLayoutProps {
   title: string;
@@ -15,17 +17,29 @@ export default function AuthSplitLayout({
   return (
     <div className="asl-root">
       <div className="asl-bg" aria-hidden="true">
-        <img src={authHero.src} alt="" className="asl-bg-img" />
+        <Image
+          src={authBg}
+          alt=""
+          fill
+          className="asl-bg-img"
+          priority
+          sizes="100vw"
+          style={{ objectFit: "cover", objectPosition: "center top" }}
+        />
         <div className="asl-bg-overlay" />
       </div>
 
       <div className="asl-wrapper">
         <div className="asl-card">
           <div className="asl-left" aria-hidden="true">
-            <img
-              src={authHero.src}
+            <Image
+              src={authHero}
               alt="Caregiver with client"
+              fill
               className="asl-left-img"
+              priority
+              sizes="(max-width: 768px) 0vw, 50vw"
+              style={{ objectFit: "cover", objectPosition: "center" }}
             />
             <div className="asl-left-overlay" />
           </div>

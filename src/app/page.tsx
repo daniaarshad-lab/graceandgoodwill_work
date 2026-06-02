@@ -1,6 +1,7 @@
 import { Mic, Play, Newspaper, ExternalLink } from "lucide-react";
 import happySeniorCouple from "@/assets/open/happy_senior_couple.png";
 import Button from "@/components/Button";
+import BBCAudioCard from "@/components/BBCAudioCard";
 
 export default function HomePage() {
   return (
@@ -40,7 +41,7 @@ export default function HomePage() {
             </Button>
             <Button
               asChild
-              variant="gold"
+              variant="goldDarker"
               fullWidth={false}
               className="w-full sm:w-auto"
             >
@@ -125,7 +126,7 @@ export default function HomePage() {
         </div>
 
         {/* Media Feature Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
           {/* Card 1: BBC Sounds Broadcast */}
           <div className="group rounded-[2rem] border border-gold-300/10 bg-navy-900/60 p-8 shadow-elegant backdrop-blur-lg hover:border-gold-300/20 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between space-y-8">
             <div className="space-y-6">
@@ -225,6 +226,9 @@ export default function HomePage() {
               </a>
             </Button>
           </div>
+
+          {/* Card 3: BBC Audio Feature */}
+          <BBCAudioCard />
         </div>
       </section>
     </main>

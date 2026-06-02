@@ -38,6 +38,7 @@ const config: Config = {
           500: '#c99232',
           600: '#b8812a',
           muted: '#A08054',
+          darker: 'var(--color-gold-darker)',
           DEFAULT: '#d4af37',
         },
       },

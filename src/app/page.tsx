@@ -127,56 +127,46 @@ export default function HomePage() {
 
         {/* Media Feature Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
-          {/* Card 1: BBC Sounds Broadcast */}
+          {/* Card 1: BDaily Press Feature */}
           <div className="group rounded-[2rem] border border-gold-300/10 bg-navy-900/60 p-8 shadow-elegant backdrop-blur-lg hover:border-gold-300/20 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between space-y-8">
             <div className="space-y-6">
               {/* Card Header & Badge */}
               <div className="flex justify-between items-center">
-                <span className="px-3.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-red-500/10 text-red-400 border border-red-500/20 flex items-center gap-1.5">
-                  <span className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
-                  BBC Sounds Broadcast
+                <span className="px-3.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-gold-muted/10 text-gold-200 border border-gold-muted/20">
+                  BDaily
                 </span>
 
-                <Mic className="w-5 h-5 text-gold-300/40 group-hover:text-gold-300 transition-colors" />
+                <Newspaper className="w-5 h-5 text-gold-300/40 group-hover:text-gold-300 transition-colors" />
               </div>
 
-              {/* Graphic Element: Simulated Equalizer Wave */}
-              <div className="h-20 rounded-2xl bg-navy-950/60 border border-gold-300/5 flex items-center justify-center gap-1.5 px-6 overflow-hidden">
-                {[
-                  0.4, 0.75, 0.3, 0.85, 0.5, 0.95, 0.6, 0.45, 0.7, 0.35, 0.8,
-                  0.65, 0.9, 0.55, 0.4,
-                ].map((height, i) => (
-                  <span
-                    key={i}
-                    style={{ height: `${height * 100}%` }}
-                    className="w-1 bg-gradient-to-t from-gold-600 to-gold-300 rounded-full opacity-60 group-hover:opacity-100 transition-all duration-500 origin-bottom"
-                  />
-                ))}
+              {/* Graphic Element: Newspaper Column Visuals */}
+              <div className="h-20 rounded-2xl bg-navy-950/60 border border-gold-300/5 flex flex-col justify-center gap-2 px-6">
+                <div className="h-2 w-3/4 bg-gold-300/15 rounded-full" />
+                <div className="h-2 w-5/6 bg-gold-300/10 rounded-full" />
+                <div className="h-2 w-2/3 bg-gold-300/10 rounded-full" />
               </div>
 
               {/* Title & Description */}
               <div className="space-y-2">
                 <h3 className="text-lg font-bold text-gold-100 group-hover:text-gold-50 transition-colors">
-                  Specialist Live-In Care Interview
+                  Gateshead Care Firm Grows From Lived Experience
                 </h3>
                 <p className="text-xs text-gold-100/60 leading-relaxed">
-                  Listen to the exclusive discussion covering how Grace &
-                  Goodwill connects families with vetted, highly trained carer
-                  matches, re-establishing high-quality standards.
+                  Read how Grace & Goodwill expands its impact by drawing on personal, lived experiences to deliver high-quality, compassionate live-in care support.
                 </p>
               </div>
             </div>
 
             {/* Button Link */}
-            <Button asChild variant="primary" size="sm" fullWidth>
+            <Button asChild variant="secondary" size="sm" fullWidth>
               <a
-                href="https://www.bbc.co.uk/sounds/play/p0m85mv7?partner=uk.co.bbc&origin=share-mobile"
+                href="https://bdaily.co.uk/articles/2025/08/17/gateshead-care-firm-grows-from-lived-experience"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="gap-2"
               >
-                <Play className="w-4 h-4 fill-current" />
-                Listen Now (BBC sounds)
+                <ExternalLink className="w-4 h-4" />
+                Read Article
               </a>
             </Button>
           </div>
@@ -229,6 +219,8 @@ export default function HomePage() {
 
           {/* Card 3: BBC Audio Feature */}
           <BBCAudioCard />
+
+
         </div>
       </section>
     </main>

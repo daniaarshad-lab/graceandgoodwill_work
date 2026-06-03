@@ -1,19 +1,14 @@
 /** @type {import('next').NextConfig} */
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+})
+
 const nextConfig = {
   reactStrictMode: true,
   eslint: {
     ignoreDuringBuilds: true,
   },
-  webpack(config) {
-    config.module.rules.push({
-      test: /\.(mp3|mp4|wav|ogg)$/i,
-      type: 'asset/resource',
-      generator: {
-        filename: 'static/media/[name].[hash][ext]'
-      }
-    });
-    return config;
-  },
+
 };
 
-module.exports = nextConfig;
+module.exports = withBundleAnalyzer(nextConfig);

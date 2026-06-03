@@ -1,8 +1,12 @@
 "use client";
 
 import React from "react";
-import ReactPhoneInput from "react-phone-input-2";
+import dynamic from "next/dynamic";
 import "react-phone-input-2/lib/style.css";
+
+const ReactPhoneInput = dynamic(() => import("react-phone-input-2"), {
+  ssr: false,
+});
 
 interface PhoneInputProps {
   label: string;
@@ -103,7 +107,6 @@ export default function PhoneInput({
       border-bottom-color: rgba(160, 128, 84, 0.5) !important;
     }
     
-    /* Hover Overrides */
     .phone-input-container .phone-input-field:hover {
       border-color: ${error ? "rgba(239, 68, 68, 0.55)" : "rgba(160, 128, 84, 0.38)"} !important;
       background-color: rgba(255, 255, 255, 0.055) !important;

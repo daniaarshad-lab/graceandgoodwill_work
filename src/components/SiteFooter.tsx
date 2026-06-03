@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 
 const values = [
   {
@@ -23,7 +24,7 @@ const values = [
   },
 ];
 
-export default function SiteFooter() {
+function SiteFooter() {
   return (
     <footer className="bg-navy-950 py-6 sm:py-8 border-t border-navy-800">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -35,15 +36,17 @@ export default function SiteFooter() {
                 idx === 0
                   ? "md:pr-6 lg:pr-8 pb-6 md:pb-0"
                   : idx === values.length - 1
-                  ? "md:pl-6 lg:pl-8 pt-6 md:pt-0"
-                  : "md:px-6 lg:px-8 py-6 md:py-0"
+                    ? "md:pl-6 lg:pl-8 pt-6 md:pt-0"
+                    : "md:px-6 lg:px-8 py-6 md:py-0"
               }`}
             >
               <div className="flex-shrink-0">
                 {val.icon ? (
-                  <img
+                  <Image
                     src={val.icon}
                     alt={`${val.title} icon`}
+                    width={64}
+                    height={64}
                     className="w-12 h-12 lg:w-16 lg:h-16 object-contain drop-shadow-elegant"
                   />
                 ) : (
@@ -72,3 +75,5 @@ export default function SiteFooter() {
     </footer>
   );
 }
+
+export default React.memo(SiteFooter);

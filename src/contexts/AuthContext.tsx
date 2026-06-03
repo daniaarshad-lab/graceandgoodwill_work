@@ -1,6 +1,13 @@
 "use client";
 
-import { createContext, useContext, useEffect, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useCallback,
+  useMemo,
+  ReactNode,
+} from "react";
 import {
   RegisterPayload,
   LoginPayload,
@@ -13,7 +20,6 @@ import {
   register as registerThunk,
   getProfile,
   logout as logoutThunk,
-  loadPersistedAuth,
 } from "@/store/slices/authSlice";
 
 interface AuthContextType {
@@ -37,62 +43,75 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     loading: isLoading,
   } = useAppSelector((state) => state.auth);
 
-  // Initialize and validate session on mount
   useEffect(() => {
-    dispatch(loadPersistedAuth());
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+    if (!token) return;
     dispatch(getProfile());
   }, [dispatch]);
 
-  const login = async (payload: LoginPayload) => {
-    const resultAction = await dispatch(loginThunk(payload));
-    if (loginThunk.fulfilled.match(resultAction)) {
-      return resultAction.payload;
-    } else {
-      throw new Error((resultAction.payload as string) || "Login failed");
-    }
-  };
+  const login = useCallback(
+    async (payload: LoginPayload) => {
+      const resultAction = await dispatch(loginThunk(payload));
+      if (loginThunk.fulfilled.match(resultAction)) {
+        return resultAction.payload;
+      } else {
+        throw new Error((resultAction.payload as string) || "Login failed");
+      }
+    },
+    [dispatch],
+  );
 
-  const register = async (payload: RegisterPayload) => {
-    const resultAction = await dispatch(registerThunk(payload));
-    if (registerThunk.fulfilled.match(resultAction)) {
-      return resultAction.payload;
-    } else {
-      throw new Error(
-        (resultAction.payload as string) || "Registration failed",
-      );
-    }
-  };
+  const register = useCallback(
+    async (payload: RegisterPayload) => {
+      const resultAction = await dispatch(registerThunk(payload));
+      if (registerThunk.fulfilled.match(resultAction)) {
+        return resultAction.payload;
+      } else {
+        throw new Error(
+          (resultAction.payload as string) || "Registration failed",
+        );
+      }
+    },
+    [dispatch],
+  );
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     await dispatch(logoutThunk());
-  };
+  }, [dispatch]);
 
-  const hasRole = (allowedRoles: string[]) => {
-    if (!user || !user.role) return false;
-    return allowedRoles
-      .map((r) => r.toLowerCase())
-      .includes(user.role.toLowerCase());
-  };
+  const hasRole = useCallback(
+    (allowedRoles: string[]) => {
+      if (!user || !user.role) return false;
+      return allowedRoles
+        .map((r) => r.toLowerCase())
+        .includes(user.role.toLowerCase());
+    },
+    [user],
+  );
 
-  const refreshUser = async () => {
+  const refreshUser = useCallback(async () => {
     await dispatch(getProfile());
-  };
+  }, [dispatch]);
 
+  const contextValue = useMemo(
+    () => ({
+      user,
+      isAuthenticated,
+      isLoading,
+      login,
+      register,
+      logout,
+      hasRole,
+      refreshUser,
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [user, isAuthenticated, login, register, logout, hasRole, refreshUser],
+  );
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        isAuthenticated,
-        isLoading,
-        login,
-        register,
-        logout,
-        hasRole,
-        refreshUser,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
   );
 }
 

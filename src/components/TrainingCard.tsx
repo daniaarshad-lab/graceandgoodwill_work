@@ -1,6 +1,7 @@
 import Card from "./Card";
 import Button from "./Button";
 import { ReactNode } from "react";
+import { GraduationCap } from "lucide-react";
 
 interface TrainingCardProps {
   title: string;
@@ -21,21 +22,7 @@ export default function TrainingCard({
     <Card className="hover:shadow-md transition">
       <div className="flex items-start gap-4">
         <div className="shrink-0 h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-          {icon ?? (
-            <svg
-              className="h-6 w-6"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-            >
-              <path
-                d="M12 14l9-5-9-5-9 5 9 5z"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          )}
+          {icon ?? <GraduationCap className="h-6 w-6" strokeWidth={1.5} />}
         </div>
 
         <div className="grow">

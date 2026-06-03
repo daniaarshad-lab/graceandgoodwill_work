@@ -4,13 +4,11 @@ import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { Mic, Play, Pause, ListMusic } from "lucide-react";
 
-import bbcAudio1 from "@/assets/audio/bbc-audio-1.mp3";
-import bbcAudio2 from "@/assets/audio/bbc-audio-2.mp4";
 import bbcImage from "@/assets/open/bbc-image.jpeg";
 
 const INTERVIEWS = [
-  { id: 1, title: "BBC Interview 1", src: bbcAudio1 },
-  { id: 2, title: "BBC Interview 2", src: bbcAudio2 },
+  { id: 1, title: "BBC Interview 1", src: "/audio/bbc-audio-1.mp3" },
+  { id: 2, title: "BBC Interview 2", src: "/audio/bbc-audio-2.mp4" },
 ];
 
 const formatTime = (time: number): string => {
@@ -30,7 +28,7 @@ export default function BBCAudioCard() {
 
   const togglePlay = () => {
     if (!audioRef.current) return;
-    
+
     if (isPlaying) {
       audioRef.current.pause();
     } else {
@@ -53,7 +51,9 @@ export default function BBCAudioCard() {
   const handleTimeUpdate = () => {
     if (audioRef.current) {
       setCurrentTime(audioRef.current.currentTime);
-      setProgress((audioRef.current.currentTime / audioRef.current.duration) * 100);
+      setProgress(
+        (audioRef.current.currentTime / audioRef.current.duration) * 100,
+      );
     }
   };
 
@@ -74,7 +74,6 @@ export default function BBCAudioCard() {
 
   return (
     <div className="group rounded-[2rem] border border-gold-300/10 bg-navy-900/60 shadow-elegant backdrop-blur-lg hover:border-gold-300/20 transition-all duration-300 flex flex-col h-full overflow-hidden">
-      
       <audio
         ref={audioRef}
         src={activeInterview.src}
@@ -84,11 +83,10 @@ export default function BBCAudioCard() {
       />
 
       <div className="relative w-full flex-grow flex flex-col justify-between p-6 sm:p-8 group/media">
-        
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-navy-950/20 mix-blend-multiply z-10 pointer-events-none" />
           <div className="absolute inset-0 bg-gradient-to-t from-navy-950/95 via-navy-950/50 to-transparent z-10 pointer-events-none transition-opacity duration-500" />
-          <Image 
+          <Image
             src={bbcImage}
             alt="BBC Interview"
             fill
@@ -108,7 +106,7 @@ export default function BBCAudioCard() {
           <h3 className="text-lg font-bold text-gold-50 drop-shadow-lg leading-tight">
             Exclusive BBC Care Interviews
           </h3>
-          
+
           <div className="flex gap-2">
             {INTERVIEWS.map((interview) => (
               <button
@@ -120,7 +118,9 @@ export default function BBCAudioCard() {
                     : "bg-navy-950/60 border-gold-300/10 text-gold-100/60 hover:bg-gold-400/15 hover:text-gold-100 hover:border-gold-300/30 backdrop-blur-sm"
                 }`}
               >
-                {activeInterview.id === interview.id && <ListMusic className="w-3.5 h-3.5" />}
+                {activeInterview.id === interview.id && (
+                  <ListMusic className="w-3.5 h-3.5" />
+                )}
                 {interview.title}
               </button>
             ))}

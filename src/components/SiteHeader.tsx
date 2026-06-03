@@ -1,10 +1,14 @@
 "use client";
 
+import React from "react";
 import Link from "next/link";
-import { useAuth } from "@/contexts/AuthContext";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Button from "./Button";
+import { useAppSelector, useAppDispatch } from "@/store/hooks";
+import { logout as logoutThunk } from "@/store/slices/authSlice";
 
+// Nav links are defined outside the component so they are never recreated.
 const navLinks = [
   { href: "/about", label: "About Us" },
   { href: "/services", label: "Services" },
@@ -15,12 +19,20 @@ const navLinks = [
   { href: "/faq", label: "FAQ" },
 ];
 
-export default function SiteHeader() {
-  const { user, isAuthenticated, logout } = useAuth();
+// SiteHeader reads user and isAuthenticated directly from the Redux store via
+// granular selectors instead of consuming the full AuthContext. This means the
+// header re-renders ONLY when user or isAuthenticated actually change — NOT
+// when isLoading toggles during a getProfile fetch, which was the cause of the
+// extra render cycles observed in dev. React.memo is retained as a secondary
+// guard against parent-triggered re-renders.
+function SiteHeader() {
+  const user = useAppSelector((state) => state.auth.user);
+  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
+  const dispatch = useAppDispatch();
   const router = useRouter();
 
   const handleLogout = async () => {
-    await logout();
+    await dispatch(logoutThunk());
     router.push("/login");
   };
 
@@ -39,9 +51,11 @@ export default function SiteHeader() {
     <header className="sticky top-0 z-30 w-full h-20 border-b border-navy-800 bg-navy-950/95 backdrop-blur flex items-center">
       <div className="container-wrapper flex items-center justify-between py-4">
         <Link href="/" className="flex items-center gap-3 text-white group">
-          <img
+          <Image
             src="/Icon_logo.png"
             alt="Grace & Goodwill logo"
+            width={48}
+            height={48}
             className="h-10 w-10 sm:h-12 sm:w-12 object-contain drop-shadow-elegant transition-transform duration-300 group-hover:scale-105"
           />
           <span className="body-base-medium tracking-[0.08em] text-gold-100 transition-colors group-hover:text-gold-50">
@@ -54,23 +68,23 @@ export default function SiteHeader() {
             <Link
               key={link.href}
               href={link.href}
+              prefetch={true}
               className="body-small font-medium text-gold-200 transition hover:text-gold-50"
             >
               {link.label}
             </Link>
           ))}
 
-          {/* Dynamic Portal Link */}
           {portalLink && (
             <Link
               href={portalLink.href}
+              prefetch={true}
               className="body-small font-semibold text-gold-DEFAULT transition hover:text-gold-200"
             >
               {portalLink.label}
             </Link>
           )}
 
-          {/* Authentication Actions */}
           {isAuthenticated ? (
             <Button
               onClick={handleLogout}
@@ -84,6 +98,7 @@ export default function SiteHeader() {
             <div className="flex items-center gap-3">
               <Link
                 href="/login"
+                prefetch={true}
                 className="body-small font-semibold text-gold-200 hover:text-gold-50"
               >
                 Login
@@ -95,3 +110,5 @@ export default function SiteHeader() {
     </header>
   );
 }
+
+export default React.memo(SiteHeader);

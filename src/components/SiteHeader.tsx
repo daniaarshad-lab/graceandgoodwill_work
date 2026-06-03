@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import Button from "./Button";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { logout as logoutThunk } from "@/store/slices/authSlice";
@@ -30,6 +30,7 @@ function SiteHeader() {
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const pathname = usePathname();
 
   const handleLogout = async () => {
     await dispatch(logoutThunk());
@@ -64,16 +65,21 @@ function SiteHeader() {
         </Link>
 
         <nav className="hidden items-center gap-6 md:flex">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              prefetch={true}
-              className="body-small font-medium text-gold-200 transition hover:text-gold-50"
-            >
-              {link.label}
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            const isActive = pathname === link.href;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                prefetch={true}
+                className={`body-small font-medium transition hover:text-gold-50 ${
+                  isActive ? "text-gold-50" : "text-gold-200"
+                }`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
 
           {portalLink && (
             <Link
@@ -99,7 +105,9 @@ function SiteHeader() {
               <Link
                 href="/login"
                 prefetch={true}
-                className="body-small font-semibold text-gold-200 hover:text-gold-50"
+                className={`body-small font-semibold hover:text-gold-50 ${
+                  pathname === "/login" ? "text-gold-50" : "text-gold-200"
+                }`}
               >
                 Login
               </Link>

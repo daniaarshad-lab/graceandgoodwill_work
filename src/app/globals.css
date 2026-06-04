@@ -340,7 +340,7 @@
 
 .asl-subtitle {
   font-size: 0.875rem;
-  color: rgba(160, 128, 84, 0.60);
+  color: rgb(160 128 84 / var(--tw-text-opacity, 1));
   margin: 0;
   line-height: 1.6;
   letter-spacing: 0.01em;

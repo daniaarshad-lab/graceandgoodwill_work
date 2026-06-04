@@ -34,11 +34,11 @@ export default function AuthSplitLayout({
   const bgSrc = authHero.src;
 
   // Choose correct image asset for each option
-  const defaultHero = option === "1" ? "/login_option1.jpg" : "/login_option2.jpg";
+  const defaultHero = option === "1" ? "/login_option1.jpg" : "/sample.png";
   const heroSrc = heroImage ?? defaultHero;
 
   // Custom positioning per option after mirroring to keep both caregiver and boy perfectly visible
-  const defaultPosition = option === "1" ? "53% center" : "84% center";
+  const defaultPosition = option === "1" ? "45% center" : "50% center";
   const finalPosition = heroPosition ?? defaultPosition;
 
   return (
@@ -72,10 +72,10 @@ export default function AuthSplitLayout({
               alt="Caregiver with client"
               className="asl-left-img absolute inset-0 w-full h-full object-cover"
               style={{
-                objectPosition: finalPosition,
-                transform: "scaleX(-1)",
-                maskImage: "radial-gradient(circle at 45% 45%, black 35%, transparent 75%)",
-                WebkitMaskImage: "radial-gradient(circle at 45% 45%, black 35%, transparent 75%)",
+                // objectPosition: finalPosition,
+                // transform: "scaleX(-1)",
+                maskImage: "radial-gradient(circle at 41% 35%, black 45%, transparent 75%)",
+                // WebkitMaskImage: "radial-gradient(circle at 60% 10%, black 35%, transparent 75%)",
                 filter: "sepia(0.08) saturate(1.05) brightness(0.95)"
               }}
             />

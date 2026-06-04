@@ -83,7 +83,7 @@ export default function ForgotPasswordPage() {
       title="Forgot Password"
       subtitle="Enter your email to receive a reset link."
     >
-      <form className="space-y-5" onSubmit={handleSubmit}>
+      <form className="space-y-5 " onSubmit={handleSubmit}>
         {apiError && (
           <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-500">
             {apiError}
@@ -115,6 +115,26 @@ export default function ForgotPasswordPage() {
           </Link>
         </p>
       </form>
+       <div className="mt-12 flex flex-col items-center justify-center text-center select-none">
+        <img
+          src="/website_logo.png"
+          alt="Logo"
+          className="h-16 w-auto mb-2"
+        />
+
+        <div className="flex items-center w-full justify-center mt-2">
+          <div className="h-px w-4 sm:w-11 bg-gradient-to-r from-transparent to-[#b8915e]/60" />
+
+          <p
+            className="mx-2 text-base font-medium  text-gold-muted tracking-wide"
+            style={{ letterSpacing: "-0.01em" }}
+          >
+            Care Defined By Integrity
+          </p>
+
+          <div className="h-px w-4 sm:w-11 bg-gradient-to-l from-transparent to-[#b8915e]/60" />
+        </div>
+      </div>
     </AuthSplitLayout>
   );
 }

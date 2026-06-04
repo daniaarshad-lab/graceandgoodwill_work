@@ -105,7 +105,7 @@ export default function HowItWorksPage() {
       <div className="mx-auto max-w-5xl">
         {/* Page Header */}
         <section className="mb-20 text-center">
-          <p className="inline-block rounded-full border border-gold-500/25 bg-gold-500/5 px-4 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-gold-300">
+          {/* <p className="inline-block rounded-full border border-gold-500/25 bg-gold-500/5 px-4 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-gold-300">
             Our Process
           </p>
           <h1 className="mt-6 text-4xl font-light tracking-tight text-gold-50 sm:text-5xl md:text-6xl">
@@ -113,7 +113,13 @@ export default function HowItWorksPage() {
             <span className="font-semibold text-gold-DEFAULT">
               Supportive throughout.
             </span>
-          </h1>
+          </h1> */}
+              <div className="flex items-center justify-center gap-4 mb-8">
+                <div className="h-px w-10 bg-gradient-to-r from-transparent to-gold-400/50" />
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight  text-gold-darker">
+                   Simple to begin. Supportive throughout.</h1>
+                <div className="h-px w-10 bg-gradient-to-l from-transparent to-gold-400/50" />
+          </div>
           <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-gold-200/80 sm:text-lg">
             At Grace & Goodwill, we bring harmony and clarity to live-in care
             coordination. We make it simple to get started, ensuring your

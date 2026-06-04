@@ -111,17 +111,22 @@ export default function PricingPage() {
 
         <div className="container-wrapper relative z-10 text-center flex flex-col items-center">
           {/* Eyebrow label & Gold accent line restored to premium style */}
-          <div className="flex items-center gap-4 mb-8">
+          {/* <div className="flex items-center gap-4 mb-8">
             <div className="h-px w-10 bg-gradient-to-r from-transparent to-gold-400/50" />
             <p className="text-xs uppercase tracking-[0.4em] text-gold-400 font-bold">
               GRACE &amp; GOODWILL • MEMBERSHIP PLANS
             </p>
             <div className="h-px w-10 bg-gradient-to-l from-transparent to-gold-400/50" />
+          </div> */}
+  <div className="flex items-center justify-center gap-4 mb-8">
+                <div className="h-px w-10 bg-gradient-to-r from-transparent to-gold-400/50" />
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight  text-gold-darker">
+                     Membership  plans</h1>
+                <div className="h-px w-10 bg-gradient-to-l from-transparent to-gold-400/50" />
           </div>
-
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight mb-6 text-gold-100 tracking-wide max-w-4xl">
+          {/* <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight mb-6 text-gold-100 tracking-wide max-w-4xl">
             Membership Plans
-          </h1>
+          </h1> */}
 
           <p className="max-w-2xl text-base sm:text-lg text-gold-200/80 leading-relaxed font-light">
             Flexible membership options for professional carers and care providers.

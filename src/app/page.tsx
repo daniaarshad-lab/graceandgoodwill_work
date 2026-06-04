@@ -8,17 +8,22 @@ export default function HomePage() {
     <main className="min-h-[calc(100vh-80px)] bg-navy-950 pt-12 pb-16 md:pt-20 md:pb-24 text-gold-100">
       <section className="container-wrapper flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between pb-16">
         <div className="max-w-2xl space-y-6">
-          <p className="text-sm uppercase tracking-[0.4em] text-gold-200">
-            Grace & Goodwill
-          </p>
-          <h2>Live In Care Services Across The UK</h2>
-          <h5>Care Defined By Integrity</h5>
-          <p className="text-lg text-gold-200 max-w-3xl">
-            Helping families across the UK find trusted live in care with
-            compassion, continuity, and genuine human support.
-          </p>
+          
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight  text-white">
+           Live In Care Services Across The UK</h1>
+   <p
+            className=" text-base font-medium  text-gold-muted tracking-wide"
+            style={{ letterSpacing: "-0.01em" }}
+          >
+            Care Defined By Integrity
+          </p>        
+         
 
-          <div className="prose max-w-xl text-gold-200">
+          <div className="prose max-w-xl text-gold-200 space-y-2" >
+            <p>
+              Helping families across the UK find trusted live in care with
+            compassion, continuity, and genuine human support.
+            </p>
             <p>
               At Grace & Goodwill, we carefully match families with professional
               carers to provide safe, personal, and dependable care at home.
@@ -33,7 +38,7 @@ export default function HomePage() {
           <div className="flex flex-wrap items-center gap-4">
             <Button
               asChild
-              variant="navy"
+              variant="goldDarker"
               fullWidth={false}
               className="w-full sm:w-auto"
             >
@@ -74,10 +79,10 @@ export default function HomePage() {
         <div className="relative flex items-center justify-center w-full lg:max-w-xl h-[450px] overflow-visible">
           {/* Glowing concentric radiating gold rings */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="absolute w-[280px] h-[280px] rounded-full border border-gold-300/5 animate-[pulse_3s_infinite_ease-in-out]" />
-            <div className="absolute w-[360px] h-[360px] rounded-full border border-gold-300/5 animate-[pulse_4s_infinite_ease-in-out_1s]" />
-            <div className="absolute w-[440px] h-[440px] rounded-full border border-gold-300/3 animate-[pulse_5s_infinite_ease-in-out_2s]" />
-            <div className="absolute w-[520px] h-[520px] rounded-full border border-gold-300/2 animate-[pulse_6s_infinite_ease-in-out_3s]" />
+            <div className="absolute w-[280px] h-[280px] rounded-full border-4 border-gold-400 animate-[pulse_3s_infinite_ease-in-out]" />
+            {/* <div className="absolute w-[360px] h-[360px] rounded-full border-4 border-gold-400 animate-[pulse_4s_infinite_ease-in-out_1s]" /> */}
+            <div className="absolute w-[440px] h-[440px] rounded-full border-4 border-gold-400 animate-[pulse_5s_infinite_ease-in-out_2s]" />
+            <div className="absolute w-[520px] h-[520px] rounded-full border-4 border-gold-400 animate-[pulse_6s_infinite_ease-in-out_3s]" />
           </div>
 
           {/* Focal Circular Portrait Container */}

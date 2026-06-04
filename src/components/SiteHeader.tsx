@@ -40,13 +40,27 @@ export default function SiteHeader() {
       <div className="container-wrapper flex items-center justify-between py-4">
         <Link href="/" className="flex items-center gap-3 text-white group">
           <img
-            src="/Icon_logo.png"
+            src="/website_logo.png"
             alt="Grace & Goodwill logo"
             className="h-10 w-10 sm:h-12 sm:w-12 object-contain drop-shadow-elegant transition-transform duration-300 group-hover:scale-105"
           />
-          <span className="body-base-medium tracking-[0.08em] text-gold-100 transition-colors group-hover:text-gold-50">
-            Grace & Goodwill
-          </span>
+              <span
+        className="
+          font-['Cinzel']
+          text-[20px]
+          font-medium
+          tracking-[0.25em]
+          uppercase
+          text-[#D4AF7A]
+          transition-colors
+          group-hover:text-[#E5C79A]
+        "
+        style={{
+          textShadow: "0 1px 2px rgba(0,0,0,0.4)",
+        }}
+      >
+        GRACE & GOODWILL
+      </span>
         </Link>
 
         <nav className="hidden items-center gap-6 md:flex">

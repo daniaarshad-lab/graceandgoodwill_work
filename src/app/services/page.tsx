@@ -138,16 +138,15 @@ export default function ServicesPage() {
 
       <div className="container-wrapper">
         {/* Header Section */}
-        <section className="mb-20 text-center">
-          <p className="inline-block rounded-full border border-gold-500/25 bg-gold-500/5 px-4 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-gold-300">
-            Tailored Care
-          </p>
-          <h1 className="mt-6 text-4xl font-light tracking-tight text-gold-50 sm:text-5xl md:text-6xl">
-            Support designed{" "}
-            <span className="font-semibold text-gold-DEFAULT">
-              around real lives.
-            </span>
-          </h1>
+        <section className="mb-20 text-center">        
+
+             <div className="flex items-center justify-center gap-4 mb-8">
+                <div className="h-px w-10 bg-gradient-to-r from-transparent to-gold-400/50" />
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight  text-gold-darker">
+                  Support designed around real lives</h1>
+                <div className="h-px w-10 bg-gradient-to-l from-transparent to-gold-400/50" />
+          </div>
+          
           <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-gold-200/80 sm:text-lg">
             Every family is unique, and so is our support. Explore our core
             services structured around dignity, continuity, and warm human

@@ -3,23 +3,23 @@ import React from "react";
 const values = [
   {
     title: "INTEGRITY",
-    text: "Rooted in law,\nguided by ethics.",
+    text:  "Morally and ethically guided.",
     icon: "/Integrity.png",
   },
   {
     title: "COMPASSION",
-    text: "A duty to care,\na promise to serve.",
+    text:  "A duty to care, a promise to serve.",
     icon: "/Compassion.png",
   },
   {
     title: "TRUST",
-    text: "Built on honesty,\nstrengthened by\nreliability.",
+    text: "Built on honesty, strengthened by reliability.",
     icon: "/Trust.png",
   },
   {
     title: "PURPOSE",
-    text: "Care with meaning,\nimpact that lasts.",
-    icon: null, // Custom SVG for Wreath
+    text: "Care with meaning, impact that lasts.",
+    icon: "/Purpose.png", 
   },
 ];
 

@@ -36,7 +36,7 @@ const UploadDocumentModal = dynamic(
 type TabType = "overview" | "profile" | "compliance" | "availability";
 
 export default function CarerDashboard() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<TabType>("overview");
 
   const dispatch = useAppDispatch();
@@ -67,7 +67,6 @@ export default function CarerDashboard() {
           photoUploading={portal.photoUploading}
           photoProgress={portal.photoProgress}
           handlePhotoChange={portal.handlePhotoChange}
-          logout={logout}
         />
 
         <PortalTabs activeTab={activeTab} setActiveTab={setActiveTab} />

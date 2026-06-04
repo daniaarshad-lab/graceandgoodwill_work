@@ -1,10 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  defaultBio,
-  defaultSpecialties,
-  defaultExperience,
-  defaultAddress,
-} from "../data/mockProfile";
+
 import {
   CarerDocument,
   ComplianceDoc,
@@ -70,16 +65,14 @@ export function useCarerPortal({
   profile,
   documents,
 }: UseCarerPortalProps) {
-  const [firstName, setFirstName] = useState(user?.firstName || "Alex");
-  const [lastName, setLastName] = useState(user?.lastName || "Mercer");
-  const [phone, setPhone] = useState(user?.phoneNumber || "+1 (555) 123-4567");
-  const [email, setEmail] = useState(
-    user?.email || "alex.mercer@graceandgoodwill.com",
-  );
-  const [bio, setBio] = useState(defaultBio);
-  const [specialties, setSpecialties] = useState(defaultSpecialties);
-  const [experience, setExperience] = useState(defaultExperience);
-  const [address, setAddress] = useState(defaultAddress);
+  const [firstName, setFirstName] = useState(user?.firstName || "");
+  const [lastName, setLastName] = useState(user?.lastName || "");
+  const [phone, setPhone] = useState(user?.phoneNumber || "");
+  const [email, setEmail] = useState(user?.email || "");
+  const [bio, setBio] = useState("");
+  const [specialties, setSpecialties] = useState("");
+  const [experience, setExperience] = useState("");
+  const [address, setAddress] = useState("");
 
   useEffect(() => {
     if (profile) {
@@ -143,7 +136,7 @@ export function useCarerPortal({
     "pending",
   );
   const [membershipActive] = useState(true);
-  const [membershipExpiry] = useState("2027-05-25");
+  const [membershipExpiry] = useState("");
 
   // Compliance documents — derived from Redux documents state
   const complianceDocs: ComplianceDoc[] = documents.map((doc) => ({

@@ -10,8 +10,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Check } from "lucide-react";
 
 export default function RegisterForm() {
-  const { register } = useAuth();
-  const [role, setRole] = useState<"CLIENT" | "CARER" | string>("CLIENT");
+  const { register, logout } = useAuth();
+  const [selectedRole, setSelectedRole] = useState<"CLIENT" | "CARER" | string>("CLIENT");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -43,16 +43,30 @@ export default function RegisterForm() {
     setErrors({});
     setIsLoading(true);
 
+    const payload = {
+      firstName,
+      lastName,
+      email,
+      phone,
+      password,
+      role: selectedRole,
+    };
+
+
+
+    // Clear any stale auth session before registering
+    await logout();
+
     try {
       // Attempt registration using useAuth register wrapper
-      await register({
-        firstName,
-        lastName,
-        email,
-        phone,
-        password,
-        role,
-      });
+      const response = await register(payload);
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setPhone("");
+      setPassword("");
+      setSelectedRole("CLIENT");
+      setErrors({});
 
       setIsSuccess(true);
     } catch (error) {
@@ -108,9 +122,9 @@ export default function RegisterForm() {
         <div className="grid grid-cols-2 gap-2 p-1.5 rounded-xl bg-navy-950/60 border border-gold-muted/20 backdrop-blur-sm">
           <Button
             type="button"
-            onClick={() => setRole("CLIENT")}
+            onClick={() => setSelectedRole("CLIENT")}
             variant="selectable"
-            isSelected={role === "CLIENT"}
+            isSelected={selectedRole === "CLIENT"}
             size="sm"
             fullWidth
             className="py-2.5 rounded-lg font-semibold"
@@ -119,9 +133,9 @@ export default function RegisterForm() {
           </Button>
           <Button
             type="button"
-            onClick={() => setRole("CARER")}
+            onClick={() => setSelectedRole("CARER")}
             variant="selectable"
-            isSelected={role === "CARER"}
+            isSelected={selectedRole === "CARER"}
             size="sm"
             fullWidth
             className="py-2.5 rounded-lg font-semibold"
@@ -129,6 +143,7 @@ export default function RegisterForm() {
             Professional Carer
           </Button>
         </div>
+
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -173,6 +188,7 @@ export default function RegisterForm() {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         error={errors.password}
+        autoComplete="new-password"
       />
 
       <Button

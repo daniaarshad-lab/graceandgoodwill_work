@@ -34,7 +34,7 @@ const IntroductionModal = dynamic(
 type TabType = "overview" | "request" | "carers" | "tracking" | "enquiry";
 
 export default function ClientDashboard() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<TabType>("overview");
 
   // Custom hook containing state + handlers
@@ -43,7 +43,7 @@ export default function ClientDashboard() {
   return (
     <main className="min-h-screen bg-navy-950 py-10 text-gold-100">
       <div className="container-wrapper space-y-8">
-        <PortalHeader user={user} logout={logout} />
+        <PortalHeader user={user} />
 
         <PortalTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 

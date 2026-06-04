@@ -9,7 +9,6 @@ interface PortalHeaderProps {
   photoUploading: boolean;
   photoProgress: number;
   handlePhotoChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  logout: () => void;
 }
 
 export default function PortalHeader({
@@ -21,7 +20,6 @@ export default function PortalHeader({
   photoUploading,
   photoProgress: _photoProgress,
   handlePhotoChange,
-  logout,
 }: PortalHeaderProps) {
   return (
     <section className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 rounded-3xl border border-gold-300/10 bg-navy-900/40 p-6 md:p-8 shadow-elegant backdrop-blur-md">
@@ -68,12 +66,6 @@ export default function PortalHeader({
         </div>
       </div>
 
-      <button
-        onClick={logout}
-        className="rounded-xl border border-gold-DEFAULT/20 px-4 py-2 text-xs font-semibold text-gold-DEFAULT transition hover:bg-gold-DEFAULT/10 hover:border-gold-DEFAULT"
-      >
-        Log Out
-      </button>
     </section>
   );
 }

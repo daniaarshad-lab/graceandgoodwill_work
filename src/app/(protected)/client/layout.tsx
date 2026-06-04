@@ -8,7 +8,7 @@ export default function ClientLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ProtectedRoute allowedRoles={["client", "admin"]}>
+    <ProtectedRoute allowedRoles={["client"]}>
       {children}
     </ProtectedRoute>
   );

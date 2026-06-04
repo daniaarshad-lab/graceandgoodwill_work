@@ -36,7 +36,7 @@ const MatchAssignmentModal = dynamic(
 );
 
 export default function AdminDashboard() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const portal = useAdminPortal();
 
   // Local state to track matching confirmation flow
@@ -71,16 +71,6 @@ export default function AdminDashboard() {
                 Authorization Level: Tier 1
               </p>
             </div>
-
-            <Button
-              onClick={logout}
-              variant="ghost-gold"
-              size="sm"
-              fullWidth={false}
-              className="inline-flex items-center justify-center border border-gold-300/10 bg-navy-950/60 px-4 py-2.5 font-bold text-gold-200 hover:bg-navy-950 hover:border-gold-300/30"
-            >
-              Secure Logout ➔
-            </Button>
           </div>
         </header>
 

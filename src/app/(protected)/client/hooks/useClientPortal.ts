@@ -11,18 +11,16 @@ export function useClientPortal({ user }: UseClientPortalProps) {
   const userFullName = `${user?.firstName || "Jane"} ${user?.lastName || "Doe"}`;
 
   // --- CORE DATA STATES ---
-  const [careRequests, setCareRequests] = useState<CareRequest[]>(() =>
-    defaultCareRequests(userFullName),
-  );
-  const [enquiries, setEnquiries] = useState<Enquiry[]>(() => defaultEnquiries);
+  const [careRequests, setCareRequests] = useState<CareRequest[]>([]);
+  const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
 
   // --- FORM STATES: CARE REQUEST ---
   const [careFullName, setCareFullName] = useState(
-    `${user?.firstName || ""} ${user?.lastName || ""}`,
+    `${user?.firstName || ""} ${user?.lastName || ""}`.trim(),
   );
   const [careEmail, setCareEmail] = useState(user?.email || "");
   const [carePhone, setCarePhone] = useState(user?.phone || "");
-  const [careType, setCareType] = useState("Companion Support");
+  const [careType, setCareType] = useState("");
   const [careSupport, setCareSupport] = useState("");
   const [careStartDate, setCareStartDate] = useState("");
   const [careDuration, setCareDuration] = useState("");
@@ -36,7 +34,7 @@ export function useClientPortal({ user }: UseClientPortalProps) {
   // --- FORM STATES: GENERAL ENQUIRIES ---
   const [enquirySubject, setEnquirySubject] = useState("");
   const [enquiryMessage, setEnquiryMessage] = useState("");
-  const [enquiryPreference, setEnquiryPreference] = useState("Email");
+  const [enquiryPreference, setEnquiryPreference] = useState("");
 
   const [enquiryErrors, setEnquiryErrors] = useState<Record<string, string>>(
     {},

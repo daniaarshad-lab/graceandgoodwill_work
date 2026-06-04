@@ -15,7 +15,7 @@ export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   const router = useRouter();
-  const { login } = useAuth();
+  const { login, logout } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,13 +33,28 @@ export default function LoginForm() {
     setIsLoading(true);
 
     try {
-      await login({
-        email,
+      // Clear any stale auth session before logging in
+      await logout();
+
+      const trimmedEmail = email.trim();
+
+      const response = await login({
+        email: trimmedEmail,
         password,
       });
 
-      // Perform smart redirect to home which will dynamically navigate based on portal link
-      router.push("/");
+      const role = response.user?.role?.toUpperCase();
+      
+      let route = "/unauthorized";
+      if (role === "ADMIN") {
+        route = "/admin";
+      } else if (role === "CARER") {
+        route = "/carer";
+      } else if (role === "CLIENT") {
+        route = "/client";
+      }
+      
+      router.push(route);
       router.refresh();
     } catch (error: any) {
       console.error(error);
@@ -52,7 +67,7 @@ export default function LoginForm() {
   };
 
   return (
-    <form className="space-y-5" onSubmit={handleSubmit}>
+    <form className="space-y-5" onSubmit={handleSubmit} autoComplete="off">
       {apiError && (
         <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-500">
           {apiError}
@@ -66,6 +81,7 @@ export default function LoginForm() {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         error={errors.email}
+        autoComplete="off"
       />
 
       <Input
@@ -75,6 +91,7 @@ export default function LoginForm() {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         error={errors.password}
+        autoComplete="new-password"
       />
 
       <div className="flex justify-end">

@@ -1,9 +1,8 @@
 interface PortalHeaderProps {
   user: any;
-  logout: () => void;
 }
 
-export default function PortalHeader({ user, logout }: PortalHeaderProps) {
+export default function PortalHeader({ user }: PortalHeaderProps) {
   return (
     <section className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 rounded-3xl border border-gold-300/10 bg-navy-900/40 p-6 md:p-8 shadow-elegant backdrop-blur-md">
       <div className="flex items-center gap-5">
@@ -23,12 +22,6 @@ export default function PortalHeader({ user, logout }: PortalHeaderProps) {
         </div>
       </div>
 
-      <button
-        onClick={logout}
-        className="rounded-xl border border-gold-DEFAULT/20 px-4 py-2 text-xs font-semibold text-gold-DEFAULT transition hover:bg-gold-DEFAULT/10 hover:border-gold-DEFAULT"
-      >
-        Log Out
-      </button>
     </section>
   );
 }

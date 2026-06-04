@@ -81,7 +81,7 @@ function SiteHeader() {
             );
           })}
 
-          {portalLink && (
+          {portalLink && !pathname.startsWith(portalLink.href) && (
             <Link
               href={portalLink.href}
               prefetch={true}

@@ -183,10 +183,8 @@ export default function TrainingPage() {
         {/* Bottom Banner Call to Action */}
         <section className="mt-24 rounded-[32px] border border-gold-300/15 bg-navy-900/30 p-8 text-center backdrop-blur-sm sm:p-12">
           <h2 className="text-2xl font-light text-gold-50 sm:text-3xl">
-            Want to customize{" "}
-            <span className="font-semibold text-gold-DEFAULT">
-              training paths?
-            </span>
+            Want to customize training paths?
+            
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-gold-200/80 sm:text-base">
             Configure learning milestones, customized compliance dashboards, and

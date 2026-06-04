@@ -12,21 +12,21 @@ export default function HomePage() {
     <main className="min-h-[calc(100vh-80px)] bg-navy-950 pt-12 pb-16 md:pt-20 md:pb-24 text-gold-100">
       <section className="container-wrapper flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between pb-16">
         <div className="max-w-2xl space-y-6">
-          
+
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight  text-white">
-           Live In Care Services Across The UK</h1>
-   <p
+            Live In Care Services Across The UK</h1>
+          <p
             className=" text-base font-medium  text-gold-muted tracking-wide"
             style={{ letterSpacing: "-0.01em" }}
           >
             Care Defined By Integrity
-          </p>        
-         
+          </p>
+
 
           <div className="prose max-w-xl text-gold-200 space-y-2" >
             <p>
               Helping families across the UK find trusted live in care with
-            compassion, continuity, and genuine human support.
+              compassion, continuity, and genuine human support.
             </p>
             <p>
               At Grace & Goodwill, we carefully match families with professional
@@ -52,7 +52,7 @@ export default function HomePage() {
             </Button>
             <Button
               asChild
-              variant="goldDarker"
+              variant="goldBrown"
               fullWidth={false}
               className="w-full sm:w-auto"
             >
@@ -81,14 +81,14 @@ export default function HomePage() {
         <div className="relative flex items-center justify-center w-full lg:max-w-xl h-[450px] overflow-visible">
           {/* Glowing concentric radiating gold rings */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="absolute w-[280px] h-[280px] rounded-full border-4 border-gold-400 animate-[pulse_3s_infinite_ease-in-out]" />
-            {/* <div className="absolute w-[360px] h-[360px] rounded-full border-4 border-gold-400 animate-[pulse_4s_infinite_ease-in-out_1s]" /> */}
-            <div className="absolute w-[440px] h-[440px] rounded-full border-4 border-gold-400 animate-[pulse_5s_infinite_ease-in-out_2s]" />
-            <div className="absolute w-[520px] h-[520px] rounded-full border-4 border-gold-400 animate-[pulse_6s_infinite_ease-in-out_3s]" />
+            <div className="absolute w-[280px] h-[280px] rounded-full border-2 border-gold-400 animate-ring-pulse-1" />
+            <div className="absolute w-[360px] h-[360px] rounded-full border-2 border-gold-400 animate-ring-pulse-2" />
+            <div className="absolute w-[440px] h-[440px] rounded-full border-2 border-gold-400 animate-ring-pulse-3" />
+            <div className="absolute w-[520px] h-[520px] rounded-full border-2 border-gold-400 animate-ring-pulse-4" />
           </div>
 
           {/* Focal Circular Portrait Container */}
-          <div className="relative w-72 h-72 sm:w-80 sm:h-80 rounded-full border-4 border-gold-400 bg-navy-950 shadow-elegant overflow-hidden transition-all duration-500 hover:scale-[1.02]">
+          <div className="relative w-72 h-72 sm:w-80 sm:h-80 rounded-full border-4 border-gold-400 bg-navy-950 shadow-elegant overflow-hidden transition-all duration-500 hover:scale-[1.02] animate-image-pulse">
             <Image
               src={happySeniorCouple}
               alt="Reassured senior couple supported by Grace & Goodwill live in care"
@@ -176,8 +176,9 @@ export default function HomePage() {
               </a>
             </Button>
           </div>
-
-          {/* Card 2: Regional Press Feature */}
+          {/* Card 2: BBC Audio Feature */}
+          <BBCAudioCard />
+          {/* Card 3: Regional Press Feature */}
           <div className="group rounded-[2rem] border border-gold-300/10 bg-navy-900/60 p-8 shadow-elegant backdrop-blur-lg hover:border-gold-300/20 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between space-y-8">
             <div className="space-y-6">
               {/* Card Header & Badge */}
@@ -221,8 +222,7 @@ export default function HomePage() {
             </Button>
           </div>
 
-          {/* Card 3: BBC Audio Feature */}
-          <BBCAudioCard />
+
         </div>
       </section>
     </main>

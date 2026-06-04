@@ -280,7 +280,7 @@ Questa esperienza, insieme al mio background professionale a sostegno delle pers
 
             {/* Header */}
             <div className="mb-14 space-y-4">
-              <h2 className="text-3xl sm:text-4xl font-serif text-gold-50 font-light tracking-wide">
+              <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide">
                 Why We Started
               </h2>
             </div>

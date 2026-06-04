@@ -2,6 +2,7 @@
 
 import { useState, FormEvent, useEffect } from "react";
 import Button from "@/components/Button";
+import { Mail } from "lucide-react";
 
 interface FormData {
   firstName: string;
@@ -82,10 +83,10 @@ export default function NewsletterForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="w-full max-w-2xl mx-auto flex flex-col gap-4"
+      className="w-full max-w-2xl mx-auto flex flex-col gap-5"
     >
       {submitStatus === "success" && (
-        <div className="p-3 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 text-sm text-center">
+        <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm text-center">
           Thank you for subscribing!
         </div>
       )}
@@ -96,56 +97,66 @@ export default function NewsletterForm() {
         </div>
       )}
 
-      <div className="flex flex-col sm:flex-row gap-4 w-full">
-        <div className="flex-1 flex flex-col items-start">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 w-full">
+        <div className="space-y-2">
+          <label className="text-sm text-gold-200/80 ml-1 text-left block">
+            First Name *
+          </label>
           <input
             type="text"
-            placeholder="First Name"
             value={formData.firstName}
             onChange={(e) =>
               setFormData({ ...formData, firstName: e.target.value })
             }
-            className={`w-full bg-navy-900/80 border rounded-full px-6 py-3.5 text-gold-50 focus:outline-none focus:ring-1 transition-colors placeholder:text-gold-200/40 ${
-              errors.firstName
-                ? "border-red-500/50 focus:border-red-500/50 focus:ring-red-500/50"
-                : "border-gold-muted/30 focus:border-gold-400/60 focus:ring-gold-400/60"
+            className={`w-full bg-navy-900/60 border rounded-xl px-4 py-3 text-gold-50 focus:outline-none focus:ring-1 transition-colors ${
+              errors.firstName ? "border-red-500/50 focus:border-red-500/50 focus:ring-red-500/50" : "border-gold-muted/20 focus:border-gold-400/50 focus:ring-gold-400/50"
             }`}
             disabled={isSubmitting}
           />
           {errors.firstName && (
-            <p className="text-red-400 text-xs ml-4 mt-1">{errors.firstName}</p>
+            <p className="form-help text-red-500">{errors.firstName}</p>
           )}
         </div>
 
-        <div className="flex-1 flex flex-col items-start">
+        <div className="space-y-2">
+          <label className="text-sm text-gold-200/80 ml-1 text-left block">
+            Email Address *
+          </label>
           <input
             type="email"
-            placeholder="Email Address"
             value={formData.email}
             onChange={(e) =>
               setFormData({ ...formData, email: e.target.value })
             }
-            className={`w-full bg-navy-900/80 border rounded-full px-6 py-3.5 text-gold-50 focus:outline-none focus:ring-1 transition-colors placeholder:text-gold-200/40 ${
-              errors.email
-                ? "border-red-500/50 focus:border-red-500/50 focus:ring-red-500/50"
-                : "border-gold-muted/30 focus:border-gold-400/60 focus:ring-gold-400/60"
+            className={`w-full bg-navy-900/60 border rounded-xl px-4 py-3 text-gold-50 focus:outline-none focus:ring-1 transition-colors ${
+              errors.email ? "border-red-500/50 focus:border-red-500/50 focus:ring-red-500/50" : "border-gold-muted/20 focus:border-gold-400/50 focus:ring-gold-400/50"
             }`}
             disabled={isSubmitting}
           />
           {errors.email && (
-            <p className="text-red-400 text-xs ml-4 mt-1">{errors.email}</p>
+            <p className="form-help text-red-500">{errors.email}</p>
           )}
         </div>
       </div>
 
-      <div className="flex justify-center mt-2">
+      <div className="flex justify-center pt-1">
         <Button
           type="submit"
           variant="primary"
-          className="rounded-full px-10 py-3.5 h-[54px] w-full sm:w-auto"
+          className="rounded-xl px-10 py-3.5 w-full sm:w-auto"
           disabled={isSubmitting}
         >
-          {isSubmitting ? "Submitting..." : "Subscribe"}
+          {isSubmitting ? (
+            <div className="flex items-center justify-center gap-2">
+              <div className="w-4 h-4 border-2 border-navy-950 border-t-transparent rounded-full animate-spin" />
+              <span>Subscribing...</span>
+            </div>
+          ) : (
+            <span className="flex items-center justify-center gap-2">
+              <Mail className="w-4 h-4" />
+              Subscribe
+            </span>
+          )}
         </Button>
       </div>
     </form>

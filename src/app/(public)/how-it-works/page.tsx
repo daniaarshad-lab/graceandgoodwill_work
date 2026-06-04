@@ -141,10 +141,7 @@ export default function HowItWorksPage() {
 
         <section className="mt-24 rounded-[32px] border border-gold-300/15 bg-navy-900/30 p-8 text-center backdrop-blur-sm sm:p-12">
           <h2 className="text-2xl font-light text-gold-50 sm:text-3xl">
-            Ready to find{" "}
-            <span className="font-semibold text-gold-DEFAULT">
-              trusted support?
-            </span>
+            Ready to find trusted support?           
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-gold-200/80 sm:text-base">
             Begin with confidence. We coordinate and support every moment so you

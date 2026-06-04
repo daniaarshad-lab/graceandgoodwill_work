@@ -3,16 +3,17 @@ import React, { ButtonHTMLAttributes } from "react";
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   text?: string;
   variant?:
-    | "primary"
-    | "secondary"
-    | "outline"
-    | "navy"
-    | "gold"
-    | "goldDarker"
-    | "whatsapp"
-    | "ghost-gold"
-    | "danger"
-    | "selectable";
+  | "primary"
+  | "secondary"
+  | "outline"
+  | "navy"
+  | "gold"
+  | "goldDarker"
+  | "whatsapp"
+  | "ghost-gold"
+  | "danger"
+  | "selectable"
+  | "goldBrown";
   isSelected?: boolean;
   size?: "sm" | "md" | "lg" | "custom";
   asChild?: boolean;
@@ -59,6 +60,8 @@ function Button({
     selectable: isSelected
       ? "bg-gold-muted/15 border-2 border-gold-muted text-gold-200 shadow-[0_0_15px_rgba(160,128,84,0.18)] hover:bg-gold-muted/25 hover:text-white hover:-translate-y-[1px] hover:shadow-[0_8px_24px_rgba(160,128,84,0.22)] active:translate-y-0 active:shadow-none"
       : "bg-navy-900/40 border border-gold-muted/30 text-gold-200/60 hover:bg-gold-muted/10 hover:border-gold-muted/50 hover:text-white hover:-translate-y-[1px] hover:shadow-[0_8px_24px_rgba(160,128,84,0.12)] active:translate-y-0 active:shadow-none",
+    goldBrown:
+      "bg-[#8c5713] text-white border-2 border-[#7b4806] hover:bg-[#9c661c] hover:border-[#6b420e] hover:text-white hover:-translate-y-[1px] hover:shadow-[0_8px_30px_rgba(140,87,19,0.25)] active:translate-y-0 active:shadow-none",
   };
 
   const sizes = {
@@ -68,9 +71,8 @@ function Button({
     custom: "",
   };
 
-  const combinedClassName = `${baseStyles} ${variants[variant]} ${sizes[size]} ${
-    fullWidth ? "w-full" : ""
-  } ${className}`;
+  const combinedClassName = `${baseStyles} ${variants[variant]} ${sizes[size]} ${fullWidth ? "w-full" : ""
+    } ${className}`;
 
   if (asChild && React.isValidElement(children)) {
     return React.cloneElement(children, {

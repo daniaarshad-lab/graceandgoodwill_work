@@ -16,13 +16,21 @@ export default function FAQPage() {
 
       <div className="mx-auto max-w-4xl">
         <section className="mb-16 text-center">
-          <p className="inline-block rounded-full border border-gold-500/25 bg-gold-500/5 px-4 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-gold-300">
+          {/* <p className="inline-block rounded-full border border-gold-500/25 bg-gold-500/5 px-4 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-gold-300">
             Support Desk
-          </p>
-          <h1 className="mt-6 text-4xl font-light tracking-tight text-gold-50 sm:text-5xl md:text-6xl">
-            Frequently Asked{" "}
-            <span className="font-semibold text-gold-DEFAULT">Questions</span>
-          </h1>
+          </p> */}
+
+          <div className="flex items-center justify-center gap-4 mb-8">
+            <div className="h-px w-10 bg-gradient-to-r from-transparent to-gold-400/50" />
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight  text-gold-darker">
+              Frequently Asked Questions
+            </h1>
+            <div className="h-px w-10 bg-gradient-to-l from-transparent to-gold-400/50" />
+          </div>
+
+          {/* <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight  text-gold-darker">
+            Frequently Asked Questions
+          </h1> */}
           <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-gold-200/80 sm:text-lg">
             Find answers to common questions about matching, continuity, and how
             we coordinate trustworthy live-in support.

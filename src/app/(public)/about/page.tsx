@@ -7,7 +7,7 @@ export default function AboutPage() {
   return (
     <main className="container-wrapper flex min-h-screen flex-col gap-10 py-16">
       {/* ── REDESIGNED HERO ─────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-b from-navy-950 to-navy-900 text-gold-50 shadow-elegant ring-1 ring-gold-400/10 px-8 py-14 sm:px-12 sm:py-16">
+      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-b from-navy-950 to-navy-900 text-gold-50 shadow-elegant ring-1 ring-gold-400/10 px-6 py-12 sm:px-12 sm:py-16">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gold-400/5 rounded-full blur-[120px] pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-navy-800/30 rounded-full blur-[100px] pointer-events-none" />
 
@@ -72,7 +72,7 @@ export default function AboutPage() {
           <div className="relative text-center mb-14 px-4">
             <span
               aria-hidden="true"
-              className="pointer-events-none absolute -top-10 left-0 right-0 mx-auto text-[6rem] leading-none text-gold-400/50 font-serif select-none"
+              className="pointer-events-none absolute -top-8 sm:-top-10 left-0 right-0 mx-auto text-[4rem] sm:text-[6rem] leading-none text-gold-400/50 font-serif select-none"
             >
               &ldquo;
             </span>
@@ -268,7 +268,7 @@ Questa esperienza, insieme al mio background professionale a sostegno delle pers
       */}
 
       {/* ── SECTION 2 · WHY WE STARTED ──────────────────────────────────────── */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-navy-950 to-navy-900 text-gold-50 shadow-elegant ring-1 ring-gold-400/10 px-8 py-16 sm:px-12 sm:py-20 lg:p-24 mb-24">
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-navy-950 to-navy-900 text-gold-50 shadow-elegant ring-1 ring-gold-400/10 px-6 py-12 sm:px-12 sm:py-20 lg:p-24 mb-24">
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gold-400/5 rounded-full blur-[140px] pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-navy-800/30 rounded-full blur-[120px] pointer-events-none" />
 

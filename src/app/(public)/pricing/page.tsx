@@ -152,7 +152,7 @@ export default function PricingPage() {
             <div
               key={plan.name}
               className={[
-                "relative flex flex-col rounded-3xl p-8 lg:p-10 border group transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] transform h-full",
+                "relative flex flex-col rounded-3xl p-6 sm:p-8 lg:p-10 border group transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] transform h-full",
                 plan.featured
                   ? "border-gold-400/40 shadow-[0_15px_40px_rgba(212,175,55,0.08)] ring-1 ring-gold-muted/20 scale-[1.02] z-10 md:-translate-y-2 " +
                   "hover:scale-[1.03] hover:-translate-y-3 hover:shadow-[0_20px_50px_rgba(212,175,55,0.15)] hover:border-gold-400/60"
@@ -323,7 +323,7 @@ export default function PricingPage() {
             <div
               key={plan.name}
               className={[
-                "relative flex flex-col rounded-3xl p-8 lg:p-10 border group transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] transform h-full",
+                "relative flex flex-col rounded-3xl p-6 sm:p-8 lg:p-10 border group transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] transform h-full",
                 plan.featured
                   ? "border-gold-400/40 shadow-[0_15px_40px_rgba(212,175,55,0.08)] ring-1 ring-gold-muted/20 scale-[1.02] z-10 md:-translate-y-2 " +
                   "hover:scale-[1.03] hover:-translate-y-3 hover:shadow-[0_20px_50px_rgba(212,175,55,0.15)] hover:border-gold-400/60"

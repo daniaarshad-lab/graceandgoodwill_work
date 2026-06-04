@@ -100,7 +100,7 @@ export default function HowItWorksPage() {
                   </div>
 
                   <div
-                    className={`ml-16 w-auto rounded-[24px] border border-gold-300/10 bg-navy-900/40 p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)] md:ml-0 md:w-[calc(50%-40px)] ${
+                    className={`ml-16 w-auto rounded-[24px] border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)] md:ml-0 md:w-[calc(50%-40px)] ${
                       isEven ? "md:mr-auto" : "md:ml-auto"
                     }`}
                   >
@@ -139,7 +139,7 @@ export default function HowItWorksPage() {
           </div>
         </section>
 
-        <section className="mt-24 rounded-[32px] border border-gold-300/15 bg-navy-900/30 p-8 text-center backdrop-blur-sm sm:p-12">
+        <section className="mt-24 rounded-[32px] border border-gold-300/15 bg-navy-900/30 p-6 sm:p-8 md:p-12 text-center backdrop-blur-sm">
           <h2 className="text-2xl font-light text-gold-50 sm:text-3xl">
             Ready to find trusted support?           
           </h2>

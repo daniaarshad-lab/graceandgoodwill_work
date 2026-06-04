@@ -20,13 +20,9 @@ export default function AboutPage() {
             <div className="h-px w-10 bg-gradient-to-l from-transparent to-gold-400/50" />
           </div>
 
-          {/* Headline */}
-          {/* <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight mb-8 text-gold-darker">
-            A service built around people.
-          </h1> */}
 
           <div className="space-y-5 text-base sm:text-lg text-gold-200/90 leading-relaxed max-w-3xl">
-            
+
             <p className="text-sm sm:text-base text-gold-200/70">
               Grace &amp; Goodwill was created from real experience and a belief
               that support should feel reassuring from the very beginning.
@@ -84,13 +80,13 @@ export default function AboutPage() {
 
           <div className="space-y-8 text-base sm:text-lg text-gold-100/90 leading-relaxed font-light">
             <p>
-Nel corso della mia vita sono stato attratto dall'aiutare gli altri, sia sostenendo professionalmente le persone vulnerabili, prendendomi cura dei membri della famiglia, sia stando al fianco di coloro che affrontano momenti difficili della vita. Ho sempre creduto che ogni persona meriti di essere trattata con dignità, gentilezza, compassione e genuino rispetto.</p>
+              Nel corso della mia vita sono stato attratto dall'aiutare gli altri, sia sostenendo professionalmente le persone vulnerabili, prendendomi cura dei membri della famiglia, sia stando al fianco di coloro che affrontano momenti difficili della vita. Ho sempre creduto che ogni persona meriti di essere trattata con dignità, gentilezza, compassione e genuino rispetto.</p>
             <p>
-Dopo aver trascorso anni lavorando all'interno del Probation Service, mi sono reso conto che il mio scopo non era semplicemente quello di lavorare all'interno di un sistema, ma di creare qualcosa che potesse fare una differenza duratura nella vita delle persone. Grace & Goodwill si fonda sulla convinzione che le famiglie meritano onestà, gli assistenti meritano rispetto e le persone che ricevono sostegno meritano continuità, fiducia e un legame umano significativo. </p>
+              Dopo aver trascorso anni lavorando all'interno del Probation Service, mi sono reso conto che il mio scopo non era semplicemente quello di lavorare all'interno di un sistema, ma di creare qualcosa che potesse fare una differenza duratura nella vita delle persone. Grace & Goodwill si fonda sulla convinzione che le famiglie meritano onestà, gli assistenti meritano rispetto e le persone che ricevono sostegno meritano continuità, fiducia e un legame umano significativo. </p>
             <p>
-Mia sorella Erica è stata una delle mie più grandi maestre nella vita. Sostenerla e sostenerla nel corso degli anni mi ha fatto capire in prima persona quanto siano importanti la dignità, la pazienza, la coerenza e la genuina connessione umana per il benessere di una persona. Mi ha mostrato la differenza che può fare il giusto sostegno, non solo per la persona che riceve assistenza, ma per le persone che la amano.            </p>
+              Mia sorella Erica è stata una delle mie più grandi maestre nella vita. Sostenerla e sostenerla nel corso degli anni mi ha fatto capire in prima persona quanto siano importanti la dignità, la pazienza, la coerenza e la genuina connessione umana per il benessere di una persona. Mi ha mostrato la differenza che può fare il giusto sostegno, non solo per la persona che riceve assistenza, ma per le persone che la amano.            </p>
             <p>
-Questa esperienza, insieme al mio background professionale a sostegno delle persone vulnerabili, continua a plasmare ogni decisione che prendiamo in Grace & Goodwill.            </p>
+              Questa esperienza, insieme al mio background professionale a sostegno delle persone vulnerabili, continua a plasmare ogni decisione che prendiamo in Grace & Goodwill.            </p>
 
             <div className="mt-12 pt-10 border-t border-gold-400/15">
               <p className="italic text-lg sm:text-xl text-gold-300/90 font-serif leading-relaxed text-center">
@@ -324,7 +320,7 @@ Questa esperienza, insieme al mio background professionale a sostegno delle pers
                 we make at Grace &amp; Goodwill.
               </p>
               <p>
-               At the heart of Grace &amp; Goodwill is a simple belief: when people feel seen, valued, respected and genuinely cared for, lives change. Our mission is to build those relationships, create that trust, and leave the world a little better than we found it, one person, one family and one act of kindness at a time.
+                At the heart of Grace &amp; Goodwill is a simple belief: when people feel seen, valued, respected and genuinely cared for, lives change. Our mission is to build those relationships, create that trust, and leave the world a little better than we found it, one person, one family and one act of kindness at a time.
               </p>
 
               {/* Featured Closing Mission Pull-Quote

@@ -5,7 +5,7 @@ import {
   UpdateCarerProfilePayload,
   UpdateAvailabilityPayload,
 } from "@/types/carer.types";
-import { CarerDocument } from "@/app/carer/types/carer.types";
+import { CarerDocument } from "@/app/(protected)/carer/types/carer.types";
 
 interface CarerState {
   profile: CarerProfile | null;

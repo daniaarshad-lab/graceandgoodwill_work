@@ -1,10 +1,14 @@
 "use client";
 
+import React from "react";
 import Link from "next/link";
-import { useAuth } from "@/contexts/AuthContext";
-import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { useRouter, usePathname } from "next/navigation";
 import Button from "./Button";
+import { useAppSelector, useAppDispatch } from "@/store/hooks";
+import { logout as logoutThunk } from "@/store/slices/authSlice";
 
+// Nav links are defined outside the component so they are never recreated.
 const navLinks = [
   { href: "/about", label: "About Us" },
   { href: "/services", label: "Services" },
@@ -15,12 +19,21 @@ const navLinks = [
   { href: "/faq", label: "FAQ" },
 ];
 
-export default function SiteHeader() {
-  const { user, isAuthenticated, logout } = useAuth();
+// SiteHeader reads user and isAuthenticated directly from the Redux store via
+// granular selectors instead of consuming the full AuthContext. This means the
+// header re-renders ONLY when user or isAuthenticated actually change — NOT
+// when isLoading toggles during a getProfile fetch, which was the cause of the
+// extra render cycles observed in dev. React.memo is retained as a secondary
+// guard against parent-triggered re-renders.
+function SiteHeader() {
+  const user = useAppSelector((state) => state.auth.user);
+  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
+  const dispatch = useAppDispatch();
   const router = useRouter();
+  const pathname = usePathname();
 
   const handleLogout = async () => {
-    await logout();
+    await dispatch(logoutThunk());
     router.push("/login");
   };
 
@@ -42,6 +55,8 @@ export default function SiteHeader() {
           <img
             src="/website_logo.png"
             alt="Grace & Goodwill logo"
+            width={48}
+            height={48}
             className="h-10 w-10 sm:h-12 sm:w-12 object-contain drop-shadow-elegant transition-transform duration-300 group-hover:scale-105"
           />
               <span
@@ -64,27 +79,32 @@ export default function SiteHeader() {
         </Link>
 
         <nav className="hidden items-center gap-6 md:flex">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="body-small font-medium text-gold-200 transition hover:text-gold-50"
-            >
-              {link.label}
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            const isActive = pathname === link.href;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                prefetch={true}
+                className={`body-small font-medium transition hover:text-gold-50 ${
+                  isActive ? "text-gold-50" : "text-gold-200"
+                }`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
 
-          {/* Dynamic Portal Link */}
-          {portalLink && (
+          {portalLink && !pathname.startsWith(portalLink.href) && (
             <Link
               href={portalLink.href}
+              prefetch={true}
               className="body-small font-semibold text-gold-DEFAULT transition hover:text-gold-200"
             >
               {portalLink.label}
             </Link>
           )}
 
-          {/* Authentication Actions */}
           {isAuthenticated ? (
             <Button
               onClick={handleLogout}
@@ -98,7 +118,10 @@ export default function SiteHeader() {
             <div className="flex items-center gap-3">
               <Link
                 href="/login"
-                className="body-small font-semibold text-gold-200 hover:text-gold-50"
+                prefetch={true}
+                className={`body-small font-semibold hover:text-gold-50 ${
+                  pathname === "/login" ? "text-gold-50" : "text-gold-200"
+                }`}
               >
                 Login
               </Link>
@@ -109,3 +132,5 @@ export default function SiteHeader() {
     </header>
   );
 }
+
+export default React.memo(SiteHeader);

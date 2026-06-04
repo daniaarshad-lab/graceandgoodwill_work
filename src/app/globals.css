@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -15,7 +15,7 @@
     --color-gold-darker: #d1a555a3;
 
     /* Scalable Global Typography Tokens */
-    --font-family-poppins: 'Poppins', 'Segoe UI', Inter, sans-serif;
+    --font-family-poppins: "Poppins", "Segoe UI", Inter, sans-serif;
 
     --size-h1: 2.25rem;
     --size-h2: 1.75rem;
@@ -199,7 +199,7 @@
   object-fit: cover;
   object-position: center top;
   display: block;
-  filter: blur(16px) saturate(0.80) brightness(1.05);
+  filter: blur(16px) saturate(0.8) brightness(1.05);
   transform: scale(1.12);
 }
 
@@ -241,7 +241,7 @@
   backdrop-filter: blur(32px) saturate(1.3);
   -webkit-backdrop-filter: blur(32px) saturate(1.3);
   box-shadow:
-    0 0 0 1px rgba(160, 128, 84, 0.20),
+    0 0 0 1px rgba(160, 128, 84, 0.2),
     0 2px 0 0 rgba(255, 255, 255, 0.04) inset,
     0 24px 60px rgba(0, 0, 0, 0.35),
     0 8px 24px rgba(0, 0, 0, 0.22),
@@ -252,11 +252,11 @@
 
 .asl-card:hover {
   box-shadow:
-    0 0 0 1px rgba(160, 128, 84, 0.30),
+    0 0 0 1px rgba(160, 128, 84, 0.3),
     0 2px 0 0 rgba(255, 255, 255, 0.06) inset,
     0 32px 80px rgba(0, 0, 0, 0.42),
     0 12px 32px rgba(0, 0, 0, 0.28),
-    0 0 120px rgba(160, 128, 84, 0.10),
+    0 0 120px rgba(160, 128, 84, 0.1),
     0 0 200px rgba(160, 128, 84, 0.06);
 }
 
@@ -283,17 +283,17 @@
   background:
     linear-gradient(to right,
       rgba(5, 8, 20, 0.25) 0%,
-      rgba(5, 8, 20, 0.10) 60%,
+      rgba(5, 8, 20, 0.1) 60%,
       rgba(9, 14, 32, 0.45) 100%),
     linear-gradient(to bottom,
-      rgba(5, 8, 20, 0.30) 0%,
+      rgba(5, 8, 20, 0.3) 0%,
       transparent 30%,
       transparent 70%,
-      rgba(5, 8, 20, 0.40) 100%);
+      rgba(5, 8, 20, 0.4) 100%);
 }
 
 .asl-left::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 8%;
   right: 0;
@@ -301,8 +301,8 @@
   width: 1px;
   background: linear-gradient(to bottom,
       transparent 0%,
-      rgba(160, 128, 84, 0.30) 25%,
-      rgba(160, 128, 84, 0.30) 75%,
+      rgba(160, 128, 84, 0.3) 25%,
+      rgba(160, 128, 84, 0.3) 75%,
       transparent 100%);
   z-index: 2;
 }
@@ -335,7 +335,7 @@
   letter-spacing: -0.03em;
   line-height: 1.15;
   text-shadow: 0 0 32px rgba(160, 128, 84, 0.18);
-  font-family: 'Poppins', 'Segoe UI', sans-serif;
+  font-family: "Poppins", "Segoe UI", sans-serif;
 }
 
 .asl-subtitle {
@@ -344,7 +344,7 @@
   margin: 0;
   line-height: 1.6;
   letter-spacing: 0.01em;
-  font-family: 'Poppins', 'Segoe UI', sans-serif;
+  font-family: "Poppins", "Segoe UI", sans-serif;
   font-weight: 400;
 }
 
@@ -394,20 +394,20 @@
 
 .asl-right input:focus {
   outline: none !important;
-  border-color: rgba(160, 128, 84, 0.60) !important;
+  border-color: rgba(160, 128, 84, 0.6) !important;
   background: rgba(255, 255, 255, 0.06) !important;
   box-shadow:
-    0 0 0 3px rgba(160, 128, 84, 0.10),
+    0 0 0 3px rgba(160, 128, 84, 0.1),
     0 1px 8px rgba(0, 0, 0, 0.28) !important;
 }
 
 .asl-right input.border-red-500 {
   border-color: rgba(239, 68, 68, 0.55) !important;
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.10) !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
 }
 
 .asl-right [role="button"] {
-  color: rgba(160, 128, 84, 0.50) !important;
+  color: rgba(160, 128, 84, 0.5) !important;
   transition: color 0.2s ease !important;
 }
 
@@ -514,9 +514,9 @@
 .pg-card {
   cursor: pointer;
   transition:
-    transform 0.30s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    box-shadow 0.30s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    border-color 0.30s ease;
+    transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    box-shadow 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    border-color 0.3s ease;
 }
 
 .pg-card:hover {
@@ -532,8 +532,8 @@
   cursor: pointer;
   transform: translateY(-6px);
   transition:
-    transform 0.30s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    box-shadow 0.30s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    box-shadow 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .pg-card--featured:hover {

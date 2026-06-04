@@ -7,21 +7,29 @@ import {
 
 export const authService = {
   async register(payload: RegisterPayload): Promise<AuthResponse> {
+    const sanitizedPayload = {
+      ...payload,
+      email: payload.email.trim(),
+    };
+    const body = JSON.stringify(sanitizedPayload);
     const data = await apiFetch("/auth/register", {
       method: "POST",
-      body: JSON.stringify(payload),
+      body,
     });
-    if (data.accessToken) {
-      localStorage.setItem("accessToken", data.accessToken);
-      localStorage.setItem("refreshToken", data.refreshToken);
-    }
+    // Do NOT store tokens on registration.
+    // The user should log in manually after registering.
     return data;
   },
 
   async login(payload: LoginPayload): Promise<AuthResponse> {
+    const sanitizedPayload = {
+      ...payload,
+      email: payload.email.trim(),
+    };
+    const body = JSON.stringify(sanitizedPayload);
     const data = await apiFetch("/auth/login", {
       method: "POST",
-      body: JSON.stringify(payload),
+      body,
     });
     if (data.accessToken) {
       localStorage.setItem("accessToken", data.accessToken);

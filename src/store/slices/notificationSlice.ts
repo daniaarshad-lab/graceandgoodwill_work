@@ -50,7 +50,6 @@ const notificationSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // Fetch
     builder.addCase(fetchNotifications.pending, (state) => {
       state.loading = true;
       state.error = null;
@@ -68,7 +67,6 @@ const notificationSlice = createSlice({
       state.error = action.payload || "Failed to fetch notifications";
     });
 
-    // Mark Read
     builder.addCase(
       markNotificationRead.fulfilled,
       (state, action: PayloadAction<string>) => {

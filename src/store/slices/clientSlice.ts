@@ -42,7 +42,6 @@ const clientSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // Fetch
     builder.addCase(fetchClientProfile.pending, (state) => {
       state.loading = true;
       state.error = null;
@@ -59,7 +58,6 @@ const clientSlice = createSlice({
       state.error = action.payload || "Failed to fetch client profile";
     });
 
-    // Update
     builder.addCase(updateClientProfile.pending, (state) => {
       state.loading = true;
       state.error = null;

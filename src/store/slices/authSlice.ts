@@ -13,11 +13,10 @@ const initialState: AuthState = {
   token: null,
   role: null,
   isAuthenticated: false,
-  loading: true,
+  loading: false,
   error: null,
 };
 
-// Async Thunks
 export const login = createAsyncThunk<
   AuthResponse,
   LoginPayload,
@@ -115,7 +114,6 @@ const authSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // Login
     builder.addCase(login.pending, (state) => {
       state.loading = true;
       state.error = null;
@@ -142,22 +140,16 @@ const authSlice = createSlice({
       state.role = null;
     });
 
-    // Register
     builder.addCase(register.pending, (state) => {
       state.loading = true;
       state.error = null;
     });
     builder.addCase(
       register.fulfilled,
-      (state, action: PayloadAction<AuthResponse>) => {
+      (state) => {
+        // Registration succeeded — but do NOT auto-authenticate.
+        // The user will log in manually after registration.
         state.loading = false;
-        state.isAuthenticated = true;
-        state.token = action.payload.accessToken;
-        state.user = action.payload.user;
-        state.role = action.payload.user.role || null;
-        if (typeof window !== "undefined") {
-          localStorage.setItem("user", JSON.stringify(action.payload.user));
-        }
       },
     );
     builder.addCase(register.rejected, (state, action) => {
@@ -169,7 +161,6 @@ const authSlice = createSlice({
       state.role = null;
     });
 
-    // Get Profile
     builder.addCase(getProfile.pending, (state) => {
       state.loading = true;
       state.error = null;
@@ -200,7 +191,6 @@ const authSlice = createSlice({
       }
     });
 
-    // Logout
     builder.addCase(logout.fulfilled, (state) => {
       state.user = null;
       state.token = null;

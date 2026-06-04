@@ -1,4 +1,3 @@
-// Email validation
 export const validateEmail = (email: string): string | null => {
   if (!email.trim()) {
     return "Email is required";
@@ -10,7 +9,6 @@ export const validateEmail = (email: string): string | null => {
   return null;
 };
 
-// Password validation
 export const validatePassword = (password: string): string | null => {
   if (!password) {
     return "Password is required";
@@ -30,7 +28,6 @@ export const validatePassword = (password: string): string | null => {
   return null;
 };
 
-// Password confirmation validation
 export const validatePasswordConfirm = (
   password: string,
   confirmPassword: string,
@@ -44,7 +41,6 @@ export const validatePasswordConfirm = (
   return null;
 };
 
-// Full name validation
 export const validateFullName = (name: string): string | null => {
   if (!name.trim()) {
     return "Full name is required";
@@ -58,7 +54,6 @@ export const validateFullName = (name: string): string | null => {
   return null;
 };
 
-// Role validation
 export const validateRole = (role: string): string | null => {
   if (!role) {
     return "Please select a role";
@@ -66,7 +61,6 @@ export const validateRole = (role: string): string | null => {
   return null;
 };
 
-// First name validation
 export const validateFirstName = (name: string): string | null => {
   if (!name.trim()) {
     return "First name is required";
@@ -80,7 +74,6 @@ export const validateFirstName = (name: string): string | null => {
   return null;
 };
 
-// Last name validation
 export const validateLastName = (name: string): string | null => {
   if (!name.trim()) {
     return "Last name is required";
@@ -94,7 +87,6 @@ export const validateLastName = (name: string): string | null => {
   return null;
 };
 
-// Phone number validation
 export const validatePhone = (phone: string): string | null => {
   if (!phone.trim()) {
     return "Phone number is required";
@@ -106,7 +98,6 @@ export const validatePhone = (phone: string): string | null => {
   return null;
 };
 
-// Login form validation
 export interface LoginFormErrors {
   email?: string;
   password?: string;
@@ -128,7 +119,6 @@ export const validateLoginForm = (
   return errors;
 };
 
-// Register form validation
 export interface RegisterFormErrors {
   firstName?: string;
   lastName?: string;

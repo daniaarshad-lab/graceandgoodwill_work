@@ -1,8 +1,6 @@
-
-
-import { ReactNode, useState, useEffect } from "react";
+import { ReactNode } from "react";
+import Image from "next/image";
 import authHero from "@/assets/auth/auth-hero.png";
-import authBg from "@/assets/auth/auth-bg.png";
 
 interface AuthSplitLayoutProps {
   title: string;
@@ -12,27 +10,14 @@ interface AuthSplitLayoutProps {
   children: ReactNode;
 }
 
-export default function AuthSplitLayout({
+function AuthSplitLayoutContent({
   title,
   subtitle,
   heroImage,
   heroPosition,
+  option = "2",
   children,
-}: AuthSplitLayoutProps) {
-  const [option, setOption] = useState<"1" | "2">("2"); // Default to Option 2
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const opt = params.get("option");
-    if (opt === "1") {
-      setOption("1");
-    } else if (opt === "2") {
-      setOption("2");
-    }
-  }, []);
-
-  const bgSrc = authHero.src;
-
+}: AuthSplitLayoutProps & { option?: string }) {
   // Choose correct image asset for each option
   const defaultHero = option === "1" ? "/login_option1.jpg" : "/sample.png";
   const heroSrc = heroImage ?? defaultHero;
@@ -44,33 +29,44 @@ export default function AuthSplitLayout({
   return (
     <div className="asl-root">
       <div className="asl-bg" aria-hidden="true">
-        <img src={bgSrc} alt="" className="asl-bg-img" />
+        <Image
+          src={authHero}
+          alt=""
+          className="asl-bg-img"
+          placeholder="blur"
+        />
         <div className="asl-bg-overlay" />
       </div>
 
       <div className="asl-wrapper">
         <div className="asl-card">
-          <div className="asl-left relative overflow-hidden" aria-hidden="true" style={{ backgroundColor: "#0a1128" }}>
+          <div
+            className="asl-left relative overflow-hidden"
+            aria-hidden="true"
+            style={{ backgroundColor: "#0a1128" }}
+          >
             {/* Blurred background image with ambient texture */}
-            <img
+            <Image
               src={heroSrc}
               alt=""
-              className="asl-left-img absolute inset-0 w-full h-full object-cover"
+              fill
+              className="asl-left-img object-cover"
               style={{
                 objectPosition: finalPosition,
                 transform: "scaleX(-1)",
                 filter: "blur(16px) brightness(0.35) saturate(0.7)",
-                opacity: 0.55
+                opacity: 0.55,
               }}
             />
             {/* Brand colorized navy and gold gradient overlay */}
             <div className="absolute inset-0 bg-gradient-to-tr from-[#0a1128]/95 via-[#0a1128]/72 to-[#A08054]/22" />
 
             {/* Sharp original foreground image with mask fading smoothly into the brand background */}
-            <img
+            <Image
               src={heroSrc}
               alt="Caregiver with client"
-              className="asl-left-img absolute inset-0 w-full h-full object-cover"
+              fill
+              className="asl-left-img object-cover"
               style={{
                 // objectPosition: finalPosition,
                 // transform: "scaleX(-1)",
@@ -83,7 +79,6 @@ export default function AuthSplitLayout({
           </div>
 
           <div className="asl-right">
-
             <div className="asl-header">
               <h1 className="asl-title">{title}</h1>
               {subtitle && <p className="asl-subtitle">{subtitle}</p>}
@@ -92,8 +87,12 @@ export default function AuthSplitLayout({
           </div>
         </div>
       </div>
-
-
     </div>
   );
+}
+
+export default function AuthSplitLayout(
+  props: AuthSplitLayoutProps & { option?: string },
+) {
+  return <AuthSplitLayoutContent {...props} />;
 }

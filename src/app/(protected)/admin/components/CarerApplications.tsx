@@ -3,21 +3,27 @@ import SectionCard from "./shared/SectionCard";
 import StatusBadge from "./shared/StatusBadge";
 import { CarerApplication } from "../types/admin.types";
 import Button from "@/components/Button";
+import { ExternalLink, Check, X } from "lucide-react";
 
 interface CarerApplicationsProps {
   carers: CarerApplication[];
   onReject: (id: string) => void;
   setSelectedCarerForApproval: (carer: CarerApplication | null) => void;
+  onUpdateDocumentStatus?: (
+    docId: string,
+    status: "VERIFIED" | "REJECTED",
+  ) => Promise<void> | void;
 }
 
 export default function CarerApplications({
   carers,
   onReject,
   setSelectedCarerForApproval,
+  onUpdateDocumentStatus,
 }: CarerApplicationsProps) {
   const [filter, setFilter] = useState<
     "All" | "Pending" | "Approved" | "Rejected"
-  >("All");
+  >("Pending");
   const [selectedCarer, setSelectedCarer] = useState<CarerApplication | null>(
     null,
   );
@@ -113,11 +119,12 @@ export default function CarerApplications({
                   {carer.documents.map((doc) => (
                     <div
                       key={doc.name}
-                      className="rounded-lg bg-navy-950 p-2 border border-gold-300/5 text-center text-[10px]"
+                      className="rounded-lg bg-navy-950 p-2 border border-gold-300/5 flex flex-col justify-between items-center text-[10px] min-h-[75px]"
                     >
-                      <p className="font-medium text-gold-100/70 truncate">
+                      <p className="font-medium text-gold-100/70 truncate w-full text-center">
                         {doc.name}
                       </p>
+
                       <span
                         className={`mt-1 inline-block font-bold uppercase tracking-wider ${
                           doc.status === "Verified"
@@ -129,6 +136,43 @@ export default function CarerApplications({
                       >
                         {doc.status}
                       </span>
+
+                      {doc.id && doc.fileUrl && (
+                        <div className="mt-2 flex items-center justify-center gap-2 border-t border-gold-300/5 pt-1.5 w-full">
+                          <a
+                            href={doc.fileUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-gold-100/40 hover:text-gold flex items-center gap-0.5"
+                            title="View Document"
+                          >
+                            <ExternalLink className="h-3 w-3" />
+                          </a>
+
+                          {doc.status !== "Verified" && (
+                            <>
+                              <button
+                                onClick={() =>
+                                  onUpdateDocumentStatus?.(doc.id!, "VERIFIED")
+                                }
+                                className="text-emerald-500 hover:text-emerald-400 p-0.5 rounded hover:bg-emerald-500/10 transition"
+                                title="Approve Document"
+                              >
+                                <Check className="h-3 w-3" />
+                              </button>
+                              <button
+                                onClick={() =>
+                                  onUpdateDocumentStatus?.(doc.id!, "REJECTED")
+                                }
+                                className="text-rose-500 hover:text-rose-400 p-0.5 rounded hover:bg-rose-500/10 transition"
+                                title="Reject Document"
+                              >
+                                <X className="h-3 w-3" />
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -275,6 +319,108 @@ export default function CarerApplications({
                     >
                       {s}
                     </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="border-t border-gold-300/5 pt-4">
+                <p className="text-xs text-gold-100/40 font-semibold uppercase mb-2">
+                  Compliance Documents Dossier
+                </p>
+                <div className="space-y-2">
+                  {selectedCarer.documents.map((doc) => (
+                    <div
+                      key={doc.name}
+                      className="flex items-center justify-between rounded-xl bg-navy-950 p-3 border border-gold-300/5 text-xs"
+                    >
+                      <div className="flex-1">
+                        <p className="font-bold text-gold-200">{doc.name}</p>
+                        <p className="text-[10px] text-gold-100/40 mt-0.5">
+                          Status:{" "}
+                          <span
+                            className={
+                              doc.status === "Verified"
+                                ? "text-emerald-400 font-bold"
+                                : doc.status === "Uploaded"
+                                  ? "text-gold-DEFAULT font-bold"
+                                  : "text-rose-400 font-bold"
+                            }
+                          >
+                            {doc.status}
+                          </span>
+                        </p>
+                      </div>
+
+                      {doc.id && doc.fileUrl && (
+                        <div className="flex items-center gap-3">
+                          <a
+                            href={doc.fileUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1.5 rounded-lg border border-gold-300/10 bg-navy-900/50 px-2.5 py-1 text-[11px] font-medium text-gold hover:border-gold-300/30 transition"
+                          >
+                            <ExternalLink className="h-3.5 w-3.5" />
+                            View
+                          </a>
+
+                          {doc.status !== "Verified" && (
+                            <div className="flex gap-1">
+                              <button
+                                onClick={async () => {
+                                  if (onUpdateDocumentStatus) {
+                                    await onUpdateDocumentStatus(
+                                      doc.id!,
+                                      "VERIFIED",
+                                    );
+                                  }
+                                  setSelectedCarer((prev) => {
+                                    if (!prev) return null;
+                                    return {
+                                      ...prev,
+                                      documents: prev.documents.map((d) =>
+                                        d.id === doc.id
+                                          ? { ...d, status: "Verified" }
+                                          : d,
+                                      ),
+                                    };
+                                  });
+                                }}
+                                className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 transition"
+                                title="Approve Document"
+                              >
+                                <Check className="h-4 w-4" />
+                              </button>
+
+                              <button
+                                onClick={async () => {
+                                  if (onUpdateDocumentStatus) {
+                                    await onUpdateDocumentStatus(
+                                      doc.id!,
+                                      "REJECTED",
+                                    );
+                                  }
+                                  setSelectedCarer((prev) => {
+                                    if (!prev) return null;
+                                    return {
+                                      ...prev,
+                                      documents: prev.documents.map((d) =>
+                                        d.id === doc.id
+                                          ? { ...d, status: "Rejected" }
+                                          : d,
+                                      ),
+                                    };
+                                  });
+                                }}
+                                className="flex h-7 w-7 items-center justify-center rounded-lg bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500/20 transition"
+                                title="Reject Document"
+                              >
+                                <X className="h-4 w-4" />
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   ))}
                 </div>
               </div>

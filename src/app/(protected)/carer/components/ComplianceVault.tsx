@@ -55,8 +55,9 @@ export default function ComplianceVault({
             Compliance Document Upload
           </h3>
           <p className="text-xs text-gold-100/60 leading-relaxed">
-            Upload official PDF scans of your credentials to become a verified
-            live-in carer. Ensure documents are clearly readable.
+            Upload official scans or photos (PDF, PNG, JPG) of your credentials
+            to become a verified live-in carer. Ensure documents are clearly
+            readable.
           </p>
 
           {/* Reusable document type uploads */}
@@ -96,10 +97,10 @@ export default function ComplianceVault({
                     fullWidth={false}
                   >
                     <label className="cursor-pointer">
-                      Upload PDF
+                      Upload File
                       <input
                         type="file"
-                        accept=".pdf"
+                        accept=".pdf,.png,.jpg,.jpeg"
                         className="hidden"
                         onChange={(e) => handleDocUpload(docType, e)}
                       />

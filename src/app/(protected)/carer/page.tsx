@@ -9,29 +9,13 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { useCarerPortal } from "./hooks/useCarerPortal";
 
-import dynamic from "next/dynamic";
+import DashboardOverview from "./components/DashboardOverview";
+import ProfileManagement from "./components/ProfileManagement";
+import ComplianceVault from "./components/ComplianceVault";
+import AvailabilitySchedule from "./components/AvailabilitySchedule";
+import UploadDocumentModal from "./components/UploadDocumentModal";
 import PortalHeader from "./components/PortalHeader";
 import PortalTabs from "./components/PortalTabs";
-
-const DashboardOverview = dynamic(
-  () => import("./components/DashboardOverview"),
-  { ssr: false },
-);
-const ProfileManagement = dynamic(
-  () => import("./components/ProfileManagement"),
-  { ssr: false },
-);
-const ComplianceVault = dynamic(() => import("./components/ComplianceVault"), {
-  ssr: false,
-});
-const AvailabilitySchedule = dynamic(
-  () => import("./components/AvailabilitySchedule"),
-  { ssr: false },
-);
-const UploadDocumentModal = dynamic(
-  () => import("./components/UploadDocumentModal"),
-  { ssr: false },
-);
 
 type TabType = "overview" | "profile" | "compliance" | "availability";
 

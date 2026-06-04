@@ -40,24 +40,22 @@ export default function ApprovalModal({
           </p>
 
           <div className="rounded-xl bg-navy-950 p-4 border border-gold-300/5 space-y-2">
-            <div className="flex justify-between">
-              <span className="font-semibold text-gold-200">
-                DBS Certificate:
-              </span>
-              <span className="font-bold text-emerald-400">Verified</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="font-semibold text-gold-200">
-                ID Verification:
-              </span>
-              <span className="font-bold text-emerald-400">Verified</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="font-semibold text-gold-200">
-                First Aid Check:
-              </span>
-              <span className="font-bold text-emerald-400">Verified</span>
-            </div>
+            {carer.documents.map((doc) => (
+              <div key={doc.name} className="flex justify-between">
+                <span className="font-semibold text-gold-200">{doc.name}:</span>
+                <span
+                  className={`font-bold ${
+                    doc.status === "Verified"
+                      ? "text-emerald-400"
+                      : doc.status === "Uploaded"
+                        ? "text-gold-DEFAULT"
+                        : "text-rose-400"
+                  }`}
+                >
+                  {doc.status}
+                </span>
+              </div>
+            ))}
           </div>
 
           <p className="text-gold-100/50 italic">

@@ -1,13 +1,219 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import {
   CarerApplication,
   ClientRequest,
   Placement,
   AdminActivity,
 } from "../types/admin.types";
-import { mockApplications } from "../data/mockApplications";
-import { mockClientRequests } from "../data/mockClientRequests";
-import { mockPlacements } from "../data/mockPlacements";
+import { adminService } from "@/services/admin/admin.service";
+
+// Helper to map backend document category to frontend status with file URLs and IDs
+const getDocDetails = (docs: any[], category: string) => {
+  const doc = docs.find((d: any) => d.fileCategory === category);
+
+  const categoryNames: Record<string, string> = {
+    CRIMINAL_RECORD_CHECK: "DBS Certificate",
+    DRIVERS_LICENSE: "Driver's License",
+    DEMENTIA_SUPPORT: "Dementia Cert",
+    NURSES_REGISTRY: "Nurses Registry",
+  };
+
+  const name = categoryNames[category] || category;
+
+  if (!doc) {
+    return {
+      name,
+      status: "Missing" as const,
+    };
+  }
+
+  let status: "Uploaded" | "Missing" | "Verified" | "Rejected" = "Uploaded";
+  if (doc.status === "VERIFIED") status = "Verified";
+  else if (doc.status === "REJECTED") status = "Rejected";
+
+  return {
+    id: doc.id,
+    name,
+    status,
+    fileCategory: doc.fileCategory,
+    fileUrl: doc.fileUrl,
+  };
+};
+
+// Helper to map backend carer structures to frontend CarerApplication format
+const mapBackendCarers = (backendCarers: any[]): CarerApplication[] => {
+  return backendCarers.map((user: any) => {
+    const profile = user.carerProfile || {};
+    const rawDocs = profile.documents || [];
+
+    const documents = [
+      getDocDetails(rawDocs, "CRIMINAL_RECORD_CHECK"),
+      getDocDetails(rawDocs, "DRIVERS_LICENSE"),
+      getDocDetails(rawDocs, "DEMENTIA_SUPPORT"),
+      getDocDetails(rawDocs, "NURSES_REGISTRY"),
+    ];
+
+    let availabilityStr = "Not configured";
+    if (profile.availability) {
+      if (typeof profile.availability === "string") {
+        availabilityStr = profile.availability;
+      } else if (Array.isArray(profile.availability)) {
+        const activeDays = profile.availability
+          .filter((d: any) => d.enabled)
+          .map((d: any) => {
+            const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+            return dayNames[d.dayOfWeek] || `Day ${d.dayOfWeek}`;
+          });
+        if (activeDays.length > 0) {
+          availabilityStr = `Active days: ${activeDays.join(", ")}`;
+        }
+      }
+    }
+
+    let dbsStatus: "Pending" | "Verified" | "Failed" = "Pending";
+    const dbsDoc = rawDocs.find(
+      (d: any) => d.fileCategory === "CRIMINAL_RECORD_CHECK",
+    );
+    if (dbsDoc) {
+      if (dbsDoc.status === "VERIFIED") dbsStatus = "Verified";
+      else if (dbsDoc.status === "REJECTED") dbsStatus = "Failed";
+    }
+
+    let status: "Pending" | "Approved" | "Rejected" = "Pending";
+    if (user.status === "APPROVED" || user.status === "ACTIVE") {
+      status = "Approved";
+    } else if (user.status === "SUSPENDED") {
+      status = "Rejected";
+    }
+
+    // Map specialties checking both careSpecialties string and careTypes array
+    let specialtiesList: string[] = [];
+    if (profile.careSpecialties) {
+      specialtiesList = profile.careSpecialties
+        .split(",")
+        .map((s: string) => s.trim())
+        .filter(Boolean);
+    } else if (profile.careTypes && Array.isArray(profile.careTypes)) {
+      specialtiesList = profile.careTypes;
+    }
+
+    return {
+      id: user.id,
+      carerProfileId: profile.id,
+      name: `${user.firstName} ${user.lastName}`,
+      experience:
+        profile.experience ||
+        (profile.experienceYears
+          ? `${profile.experienceYears} Years`
+          : "No experience listed"),
+      city: profile.city || "Unknown",
+      dbsStatus,
+      specialties: specialtiesList,
+      documents,
+      availability: availabilityStr,
+      status,
+      email: user.email,
+      phone: user.phoneNumber || "No phone listed",
+    };
+  });
+};
+
+// Helper to map backend client structures to frontend ClientRequest format
+const mapBackendRequests = (backendClients: any[]): ClientRequest[] => {
+  const requestsList: ClientRequest[] = [];
+
+  backendClients.forEach((client: any) => {
+    const profile = client.clientProfile || {};
+    const careRequests = profile.careRequests || [];
+
+    careRequests.forEach((req: any) => {
+      let status: "Unmatched" | "Matched" | "Reviewing" | "Emergency" = "Unmatched";
+      if (req.status === "MATCHED" || req.status === "PLACEMENT_CONFIRMED") {
+        status = "Matched";
+      } else if (req.isEmergency) {
+        status = "Emergency";
+      } else if (req.status === "UNDER_REVIEW") {
+        status = "Reviewing";
+      }
+
+      let urgency: "Standard" | "High" | "Emergency" = "Standard";
+      if (req.isEmergency) {
+        urgency = "Emergency";
+      } else if (req.status === "MATCHING_CARERS") {
+        urgency = "High";
+      }
+
+      requestsList.push({
+        id: req.id,
+        clientProfileId: profile.id,
+        clientName: `${client.firstName} ${client.lastName}`,
+        careType: req.careCategory || "General Care",
+        location: req.city || profile.city || "London",
+        urgency,
+        startDate: req.startDate ? new Date(req.startDate).toISOString().split('T')[0] : "As soon as possible",
+        notes: req.additionalNotes || req.requirements || "No additional notes provided.",
+        status,
+        email: client.email || req.requestorEmail || "",
+        phone: client.phoneNumber || req.requestorPhone || "No phone listed",
+      });
+    });
+  });
+
+  return requestsList;
+};
+
+// Helper to map backend placement structures to frontend Placement format
+const mapBackendPlacements = (backendPlacements: any[]): Placement[] => {
+  return backendPlacements.map((p: any) => {
+    const carerUser = p.carerProfile?.user || {};
+    const clientUser = p.clientProfile?.user || {};
+    const careReq = p.careRequest || {};
+
+    let urgency: "Standard" | "High" | "Emergency" = "Standard";
+    if (careReq.isEmergency) {
+      urgency = "Emergency";
+    }
+
+    let status: "Pending" | "Reviewing" | "Matched" | "Active" | "Completed" | "Emergency" = "Matched";
+    if (p.status === "ACTIVE") {
+      status = p.contactDetailsReleased ? "Active" : "Matched";
+    } else if (p.status === "COMPLETED") {
+      status = "Completed";
+    } else if (p.status === "TERMINATED" || p.status === "CANCELLED") {
+      status = "Completed";
+    }
+
+    const timeline = [];
+    timeline.push({
+      title: "Match Created",
+      timestamp: new Date(p.createdAt).toISOString().replace("T", " ").substring(0, 16),
+      description: `Admin assigned ${carerUser.firstName} ${carerUser.lastName} to ${clientUser.firstName} ${clientUser.lastName}.`,
+    });
+
+    if (p.contactDetailsReleased) {
+      timeline.push({
+        title: "Contacts Approved & Released",
+        timestamp: new Date(p.updatedAt).toISOString().replace("T", " ").substring(0, 16),
+        description: "Admin approved contact detail sharing.",
+      });
+    }
+
+    return {
+      id: p.id,
+      clientId: p.clientProfileId,
+      clientName: `${clientUser.firstName} ${clientUser.lastName}`,
+      carerId: p.carerProfileId,
+      carerName: `${carerUser.firstName} ${carerUser.lastName}`,
+      careType: careReq.careCategory || "General Care",
+      location: careReq.city || p.clientProfile?.city || "London",
+      urgency,
+      status,
+      contactDetailsReleased: !!p.contactDetailsReleased,
+      startDate: p.startDate ? new Date(p.startDate).toISOString().split('T')[0] : "Pending",
+      timeline,
+    };
+  });
+};
 
 export type AdminTabType =
   | "overview"
@@ -15,14 +221,15 @@ export type AdminTabType =
   | "requests"
   | "matching"
   | "placements"
-  | "emergency";
+  | "emergency"
+  | "billing";
 
 export function useAdminPortal() {
   const [activeTab, setActiveTab] = useState<AdminTabType>("overview");
 
-  const [carers, setCarers] = useState<CarerApplication[]>(mockApplications);
-  const [requests, setRequests] = useState<ClientRequest[]>(mockClientRequests);
-  const [placements, setPlacements] = useState<Placement[]>(mockPlacements);
+  const [carers, setCarers] = useState<CarerApplication[]>([]);
+  const [requests, setRequests] = useState<ClientRequest[]>([]);
+  const [placements, setPlacements] = useState<Placement[]>([]);
 
   const [activities, setActivities] = useState<AdminActivity[]>([
     {
@@ -64,180 +271,199 @@ export function useAdminPortal() {
     [],
   );
 
+  // Load carers from backend API
+  const loadCarers = useCallback(async () => {
+    try {
+      const data = await adminService.getCarers();
+      const mapped = mapBackendCarers(data);
+      setCarers(mapped);
+    } catch (err: any) {
+      console.error("Failed to load carers:", err.message);
+    }
+  }, []);
+
+  // Load client requests from backend API
+  const loadRequests = useCallback(async () => {
+    try {
+      const data = await adminService.getClients();
+      const mapped = mapBackendRequests(data);
+      setRequests(mapped);
+    } catch (err: any) {
+      console.error("Failed to load client requests:", err.message);
+    }
+  }, []);
+
+  // Load placements from backend API
+  const loadPlacements = useCallback(async () => {
+    try {
+      const data = await adminService.getPlacements();
+      const mapped = mapBackendPlacements(data);
+      setPlacements(mapped);
+    } catch (err: any) {
+      console.error("Failed to load placements:", err.message);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadCarers();
+    loadRequests();
+    loadPlacements();
+  }, [loadCarers, loadRequests, loadPlacements]);
+
   // Action: Approve Carer Application
   const handleApproveCarer = useCallback(
-    (carerId: string) => {
-      setCarers((prev) =>
-        prev.map((c) => {
-          if (c.id === carerId) {
-            logActivity(
-              `Carer '${c.name}' has been Approved and DBS verified.`,
-              "success",
-            );
-            return {
-              ...c,
-              status: "Approved",
-              dbsStatus: "Verified",
-              documents: c.documents.map((doc) => ({
-                ...doc,
-                status: "Verified",
-              })),
-            };
-          }
-          return c;
-        }),
-      );
+    async (carerId: string) => {
+      try {
+        await adminService.updateCarerStatus(carerId, "APPROVED");
+        logActivity(
+          `Carer has been Approved and account activated.`,
+          "success",
+        );
+        await loadCarers();
+      } catch (err: any) {
+        logActivity(`Failed to approve carer: ${err.message}`, "error");
+      }
       setSelectedCarerForApproval(null);
     },
-    [logActivity],
+    [loadCarers, logActivity],
   );
 
   // Action: Reject Carer Application
   const handleRejectCarer = useCallback(
-    (carerId: string) => {
-      setCarers((prev) =>
-        prev.map((c) => {
-          if (c.id === carerId) {
-            logActivity(`Carer '${c.name}' has been Rejected.`, "error");
-            return {
-              ...c,
-              status: "Rejected",
-            };
-          }
-          return c;
-        }),
-      );
+    async (carerId: string) => {
+      try {
+        await adminService.updateCarerStatus(carerId, "SUSPENDED");
+        logActivity(`Carer has been Suspended/Rejected.`, "error");
+        await loadCarers();
+      } catch (err: any) {
+        logActivity(`Failed to reject carer: ${err.message}`, "error");
+      }
       setSelectedCarerForApproval(null);
     },
-    [logActivity],
+    [loadCarers, logActivity],
   );
 
   const handleCreatePlacement = useCallback(
-    (requestId: string, carerId: string) => {
+    async (requestId: string, carerId: string) => {
       const clientReq = requests.find((r) => r.id === requestId);
       const carerObj = carers.find((c) => c.id === carerId);
 
       if (!clientReq || !carerObj) return;
 
-      const newPlacement: Placement = {
-        id: `place-${Date.now()}`,
-        clientId: clientReq.id,
-        clientName: clientReq.clientName,
-        carerId: carerObj.id,
-        carerName: carerObj.name,
-        careType: clientReq.careType,
-        location: clientReq.location,
-        urgency: clientReq.urgency,
-        status: "Matched",
-        contactDetailsReleased: false, // Default is hidden
-        startDate: clientReq.startDate,
-        timeline: [
-          {
-            title: "Match Assigned",
-            timestamp: new Date()
-              .toISOString()
-              .replace("T", " ")
-              .substring(0, 16),
-            description: `Placement assigned to carer ${carerObj.name} by Admin override.`,
-          },
-        ],
-      };
+      try {
+        await adminService.createPlacement({
+          carerProfileId: carerObj.carerProfileId!,
+          clientProfileId: clientReq.clientProfileId!,
+          careRequestId: clientReq.id,
+          hourlyRate: 15.0,
+          startDate: clientReq.startDate || new Date().toISOString(),
+        });
 
-      // Update Client Request Status
-      setRequests((prev) =>
-        prev.map((r) => (r.id === requestId ? { ...r, status: "Matched" } : r)),
-      );
+        logActivity(
+          `Successfully matched ${carerObj.name} to client ${clientReq.clientName}.`,
+          "success",
+        );
 
-      setPlacements((prev) => [newPlacement, ...prev]);
+        setSelectedRequestForMatching(null);
+        setActiveTab("placements");
 
-      logActivity(
-        `Successfully matched ${carerObj.name} to client ${clientReq.clientName}.`,
-        "success",
-      );
-
-      setSelectedRequestForMatching(null);
-      setActiveTab("placements"); // Transition to tracking page
+        await loadRequests();
+        await loadPlacements();
+      } catch (err: any) {
+        logActivity(`Failed to create placement: ${err.message}`, "error");
+      }
     },
-    [requests, carers, logActivity],
+    [requests, carers, logActivity, loadRequests, loadPlacements],
   );
 
   // Action: Toggle Contact Details Release
   const handleToggleContactRelease = useCallback(
-    (placementId: string) => {
-      setPlacements((prev) =>
-        prev.map((p) => {
-          if (p.id === placementId) {
-            const released = !p.contactDetailsReleased;
-            logActivity(
-              `Contact details sharing for ${p.clientName} and ${p.carerName} has been ${
-                released ? "Released / Enabled" : "Revoked / Disabled"
-              }.`,
-              released ? "success" : "warning",
+    async (placementId: string) => {
+      const place = placements.find((p) => p.id === placementId);
+      if (!place) return;
+
+      const released = !place.contactDetailsReleased;
+
+      try {
+        const rawPlacements = await adminService.getPlacements();
+        const rawPlace = rawPlacements.find((rp) => rp.id === placementId);
+
+        if (rawPlace) {
+          const intro = rawPlace.careRequest?.introductions.find(
+            (i: any) => i.carerProfileId === rawPlace.carerProfileId
+          );
+
+          if (intro) {
+            await adminService.updateIntroductionStatus(
+              intro.id,
+              released ? "APPROVED" : "PENDING"
             );
-            return {
-              ...p,
-              contactDetailsReleased: released,
-              timeline: [
-                ...p.timeline,
-                {
-                  title: released
-                    ? "Contact Details Released"
-                    : "Contact Details Revoked",
-                  timestamp: new Date()
-                    .toISOString()
-                    .replace("T", " ")
-                    .substring(0, 16),
-                  description: released
-                    ? "Admin approved contact detail sharing for direct communication."
-                    : "Admin revoked contact details visibility.",
-                },
-              ],
-            };
+          } else if (rawPlace.careRequestId) {
+            await adminService.createDirectMatch({
+              careRequestId: rawPlace.careRequestId,
+              carerProfileId: rawPlace.carerProfileId,
+            });
           }
-          return p;
-        }),
-      );
+        }
+
+        logActivity(
+          `Contact details sharing for ${place.clientName} and ${place.carerName} has been ${
+            released ? "Released / Enabled" : "Revoked / Disabled"
+          }.`,
+          released ? "success" : "warning",
+        );
+
+        await loadPlacements();
+      } catch (err: any) {
+        logActivity(`Failed to toggle contact release: ${err.message}`, "error");
+      }
     },
-    [logActivity],
+    [placements, logActivity, loadPlacements],
   );
 
   // Action: Override or Reassign Carer manually
   const handleOverridePlacementCarer = useCallback(
-    (placementId: string, newCarerId: string) => {
+    async (placementId: string, newCarerId: string) => {
       const newCarer = carers.find((c) => c.id === newCarerId);
       if (!newCarer) return;
 
-      setPlacements((prev) =>
-        prev.map((p) => {
-          if (p.id === placementId) {
-            logActivity(
-              `Reassigned placement for ${p.clientName}: replaced ${p.carerName} with ${newCarer.name}.`,
-              "warning",
-            );
-            return {
-              ...p,
-              carerId: newCarer.id,
-              carerName: newCarer.name,
-              timeline: [
-                ...p.timeline,
-                {
-                  title: "Carer Reassigned (Override)",
-                  timestamp: new Date()
-                    .toISOString()
-                    .replace("T", " ")
-                    .substring(0, 16),
-                  description: `Admin manually reassigned carer from ${p.carerName} to ${newCarer.name}.`,
-                },
-              ],
-            };
-          }
-          return p;
-        }),
-      );
+      try {
+        await adminService.replaceCarerInPlacement(
+          placementId,
+          newCarer.carerProfileId!
+        );
 
-      setSelectedPlacementForReassign(null);
+        logActivity(
+          `Reassigned placement for ${newCarer.name}.`,
+          "warning",
+        );
+
+        setSelectedPlacementForReassign(null);
+        await loadPlacements();
+      } catch (err: any) {
+        logActivity(`Failed to reassign placement carer: ${err.message}`, "error");
+      }
     },
-    [carers, logActivity],
+    [carers, logActivity, loadPlacements],
+  );
+
+  const handleUpdateDocumentStatus = useCallback(
+    async (docId: string, status: "VERIFIED" | "REJECTED") => {
+      try {
+        await adminService.updateDocumentStatus(docId, status);
+        logActivity(
+          `Document has been ${status === "VERIFIED" ? "Approved" : "Rejected"}.`,
+          status === "VERIFIED" ? "success" : "warning",
+        );
+        await loadCarers();
+      } catch (err: any) {
+        logActivity(
+          `Failed to update document status: ${err.message}`,
+          "error",
+        );
+      }
+    },
+    [loadCarers, logActivity],
   );
 
   const stats = {
@@ -270,6 +496,7 @@ export function useAdminPortal() {
     handleCreatePlacement,
     handleToggleContactRelease,
     handleOverridePlacementCarer,
+    handleUpdateDocumentStatus,
   };
 }
 export type UseAdminPortalReturn = ReturnType<typeof useAdminPortal>;

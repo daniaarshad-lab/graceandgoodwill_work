@@ -5,31 +5,14 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useClientPortal } from "./hooks/useClientPortal";
 import { mockCarers } from "./data/mockCarers";
 
-import dynamic from "next/dynamic";
+import DashboardOverview from "./components/DashboardOverview";
+import CareRequestForm from "./components/CareRequestForm";
+import CarerProfiles from "./components/CarerProfiles";
+import RequestTracking from "./components/RequestTracking";
+import SupportEnquiryForm from "./components/SupportEnquiryForm";
+import IntroductionModal from "./components/IntroductionModal";
 import PortalHeader from "./components/PortalHeader";
 import PortalTabs from "./components/PortalTabs";
-
-const DashboardOverview = dynamic(
-  () => import("./components/DashboardOverview"),
-  { ssr: false },
-);
-const CareRequestForm = dynamic(() => import("./components/CareRequestForm"), {
-  ssr: false,
-});
-const CarerProfiles = dynamic(() => import("./components/CarerProfiles"), {
-  ssr: false,
-});
-const RequestTracking = dynamic(() => import("./components/RequestTracking"), {
-  ssr: false,
-});
-const SupportEnquiryForm = dynamic(
-  () => import("./components/SupportEnquiryForm"),
-  { ssr: false },
-);
-const IntroductionModal = dynamic(
-  () => import("./components/IntroductionModal"),
-  { ssr: false },
-);
 
 type TabType = "overview" | "request" | "carers" | "tracking" | "enquiry";
 

@@ -270,12 +270,21 @@ export function useCarerPortal({
 
     if (!file) return;
 
+    const allowedTypes = [
+      "application/pdf",
+      "image/png",
+      "image/jpeg",
+      "image/jpg",
+    ];
+    const allowedExtensions = [".pdf", ".png", ".jpg", ".jpeg"];
+    const fileExtension = "." + file.name.split(".").pop()?.toLowerCase();
+
     if (
-      file.type !== "application/pdf" &&
-      !file.name.toLowerCase().endsWith(".pdf")
+      !allowedTypes.includes(file.type) &&
+      !allowedExtensions.includes(fileExtension)
     ) {
       setComplianceError(
-        "Invalid file type. Only PDF document uploads are allowed.",
+        "Invalid file type. Only PDF, PNG, and JPG/JPEG document uploads are allowed.",
       );
       return;
     }

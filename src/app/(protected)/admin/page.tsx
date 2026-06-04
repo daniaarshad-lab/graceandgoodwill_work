@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAdminPortal, AdminTabType } from "./hooks/useAdminPortal";
-import Button from "@/components/Button";
 
 import dynamic from "next/dynamic";
 
@@ -120,6 +119,7 @@ export default function AdminDashboard() {
               carers={portal.carers}
               onReject={portal.handleRejectCarer}
               setSelectedCarerForApproval={portal.setSelectedCarerForApproval}
+              onUpdateDocumentStatus={portal.handleUpdateDocumentStatus}
             />
           )}
 

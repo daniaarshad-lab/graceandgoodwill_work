@@ -1,10 +1,14 @@
 export interface DocumentStatus {
+  id?: string;
   name: string;
-  status: "Uploaded" | "Missing" | "Verified";
+  status: "Uploaded" | "Missing" | "Verified" | "Rejected";
+  fileCategory?: string;
+  fileUrl?: string;
 }
 
 export interface CarerApplication {
   id: string;
+  carerProfileId?: string;
   name: string;
   experience: string; // e.g., "5 years"
   city: string;
@@ -19,6 +23,7 @@ export interface CarerApplication {
 
 export interface ClientRequest {
   id: string;
+  clientProfileId?: string;
   clientName: string;
   careType: string; // e.g., "Live-in Care", "Hourly Care"
   location: string;

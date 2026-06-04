@@ -7,9 +7,7 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}) {
   // multipart boundary), so we only inject the JSON header for all other calls.
   const isFormData = restOptions.body instanceof FormData;
 
-  const fullUrl = `${API_URL}${endpoint}`;
-
-  const response = await fetch(fullUrl, {
+  const response = await fetch(`${API_URL}${endpoint}`, {
     headers: {
       ...(isFormData ? {} : { "Content-Type": "application/json" }),
       ...(callerHeaders || {}),
@@ -17,24 +15,10 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}) {
     ...restOptions,
   });
 
-  // Safely parse JSON — the server may return HTML on 500 errors
-  let data: any = null;
-  const contentType = response.headers.get("content-type") || "";
-
-  if (contentType.includes("application/json")) {
-    try {
-      data = await response.json();
-    } catch {
-      data = null;
-    }
-  }
-
-
+  const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(
-      data?.message || `Request failed with status ${response.status}`,
-    );
+    throw new Error(data.message || "Something went wrong");
   }
 
   return data;

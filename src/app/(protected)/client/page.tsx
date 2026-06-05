@@ -13,6 +13,10 @@ const DashboardOverview = dynamic(
   () => import("./components/DashboardOverview"),
   { ssr: false },
 );
+const ClientProfileManagement = dynamic(
+  () => import("./components/ClientProfileManagement"),
+  { ssr: false },
+);
 const CareRequestForm = dynamic(() => import("./components/CareRequestForm"), {
   ssr: false,
 });
@@ -22,8 +26,8 @@ const CarerProfiles = dynamic(() => import("./components/CarerProfiles"), {
 const RequestTracking = dynamic(() => import("./components/RequestTracking"), {
   ssr: false,
 });
-const SupportEnquiryForm = dynamic(
-  () => import("./components/SupportEnquiryForm"),
+const SupportEnquiryPanel = dynamic(
+  () => import("./components/enquiry/SupportEnquiryPanel"),
   { ssr: false },
 );
 const IntroductionModal = dynamic(
@@ -31,7 +35,7 @@ const IntroductionModal = dynamic(
   { ssr: false },
 );
 
-type TabType = "overview" | "request" | "carers" | "tracking" | "enquiry";
+type TabType = "overview" | "profile" | "request" | "carers" | "tracking" | "enquiry";
 
 export default function ClientDashboard() {
   const { user } = useAuth();
@@ -60,12 +64,14 @@ export default function ClientDashboard() {
             <DashboardOverview
               user={user}
               careRequests={portal.careRequests}
-              enquiries={portal.enquiries}
               setActiveTab={setActiveTab}
             />
           )}
 
-          {/* TAB 2: SUBMIT CARE REQUEST */}
+          {/* TAB 2: PROFILE MANAGEMENT */}
+          {activeTab === "profile" && <ClientProfileManagement />}
+
+          {/* TAB 3: SUBMIT CARE REQUEST */}
           {activeTab === "request" && (
             <CareRequestForm
               fullName={portal.careFullName}
@@ -108,22 +114,7 @@ export default function ClientDashboard() {
           )}
 
           {/* TAB 5: SUPPORT & ENQUIRIES */}
-          {activeTab === "enquiry" && (
-            <SupportEnquiryForm
-              subject={portal.enquirySubject}
-              setSubject={portal.setEnquirySubject}
-              message={portal.enquiryMessage}
-              setMessage={portal.setEnquiryMessage}
-              preference={portal.enquiryPreference}
-              setPreference={portal.setEnquiryPreference}
-              errors={portal.enquiryErrors}
-              isSubmitting={portal.isEnquirySubmitting}
-              success={portal.enquirySuccess}
-              onSubmit={portal.handleEnquirySubmit}
-              enquiries={portal.enquiries}
-              setActiveTab={setActiveTab}
-            />
-          )}
+          {activeTab === "enquiry" && <SupportEnquiryPanel />}
         </div>
       </div>
 

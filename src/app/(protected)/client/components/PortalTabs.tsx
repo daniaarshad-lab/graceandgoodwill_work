@@ -1,4 +1,4 @@
-type TabType = "overview" | "request" | "carers" | "tracking" | "enquiry";
+type TabType = "overview" | "profile" | "request" | "carers" | "tracking" | "enquiry";
 
 interface PortalTabsProps {
   activeTab: TabType;
@@ -11,6 +11,7 @@ export default function PortalTabs({
 }: PortalTabsProps) {
   const tabs = [
     { id: "overview", label: "Dashboard Overview" },
+    { id: "profile", label: "Profile Management" },
     { id: "request", label: "Submit Care Request" },
     { id: "carers", label: "Carer Profiles" },
     { id: "tracking", label: "Track Requests" },

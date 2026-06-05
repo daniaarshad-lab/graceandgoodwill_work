@@ -1,4 +1,4 @@
-import { Carer } from "../types/client.types";
+import { Carer } from "../types/client-ui.types";
 import Button from "@/components/Button";
 
 interface IntroductionModalProps {

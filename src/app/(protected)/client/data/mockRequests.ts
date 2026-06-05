@@ -1,4 +1,4 @@
-import { CareRequest, Enquiry } from "../types/client.types";
+import { CareRequest } from "../types/client-ui.types";
 
 export const defaultCareRequests = (userFullName: string): CareRequest[] => [
   {
@@ -30,23 +30,3 @@ export const defaultCareRequests = (userFullName: string): CareRequest[] => [
   },
 ];
 
-export const defaultEnquiries: Enquiry[] = [
-  {
-    id: "ENQ-901",
-    subject: "Insurance Coverage Options",
-    message:
-      "Hello, I would like to check if our private medical insurance covers live-in companion care services.",
-    preference: "Email",
-    date: "2026-05-24",
-    status: "Responded",
-  },
-  {
-    id: "ENQ-902",
-    subject: "Dementia Care Certification Details",
-    message:
-      "Could you please send over details regarding the certifications and training your dementia carers undergo?",
-    preference: "Phone Call",
-    date: "2026-05-25",
-    status: "Received",
-  },
-];

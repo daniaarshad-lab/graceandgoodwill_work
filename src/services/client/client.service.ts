@@ -1,5 +1,10 @@
 import { apiFetch } from "@/lib/api";
-import { ClientProfile } from "@/types/client.types";
+import {
+  ClientProfile,
+  CreateCareRequestPayload,
+  CareRequest,
+  CreateEnquiryPayload,
+} from "@/types/client.types";
 
 export const clientService = {
   async getProfile(): Promise<ClientProfile> {
@@ -20,7 +25,11 @@ export const clientService = {
     });
   },
 
-  async updateProfile(payload: Partial<ClientProfile>): Promise<ClientProfile> {
+
+
+  async updateProfile(
+    payload: Partial<ClientProfile>
+  ): Promise<ClientProfile> {
     const token =
       typeof window !== "undefined"
         ? localStorage.getItem("accessToken")
@@ -31,11 +40,151 @@ export const clientService = {
     }
 
     return apiFetch("/client/profile", {
-      method: "PUT",
+      method: "PATCH",
       headers: {
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(payload),
     });
+  },
+
+  async uploadProfilePhoto(file: File): Promise<ClientProfile> {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    const formData = new FormData();
+    formData.append("photo", file);
+
+    return apiFetch("/client/profile/photo", {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+  },
+  async createCareRequest(
+    payload: CreateCareRequestPayload,
+  ): Promise<any> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch("/client/care-request", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async getCareRequests(): Promise<CareRequest[]> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch("/client/care-requests", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
+  async createEnquiry(
+    payload: CreateEnquiryPayload,
+  ): Promise<any> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch("/client/enquiry", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async getEnquiries() {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch("/client/enquiry", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
+  async getEnquiryById(id: string) {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch(`/client/enquiry/${id}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
+  async sendEnquiryMessage(
+    enquiryId: string,
+    message: string
+  ) {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch(
+      `/client/enquiry/${enquiryId}/message`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          message,
+        }),
+      }
+    );
   },
 };

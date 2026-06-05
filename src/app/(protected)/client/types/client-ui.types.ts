@@ -45,6 +45,7 @@ export interface Enquiry {
   phone: string;
   message: string;
   status: EnquiryStatus;
+  isRead: boolean;
   createdAt: string;
   updatedAt: string;
   messages: EnquiryMessage[];

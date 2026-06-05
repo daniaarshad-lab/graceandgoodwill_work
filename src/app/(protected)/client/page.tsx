@@ -1,16 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { useAuth } from "@/contexts/AuthContext";
 import { useClientPortal } from "./hooks/useClientPortal";
 import { mockCarers } from "./data/mockCarers";
 
-import DashboardOverview from "./components/DashboardOverview";
-import CareRequestForm from "./components/CareRequestForm";
-import CarerProfiles from "./components/CarerProfiles";
-import RequestTracking from "./components/RequestTracking";
-import SupportEnquiryForm from "./components/SupportEnquiryForm";
-import IntroductionModal from "./components/IntroductionModal";
 import PortalHeader from "./components/PortalHeader";
 import PortalTabs from "./components/PortalTabs";
 

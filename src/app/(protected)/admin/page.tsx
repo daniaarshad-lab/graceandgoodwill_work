@@ -33,6 +33,14 @@ const MatchAssignmentModal = dynamic(
   () => import("./components/MatchAssignmentModal"),
   { ssr: false },
 );
+const BillingManagement = dynamic(
+  () => import("./components/BillingManagement"),
+  { ssr: false },
+);
+const SupportEnquiryManagement = dynamic(
+  () => import("./components/SupportEnquiryManagement"),
+  { ssr: false },
+);
 
 export default function AdminDashboard() {
   const { user } = useAuth();
@@ -50,6 +58,8 @@ export default function AdminDashboard() {
     matching: "Matching Assistant",
     placements: "Tracking & Overrides",
     emergency: "Emergency Triage",
+    billing: "Billing & Invoices",
+    enquiries: "Support & Enquiries",
   };
 
   return (
@@ -96,6 +106,11 @@ export default function AdminDashboard() {
                 {tab === "carers" && portal.stats.pendingCarers > 0 && (
                   <span className="ml-1.5 inline-flex items-center justify-center rounded-full bg-gold-600 px-1.5 py-0.5 text-[9px] font-black text-navy-950">
                     {portal.stats.pendingCarers}
+                  </span>
+                )}
+                {tab === "enquiries" && portal.stats.unreadEnquiries > 0 && (
+                  <span className="ml-1.5 inline-flex items-center justify-center rounded-full bg-amber-500 px-1.5 py-0.5 text-[9px] font-black text-navy-950 animate-pulse">
+                    {portal.stats.unreadEnquiries}
                   </span>
                 )}
               </button>
@@ -168,6 +183,23 @@ export default function AdminDashboard() {
               requests={portal.requests}
               carers={portal.carers}
               onCreateMatch={portal.handleCreatePlacement}
+            />
+          )}
+
+          {/* TAB 7: BILLING & INVOICES */}
+          {portal.activeTab === "billing" && (
+            <BillingManagement placements={portal.placements} />
+          )}
+
+          {/* TAB 8: SUPPORT & ENQUIRIES */}
+          {portal.activeTab === "enquiries" && (
+            <SupportEnquiryManagement
+              enquiries={portal.enquiries}
+              selectedEnquiry={portal.selectedEnquiry}
+              setSelectedEnquiry={portal.setSelectedEnquiry}
+              loadEnquiryDetails={portal.loadEnquiryDetails}
+              handleRespondToEnquiry={portal.handleRespondToEnquiry}
+              handleUpdateEnquiryStatus={portal.handleUpdateEnquiryStatus}
             />
           )}
         </div>

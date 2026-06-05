@@ -6,6 +6,7 @@ import {
   AdminActivity,
 } from "../types/admin.types";
 import { adminService } from "@/services/admin/admin.service";
+import { Enquiry } from "@/app/(protected)/client/types/client-ui.types";
 
 // Helper to map backend document category to frontend status with file URLs and IDs
 const getDocDetails = (docs: any[], category: string) => {
@@ -174,9 +175,22 @@ const mapBackendPlacements = (backendPlacements: any[]): Placement[] => {
       urgency = "Emergency";
     }
 
+    const carerIntros = p.carerProfile?.introductions || [];
+    const approvedIntroForClient = carerIntros.find(
+      (i: any) =>
+        i.status === "APPROVED" &&
+        (i.careRequest?.clientProfileId === p.clientProfileId || i.careRequestId === p.careRequestId)
+    );
+    const intro = careReq.introductions?.find(
+      (i: any) => i.carerProfileId === p.carerProfileId
+    );
+    const contactDetailsReleased = approvedIntroForClient
+      ? true
+      : (intro ? intro.status === "APPROVED" : false);
+
     let status: "Pending" | "Reviewing" | "Matched" | "Active" | "Completed" | "Emergency" = "Matched";
     if (p.status === "ACTIVE") {
-      status = p.contactDetailsReleased ? "Active" : "Matched";
+      status = contactDetailsReleased ? "Active" : "Matched";
     } else if (p.status === "COMPLETED") {
       status = "Completed";
     } else if (p.status === "TERMINATED" || p.status === "CANCELLED") {
@@ -190,7 +204,7 @@ const mapBackendPlacements = (backendPlacements: any[]): Placement[] => {
       description: `Admin assigned ${carerUser.firstName} ${carerUser.lastName} to ${clientUser.firstName} ${clientUser.lastName}.`,
     });
 
-    if (p.contactDetailsReleased) {
+    if (contactDetailsReleased) {
       timeline.push({
         title: "Contacts Approved & Released",
         timestamp: new Date(p.updatedAt).toISOString().replace("T", " ").substring(0, 16),
@@ -208,7 +222,7 @@ const mapBackendPlacements = (backendPlacements: any[]): Placement[] => {
       location: careReq.city || p.clientProfile?.city || "London",
       urgency,
       status,
-      contactDetailsReleased: !!p.contactDetailsReleased,
+      contactDetailsReleased,
       startDate: p.startDate ? new Date(p.startDate).toISOString().split('T')[0] : "Pending",
       timeline,
     };
@@ -222,7 +236,8 @@ export type AdminTabType =
   | "matching"
   | "placements"
   | "emergency"
-  | "billing";
+  | "billing"
+  | "enquiries";
 
 export function useAdminPortal() {
   const [activeTab, setActiveTab] = useState<AdminTabType>("overview");
@@ -230,6 +245,8 @@ export function useAdminPortal() {
   const [carers, setCarers] = useState<CarerApplication[]>([]);
   const [requests, setRequests] = useState<ClientRequest[]>([]);
   const [placements, setPlacements] = useState<Placement[]>([]);
+  const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
+  const [selectedEnquiry, setSelectedEnquiry] = useState<Enquiry | null>(null);
 
   const [activities, setActivities] = useState<AdminActivity[]>([
     {
@@ -304,11 +321,22 @@ export function useAdminPortal() {
     }
   }, []);
 
+  // Load enquiries from backend API
+  const loadEnquiries = useCallback(async () => {
+    try {
+      const data = await adminService.getEnquiries();
+      setEnquiries(data);
+    } catch (err: any) {
+      console.error("Failed to load enquiries:", err.message);
+    }
+  }, []);
+
   useEffect(() => {
     loadCarers();
     loadRequests();
     loadPlacements();
-  }, [loadCarers, loadRequests, loadPlacements]);
+    loadEnquiries();
+  }, [loadCarers, loadRequests, loadPlacements, loadEnquiries]);
 
   // Action: Approve Carer Application
   const handleApproveCarer = useCallback(
@@ -389,7 +417,10 @@ export function useAdminPortal() {
         const rawPlace = rawPlacements.find((rp) => rp.id === placementId);
 
         if (rawPlace) {
-          const intro = rawPlace.careRequest?.introductions.find(
+          const carerIntros = rawPlace.carerProfile?.introductions || [];
+          const intro = carerIntros.find(
+            (i: any) => i.careRequest?.clientProfileId === rawPlace.clientProfileId
+          ) || rawPlace.careRequest?.introductions.find(
             (i: any) => i.carerProfileId === rawPlace.carerProfileId
           );
 
@@ -466,6 +497,36 @@ export function useAdminPortal() {
     [loadCarers, logActivity],
   );
 
+  const loadEnquiryDetails = useCallback(async (id: string) => {
+    try {
+      const data = await adminService.getEnquiryDetails(id);
+      setSelectedEnquiry(data);
+      await loadEnquiries();
+    } catch (err: any) {
+      console.error("Failed to load enquiry details:", err.message);
+    }
+  }, [loadEnquiries]);
+
+  const handleRespondToEnquiry = useCallback(async (id: string, message: string) => {
+    try {
+      await adminService.respondToEnquiry(id, message);
+      logActivity("Sent response to enquiry.", "success");
+      await loadEnquiryDetails(id);
+    } catch (err: any) {
+      logActivity(`Failed to send response: ${err.message}`, "error");
+    }
+  }, [loadEnquiryDetails, logActivity]);
+
+  const handleUpdateEnquiryStatus = useCallback(async (id: string, status: string) => {
+    try {
+      await adminService.updateEnquiryStatus(id, status);
+      logActivity(`Updated enquiry status to ${status}.`, "success");
+      await loadEnquiryDetails(id);
+    } catch (err: any) {
+      logActivity(`Failed to update status: ${err.message}`, "error");
+    }
+  }, [loadEnquiryDetails, logActivity]);
+
   const stats = {
     totalCarers: carers.length,
     pendingCarers: carers.filter((c) => c.status === "Pending").length,
@@ -475,6 +536,7 @@ export function useAdminPortal() {
     emergencyCases: requests.filter(
       (r) => r.status === "Emergency" || r.urgency === "Emergency",
     ).length,
+    unreadEnquiries: enquiries.filter((e) => !e.isRead).length,
   };
 
   return {
@@ -497,6 +559,12 @@ export function useAdminPortal() {
     handleToggleContactRelease,
     handleOverridePlacementCarer,
     handleUpdateDocumentStatus,
+    enquiries,
+    selectedEnquiry,
+    setSelectedEnquiry,
+    loadEnquiryDetails,
+    handleRespondToEnquiry,
+    handleUpdateEnquiryStatus,
   };
 }
 export type UseAdminPortalReturn = ReturnType<typeof useAdminPortal>;

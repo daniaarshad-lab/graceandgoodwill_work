@@ -1,4 +1,4 @@
-import { Carer } from "../types/client.types";
+import { Carer } from "../types/client-ui.types";
 
 export const mockCarers: Carer[] = [
   {

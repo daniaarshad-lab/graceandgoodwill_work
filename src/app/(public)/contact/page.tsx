@@ -11,21 +11,22 @@ export const metadata = {
 
 export default function ContactPage() {
   return (
-    <main className="min-h-[calc(100vh-80px)] bg-navy-950 py-16 text-gold-100 flex items-center">
+    <main className="bg-navy-950 py-12 md:py-16 text-gold-100 min-h-[calc(100vh-80px)] flex flex-col justify-center">
       <div className="container-wrapper">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+        <div className="mb-20  text-center">
           {/* LEFT COLUMN: Supportive Content & Guidance */}
-          <div className="lg:col-span-5 space-y-8 lg:sticky lg:top-28">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-widest bg-gold-muted/10 text-gold-200 border border-gold-muted/20">
+          <div className="">
+            {/* <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-widest bg-gold-muted/10 text-gold-200 border border-gold-muted/20">
               <span className="h-1.5 w-1.5 rounded-full bg-gold-DEFAULT" />
               <span>Standard Care Enquiry</span>
-            </div>
+            </div> */}
 
             {/* Dynamic Heading & Description */}
             <div className="space-y-4">
-              <h1 className="text-4xl font-semibold leading-tight text-gold-50 sm:text-5xl">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight  text-gold-darker">
                 Trusted Live In Care Support Across The UK
               </h1>
+
               <p className="text-gold-200/80 leading-relaxed text-base">
                 We help families find compassionate, dependable live in care
                 with a personal and supportive approach. Welcoming a carer into
@@ -34,6 +35,18 @@ export default function ContactPage() {
                 and reassurance.
               </p>
             </div>
+
+
+          </div>
+
+
+
+        </div>
+
+        {/* new section */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+          <div className="lg:col-span-5 space-y-8 lg:sticky lg:top-28">
+
 
             <div className="space-y-4 pt-2">
               <div className="flex gap-4 p-4 rounded-2xl bg-gold-muted/5 border border-gold-muted/10">
@@ -101,10 +114,8 @@ export default function ContactPage() {
               </div>
             </div>
           </div>
-
-          {/* RIGHT COLUMN: Premium glassmorphic form card */}
           <div className="lg:col-span-7">
-            <div className="rounded-[2rem] border border-gold-muted/20 bg-navy-900/50 p-8 lg:p-10 shadow-elegant backdrop-blur-xl space-y-6">
+            <div className="rounded-[2rem] border border-gold-muted/20 bg-navy-900/50 p-6 sm:p-8 lg:p-10 shadow-elegant backdrop-blur-xl space-y-6">
               <div className="border-b border-gold-300/10 pb-4">
                 <h2 className="text-xl font-bold text-gold-200">
                   Care Enquiry Form

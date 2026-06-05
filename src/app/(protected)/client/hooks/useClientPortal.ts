@@ -1,18 +1,23 @@
 import { useState } from "react";
-import { defaultCareRequests, defaultEnquiries } from "../data/mockRequests";
-import { CareRequest, Enquiry, Carer } from "../types/client.types";
-import { validateCareForm, validateEnquiryForm } from "../utils/validation";
+import { Carer } from "../types/client-ui.types";
+import { validateCareForm } from "../utils/validation";
+import { useAppDispatch } from "@/store/hooks";
+import { createCareRequest, fetchCareRequests } from "@/store/slices/clientSlice";
+import { useAppSelector } from "@/store/hooks";
 
 interface UseClientPortalProps {
   user: any;
 }
 
 export function useClientPortal({ user }: UseClientPortalProps) {
+  const dispatch = useAppDispatch();
   const userFullName = `${user?.firstName || "Jane"} ${user?.lastName || "Doe"}`;
 
   // --- CORE DATA STATES ---
-  const [careRequests, setCareRequests] = useState<CareRequest[]>([]);
-  const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
+  const careRequests = useAppSelector(
+    (state) => state.client.careRequests
+  );
+
 
   // --- FORM STATES: CARE REQUEST ---
   const [careFullName, setCareFullName] = useState(
@@ -31,23 +36,14 @@ export function useClientPortal({ user }: UseClientPortalProps) {
   const [isCareSubmitting, setIsCareSubmitting] = useState(false);
   const [careSuccess, setCareSuccess] = useState(false);
 
-  // --- FORM STATES: GENERAL ENQUIRIES ---
-  const [enquirySubject, setEnquirySubject] = useState("");
-  const [enquiryMessage, setEnquiryMessage] = useState("");
-  const [enquiryPreference, setEnquiryPreference] = useState("");
 
-  const [enquiryErrors, setEnquiryErrors] = useState<Record<string, string>>(
-    {},
-  );
-  const [isEnquirySubmitting, setIsEnquirySubmitting] = useState(false);
-  const [enquirySuccess, setEnquirySuccess] = useState(false);
 
   // --- STATE FOR REQUEST INTRODUCTION ---
   const [selectedCarer, setSelectedCarer] = useState<Carer | null>(null);
   const [introSuccessMsg, setIntroSuccessMsg] = useState<string | null>(null);
 
   // --- HANDLERS: CARE REQUEST SUBMISSION ---
-  const handleCareSubmit = (e: React.FormEvent) => {
+  const handleCareSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setCareErrors({});
     setCareSuccess(false);
@@ -68,24 +64,36 @@ export function useClientPortal({ user }: UseClientPortalProps) {
       setCareErrors(errors);
       return;
     }
+    const payload = {
+      address: careAddress,
+
+      careCategory: careType,
+
+      requirements: careSupport,
+
+      requestorName: careFullName,
+      requestorEmail: careEmail,
+      requestorPhone: carePhone,
+
+      startDate: careStartDate,
+      duration: careDuration,
+
+      additionalNotes: careNotes,
+
+      shiftType: "MORNING",
+    };
 
     setIsCareSubmitting(true);
+    try {
+      await dispatch(createCareRequest(payload)).unwrap();
+      await dispatch(fetchCareRequests());
+    } catch (error) {
+      console.error("CARE REQUEST ERROR:", error);
+    }
 
     setTimeout(() => {
       setIsCareSubmitting(false);
       setCareSuccess(true);
-
-      const newReq: CareRequest = {
-        id: `REQ-${Math.floor(100 + Math.random() * 900)}`,
-        fullName: careFullName,
-        careType: careType,
-        startDate: careStartDate,
-        duration: careDuration,
-        status: "Pending",
-        progress: 15,
-      };
-
-      setCareRequests((prev) => [newReq, ...prev]);
 
       setCareSupport("");
       setCareStartDate("");
@@ -97,47 +105,7 @@ export function useClientPortal({ user }: UseClientPortalProps) {
     }, 1200);
   };
 
-  // --- HANDLERS: ENQUIRY SUBMISSION ---
-  const handleEnquirySubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setEnquiryErrors({});
-    setEnquirySuccess(false);
 
-    const formData = {
-      subject: enquirySubject,
-      message: enquiryMessage,
-    };
-
-    const errors = validateEnquiryForm(formData);
-
-    if (Object.keys(errors).length > 0) {
-      setEnquiryErrors(errors);
-      return;
-    }
-
-    setIsEnquirySubmitting(true);
-
-    setTimeout(() => {
-      setIsEnquirySubmitting(false);
-      setEnquirySuccess(true);
-
-      const newEnq: Enquiry = {
-        id: `ENQ-${Math.floor(100 + Math.random() * 900)}`,
-        subject: enquirySubject,
-        message: enquiryMessage,
-        preference: enquiryPreference,
-        date: new Date().toISOString().split("T")[0],
-        status: "Received",
-      };
-
-      setEnquiries((prev) => [newEnq, ...prev]);
-
-      setEnquirySubject("");
-      setEnquiryMessage("");
-
-      setTimeout(() => setEnquirySuccess(false), 5000);
-    }, 1200);
-  };
 
   // --- HANDLERS: REQUEST INTRODUCTION ---
   const handleRequestIntro = (carer: Carer) => {
@@ -157,7 +125,6 @@ export function useClientPortal({ user }: UseClientPortalProps) {
 
   return {
     careRequests,
-    enquiries,
 
     careFullName,
     setCareFullName,
@@ -181,17 +148,6 @@ export function useClientPortal({ user }: UseClientPortalProps) {
     isCareSubmitting,
     careSuccess,
     handleCareSubmit,
-
-    enquirySubject,
-    setEnquirySubject,
-    enquiryMessage,
-    setEnquiryMessage,
-    enquiryPreference,
-    setEnquiryPreference,
-    enquiryErrors,
-    isEnquirySubmitting,
-    enquirySuccess,
-    handleEnquirySubmit,
 
     selectedCarer,
     setSelectedCarer,

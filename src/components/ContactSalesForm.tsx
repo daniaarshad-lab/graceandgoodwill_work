@@ -148,10 +148,9 @@ export default function ContactSalesForm() {
   };
 
   const getInputClass = (hasError: boolean) =>
-    `w-full bg-navy-900/60 border rounded-xl px-4 py-3 text-gold-50 focus:outline-none focus:ring-1 transition-colors ${
-      hasError
-        ? "border-red-500/50 focus:border-red-500/50 focus:ring-red-500/50"
-        : "border-gold-muted/20 focus:border-gold-400/50 focus:ring-gold-400/50"
+    `w-full bg-navy-900/60 border rounded-xl px-4 py-3 text-gold-50 focus:outline-none focus:ring-1 transition-colors ${hasError
+      ? "border-red-500/50 focus:border-red-500/50 focus:ring-red-500/50"
+      : "border-gold-muted/20 focus:border-gold-400/50 focus:ring-gold-400/50"
     }`;
 
   return (

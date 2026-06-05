@@ -121,16 +121,17 @@ export default function TrainingPage() {
       <div className="pointer-events-none absolute -left-40 bottom-10 h-[300px] w-[500px] rounded-full bg-navy-800/20 blur-[100px]" />
 
       <div className="container-wrapper">
-        <section className="mb-20 text-center">
-          <p className="inline-block rounded-full border border-gold-500/25 bg-gold-500/5 px-4 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-gold-300">
-            Academy & Compliance
-          </p>
-          <h1 className="mt-6 text-4xl font-light tracking-tight text-gold-50 sm:text-5xl md:text-6xl">
-            Premium Training &{" "}
-            <span className="font-semibold text-gold-DEFAULT">
-              Support for Carers
-            </span>
-          </h1>
+        {/* Header Section */}
+        <section className="mb-20 text-center">        
+
+             <div className="flex items-center justify-center gap-4 mb-8">
+                <div className="h-px w-10 bg-gradient-to-r from-transparent to-gold-400/50" />
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight  text-gold-darker">
+                   Premium Training & Support for Carers</h1>
+                <div className="h-px w-10 bg-gradient-to-l from-transparent to-gold-400/50" />
+          </div>
+
+          
           <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-gold-200/80 sm:text-lg">
             A flexible learning and compliance system built for professional
             care organizations. Empower your team with mandatory courses,
@@ -142,7 +143,7 @@ export default function TrainingPage() {
           {modules.map((m) => (
             <div
               key={m.title}
-              className="group relative flex flex-col justify-between rounded-[28px] border border-gold-300/10 bg-navy-900/40 p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)]"
+              className="group relative flex flex-col justify-between rounded-[28px] border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)]"
             >
               <div>
                 <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl border border-gold-400/20 bg-navy-950 shadow-inner">
@@ -180,12 +181,10 @@ export default function TrainingPage() {
         </section>
 
         {/* Bottom Banner Call to Action */}
-        <section className="mt-24 rounded-[32px] border border-gold-300/15 bg-navy-900/30 p-8 text-center backdrop-blur-sm sm:p-12">
+        <section className="mt-24 rounded-[32px] border border-gold-300/15 bg-navy-900/30 p-6 sm:p-8 md:p-12 text-center backdrop-blur-sm">
           <h2 className="text-2xl font-light text-gold-50 sm:text-3xl">
-            Want to customize{" "}
-            <span className="font-semibold text-gold-DEFAULT">
-              training paths?
-            </span>
+            Want to customize training paths?
+            
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-gold-200/80 sm:text-base">
             Configure learning milestones, customized compliance dashboards, and

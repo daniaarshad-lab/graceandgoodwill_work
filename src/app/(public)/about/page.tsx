@@ -7,30 +7,26 @@ export default function AboutPage() {
   return (
     <main className="container-wrapper flex min-h-screen flex-col gap-10 py-16">
       {/* ── REDESIGNED HERO ─────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-b from-navy-950 to-navy-900 text-gold-50 shadow-elegant ring-1 ring-gold-400/10 px-8 py-14 sm:px-12 sm:py-16">
+      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-b from-navy-950 to-navy-900 text-gold-50 shadow-elegant ring-1 ring-gold-400/10 px-6 py-12 sm:px-12 sm:py-16">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gold-400/5 rounded-full blur-[120px] pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-navy-800/30 rounded-full blur-[100px] pointer-events-none" />
 
         <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center text-center">
           <div className="flex items-center gap-4 mb-8">
             <div className="h-px w-10 bg-gradient-to-r from-transparent to-gold-400/50" />
-            <p className="text-xs uppercase tracking-[0.4em] text-gold-400 font-bold">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight  text-gold-darker">
               About Grace &amp; Goodwill
-            </p>
+            </h1>
             <div className="h-px w-10 bg-gradient-to-l from-transparent to-gold-400/50" />
           </div>
 
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight mb-8 text-gold-darker">
-            A service built around people.
-          </h1>
 
           <div className="space-y-5 text-base sm:text-lg text-gold-200/90 leading-relaxed max-w-3xl">
-            <p>
+
+            <p className="text-sm sm:text-base text-gold-200/70">
               Grace &amp; Goodwill was created from real experience and a belief
               that support should feel reassuring from the very beginning.
-            </p>
-            <p className="text-sm sm:text-base text-gold-200/70">
-              We understand families are not simply searching for availability —
+              We understand families are not simply searching for availability
               they are searching for somebody they can trust and a process that
               feels calm, personal, and dependable. Our role is to connect
               people with carefully selected support while maintaining
@@ -44,7 +40,7 @@ export default function AboutPage() {
       <section className="w-full text-gold-50">
         <div className="max-w-[1400px] mx-auto pt-16 pb-20 px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10 space-y-5">
-            <h2 className="text-3xl sm:text-5xl font-serif text-gold-50 tracking-wide">
+            <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide">
               Meet Aurea Neto, Our Founder
             </h2>
             <div className="h-px w-24 bg-gradient-to-r from-transparent via-gold-400/50 to-transparent mx-auto" />
@@ -72,7 +68,7 @@ export default function AboutPage() {
           <div className="relative text-center mb-14 px-4">
             <span
               aria-hidden="true"
-              className="pointer-events-none absolute -top-10 left-0 right-0 mx-auto text-[6rem] leading-none text-gold-400/10 font-serif select-none"
+              className="pointer-events-none absolute -top-8 sm:-top-10 left-0 right-0 mx-auto text-[4rem] sm:text-[6rem] leading-none text-gold-400/50 font-serif select-none"
             >
               &ldquo;
             </span>
@@ -84,35 +80,13 @@ export default function AboutPage() {
 
           <div className="space-y-8 text-base sm:text-lg text-gold-100/90 leading-relaxed font-light">
             <p>
-              Throughout my life I have been drawn to helping others, whether
-              supporting vulnerable people professionally, caring for family
-              members, or standing alongside those facing difficult moments in
-              life. I have always believed that every person deserves to be
-              treated with dignity, kindness, compassion and genuine respect.
-            </p>
+              Nel corso della mia vita sono stato attratto dall'aiutare gli altri, sia sostenendo professionalmente le persone vulnerabili, prendendomi cura dei membri della famiglia, sia stando al fianco di coloro che affrontano momenti difficili della vita. Ho sempre creduto che ogni persona meriti di essere trattata con dignità, gentilezza, compassione e genuino rispetto.</p>
             <p>
-              After spending years working within the Probation Service, I
-              realised that my purpose was not simply to work within a system,
-              but to create something that could make a lasting difference in
-              people&apos;s lives. Grace &amp; Goodwill was built on the belief
-              that families deserve honesty, carers deserve respect, and the
-              people receiving support deserve continuity, trust and meaningful
-              human connection.
-            </p>
+              Dopo aver trascorso anni lavorando all'interno del Probation Service, mi sono reso conto che il mio scopo non era semplicemente quello di lavorare all'interno di un sistema, ma di creare qualcosa che potesse fare una differenza duratura nella vita delle persone. Grace & Goodwill si fonda sulla convinzione che le famiglie meritano onestà, gli assistenti meritano rispetto e le persone che ricevono sostegno meritano continuità, fiducia e un legame umano significativo. </p>
             <p>
-              My sister Erica has been one of my greatest teachers in life.
-              Supporting and advocating for her over the years gave me a first
-              hand understanding of how important dignity, patience, consistency
-              and genuine human connection are to a person&apos;s wellbeing. It
-              showed me the difference that the right support can make, not only
-              for the individual receiving care, but for the people who love
-              them.
-            </p>
+              Mia sorella Erica è stata una delle mie più grandi maestre nella vita. Sostenerla e sostenerla nel corso degli anni mi ha fatto capire in prima persona quanto siano importanti la dignità, la pazienza, la coerenza e la genuina connessione umana per il benessere di una persona. Mi ha mostrato la differenza che può fare il giusto sostegno, non solo per la persona che riceve assistenza, ma per le persone che la amano.            </p>
             <p>
-              That experience, together with my professional background
-              supporting vulnerable people, continues to shape every decision we
-              make at Grace &amp; Goodwill.
-            </p>
+              Questa esperienza, insieme al mio background professionale a sostegno delle persone vulnerabili, continua a plasmare ogni decisione che prendiamo in Grace & Goodwill.            </p>
 
             <div className="mt-12 pt-10 border-t border-gold-400/15">
               <p className="italic text-lg sm:text-xl text-gold-300/90 font-serif leading-relaxed text-center">
@@ -290,7 +264,7 @@ export default function AboutPage() {
       */}
 
       {/* ── SECTION 2 · WHY WE STARTED ──────────────────────────────────────── */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-navy-950 to-navy-900 text-gold-50 shadow-elegant ring-1 ring-gold-400/10 px-8 py-16 sm:px-12 sm:py-20 lg:p-24 mb-24">
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-navy-950 to-navy-900 text-gold-50 shadow-elegant ring-1 ring-gold-400/10 px-6 py-12 sm:px-12 sm:py-20 lg:p-24 mb-24">
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gold-400/5 rounded-full blur-[140px] pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-navy-800/30 rounded-full blur-[120px] pointer-events-none" />
 
@@ -298,15 +272,17 @@ export default function AboutPage() {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gold-400/[0.02] via-transparent to-transparent pointer-events-none" />
 
         <div className="relative z-10 max-w-[1400px] mx-auto">
-          <div className="max-w-3xl">
+          <div className="w-full">
+
+            {/* Header */}
             <div className="mb-14 space-y-4">
-              <h2 className="text-3xl sm:text-4xl font-serif text-gold-50 font-light tracking-wide">
+              <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide">
                 Why We Started
               </h2>
             </div>
 
             {/* Opening Statement - Featured Intro Block */}
-            <div className="mb-14 relative">
+            {/* <div className="mb-14 relative">
               <div className="absolute -left-6 top-0 bottom-0 w-1 bg-gradient-to-b from-gold-400/40 to-transparent rounded-full" />
               <p className="text-xl sm:text-[1.35rem] text-gold-100 leading-relaxed font-serif italic">
                 Grace &amp; Goodwill was created because too many families are
@@ -315,9 +291,11 @@ export default function AboutPage() {
                 ethical opportunities where they are respected, valued and
                 treated fairly.
               </p>
-            </div>
+            </div> */}
 
             <div className="space-y-10 text-base sm:text-lg text-gold-100/80 leading-relaxed font-light">
+              <p> Grace &amp; Goodwill was created because too many families are left feeling overwhelmed when trying to find support they can genuinely trust, while many exceptional carers struggle to find ethical opportunities where they are respected, valued and treated fairly.
+              </p>
               <p>
                 We believe that successful care begins with people. Skills
                 matter, experience matters, but kindness, trust and human
@@ -325,11 +303,6 @@ export default function AboutPage() {
                 carer brings something unique, and every care journey deserves
                 to be treated with the dignity and attention it deserves.
               </p>
-
-              <div className="flex items-center gap-4 py-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-gold-400/20" />
-                <div className="w-16 h-px bg-gold-400/10" />
-              </div>
 
               <p>
                 For me, care has never been just a profession. My sister Erica
@@ -346,15 +319,12 @@ export default function AboutPage() {
                 supporting vulnerable people, continues to shape every decision
                 we make at Grace &amp; Goodwill.
               </p>
+              <p>
+                At the heart of Grace &amp; Goodwill is a simple belief: when people feel seen, valued, respected and genuinely cared for, lives change. Our mission is to build those relationships, create that trust, and leave the world a little better than we found it, one person, one family and one act of kindness at a time.
+              </p>
 
-              {/* Featured Closing Mission Pull-Quote */}
+              {/* Featured Closing Mission Pull-Quote
               <div className="mt-20 pt-14 border-t border-gold-400/10 relative">
-                <span
-                  className="absolute -top-6 left-0 text-6xl text-gold-400/10 font-serif leading-none select-none"
-                  aria-hidden="true"
-                >
-                  &ldquo;
-                </span>
                 <p className="italic text-[1.35rem] sm:text-2xl text-gold-200/95 font-serif leading-[1.6]">
                   At the heart of Grace &amp; Goodwill is a simple belief: when
                   people feel seen, valued, respected and genuinely cared for,
@@ -363,7 +333,7 @@ export default function AboutPage() {
                   found it, one person, one family and one act of kindness at a
                   time.
                 </p>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

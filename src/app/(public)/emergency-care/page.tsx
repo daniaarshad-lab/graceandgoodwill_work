@@ -9,7 +9,7 @@ export const metadata = {
 
 export default function EmergencyCarePage() {
   return (
-    <main className="min-h-[calc(100vh-80px)] bg-navy-950 py-16 text-gold-100 flex items-center">
+    <main className="bg-navy-950 py-12 md:py-16 text-gold-100 min-h-[calc(100vh-80px)] flex flex-col justify-center">
       <div className="container-wrapper">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
           {/* LEFT COLUMN: Urgent Content & Priority Assistance */}
@@ -101,7 +101,7 @@ export default function EmergencyCarePage() {
 
           {/* RIGHT COLUMN: Premium glassmorphic priority form card */}
           <div className="lg:col-span-7">
-            <div className="rounded-[2rem] border border-amber-500/20 bg-navy-900/50 p-8 lg:p-10 shadow-[0_20px_50px_rgba(245,158,11,0.05)] backdrop-blur-xl space-y-6">
+            <div className="rounded-[2rem] border border-amber-500/20 bg-navy-900/50 p-6 sm:p-8 lg:p-10 shadow-[0_20px_50px_rgba(245,158,11,0.05)] backdrop-blur-xl space-y-6">
               <div className="border-b border-gold-300/10 pb-4">
                 <h2 className="text-xl font-bold text-amber-200">
                   Priority Placement Request

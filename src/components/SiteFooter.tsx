@@ -4,7 +4,7 @@ import Image from "next/image";
 const values = [
   {
     title: "INTEGRITY",
-    text: "Rooted in law,\nguided by ethics.",
+    text: "Morally and \n ethically guided.",
     icon: "/Integrity.png",
   },
   {
@@ -14,13 +14,13 @@ const values = [
   },
   {
     title: "TRUST",
-    text: "Built on honesty,\nstrengthened by\nreliability.",
+    text: "Built on honesty,\nstrengthened by reliability.",
     icon: "/Trust.png",
   },
   {
     title: "PURPOSE",
     text: "Care with meaning,\nimpact that lasts.",
-    icon: null, // Custom SVG for Wreath
+    icon: "/Purpose.png",
   },
 ];
 
@@ -32,13 +32,12 @@ function SiteFooter() {
           {values.map((val, idx) => (
             <div
               key={idx}
-              className={`flex items-center space-x-4 sm:space-x-5 flex-1 ${
-                idx === 0
-                  ? "md:pr-6 lg:pr-8 pb-6 md:pb-0"
-                  : idx === values.length - 1
-                    ? "md:pl-6 lg:pl-8 pt-6 md:pt-0"
-                    : "md:px-6 lg:px-8 py-6 md:py-0"
-              }`}
+              className={`flex flex-col justify-center items-center space-y-4 sm:space-y-5 flex-1 ${idx === 0
+                ? "md:pr-6 lg:pr-8 pb-6 md:pb-0"
+                : idx === values.length - 1
+                  ? "md:pl-6 lg:pl-8 pt-6 md:pt-0"
+                  : "md:px-6 lg:px-8 py-6 md:py-0"
+                }`}
             >
               <div className="flex-shrink-0">
                 {val.icon ? (
@@ -60,7 +59,7 @@ function SiteFooter() {
                   </svg>
                 )}
               </div>
-              <div className="flex flex-col justify-center">
+              <div className="flex flex-col justify-center text-center">
                 <h3 className="text-[13px] lg:text-[15px] font-serif text-gold-100 tracking-widest mb-1.5">
                   {val.title}
                 </h3>

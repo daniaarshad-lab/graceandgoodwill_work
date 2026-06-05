@@ -1,22 +1,31 @@
 import SectionCard from "./shared/SectionCard";
 import StatusBadge from "./shared/StatusBadge";
-import { CareRequest, Enquiry } from "../types/client.types";
+import { CareRequest } from "@/types/client.types";
+import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { fetchCareRequests, fetchClientProfile } from "@/store/slices/clientSlice";
+import EnquiryStatusBadge from "./enquiry/EnquiryStatusBadge";
 
 interface DashboardOverviewProps {
   user: any;
   careRequests: CareRequest[];
-  enquiries: Enquiry[];
   setActiveTab: (tab: any) => void;
 }
 
 export default function DashboardOverview({
   user,
   careRequests,
-  enquiries,
   setActiveTab,
 }: DashboardOverviewProps) {
+  const reduxEnquiries = useAppSelector((state) => state.client.enquiries) || [];
+  const sliceEnquiries = reduxEnquiries.slice(0, 2);
   const latestRequest = careRequests[0];
-  const sliceEnquiries = enquiries.slice(0, 2);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(fetchCareRequests());
+    dispatch(fetchClientProfile());
+  }, [dispatch]);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -47,7 +56,7 @@ export default function DashboardOverview({
               Matched Matches
             </p>
             <p className="text-3xl font-bold text-emerald-400">
-              {careRequests.filter((r) => r.status === "Matched").length}
+              {careRequests.filter((r) => r.status === "MATCHED").length}
             </p>
             <p className="text-[10px] text-gold-100/40">
               Carer placement confirmed and operational.
@@ -63,7 +72,7 @@ export default function DashboardOverview({
             <div className="flex justify-between items-center">
               <div>
                 <p className="text-xs font-semibold text-gold-200">
-                  {latestRequest.careType}
+                  {latestRequest.careCategory}
                 </p>
                 <p className="text-[10px] text-gold-100/50 mt-1">
                   Started: {latestRequest.startDate} • Duration:{" "}
@@ -94,20 +103,12 @@ export default function DashboardOverview({
               >
                 <div className="flex justify-between items-center">
                   <h4 className="text-xs font-bold text-gold-50 truncate max-w-[150px]">
-                    {enq.subject}
+                    {enq.message?.substring(0, 40) || "Enquiry"}
                   </h4>
-                  <span
-                    className={`rounded-full px-2 py-0.5 text-[8px] font-bold uppercase tracking-wider ${
-                      enq.status === "Responded"
-                        ? "bg-emerald-500/10 text-emerald-400"
-                        : "bg-gold-DEFAULT/10 text-gold-DEFAULT"
-                    }`}
-                  >
-                    {enq.status}
-                  </span>
+                  <EnquiryStatusBadge status={enq.status} />
                 </div>
                 <p className="text-[10px] text-gold-100/40">
-                  Preference: {enq.preference} • Date: {enq.date}
+                  {new Date(enq.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
                 </p>
               </div>
             ))}
@@ -133,7 +134,7 @@ export default function DashboardOverview({
             <p className="text-xs text-gold-100/70">
               Enquiry{" "}
               <span className="font-semibold">
-                {enquiries[0]?.id || "ENQ-901"}
+                {reduxEnquiries[0]?.id || "ENQ"}
               </span>{" "}
               has been marked as completed/responded by Grace & Goodwill support
               staff.

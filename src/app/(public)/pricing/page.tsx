@@ -113,17 +113,22 @@ export default function PricingPage() {
 
         <div className="container-wrapper relative z-10 text-center flex flex-col items-center">
           {/* Eyebrow label & Gold accent line restored to premium style */}
-          <div className="flex items-center gap-4 mb-8">
+          {/* <div className="flex items-center gap-4 mb-8">
             <div className="h-px w-10 bg-gradient-to-r from-transparent to-gold-400/50" />
             <p className="text-xs uppercase tracking-[0.4em] text-gold-400 font-bold">
               GRACE &amp; GOODWILL • MEMBERSHIP PLANS
             </p>
             <div className="h-px w-10 bg-gradient-to-l from-transparent to-gold-400/50" />
+          </div> */}
+          <div className="flex items-center justify-center gap-4 mb-8">
+            <div className="h-px w-10 bg-gradient-to-r from-transparent to-gold-400/50" />
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight  text-gold-darker">
+              Membership  plans</h1>
+            <div className="h-px w-10 bg-gradient-to-l from-transparent to-gold-400/50" />
           </div>
-
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight mb-6 text-gold-100 tracking-wide max-w-4xl">
+          {/* <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight mb-6 text-gold-100 tracking-wide max-w-4xl">
             Membership Plans
-          </h1>
+          </h1> */}
 
           <p className="max-w-2xl text-base sm:text-lg text-gold-200/80 leading-relaxed font-light">
             Flexible membership options for professional carers and care
@@ -147,15 +152,15 @@ export default function PricingPage() {
             <div
               key={plan.name}
               className={[
-                "relative flex flex-col rounded-3xl p-8 lg:p-10 border group transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] transform h-full",
+                "relative flex flex-col rounded-3xl p-6 sm:p-8 lg:p-10 border group transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] transform h-full",
                 plan.featured
                   ? "border-gold-400/40 shadow-[0_15px_40px_rgba(212,175,55,0.08)] ring-1 ring-gold-muted/20 scale-[1.02] z-10 md:-translate-y-2 " +
-                    "hover:scale-[1.03] hover:-translate-y-3 hover:shadow-[0_20px_50px_rgba(212,175,55,0.15)] hover:border-gold-400/60"
+                  "hover:scale-[1.03] hover:-translate-y-3 hover:shadow-[0_20px_50px_rgba(212,175,55,0.15)] hover:border-gold-400/60"
                   : plan.premium
                     ? "border-gold-300/20 shadow-xl shadow-navy-950/50 scale-100 opacity-95 md:-translate-y-0 " +
-                      "hover:scale-[1.01] hover:-translate-y-1 hover:opacity-100 hover:border-gold-400/40 hover:shadow-[0_12px_40px_rgba(212,175,55,0.08)]"
+                    "hover:scale-[1.01] hover:-translate-y-1 hover:opacity-100 hover:border-gold-400/40 hover:shadow-[0_12px_40px_rgba(212,175,55,0.08)]"
                     : "border-gold-muted/15 shadow-md scale-100 opacity-80 md:translate-y-0 " +
-                      "hover:scale-[1.01] hover:-translate-y-1 hover:opacity-100 hover:border-gold-muted/30 hover:shadow-[0_12px_40px_rgba(160,128,84,0.06)]",
+                    "hover:scale-[1.01] hover:-translate-y-1 hover:opacity-100 hover:border-gold-muted/30 hover:shadow-[0_12px_40px_rgba(160,128,84,0.06)]",
               ].join(" ")}
               style={{
                 background: plan.featured
@@ -318,12 +323,12 @@ export default function PricingPage() {
             <div
               key={plan.name}
               className={[
-                "relative flex flex-col rounded-3xl p-8 lg:p-10 border group transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] transform h-full",
+                "relative flex flex-col rounded-3xl p-6 sm:p-8 lg:p-10 border group transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] transform h-full",
                 plan.featured
                   ? "border-gold-400/40 shadow-[0_15px_40px_rgba(212,175,55,0.08)] ring-1 ring-gold-muted/20 scale-[1.02] z-10 md:-translate-y-2 " +
-                    "hover:scale-[1.03] hover:-translate-y-3 hover:shadow-[0_20px_50px_rgba(212,175,55,0.15)] hover:border-gold-400/60"
+                  "hover:scale-[1.03] hover:-translate-y-3 hover:shadow-[0_20px_50px_rgba(212,175,55,0.15)] hover:border-gold-400/60"
                   : "border-gold-muted/15 shadow-md scale-100 opacity-80 md:translate-y-0 " +
-                    "hover:scale-[1.01] hover:-translate-y-1 hover:opacity-100 hover:border-gold-muted/30 hover:shadow-[0_12px_40px_rgba(160,128,84,0.06)]",
+                  "hover:scale-[1.01] hover:-translate-y-1 hover:opacity-100 hover:border-gold-muted/30 hover:shadow-[0_12px_40px_rgba(160,128,84,0.06)]",
               ].join(" ")}
               style={{
                 background: plan.featured
@@ -463,7 +468,7 @@ export default function PricingPage() {
           />
 
           <div className="relative z-10 md:max-w-2xl text-center md:text-left">
-            <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide mb-4">
+            <h2 className="text-3xl sm:text-4xl font-serif text-gold-50 tracking-wide font-light mb-4">
               Training Without Membership
             </h2>
             <p className="text-gold-200/70 leading-relaxed font-light text-lg">
@@ -498,7 +503,7 @@ export default function PricingPage() {
       <section className="container-wrapper pt-12 pb-24 border-t border-gold-muted/10">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16 space-y-5">
-            <h2 className="text-3xl font-serif text-gold-50 tracking-wide font-light">
+            <h2 className="text-3xl sm:text-4xl font-serif text-gold-50 tracking-wide font-light mb-4">
               Membership Conditions
             </h2>
             <div className="h-px w-24 bg-gradient-to-r from-transparent via-gold-400/30 to-transparent mx-auto" />
@@ -560,8 +565,8 @@ export default function PricingPage() {
       <section className="bg-navy-900/50 py-24 relative overflow-hidden border-y border-gold-muted/10">
         <div className="container-wrapper max-w-3xl relative z-10">
           <div className="text-center mb-12 space-y-4">
-            <h2 className="text-3xl font-serif text-gold-50 tracking-wide">
-              Contact Sales Form
+            <h2 className="text-3xl sm:text-4xl font-serif text-gold-50 tracking-wide font-light mb-4">
+              Contact Sales
             </h2>
           </div>
 
@@ -581,7 +586,7 @@ export default function PricingPage() {
         />
 
         <div className="container-wrapper relative z-20 text-center max-w-2xl mx-auto">
-          <h2 className="text-3xl font-serif text-gold-50 mb-4 tracking-wide">
+          <h2 className="text-3xl sm:text-4xl font-serif text-gold-50 tracking-wide font-light mb-4">
             Stay Connected
           </h2>
           <p className="text-gold-200/70 font-light mb-8">

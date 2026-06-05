@@ -86,16 +86,16 @@ export default function ServicesPage() {
       <div className="pointer-events-none absolute right-1/4 bottom-10 h-[450px] w-[600px] rounded-full bg-navy-800/30 blur-[130px]" />
 
       <div className="container-wrapper">
-        <section className="mb-20 text-center">
-          <p className="inline-block rounded-full border border-gold-500/25 bg-gold-500/5 px-4 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-gold-300">
-            Tailored Care
-          </p>
-          <h1 className="mt-6 text-4xl font-light tracking-tight text-gold-50 sm:text-5xl md:text-6xl">
-            Support designed{" "}
-            <span className="font-semibold text-gold-DEFAULT">
-              around real lives.
-            </span>
-          </h1>
+        {/* Header Section */}
+        <section className="mb-20 text-center">        
+
+             <div className="flex items-center justify-center gap-4 mb-8">
+                <div className="h-px w-10 bg-gradient-to-r from-transparent to-gold-400/50" />
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight  text-gold-darker">
+                  Support designed around real lives</h1>
+                <div className="h-px w-10 bg-gradient-to-l from-transparent to-gold-400/50" />
+          </div>
+          
           <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-gold-200/80 sm:text-lg">
             Every family is unique, and so is our support. Explore our core
             services structured around dignity, continuity, and warm human
@@ -107,7 +107,7 @@ export default function ServicesPage() {
           {coreServices.map((service) => (
             <div
               key={service.title}
-              className="group relative rounded-[28px] border border-gold-300/10 bg-navy-900/40 p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)]"
+              className="group relative rounded-[28px] border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)]"
             >
               <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl border border-gold-400/20 bg-navy-950 shadow-inner">
                 {service.icon}
@@ -124,7 +124,7 @@ export default function ServicesPage() {
 
         {/* 7th Service Featured Wide Panel */}
         <section className="mt-8">
-          <div className="group relative overflow-hidden rounded-[32px] border border-gold-300/15 bg-gradient-to-r from-navy-900/70 to-navy-900/40 p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:border-gold-300/35 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)] md:p-12">
+          <div className="group relative overflow-hidden rounded-[32px] border border-gold-300/15 bg-gradient-to-r from-navy-900/70 to-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:border-gold-300/35 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)] md:p-12">
             <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
               <div className="max-w-2xl space-y-4">
                 <div className="flex items-center gap-4">
@@ -166,12 +166,10 @@ export default function ServicesPage() {
           </div>
         </section>
 
-        <section className="mt-24 rounded-[32px] border border-gold-300/15 bg-navy-900/30 p-8 text-center backdrop-blur-sm sm:p-12">
+        <section className="mt-24 rounded-[32px] border border-gold-300/15 bg-navy-900/30 p-6 sm:p-8 md:p-12 text-center backdrop-blur-sm">
           <h2 className="text-2xl font-light text-gold-50 sm:text-3xl">
-            Let&apos;s discuss how we can{" "}
-            <span className="font-semibold text-gold-DEFAULT">
-              support you.
-            </span>
+            Let&apos;s discuss how we can support you.
+           
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-gold-200/80 sm:text-base">
             Reach out to our care matching experts to discuss your requirements,

@@ -6,6 +6,7 @@ import {
   useEffect,
   useCallback,
   useMemo,
+  useState,
   ReactNode,
 } from "react";
 import {
@@ -22,6 +23,8 @@ import {
   logout as logoutThunk,
 } from "@/store/slices/authSlice";
 
+import { usePathname, useRouter } from "next/navigation";
+
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
@@ -37,6 +40,8 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const dispatch = useAppDispatch();
+  const pathname = usePathname();
+  const [isInitializing, setIsInitializing] = useState(true);
   const {
     user,
     isAuthenticated,
@@ -44,13 +49,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-    if (!token) return;
-    dispatch(getProfile());
+    const initAuth = async () => {
+      const token =
+        typeof window !== "undefined"
+          ? localStorage.getItem("accessToken")
+          : null;
+      if (!token) {
+        setIsInitializing(false);
+        return;
+      }
+      try {
+        await dispatch(getProfile()).unwrap();
+      } catch (e) {
+        console.error("Hydration getProfile failed:", e);
+      } finally {
+        setIsInitializing(false);
+      }
+    };
+
+    initAuth();
   }, [dispatch]);
+
+  const combinedLoading = isLoading || isInitializing;
 
   const login = useCallback(
     async (payload: LoginPayload) => {
@@ -100,7 +120,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     () => ({
       user,
       isAuthenticated,
-      isLoading,
+      isLoading: combinedLoading,
       login,
       register,
       logout,

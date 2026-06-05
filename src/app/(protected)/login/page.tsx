@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -8,6 +8,7 @@ import AuthSplitLayout from "@/components/AuthSplitLayout";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import { validateLoginForm, LoginFormErrors } from "@/lib/validation";
+import { usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function LoginPage() {
@@ -17,11 +18,27 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   const router = useRouter();
-  const { login } = useAuth();
+  const pathname = usePathname();
+  const { login, isAuthenticated, user, isLoading: authLoading } = useAuth();
+
+  useEffect(() => {
+    if (isAuthenticated && user?.role) {
+      const role = user.role.toUpperCase();
+      console.log(`[LOGIN-PAGE-EFFECT] Triggering redirect. Target: /${role.toLowerCase()}`);
+      if (role === "CLIENT") {
+        router.push("/client");
+      } else if (role === "CARER") {
+        router.push("/carer");
+      } else if (role === "ADMIN") {
+        router.push("/admin");
+      } else {
+        router.push("/");
+      }
+    }
+  }, [isAuthenticated, user, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("LOGIN SUBMIT");
     setApiError(null);
 
     // Validate form
@@ -36,18 +53,11 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      console.log("Login attempt:", { email });
-
       const response = await login({
         email,
         password,
       });
 
-      console.log("LOGIN SUCCESS", response);
-
-      // Perform smart redirect to home which will dynamically navigate based on portal link
-      router.push("/");
-      router.refresh();
     } catch (error: any) {
       console.error(error);
       setApiError(
@@ -57,6 +67,20 @@ export default function LoginPage() {
       setIsLoading(false);
     }
   };
+
+  // Prevent form render while checking auth or redirecting
+  if (authLoading || isAuthenticated) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-navy-950 text-gold-100">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold-DEFAULT"></div>
+          <p className="text-sm tracking-wider text-gold-200">
+            Redirecting...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <AuthSplitLayout

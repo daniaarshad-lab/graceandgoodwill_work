@@ -105,7 +105,7 @@ const authSlice = createSlice({
             }
           }
         } catch (e) {
-          console.error("Failed to load persisted auth", e);
+          console.error("[authSlice] Failed to load persisted auth", e);
         }
       }
     },

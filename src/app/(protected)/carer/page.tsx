@@ -47,10 +47,7 @@ export default function CarerDashboard() {
           lastName={profileUser?.lastName || portal.lastName}
           email={profileUser?.email || portal.email}
           phone={profileUser?.phoneNumber || portal.phone}
-          profilePhoto={portal.profilePhoto}
-          photoUploading={portal.photoUploading}
-          photoProgress={portal.photoProgress}
-          handlePhotoChange={portal.handlePhotoChange}
+          profilePhoto={profile?.profilePhotoUrl || null}
         />
 
         <PortalTabs activeTab={activeTab} setActiveTab={setActiveTab} />
@@ -85,11 +82,6 @@ export default function CarerDashboard() {
               setExperience={portal.setExperience}
               address={portal.address}
               setAddress={portal.setAddress}
-              profilePhoto={portal.profilePhoto}
-              photoUploading={portal.photoUploading}
-              photoProgress={portal.photoProgress}
-              photoError={portal.photoError}
-              handlePhotoChange={portal.handlePhotoChange}
               errors={portal.profileErrors}
               isProfileSaving={portal.isProfileSaving}
               onSubmit={portal.handleSaveProfile}

@@ -45,6 +45,28 @@ export const carerService = {
     });
   },
 
+  async uploadProfilePhoto(file: File): Promise<CarerProfile> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    const formData = new FormData();
+    formData.append("photo", file);
+
+    return apiFetch("/carer/profile/photo", {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+  },
+
   async uploadDocument(file: File, category: string) {
     const token =
       typeof window !== "undefined"

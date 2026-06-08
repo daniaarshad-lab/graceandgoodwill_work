@@ -50,6 +50,22 @@ export const updateCarerProfile = createAsyncThunk<
   }
 });
 
+export const uploadCarerProfilePhoto = createAsyncThunk<
+  CarerProfile,
+  File,
+  { rejectValue: string }
+>("carer/uploadProfilePhoto", async (file, { rejectWithValue }) => {
+  try {
+    return await carerService.uploadProfilePhoto(file);
+  } catch (error: any) {
+    return rejectWithValue(
+      error?.response?.data?.message ||
+      error?.message ||
+      "Failed to upload profile photo",
+    );
+  }
+});
+
 export const fetchCarerDocuments = createAsyncThunk<
   CarerDocument[],
   void,
@@ -128,6 +144,22 @@ const carerSlice = createSlice({
       .addCase(updateCarerProfile.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Failed to update carer profile";
+      })
+
+      .addCase(uploadCarerProfilePhoto.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(
+        uploadCarerProfilePhoto.fulfilled,
+        (state, action: PayloadAction<CarerProfile>) => {
+          state.loading = false;
+          state.profile = action.payload;
+        },
+      )
+      .addCase(uploadCarerProfilePhoto.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Failed to upload profile photo";
       })
       .addCase(fetchCarerDocuments.pending, (state) => {
         state.loading = true;

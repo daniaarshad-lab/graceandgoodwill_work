@@ -118,12 +118,7 @@ export function useCarerPortal({
     }
   }, [profile]);
 
-  // States for Profile photo upload
-  const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
-  const [photoUploading, setPhotoUploading] = useState(false);
-  const [photoProgress, setPhotoProgress] = useState(0);
-  const [photoError, setPhotoError] = useState<string | null>(null);
-
+  // Profile errors state
   const [profileErrors, setProfileErrors] = useState<Record<string, string>>(
     {},
   );
@@ -205,39 +200,7 @@ export function useCarerPortal({
     }
   };
 
-  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    setPhotoError(null);
 
-    if (file) {
-      const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
-      if (!allowedTypes.includes(file.type)) {
-        showErrorToast("Invalid Format", "Unsupported format. Please upload JPG, JPEG, or PNG headshots.");
-        return;
-      }
-
-      const maxPhotoSize = 5 * 1024 * 1024; // 5 MB
-      if (file.size > maxPhotoSize) {
-        showErrorToast("File Too Large", "File too large. Maximum size allowed is 5 MB.");
-        return;
-      }
-
-      setPhotoUploading(true);
-      setPhotoProgress(0);
-
-      const interval = setInterval(() => {
-        setPhotoProgress((prev) => {
-          if (prev >= 100) {
-            clearInterval(interval);
-            setPhotoUploading(false);
-            setProfilePhoto(URL.createObjectURL(file));
-            return 100;
-          }
-          return prev + 20;
-        });
-      }, 150);
-    }
-  };
 
   const handleDocUpload = async (
     type: string,
@@ -260,7 +223,8 @@ export function useCarerPortal({
       !allowedTypes.includes(file.type) &&
       !allowedExtensions.includes(fileExtension)
     ) {
-      setComplianceError(
+      showErrorToast(
+        "Invalid Format",
         "Invalid file type. Only PDF, PNG, and JPG/JPEG document uploads are allowed.",
       );
       return;
@@ -448,13 +412,6 @@ export function useCarerPortal({
     setExperience,
     address,
     setAddress,
-
-    profilePhoto,
-    photoUploading,
-    photoProgress,
-    photoError,
-    setPhotoError,
-    handlePhotoChange,
 
     profileErrors,
     isProfileSaving,

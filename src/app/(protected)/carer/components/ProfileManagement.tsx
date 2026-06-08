@@ -1,7 +1,6 @@
 import { ChangeEvent, FormEvent } from "react";
 import SectionCard from "./shared/SectionCard";
 import Input from "@/components/Input";
-import UploadPhotoSection from "./UploadPhotoSection";
 import PhoneInput from "@/components/PhoneInput";
 import Button from "@/components/Button";
 
@@ -22,11 +21,6 @@ interface ProfileManagementProps {
   setExperience: (val: string) => void;
   address: string;
   setAddress: (val: string) => void;
-  profilePhoto: string | null;
-  photoUploading: boolean;
-  photoProgress: number;
-  photoError: string | null;
-  handlePhotoChange: (e: ChangeEvent<HTMLInputElement>) => void;
   errors: Record<string, string>;
   isProfileSaving: boolean;
   onSubmit: (e: FormEvent) => void;
@@ -52,11 +46,6 @@ export default function ProfileManagement({
   setExperience,
   address,
   setAddress,
-  profilePhoto,
-  photoUploading,
-  photoProgress,
-  photoError,
-  handlePhotoChange,
   errors,
   isProfileSaving,
   onSubmit,
@@ -69,14 +58,6 @@ export default function ProfileManagement({
       </h3>
 
       <form onSubmit={onSubmit} className="space-y-6">
-        <UploadPhotoSection
-          profilePhoto={profilePhoto}
-          photoUploading={photoUploading}
-          photoProgress={photoProgress}
-          photoError={photoError}
-          handlePhotoChange={handlePhotoChange}
-        />
-
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Input
             label="First Name"

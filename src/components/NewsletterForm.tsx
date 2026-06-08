@@ -3,6 +3,7 @@
 import { useState, FormEvent, useEffect } from "react";
 import Button from "@/components/Button";
 import { Mail } from "lucide-react";
+import { showSuccessToast, showErrorToast } from "@/utils/toast";
 
 interface FormData {
   firstName: string;
@@ -22,23 +23,6 @@ export default function NewsletterForm() {
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<
-    "idle" | "success" | "error"
-  >("idle");
-
-  useEffect(() => {
-    const checkValidity = () => {
-      if (!formData.firstName.trim()) return false;
-      if (
-        !formData.email.trim() ||
-        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())
-      )
-        return false;
-      return true;
-    };
-    checkValidity();
-  }, [formData]);
-
   const validate = (): boolean => {
     const newErrors: FormErrors = {};
     let formIsValid = true;
@@ -63,17 +47,18 @@ export default function NewsletterForm() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setSubmitStatus("idle");
 
     if (validate()) {
       setIsSubmitting(true);
       try {
         await new Promise((resolve) => setTimeout(resolve, 1500));
-        setSubmitStatus("success");
+        
+        showSuccessToast("Subscribed Successfully", "Thank you for subscribing!");
+        
         setFormData({ firstName: "", email: "" });
         setErrors({});
       } catch (error) {
-        setSubmitStatus("error");
+        showErrorToast("Subscription Failed", "Something went wrong. Please try again later.");
       } finally {
         setIsSubmitting(false);
       }
@@ -85,18 +70,6 @@ export default function NewsletterForm() {
       onSubmit={handleSubmit}
       className="w-full max-w-2xl mx-auto flex flex-col gap-5"
     >
-      {submitStatus === "success" && (
-        <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm text-center">
-          Thank you for subscribing!
-        </div>
-      )}
-
-      {submitStatus === "error" && (
-        <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm text-center">
-          Something went wrong. Please try again later.
-        </div>
-      )}
-
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 w-full">
         <div className="space-y-2">
           <label className="text-sm text-gold-200/80 ml-1 text-left block">

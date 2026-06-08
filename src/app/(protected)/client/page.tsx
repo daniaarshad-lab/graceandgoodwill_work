@@ -56,13 +56,6 @@ export default function ClientDashboard() {
 
         <PortalTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
-        {/* --- INTRODUCTION REQUEST NOTIFICATION BANNER --- */}
-        {portal.introSuccessMsg && (
-          <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-sm text-emerald-400">
-            {portal.introSuccessMsg}
-          </div>
-        )}
-
         <div className="transition-all duration-300">
           {/* TAB 1: DASHBOARD OVERVIEW */}
           {activeTab === "overview" && (
@@ -99,7 +92,6 @@ export default function ClientDashboard() {
               setNotes={portal.setCareNotes}
               errors={portal.careErrors}
               isSubmitting={portal.isCareSubmitting}
-              success={portal.careSuccess}
               onSubmit={portal.handleCareSubmit}
               setActiveTab={setActiveTab}
             />

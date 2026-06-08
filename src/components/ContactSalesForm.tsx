@@ -2,6 +2,7 @@
 
 import { useState, FormEvent, useEffect } from "react";
 import Button from "@/components/Button";
+import { showSuccessToast, showErrorToast } from "@/utils/toast";
 
 interface FormData {
   name: string;
@@ -36,11 +37,6 @@ export default function ContactSalesForm() {
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<
-    "idle" | "success" | "error"
-  >("idle");
-
-  // Re-validate silently when form data changes to enable/disable button
   useEffect(() => {
     const checkValidity = () => {
       if (!formData.name.trim()) return false;
@@ -121,14 +117,15 @@ export default function ContactSalesForm() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setSubmitStatus("idle");
 
     if (validate()) {
       setIsSubmitting(true);
       try {
         // Placeholder for API integration
         await new Promise((resolve) => setTimeout(resolve, 1500));
-        setSubmitStatus("success");
+        
+        showSuccessToast("Inquiry Received", "Thank you for your inquiry. Our team will contact you shortly.");
+        
         setFormData({
           name: "",
           company: "",
@@ -140,7 +137,7 @@ export default function ContactSalesForm() {
         });
         setErrors({});
       } catch (error) {
-        setSubmitStatus("error");
+        showErrorToast("Submission Failed", "Something went wrong. Please try again later.");
       } finally {
         setIsSubmitting(false);
       }
@@ -159,18 +156,6 @@ export default function ContactSalesForm() {
       onSubmit={handleSubmit}
       className="bg-navy-950/80 p-8 md:p-12 rounded-3xl border border-gold-400/10 shadow-xl space-y-6 backdrop-blur-sm"
     >
-      {submitStatus === "success" && (
-        <div className="p-4 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 text-sm text-center">
-          Thank you for your inquiry. Our team will contact you shortly.
-        </div>
-      )}
-
-      {submitStatus === "error" && (
-        <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm text-center">
-          Something went wrong. Please try again later.
-        </div>
-      )}
-
       <div className="grid md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <label htmlFor="name" className="text-sm text-gold-200/80 ml-1">

@@ -28,8 +28,6 @@ interface ProfileManagementProps {
   photoError: string | null;
   handlePhotoChange: (e: ChangeEvent<HTMLInputElement>) => void;
   errors: Record<string, string>;
-  errorMsg: string | null;
-  successMsg: boolean;
   isProfileSaving: boolean;
   onSubmit: (e: FormEvent) => void;
   setActiveTab: (
@@ -60,8 +58,6 @@ export default function ProfileManagement({
   photoError,
   handlePhotoChange,
   errors,
-  errorMsg,
-  successMsg,
   isProfileSaving,
   onSubmit,
   setActiveTab,
@@ -156,18 +152,6 @@ export default function ProfileManagement({
           placeholder="Enter full physical address"
           error={errors.address}
         />
-
-        {errorMsg && (
-          <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-500">
-            {errorMsg}
-          </div>
-        )}
-
-        {successMsg && (
-          <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-400">
-            Profile successfully updated and saved in memory!
-          </div>
-        )}
 
         <div className="flex justify-end gap-3 pt-2">
           <Button

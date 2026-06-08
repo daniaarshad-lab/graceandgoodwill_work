@@ -2,7 +2,7 @@
 
 import { useState, Suspense } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 
 import AuthSplitLayout from "@/components/AuthSplitLayout";
 import Input from "@/components/Input";
@@ -12,13 +12,14 @@ import {
   ResetPasswordFormErrors,
 } from "@/lib/validation";
 import { authService } from "@/services/auth/auth.service";
+import { showSuccessToast, showErrorToast } from "@/utils/toast";
 
 function ResetPasswordForm() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState<ResetPasswordFormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const router = useRouter();
 
   const searchParams = useSearchParams();
   const token = searchParams.get("token") || "";
@@ -44,34 +45,15 @@ function ResetPasswordForm() {
       // Perform actual API call to reset password
       await authService.resetPassword(token, newPassword);
 
-      setSubmitted(true);
+      showSuccessToast("Password Reset", "Your password has been successfully reset. You can now login.");
+      router.push("/login");
     } catch (error: any) {
-      console.error("Reset password error:", error);
+      const errorMsg = typeof error === 'string' ? error : error?.message || "Password reset failed.";
+      showErrorToast("Reset Failed", errorMsg);
     } finally {
       setIsLoading(false);
     }
   };
-
-  if (submitted) {
-    return (
-      <AuthSplitLayout
-        title="Password Reset"
-        subtitle="Your password has been successfully reset."
-      >
-        <div className="space-y-4 text-center">
-          <p className="text-sm text-gold-100/70">
-            You can now login with your new password.
-          </p>
-          <Link
-            href="/login"
-            className="block rounded-xl py-3 font-medium transition-all bg-gold-muted text-navy-950 hover:bg-[#b8915e] text-center"
-          >
-            Go to Login
-          </Link>
-        </div>
-      </AuthSplitLayout>
-    );
-  }
 
   return (
     <AuthSplitLayout

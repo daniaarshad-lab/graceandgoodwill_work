@@ -7,6 +7,7 @@ import Input from "@/components/Input";
 import Button from "@/components/Button";
 import { validateLoginForm, LoginFormErrors } from "@/lib/validation";
 import { useAuth } from "@/contexts/AuthContext";
+import { showSuccessToast, showErrorToast } from "@/utils/toast";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
@@ -51,10 +52,12 @@ export default function LoginForm() {
         route = "/client";
       }
 
+      showSuccessToast("Login Successful", "Welcome back to Grace & Goodwill.");
+
       router.push(route);
-      router.refresh();
     } catch (error: any) {
-      console.error(error);
+      const errorMsg = typeof error === 'string' ? error : error?.message || "Login failed.";
+      showErrorToast("Login Failed", errorMsg);
     } finally {
       setIsLoading(false);
     }

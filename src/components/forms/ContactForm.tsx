@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import PhoneInput from "@/components/PhoneInput";
 import Button from "@/components/Button";
-import { Check } from "lucide-react";
+import { showSuccessToast } from "@/utils/toast";
 
 export default function ContactForm() {
   const [fullName, setFullName] = useState("");
@@ -18,7 +18,6 @@ export default function ContactForm() {
   // UX & Validation State
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const validate = () => {
     const tempErrors: Record<string, string> = {};
@@ -53,7 +52,11 @@ export default function ContactForm() {
     setIsSubmitting(true);
     setTimeout(() => {
       setIsSubmitting(false);
-      setIsSubmitted(true);
+      showSuccessToast(
+        "Request Received",
+        "Thank you for reaching out. One of our consultants will contact you within the next two hours."
+      );
+      resetForm();
     }, 1200);
   };
 
@@ -67,35 +70,7 @@ export default function ContactForm() {
     setStartDate("");
     setMessage("");
     setErrors({});
-    setIsSubmitted(false);
   };
-
-  if (isSubmitted) {
-    return (
-      <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-6 text-center space-y-4">
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400">
-          <Check className="w-6 h-6" strokeWidth={2.5} />
-        </div>
-        <div className="space-y-1">
-          <h3 className="text-lg font-bold text-emerald-300">
-            Request Successfully Received
-          </h3>
-          <p className="text-xs text-gold-100/70 leading-relaxed max-w-md mx-auto">
-            Thank you for reaching out. We have logged your request. One of our
-            matchmaking consultants will review your details and contact you
-            within the next two hours.
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={resetForm}
-          className="mt-2 text-xs font-semibold text-gold-200 underline hover:text-gold-100"
-        >
-          Submit another request
-        </button>
-      </div>
-    );
-  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">

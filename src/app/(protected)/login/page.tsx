@@ -9,13 +9,13 @@ import Input from "@/components/Input";
 import Button from "@/components/Button";
 import { validateLoginForm, LoginFormErrors } from "@/lib/validation";
 import { useAuth } from "@/contexts/AuthContext";
+import { showSuccessToast, showErrorToast } from "@/utils/toast";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<LoginFormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
-  const [apiError, setApiError] = useState<string | null>(null);
   const router = useRouter();
   const { login, isAuthenticated, user, isLoading: authLoading } = useAuth();
 
@@ -36,7 +36,6 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setApiError(null);
 
     // Validate form
     const formErrors = validateLoginForm(email, password);
@@ -54,10 +53,12 @@ export default function LoginPage() {
         email,
         password,
       });
+      showSuccessToast("Login Successful", "Welcome back to Grace & Goodwill.");
     } catch (error: any) {
       console.error(error);
-      setApiError(
-        error.message || "Invalid email or password. Please try again.",
+      showErrorToast(
+        "Login Failed",
+        error.message || "Invalid email or password. Please try again."
       );
     } finally {
       setIsLoading(false);
@@ -81,11 +82,6 @@ export default function LoginPage() {
       subtitle="Login to continue managing care services."
     >
       <form className="space-y-5" onSubmit={handleSubmit}>
-        {apiError && (
-          <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-500">
-            {apiError}
-          </div>
-        )}
 
         <Input
           label="Email"

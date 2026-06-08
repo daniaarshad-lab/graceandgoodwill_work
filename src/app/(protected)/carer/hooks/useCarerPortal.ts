@@ -23,6 +23,7 @@ import {
   AvailabilityDay,
   AvailabilitySlot,
 } from "@/types/carer.types";
+import { showSuccessToast, showErrorToast } from "@/utils/toast";
 
 interface UseCarerPortalProps {
   user: any;
@@ -123,13 +124,10 @@ export function useCarerPortal({
   const [photoProgress, setPhotoProgress] = useState(0);
   const [photoError, setPhotoError] = useState<string | null>(null);
 
-  // Validation States for Profile Form
   const [profileErrors, setProfileErrors] = useState<Record<string, string>>(
     {},
   );
-  const [profileErrorMsg, setProfileErrorMsg] = useState<string | null>(null);
   const [isProfileSaving, setIsProfileSaving] = useState(false);
-  const [profileSuccessMsg, setProfileSuccessMsg] = useState(false);
 
   // Application status — mock until API is available
   const [applicationStatus] = useState<"pending" | "approved" | "rejected">(
@@ -159,29 +157,18 @@ export function useCarerPortal({
   const [previewDoc, setPreviewDoc] = useState<ComplianceDoc | null>(null);
 
   // Compliance Upload Validation States
-  const [complianceError, setComplianceError] = useState<string | null>(null);
-  const [complianceSuccess, setComplianceSuccess] = useState<string | null>(
-    null,
-  );
   const [docToDelete, setDocToDelete] = useState<string | null>(null);
 
   const [availability, setAvailability] =
     useState<WeeklyAvailability>(emptyAvailability);
 
   // Availability Save Validation States
-  const [availabilityError, setAvailabilityError] = useState<string | null>(
-    null,
-  );
-  const [availabilitySuccess, setAvailabilitySuccess] = useState(false);
   const [isAvailabilitySaving, setIsAvailabilitySaving] = useState(false);
 
   const dispatch = useAppDispatch();
 
-  // Action 1: Save Profile Form Changes
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
-    setProfileErrorMsg(null);
-    setProfileSuccessMsg(false);
 
     const formData = {
       experience,
@@ -193,9 +180,7 @@ export function useCarerPortal({
 
     if (Object.keys(errors).length > 0) {
       setProfileErrors(errors);
-      setProfileErrorMsg(
-        "Please correct the errors in the profile form before saving.",
-      );
+      showErrorToast("Validation Error", "Please correct the errors in the profile form before saving.");
       return;
     }
 
@@ -211,13 +196,10 @@ export function useCarerPortal({
     try {
       setIsProfileSaving(true);
       await dispatch(updateCarerProfile(payload)).unwrap();
-      setProfileSuccessMsg(true);
-      setTimeout(() => {
-        setProfileSuccessMsg(false);
-      }, 4000);
-    } catch (error) {
-      console.error(error);
-      setProfileErrorMsg("Failed to update profile.");
+      showSuccessToast("Profile Updated", "Profile successfully updated and saved!");
+    } catch (error: any) {
+      const errorMsg = typeof error === 'string' ? error : error?.message || "Failed to update profile.";
+      showErrorToast("Error", errorMsg);
     } finally {
       setIsProfileSaving(false);
     }
@@ -230,15 +212,13 @@ export function useCarerPortal({
     if (file) {
       const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
       if (!allowedTypes.includes(file.type)) {
-        setPhotoError(
-          "Unsupported format. Please upload JPG, JPEG, or PNG headshots.",
-        );
+        showErrorToast("Invalid Format", "Unsupported format. Please upload JPG, JPEG, or PNG headshots.");
         return;
       }
 
       const maxPhotoSize = 5 * 1024 * 1024; // 5 MB
       if (file.size > maxPhotoSize) {
-        setPhotoError("File too large. Maximum size allowed is 5 MB.");
+        showErrorToast("File Too Large", "File too large. Maximum size allowed is 5 MB.");
         return;
       }
 
@@ -265,9 +245,6 @@ export function useCarerPortal({
   ) => {
     const file = e.target.files?.[0];
 
-    setComplianceError(null);
-    setComplianceSuccess(null);
-
     if (!file) return;
 
     const allowedTypes = [
@@ -292,9 +269,7 @@ export function useCarerPortal({
     const maxDocSize = 10 * 1024 * 1024;
 
     if (file.size > maxDocSize) {
-      setComplianceError(
-        `File "${file.name}" is too large. Maximum allowed size is 10 MB.`,
-      );
+      showErrorToast("File Too Large", `File "${file.name}" is too large. Maximum allowed size is 10 MB.`);
       return;
     }
 
@@ -330,32 +305,26 @@ export function useCarerPortal({
       // Refresh documents list from Redux after successful upload
       dispatch(fetchCarerDocuments());
 
-      setComplianceSuccess(`Document "${file.name}" uploaded successfully!`);
+      showSuccessToast("Document Uploaded", `Document "${file.name}" uploaded successfully!`);
 
       setTimeout(() => {
-        setComplianceSuccess(null);
         setUploadProgress(0);
       }, 4000);
-    } catch (error) {
+    } catch (error: any) {
       clearInterval(progressInterval);
-      console.error(error);
-
-      setComplianceError("Failed to upload document.");
+      const errorMsg = typeof error === 'string' ? error : error?.message || "Failed to upload document.";
+      showErrorToast("Upload Failed", errorMsg);
     } finally {
       setUploadingDocType(null);
     }
   };
   const handleDeleteDoc = async (id: string) => {
-    setComplianceError(null);
-    setComplianceSuccess(null);
-
     try {
       await dispatch(deleteCarerDocument(id)).unwrap();
-      setComplianceSuccess("Document successfully deleted.");
-      setTimeout(() => setComplianceSuccess(null), 4000);
-    } catch (error) {
-      console.error(error);
-      setComplianceError("Failed to delete document. Please try again.");
+      showSuccessToast("Document Deleted", "Document successfully deleted.");
+    } catch (error: any) {
+      const errorMsg = typeof error === 'string' ? error : error?.message || "Failed to delete document. Please try again.";
+      showErrorToast("Delete Failed", errorMsg);
     }
   };
 
@@ -407,14 +376,13 @@ export function useCarerPortal({
 
   const handleSaveAvailability = async (e: React.FormEvent) => {
     e.preventDefault();
-    setAvailabilityError(null);
-    setAvailabilitySuccess(false);
 
     const isSchedulePopulated = validateAvailabilitySchedule(availability);
 
     if (!isSchedulePopulated) {
-      setAvailabilityError(
-        "Validation Failed: Please configure at least one active day and time slot before saving.",
+      showErrorToast(
+        "Validation Error",
+        "Please configure at least one active day and time slot before saving."
       );
       return;
     }
@@ -424,11 +392,10 @@ export function useCarerPortal({
     try {
       setIsAvailabilitySaving(true);
       await dispatch(updateCarerAvailability(payload)).unwrap();
-      setAvailabilitySuccess(true);
-      setTimeout(() => setAvailabilitySuccess(false), 4000);
-    } catch (error) {
-      console.error(error);
-      setAvailabilityError("Failed to save availability. Please try again.");
+      showSuccessToast("Availability Updated", "Availability schedule successfully updated!");
+    } catch (error: any) {
+      const errorMsg = typeof error === 'string' ? error : error?.message || "Failed to save availability. Please try again.";
+      showErrorToast("Update Failed", errorMsg);
     } finally {
       setIsAvailabilitySaving(false);
     }
@@ -490,9 +457,7 @@ export function useCarerPortal({
     handlePhotoChange,
 
     profileErrors,
-    profileErrorMsg,
     isProfileSaving,
-    profileSuccessMsg,
     handleSaveProfile,
 
     applicationStatus,
@@ -504,17 +469,12 @@ export function useCarerPortal({
     uploadProgress,
     previewDoc,
     setPreviewDoc,
-    complianceError,
-    complianceSuccess,
-    setComplianceSuccess,
     docToDelete,
     setDocToDelete,
     handleDocUpload,
     handleDeleteDoc,
 
     availability,
-    availabilityError,
-    availabilitySuccess,
     isAvailabilitySaving,
     handleSaveAvailability,
     handleToggleDay,

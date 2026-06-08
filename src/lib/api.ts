@@ -15,7 +15,17 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}) {
     ...restOptions,
   });
 
-  const data = await response.json();
+  // Safely parse JSON — the server may return HTML on 500 errors
+  let data: any = null;
+  const contentType = response.headers.get("content-type") || "";
+
+  if (contentType.includes("application/json")) {
+    try {
+      data = await response.json();
+    } catch {
+      data = null;
+    }
+  }
 
   if (!response.ok) {
     throw new Error(data.message || "Something went wrong");

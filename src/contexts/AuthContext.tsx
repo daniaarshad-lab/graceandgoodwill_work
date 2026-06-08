@@ -23,8 +23,6 @@ import {
   logout as logoutThunk,
 } from "@/store/slices/authSlice";
 
-import { usePathname, useRouter } from "next/navigation";
-
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
@@ -40,7 +38,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const dispatch = useAppDispatch();
-  const pathname = usePathname();
   const [isInitializing, setIsInitializing] = useState(true);
   const {
     user,
@@ -54,14 +51,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         typeof window !== "undefined"
           ? localStorage.getItem("accessToken")
           : null;
+
       if (!token) {
         setIsInitializing(false);
         return;
       }
+
       try {
         await dispatch(getProfile()).unwrap();
       } catch (e) {
-        console.error("Hydration getProfile failed:", e);
+        console.error("GET PROFILE FAILED", e);
       } finally {
         setIsInitializing(false);
       }
@@ -127,8 +126,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       hasRole,
       refreshUser,
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [user, isAuthenticated, login, register, logout, hasRole, refreshUser],
+    [
+      user,
+      isAuthenticated,
+      combinedLoading,
+      login,
+      register,
+      logout,
+      hasRole,
+      refreshUser,
+    ],
   );
   return (
     <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>

@@ -27,9 +27,7 @@ function getActiveStage(status: EnquiryStatus): number {
   }
 }
 
-export default function EnquiryTimeline({
-  status,
-}: EnquiryTimelineProps) {
+export default function EnquiryTimeline({ status }: EnquiryTimelineProps) {
   const activeStage = getActiveStage(status);
 
   return (

@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import Button from "./Button";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
@@ -50,7 +49,11 @@ function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 w-full h-20 border-b border-navy-800 bg-navy-950/95 backdrop-blur flex items-center">
       <div className="container-wrapper flex items-center justify-between py-4">
-        <Link href="/" className="flex items-center gap-2 sm:gap-3 text-white group" onClick={() => setIsMobileMenuOpen(false)}>
+        <Link
+          href="/"
+          className="flex items-center gap-2 sm:gap-3 text-white group"
+          onClick={() => setIsMobileMenuOpen(false)}
+        >
           <img
             src="/website_logo.png"
             alt="Grace & Goodwill logo"
@@ -80,12 +83,16 @@ function SiteHeader() {
         </Link>
 
         {/* Mobile menu button */}
-        <button 
+        <button
           className="md:hidden flex items-center text-gold-200 hover:text-gold-50 transition p-2 -mr-2"
           onClick={toggleMenu}
           aria-label="Toggle menu"
         >
-          {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {isMobileMenuOpen ? (
+            <X className="w-6 h-6" />
+          ) : (
+            <Menu className="w-6 h-6" />
+          )}
         </button>
 
         {/* Desktop Navigation */}
@@ -184,13 +191,11 @@ function SiteHeader() {
                   Logout
                 </Button>
               ) : (
-                <Button
-                  asChild
-                  variant="primary"
-                  size="md"
-                  fullWidth
-                >
-                  <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                <Button asChild variant="primary" size="md" fullWidth>
+                  <Link
+                    href="/login"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
                     Login
                   </Link>
                 </Button>

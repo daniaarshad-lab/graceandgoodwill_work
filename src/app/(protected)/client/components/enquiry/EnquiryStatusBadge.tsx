@@ -4,36 +4,31 @@ interface EnquiryStatusBadgeProps {
   status: EnquiryStatus;
 }
 
-const statusConfig: Record<
-  EnquiryStatus,
-  { label: string; classes: string }
-> = {
-  PENDING: {
-    label: "Pending",
-    classes:
-      "bg-sky-500/10 text-sky-400 border border-sky-500/20",
-  },
-  IN_PROGRESS: {
-    label: "In Progress",
-    classes:
-      "bg-gold-DEFAULT/10 text-gold-DEFAULT border border-gold-DEFAULT/20",
-  },
-  RESPONDED: {
-    label: "Responded",
-    classes:
-      "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20",
-  },
-  RESOLVED: {
-    label: "Resolved",
-    classes:
-      "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20",
-  },
-  CLOSED: {
-    label: "Closed",
-    classes:
-      "bg-gray-500/10 text-gray-400 border border-gray-500/20",
-  },
-};
+const statusConfig: Record<EnquiryStatus, { label: string; classes: string }> =
+  {
+    PENDING: {
+      label: "Pending",
+      classes: "bg-sky-500/10 text-sky-400 border border-sky-500/20",
+    },
+    IN_PROGRESS: {
+      label: "In Progress",
+      classes:
+        "bg-gold-DEFAULT/10 text-gold-DEFAULT border border-gold-DEFAULT/20",
+    },
+    RESPONDED: {
+      label: "Responded",
+      classes: "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20",
+    },
+    RESOLVED: {
+      label: "Resolved",
+      classes:
+        "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20",
+    },
+    CLOSED: {
+      label: "Closed",
+      classes: "bg-gray-500/10 text-gray-400 border border-gray-500/20",
+    },
+  };
 
 export default function EnquiryStatusBadge({
   status,

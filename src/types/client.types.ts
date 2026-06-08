@@ -8,6 +8,8 @@ export interface ClientUser {
   status: string;
 }
 
+import { Carer } from "@/app/(protected)/client/types/client-ui.types";
+
 export interface ClientProfile {
   id: string;
   userId: string;
@@ -50,6 +52,7 @@ export interface CreateCareRequestPayload {
 export interface ClientState {
   profile: ClientProfile | null;
   careRequests: CareRequest[];
+  carers: Carer[];
 
   enquiries: any[];
   selectedEnquiry: any | null;
@@ -61,7 +64,6 @@ export interface CareRequest {
   id: string;
   clientProfileId: string;
   progress?: number;
-
 
   requestorName: string;
   requestorEmail: string;
@@ -96,4 +98,34 @@ export interface CreateEnquiryPayload {
   email: string;
   phone: string;
   message: string;
+}
+
+export interface IntroductionRequestPayload {
+  careRequestId: string;
+  carerProfileId: string;
+}
+
+export interface IntroductionRequest {
+  id: string;
+  careRequestId: string;
+  carerProfileId: string;
+  status: string;
+  adminNotes: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CarerProfile {
+  id: string;
+  firstName: string;
+  lastName: string;
+  bio: string | null;
+  profilePhotoUrl: string | null;
+  experienceYears: number | null;
+  hourlyRate: number | null;
+  availability: string | null;
+  careTypes: string[];
+  careSpecialties: string[] | null;
+  experience: string | null;
+  summary: string | null;
 }

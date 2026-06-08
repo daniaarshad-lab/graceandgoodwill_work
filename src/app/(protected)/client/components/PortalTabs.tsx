@@ -1,4 +1,10 @@
-type TabType = "overview" | "profile" | "request" | "carers" | "tracking" | "enquiry";
+type TabType =
+  | "overview"
+  | "profile"
+  | "request"
+  | "carers"
+  | "tracking"
+  | "enquiry";
 
 interface PortalTabsProps {
   activeTab: TabType;

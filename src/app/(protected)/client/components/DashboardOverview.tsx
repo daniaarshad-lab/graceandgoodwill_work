@@ -3,7 +3,11 @@ import StatusBadge from "./shared/StatusBadge";
 import { CareRequest } from "@/types/client.types";
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { fetchCareRequests, fetchClientProfile } from "@/store/slices/clientSlice";
+import {
+  fetchCareRequests,
+  fetchClientProfile,
+  fetchEnquiries,
+} from "@/store/slices/clientSlice";
 import EnquiryStatusBadge from "./enquiry/EnquiryStatusBadge";
 
 interface DashboardOverviewProps {
@@ -17,7 +21,8 @@ export default function DashboardOverview({
   careRequests,
   setActiveTab,
 }: DashboardOverviewProps) {
-  const reduxEnquiries = useAppSelector((state) => state.client.enquiries) || [];
+  const reduxEnquiries =
+    useAppSelector((state) => state.client.enquiries) || [];
   const sliceEnquiries = reduxEnquiries.slice(0, 2);
   const latestRequest = careRequests[0];
   const dispatch = useAppDispatch();
@@ -25,6 +30,7 @@ export default function DashboardOverview({
   useEffect(() => {
     dispatch(fetchCareRequests());
     dispatch(fetchClientProfile());
+    dispatch(fetchEnquiries());
   }, [dispatch]);
 
   return (
@@ -108,7 +114,10 @@ export default function DashboardOverview({
                   <EnquiryStatusBadge status={enq.status} />
                 </div>
                 <p className="text-[10px] text-gold-100/40">
-                  {new Date(enq.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
+                  {new Date(enq.createdAt).toLocaleDateString("en-GB", {
+                    day: "numeric",
+                    month: "short",
+                  })}
                 </p>
               </div>
             ))}

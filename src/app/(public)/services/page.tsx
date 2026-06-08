@@ -87,15 +87,15 @@ export default function ServicesPage() {
 
       <div className="container-wrapper">
         {/* Header Section */}
-        <section className="mb-20 text-center">        
-
-             <div className="flex items-center justify-center gap-4 mb-8">
-                <div className="h-px w-10 bg-gradient-to-r from-transparent to-gold-400/50" />
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight  text-gold-darker">
-                  Support designed around real lives</h1>
-                <div className="h-px w-10 bg-gradient-to-l from-transparent to-gold-400/50" />
+        <section className="mb-20 text-center">
+          <div className="flex items-center justify-center gap-4 mb-8">
+            <div className="h-px w-10 bg-gradient-to-r from-transparent to-gold-400/50" />
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight  text-gold-darker">
+              Support designed around real lives
+            </h1>
+            <div className="h-px w-10 bg-gradient-to-l from-transparent to-gold-400/50" />
           </div>
-          
+
           <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-gold-200/80 sm:text-lg">
             Every family is unique, and so is our support. Explore our core
             services structured around dignity, continuity, and warm human
@@ -169,7 +169,6 @@ export default function ServicesPage() {
         <section className="mt-24 rounded-[32px] border border-gold-300/15 bg-navy-900/30 p-6 sm:p-8 md:p-12 text-center backdrop-blur-sm">
           <h2 className="text-2xl font-light text-gold-50 sm:text-3xl">
             Let&apos;s discuss how we can support you.
-           
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-gold-200/80 sm:text-base">
             Reach out to our care matching experts to discuss your requirements,

@@ -123,7 +123,8 @@ export default function PricingPage() {
           <div className="flex items-center justify-center gap-4 mb-8">
             <div className="h-px w-10 bg-gradient-to-r from-transparent to-gold-400/50" />
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight  text-gold-darker">
-              Membership  plans</h1>
+              Membership plans
+            </h1>
             <div className="h-px w-10 bg-gradient-to-l from-transparent to-gold-400/50" />
           </div>
           {/* <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight mb-6 text-gold-100 tracking-wide max-w-4xl">
@@ -155,12 +156,12 @@ export default function PricingPage() {
                 "relative flex flex-col rounded-3xl p-6 sm:p-8 lg:p-10 border group transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] transform h-full",
                 plan.featured
                   ? "border-gold-400/40 shadow-[0_15px_40px_rgba(212,175,55,0.08)] ring-1 ring-gold-muted/20 scale-[1.02] z-10 md:-translate-y-2 " +
-                  "hover:scale-[1.03] hover:-translate-y-3 hover:shadow-[0_20px_50px_rgba(212,175,55,0.15)] hover:border-gold-400/60"
+                    "hover:scale-[1.03] hover:-translate-y-3 hover:shadow-[0_20px_50px_rgba(212,175,55,0.15)] hover:border-gold-400/60"
                   : plan.premium
                     ? "border-gold-300/20 shadow-xl shadow-navy-950/50 scale-100 opacity-95 md:-translate-y-0 " +
-                    "hover:scale-[1.01] hover:-translate-y-1 hover:opacity-100 hover:border-gold-400/40 hover:shadow-[0_12px_40px_rgba(212,175,55,0.08)]"
+                      "hover:scale-[1.01] hover:-translate-y-1 hover:opacity-100 hover:border-gold-400/40 hover:shadow-[0_12px_40px_rgba(212,175,55,0.08)]"
                     : "border-gold-muted/15 shadow-md scale-100 opacity-80 md:translate-y-0 " +
-                    "hover:scale-[1.01] hover:-translate-y-1 hover:opacity-100 hover:border-gold-muted/30 hover:shadow-[0_12px_40px_rgba(160,128,84,0.06)]",
+                      "hover:scale-[1.01] hover:-translate-y-1 hover:opacity-100 hover:border-gold-muted/30 hover:shadow-[0_12px_40px_rgba(160,128,84,0.06)]",
               ].join(" ")}
               style={{
                 background: plan.featured
@@ -326,9 +327,9 @@ export default function PricingPage() {
                 "relative flex flex-col rounded-3xl p-6 sm:p-8 lg:p-10 border group transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] transform h-full",
                 plan.featured
                   ? "border-gold-400/40 shadow-[0_15px_40px_rgba(212,175,55,0.08)] ring-1 ring-gold-muted/20 scale-[1.02] z-10 md:-translate-y-2 " +
-                  "hover:scale-[1.03] hover:-translate-y-3 hover:shadow-[0_20px_50px_rgba(212,175,55,0.15)] hover:border-gold-400/60"
+                    "hover:scale-[1.03] hover:-translate-y-3 hover:shadow-[0_20px_50px_rgba(212,175,55,0.15)] hover:border-gold-400/60"
                   : "border-gold-muted/15 shadow-md scale-100 opacity-80 md:translate-y-0 " +
-                  "hover:scale-[1.01] hover:-translate-y-1 hover:opacity-100 hover:border-gold-muted/30 hover:shadow-[0_12px_40px_rgba(160,128,84,0.06)]",
+                    "hover:scale-[1.01] hover:-translate-y-1 hover:opacity-100 hover:border-gold-muted/30 hover:shadow-[0_12px_40px_rgba(160,128,84,0.06)]",
               ].join(" ")}
               style={{
                 background: plan.featured

@@ -16,13 +16,10 @@ export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [errors, setErrors] = useState<ForgotPasswordFormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
-  const [apiError, setApiError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("FORGOT PASSWORD SUBMIT");
-    setApiError(null);
 
     // Validate form
     const formErrors = validateForgotPasswordForm(email);
@@ -36,18 +33,12 @@ export default function ForgotPasswordPage() {
     setIsLoading(true);
 
     try {
-      console.log("Forgot password attempt:", { email });
-
       // Perform actual API call to forgot-password
       await authService.forgotPassword(email);
 
       setSubmitted(true);
     } catch (error: any) {
       console.error("Forgot password error:", error);
-      setApiError(
-        error.message ||
-          "Something went wrong. Please check your network and try again.",
-      );
     } finally {
       setIsLoading(false);
     }
@@ -84,12 +75,6 @@ export default function ForgotPasswordPage() {
       subtitle="Enter your email to receive a reset link."
     >
       <form className="space-y-5 " onSubmit={handleSubmit}>
-        {apiError && (
-          <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-500">
-            {apiError}
-          </div>
-        )}
-
         <Input
           label="Email"
           type="email"
@@ -115,12 +100,8 @@ export default function ForgotPasswordPage() {
           </Link>
         </p>
       </form>
-       <div className="mt-12 flex flex-col items-center justify-center text-center select-none">
-        <img
-          src="/website_logo.png"
-          alt="Logo"
-          className="h-16 w-auto mb-2"
-        />
+      <div className="mt-12 flex flex-col items-center justify-center text-center select-none">
+        <img src="/website_logo.png" alt="Logo" className="h-16 w-auto mb-2" />
 
         <div className="flex items-center w-full justify-center mt-2">
           <div className="h-px w-4 sm:w-11 bg-gradient-to-r from-transparent to-[#b8915e]/60" />

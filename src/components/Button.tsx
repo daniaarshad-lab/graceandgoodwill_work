@@ -3,17 +3,17 @@ import React, { ButtonHTMLAttributes } from "react";
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   text?: string;
   variant?:
-  | "primary"
-  | "secondary"
-  | "outline"
-  | "navy"
-  | "gold"
-  | "goldDarker"
-  | "whatsapp"
-  | "ghost-gold"
-  | "danger"
-  | "selectable"
-  | "goldBrown";
+    | "primary"
+    | "secondary"
+    | "outline"
+    | "navy"
+    | "gold"
+    | "goldDarker"
+    | "whatsapp"
+    | "ghost-gold"
+    | "danger"
+    | "selectable"
+    | "goldBrown";
   isSelected?: boolean;
   size?: "sm" | "md" | "lg" | "custom";
   asChild?: boolean;
@@ -71,8 +71,9 @@ function Button({
     custom: "",
   };
 
-  const combinedClassName = `${baseStyles} ${variants[variant]} ${sizes[size]} ${fullWidth ? "w-full" : ""
-    } ${className}`;
+  const combinedClassName = `${baseStyles} ${variants[variant]} ${sizes[size]} ${
+    fullWidth ? "w-full" : ""
+  } ${className}`;
 
   if (asChild && React.isValidElement(children)) {
     return React.cloneElement(children, {

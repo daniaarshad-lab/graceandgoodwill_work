@@ -5,9 +5,7 @@ interface PortalHeaderProps {
 }
 
 export default function PortalHeader({ user }: PortalHeaderProps) {
-  const profile = useAppSelector(
-    (state) => state.client.profile
-  );
+  const profile = useAppSelector((state) => state.client.profile);
 
   const displayUser = profile?.user || user;
 

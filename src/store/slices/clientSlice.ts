@@ -5,12 +5,17 @@ import {
   ClientState,
   CreateCareRequestPayload,
   CareRequest,
+  IntroductionRequestPayload,
+  IntroductionRequest,
 } from "@/types/client.types";
 import { CreateEnquiryPayload } from "@/types/client.types";
+import { Carer } from "@/app/(protected)/client/types/client-ui.types";
+import { mapCarerProfileToUICarer } from "@/utils/mappers/carerMapper";
 
 const initialState: ClientState = {
   profile: null,
   careRequests: [],
+  carers: [],
 
   enquiries: [],
   selectedEnquiry: null,
@@ -59,54 +64,68 @@ export const createCareRequest = createAsyncThunk<
   any,
   CreateCareRequestPayload,
   { rejectValue: string }
->(
-  "client/createCareRequest",
-  async (payload, { rejectWithValue }) => {
-    try {
-      return await clientService.createCareRequest(payload);
-    } catch (error: any) {
-      return rejectWithValue(
-        error?.message || "Failed to create care request",
-      );
-    }
-  },
-);
+>("client/createCareRequest", async (payload, { rejectWithValue }) => {
+  try {
+    return await clientService.createCareRequest(payload);
+  } catch (error: any) {
+    return rejectWithValue(error?.message || "Failed to create care request");
+  }
+});
 
 export const createEnquiry = createAsyncThunk<
   any,
   CreateEnquiryPayload,
   { rejectValue: string }
->(
-  "client/createEnquiry",
-  async (payload, { rejectWithValue }) => {
-    try {
-      return await clientService.createEnquiry(payload);
-    } catch (error: any) {
-      return rejectWithValue(
-        error?.message || "Failed to create enquiry",
-      );
-    }
-  },
-);
-
-
+>("client/createEnquiry", async (payload, { rejectWithValue }) => {
+  try {
+    const res = await clientService.createEnquiry(payload);
+    return res;
+  } catch (error: any) {
+    console.error("[Thunk: createEnquiry] Error:", error);
+    return rejectWithValue(error?.message || "Failed to create enquiry");
+  }
+});
 
 export const fetchCareRequests = createAsyncThunk<
   CareRequest[],
   void,
   { rejectValue: string }
->(
-  "client/fetchCareRequests",
-  async (_, { rejectWithValue }) => {
-    try {
-      return await clientService.getCareRequests();
-    } catch (error: any) {
-      return rejectWithValue(
-        error?.message || "Failed to fetch care requests",
-      );
-    }
-  },
-);
+>("client/fetchCareRequests", async (_, { rejectWithValue }) => {
+  try {
+    return await clientService.getCareRequests();
+  } catch (error: any) {
+    return rejectWithValue(error?.message || "Failed to fetch care requests");
+  }
+});
+
+export const requestIntroduction = createAsyncThunk<
+  IntroductionRequest,
+  IntroductionRequestPayload,
+  { rejectValue: string }
+>("client/requestIntroduction", async (payload, { rejectWithValue }) => {
+  try {
+    const response = await clientService.requestIntroduction(payload);
+    return response;
+  } catch (error: any) {
+    console.error("[Thunk: requestIntroduction] Error:", error);
+    return rejectWithValue(error?.message || "Failed to request introduction");
+  }
+});
+
+export const fetchCarers = createAsyncThunk<
+  Carer[],
+  void,
+  { rejectValue: string }
+>("client/fetchCarers", async (_, { rejectWithValue }) => {
+  try {
+    const response = await clientService.getCarers();
+    const mapped = response.map(mapCarerProfileToUICarer);
+    return mapped;
+  } catch (error: any) {
+    console.error("[Thunk: fetchCarers] Error:", error);
+    return rejectWithValue(error?.message || "Failed to fetch carers");
+  }
+});
 
 const clientSlice = createSlice({
   name: "client",
@@ -120,7 +139,7 @@ const clientSlice = createSlice({
       state.selectedEnquiry = null;
 
       state.error = null;
-    }
+    },
   },
   extraReducers: (builder) => {
     // Profile
@@ -180,7 +199,7 @@ const clientSlice = createSlice({
         } else {
           state.profile = action.payload;
         }
-      }
+      },
     );
 
     builder.addCase(uploadClientProfilePhoto.rejected, (state, action) => {
@@ -206,6 +225,22 @@ const clientSlice = createSlice({
       state.loading = false;
       state.error = action.payload || "Failed to fetch care requests";
     });
+
+    builder.addCase(createEnquiry.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+
+    builder.addCase(createEnquiry.fulfilled, (state, action) => {
+      state.loading = false;
+      state.enquiries.unshift(action.payload);
+    });
+
+    builder.addCase(createEnquiry.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload || "Failed to create enquiry";
+    });
+
     builder.addCase(fetchEnquiries.pending, (state) => {
       state.loading = true;
       state.error = null;
@@ -234,8 +269,7 @@ const clientSlice = createSlice({
 
     builder.addCase(fetchEnquiryById.rejected, (state, action) => {
       state.loading = false;
-      state.error =
-        action.payload || "Failed to fetch enquiry details";
+      state.error = action.payload || "Failed to fetch enquiry details";
     });
     builder.addCase(sendEnquiryMessage.pending, (state) => {
       state.loading = true;
@@ -248,8 +282,38 @@ const clientSlice = createSlice({
 
     builder.addCase(sendEnquiryMessage.rejected, (state, action) => {
       state.loading = false;
-      state.error =
-        action.payload || "Failed to send enquiry message";
+      state.error = action.payload || "Failed to send enquiry message";
+    });
+    builder.addCase(requestIntroduction.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+
+    builder.addCase(requestIntroduction.fulfilled, (state) => {
+      state.loading = false;
+    });
+
+    builder.addCase(requestIntroduction.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload || "Failed to request introduction";
+    });
+
+    builder.addCase(fetchCarers.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+
+    builder.addCase(
+      fetchCarers.fulfilled,
+      (state, action: PayloadAction<Carer[]>) => {
+        state.loading = false;
+        state.carers = action.payload;
+      },
+    );
+
+    builder.addCase(fetchCarers.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload || "Failed to fetch carers";
     });
   },
 });
@@ -258,35 +322,27 @@ export const fetchEnquiries = createAsyncThunk<
   any[],
   void,
   { rejectValue: string }
->(
-  "client/fetchEnquiries",
-  async (_, { rejectWithValue }) => {
-    try {
-      return await clientService.getEnquiries();
-    } catch (error: any) {
-      return rejectWithValue(
-        error?.message || "Failed to fetch enquiries"
-      );
-    }
+>("client/fetchEnquiries", async (_, { rejectWithValue }) => {
+  try {
+    const res = await clientService.getEnquiries();
+    return res;
+  } catch (error: any) {
+    console.error("[Thunk: fetchEnquiries] Error:", error);
+    return rejectWithValue(error?.message || "Failed to fetch enquiries");
   }
-);
+});
 
 export const fetchEnquiryById = createAsyncThunk<
   any,
   string,
   { rejectValue: string }
->(
-  "client/fetchEnquiryById",
-  async (id, { rejectWithValue }) => {
-    try {
-      return await clientService.getEnquiryById(id);
-    } catch (error: any) {
-      return rejectWithValue(
-        error?.message || "Failed to fetch enquiry details"
-      );
-    }
+>("client/fetchEnquiryById", async (id, { rejectWithValue }) => {
+  try {
+    return await clientService.getEnquiryById(id);
+  } catch (error: any) {
+    return rejectWithValue(error?.message || "Failed to fetch enquiry details");
   }
-);
+});
 
 export const sendEnquiryMessage = createAsyncThunk<
   any,
@@ -297,21 +353,15 @@ export const sendEnquiryMessage = createAsyncThunk<
   { rejectValue: string }
 >(
   "client/sendEnquiryMessage",
-  async (
-    { enquiryId, message },
-    { rejectWithValue }
-  ) => {
+  async ({ enquiryId, message }, { rejectWithValue }) => {
     try {
-      return await clientService.sendEnquiryMessage(
-        enquiryId,
-        message
-      );
+      return await clientService.sendEnquiryMessage(enquiryId, message);
     } catch (error: any) {
       return rejectWithValue(
-        error?.message || "Failed to send enquiry message"
+        error?.message || "Failed to send enquiry message",
       );
     }
-  }
+  },
 );
 
 export const { clearClientProfile } = clientSlice.actions;

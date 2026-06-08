@@ -13,14 +13,11 @@ export default function LoginForm() {
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<LoginFormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
-  const [apiError, setApiError] = useState<string | null>(null);
   const router = useRouter();
   const { login, logout } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    setApiError(null);
 
     const formErrors = validateLoginForm(email, password);
     if (Object.keys(formErrors).length > 0) {
@@ -44,7 +41,7 @@ export default function LoginForm() {
       });
 
       const role = response.user?.role?.toUpperCase();
-      
+
       let route = "/unauthorized";
       if (role === "ADMIN") {
         route = "/admin";
@@ -53,14 +50,11 @@ export default function LoginForm() {
       } else if (role === "CLIENT") {
         route = "/client";
       }
-      
+
       router.push(route);
       router.refresh();
     } catch (error: any) {
       console.error(error);
-      setApiError(
-        error.message || "Invalid email or password. Please try again.",
-      );
     } finally {
       setIsLoading(false);
     }
@@ -68,12 +62,6 @@ export default function LoginForm() {
 
   return (
     <form className="space-y-5" onSubmit={handleSubmit} autoComplete="off">
-      {apiError && (
-        <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-500">
-          {apiError}
-        </div>
-      )}
-
       <Input
         label="Email"
         type="email"

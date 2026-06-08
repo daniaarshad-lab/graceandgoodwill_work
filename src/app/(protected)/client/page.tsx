@@ -4,7 +4,6 @@ import { useState } from "react";
 import dynamic from "next/dynamic";
 import { useAuth } from "@/contexts/AuthContext";
 import { useClientPortal } from "./hooks/useClientPortal";
-import { mockCarers } from "./data/mockCarers";
 
 import PortalHeader from "./components/PortalHeader";
 import PortalTabs from "./components/PortalTabs";
@@ -35,7 +34,13 @@ const IntroductionModal = dynamic(
   { ssr: false },
 );
 
-type TabType = "overview" | "profile" | "request" | "carers" | "tracking" | "enquiry";
+type TabType =
+  | "overview"
+  | "profile"
+  | "request"
+  | "carers"
+  | "tracking"
+  | "enquiry";
 
 export default function ClientDashboard() {
   const { user } = useAuth();
@@ -103,7 +108,7 @@ export default function ClientDashboard() {
           {/* TAB 3: CARER PROFILES */}
           {activeTab === "carers" && (
             <CarerProfiles
-              carers={mockCarers}
+              carers={portal.carers}
               onRequestIntro={portal.handleRequestIntro}
             />
           )}
@@ -122,6 +127,7 @@ export default function ClientDashboard() {
       {portal.selectedCarer && (
         <IntroductionModal
           carer={portal.selectedCarer}
+          careRequests={portal.careRequests}
           onCancel={() => portal.setSelectedCarer(null)}
           onConfirm={portal.confirmIntroRequest}
         />

@@ -2,7 +2,10 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { updateClientProfile, uploadClientProfilePhoto } from "@/store/slices/clientSlice";
+import {
+  updateClientProfile,
+  uploadClientProfilePhoto,
+} from "@/store/slices/clientSlice";
 import SectionCard from "./shared/SectionCard";
 import Image from "next/image";
 import Input from "@/components/Input";
@@ -71,9 +74,9 @@ export default function ClientProfileManagement() {
           city,
           state: stateField,
           pincode,
-        })
+        }),
       ).unwrap();
-      
+
       setSuccessMsg(true);
       setTimeout(() => setSuccessMsg(false), 3000);
     } catch (err: any) {
@@ -103,7 +106,8 @@ export default function ClientProfileManagement() {
                 unoptimized
               />
             ) : (
-              (profile?.user?.firstName?.[0] || "") + (profile?.user?.lastName?.[0] || "") || "CL"
+              (profile?.user?.firstName?.[0] || "") +
+                (profile?.user?.lastName?.[0] || "") || "CL"
             )}
           </div>
 
@@ -115,9 +119,12 @@ export default function ClientProfileManagement() {
         </div>
 
         <div className="space-y-2 flex-grow text-center sm:text-left">
-          <h4 className="text-sm font-semibold text-gold-50">Profile Picture</h4>
+          <h4 className="text-sm font-semibold text-gold-50">
+            Profile Picture
+          </h4>
           <p className="text-xs text-gold-100/50">
-            Upload a professional high-resolution headshot. Supports JPEG, PNG formats.
+            Upload a professional high-resolution headshot. Supports JPEG, PNG
+            formats.
           </p>
           {photoError && (
             <p className="text-xs text-red-500 font-medium">{photoError}</p>
@@ -137,15 +144,28 @@ export default function ClientProfileManagement() {
 
       <div className="space-y-4 text-sm text-gold-100/70 border-b border-gold-300/10 pb-6">
         <h4 className="font-semibold text-gold-50">Personal Details</h4>
-        <p>Name: <span className="text-gold-200">{profile?.user?.firstName} {profile?.user?.lastName}</span></p>
-        <p>Email: <span className="text-gold-200">{profile?.user?.email}</span></p>
-        <p>Phone: <span className="text-gold-200">{profile?.user?.phoneNumber}</span></p>
-        <p className="text-xs text-gold-100/40 italic">Note: Personal details are managed through your account settings and cannot be edited here.</p>
+        <p>
+          Name:{" "}
+          <span className="text-gold-200">
+            {profile?.user?.firstName} {profile?.user?.lastName}
+          </span>
+        </p>
+        <p>
+          Email: <span className="text-gold-200">{profile?.user?.email}</span>
+        </p>
+        <p>
+          Phone:{" "}
+          <span className="text-gold-200">{profile?.user?.phoneNumber}</span>
+        </p>
+        <p className="text-xs text-gold-100/40 italic">
+          Note: Personal details are managed through your account settings and
+          cannot be edited here.
+        </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <h4 className="font-semibold text-gold-50 text-sm">Location Details</h4>
-        
+
         <Input
           label="Address"
           value={address}

@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import { Mic, Play, Pause, ListMusic } from "lucide-react";
+import { Play, Pause, ListMusic } from "lucide-react";
 
 const INTERVIEWS = [
   { id: 1, title: "BBC Interview 1", src: "/audio/bbc-audio-1.mp3" },
@@ -110,10 +110,11 @@ export default function BBCAudioCard() {
               <button
                 key={interview.id}
                 onClick={() => setActiveInterview(interview)}
-                className={`flex-1 text-[10px] sm:text-[11px] font-medium tracking-wide uppercase py-2 px-2 rounded-xl border transition-all duration-300 flex items-center justify-center gap-1.5 ${activeInterview.id === interview.id
-                  ? "bg-gold-400/25 border-gold-400/40 text-gold-100 shadow-[0_0_15px_rgba(232,186,122,0.2)] backdrop-blur-md"
-                  : "bg-navy-950/60 border-gold-300/10 text-gold-100/60 hover:bg-gold-400/15 hover:text-gold-100 hover:border-gold-300/30 backdrop-blur-sm"
-                  }`}
+                className={`flex-1 text-[10px] sm:text-[11px] font-medium tracking-wide uppercase py-2 px-2 rounded-xl border transition-all duration-300 flex items-center justify-center gap-1.5 ${
+                  activeInterview.id === interview.id
+                    ? "bg-gold-400/25 border-gold-400/40 text-gold-100 shadow-[0_0_15px_rgba(232,186,122,0.2)] backdrop-blur-md"
+                    : "bg-navy-950/60 border-gold-300/10 text-gold-100/60 hover:bg-gold-400/15 hover:text-gold-100 hover:border-gold-300/30 backdrop-blur-sm"
+                }`}
               >
                 {activeInterview.id === interview.id && (
                   <ListMusic className="w-3.5 h-3.5" />

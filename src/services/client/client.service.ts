@@ -4,6 +4,8 @@ import {
   CreateCareRequestPayload,
   CareRequest,
   CreateEnquiryPayload,
+  IntroductionRequestPayload,
+  IntroductionRequest,
 } from "@/types/client.types";
 
 export const clientService = {
@@ -25,11 +27,7 @@ export const clientService = {
     });
   },
 
-
-
-  async updateProfile(
-    payload: Partial<ClientProfile>
-  ): Promise<ClientProfile> {
+  async updateProfile(payload: Partial<ClientProfile>): Promise<ClientProfile> {
     const token =
       typeof window !== "undefined"
         ? localStorage.getItem("accessToken")
@@ -49,7 +47,10 @@ export const clientService = {
   },
 
   async uploadProfilePhoto(file: File): Promise<ClientProfile> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) {
       throw new Error("No token found");
     }
@@ -65,9 +66,7 @@ export const clientService = {
       body: formData,
     });
   },
-  async createCareRequest(
-    payload: CreateCareRequestPayload,
-  ): Promise<any> {
+  async createCareRequest(payload: CreateCareRequestPayload): Promise<any> {
     const token =
       typeof window !== "undefined"
         ? localStorage.getItem("accessToken")
@@ -104,9 +103,7 @@ export const clientService = {
     });
   },
 
-  async createEnquiry(
-    payload: CreateEnquiryPayload,
-  ): Promise<any> {
+  async createEnquiry(payload: CreateEnquiryPayload): Promise<any> {
     const token =
       typeof window !== "undefined"
         ? localStorage.getItem("accessToken")
@@ -161,10 +158,7 @@ export const clientService = {
     });
   },
 
-  async sendEnquiryMessage(
-    enquiryId: string,
-    message: string
-  ) {
+  async sendEnquiryMessage(enquiryId: string, message: string) {
     const token =
       typeof window !== "undefined"
         ? localStorage.getItem("accessToken")
@@ -174,17 +168,55 @@ export const clientService = {
       throw new Error("No token found");
     }
 
-    return apiFetch(
-      `/client/enquiry/${enquiryId}/message`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          message,
-        }),
-      }
-    );
+    return apiFetch(`/client/enquiry/${enquiryId}/message`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        message,
+      }),
+    });
+  },
+
+  async requestIntroduction(
+    payload: IntroductionRequestPayload,
+  ): Promise<IntroductionRequest> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    const response = await apiFetch("/client/introduction", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+    return response;
+  },
+
+  async getCarers() {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    const response = await apiFetch("/client/carers", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response;
   },
 };

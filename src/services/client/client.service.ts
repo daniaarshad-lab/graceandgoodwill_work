@@ -6,6 +6,7 @@ import {
   CreateEnquiryPayload,
   IntroductionRequestPayload,
   IntroductionRequest,
+  UpdateClientProfilePayload,
 } from "@/types/client.types";
 
 export const clientService = {
@@ -27,7 +28,7 @@ export const clientService = {
     });
   },
 
-  async updateProfile(payload: Partial<ClientProfile>): Promise<ClientProfile> {
+  async updateProfile(payload: UpdateClientProfilePayload): Promise<ClientProfile> {
     const token =
       typeof window !== "undefined"
         ? localStorage.getItem("accessToken")
@@ -38,7 +39,7 @@ export const clientService = {
     }
 
     return apiFetch("/client/profile", {
-      method: "PATCH",
+      method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`,
       },

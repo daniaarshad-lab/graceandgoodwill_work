@@ -14,6 +14,7 @@ interface PhoneInputProps {
   onChange: (value: string) => void;
   error?: string;
   placeholder?: string;
+  disabled?: boolean;
 }
 
 export default function PhoneInput({
@@ -22,6 +23,7 @@ export default function PhoneInput({
   onChange,
   error,
   placeholder = "Enter phone number",
+  disabled = false,
 }: PhoneInputProps) {
   const handlePhoneChange = (phoneVal: string) => {
     if (phoneVal) {
@@ -249,6 +251,7 @@ export default function PhoneInput({
           value={value.startsWith("+") ? value.substring(1) : value}
           onChange={handlePhoneChange}
           placeholder={placeholder}
+          disabled={disabled}
           enableSearch={true}
           disableSearchIcon={true}
           autocompleteSearch={true}

@@ -7,6 +7,7 @@ import {
   CareRequest,
   IntroductionRequestPayload,
   IntroductionRequest,
+  UpdateClientProfilePayload,
 } from "@/types/client.types";
 import { CreateEnquiryPayload } from "@/types/client.types";
 import { Carer } from "@/app/(protected)/client/types/client-ui.types";
@@ -38,7 +39,7 @@ export const fetchClientProfile = createAsyncThunk<
 
 export const updateClientProfile = createAsyncThunk<
   ClientProfile,
-  Partial<ClientProfile>,
+  UpdateClientProfilePayload,
   { rejectValue: string }
 >("client/updateProfile", async (payload, { rejectWithValue }) => {
   try {

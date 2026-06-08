@@ -7,12 +7,18 @@ import {
 } from "@/store/slices/clientSlice";
 import SectionCard from "./shared/SectionCard";
 import Input from "@/components/Input";
+import PhoneInput from "@/components/PhoneInput";
 import Button from "@/components/Button";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 
 export default function ClientProfileManagement() {
   const dispatch = useAppDispatch();
   const { profile, loading } = useAppSelector((state) => state.client);
+
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
 
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
@@ -23,6 +29,11 @@ export default function ClientProfileManagement() {
 
   useEffect(() => {
     if (profile) {
+      setFirstName(profile.user?.firstName || "");
+      setLastName(profile.user?.lastName || "");
+      setEmail(profile.user?.email || "");
+      setPhoneNumber(profile.user?.phoneNumber || "");
+
       setAddress(profile.address || "");
       setCity(profile.city || "");
       setStateField(profile.state || "");
@@ -37,14 +48,20 @@ export default function ClientProfileManagement() {
     try {
       await dispatch(
         updateClientProfile({
+          firstName,
+          lastName,
+          email,
+          phoneNumber,
           address,
           city,
           state: stateField,
           pincode,
+          postcode: pincode, // Backend often expects one or both depending on schema
+          profilePhotoUrl: profile?.profilePhotoUrl || null,
         }),
       ).unwrap();
 
-      showSuccessToast("Profile Updated", "Profile location details successfully updated!");
+      showSuccessToast("Profile Updated", "Profile details successfully updated!");
     } catch (err: any) {
       showErrorToast("Update Failed", err || "Failed to update profile.");
     } finally {
@@ -58,29 +75,48 @@ export default function ClientProfileManagement() {
         Client Profile Management
       </h3>
 
-      <div className="space-y-4 text-sm text-gold-100/70 border-b border-gold-300/10 pb-6 mt-4">
-        <h4 className="font-semibold text-gold-50">Personal Details</h4>
-        <p>
-          Name:{" "}
-          <span className="text-gold-200">
-            {profile?.user?.firstName} {profile?.user?.lastName}
-          </span>
-        </p>
-        <p>
-          Email: <span className="text-gold-200">{profile?.user?.email}</span>
-        </p>
-        <p>
-          Phone:{" "}
-          <span className="text-gold-200">{profile?.user?.phoneNumber}</span>
-        </p>
-        <p className="text-xs text-gold-100/40 italic">
-          Note: Personal details are managed through your account settings and
-          cannot be edited here.
-        </p>
-      </div>
+      <form onSubmit={handleSubmit} className="space-y-6 mt-4">
+        <h4 className="font-semibold text-gold-50 text-sm">Personal Details</h4>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <h4 className="font-semibold text-gold-50 text-sm">Location Details</h4>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Input
+            label="First Name"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            placeholder="Enter first name"
+            disabled={loading || isSaving}
+            required
+          />
+
+          <Input
+            label="Last Name"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            placeholder="Enter last name"
+            disabled={loading || isSaving}
+            required
+          />
+
+          <Input
+            label="Email Address"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter email"
+            type="email"
+            disabled={loading || isSaving}
+            required
+          />
+
+          <PhoneInput
+            label="Phone Number"
+            value={phoneNumber}
+            onChange={setPhoneNumber}
+            placeholder="Enter phone number"
+            disabled={loading || isSaving}
+          />
+        </div>
+
+        <h4 className="font-semibold text-gold-50 text-sm pt-4 border-t border-gold-300/10">Location Details</h4>
 
         <Input
           label="Address"

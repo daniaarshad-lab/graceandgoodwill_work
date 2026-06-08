@@ -29,6 +29,19 @@ export interface ClientProfile {
   user?: ClientUser;
 }
 
+export interface UpdateClientProfilePayload {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  address?: string | null;
+  city?: string | null;
+  state?: string | null;
+  pincode?: string | null;
+  postcode?: string | null;
+  profilePhotoUrl?: string | null;
+}
+
 export interface CreateCareRequestPayload {
   postcode?: string;
   city?: string;

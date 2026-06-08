@@ -360,22 +360,7 @@ export function useAdminPortal() {
   const [selectedPlacementForReassign, setSelectedPlacementForReassign] =
     useState<Placement | null>(null);
 
-  // Helper to add activity logs
-  const logActivity = useCallback(
-    (
-      message: string,
-      type: "info" | "success" | "warning" | "error" = "info",
-    ) => {
-      const newActivity: AdminActivity = {
-        id: `act-${Date.now()}`,
-        timestamp: new Date().toISOString().replace("T", " ").substring(0, 16),
-        message,
-        type,
-      };
-      setActivities((prev) => [newActivity, ...prev]);
-    },
-    [],
-  );
+
 
   // Load carers from backend API
   const loadCarers = useCallback(async () => {

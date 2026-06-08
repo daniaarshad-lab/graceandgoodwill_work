@@ -18,7 +18,6 @@ function ResetPasswordForm() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState<ResetPasswordFormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
-  const [apiError, setApiError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
 
   const searchParams = useSearchParams();
@@ -27,12 +26,7 @@ function ResetPasswordForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    setApiError(null);
-
     if (!token) {
-      setApiError(
-        "Invalid password reset session. Missing token. Please request a new link.",
-      );
       return;
     }
 
@@ -53,10 +47,6 @@ function ResetPasswordForm() {
       setSubmitted(true);
     } catch (error: any) {
       console.error("Reset password error:", error);
-      setApiError(
-        error.message ||
-          "Your password reset link is invalid or has expired. Please try again.",
-      );
     } finally {
       setIsLoading(false);
     }
@@ -89,12 +79,6 @@ function ResetPasswordForm() {
       subtitle="Create a new secure password."
     >
       <form className="space-y-5" onSubmit={handleSubmit}>
-        {apiError && (
-          <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-500">
-            {apiError}
-          </div>
-        )}
-
         {!token && (
           <div className="rounded-xl border border-gold-muted/25 bg-gold-muted/8 p-3 body-small text-gold-muted space-y-2">
             <p>

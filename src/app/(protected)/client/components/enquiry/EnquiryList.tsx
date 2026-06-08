@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Enquiry } from "../../types/client-ui.types";
 import EnquiryStatusBadge from "./EnquiryStatusBadge";
+import { Plus, Search } from "lucide-react";
 
 interface EnquiryListProps {
   enquiries: Enquiry[];
@@ -50,40 +51,14 @@ export default function EnquiryList({
             onClick={onCreateNew}
             className="inline-flex items-center gap-1.5 rounded-lg bg-gold-DEFAULT/10 border border-gold-DEFAULT/30 px-3 py-1.5 text-[11px] font-semibold text-gold-DEFAULT transition-all duration-300 hover:bg-gold-DEFAULT/20 hover:border-gold-DEFAULT/50"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-3.5 w-3.5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 4.5v15m7.5-7.5h-15"
-              />
-            </svg>
+            <Plus className="h-3.5 w-3.5" />
             New
           </button>
         </div>
 
         {/* Search */}
         <div className="relative">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gold-100/30"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
-            />
-          </svg>
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gold-100/30" />
           <input
             type="text"
             placeholder="Search enquiries…"
@@ -126,9 +101,7 @@ export default function EnquiryList({
 
                 <div className="flex items-center justify-between text-[10px] text-gold-100/40 mt-3">
                   <span>Created: {formatDate(enq.createdAt)}</span>
-                  <span>
-                    Updated: {timeAgo(enq.updatedAt)}
-                  </span>
+                  <span>Updated: {timeAgo(enq.updatedAt)}</span>
                 </div>
               </button>
             );

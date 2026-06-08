@@ -1,16 +1,11 @@
 import { useState } from "react";
-import Input from "@/components/Input";
-import Select from "@/components/Select";
 import Button from "@/components/Button";
+import { X } from "lucide-react";
 
 interface NewEnquiryModalProps {
   onClose: () => void;
-  onSubmit: (data: {
-    message: string;
-  }) => void;
+  onSubmit: (data: { message: string }) => void;
 }
-
-
 
 export default function NewEnquiryModal({
   onClose,
@@ -56,20 +51,7 @@ export default function NewEnquiryModal({
           onClick={onClose}
           className="absolute top-4 right-4 p-1.5 rounded-lg hover:bg-navy-950/60 transition-colors text-gold-100/40 hover:text-gold-100"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6 18 18 6M6 6l12 12"
-            />
-          </svg>
+          <X className="h-5 w-5" />
         </button>
 
         {/* Header */}
@@ -78,28 +60,21 @@ export default function NewEnquiryModal({
             Create New Enquiry
           </h3>
           <p className="text-xs text-gold-100/60 leading-relaxed mt-1">
-            Submit a new support enquiry. Our team will respond within 24
-            hours.
+            Submit a new support enquiry. Our team will respond within 24 hours.
           </p>
         </div>
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
-
-
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gold-200">
-              Message
-            </label>
+            <label className="text-sm font-medium text-gold-200">Message</label>
             <textarea
               rows={4}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Describe your question or concern in detail…"
               className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 text-sm ${
-                errors.message
-                  ? "border-red-500"
-                  : "border-gray-300/20"
+                errors.message ? "border-red-500" : "border-gray-300/20"
               }`}
             />
             {errors.message && (
@@ -108,8 +83,6 @@ export default function NewEnquiryModal({
               </p>
             )}
           </div>
-
-
 
           <div className="flex justify-end gap-3 pt-3">
             <Button

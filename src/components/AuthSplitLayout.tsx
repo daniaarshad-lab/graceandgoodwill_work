@@ -70,9 +70,10 @@ function AuthSplitLayoutContent({
               style={{
                 // objectPosition: finalPosition,
                 // transform: "scaleX(-1)",
-                maskImage: "radial-gradient(circle at 41% 35%, black 45%, transparent 75%)",
+                maskImage:
+                  "radial-gradient(circle at 41% 35%, black 45%, transparent 75%)",
                 // WebkitMaskImage: "radial-gradient(circle at 60% 10%, black 35%, transparent 75%)",
-                filter: "sepia(0.08) saturate(1.05) brightness(0.95)"
+                filter: "sepia(0.08) saturate(1.05) brightness(0.95)",
               }}
             />
             <div className="asl-left-overlay" />

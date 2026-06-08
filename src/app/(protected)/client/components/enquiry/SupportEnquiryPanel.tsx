@@ -19,16 +19,13 @@ export default function SupportEnquiryPanel() {
   const dispatch = useAppDispatch();
 
   const { enquiries, selectedEnquiry, profile } = useAppSelector(
-    (state) => state.client
+    (state) => state.client,
   );
   const [showNewModal, setShowNewModal] = useState(false);
   const [mobileView, setMobileView] = useState<"list" | "detail">("list");
   useEffect(() => {
     dispatch(fetchEnquiries());
   }, [dispatch]);
-
-
-
 
   // Select an enquiry
   const handleSelect = async (enquiry: any) => {
@@ -41,10 +38,7 @@ export default function SupportEnquiryPanel() {
     setMobileView("list");
   };
 
-  const handleSendReply = async (
-    enquiryId: string,
-    message: string
-  ) => {
+  const handleSendReply = async (enquiryId: string, message: string) => {
     try {
       await dispatch(sendEnquiryMessage({ enquiryId, message })).unwrap();
       // Refresh the specific enquiry to get new messages
@@ -57,25 +51,21 @@ export default function SupportEnquiryPanel() {
   };
 
   // Create a new enquiry
-  const handleCreateEnquiry = async (data: {
-    message: string;
-  }) => {
+  const handleCreateEnquiry = async (data: { message: string }) => {
     try {
-      const result = await dispatch(
+      await dispatch(
         createEnquiry({
-          name: profile?.user?.firstName + " " + profile?.user?.lastName || "Client",
+          name:
+            profile?.user?.firstName + " " + profile?.user?.lastName ||
+            "Client",
           email: profile?.user?.email || "",
           phone: profile?.user?.phoneNumber || "",
           message: data.message,
-        })
+        }),
       ).unwrap();
-
-
-      await dispatch(fetchEnquiries());
 
       setMobileView("list");
       setShowNewModal(false);
-
     } catch (error) {
       console.error("ENQUIRY ERROR", error);
     }
@@ -89,8 +79,9 @@ export default function SupportEnquiryPanel() {
         <div className="grid grid-cols-1 md:grid-cols-5 gap-6 h-[calc(100vh-240px)] min-h-[600px]">
           {/* Left Panel — Enquiry List */}
           <div
-            className={`md:col-span-2 min-h-0 flex flex-col ${mobileView === "detail" ? "hidden md:block" : "block"
-              }`}
+            className={`md:col-span-2 min-h-0 flex flex-col ${
+              mobileView === "detail" ? "hidden md:block" : "block"
+            }`}
           >
             <SectionCard className="flex-1 flex flex-col overflow-hidden min-h-0">
               <EnquiryList
@@ -104,8 +95,9 @@ export default function SupportEnquiryPanel() {
 
           {/* Right Panel — Enquiry Detail & Conversation */}
           <div
-            className={`md:col-span-3 min-h-0 flex flex-col ${mobileView === "list" ? "hidden md:block" : "block"
-              }`}
+            className={`md:col-span-3 min-h-0 flex flex-col ${
+              mobileView === "list" ? "hidden md:block" : "block"
+            }`}
           >
             <SectionCard className="flex-1 flex flex-col overflow-hidden min-h-0">
               <EnquiryDetail

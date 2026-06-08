@@ -1,31 +1,11 @@
 import { WeeklyAvailability } from "../types/carer.types";
 
-export function validateProfileForm(data: {
+export function validateProfileForm(_data: {
   experience: string;
   bio: string;
   address: string;
 }) {
-  const errors: Record<string, string> = {};
-
-  if (!data.experience.trim()) {
-    errors.experience = "Experience is required.";
-  } else if (!/^\d+$/.test(data.experience.trim())) {
-    errors.experience = "Experience must contain numeric years only.";
-  }
-
-  if (!data.bio.trim()) {
-    errors.bio = "Biographical summary is required.";
-  } else if (data.bio.trim().length < 20) {
-    errors.bio = "Biographical summary must be at least 20 characters.";
-  } else if (data.bio.trim().length > 500) {
-    errors.bio = "Biographical summary cannot exceed 500 characters.";
-  }
-
-  if (!data.address.trim()) {
-    errors.address = "Address is required.";
-  }
-
-  return errors;
+  return {};
 }
 
 export function validateAvailabilitySchedule(availability: WeeklyAvailability) {

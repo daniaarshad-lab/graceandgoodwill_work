@@ -11,7 +11,9 @@ import { Check } from "lucide-react";
 
 export default function RegisterForm() {
   const { register, logout } = useAuth();
-  const [selectedRole, setSelectedRole] = useState<"CLIENT" | "CARER" | string>("CLIENT");
+  const [selectedRole, setSelectedRole] = useState<"CLIENT" | "CARER" | string>(
+    "CLIENT",
+  );
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -19,13 +21,10 @@ export default function RegisterForm() {
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<RegisterFormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
-  const [apiError, setApiError] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    setApiError(null);
 
     const formErrors = validateRegisterForm(
       firstName,
@@ -52,14 +51,12 @@ export default function RegisterForm() {
       role: selectedRole,
     };
 
-
-
     // Clear any stale auth session before registering
     await logout();
 
     try {
       // Attempt registration using useAuth register wrapper
-      const response = await register(payload);
+      await register(payload);
       setFirstName("");
       setLastName("");
       setEmail("");
@@ -71,10 +68,6 @@ export default function RegisterForm() {
       setIsSuccess(true);
     } catch (error) {
       console.error("Register error:", error);
-      const err = error as { message?: string };
-      setApiError(
-        err.message || "An unexpected error occurred. Please try again.",
-      );
     } finally {
       setIsLoading(false);
     }
@@ -108,12 +101,6 @@ export default function RegisterForm() {
 
   return (
     <form className="space-y-5 pb-16" onSubmit={handleSubmit}>
-      {apiError && (
-        <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-500">
-          {apiError}
-        </div>
-      )}
-
       {/* Premium Segmented Role Selection */}
       <div className="space-y-2">
         <label className="form-label text-gold-muted/80">
@@ -143,7 +130,6 @@ export default function RegisterForm() {
             Professional Carer
           </Button>
         </div>
-
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

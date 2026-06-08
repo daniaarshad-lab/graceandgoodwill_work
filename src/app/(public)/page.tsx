@@ -12,9 +12,9 @@ export default function HomePage() {
     <main className="overflow-x-hidden min-h-[calc(100vh-80px)] bg-navy-950 pt-12 pb-16 md:pt-20 md:pb-24 text-gold-100">
       <section className="container-wrapper flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between pb-16">
         <div className="max-w-2xl space-y-6">
-
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight  text-white">
-            Live In Care Services Across The UK</h1>
+            Live In Care Services Across The UK
+          </h1>
           <p
             className=" text-base font-medium  text-gold-muted tracking-wide"
             style={{ letterSpacing: "-0.01em" }}
@@ -22,8 +22,7 @@ export default function HomePage() {
             Care Defined By Integrity
           </p>
 
-
-          <div className="prose max-w-xl text-gold-200 space-y-2" >
+          <div className="prose max-w-xl text-gold-200 space-y-2">
             <p>
               Helping families across the UK find trusted live in care with
               compassion, continuity, and genuine human support.
@@ -229,8 +228,6 @@ export default function HomePage() {
               </a>
             </Button>
           </div>
-
-
         </div>
       </section>
     </main>

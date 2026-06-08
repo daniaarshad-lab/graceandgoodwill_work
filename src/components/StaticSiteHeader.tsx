@@ -26,16 +26,20 @@ function StaticSiteHeader() {
   return (
     <header className="sticky top-0 z-50 w-full h-20 border-b border-navy-800 bg-navy-950/95 backdrop-blur flex items-center">
       <div className="container-wrapper flex items-center justify-between py-4">
-        <Link href="/" className="flex items-center gap-2 sm:gap-3 text-white group" onClick={() => setIsMobileMenuOpen(false)}>
+        <Link
+          href="/"
+          className="flex items-center gap-2 sm:gap-3 text-white group"
+          onClick={() => setIsMobileMenuOpen(false)}
+        >
           <Image
-             src="/website_logo.png"
+            src="/website_logo.png"
             alt="Grace & Goodwill logo"
             width={48}
             height={48}
             className="h-8 w-8 sm:h-12 sm:w-12 object-contain drop-shadow-elegant transition-transform duration-300 group-hover:scale-105"
           />
-         <span
-        className="
+          <span
+            className="
           font-['Cinzel']
           text-[14px]
           sm:text-[20px]
@@ -47,21 +51,25 @@ function StaticSiteHeader() {
           transition-colors
           group-hover:text-[#E5C79A]
         "
-        style={{
-          textShadow: "0 1px 2px rgba(0,0,0,0.4)",
-        }}
-      >
-        GRACE & GOODWILL
-      </span>
+            style={{
+              textShadow: "0 1px 2px rgba(0,0,0,0.4)",
+            }}
+          >
+            GRACE & GOODWILL
+          </span>
         </Link>
 
         {/* Mobile menu button */}
-        <button 
+        <button
           className="md:hidden flex items-center text-gold-200 hover:text-gold-50 transition p-2 -mr-2"
           onClick={toggleMenu}
           aria-label="Toggle menu"
         >
-          {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {isMobileMenuOpen ? (
+            <X className="w-6 h-6" />
+          ) : (
+            <Menu className="w-6 h-6" />
+          )}
         </button>
 
         <nav className="hidden items-center gap-4 lg:gap-6 md:flex">

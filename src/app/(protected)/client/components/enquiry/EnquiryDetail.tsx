@@ -3,6 +3,7 @@ import { Enquiry, EnquiryMessage } from "../../types/client-ui.types";
 import EnquiryStatusBadge from "./EnquiryStatusBadge";
 import EnquiryTimeline from "./EnquiryTimeline";
 import EmptyEnquiryState from "./EmptyEnquiryState";
+import { ArrowLeft, Send } from "lucide-react";
 
 interface EnquiryDetailProps {
   enquiry: Enquiry | null;
@@ -39,9 +40,7 @@ function MessageBubble({
   const isClient = msg.senderId === clientUserId;
 
   return (
-    <div
-      className={`flex ${isClient ? "justify-end" : "justify-start"} mb-4`}
-    >
+    <div className={`flex ${isClient ? "justify-end" : "justify-start"} mb-4`}>
       <div
         className={`max-w-[80%] rounded-2xl px-4 py-3 ${
           isClient
@@ -140,20 +139,7 @@ export default function EnquiryDetail({
               onClick={onBack}
               className="mt-0.5 p-1 rounded-lg hover:bg-navy-900/60 transition-colors text-gold-100/50 hover:text-gold-100"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
-                />
-              </svg>
+              <ArrowLeft className="h-5 w-5" />
             </button>
           )}
 
@@ -201,8 +187,8 @@ export default function EnquiryDetail({
         {isConversationClosed ? (
           <div className="text-center py-3 rounded-xl bg-navy-900/40 border border-gold-300/5">
             <p className="text-xs text-gold-100/40">
-              This enquiry has been {enquiry.status.toLowerCase()}. To
-              continue the conversation, please create a new enquiry.
+              This enquiry has been {enquiry.status.toLowerCase()}. To continue
+              the conversation, please create a new enquiry.
             </p>
           </div>
         ) : (
@@ -221,20 +207,7 @@ export default function EnquiryDetail({
                 disabled={!replyText.trim() || isSending}
                 className="inline-flex items-center gap-2 rounded-xl bg-[#b59469] px-5 py-2 text-xs font-semibold text-navy-950 transition-all duration-300 hover:bg-[#c9a67d] hover:-translate-y-[1px] hover:shadow-[0_8px_30px_rgba(160,128,84,0.24)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-3.5 w-3.5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"
-                  />
-                </svg>
+                <Send className="h-3.5 w-3.5" />
                 {isSending ? "Sending…" : "Send Reply"}
               </button>
             </div>

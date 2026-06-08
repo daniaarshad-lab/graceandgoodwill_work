@@ -109,7 +109,9 @@ export default function NewsletterForm() {
               setFormData({ ...formData, firstName: e.target.value })
             }
             className={`w-full bg-navy-900/60 border rounded-xl px-4 py-3 text-gold-50 focus:outline-none focus:ring-1 transition-colors ${
-              errors.firstName ? "border-red-500/50 focus:border-red-500/50 focus:ring-red-500/50" : "border-gold-muted/20 focus:border-gold-400/50 focus:ring-gold-400/50"
+              errors.firstName
+                ? "border-red-500/50 focus:border-red-500/50 focus:ring-red-500/50"
+                : "border-gold-muted/20 focus:border-gold-400/50 focus:ring-gold-400/50"
             }`}
             disabled={isSubmitting}
           />
@@ -129,7 +131,9 @@ export default function NewsletterForm() {
               setFormData({ ...formData, email: e.target.value })
             }
             className={`w-full bg-navy-900/60 border rounded-xl px-4 py-3 text-gold-50 focus:outline-none focus:ring-1 transition-colors ${
-              errors.email ? "border-red-500/50 focus:border-red-500/50 focus:ring-red-500/50" : "border-gold-muted/20 focus:border-gold-400/50 focus:ring-gold-400/50"
+              errors.email
+                ? "border-red-500/50 focus:border-red-500/50 focus:ring-red-500/50"
+                : "border-gold-muted/20 focus:border-gold-400/50 focus:ring-gold-400/50"
             }`}
             disabled={isSubmitting}
           />

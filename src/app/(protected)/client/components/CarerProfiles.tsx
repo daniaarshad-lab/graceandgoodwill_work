@@ -1,3 +1,6 @@
+import { useEffect } from "react";
+import { useAppDispatch } from "@/store/hooks";
+import { fetchCarers } from "@/store/slices/clientSlice";
 import SectionCard from "./shared/SectionCard";
 import { Carer } from "../types/client-ui.types";
 import Button from "@/components/Button";
@@ -11,6 +14,12 @@ export default function CarerProfiles({
   carers,
   onRequestIntro,
 }: CarerProfilesProps) {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(fetchCarers());
+  }, [dispatch]);
+
   return (
     <div className="space-y-6">
       <div className="border-b border-gold-300/10 pb-4">
@@ -42,10 +51,11 @@ export default function CarerProfiles({
                 </div>
 
                 <span
-                  className={`rounded-full px-2.5 py-0.5 text-[8px] font-bold uppercase tracking-wider ${carer.availability === "Available"
+                  className={`rounded-full px-2.5 py-0.5 text-[8px] font-bold uppercase tracking-wider ${
+                    carer.availability === "Available"
                       ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
                       : "bg-amber-500/10 text-amber-400 border border-amber-500/20"
-                    }`}
+                  }`}
                 >
                   {carer.availability}
                 </span>

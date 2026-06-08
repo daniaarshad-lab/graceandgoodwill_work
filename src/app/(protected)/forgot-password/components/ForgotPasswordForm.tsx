@@ -14,13 +14,10 @@ export default function ForgotPasswordForm() {
   const [email, setEmail] = useState("");
   const [errors, setErrors] = useState<ForgotPasswordFormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
-  const [apiError, setApiError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    setApiError(null);
 
     const formErrors = validateForgotPasswordForm(email);
     if (Object.keys(formErrors).length > 0) {
@@ -39,10 +36,6 @@ export default function ForgotPasswordForm() {
       setSubmitted(true);
     } catch (error: any) {
       console.error("Forgot password error:", error);
-      setApiError(
-        error.message ||
-          "Something went wrong. Please check your network and try again.",
-      );
     } finally {
       setIsLoading(false);
     }
@@ -70,12 +63,6 @@ export default function ForgotPasswordForm() {
 
   return (
     <form className="space-y-5" onSubmit={handleSubmit}>
-      {apiError && (
-        <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-500">
-          {apiError}
-        </div>
-      )}
-
       <Input
         label="Email"
         type="email"

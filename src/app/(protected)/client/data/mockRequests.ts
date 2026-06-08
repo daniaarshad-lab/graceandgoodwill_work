@@ -29,4 +29,3 @@ export const defaultCareRequests = (userFullName: string): CareRequest[] => [
     progress: 100,
   },
 ];
-

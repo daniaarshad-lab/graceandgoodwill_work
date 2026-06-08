@@ -2,7 +2,11 @@ import { useState } from "react";
 import { Carer } from "../types/client-ui.types";
 import { validateCareForm } from "../utils/validation";
 import { useAppDispatch } from "@/store/hooks";
-import { createCareRequest, fetchCareRequests } from "@/store/slices/clientSlice";
+import {
+  createCareRequest,
+  fetchCareRequests,
+  requestIntroduction,
+} from "@/store/slices/clientSlice";
 import { useAppSelector } from "@/store/hooks";
 
 interface UseClientPortalProps {
@@ -11,13 +15,9 @@ interface UseClientPortalProps {
 
 export function useClientPortal({ user }: UseClientPortalProps) {
   const dispatch = useAppDispatch();
-  const userFullName = `${user?.firstName || "Jane"} ${user?.lastName || "Doe"}`;
 
   // --- CORE DATA STATES ---
-  const careRequests = useAppSelector(
-    (state) => state.client.careRequests
-  );
-
+  const { careRequests, carers } = useAppSelector((state) => state.client);
 
   // --- FORM STATES: CARE REQUEST ---
   const [careFullName, setCareFullName] = useState(
@@ -35,8 +35,6 @@ export function useClientPortal({ user }: UseClientPortalProps) {
   const [careErrors, setCareErrors] = useState<Record<string, string>>({});
   const [isCareSubmitting, setIsCareSubmitting] = useState(false);
   const [careSuccess, setCareSuccess] = useState(false);
-
-
 
   // --- STATE FOR REQUEST INTRODUCTION ---
   const [selectedCarer, setSelectedCarer] = useState<Carer | null>(null);
@@ -105,26 +103,44 @@ export function useClientPortal({ user }: UseClientPortalProps) {
     }, 1200);
   };
 
-
-
   // --- HANDLERS: REQUEST INTRODUCTION ---
   const handleRequestIntro = (carer: Carer) => {
     setSelectedCarer(carer);
   };
 
-  const confirmIntroRequest = () => {
+  const confirmIntroRequest = async (careRequestId: string) => {
     if (!selectedCarer) return;
 
-    setIntroSuccessMsg(
-      `Your introduction request for ${selectedCarer.name} has been submitted! Our care coordinator will contact you shortly.`,
-    );
-    setSelectedCarer(null);
+    if (!careRequestId) {
+      setIntroSuccessMsg("Please select a care request first.");
+      return;
+    }
 
-    setTimeout(() => setIntroSuccessMsg(null), 6000);
+    try {
+      await dispatch(
+        requestIntroduction({
+          careRequestId,
+          carerProfileId: selectedCarer.id,
+        }),
+      ).unwrap();
+
+      setIntroSuccessMsg(
+        `Your introduction request for ${selectedCarer.name} has been submitted! Our care coordinator will contact you shortly.`,
+      );
+    } catch (error) {
+      console.error("[useClientPortal.confirmIntroRequest] Error:", error);
+      setIntroSuccessMsg(
+        "Failed to submit introduction request. Please try again.",
+      );
+    } finally {
+      setSelectedCarer(null);
+      setTimeout(() => setIntroSuccessMsg(null), 6000);
+    }
   };
 
   return {
     careRequests,
+    carers,
 
     careFullName,
     setCareFullName,

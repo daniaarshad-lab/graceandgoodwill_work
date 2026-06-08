@@ -57,14 +57,15 @@ export default function RequestTracking({
                   </span>
 
                   <span
-                    className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider ${req.status === "COMPLETED"
+                    className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider ${
+                      req.status === "COMPLETED"
                         ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
                         : req.status === "MATCHED"
                           ? "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20"
                           : req.status === "REVIEWING"
                             ? "bg-gold-DEFAULT/10 text-gold-DEFAULT border border-gold-DEFAULT/20"
                             : "bg-navy-950 text-gold-100/40 border border-gold-300/10"
-                      }`}
+                    }`}
                   >
                     {req.status}
                   </span>
@@ -94,19 +95,19 @@ export default function RequestTracking({
                         className="relative z-10 flex flex-col items-center"
                       >
                         <div
-                          className={`h-8 w-8 rounded-full border-2 flex items-center justify-center text-xs font-bold transition-all duration-300 ${isActive
+                          className={`h-8 w-8 rounded-full border-2 flex items-center justify-center text-xs font-bold transition-all duration-300 ${
+                            isActive
                               ? "bg-navy-950 border-gold-DEFAULT text-gold-DEFAULT shadow-soft"
                               : "bg-navy-950 border-gray-300/20 text-gold-100/20"
-                            }`}
+                          }`}
                         >
                           {isActive ? "✓" : "•"}
                         </div>
 
                         <span
-                          className={`text-[10px] font-bold mt-2 tracking-wider ${isActive
-                              ? "text-gold-200"
-                              : "text-gold-100/20"
-                            }`}
+                          className={`text-[10px] font-bold mt-2 tracking-wider ${
+                            isActive ? "text-gold-200" : "text-gold-100/20"
+                          }`}
                         >
                           {cp.label}
                         </span>
@@ -118,9 +119,7 @@ export default function RequestTracking({
                 <div className="flex justify-between items-center text-xs text-gold-100/50 pt-2 border-t border-gold-300/10">
                   <span>Allocated Duration: {req.duration}</span>
 
-                  <span>
-                    Overall Placement Completeness: {progress}%
-                  </span>
+                  <span>Overall Placement Completeness: {progress}%</span>
                 </div>
               </div>
             </SectionCard>

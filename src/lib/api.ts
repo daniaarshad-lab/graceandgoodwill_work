@@ -29,8 +29,6 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}) {
     }
   }
 
-
-
   if (!response.ok) {
     throw new Error(
       data?.message || `Request failed with status ${response.status}`,

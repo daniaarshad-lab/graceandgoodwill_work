@@ -126,7 +126,12 @@ const authSlice = createSlice({
         state.token = action.payload.accessToken;
         state.user = action.payload.user;
         state.role = action.payload.user.role || null;
+
         if (typeof window !== "undefined") {
+          localStorage.setItem("accessToken", action.payload.accessToken);
+
+          localStorage.setItem("refreshToken", action.payload.refreshToken);
+
           localStorage.setItem("user", JSON.stringify(action.payload.user));
         }
       },
@@ -144,14 +149,11 @@ const authSlice = createSlice({
       state.loading = true;
       state.error = null;
     });
-    builder.addCase(
-      register.fulfilled,
-      (state) => {
-        // Registration succeeded — but do NOT auto-authenticate.
-        // The user will log in manually after registration.
-        state.loading = false;
-      },
-    );
+    builder.addCase(register.fulfilled, (state) => {
+      // Registration succeeded — but do NOT auto-authenticate.
+      // The user will log in manually after registration.
+      state.loading = false;
+    });
     builder.addCase(register.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload || "Registration failed";
@@ -188,6 +190,8 @@ const authSlice = createSlice({
       state.role = null;
       if (typeof window !== "undefined") {
         localStorage.removeItem("user");
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
       }
     });
 

@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import {
   CarerApplication,
   ClientRequest,
@@ -245,8 +245,97 @@ export function useAdminPortal() {
   const [carers, setCarers] = useState<CarerApplication[]>([]);
   const [requests, setRequests] = useState<ClientRequest[]>([]);
   const [placements, setPlacements] = useState<Placement[]>([]);
-  const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
-  const [selectedEnquiry, setSelectedEnquiry] = useState<Enquiry | null>(null);
+  const [enquiries, setEnquiries] = useState<any[]>([]);
+  const [selectedEnquiry, setSelectedEnquiry] = useState<any | null>(null);
+
+  const [isLiveActive, setIsLiveActive] = useState(true);
+
+  const prevCarersRef = useRef<CarerApplication[]>([]);
+  const prevRequestsRef = useRef<ClientRequest[]>([]);
+  const prevPlacementsRef = useRef<Placement[]>([]);
+  const prevEnquiriesRef = useRef<any[]>([]);
+
+  // Helper to add activity logs
+  const logActivity = useCallback(
+    (
+      message: string,
+      type: "info" | "success" | "warning" | "error" = "info",
+    ) => {
+      const newActivity: AdminActivity = {
+        id: `act-${Date.now()}`,
+        timestamp: new Date().toISOString().replace("T", " ").substring(0, 16),
+        message,
+        type,
+      };
+      setActivities((prev) => [newActivity, ...prev]);
+    },
+    [],
+  );
+
+  // Compare new carers with previous carers to log changes
+  const checkCarersDiff = useCallback((newCarers: CarerApplication[]) => {
+    const prev = prevCarersRef.current;
+    if (prev.length > 0) {
+      newCarers.forEach((c) => {
+        const old = prev.find((pc) => pc.id === c.id);
+        if (!old) {
+          logActivity(`New carer registered: ${c.name}`, "info");
+        } else if (old.status !== c.status) {
+          if (c.status === "Approved") {
+            logActivity(`Carer application for ${c.name} was Approved.`, "success");
+          } else if (c.status === "Rejected") {
+            logActivity(`Carer application for ${c.name} was Suspended/Rejected.`, "error");
+          }
+        }
+      });
+    }
+    prevCarersRef.current = newCarers;
+  }, [logActivity]);
+
+  const checkRequestsDiff = useCallback((newRequests: ClientRequest[]) => {
+    const prev = prevRequestsRef.current;
+    if (prev.length > 0) {
+      newRequests.forEach((r) => {
+        const old = prev.find((pr) => pr.id === r.id);
+        if (!old) {
+          logActivity(`New client care request received from ${r.clientName}`, "info");
+        } else if (old.status !== r.status) {
+          logActivity(`Request for ${r.clientName} status changed to ${r.status}.`, "success");
+        }
+      });
+    }
+    prevRequestsRef.current = newRequests;
+  }, [logActivity]);
+
+  const checkPlacementsDiff = useCallback((newPlacements: Placement[]) => {
+    const prev = prevPlacementsRef.current;
+    if (prev.length > 0) {
+      newPlacements.forEach((p) => {
+        const old = prev.find((pp) => pp.id === p.id);
+        if (!old) {
+          logActivity(`New placement match created: ${p.carerName} with ${p.clientName}.`, "success");
+        } else if (old.status !== p.status) {
+          logActivity(`Placement for ${p.clientName} status changed to ${p.status}.`, "info");
+        }
+      });
+    }
+    prevPlacementsRef.current = newPlacements;
+  }, [logActivity]);
+
+  const checkEnquiriesDiff = useCallback((newEnquiries: any[]) => {
+    const prev = prevEnquiriesRef.current;
+    if (prev.length > 0) {
+      newEnquiries.forEach((e) => {
+        const old = prev.find((pe) => pe.id === e.id);
+        if (!old) {
+          logActivity(`New support enquiry received from ${e.name}.`, "warning");
+        } else if (old.status !== e.status) {
+          logActivity(`Enquiry from ${e.name} status updated to ${e.status}.`, "info");
+        }
+      });
+    }
+    prevEnquiriesRef.current = newEnquiries;
+  }, [logActivity]);
 
   const [activities, setActivities] = useState<AdminActivity[]>([
     {

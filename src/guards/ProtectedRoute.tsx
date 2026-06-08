@@ -49,7 +49,16 @@ export default function ProtectedRoute({
 
   // Prevent flash of secure content if unauthenticated or unauthorized
   if (!isAuthenticated) {
-    return null;
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-navy-950 text-gold-100">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold-DEFAULT"></div>
+          <p className="text-sm tracking-wider text-gold-200">
+            Redirecting to login...
+          </p>
+        </div>
+      </div>
+    );
   }
 
   if (
@@ -60,7 +69,16 @@ export default function ProtectedRoute({
         .map((r) => r.toLowerCase())
         .includes(user.role.toLowerCase()))
   ) {
-    return null;
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-navy-950 text-gold-100">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold-DEFAULT"></div>
+          <p className="text-sm tracking-wider text-gold-200">
+            Redirecting...
+          </p>
+        </div>
+      </div>
+    );
   }
 
   return <>{children}</>;

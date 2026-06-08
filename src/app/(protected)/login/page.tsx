@@ -63,7 +63,6 @@ export default function LoginPage() {
       setIsLoading(false);
     }
   };
-
   // Prevent form render while checking auth or redirecting
   if (authLoading || isAuthenticated) {
     return (
@@ -129,7 +128,7 @@ export default function LoginPage() {
           >
             Register
           </Link>
-        </p>
+        </p>  
       </form>
 
       <div className="mt-12 flex flex-col items-center justify-center text-center select-none">

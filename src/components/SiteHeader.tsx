@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import Button from "./Button";
@@ -26,6 +26,11 @@ function SiteHeader() {
   const router = useRouter();
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleLogout = async () => {
     await dispatch(logoutThunk());
@@ -113,7 +118,7 @@ function SiteHeader() {
             );
           })}
 
-          {portalLink && !pathname.startsWith(portalLink.href) && (
+          {mounted && portalLink && !pathname.startsWith(portalLink.href) && (
             <Link
               href={portalLink.href}
               prefetch={true}
@@ -123,7 +128,7 @@ function SiteHeader() {
             </Link>
           )}
 
-          {isAuthenticated ? (
+          {mounted && isAuthenticated ? (
             <Button
               onClick={handleLogout}
               variant="ghost-gold"
@@ -169,7 +174,7 @@ function SiteHeader() {
               );
             })}
 
-            {portalLink && !pathname.startsWith(portalLink.href) && (
+            {mounted && portalLink && !pathname.startsWith(portalLink.href) && (
               <Link
                 href={portalLink.href}
                 prefetch={true}
@@ -181,7 +186,7 @@ function SiteHeader() {
             )}
 
             <div className="pt-4 pb-2">
-              {isAuthenticated ? (
+              {mounted && isAuthenticated ? (
                 <Button
                   onClick={handleLogout}
                   variant="outline"

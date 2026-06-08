@@ -7,7 +7,8 @@ import Button from "@/components/Button";
 import PhoneInput from "@/components/PhoneInput";
 import { validateRegisterForm, RegisterFormErrors } from "@/lib/validation";
 import { useAuth } from "@/contexts/AuthContext";
-import { Check } from "lucide-react";
+import { showSuccessToast, showErrorToast } from "@/utils/toast";
+import { useRouter } from "next/navigation";
 
 export default function RegisterForm() {
   const { register, logout } = useAuth();
@@ -21,7 +22,7 @@ export default function RegisterForm() {
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<RegisterFormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,39 +66,18 @@ export default function RegisterForm() {
       setSelectedRole("CLIENT");
       setErrors({});
 
-      setIsSuccess(true);
-    } catch (error) {
-      console.error("Register error:", error);
+      showSuccessToast(
+        "Registration Successful!",
+        "Welcome to Grace & Goodwill. You have successfully created your account."
+      );
+      router.push("/login");
+    } catch (error: any) {
+      const errorMsg = typeof error === 'string' ? error : error?.message || "Registration failed.";
+      showErrorToast("Registration Failed", errorMsg);
     } finally {
       setIsLoading(false);
     }
   };
-
-  if (isSuccess) {
-    return (
-      <div className="text-center space-y-6">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gold-muted/10 text-gold-muted">
-          <Check className="h-8 w-8" strokeWidth={2} />
-        </div>
-
-        <div className="space-y-2">
-          <h3 className="text-xl font-semibold text-gold-muted">
-            Registration Successful!
-          </h3>
-          <p className="body-small text-gold-muted/50">
-            Welcome to Grace &amp; Goodwill. You have successfully created your
-            account.
-          </p>
-        </div>
-
-        <Button asChild className="hover:text-[#0a1128]">
-          <Link href="/login" prefetch={true}>
-            Go to Login
-          </Link>
-        </Button>
-      </div>
-    );
-  }
 
   return (
     <form className="space-y-5 pb-16" onSubmit={handleSubmit}>

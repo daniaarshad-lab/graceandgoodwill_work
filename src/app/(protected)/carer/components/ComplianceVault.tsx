@@ -1,6 +1,7 @@
 import SectionCard from "./shared/SectionCard";
 import { ComplianceDoc } from "../types/carer.types";
 import Button from "@/components/Button";
+import { Eye, Trash2, FileText } from "lucide-react";
 
 interface ComplianceVaultProps {
   complianceDocs: ComplianceDoc[];
@@ -12,8 +13,6 @@ interface ComplianceVaultProps {
   ) => void;
   setPreviewDoc: (doc: ComplianceDoc) => void;
   setDocToDelete: (id: string) => void;
-  complianceError: string | null;
-  complianceSuccess: string | null;
 }
 
 export default function ComplianceVault({
@@ -23,8 +22,6 @@ export default function ComplianceVault({
   handleDocUpload,
   setPreviewDoc,
   setDocToDelete,
-  complianceError,
-  complianceSuccess,
 }: ComplianceVaultProps) {
   const docTypes = [
     "Driver's License",
@@ -35,18 +32,6 @@ export default function ComplianceVault({
 
   return (
     <div className="space-y-6">
-      {complianceError && (
-        <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-500 max-w-4xl mx-auto">
-          {complianceError}
-        </div>
-      )}
-
-      {complianceSuccess && (
-        <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-400 max-w-4xl mx-auto">
-          {complianceSuccess}
-        </div>
-      )}
-
       {/* Main Document Upload Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* File Upload Dropzones Card */}
@@ -120,7 +105,7 @@ export default function ComplianceVault({
           {complianceDocs.length === 0 ? (
             <div className="text-center py-12 space-y-2">
               <div className="mx-auto h-12 w-12 rounded-full border border-dashed border-gold-300/30 flex items-center justify-center text-gold-100/40">
-                📄
+                <FileText className="w-5 h-5" />
               </div>
               <p className="text-xs text-gold-100/40">
                 No documents uploaded yet. Upload items on the left to populate
@@ -135,8 +120,8 @@ export default function ComplianceVault({
                   className="p-4 rounded-xl border border-gold-300/10 bg-navy-950/40 flex justify-between items-center gap-4"
                 >
                   <div className="flex items-center gap-3 overflow-hidden">
-                    <div className="shrink-0 h-10 w-10 rounded-lg bg-gold-DEFAULT/10 border border-gold-DEFAULT/20 flex items-center justify-center text-lg text-gold-DEFAULT">
-                      📄
+                    <div className="shrink-0 h-10 w-10 rounded-lg bg-gold-DEFAULT/10 border border-gold-DEFAULT/20 flex items-center justify-center text-gold-DEFAULT">
+                      <FileText className="w-5 h-5" />
                     </div>
                     <div className="overflow-hidden">
                       <h4 className="text-xs font-semibold text-gold-50 truncate">
@@ -161,17 +146,17 @@ export default function ComplianceVault({
 
                     <button
                       onClick={() => setPreviewDoc(doc)}
-                      className="p-1.5 text-xs text-gold-200 hover:text-gold-50"
+                      className="p-1.5 text-gold-200 hover:text-gold-50 transition-colors"
                       title="Preview"
                     >
-                      👁️
+                      <Eye className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => setDocToDelete(doc.id)}
-                      className="p-1.5 text-xs text-red-500 hover:text-red-400"
+                      className="p-1.5 text-red-500 hover:text-red-400 transition-colors"
                       title="Delete"
                     >
-                      🗑️
+                      <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
                 </div>

@@ -9,12 +9,12 @@ import {
   ForgotPasswordFormErrors,
 } from "@/lib/validation";
 import { authService } from "@/services/auth/auth.service";
+import { showSuccessToast, showErrorToast } from "@/utils/toast";
 
 export default function ForgotPasswordForm() {
   const [email, setEmail] = useState("");
   const [errors, setErrors] = useState<ForgotPasswordFormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,33 +33,18 @@ export default function ForgotPasswordForm() {
       // Perform actual API call to forgot-password
       await authService.forgotPassword(email);
 
-      setSubmitted(true);
+      showSuccessToast(
+        "Reset Link Sent",
+        "If an account exists, you will receive an email with instructions to reset your password."
+      );
+      setEmail("");
     } catch (error: any) {
-      console.error("Forgot password error:", error);
+      const errorMsg = typeof error === 'string' ? error : error?.message || "Failed to send reset link.";
+      showErrorToast("Error", errorMsg);
     } finally {
       setIsLoading(false);
     }
   };
-
-  if (submitted) {
-    return (
-      <div className="space-y-4 text-center">
-        <p className="text-sm text-gold-100/70">
-          If an account exists for <strong>{email}</strong>, you will receive an
-          email with instructions to reset your password.
-        </p>
-        <p className="text-sm text-gold-100/70">
-          If you don&apos;t see the email, please check your spam folder.
-        </p>
-        <Link
-          href="/login"
-          className="block rounded-xl py-3 font-medium transition-all bg-gold-muted text-navy-950 hover:bg-[#b8915e] text-center"
-        >
-          Back to Login
-        </Link>
-      </div>
-    );
-  }
 
   return (
     <form className="space-y-5" onSubmit={handleSubmit}>

@@ -5,8 +5,6 @@ import Toggle from "@/components/Toggle";
 
 interface AvailabilityScheduleProps {
   availability: WeeklyAvailability;
-  availabilityError: string | null;
-  availabilitySuccess: boolean;
   isAvailabilitySaving: boolean;
   handleSaveAvailability: (e: React.FormEvent) => void;
   handleToggleDay: (day: string) => void;
@@ -18,8 +16,6 @@ interface AvailabilityScheduleProps {
 
 export default function AvailabilitySchedule({
   availability,
-  availabilityError,
-  availabilitySuccess,
   isAvailabilitySaving,
   handleSaveAvailability,
   handleToggleDay,
@@ -47,18 +43,6 @@ export default function AvailabilitySchedule({
           {isAvailabilitySaving ? "Saving..." : "Save Schedule"}
         </Button>
       </div>
-
-      {availabilityError && (
-        <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-500">
-          {availabilityError}
-        </div>
-      )}
-
-      {availabilitySuccess && (
-        <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-400">
-          Availability schedule successfully updated and saved in memory!
-        </div>
-      )}
 
       <div className="space-y-4">
         {Object.keys(availability).map((day) => {

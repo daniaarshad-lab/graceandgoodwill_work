@@ -4,6 +4,7 @@ import carerReducer from "./slices/carerSlice";
 import clientReducer from "./slices/clientSlice";
 import adminReducer from "./slices/adminSlice";
 import notificationReducer from "./slices/notificationSlice";
+import { toastMiddleware } from "./toastMiddleware";
 
 export const store = configureStore({
   reducer: {
@@ -16,7 +17,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,
-    }),
+    }).concat(toastMiddleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

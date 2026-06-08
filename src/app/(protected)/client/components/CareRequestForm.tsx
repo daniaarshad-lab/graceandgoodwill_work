@@ -25,7 +25,6 @@ interface CareRequestFormProps {
   setNotes: (val: string) => void;
   errors: Record<string, string>;
   isSubmitting: boolean;
-  success: boolean;
   onSubmit: (e: React.FormEvent) => void;
   setActiveTab: (
     tab: "overview" | "request" | "carers" | "tracking" | "enquiry",
@@ -53,7 +52,6 @@ export default function CareRequestForm({
   setNotes,
   errors,
   isSubmitting,
-  success,
   onSubmit,
   setActiveTab,
 }: CareRequestFormProps) {
@@ -68,12 +66,6 @@ export default function CareRequestForm({
           automatically aligns compatible profiles.
         </p>
       </div>
-
-      {success && (
-        <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-400">
-          Care request submitted successfully! Tracking initiated in dashboard.
-        </div>
-      )}
 
       <form onSubmit={onSubmit} className="space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

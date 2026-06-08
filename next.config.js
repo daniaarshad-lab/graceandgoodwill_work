@@ -8,7 +8,18 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-
+  images: {
+    remotePatterns: [
+      {
+        protocol: "http",
+        hostname: "localhost",
+      },
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+    ],
+  },
 };
 
 module.exports = withBundleAnalyzer(nextConfig);

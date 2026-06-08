@@ -6,6 +6,7 @@ import { useRouter, usePathname } from "next/navigation";
 import Button from "./Button";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { logout as logoutThunk } from "@/store/slices/authSlice";
+import { showSuccessToast } from "@/utils/toast";
 import { Menu, X } from "lucide-react";
 
 // Nav links are defined outside the component so they are never recreated.
@@ -30,6 +31,7 @@ function SiteHeader() {
   const handleLogout = async () => {
     await dispatch(logoutThunk());
     setIsMobileMenuOpen(false);
+    showSuccessToast("Logged out successfully");
     router.push("/login");
   };
 

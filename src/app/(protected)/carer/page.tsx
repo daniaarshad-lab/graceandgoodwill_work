@@ -107,8 +107,6 @@ export default function CarerDashboard() {
               photoError={portal.photoError}
               handlePhotoChange={portal.handlePhotoChange}
               errors={portal.profileErrors}
-              errorMsg={portal.profileErrorMsg}
-              successMsg={portal.profileSuccessMsg}
               isProfileSaving={portal.isProfileSaving}
               onSubmit={portal.handleSaveProfile}
               setActiveTab={setActiveTab}
@@ -123,16 +121,12 @@ export default function CarerDashboard() {
               handleDocUpload={portal.handleDocUpload}
               setPreviewDoc={portal.setPreviewDoc}
               setDocToDelete={portal.setDocToDelete}
-              complianceError={portal.complianceError}
-              complianceSuccess={portal.complianceSuccess}
             />
           )}
 
           {activeTab === "availability" && (
             <AvailabilitySchedule
               availability={portal.availability}
-              availabilityError={portal.availabilityError}
-              availabilitySuccess={portal.availabilitySuccess}
               isAvailabilitySaving={portal.isAvailabilitySaving}
               handleSaveAvailability={portal.handleSaveAvailability}
               handleToggleDay={portal.handleToggleDay}
@@ -151,8 +145,6 @@ export default function CarerDashboard() {
           if (portal.docToDelete) {
             portal.handleDeleteDoc(portal.docToDelete);
             portal.setDocToDelete(null);
-            portal.setComplianceSuccess("Document successfully deleted.");
-            setTimeout(() => portal.setComplianceSuccess(null), 4000);
           }
         }}
       />

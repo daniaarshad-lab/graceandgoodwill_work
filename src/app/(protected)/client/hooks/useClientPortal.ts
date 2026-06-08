@@ -8,6 +8,7 @@ import {
   requestIntroduction,
 } from "@/store/slices/clientSlice";
 import { useAppSelector } from "@/store/hooks";
+import { showSuccessToast, showErrorToast } from "@/utils/toast";
 
 interface UseClientPortalProps {
   user: any;
@@ -34,17 +35,13 @@ export function useClientPortal({ user }: UseClientPortalProps) {
 
   const [careErrors, setCareErrors] = useState<Record<string, string>>({});
   const [isCareSubmitting, setIsCareSubmitting] = useState(false);
-  const [careSuccess, setCareSuccess] = useState(false);
-
   // --- STATE FOR REQUEST INTRODUCTION ---
   const [selectedCarer, setSelectedCarer] = useState<Carer | null>(null);
-  const [introSuccessMsg, setIntroSuccessMsg] = useState<string | null>(null);
 
   // --- HANDLERS: CARE REQUEST SUBMISSION ---
   const handleCareSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setCareErrors({});
-    setCareSuccess(false);
 
     const formData = {
       fullName: careFullName,
@@ -81,26 +78,23 @@ export function useClientPortal({ user }: UseClientPortalProps) {
       shiftType: "MORNING",
     };
 
-    setIsCareSubmitting(true);
     try {
       await dispatch(createCareRequest(payload)).unwrap();
       await dispatch(fetchCareRequests());
-    } catch (error) {
-      console.error("CARE REQUEST ERROR:", error);
-    }
 
-    setTimeout(() => {
-      setIsCareSubmitting(false);
-      setCareSuccess(true);
+      showSuccessToast("Care Request Submitted", "Care request submitted successfully! Tracking initiated in dashboard.");
 
       setCareSupport("");
       setCareStartDate("");
       setCareDuration("");
       setCareAddress("");
       setCareNotes("");
-
-      setTimeout(() => setCareSuccess(false), 5000);
-    }, 1200);
+    } catch (error: any) {
+      const errorMsg = typeof error === 'string' ? error : error?.message || "Failed to submit care request.";
+      showErrorToast("Error", errorMsg);
+    } finally {
+      setIsCareSubmitting(false);
+    }
   };
 
   // --- HANDLERS: REQUEST INTRODUCTION ---
@@ -112,7 +106,7 @@ export function useClientPortal({ user }: UseClientPortalProps) {
     if (!selectedCarer) return;
 
     if (!careRequestId) {
-      setIntroSuccessMsg("Please select a care request first.");
+      showErrorToast("Introduction Failed", "Please select a care request first.");
       return;
     }
 
@@ -124,17 +118,15 @@ export function useClientPortal({ user }: UseClientPortalProps) {
         }),
       ).unwrap();
 
-      setIntroSuccessMsg(
-        `Your introduction request for ${selectedCarer.name} has been submitted! Our care coordinator will contact you shortly.`,
+      showSuccessToast(
+        "Introduction Requested",
+        `Your introduction request for ${selectedCarer.name} has been submitted! Our care coordinator will contact you shortly.`
       );
-    } catch (error) {
-      console.error("[useClientPortal.confirmIntroRequest] Error:", error);
-      setIntroSuccessMsg(
-        "Failed to submit introduction request. Please try again.",
-      );
+    } catch (error: any) {
+      const errorMsg = typeof error === 'string' ? error : error?.message || "Failed to submit introduction request.";
+      showErrorToast("Request Failed", errorMsg);
     } finally {
       setSelectedCarer(null);
-      setTimeout(() => setIntroSuccessMsg(null), 6000);
     }
   };
 
@@ -162,12 +154,10 @@ export function useClientPortal({ user }: UseClientPortalProps) {
     setCareNotes,
     careErrors,
     isCareSubmitting,
-    careSuccess,
     handleCareSubmit,
 
     selectedCarer,
     setSelectedCarer,
-    introSuccessMsg,
     handleRequestIntro,
     confirmIntroRequest,
   };

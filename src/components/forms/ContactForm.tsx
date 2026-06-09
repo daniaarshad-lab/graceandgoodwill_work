@@ -54,7 +54,7 @@ export default function ContactForm() {
       setIsSubmitting(false);
       showSuccessToast(
         "Request Received",
-        "Thank you for reaching out. One of our consultants will contact you within the next two hours."
+        "Thank you for reaching out. One of our consultants will contact you within the next two hours.",
       );
       resetForm();
     }, 1200);

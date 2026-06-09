@@ -123,9 +123,12 @@ export default function ContactSalesForm() {
       try {
         // Placeholder for API integration
         await new Promise((resolve) => setTimeout(resolve, 1500));
-        
-        showSuccessToast("Inquiry Received", "Thank you for your inquiry. Our team will contact you shortly.");
-        
+
+        showSuccessToast(
+          "Inquiry Received",
+          "Thank you for your inquiry. Our team will contact you shortly.",
+        );
+
         setFormData({
           name: "",
           company: "",
@@ -137,7 +140,10 @@ export default function ContactSalesForm() {
         });
         setErrors({});
       } catch (error) {
-        showErrorToast("Submission Failed", "Something went wrong. Please try again later.");
+        showErrorToast(
+          "Submission Failed",
+          "Something went wrong. Please try again later.",
+        );
       } finally {
         setIsSubmitting(false);
       }

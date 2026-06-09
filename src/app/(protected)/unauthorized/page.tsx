@@ -29,12 +29,12 @@ export default function UnauthorizedPage() {
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button asChild variant="outline" className="w-full sm:w-auto">
-            <Link href="/" prefetch={true}>
+            <Link href="/" prefetch={false}>
               Go to Home
             </Link>
           </Button>
           <Button asChild variant="primary" className="w-full sm:w-auto">
-            <Link href="/login" prefetch={true}>
+            <Link href="/login" prefetch={false}>
               Login Page
             </Link>
           </Button>

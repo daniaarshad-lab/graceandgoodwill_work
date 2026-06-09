@@ -35,11 +35,14 @@ export default function ForgotPasswordForm() {
 
       showSuccessToast(
         "Reset Link Sent",
-        "If an account exists, you will receive an email with instructions to reset your password."
+        "If an account exists, you will receive an email with instructions to reset your password.",
       );
       setEmail("");
     } catch (error: any) {
-      const errorMsg = typeof error === 'string' ? error : error?.message || "Failed to send reset link.";
+      const errorMsg =
+        typeof error === "string"
+          ? error
+          : error?.message || "Failed to send reset link.";
       showErrorToast("Error", errorMsg);
     } finally {
       setIsLoading(false);

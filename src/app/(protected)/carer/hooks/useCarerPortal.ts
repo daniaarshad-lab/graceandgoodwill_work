@@ -175,7 +175,10 @@ export function useCarerPortal({
 
     if (Object.keys(errors).length > 0) {
       setProfileErrors(errors);
-      showErrorToast("Validation Error", "Please correct the errors in the profile form before saving.");
+      showErrorToast(
+        "Validation Error",
+        "Please correct the errors in the profile form before saving.",
+      );
       return;
     }
 
@@ -191,16 +194,20 @@ export function useCarerPortal({
     try {
       setIsProfileSaving(true);
       await dispatch(updateCarerProfile(payload)).unwrap();
-      showSuccessToast("Profile Updated", "Profile successfully updated and saved!");
+      showSuccessToast(
+        "Profile Updated",
+        "Profile successfully updated and saved!",
+      );
     } catch (error: any) {
-      const errorMsg = typeof error === 'string' ? error : error?.message || "Failed to update profile.";
+      const errorMsg =
+        typeof error === "string"
+          ? error
+          : error?.message || "Failed to update profile.";
       showErrorToast("Error", errorMsg);
     } finally {
       setIsProfileSaving(false);
     }
   };
-
-
 
   const handleDocUpload = async (
     type: string,
@@ -233,7 +240,10 @@ export function useCarerPortal({
     const maxDocSize = 10 * 1024 * 1024;
 
     if (file.size > maxDocSize) {
-      showErrorToast("File Too Large", `File "${file.name}" is too large. Maximum allowed size is 10 MB.`);
+      showErrorToast(
+        "File Too Large",
+        `File "${file.name}" is too large. Maximum allowed size is 10 MB.`,
+      );
       return;
     }
 
@@ -269,14 +279,20 @@ export function useCarerPortal({
       // Refresh documents list from Redux after successful upload
       dispatch(fetchCarerDocuments());
 
-      showSuccessToast("Document Uploaded", `Document "${file.name}" uploaded successfully!`);
+      showSuccessToast(
+        "Document Uploaded",
+        `Document "${file.name}" uploaded successfully!`,
+      );
 
       setTimeout(() => {
         setUploadProgress(0);
       }, 4000);
     } catch (error: any) {
       clearInterval(progressInterval);
-      const errorMsg = typeof error === 'string' ? error : error?.message || "Failed to upload document.";
+      const errorMsg =
+        typeof error === "string"
+          ? error
+          : error?.message || "Failed to upload document.";
       showErrorToast("Upload Failed", errorMsg);
     } finally {
       setUploadingDocType(null);
@@ -287,7 +303,10 @@ export function useCarerPortal({
       await dispatch(deleteCarerDocument(id)).unwrap();
       showSuccessToast("Document Deleted", "Document successfully deleted.");
     } catch (error: any) {
-      const errorMsg = typeof error === 'string' ? error : error?.message || "Failed to delete document. Please try again.";
+      const errorMsg =
+        typeof error === "string"
+          ? error
+          : error?.message || "Failed to delete document. Please try again.";
       showErrorToast("Delete Failed", errorMsg);
     }
   };
@@ -346,7 +365,7 @@ export function useCarerPortal({
     if (!isSchedulePopulated) {
       showErrorToast(
         "Validation Error",
-        "Please configure at least one active day and time slot before saving."
+        "Please configure at least one active day and time slot before saving.",
       );
       return;
     }
@@ -356,9 +375,15 @@ export function useCarerPortal({
     try {
       setIsAvailabilitySaving(true);
       await dispatch(updateCarerAvailability(payload)).unwrap();
-      showSuccessToast("Availability Updated", "Availability schedule successfully updated!");
+      showSuccessToast(
+        "Availability Updated",
+        "Availability schedule successfully updated!",
+      );
     } catch (error: any) {
-      const errorMsg = typeof error === 'string' ? error : error?.message || "Failed to save availability. Please try again.";
+      const errorMsg =
+        typeof error === "string"
+          ? error
+          : error?.message || "Failed to save availability. Please try again.";
       showErrorToast("Update Failed", errorMsg);
     } finally {
       setIsAvailabilitySaving(false);

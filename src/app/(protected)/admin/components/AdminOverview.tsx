@@ -6,12 +6,16 @@ interface AdminOverviewProps {
   stats: UseAdminPortalReturn["stats"];
   activities: UseAdminPortalReturn["activities"];
   setActiveTab: UseAdminPortalReturn["setActiveTab"];
+  isLiveActive: boolean;
+  setIsLiveActive: (active: boolean) => void;
 }
 
 export default function AdminOverview({
   stats,
   activities,
   setActiveTab,
+  isLiveActive,
+  setIsLiveActive,
 }: AdminOverviewProps) {
   return (
     <div className="space-y-8">
@@ -129,9 +133,24 @@ export default function AdminOverview({
                   Audit logs of matches, overrides, and carer verifications
                 </p>
               </div>
-              <span className="rounded-full bg-navy-950 px-3 py-1 text-xs text-gold-DEFAULT border border-gold-300/10">
-                Live Audit
-              </span>
+              <button
+                onClick={() => setIsLiveActive(!isLiveActive)}
+                className={`flex items-center space-x-2 rounded-full px-3 py-1 text-xs font-semibold border transition duration-300 cursor-pointer ${
+                  isLiveActive
+                    ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20"
+                    : "bg-amber-500/10 text-amber-500 border-amber-500/30 hover:bg-amber-500/20"
+                }`}
+              >
+                <span className="relative flex h-2 w-2">
+                  {isLiveActive && (
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
+                  )}
+                  <span
+                    className={`relative inline-flex h-2 w-2 rounded-full ${isLiveActive ? "bg-emerald-500" : "bg-amber-500"}`}
+                  ></span>
+                </span>
+                <span>{isLiveActive ? "Live Active" : "Live Paused"}</span>
+              </button>
             </div>
 
             <div className="flow-root">

@@ -60,8 +60,8 @@ export const uploadCarerProfilePhoto = createAsyncThunk<
   } catch (error: any) {
     return rejectWithValue(
       error?.response?.data?.message ||
-      error?.message ||
-      "Failed to upload profile photo",
+        error?.message ||
+        "Failed to upload profile photo",
     );
   }
 });

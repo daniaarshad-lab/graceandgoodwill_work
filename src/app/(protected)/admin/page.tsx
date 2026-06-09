@@ -125,6 +125,8 @@ export default function AdminDashboard() {
               stats={portal.stats}
               activities={portal.activities}
               setActiveTab={portal.setActiveTab}
+              isLiveActive={portal.isLiveActive}
+              setIsLiveActive={portal.setIsLiveActive}
             />
           )}
 

@@ -75,6 +75,7 @@ export default function BBCAudioCard() {
       <audio
         ref={audioRef}
         src={activeInterview.src}
+        preload="none"
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
         onEnded={() => setIsPlaying(false)}

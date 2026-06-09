@@ -150,12 +150,12 @@ export default function HowItWorksPage() {
           </p>
           <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
             <Button asChild variant="navy">
-              <Link href="/register" prefetch={true}>
+              <Link href="/register" prefetch={false}>
                 Get Started
               </Link>
             </Button>
             <Button asChild variant="outline">
-              <Link href="/faq" prefetch={true}>
+              <Link href="/faq" prefetch={false}>
                 Read FAQs
               </Link>
             </Button>

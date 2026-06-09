@@ -82,7 +82,10 @@ export function useClientPortal({ user }: UseClientPortalProps) {
       await dispatch(createCareRequest(payload)).unwrap();
       await dispatch(fetchCareRequests());
 
-      showSuccessToast("Care Request Submitted", "Care request submitted successfully! Tracking initiated in dashboard.");
+      showSuccessToast(
+        "Care Request Submitted",
+        "Care request submitted successfully! Tracking initiated in dashboard.",
+      );
 
       setCareSupport("");
       setCareStartDate("");
@@ -90,7 +93,10 @@ export function useClientPortal({ user }: UseClientPortalProps) {
       setCareAddress("");
       setCareNotes("");
     } catch (error: any) {
-      const errorMsg = typeof error === 'string' ? error : error?.message || "Failed to submit care request.";
+      const errorMsg =
+        typeof error === "string"
+          ? error
+          : error?.message || "Failed to submit care request.";
       showErrorToast("Error", errorMsg);
     } finally {
       setIsCareSubmitting(false);
@@ -106,7 +112,10 @@ export function useClientPortal({ user }: UseClientPortalProps) {
     if (!selectedCarer) return;
 
     if (!careRequestId) {
-      showErrorToast("Introduction Failed", "Please select a care request first.");
+      showErrorToast(
+        "Introduction Failed",
+        "Please select a care request first.",
+      );
       return;
     }
 
@@ -120,10 +129,13 @@ export function useClientPortal({ user }: UseClientPortalProps) {
 
       showSuccessToast(
         "Introduction Requested",
-        `Your introduction request for ${selectedCarer.name} has been submitted! Our care coordinator will contact you shortly.`
+        `Your introduction request for ${selectedCarer.name} has been submitted! Our care coordinator will contact you shortly.`,
       );
     } catch (error: any) {
-      const errorMsg = typeof error === 'string' ? error : error?.message || "Failed to submit introduction request.";
+      const errorMsg =
+        typeof error === "string"
+          ? error
+          : error?.message || "Failed to submit introduction request.";
       showErrorToast("Request Failed", errorMsg);
     } finally {
       setSelectedCarer(null);

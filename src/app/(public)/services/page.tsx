@@ -182,7 +182,7 @@ export default function ServicesPage() {
               fullWidth={false}
               className="px-8 py-3.5"
             >
-              <Link href="/contact" prefetch={true}>
+              <Link href="/contact" prefetch={false}>
                 Get In Touch
               </Link>
             </Button>
@@ -193,7 +193,7 @@ export default function ServicesPage() {
               fullWidth={false}
               className="px-8 py-3.5"
             >
-              <Link href="/about" prefetch={true}>
+              <Link href="/about" prefetch={false}>
                 About Our Care
               </Link>
             </Button>

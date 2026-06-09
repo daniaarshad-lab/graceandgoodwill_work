@@ -58,7 +58,7 @@ export default function LoginPage() {
       console.error(error);
       showErrorToast(
         "Login Failed",
-        error.message || "Invalid email or password. Please try again."
+        error.message || "Invalid email or password. Please try again.",
       );
     } finally {
       setIsLoading(false);
@@ -82,7 +82,6 @@ export default function LoginPage() {
       subtitle="Login to continue managing care services."
     >
       <form className="space-y-5" onSubmit={handleSubmit}>
-
         <Input
           label="Email"
           type="email"
@@ -124,7 +123,7 @@ export default function LoginPage() {
           >
             Register
           </Link>
-        </p>  
+        </p>
       </form>
 
       <div className="mt-12 flex flex-col items-center justify-center text-center select-none">

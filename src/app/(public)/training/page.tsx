@@ -191,14 +191,14 @@ export default function TrainingPage() {
           <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
             <Link
               href="/contact"
-              prefetch={true}
+              prefetch={false}
               className="inline-flex items-center justify-center rounded-full bg-gold-500 px-8 py-3.5 text-sm font-semibold text-navy-950 shadow-elegant transition duration-300 hover:bg-gold-400 hover:scale-[1.02]"
             >
               Contact Sales
             </Link>
             <Link
               href="/how-it-works"
-              prefetch={true}
+              prefetch={false}
               className="inline-flex items-center justify-center rounded-full border border-gold-300/30 px-8 py-3.5 text-sm font-semibold text-gold-200 transition duration-300 hover:bg-navy-900/50 hover:border-gold-300/60"
             >
               How It Works

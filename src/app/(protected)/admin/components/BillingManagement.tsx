@@ -18,7 +18,9 @@ interface BillingManagementProps {
   placements: Placement[];
 }
 
-export default function BillingManagement({ placements }: BillingManagementProps) {
+export default function BillingManagement({
+  placements,
+}: BillingManagementProps) {
   // Pre-seed some mock invoices
   const [invoices, setInvoices] = useState<Invoice[]>([
     {
@@ -62,9 +64,15 @@ export default function BillingManagement({ placements }: BillingManagementProps
 
   // Statistics
   const totalInvoiced = invoices.reduce((sum, inv) => sum + inv.amount, 0);
-  const totalPaid = invoices.filter((inv) => inv.status === "Paid").reduce((sum, inv) => sum + inv.amount, 0);
-  const totalPending = invoices.filter((inv) => inv.status === "Pending").reduce((sum, inv) => sum + inv.amount, 0);
-  const totalOverdue = invoices.filter((inv) => inv.status === "Overdue").reduce((sum, inv) => sum + inv.amount, 0);
+  const totalPaid = invoices
+    .filter((inv) => inv.status === "Paid")
+    .reduce((sum, inv) => sum + inv.amount, 0);
+  const totalPending = invoices
+    .filter((inv) => inv.status === "Pending")
+    .reduce((sum, inv) => sum + inv.amount, 0);
+  const totalOverdue = invoices
+    .filter((inv) => inv.status === "Overdue")
+    .reduce((sum, inv) => sum + inv.amount, 0);
 
   // Generate Invoice Handler
   const handleGenerateInvoice = (e: React.FormEvent) => {
@@ -93,7 +101,9 @@ export default function BillingManagement({ placements }: BillingManagementProps
     };
 
     setInvoices((prev) => [newInvoice, ...prev]);
-    setSuccessMsg(`Successfully generated invoice ${newInvoice.id} for £${amountVal.toFixed(2)}`);
+    setSuccessMsg(
+      `Successfully generated invoice ${newInvoice.id} for £${amountVal.toFixed(2)}`,
+    );
 
     // Reset fields
     setSelectedPlacementId("");
@@ -106,7 +116,9 @@ export default function BillingManagement({ placements }: BillingManagementProps
 
   const handleMarkAsPaid = (id: string) => {
     setInvoices((prev) =>
-      prev.map((inv) => (inv.id === id ? { ...inv, status: "Paid" as const } : inv))
+      prev.map((inv) =>
+        inv.id === id ? { ...inv, status: "Paid" as const } : inv,
+      ),
     );
   };
 
@@ -123,7 +135,8 @@ export default function BillingManagement({ placements }: BillingManagementProps
             Billing & Invoices Management
           </h2>
           <p className="text-sm text-gold-100/50">
-            Monitor client billing, record hours worked, and track carer payouts.
+            Monitor client billing, record hours worked, and track carer
+            payouts.
           </p>
         </div>
       </div>
@@ -132,26 +145,47 @@ export default function BillingManagement({ placements }: BillingManagementProps
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {/* Total Invoiced */}
         <div className="rounded-2xl border border-gold-300/10 bg-navy-900/40 p-5 shadow-soft backdrop-blur-md">
-          <span className="text-xs font-bold uppercase tracking-wider text-gold-100/40">Total Invoiced</span>
-          <div className="mt-2 text-2xl font-black text-gold">£{totalInvoiced.toLocaleString("en-GB", { minimumFractionDigits: 2 })}</div>
+          <span className="text-xs font-bold uppercase tracking-wider text-gold-100/40">
+            Total Invoiced
+          </span>
+          <div className="mt-2 text-2xl font-black text-gold">
+            £
+            {totalInvoiced.toLocaleString("en-GB", {
+              minimumFractionDigits: 2,
+            })}
+          </div>
         </div>
 
         {/* Total Paid */}
         <div className="rounded-2xl border border-emerald-500/10 bg-emerald-950/20 p-5 shadow-soft backdrop-blur-md">
-          <span className="text-xs font-bold uppercase tracking-wider text-emerald-400/60">Total Paid</span>
-          <div className="mt-2 text-2xl font-black text-emerald-400">£{totalPaid.toLocaleString("en-GB", { minimumFractionDigits: 2 })}</div>
+          <span className="text-xs font-bold uppercase tracking-wider text-emerald-400/60">
+            Total Paid
+          </span>
+          <div className="mt-2 text-2xl font-black text-emerald-400">
+            £{totalPaid.toLocaleString("en-GB", { minimumFractionDigits: 2 })}
+          </div>
         </div>
 
         {/* Total Pending */}
         <div className="rounded-2xl border border-amber-500/10 bg-amber-950/20 p-5 shadow-soft backdrop-blur-md">
-          <span className="text-xs font-bold uppercase tracking-wider text-amber-400/60">Total Pending</span>
-          <div className="mt-2 text-2xl font-black text-amber-400">£{totalPending.toLocaleString("en-GB", { minimumFractionDigits: 2 })}</div>
+          <span className="text-xs font-bold uppercase tracking-wider text-amber-400/60">
+            Total Pending
+          </span>
+          <div className="mt-2 text-2xl font-black text-amber-400">
+            £
+            {totalPending.toLocaleString("en-GB", { minimumFractionDigits: 2 })}
+          </div>
         </div>
 
         {/* Total Overdue */}
         <div className="rounded-2xl border border-rose-500/10 bg-rose-950/20 p-5 shadow-soft backdrop-blur-md">
-          <span className="text-xs font-bold uppercase tracking-wider text-rose-400/60">Total Overdue</span>
-          <div className="mt-2 text-2xl font-black text-rose-400">£{totalOverdue.toLocaleString("en-GB", { minimumFractionDigits: 2 })}</div>
+          <span className="text-xs font-bold uppercase tracking-wider text-rose-400/60">
+            Total Overdue
+          </span>
+          <div className="mt-2 text-2xl font-black text-rose-400">
+            £
+            {totalOverdue.toLocaleString("en-GB", { minimumFractionDigits: 2 })}
+          </div>
         </div>
       </div>
 
@@ -159,7 +193,9 @@ export default function BillingManagement({ placements }: BillingManagementProps
         {/* INVOICE LIST PANEL */}
         <div className="lg:col-span-2 space-y-4">
           <div className="rounded-2xl border border-gold-300/10 bg-navy-900/40 p-6 shadow-soft backdrop-blur-md">
-            <h3 className="text-lg font-bold text-gold-200 mb-4">Invoice Records</h3>
+            <h3 className="text-lg font-bold text-gold-200 mb-4">
+              Invoice Records
+            </h3>
 
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm text-gold-100/70">
@@ -177,20 +213,35 @@ export default function BillingManagement({ placements }: BillingManagementProps
                 <tbody className="divide-y divide-gold-300/5">
                   {invoices.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="py-8 text-center text-gold-100/30">
+                      <td
+                        colSpan={7}
+                        className="py-8 text-center text-gold-100/30"
+                      >
                         No invoice records found.
                       </td>
                     </tr>
                   ) : (
                     invoices.map((inv) => (
-                      <tr key={inv.id} className="hover:bg-navy-900/20 transition-all">
-                        <td className="py-4 px-2 font-mono font-bold text-gold">{inv.id}</td>
+                      <tr
+                        key={inv.id}
+                        className="hover:bg-navy-900/20 transition-all"
+                      >
+                        <td className="py-4 px-2 font-mono font-bold text-gold">
+                          {inv.id}
+                        </td>
                         <td className="py-4 px-2">
-                          <div className="font-semibold text-gold-100">{inv.clientName}</div>
-                          <div className="text-[10px] text-gold-100/40">Carer: {inv.carerName}</div>
+                          <div className="font-semibold text-gold-100">
+                            {inv.clientName}
+                          </div>
+                          <div className="text-[10px] text-gold-100/40">
+                            Carer: {inv.carerName}
+                          </div>
                         </td>
                         <td className="py-4 px-2 font-mono">
-                          {inv.hours} hrs <span className="text-[10px] text-gold-100/40">@ £{inv.rate}/hr</span>
+                          {inv.hours} hrs{" "}
+                          <span className="text-[10px] text-gold-100/40">
+                            @ £{inv.rate}/hr
+                          </span>
                         </td>
                         <td className="py-4 px-2 font-mono font-bold text-gold-200">
                           £{inv.amount.toFixed(2)}
@@ -201,14 +252,16 @@ export default function BillingManagement({ placements }: BillingManagementProps
                               inv.status === "Paid"
                                 ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
                                 : inv.status === "Pending"
-                                ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
-                                : "bg-rose-500/10 text-rose-400 border border-rose-500/20 animate-pulse"
+                                  ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                                  : "bg-rose-500/10 text-rose-400 border border-rose-500/20 animate-pulse"
                             }`}
                           >
                             {inv.status}
                           </span>
                         </td>
-                        <td className="py-4 px-2 font-mono text-xs">{inv.dueDate}</td>
+                        <td className="py-4 px-2 font-mono text-xs">
+                          {inv.dueDate}
+                        </td>
                         <td className="py-4 px-2 text-right">
                           <div className="flex justify-end gap-1.5">
                             {inv.status !== "Paid" && (
@@ -228,7 +281,9 @@ export default function BillingManagement({ placements }: BillingManagementProps
                               </button>
                             )}
                             {inv.status === "Paid" && (
-                              <span className="text-[10px] text-emerald-400 font-bold uppercase py-1 px-2">Cleared</span>
+                              <span className="text-[10px] text-emerald-400 font-bold uppercase py-1 px-2">
+                                Cleared
+                              </span>
                             )}
                           </div>
                         </td>
@@ -244,7 +299,9 @@ export default function BillingManagement({ placements }: BillingManagementProps
         {/* GENERATE NEW INVOICE FORM */}
         <div className="space-y-4">
           <div className="rounded-2xl border border-gold-300/10 bg-navy-900/40 p-6 shadow-soft backdrop-blur-md">
-            <h3 className="text-lg font-bold text-gold-200 mb-4">Generate Placement Invoice</h3>
+            <h3 className="text-lg font-bold text-gold-200 mb-4">
+              Generate Placement Invoice
+            </h3>
 
             {successMsg && (
               <div className="mb-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-xs text-emerald-400">
@@ -265,7 +322,9 @@ export default function BillingManagement({ placements }: BillingManagementProps
                 >
                   <option value="">-- Choose Placement --</option>
                   {placements
-                    .filter((p) => p.status === "Active" || p.status === "Matched")
+                    .filter(
+                      (p) => p.status === "Active" || p.status === "Matched",
+                    )
                     .map((p) => (
                       <option key={p.id} value={p.id}>
                         {p.clientName} (Carer: {p.carerName})

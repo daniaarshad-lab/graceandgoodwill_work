@@ -299,7 +299,7 @@ export default function PricingPage() {
                     }
                     fullWidth
                   >
-                    <Link href={plan.href} prefetch={true}>
+                    <Link href={plan.href} prefetch={false}>
                       {plan.cta}
                     </Link>
                   </Button>
@@ -439,7 +439,7 @@ export default function PricingPage() {
                     variant={plan.featured ? "primary" : "ghost-gold"}
                     fullWidth
                   >
-                    <Link href={plan.href} prefetch={true}>
+                    <Link href={plan.href} prefetch={false}>
                       {plan.cta}
                     </Link>
                   </Button>
@@ -492,7 +492,7 @@ export default function PricingPage() {
               variant="outline"
               className="w-full md:w-auto whitespace-nowrap py-4 px-8 text-lg"
             >
-              <Link href="/contact" prefetch={true}>
+              <Link href="/contact" prefetch={false}>
                 Book Training Session
               </Link>
             </Button>

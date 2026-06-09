@@ -110,7 +110,7 @@ function SiteHeader() {
               <Link
                 key={link.href}
                 href={link.href}
-                prefetch={true}
+                prefetch={false}
                 className={`text-[13px] lg:text-sm font-medium transition hover:text-gold-50 ${
                   isActive ? "text-gold-50" : "text-gold-200"
                 }`}
@@ -123,7 +123,7 @@ function SiteHeader() {
           {mounted && portalLink && !pathname.startsWith(portalLink.href) && (
             <Link
               href={portalLink.href}
-              prefetch={true}
+              prefetch={false}
               className="text-[13px] lg:text-sm font-semibold text-gold-DEFAULT transition hover:text-gold-200"
             >
               {portalLink.label}
@@ -143,7 +143,7 @@ function SiteHeader() {
             <div className="flex items-center gap-3">
               <Link
                 href="/login"
-                prefetch={true}
+                prefetch={false}
                 className={`text-[13px] lg:text-sm font-semibold hover:text-gold-50 ${
                   pathname === "/login" ? "text-gold-50" : "text-gold-200"
                 }`}
@@ -165,7 +165,7 @@ function SiteHeader() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  prefetch={true}
+                  prefetch={false}
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={`text-base font-medium transition py-2 border-b border-gold-300/10 hover:text-gold-50 ${
                     isActive ? "text-gold-50" : "text-gold-200"
@@ -179,7 +179,7 @@ function SiteHeader() {
             {mounted && portalLink && !pathname.startsWith(portalLink.href) && (
               <Link
                 href={portalLink.href}
-                prefetch={true}
+                prefetch={false}
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="text-base font-semibold text-gold-DEFAULT transition py-2 border-b border-gold-300/10 hover:text-gold-200"
               >

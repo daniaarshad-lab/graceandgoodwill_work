@@ -45,10 +45,16 @@ function ResetPasswordForm() {
       // Perform actual API call to reset password
       await authService.resetPassword(token, newPassword);
 
-      showSuccessToast("Password Reset", "Your password has been successfully reset. You can now login.");
+      showSuccessToast(
+        "Password Reset",
+        "Your password has been successfully reset. You can now login.",
+      );
       router.push("/login");
     } catch (error: any) {
-      const errorMsg = typeof error === 'string' ? error : error?.message || "Password reset failed.";
+      const errorMsg =
+        typeof error === "string"
+          ? error
+          : error?.message || "Password reset failed.";
       showErrorToast("Reset Failed", errorMsg);
     } finally {
       setIsLoading(false);

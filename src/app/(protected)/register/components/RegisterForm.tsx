@@ -68,11 +68,14 @@ export default function RegisterForm() {
 
       showSuccessToast(
         "Registration Successful!",
-        "Welcome to Grace & Goodwill. You have successfully created your account."
+        "Welcome to Grace & Goodwill. You have successfully created your account.",
       );
       router.push("/login");
     } catch (error: any) {
-      const errorMsg = typeof error === 'string' ? error : error?.message || "Registration failed.";
+      const errorMsg =
+        typeof error === "string"
+          ? error
+          : error?.message || "Registration failed.";
       showErrorToast("Registration Failed", errorMsg);
     } finally {
       setIsLoading(false);

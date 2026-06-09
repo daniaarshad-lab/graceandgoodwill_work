@@ -52,13 +52,19 @@ export default function NewsletterForm() {
       setIsSubmitting(true);
       try {
         await new Promise((resolve) => setTimeout(resolve, 1500));
-        
-        showSuccessToast("Subscribed Successfully", "Thank you for subscribing!");
-        
+
+        showSuccessToast(
+          "Subscribed Successfully",
+          "Thank you for subscribing!",
+        );
+
         setFormData({ firstName: "", email: "" });
         setErrors({});
       } catch (error) {
-        showErrorToast("Subscription Failed", "Something went wrong. Please try again later.");
+        showErrorToast(
+          "Subscription Failed",
+          "Something went wrong. Please try again later.",
+        );
       } finally {
         setIsSubmitting(false);
       }

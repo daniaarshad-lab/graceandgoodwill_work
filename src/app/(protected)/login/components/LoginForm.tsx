@@ -56,7 +56,8 @@ export default function LoginForm() {
 
       router.push(route);
     } catch (error: any) {
-      const errorMsg = typeof error === 'string' ? error : error?.message || "Login failed.";
+      const errorMsg =
+        typeof error === "string" ? error : error?.message || "Login failed.";
       showErrorToast("Login Failed", errorMsg);
     } finally {
       setIsLoading(false);

@@ -45,7 +45,7 @@ export default function HomePage() {
               fullWidth={false}
               className="w-full sm:w-auto"
             >
-              <Link href="/contact" prefetch={true}>
+              <Link href="/contact" prefetch={false}>
                 Request Care
               </Link>
             </Button>
@@ -55,7 +55,7 @@ export default function HomePage() {
               fullWidth={false}
               className="w-full sm:w-auto"
             >
-              <Link href="/emergency-care" prefetch={true}>
+              <Link href="/emergency-care" prefetch={false}>
                 Emergency Care
               </Link>
             </Button>

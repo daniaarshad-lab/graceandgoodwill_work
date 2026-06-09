@@ -620,6 +620,8 @@ export function useAdminPortal() {
     requests,
     placements,
     activities,
+    isLiveActive,
+    setIsLiveActive,
     stats,
     selectedCarerForApproval,
     setSelectedCarerForApproval,

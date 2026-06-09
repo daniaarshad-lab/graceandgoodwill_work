@@ -1,7 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Enquiry, EnquiryMessage } from "@/app/(protected)/client/types/client-ui.types";
+import {
+  Enquiry,
+  EnquiryMessage,
+} from "@/app/(protected)/client/types/client-ui.types";
 
 interface SupportEnquiryManagementProps {
   enquiries: Enquiry[];
@@ -22,7 +25,9 @@ export default function SupportEnquiryManagement({
 }: SupportEnquiryManagementProps) {
   const [replyText, setReplyText] = useState("");
   const [isSending, setIsSending] = useState(false);
-  const [filterStatus, setFilterStatus] = useState<"ALL" | "PENDING" | "IN_PROGRESS" | "RESOLVED" | "CLOSED">("ALL");
+  const [filterStatus, setFilterStatus] = useState<
+    "ALL" | "PENDING" | "IN_PROGRESS" | "RESOLVED" | "CLOSED"
+  >("ALL");
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleSelectEnquiry = async (enq: Enquiry) => {
@@ -44,7 +49,9 @@ export default function SupportEnquiryManagement({
 
   const handleToggleCloseStatus = async () => {
     if (!selectedEnquiry) return;
-    const isClosed = selectedEnquiry.status === "CLOSED" || selectedEnquiry.status === "RESOLVED";
+    const isClosed =
+      selectedEnquiry.status === "CLOSED" ||
+      selectedEnquiry.status === "RESOLVED";
     const newStatus = isClosed ? "PENDING" : "CLOSED";
     await handleUpdateEnquiryStatus(selectedEnquiry.id, newStatus);
   };
@@ -60,8 +67,7 @@ export default function SupportEnquiryManagement({
   const filteredEnquiries = enquiries
     .filter((enq) => {
       const matchesStatus =
-        filterStatus === "ALL" ||
-        enq.status === filterStatus;
+        filterStatus === "ALL" || enq.status === filterStatus;
 
       const matchesSearch =
         enq.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -73,7 +79,9 @@ export default function SupportEnquiryManagement({
     })
     .sort((a, b) => {
       if (a.isRead === b.isRead) {
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
       }
       return a.isRead ? 1 : -1; // unread (isRead: false) first
     });
@@ -104,7 +112,9 @@ export default function SupportEnquiryManagement({
     });
   };
 
-  const isClosed = selectedEnquiry?.status === "CLOSED" || selectedEnquiry?.status === "RESOLVED";
+  const isClosed =
+    selectedEnquiry?.status === "CLOSED" ||
+    selectedEnquiry?.status === "RESOLVED";
   const unreadCount = enquiries.filter((e) => !e.isRead).length;
 
   return (
@@ -115,7 +125,10 @@ export default function SupportEnquiryManagement({
           Support & Enquiries Console
         </h2>
         <p className="text-sm text-gold-100/50 flex items-center flex-wrap gap-2">
-          <span>Review issues, reply to general enquiries, and manage client relations.</span>
+          <span>
+            Review issues, reply to general enquiries, and manage client
+            relations.
+          </span>
           {unreadCount > 0 && (
             <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 text-xs font-semibold text-amber-400 animate-pulse">
               ● {unreadCount} Unread
@@ -138,19 +151,21 @@ export default function SupportEnquiryManagement({
             />
 
             <div className="flex flex-wrap gap-1.5 border-b border-gold-300/10 pb-2">
-              {(["ALL", "PENDING", "IN_PROGRESS", "CLOSED"] as const).map((status) => (
-                <button
-                  key={status}
-                  onClick={() => setFilterStatus(status)}
-                  className={`rounded-lg px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider transition-all ${
-                    filterStatus === status
-                      ? "bg-gold text-navy-950"
-                      : "bg-navy-950/40 text-gold-100/60 border border-gold-300/5 hover:text-gold hover:border-gold-300/20"
-                  }`}
-                >
-                  {status}
-                </button>
-              ))}
+              {(["ALL", "PENDING", "IN_PROGRESS", "CLOSED"] as const).map(
+                (status) => (
+                  <button
+                    key={status}
+                    onClick={() => setFilterStatus(status)}
+                    className={`rounded-lg px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider transition-all ${
+                      filterStatus === status
+                        ? "bg-gold text-navy-950"
+                        : "bg-navy-950/40 text-gold-100/60 border border-gold-300/5 hover:text-gold hover:border-gold-300/20"
+                    }`}
+                  >
+                    {status}
+                  </button>
+                ),
+              )}
             </div>
           </div>
 
@@ -190,17 +205,26 @@ export default function SupportEnquiryManagement({
                     <div className="flex items-center justify-between mb-1.5">
                       <div className="flex items-center gap-1.5">
                         {!enq.isRead && (
-                          <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse" title="Unread" />
+                          <span
+                            className="h-2 w-2 rounded-full bg-amber-500 animate-pulse"
+                            title="Unread"
+                          />
                         )}
-                        <span className={`text-xs font-bold ${!enq.isRead ? "text-gold-200" : "text-gold-100"}`}>
+                        <span
+                          className={`text-xs font-bold ${!enq.isRead ? "text-gold-200" : "text-gold-100"}`}
+                        >
                           {enq.name}
                         </span>
                       </div>
-                      <span className={`rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider ${getStatusBadgeClass(enq.status)}`}>
+                      <span
+                        className={`rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider ${getStatusBadgeClass(enq.status)}`}
+                      >
                         {enq.status}
                       </span>
                     </div>
-                    <div className="text-[10px] text-gold-100/40 mb-2 truncate">{enq.email}</div>
+                    <div className="text-[10px] text-gold-100/40 mb-2 truncate">
+                      {enq.email}
+                    </div>
                     <p className="text-xs text-gold-100/70 line-clamp-2 leading-relaxed">
                       {enq.message}
                     </p>
@@ -222,13 +246,24 @@ export default function SupportEnquiryManagement({
               <div className="border-b border-gold-300/10 pb-4 mb-4 shrink-0 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <h3 className="text-sm font-bold text-gold-100">{selectedEnquiry.name}</h3>
-                    <span className={`rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider ${getStatusBadgeClass(selectedEnquiry.status)}`}>
+                    <h3 className="text-sm font-bold text-gold-100">
+                      {selectedEnquiry.name}
+                    </h3>
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider ${getStatusBadgeClass(selectedEnquiry.status)}`}
+                    >
                       {selectedEnquiry.status}
                     </span>
                   </div>
                   <div className="text-xs text-gold-100/40">
-                    Email: <span className="text-gold-200">{selectedEnquiry.email}</span> • Phone: <span className="text-gold-200">{selectedEnquiry.phone || "N/A"}</span>
+                    Email:{" "}
+                    <span className="text-gold-200">
+                      {selectedEnquiry.email}
+                    </span>{" "}
+                    • Phone:{" "}
+                    <span className="text-gold-200">
+                      {selectedEnquiry.phone || "N/A"}
+                    </span>
                   </div>
                 </div>
 
@@ -247,8 +282,12 @@ export default function SupportEnquiryManagement({
 
               {/* ORIGINAL TICKET SUMMARY */}
               <div className="mb-4 rounded-xl bg-navy-950/60 p-4 border border-gold-300/5 shrink-0">
-                <div className="text-[10px] font-bold uppercase tracking-wider text-gold/60 mb-1">Original Enquiry Query:</div>
-                <p className="text-xs text-gold-100/90 leading-relaxed font-sans">{selectedEnquiry.message}</p>
+                <div className="text-[10px] font-bold uppercase tracking-wider text-gold/60 mb-1">
+                  Original Enquiry Query:
+                </div>
+                <p className="text-xs text-gold-100/90 leading-relaxed font-sans">
+                  {selectedEnquiry.message}
+                </p>
                 <div className="mt-2 text-[9px] text-gold-100/30 font-mono">
                   Submitted at: {formatDateTime(selectedEnquiry.createdAt)}
                 </div>
@@ -256,7 +295,8 @@ export default function SupportEnquiryManagement({
 
               {/* MESSAGES THREAD CONTAINER */}
               <div className="flex-1 overflow-y-auto space-y-4 pr-1 scrollbar-thin mb-4 min-h-0">
-                {selectedEnquiry.messages && selectedEnquiry.messages.length > 0 ? (
+                {selectedEnquiry.messages &&
+                selectedEnquiry.messages.length > 0 ? (
                   selectedEnquiry.messages.map((msg: EnquiryMessage) => {
                     // Outgoing = Admin response
                     const isOutgoing = msg.senderId !== selectedEnquiry.userId;
@@ -294,7 +334,10 @@ export default function SupportEnquiryManagement({
                   })
                 ) : (
                   <div className="h-full flex flex-col items-center justify-center text-center py-12 text-gold-100/20">
-                    <span className="text-xs">No thread message history. Send a reply to start the conversation.</span>
+                    <span className="text-xs">
+                      No thread message history. Send a reply to start the
+                      conversation.
+                    </span>
                   </div>
                 )}
               </div>
@@ -304,7 +347,8 @@ export default function SupportEnquiryManagement({
                 {isClosed ? (
                   <div className="text-center py-3.5 rounded-xl bg-navy-950/40 border border-rose-500/15">
                     <p className="text-xs text-rose-400/80 font-bold">
-                      This enquiry has been Closed/Resolved. Reopen it using the button above to post new replies.
+                      This enquiry has been Closed/Resolved. Reopen it using the
+                      button above to post new replies.
                     </p>
                   </div>
                 ) : (
@@ -346,9 +390,12 @@ export default function SupportEnquiryManagement({
                   d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z"
                 />
               </svg>
-              <h4 className="text-sm font-bold text-gold-200 mb-1">Select an Enquiry</h4>
+              <h4 className="text-sm font-bold text-gold-200 mb-1">
+                Select an Enquiry
+              </h4>
               <p className="text-xs max-w-md">
-                Choose an enquiry from the left list pane to load customer details, conversation history, and actions.
+                Choose an enquiry from the left list pane to load customer
+                details, conversation history, and actions.
               </p>
             </div>
           )}

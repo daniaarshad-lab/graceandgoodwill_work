@@ -70,7 +70,11 @@ export default function RegisterForm() {
         "Registration Successful!",
         "Welcome to Grace & Goodwill. You have successfully created your account.",
       );
-      router.push("/login");
+      if (selectedRole === "CARER") {
+        router.push("/carer?onboarding=true");
+      } else {
+        router.push("/client");
+      }
     } catch (error: any) {
       const errorMsg =
         typeof error === "string"

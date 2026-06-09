@@ -16,8 +16,10 @@ export const authService = {
       method: "POST",
       body,
     });
-    // Do NOT store tokens on registration.
-    // The user should log in manually after registering.
+    if (data.accessToken) {
+      localStorage.setItem("accessToken", data.accessToken);
+      localStorage.setItem("refreshToken", data.refreshToken);
+    }
     return data;
   },
 

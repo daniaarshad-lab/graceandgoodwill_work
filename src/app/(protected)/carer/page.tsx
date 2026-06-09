@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   fetchCarerDocuments,
@@ -16,12 +17,24 @@ import AvailabilitySchedule from "./components/AvailabilitySchedule";
 import UploadDocumentModal from "./components/UploadDocumentModal";
 import PortalHeader from "./components/PortalHeader";
 import PortalTabs from "./components/PortalTabs";
+import OnboardingStepper from "./components/OnboardingStepper";
+import OnboardingProfileSetup from "./components/OnboardingProfileSetup";
+import OnboardingMembership from "./components/OnboardingMembership";
+import Button from "@/components/Button";
 
 type TabType = "overview" | "profile" | "compliance" | "availability";
 
-export default function CarerDashboard() {
+function CarerDashboardContent() {
   const { user } = useAuth();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  
+  const isOnboardingParam = searchParams.get("onboarding") === "true";
+  
   const [activeTab, setActiveTab] = useState<TabType>("overview");
+  const [onboardingDone, setOnboardingDone] = useState(true);
+  const [onboardingStep, setOnboardingStep] = useState(2);
+  const [isClient, setIsClient] = useState(false);
 
   const dispatch = useAppDispatch();
 
@@ -39,6 +52,119 @@ export default function CarerDashboard() {
     documents,
   });
 
+  useEffect(() => {
+    setIsClient(true);
+    const localStorageDone = localStorage.getItem("carer_onboarding_done") === "true";
+    
+    console.log("[Onboarding Flow] isOnboardingParam:", isOnboardingParam);
+    console.log("[Onboarding Flow] localStorageDone:", localStorageDone);
+
+    if (isOnboardingParam) {
+      // Force onboarding if explicitly requested by URL
+      setOnboardingDone(false);
+      localStorage.removeItem("carer_onboarding_done");
+      console.log("[Onboarding Flow] Setting onboardingDone to FALSE due to query param.");
+    } else {
+      setOnboardingDone(localStorageDone);
+      console.log("[Onboarding Flow] Setting onboardingDone to:", localStorageDone);
+    }
+
+    if (profile) {
+      const isComplianceUploaded = documents && documents.length > 0;
+      const isProfileSetup = !!(profile.bio && profile.experience && profile.address);
+      
+      console.log("[Onboarding Flow] isComplianceUploaded:", isComplianceUploaded, "isProfileSetup:", isProfileSetup);
+      
+      if (!isComplianceUploaded) {
+        setOnboardingStep(2);
+      } else if (!isProfileSetup) {
+        setOnboardingStep(3);
+      } else {
+        setOnboardingStep(4);
+      }
+    }
+  }, [profile, documents, isOnboardingParam]);
+
+  const showOnboarding =
+    isClient && !onboardingDone && portal.applicationStatus !== "approved";
+    
+  console.log("[Onboarding Flow] Render check -> isClient:", isClient, "onboardingDone:", onboardingDone, "status:", portal.applicationStatus, "=> showOnboarding:", showOnboarding);
+
+  // Dedicated Onboarding View Flow
+  if (showOnboarding) {
+    return (
+      <main className="min-h-screen bg-navy-950 py-10 text-gold-100">
+        <div className="container-wrapper space-y-8">
+          {/* Premium header is now integrated into OnboardingStepper */}
+
+          <OnboardingStepper
+            currentStep={onboardingStep}
+            setCurrentStep={setOnboardingStep}
+          />
+
+          <div className="transition-all duration-500">
+            {onboardingStep === 2 && (
+              <div className="space-y-6">
+                <ComplianceVault
+                  complianceDocs={portal.complianceDocs}
+                  uploadingDocType={portal.uploadingDocType}
+                  uploadProgress={portal.uploadProgress}
+                  handleDocUpload={portal.handleDocUpload}
+                  setPreviewDoc={portal.setPreviewDoc}
+                  setDocToDelete={portal.setDocToDelete}
+                />
+                <div className="flex justify-end pt-4 border-t border-gold-300/10">
+                  <Button
+                    onClick={() => setOnboardingStep(3)}
+                    disabled={portal.complianceDocs.length === 0}
+                    variant="primary"
+                    size="sm"
+                    fullWidth={false}
+                    className="px-8 shadow-gold"
+                  >
+                    Continue to Profile Setup
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {onboardingStep === 3 && (
+              <OnboardingProfileSetup
+                onComplete={() => setOnboardingStep(4)}
+              />
+            )}
+
+            {onboardingStep === 4 && (
+              <OnboardingMembership
+                onComplete={() => {
+                  localStorage.setItem("carer_onboarding_done", "true");
+                  setOnboardingDone(true);
+                  if (isOnboardingParam) {
+                    router.replace("/carer");
+                  }
+                }}
+              />
+            )}
+          </div>
+        </div>
+
+        <UploadDocumentModal
+          previewDoc={portal.previewDoc}
+          setPreviewDoc={portal.setPreviewDoc}
+          docToDelete={portal.docToDelete}
+          setDocToDelete={portal.setDocToDelete}
+          confirmDelete={() => {
+            if (portal.docToDelete) {
+              portal.handleDeleteDoc(portal.docToDelete);
+              portal.setDocToDelete(null);
+            }
+          }}
+        />
+      </main>
+    );
+  }
+
+  // Standard Carer Dashboard Layout (Unchanged)
   return (
     <main className="min-h-screen bg-navy-950 py-10 text-gold-100">
       <div className="container-wrapper space-y-8">
@@ -125,5 +251,24 @@ export default function CarerDashboard() {
         }}
       />
     </main>
+  );
+}
+
+export default function CarerDashboard() {
+  return (
+    <Suspense
+      fallback={
+        <main className="min-h-screen bg-navy-950 py-10 text-gold-100 flex items-center justify-center">
+          <div className="flex flex-col items-center space-y-4">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold-DEFAULT"></div>
+            <p className="text-sm tracking-wider text-gold-200">
+              Loading Dashboard...
+            </p>
+          </div>
+        </main>
+      }
+    >
+      <CarerDashboardContent />
+    </Suspense>
   );
 }

@@ -162,7 +162,7 @@ export function useCarerPortal({
 
   const dispatch = useAppDispatch();
 
-  const handleSaveProfile = async (e: React.FormEvent) => {
+  const handleSaveProfile = async (e: React.FormEvent): Promise<boolean> => {
     e.preventDefault();
 
     const formData = {
@@ -179,7 +179,7 @@ export function useCarerPortal({
         "Validation Error",
         "Please correct the errors in the profile form before saving.",
       );
-      return;
+      return false;
     }
 
     setProfileErrors({});
@@ -198,12 +198,14 @@ export function useCarerPortal({
         "Profile Updated",
         "Profile successfully updated and saved!",
       );
+      return true;
     } catch (error: any) {
       const errorMsg =
         typeof error === "string"
           ? error
           : error?.message || "Failed to update profile.";
       showErrorToast("Error", errorMsg);
+      return false;
     } finally {
       setIsProfileSaving(false);
     }

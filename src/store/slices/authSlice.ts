@@ -149,11 +149,22 @@ const authSlice = createSlice({
       state.loading = true;
       state.error = null;
     });
-    builder.addCase(register.fulfilled, (state) => {
-      // Registration succeeded — but do NOT auto-authenticate.
-      // The user will log in manually after registration.
-      state.loading = false;
-    });
+    builder.addCase(
+      register.fulfilled,
+      (state, action: PayloadAction<AuthResponse>) => {
+        state.loading = false;
+        state.isAuthenticated = true;
+        state.token = action.payload.accessToken;
+        state.user = action.payload.user;
+        state.role = action.payload.user.role || null;
+
+        if (typeof window !== "undefined") {
+          localStorage.setItem("accessToken", action.payload.accessToken);
+          localStorage.setItem("refreshToken", action.payload.refreshToken);
+          localStorage.setItem("user", JSON.stringify(action.payload.user));
+        }
+      },
+    );
     builder.addCase(register.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload || "Registration failed";

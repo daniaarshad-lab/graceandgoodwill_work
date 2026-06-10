@@ -1,65 +1,28 @@
 import { useEffect, useState } from "react";
 
 import {
-  CarerDocument,
   ComplianceDoc,
-  DayAvailability,
-  WeeklyAvailability,
 } from "../types/carer.types";
 import {
   validateProfileForm,
-  validateAvailabilitySchedule,
 } from "../utils/validation";
 import { useAppDispatch } from "@/store/hooks";
 import {
   fetchCarerDocuments,
   updateCarerProfile,
-  updateCarerAvailability,
   deleteCarerDocument,
 } from "@/store/slices/carerSlice";
 import { carerService } from "@/services/carer/carer.service";
 import {
   CarerProfile,
-  AvailabilityDay,
-  AvailabilitySlot,
 } from "@/types/carer.types";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 
 interface UseCarerPortalProps {
   user: any;
   profile: CarerProfile | null;
-  documents: CarerDocument[];
+  documents: any[];
 }
-
-const DAY_NUMBER_TO_NAME: Record<number, string> = {
-  1: "Monday",
-  2: "Tuesday",
-  3: "Wednesday",
-  4: "Thursday",
-  5: "Friday",
-  6: "Saturday",
-  7: "Sunday",
-};
-
-const DAYS_OF_WEEK = [
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-  "Sunday",
-];
-
-const emptyAvailability: WeeklyAvailability = Object.fromEntries(
-  DAYS_OF_WEEK.map((day) => [
-    day,
-    {
-      enabled: false,
-      shifts: { morning: false, afternoon: false, night: false },
-    } as DayAvailability,
-  ]),
-);
 
 export function useCarerPortal({
   user,
@@ -81,40 +44,6 @@ export function useCarerPortal({
       setSpecialties(profile.careSpecialties ?? "");
       setExperience(profile.experience ?? "");
       setAddress(profile.address ?? "");
-
-      // Hydrate availability from API — convert AvailabilityDay[] → WeeklyAvailability
-      const apiAvailability = profile.availability;
-      if (apiAvailability && apiAvailability.length > 0) {
-        const weekly: WeeklyAvailability = Object.fromEntries(
-          [
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday",
-            "Sunday",
-          ].map((day) => [
-            day,
-            {
-              enabled: false,
-              shifts: { morning: false, afternoon: false, night: false },
-            } as DayAvailability,
-          ]),
-        );
-        for (const apiDay of apiAvailability) {
-          const dayName = DAY_NUMBER_TO_NAME[apiDay.dayOfWeek];
-          if (!dayName) continue;
-          const shifts = { morning: false, afternoon: false, night: false };
-          for (const slot of apiDay.slots ?? []) {
-            const shift = slot.shiftType as "morning" | "afternoon" | "night";
-            if (shift in shifts) shifts[shift] = true;
-          }
-          weekly[dayName] = { enabled: apiDay.enabled, shifts };
-        }
-        setAvailability(weekly);
-      }
-      // If availability is null/empty from API, state stays as all-disabled (emptyAvailability)
     }
   }, [profile]);
 
@@ -153,12 +82,6 @@ export function useCarerPortal({
 
   // Compliance Upload Validation States
   const [docToDelete, setDocToDelete] = useState<string | null>(null);
-
-  const [availability, setAvailability] =
-    useState<WeeklyAvailability>(emptyAvailability);
-
-  // Availability Save Validation States
-  const [isAvailabilitySaving, setIsAvailabilitySaving] = useState(false);
 
   const dispatch = useAppDispatch();
 
@@ -313,115 +236,6 @@ export function useCarerPortal({
     }
   };
 
-  const DAY_OF_WEEK: Record<string, number> = {
-    Monday: 1,
-    Tuesday: 2,
-    Wednesday: 3,
-    Thursday: 4,
-    Friday: 5,
-    Saturday: 6,
-    Sunday: 7,
-  };
-
-  const SHIFT_SLOTS = {
-    morning: {
-      shiftType: "morning",
-      startTime: "08:00",
-      endTime: "12:00",
-    },
-    afternoon: {
-      shiftType: "afternoon",
-      startTime: "12:00",
-      endTime: "17:00",
-    },
-    night: {
-      shiftType: "night",
-      startTime: "17:00",
-      endTime: "22:00",
-    },
-  };
-
-  function buildAvailabilityPayload(
-    weekly: typeof availability,
-  ): AvailabilityDay[] {
-    return Object.entries(weekly).map(([day, config]) => {
-      const slots: AvailabilitySlot[] = config.enabled
-        ? (["morning", "afternoon", "night"] as const)
-            .filter((shift) => config.shifts[shift])
-            .map((shift) => SHIFT_SLOTS[shift])
-        : [];
-
-      return {
-        dayOfWeek: DAY_OF_WEEK[day],
-        enabled: config.enabled,
-        slots,
-      };
-    });
-  }
-
-  const handleSaveAvailability = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const isSchedulePopulated = validateAvailabilitySchedule(availability);
-
-    if (!isSchedulePopulated) {
-      showErrorToast(
-        "Validation Error",
-        "Please configure at least one active day and time slot before saving.",
-      );
-      return;
-    }
-
-    const payload = buildAvailabilityPayload(availability);
-
-    try {
-      setIsAvailabilitySaving(true);
-      await dispatch(updateCarerAvailability(payload)).unwrap();
-      showSuccessToast(
-        "Availability Updated",
-        "Availability schedule successfully updated!",
-      );
-    } catch (error: any) {
-      const errorMsg =
-        typeof error === "string"
-          ? error
-          : error?.message || "Failed to save availability. Please try again.";
-      showErrorToast("Update Failed", errorMsg);
-    } finally {
-      setIsAvailabilitySaving(false);
-    }
-  };
-
-  const handleToggleDay = (day: string) => {
-    setAvailability((prev) => ({
-      ...prev,
-      [day]: {
-        ...prev[day],
-        enabled: !prev[day].enabled,
-        shifts: !prev[day].enabled
-          ? { morning: true, afternoon: true, night: false }
-          : { morning: false, afternoon: false, night: false },
-      },
-    }));
-  };
-
-  const handleToggleShift = (
-    day: string,
-    shift: "morning" | "afternoon" | "night",
-  ) => {
-    if (!availability[day].enabled) return;
-    setAvailability((prev) => ({
-      ...prev,
-      [day]: {
-        ...prev[day],
-        shifts: {
-          ...prev[day].shifts,
-          [shift]: !prev[day].shifts[shift],
-        },
-      },
-    }));
-  };
-
   return {
     firstName,
     setFirstName,
@@ -457,11 +271,5 @@ export function useCarerPortal({
     setDocToDelete,
     handleDocUpload,
     handleDeleteDoc,
-
-    availability,
-    isAvailabilitySaving,
-    handleSaveAvailability,
-    handleToggleDay,
-    handleToggleShift,
   };
 }

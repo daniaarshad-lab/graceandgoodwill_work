@@ -8,18 +8,6 @@ export interface CarerUser {
   status: string;
 }
 
-export interface AvailabilitySlot {
-  shiftType: string;
-  startTime: string;
-  endTime: string;
-}
-
-export interface AvailabilityDay {
-  dayOfWeek: number;
-  enabled: boolean;
-  slots: AvailabilitySlot[];
-}
-
 export interface CarerProfile {
   id: string;
   userId: string;
@@ -28,6 +16,7 @@ export interface CarerProfile {
   bio: string | null;
   summary: string | null;
   profilePhotoUrl: string | null;
+  introVideoUrl: string | null;
 
   experienceYears: number | null;
   experience: string | null;
@@ -42,7 +31,8 @@ export interface CarerProfile {
 
   careSpecialties: string | null;
 
-  availability: AvailabilityDay[];
+  /** ISO date strings, e.g. ["2026-06-10", "2026-06-12"] */
+  availability: string[];
 
   careTypes: string[];
 
@@ -59,7 +49,7 @@ export interface UpdateCarerProfilePayload {
   city?: string;
   address?: string;
 
-  availability?: AvailabilityDay[];
+  availability?: string[];
 
   careTypes?: string[];
 
@@ -73,4 +63,5 @@ export interface UpdateCarerProfilePayload {
   pincode?: string;
 }
 
-export type UpdateAvailabilityPayload = AvailabilityDay[];
+/** Array of ISO date strings sent to PUT /carer/profile/availability */
+export type UpdateAvailabilityPayload = string[];

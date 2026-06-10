@@ -1,6 +1,6 @@
 import SectionCard from "./shared/SectionCard";
 import StatusBadge from "./shared/StatusBadge";
-import { ComplianceDoc, WeeklyAvailability } from "../types/carer.types";
+import { ComplianceDoc } from "../types/carer.types";
 import Button from "@/components/Button";
 
 interface DashboardOverviewProps {
@@ -8,7 +8,7 @@ interface DashboardOverviewProps {
   membershipActive: boolean;
   membershipExpiry: string;
   complianceDocs: ComplianceDoc[];
-  availability: WeeklyAvailability;
+  availability: string[];
   setActiveTab: (tab: any) => void;
 }
 
@@ -130,11 +130,10 @@ export default function DashboardOverview({
           </div>
           <div className="rounded-2xl border border-gold-300/10 bg-navy-950/40 p-4 text-center">
             <p className="text-2xl font-semibold text-gold-50">
-              {Object.values(availability).filter((day) => day.enabled).length}{" "}
-              Days
+              {availability.length}
             </p>
             <p className="text-[10px] text-gold-100/50 mt-1 uppercase tracking-wider">
-              Available / Wk
+              Available Dates
             </p>
           </div>
         </div>

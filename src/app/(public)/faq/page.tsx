@@ -22,7 +22,7 @@ export default function FAQPage() {
 
           <div className="flex items-center justify-center gap-4 mb-8">
             <div className="h-px w-10 bg-gradient-to-r from-transparent to-gold-400/50" />
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight  text-gold-darker">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight  text-gold-100">
               Frequently Asked Questions
             </h1>
             <div className="h-px w-10 bg-gradient-to-l from-transparent to-gold-400/50" />
@@ -31,7 +31,7 @@ export default function FAQPage() {
           {/* <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight  text-gold-darker">
             Frequently Asked Questions
           </h1> */}
-          <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-gold-200/80 sm:text-lg">
+          <p className="mx-auto mt-6 max-w-xl text-sm leading-relaxed text-gold-200/80 sm:text-base">
             Find answers to common questions about matching, continuity, and how
             we coordinate trustworthy live-in support.
           </p>

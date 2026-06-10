@@ -14,7 +14,7 @@ export default function AboutPage() {
         <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center text-center">
           <div className="flex items-center gap-4 mb-8">
             <div className="h-px w-10 bg-gradient-to-r from-transparent to-gold-400/50" />
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight  text-gold-darker">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight   text-gold-100">
               About Grace &amp; Goodwill
             </h1>
             <div className="h-px w-10 bg-gradient-to-l from-transparent to-gold-400/50" />
@@ -76,7 +76,7 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className="space-y-8 text-base sm:text-lg text-gold-100/90 leading-relaxed font-light">
+          <div className="space-y-8 text-sm sm:text-base text-gold-100/90 leading-relaxed font-light">
             <p>
               Nel corso della mia vita sono stato attratto dall&apos;aiutare gli
               altri, sia sostenendo professionalmente le persone vulnerabili,
@@ -314,7 +314,7 @@ export default function AboutPage() {
               </p>
             </div> */}
 
-            <div className="space-y-10 text-base sm:text-lg text-gold-100/80 leading-relaxed font-light">
+            <div className="space-y-10 text-sm sm:text-base text-gold-100/80 leading-relaxed font-light">
               <p>
                 {" "}
                 Grace &amp; Goodwill was created because too many families are

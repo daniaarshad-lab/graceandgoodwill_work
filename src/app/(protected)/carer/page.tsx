@@ -208,6 +208,13 @@ function CarerDashboardContent() {
               setExperience={portal.setExperience}
               address={portal.address}
               setAddress={portal.setAddress}
+              canDrive={portal.canDrive}
+              setCanDrive={portal.setCanDrive}
+              hasBusinessInsurance={portal.hasBusinessInsurance}
+              setHasBusinessInsurance={portal.setHasBusinessInsurance}
+              handleDocUpload={portal.handleDocUpload}
+              uploadingDocType={portal.uploadingDocType}
+              uploadProgress={portal.uploadProgress}
               errors={portal.profileErrors}
               isProfileSaving={portal.isProfileSaving}
               onSubmit={portal.handleSaveProfile}

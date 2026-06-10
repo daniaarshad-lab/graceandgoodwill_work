@@ -90,13 +90,13 @@ export default function ServicesPage() {
         <section className="mb-20 text-center">
           <div className="flex items-center justify-center gap-4 mb-8">
             <div className="h-px w-10 bg-gradient-to-r from-transparent to-gold-400/50" />
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight  text-gold-darker">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight   text-gold-100">
               Support designed around real lives
             </h1>
             <div className="h-px w-10 bg-gradient-to-l from-transparent to-gold-400/50" />
           </div>
 
-          <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-gold-200/80 sm:text-lg">
+          <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-gold-200/80">
             Every family is unique, and so is our support. Explore our core
             services structured around dignity, continuity, and warm human
             connection.
@@ -138,7 +138,7 @@ export default function ServicesPage() {
                     <span className="text-xs uppercase tracking-[0.25em] text-gold-400 font-semibold">
                       Guaranteed Coverage
                     </span>
-                    <h2 className="text-2xl font-semibold text-gold-50 tracking-wide mt-0.5">
+                    <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide">
                       Continuity support and replacement coordination
                     </h2>
                   </div>
@@ -167,7 +167,7 @@ export default function ServicesPage() {
         </section>
 
         <section className="mt-24 rounded-[32px] border border-gold-300/15 bg-navy-900/30 p-6 sm:p-8 md:p-12 text-center backdrop-blur-sm">
-          <h2 className="text-2xl font-light text-gold-50 sm:text-3xl">
+          <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide">
             Let&apos;s discuss how we can support you.
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-gold-200/80 sm:text-base">

@@ -39,7 +39,7 @@ export default function ServicesReveal() {
         <div className="absolute inset-0 bg-gold-400/5 pointer-events-none" />
 
         <div className="relative z-10 mb-10 text-center space-y-4">
-          <h2 className="text-2xl font-light tracking-tight text-gold-50 sm:text-3xl">
+          <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide">
             What Live-In Care Can Include
           </h2>
           <div className="h-px w-16 bg-gradient-to-r from-transparent via-gold-400/50 to-transparent mx-auto" />

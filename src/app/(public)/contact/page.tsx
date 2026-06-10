@@ -23,11 +23,11 @@ export default function ContactPage() {
 
             {/* Dynamic Heading & Description */}
             <div className="space-y-4">
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight  text-gold-darker">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight  text-gold-100">
                 Trusted Live In Care Support Across The UK
               </h1>
 
-              <p className="text-gold-200/80 leading-relaxed text-base">
+              <p className="text-gold-200/80 leading-relaxed text-base mx-auto mt-6 max-w-2xl">
                 We help families find compassionate, dependable live in care
                 with a personal and supportive approach. Welcoming a carer into
                 your home is a major family milestone, and our dedicated team is

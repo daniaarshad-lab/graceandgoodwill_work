@@ -46,6 +46,9 @@ export interface CarerProfile {
 
   careTypes: string[];
 
+  canDrive?: boolean | null;
+  hasBusinessInsurance?: boolean | null;
+
   createdAt: string;
   updatedAt: string;
 }
@@ -71,6 +74,9 @@ export interface UpdateCarerProfilePayload {
 
   state?: string;
   pincode?: string;
+
+  canDrive?: boolean;
+  hasBusinessInsurance?: boolean;
 }
 
 export type UpdateAvailabilityPayload = AvailabilityDay[];

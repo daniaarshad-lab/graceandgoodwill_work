@@ -70,12 +70,12 @@ export default function HowItWorksPage() {
           </h1> */}
           <div className="flex items-center justify-center gap-4 mb-8">
             <div className="h-px w-10 bg-gradient-to-r from-transparent to-gold-400/50" />
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight  text-gold-darker">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight  text-gold-100">
               Simple to begin. Supportive throughout.
             </h1>
-            <div className="h-px w-10 bg-gradient-to-l from-transparent to-gold-400/50" />
+            <div className="h-px w-10 bg-gradient-to-l from-transparent text-gold-100" />
           </div>
-          <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-gold-200/80 sm:text-lg">
+          <p className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-gold-200/80 sm:text-base">
             At Grace & Goodwill, we bring harmony and clarity to live-in care
             coordination. We make it simple to get started, ensuring your
             choices are respected and supported continuously.
@@ -141,7 +141,7 @@ export default function HowItWorksPage() {
         </section>
 
         <section className="mt-24 rounded-[32px] border border-gold-300/15 bg-navy-900/30 p-6 sm:p-8 md:p-12 text-center backdrop-blur-sm">
-          <h2 className="text-2xl font-light text-gold-50 sm:text-3xl">
+          <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide">
             Ready to find trusted support?
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-gold-200/80 sm:text-base">

@@ -74,6 +74,8 @@ export function useCarerPortal({
   const [specialties, setSpecialties] = useState("");
   const [experience, setExperience] = useState("");
   const [address, setAddress] = useState("");
+  const [canDrive, setCanDrive] = useState<"yes" | "no" | "">("");
+  const [hasBusinessInsurance, setHasBusinessInsurance] = useState<"yes" | "no" | "">("");
 
   useEffect(() => {
     if (profile) {
@@ -81,6 +83,8 @@ export function useCarerPortal({
       setSpecialties(profile.careSpecialties ?? "");
       setExperience(profile.experience ?? "");
       setAddress(profile.address ?? "");
+      setCanDrive(profile.canDrive === true ? "yes" : profile.canDrive === false ? "no" : "");
+      setHasBusinessInsurance(profile.hasBusinessInsurance === true ? "yes" : profile.hasBusinessInsurance === false ? "no" : "");
 
       // Hydrate availability from API — convert AvailabilityDay[] → WeeklyAvailability
       const apiAvailability = profile.availability;
@@ -189,6 +193,8 @@ export function useCarerPortal({
       careSpecialties: specialties,
       experience,
       address,
+      canDrive: canDrive === "yes" ? true : canDrive === "no" ? false : undefined,
+      hasBusinessInsurance: hasBusinessInsurance === "yes" ? true : hasBusinessInsurance === "no" ? false : undefined,
     };
 
     try {
@@ -254,6 +260,7 @@ export function useCarerPortal({
       "Criminal Record Check": "CRIMINAL_RECORD_CHECK",
       "Dementia Support Certificate": "DEMENTIA_SUPPORT",
       "Nurses Registry License": "NURSES_REGISTRY",
+      "Business Insurance": "BUSINESS_INSURANCE",
     };
 
     let progressInterval: any;
@@ -439,6 +446,10 @@ export function useCarerPortal({
     setExperience,
     address,
     setAddress,
+    canDrive,
+    setCanDrive,
+    hasBusinessInsurance,
+    setHasBusinessInsurance,
 
     profileErrors,
     isProfileSaving,

@@ -21,6 +21,13 @@ interface ProfileManagementProps {
   setExperience: (val: string) => void;
   address: string;
   setAddress: (val: string) => void;
+  canDrive: "yes" | "no" | "";
+  setCanDrive: (val: "yes" | "no" | "") => void;
+  hasBusinessInsurance: "yes" | "no" | "";
+  setHasBusinessInsurance: (val: "yes" | "no" | "") => void;
+  handleDocUpload: (type: string, e: React.ChangeEvent<HTMLInputElement>) => void;
+  uploadingDocType: string | null;
+  uploadProgress: number;
   errors: Record<string, string>;
   isProfileSaving: boolean;
   onSubmit: (e: FormEvent) => void;
@@ -46,6 +53,13 @@ export default function ProfileManagement({
   setExperience,
   address,
   setAddress,
+  canDrive,
+  setCanDrive,
+  hasBusinessInsurance,
+  setHasBusinessInsurance,
+  handleDocUpload,
+  uploadingDocType,
+  uploadProgress,
   errors,
   isProfileSaving,
   onSubmit,
@@ -133,6 +147,114 @@ export default function ProfileManagement({
           placeholder="Enter full physical address"
           error={errors.address}
         />
+
+        <div className="space-y-4 border-t border-gold-300/10 pt-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gold-200">
+              Do you drive?
+            </label>
+            <div className="flex gap-4">
+              <label className="flex items-center gap-2 text-gold-100">
+                <input
+                  type="radio"
+                  name="canDrive"
+                  value="yes"
+                  checked={canDrive === "yes"}
+                  onChange={() => setCanDrive("yes")}
+                  className="text-gold-DEFAULT focus:ring-gold-DEFAULT bg-navy-950 border-gray-300/20"
+                />
+                Yes
+              </label>
+              <label className="flex items-center gap-2 text-gold-100">
+                <input
+                  type="radio"
+                  name="canDrive"
+                  value="no"
+                  checked={canDrive === "no"}
+                  onChange={() => setCanDrive("no")}
+                  className="text-gold-DEFAULT focus:ring-gold-DEFAULT bg-navy-950 border-gray-300/20"
+                />
+                No
+              </label>
+            </div>
+          </div>
+
+          {canDrive === "yes" && (
+            <div className="space-y-2 pl-4 border-l-2 border-gold-300/20">
+              <label className="text-sm font-medium text-gold-200">
+                Do you have business insurance?
+              </label>
+              <div className="flex gap-4 mb-4">
+                <label className="flex items-center gap-2 text-gold-100">
+                  <input
+                    type="radio"
+                    name="hasBusinessInsurance"
+                    value="yes"
+                    checked={hasBusinessInsurance === "yes"}
+                    onChange={() => setHasBusinessInsurance("yes")}
+                    className="text-gold-DEFAULT focus:ring-gold-DEFAULT bg-navy-950 border-gray-300/20"
+                  />
+                  Yes
+                </label>
+                <label className="flex items-center gap-2 text-gold-100">
+                  <input
+                    type="radio"
+                    name="hasBusinessInsurance"
+                    value="no"
+                    checked={hasBusinessInsurance === "no"}
+                    onChange={() => setHasBusinessInsurance("no")}
+                    className="text-gold-DEFAULT focus:ring-gold-DEFAULT bg-navy-950 border-gray-300/20"
+                  />
+                  No
+                </label>
+              </div>
+
+              {hasBusinessInsurance === "yes" && (
+                <div className="mt-4 p-4 border border-gold-300/20 rounded-xl bg-navy-900/50">
+                  <label className="text-sm font-medium text-gold-200 block mb-2">
+                    Upload Business Insurance Certificate
+                  </label>
+                  <div className="flex items-center gap-4">
+                    <input
+                      type="file"
+                      accept=".pdf,.png,.jpg,.jpeg"
+                      onChange={(e) => handleDocUpload("Business Insurance", e)}
+                      className="hidden"
+                      id="business-insurance-upload"
+                      disabled={uploadingDocType === "Business Insurance"}
+                    />
+                    <label
+                      htmlFor="business-insurance-upload"
+                      className="cursor-pointer inline-flex items-center justify-center px-4 py-2 border border-gold-DEFAULT text-gold-DEFAULT hover:bg-gold-DEFAULT/10 transition-colors rounded-lg text-sm font-medium"
+                    >
+                      {uploadingDocType === "Business Insurance"
+                        ? "Uploading..."
+                        : "Select File"}
+                    </label>
+                    {uploadingDocType === "Business Insurance" && (
+                      <div className="flex-1 max-w-xs">
+                        <div className="h-2 bg-navy-950 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-gold-DEFAULT transition-all duration-300"
+                            style={{ width: `${uploadProgress}%` }}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {hasBusinessInsurance === "no" && (
+                <div className="mt-4 p-4 border border-blue-500/30 rounded-xl bg-blue-500/10">
+                  <p className="text-sm text-blue-200">
+                    We recommend carers to get business insurance if they are happy to drive a client. We pay extra for carers who drive.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
 
         <div className="flex justify-end gap-3 pt-2">
           <Button

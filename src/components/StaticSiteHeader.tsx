@@ -56,7 +56,10 @@ function StaticSiteHeader() {
             }}
           >
             GRACE & GOODWILL
+                      <p className="mx-2 text-sm font-medium  text-[#c7ae85] font-sans tracking-[2.5px]">Care Defined By Integrity</p>
+
           </span>
+          
         </Link>
 
         {/* Mobile menu button */}

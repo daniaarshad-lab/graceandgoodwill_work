@@ -78,7 +78,7 @@ export default function LoginPage() {
 
   return (
     <AuthSplitLayout
-      title="Welcome Back"
+      title=""
       subtitle="Login to continue managing care services."
     >
       <form className="space-y-5" onSubmit={handleSubmit}>

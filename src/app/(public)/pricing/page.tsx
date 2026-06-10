@@ -122,7 +122,7 @@ export default function PricingPage() {
           </div> */}
           <div className="flex items-center justify-center gap-4 mb-8">
             <div className="h-px w-10 bg-gradient-to-r from-transparent to-gold-400/50" />
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight  text-gold-darker">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight  text-gold-100">
               Membership plans
             </h1>
             <div className="h-px w-10 bg-gradient-to-l from-transparent to-gold-400/50" />
@@ -131,7 +131,7 @@ export default function PricingPage() {
             Membership Plans
           </h1> */}
 
-          <p className="max-w-2xl text-base sm:text-lg text-gold-200/80 leading-relaxed font-light">
+          <p className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-gold-200/80 sm:text-base">
             Flexible membership options for professional carers and care
             providers.
           </p>
@@ -141,7 +141,7 @@ export default function PricingPage() {
       {/* ── Carer Memberships ── */}
       <section className="container-wrapper pt-8 pb-20">
         <div className="text-center mb-16 space-y-5">
-          <h2 className="text-3xl sm:text-4xl font-serif text-gold-50 tracking-wide font-light">
+          <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide">
             Carer Memberships
           </h2>
           <div className="h-px w-24 bg-gradient-to-r from-transparent via-gold-400/50 to-transparent mx-auto" />
@@ -313,7 +313,7 @@ export default function PricingPage() {
       {/* ── Care Academy Memberships ── */}
       <section className="container-wrapper pt-12 pb-20">
         <div className="text-center mb-16 space-y-5">
-          <h2 className="text-3xl sm:text-4xl font-serif text-gold-50 tracking-wide font-light">
+          <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide">
             Care Academy Memberships
           </h2>
           <div className="h-px w-24 bg-gradient-to-r from-transparent via-gold-400/50 to-transparent mx-auto" />
@@ -469,10 +469,10 @@ export default function PricingPage() {
           />
 
           <div className="relative z-10 md:max-w-2xl text-center md:text-left">
-            <h2 className="text-3xl sm:text-4xl font-serif text-gold-50 tracking-wide font-light mb-4">
+            <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide mb-4">
               Training Without Membership
             </h2>
-            <p className="text-gold-200/70 leading-relaxed font-light text-lg">
+            <p className="text-sm leading-relaxed text-gold-200/80 sm:text-base">
               Access our industry-leading care training modules without a full
               membership commitment.
             </p>
@@ -504,7 +504,7 @@ export default function PricingPage() {
       <section className="container-wrapper pt-12 pb-24 border-t border-gold-muted/10">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16 space-y-5">
-            <h2 className="text-3xl sm:text-4xl font-serif text-gold-50 tracking-wide font-light mb-4">
+            <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide mb-4">
               Membership Conditions
             </h2>
             <div className="h-px w-24 bg-gradient-to-r from-transparent via-gold-400/30 to-transparent mx-auto" />
@@ -566,7 +566,7 @@ export default function PricingPage() {
       <section className="bg-navy-900/50 py-24 relative overflow-hidden border-y border-gold-muted/10">
         <div className="container-wrapper max-w-3xl relative z-10">
           <div className="text-center mb-12 space-y-4">
-            <h2 className="text-3xl sm:text-4xl font-serif text-gold-50 tracking-wide font-light mb-4">
+            <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide mb-4">
               Contact Sales
             </h2>
           </div>
@@ -587,10 +587,10 @@ export default function PricingPage() {
         />
 
         <div className="container-wrapper relative z-20 text-center max-w-2xl mx-auto">
-          <h2 className="text-3xl sm:text-4xl font-serif text-gold-50 tracking-wide font-light mb-4">
+          <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide mb-4">
             Stay Connected
           </h2>
-          <p className="text-gold-200/70 font-light mb-8">
+          <p className="text-sm leading-relaxed text-gold-200/80 sm:text-base mb-8">
             Receive care advice, family resources, training opportunities,
             events and updates from Grace & Goodwill.
           </p>

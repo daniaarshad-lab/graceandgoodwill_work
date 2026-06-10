@@ -5,15 +5,15 @@ import {
   DateRange,
   groupDatesIntoRanges,
   formatRangeDisplay,
-  rangeDayCount,
-  countTotalDays,
 } from "../../utils/date.utils";
 
 interface AvailabilitySummaryPanelProps {
   selectedDates: string[];
   onRemoveRange: (range: DateRange) => void;
   onSave: () => void;
-  onQuickAction: (action: "today" | "tomorrow" | "next7" | "next30" | "clear") => void;
+  onQuickAction: (
+    action: "today" | "tomorrow" | "next7" | "next30" | "clear",
+  ) => void;
   isSaving: boolean;
   hasChanges: boolean;
 }
@@ -28,10 +28,9 @@ export default function AvailabilitySummaryPanel({
 }: AvailabilitySummaryPanelProps) {
   const ranges = useMemo(
     () => groupDatesIntoRanges(selectedDates),
-    [selectedDates]
+    [selectedDates],
   );
 
-  const totalDays = useMemo(() => countTotalDays(ranges), [ranges]);
   const isEmpty = ranges.length === 0;
 
   return (
@@ -42,23 +41,25 @@ export default function AvailabilitySummaryPanel({
           <CalendarIcon />
         </div>
         <div>
-          <h4 className="text-sm font-bold text-gold-50">Availability Summary</h4>
+          <h4 className="text-sm font-bold text-gold-50">
+            Availability Summary
+          </h4>
           <p className="text-[11px] text-gold-100/40">
-            {isEmpty
-              ? "No dates selected"
-              : `${ranges.length} range${ranges.length !== 1 ? "s" : ""} · ${totalDays} day${totalDays !== 1 ? "s" : ""}`}
+            {isEmpty ? "No dates selected" : "Selected availability"}
           </p>
         </div>
       </div>
 
       {/* Quick Actions */}
       <div className="flex flex-wrap gap-1.5 mb-4">
-        {([
-          { key: "today", label: "Today" },
-          { key: "tomorrow", label: "Tomorrow" },
-          { key: "next7", label: "Next 7 Days" },
-          { key: "next30", label: "Next 30 Days" },
-        ] as const).map(({ key, label }) => (
+        {(
+          [
+            { key: "today", label: "Today" },
+            { key: "tomorrow", label: "Tomorrow" },
+            { key: "next7", label: "Next 7 Days" },
+            { key: "next30", label: "Next 30 Days" },
+          ] as const
+        ).map(({ key, label }) => (
           <button
             key={key}
             type="button"
@@ -89,13 +90,19 @@ export default function AvailabilitySummaryPanel({
       {hasChanges && (
         <div className="flex items-center gap-2 mb-3 px-3 py-2 rounded-xl bg-gold-DEFAULT/[0.06] border border-gold-DEFAULT/15">
           <span className="w-2 h-2 rounded-full bg-gold-DEFAULT animate-pulse" />
-          <span className="text-[11px] text-gold-200/70 font-semibold">Unsaved Changes</span>
+          <span className="text-[11px] text-gold-200/70 font-semibold">
+            Unsaved Changes
+          </span>
         </div>
       )}
 
       {/* Ranges List or Empty State */}
-      <div className="flex-1 overflow-y-auto min-h-0 pr-1 space-y-2"
-        style={{ scrollbarWidth: "thin", scrollbarColor: "rgba(160,128,84,0.15) transparent" }}
+      <div
+        className="flex-1 overflow-y-auto min-h-0 pr-1 space-y-2"
+        style={{
+          scrollbarWidth: "thin",
+          scrollbarColor: "rgba(160,128,84,0.15) transparent",
+        }}
       >
         {isEmpty ? (
           <div className="flex flex-col items-center justify-center h-full py-8 text-center">
@@ -111,7 +118,6 @@ export default function AvailabilitySummaryPanel({
           </div>
         ) : (
           ranges.map((range, idx) => {
-            const count = rangeDayCount(range);
             return (
               <div
                 key={`${range.start}-${range.end}`}
@@ -123,10 +129,7 @@ export default function AvailabilitySummaryPanel({
                 <div className="flex items-center gap-2.5 min-w-0">
                   <span className="flex-shrink-0 w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.5)]" />
                   <span className="text-[13px] text-gold-100/90 font-medium truncate">
-                    {formatRangeDisplay(range)}{" "}
-                    <span className="text-[11px] text-gold-100/40 font-normal ml-1">
-                      ({count} day{count !== 1 ? "s" : ""})
-                    </span>
+                    {formatRangeDisplay(range)}
                   </span>
                 </div>
                 <button
@@ -146,20 +149,7 @@ export default function AvailabilitySummaryPanel({
       </div>
 
       {/* Footer: Stats + Save */}
-      <div className="mt-4 pt-4 border-t border-gold-300/8 space-y-3">
-        {!isEmpty && (
-          <div className="grid grid-cols-2 gap-2">
-            <div className="text-center px-2 py-2 rounded-xl bg-navy-950/40 border border-gold-300/6">
-              <span className="text-lg font-bold text-gold-50 block">{ranges.length}</span>
-              <span className="text-[10px] text-gold-100/35 uppercase tracking-widest font-semibold">Ranges</span>
-            </div>
-            <div className="text-center px-2 py-2 rounded-xl bg-navy-950/40 border border-gold-300/6">
-              <span className="text-lg font-bold text-gold-50 block">{totalDays}</span>
-              <span className="text-[10px] text-gold-100/35 uppercase tracking-widest font-semibold">Days</span>
-            </div>
-          </div>
-        )}
-
+      <div className="mt-4 space-y-3">
         <button
           type="button"
           onClick={onSave}
@@ -177,9 +167,24 @@ export default function AvailabilitySummaryPanel({
         >
           {isSaving ? (
             <span className="inline-flex items-center gap-2">
-              <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              <svg
+                className="animate-spin h-4 w-4"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                />
               </svg>
               Saving...
             </span>
@@ -196,7 +201,17 @@ export default function AvailabilitySummaryPanel({
 
 function CalendarIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gold-DEFAULT">
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="text-gold-DEFAULT"
+    >
       <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
       <line x1="16" y1="2" x2="16" y2="6" />
       <line x1="8" y1="2" x2="8" y2="6" />
@@ -207,7 +222,17 @@ function CalendarIcon() {
 
 function EmptyCalendarIcon() {
   return (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-gold-muted/25">
+    <svg
+      width="28"
+      height="28"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="text-gold-muted/25"
+    >
       <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
       <line x1="16" y1="2" x2="16" y2="6" />
       <line x1="8" y1="2" x2="8" y2="6" />
@@ -219,7 +244,16 @@ function EmptyCalendarIcon() {
 
 function XIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <line x1="18" y1="6" x2="6" y2="18" />
       <line x1="6" y1="6" x2="18" y2="18" />
     </svg>

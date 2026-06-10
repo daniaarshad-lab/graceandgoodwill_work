@@ -119,7 +119,8 @@ export default function CalendarGrid({
 
   // Compute preview range (hover feedback while building a range)
   const previewSet = useMemo<Set<string>>(() => {
-    if (selectionMode !== "range" || !rangeStart || !hoverDate) return new Set();
+    if (selectionMode !== "range" || !rangeStart) return new Set();
+    if (!hoverDate) return new Set([rangeStart]);
     const lo = rangeStart < hoverDate ? rangeStart : hoverDate;
     const hi = rangeStart < hoverDate ? hoverDate : rangeStart;
     return new Set(expandRange(lo, hi));
@@ -141,6 +142,21 @@ export default function CalendarGrid({
       return "single";
     },
     [selectedDates]
+  );
+
+  // Compute preview range position for each cell
+  const getPreviewPosition = useCallback(
+    (dateStr: string): RangePosition => {
+      if (!rangeStart || !hoverDate) return "none";
+      const lo = rangeStart < hoverDate ? rangeStart : hoverDate;
+      const hi = rangeStart < hoverDate ? hoverDate : rangeStart;
+      if (dateStr === lo && dateStr === hi) return "single";
+      if (dateStr === lo) return "start";
+      if (dateStr === hi) return "end";
+      if (dateStr > lo && dateStr < hi) return "middle";
+      return "none";
+    },
+    [rangeStart, hoverDate]
   );
 
   // Date click handler — implements range selection
@@ -235,11 +251,10 @@ export default function CalendarGrid({
             onSetRangeStart(null);
             setHoverDate(null);
           }}
-          className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 cursor-pointer ${
-            selectionMode === "single"
+          className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 cursor-pointer ${selectionMode === "single"
               ? "bg-gold-DEFAULT/15 text-gold-50 border border-gold-DEFAULT/20"
               : "text-gold-100/50 hover:text-gold-100 border border-transparent"
-          }`}
+            }`}
         >
           <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <rect x="3" y="3" width="18" height="18" rx="2" />
@@ -249,11 +264,10 @@ export default function CalendarGrid({
         <button
           type="button"
           onClick={() => setSelectionMode("range")}
-          className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 cursor-pointer ${
-            selectionMode === "range"
+          className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 cursor-pointer ${selectionMode === "range"
               ? "bg-gold-DEFAULT/15 text-gold-50 border border-gold-DEFAULT/20"
               : "text-gold-100/50 hover:text-gold-100 border border-transparent"
-          }`}
+            }`}
         >
           <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <rect x="3" y="4" width="18" height="16" rx="2" />
@@ -304,6 +318,13 @@ export default function CalendarGrid({
       <div className="grid grid-cols-7 flex-1">
         {gridCells.map((cell) => {
           const isSelected = selectedDates.has(cell.dateStr);
+          const isPreview = previewSet.has(cell.dateStr);
+          const rangePosition = isSelected
+            ? getRangePosition(cell.dateStr, true)
+            : isPreview
+              ? getPreviewPosition(cell.dateStr)
+              : "none";
+
           return (
             <DateCell
               key={cell.dateStr}
@@ -312,8 +333,10 @@ export default function CalendarGrid({
               isToday={isToday(cell.dateStr)}
               isDisabled={!cell.isOtherMonth && isPastDate(cell.dateStr)}
               isOtherMonth={cell.isOtherMonth}
-              isPreview={previewSet.has(cell.dateStr)}
-              rangePosition={getRangePosition(cell.dateStr, isSelected)}
+              isPreview={isPreview}
+              rangePosition={rangePosition}
+              isRangeStart={cell.dateStr === rangeStart}
+              isHoverDate={cell.dateStr === hoverDate}
               onMouseDown={() => handleDateMouseDown(cell.dateStr)}
               onMouseEnter={() => handleDateMouseEnter(cell.dateStr)}
             />

@@ -625,3 +625,82 @@
   animation: calendar-shimmer 1.8s ease-in-out infinite;
 }
 
+/* ── Airbnb Date Range Picker Styles ─────────────────────────────────────── */
+.range-start::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 36px;
+  left: 50%;
+  right: 0;
+  background-color: rgba(212, 175, 55, 0.22);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.range-end::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 36px;
+  left: 0;
+  right: 50%;
+  background-color: rgba(212, 175, 55, 0.22);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.range-middle::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 36px;
+  left: 0;
+  right: 0;
+  background-color: rgba(212, 175, 55, 0.22);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.range-preview-start::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 36px;
+  left: 50%;
+  right: 0;
+  background-color: rgba(212, 175, 55, 0.12);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.range-preview-end::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 36px;
+  left: 0;
+  right: 50%;
+  background-color: rgba(212, 175, 55, 0.12);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.range-preview-middle::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 36px;
+  left: 0;
+  right: 0;
+  background-color: rgba(212, 175, 55, 0.12);
+  z-index: 0;
+  pointer-events: none;
+}
+

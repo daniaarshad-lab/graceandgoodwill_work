@@ -12,6 +12,8 @@ interface DateCellProps {
   isOtherMonth: boolean;
   isPreview: boolean;
   rangePosition: RangePosition;
+  isRangeStart?: boolean;
+  isHoverDate?: boolean;
   onMouseDown: () => void;
   onMouseEnter: () => void;
 }
@@ -24,79 +26,84 @@ function DateCell({
   isOtherMonth,
   isPreview,
   rangePosition,
+  isRangeStart,
+  isHoverDate,
   onMouseDown,
   onMouseEnter,
 }: DateCellProps) {
-  // ─── Container classes (row-level range fill band) ─────────────────────────
-  const containerClasses = ["relative flex items-center justify-center"];
+  // ─── Container classes (row-level range fill band wrapper) 
+  const containerClasses = [
+    "relative flex items-center justify-center w-full aspect-square",
+  ];
 
-  // Range fill band — connects selected cells visually
-  if (isSelected && !isOtherMonth && rangePosition !== "none") {
-    if (rangePosition === "start") {
-      containerClasses.push("bg-gradient-to-r from-transparent to-gold-DEFAULT/8");
-    } else if (rangePosition === "end") {
-      containerClasses.push("bg-gradient-to-l from-transparent to-gold-DEFAULT/8");
-    } else if (rangePosition === "middle") {
-      containerClasses.push("bg-gold-DEFAULT/8");
+  // Apply pseudo-element based horizontal ranges
+  if (!isOtherMonth && rangePosition !== "none" && rangePosition !== "single") {
+    if (isSelected) {
+      if (rangePosition === "start") containerClasses.push("range-start");
+      else if (rangePosition === "end") containerClasses.push("range-end");
+      else if (rangePosition === "middle") containerClasses.push("range-middle");
+    } else if (isPreview) {
+      if (rangePosition === "start") containerClasses.push("range-preview-start");
+      else if (rangePosition === "end") containerClasses.push("range-preview-end");
+      else if (rangePosition === "middle") containerClasses.push("range-preview-middle");
     }
   }
 
-  // Preview range fill band (hover-to-extend)
-  if (isPreview && !isSelected && !isOtherMonth && !isDisabled) {
-    containerClasses.push("bg-gold-DEFAULT/[0.04]");
-  }
-
-  // ─── Inner cell classes ────────────────────────────────────────────────────
+  // ─── Inner cell classes 
   const cellClasses = [
     "relative flex items-center justify-center",
-    "w-full aspect-square",
-    "text-sm font-medium select-none",
-    "transition-all duration-200 ease-out",
+    "w-9 h-9",
+    "text-sm select-none",
+    "transition-all duration-200 ease-out z-10",
   ];
 
-  // Shape: end caps are rounded, middles are not
-  if (rangePosition === "middle" && isSelected) {
-    cellClasses.push("rounded-none");
-  } else {
-    cellClasses.push("rounded-xl");
-  }
-
-  // ─── State-based styling ───────────────────────────────────────────────────
+  // ─── State-based styling 
   if (isOtherMonth) {
-    cellClasses.push("text-gold-100/10 cursor-default");
+    cellClasses.push(
+      "text-gold-100/10 cursor-default bg-transparent rounded-full",
+    );
   } else if (isDisabled) {
     cellClasses.push(
-      "text-gold-100/20 cursor-not-allowed"
+      "text-gold-100/20 cursor-not-allowed bg-transparent rounded-full",
     );
   } else if (isSelected) {
-    if (rangePosition === "start" || rangePosition === "end" || rangePosition === "single") {
-      // Endpoint cells get the full accent treatment
+    if (rangePosition === "start" || rangePosition === "single" || rangePosition === "end") {
+      // Perfect filled circle with brand/accent color
       cellClasses.push(
-        "bg-gold-DEFAULT/20 text-gold-50 font-semibold cursor-pointer",
-        "border border-gold-DEFAULT/40",
-        "shadow-[0_0_12px_rgba(212,175,55,0.12)]",
-        "hover:bg-gold-DEFAULT/28 hover:shadow-[0_0_20px_rgba(212,175,55,0.2)]",
-        "active:scale-95"
+        "bg-gold-DEFAULT text-white font-bold rounded-full cursor-pointer",
+        "shadow-[0_0_12px_rgba(212,175,55,0.3)]",
+        "hover:bg-gold-200 hover:scale-105",
+        "active:scale-95",
       );
-    } else {
-      // Middle cells are subtle
+    } else if (rangePosition === "middle") {
+      // Middle dates: transparent button, sits inside the continuous capsule bar
       cellClasses.push(
-        "bg-gold-DEFAULT/10 text-gold-100/90 cursor-pointer",
-        "hover:bg-gold-DEFAULT/18",
-        "active:scale-95"
+        "bg-transparent text-white font-semibold rounded-none cursor-pointer",
+        "active:scale-95",
       );
     }
   } else if (isPreview) {
-    cellClasses.push(
-      "bg-gold-DEFAULT/8 text-gold-100/60 cursor-pointer",
-      "border border-dashed border-gold-DEFAULT/20",
-      "rounded-xl"
-    );
+    if (isRangeStart || isHoverDate) {
+      // Active endpoints (clicked start or hovered end) in preview: Perfect filled circle
+      cellClasses.push(
+        "bg-gold-DEFAULT text-white font-bold rounded-full cursor-pointer",
+        "shadow-[0_0_12px_rgba(212,175,55,0.3)]",
+        "hover:bg-gold-200 hover:scale-105",
+        "active:scale-95",
+      );
+    } else {
+      // Middle date in preview
+      cellClasses.push(
+        "bg-transparent text-gold-100 font-semibold rounded-none cursor-pointer",
+        "active:scale-95",
+      );
+    }
   } else {
+    // Unselected cells
     cellClasses.push(
-      "text-gold-100/60 cursor-pointer",
-      "hover:bg-gold-muted/10 hover:text-gold-50",
-      "active:scale-95 active:bg-gold-muted/12"
+      "text-gold-100/60 rounded-full cursor-pointer",
+      "hover:bg-gold-muted/15 hover:text-gold-50 hover:scale-105",
+      "active:scale-95 active:bg-gold-muted/20",
     );
   }
 
@@ -116,15 +123,6 @@ function DateCell({
         aria-label={`Day ${dayNumber}`}
       >
         <span className="relative z-10">{dayNumber}</span>
-
-        {/* Today indicator dot */}
-        {isToday && (
-          <span
-            className={`absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full transition-colors duration-200 ${
-              isSelected ? "bg-gold-50" : "bg-gold-DEFAULT"
-            }`}
-          />
-        )}
       </button>
     </div>
   );

@@ -38,13 +38,20 @@ export default function AvailabilitySchedule({
   const [isHydrated, setIsHydrated] = useState(false);
   const [rangeStart, setRangeStart] = useState<string | null>(null);
 
+  // Reset hydration state when profile starts loading
+  useEffect(() => {
+    if (isProfileLoading) {
+      setIsHydrated(false);
+    }
+  }, [isProfileLoading]);
+
   // Hydrate from server
   useEffect(() => {
-    if (profile && !isProfileLoading) {
+    if (profile && !isProfileLoading && !isHydrated) {
       setSelectedDates(new Set(serverDates));
       setIsHydrated(true);
     }
-  }, [serverDates, profile, isProfileLoading]);
+  }, [serverDates, profile, isProfileLoading, isHydrated]);
 
   // Detect unsaved changes
   const hasChanges = useMemo(() => {
@@ -96,16 +103,17 @@ export default function AvailabilitySchedule({
     (action: "today" | "tomorrow" | "next7" | "next30" | "clear") => {
       const today = new Date();
       const todayStr = toISODateString(today);
+      setRangeStart(null); // Clear pending selection in all cases
 
       switch (action) {
         case "today":
-          setSelectedDates((prev) => new Set([...prev, todayStr]));
+          setSelectedDates(new Set([todayStr]));
           break;
 
         case "tomorrow": {
           const tmr = new Date(today);
           tmr.setDate(tmr.getDate() + 1);
-          setSelectedDates((prev) => new Set([...prev, toISODateString(tmr)]));
+          setSelectedDates(new Set([toISODateString(tmr)]));
           break;
         }
 
@@ -113,7 +121,7 @@ export default function AvailabilitySchedule({
           const end = new Date(today);
           end.setDate(end.getDate() + 6);
           const dates = expandRange(todayStr, toISODateString(end));
-          setSelectedDates((prev) => new Set([...prev, ...dates]));
+          setSelectedDates(new Set(dates));
           break;
         }
 
@@ -121,17 +129,16 @@ export default function AvailabilitySchedule({
           const end = new Date(today);
           end.setDate(end.getDate() + 29);
           const dates = expandRange(todayStr, toISODateString(end));
-          setSelectedDates((prev) => new Set([...prev, ...dates]));
+          setSelectedDates(new Set(dates));
           break;
         }
 
         case "clear":
           setSelectedDates(new Set());
-          setRangeStart(null);
           break;
       }
     },
-    []
+    [],
   );
 
   const handleSave = useCallback(async () => {
@@ -142,7 +149,7 @@ export default function AvailabilitySchedule({
       await dispatch(updateCarerAvailability(payload)).unwrap();
       showSuccessToast(
         "Availability Updated",
-        "Availability updated successfully"
+        "Availability updated successfully",
       );
     } catch (error: unknown) {
       const errorMsg =
@@ -159,7 +166,7 @@ export default function AvailabilitySchedule({
 
   const selectedDatesArray = useMemo(
     () => Array.from(selectedDates),
-    [selectedDates]
+    [selectedDates],
   );
 
   // ─── Render ────────────────────────────────────────────────────────────────
@@ -175,7 +182,8 @@ export default function AvailabilitySchedule({
               Availability Calendar
             </h3>
             <p className="text-xs text-gold-100/45 mt-1">
-              Click a start date, then an end date to select a range. Click a selected date to remove it.
+              Click a start date, then an end date to select a range. Click a
+              selected date to remove it.
             </p>
           </div>
 

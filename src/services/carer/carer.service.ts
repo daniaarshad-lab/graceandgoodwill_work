@@ -146,4 +146,35 @@ export const carerService = {
       },
     });
   },
+  async uploadProfileMedia(
+    photo?: File,
+    video?: File
+  ): Promise<CarerProfile> {
+    const formData = new FormData();
+
+    if (photo) {
+      formData.append("photo", photo);
+    }
+
+    if (video) {
+      formData.append("video", video);
+    }
+
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch("/carer/profile/media", {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+  }
 };

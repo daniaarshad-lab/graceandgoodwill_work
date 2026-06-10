@@ -589,3 +589,39 @@
 .animate-image-pulse {
   animation: central-image-pulse 6s infinite ease-in-out;
 }
+
+/* ── Calendar Component Animations ───────────────────────────────────────── */
+@keyframes calendar-cell-pop {
+  0% {
+    transform: scale(0.92);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes calendar-shimmer {
+  0% {
+    opacity: 0.04;
+  }
+  50% {
+    opacity: 0.1;
+  }
+  100% {
+    opacity: 0.04;
+  }
+}
+
+.calendar-cell-selected {
+  animation: calendar-cell-pop 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.calendar-skeleton {
+  animation: calendar-shimmer 1.8s ease-in-out infinite;
+}
+

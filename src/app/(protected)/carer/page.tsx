@@ -43,7 +43,7 @@ function CarerDashboardContent() {
     dispatch(fetchCarerDocuments());
   }, [dispatch]);
 
-  const { profile, documents } = useAppSelector((state) => state.carer);
+  const { profile, documents, loading } = useAppSelector((state) => state.carer);
   const profileUser = profile?.user;
 
   const portal = useCarerPortal({
@@ -185,7 +185,7 @@ function CarerDashboardContent() {
               membershipActive={portal.membershipActive}
               membershipExpiry={portal.membershipExpiry}
               complianceDocs={portal.complianceDocs}
-              availability={portal.availability}
+              availability={profile?.availability ?? []}
               setActiveTab={setActiveTab}
             />
           )}
@@ -235,11 +235,7 @@ function CarerDashboardContent() {
 
           {activeTab === "availability" && (
             <AvailabilitySchedule
-              availability={portal.availability}
-              isAvailabilitySaving={portal.isAvailabilitySaving}
-              handleSaveAvailability={portal.handleSaveAvailability}
-              handleToggleDay={portal.handleToggleDay}
-              handleToggleShift={portal.handleToggleShift}
+              isProfileLoading={loading}
             />
           )}
         </div>

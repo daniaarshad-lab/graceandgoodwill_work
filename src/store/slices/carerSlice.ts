@@ -32,8 +32,8 @@ export const fetchCarerProfile = createAsyncThunk<
   } catch (error: any) {
     return rejectWithValue(
       error?.response?.data?.message ||
-        error?.message ||
-        "Failed to fetch carer profile",
+      error?.message ||
+      "Failed to fetch carer profile",
     );
   }
 });
@@ -60,8 +60,8 @@ export const uploadCarerProfilePhoto = createAsyncThunk<
   } catch (error: any) {
     return rejectWithValue(
       error?.response?.data?.message ||
-        error?.message ||
-        "Failed to upload profile photo",
+      error?.message ||
+      "Failed to upload profile photo",
     );
   }
 });
@@ -90,6 +90,8 @@ export const updateCarerAvailability = createAsyncThunk<
   }
 });
 
+
+
 export const deleteCarerDocument = createAsyncThunk<
   string,
   string,
@@ -102,6 +104,32 @@ export const deleteCarerDocument = createAsyncThunk<
     return rejectWithValue(error?.message || "Failed to delete document");
   }
 });
+
+
+
+export const uploadProfileMedia = createAsyncThunk<
+  CarerProfile,
+  {
+    photo?: File;
+    video?: File;
+  },
+  {
+    rejectValue: string;
+  }
+>(
+  "carer/uploadProfileMedia",
+  async ({ photo, video }, { rejectWithValue }) => {
+    try {
+      return await carerService.uploadProfileMedia(photo, video);
+    } catch (error: any) {
+      return rejectWithValue(
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to upload profile media"
+      );
+    }
+  }
+);
 
 const carerSlice = createSlice({
   name: "carer",
@@ -208,6 +236,21 @@ const carerSlice = createSlice({
       )
       .addCase(deleteCarerDocument.rejected, (state, action) => {
         state.error = action.payload || "Failed to delete document";
+      })
+      .addCase(uploadProfileMedia.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(
+        uploadProfileMedia.fulfilled,
+        (state, action: PayloadAction<CarerProfile>) => {
+          state.loading = false;
+          state.profile = action.payload;
+        }
+      )
+      .addCase(uploadProfileMedia.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Failed to upload profile media";
       });
   },
 });

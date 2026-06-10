@@ -13,6 +13,11 @@ interface CarerState {
 
   loading: boolean;
   error: string | null;
+
+  documentsLoading: boolean;
+  uploadingDocument: boolean;
+  batchUploading: boolean;
+  deletingDocumentId: string | null;
 }
 
 const initialState: CarerState = {
@@ -20,6 +25,10 @@ const initialState: CarerState = {
   documents: [],
   loading: false,
   error: null,
+  documentsLoading: false,
+  uploadingDocument: false,
+  batchUploading: false,
+  deletingDocumentId: null,
 };
 
 export const fetchCarerProfile = createAsyncThunk<
@@ -91,6 +100,41 @@ export const updateCarerAvailability = createAsyncThunk<
 });
 
 
+export const uploadCarerDocument = createAsyncThunk<
+  CarerDocument,
+  { file: File; category: string },
+  { rejectValue: string }
+>("carer/uploadDocument", async ({ file, category }, { rejectWithValue }) => {
+  try {
+    return await carerService.uploadDocument(file, category);
+  } catch (error: any) {
+    return rejectWithValue(error?.message || "Failed to upload document");
+  }
+});
+
+export const uploadCarerDocuments = createAsyncThunk<
+  CarerDocument[],
+  Record<string, File>,
+  { rejectValue: string }
+>("carer/uploadDocuments", async (files, { rejectWithValue }) => {
+  try {
+    return await carerService.uploadDocuments(files);
+  } catch (error: any) {
+    return rejectWithValue(error?.message || "Failed to upload documents");
+  }
+});
+
+export const updateCarerDocument = createAsyncThunk<
+  CarerDocument,
+  { id: string; file: File; category: string },
+  { rejectValue: string }
+>("carer/updateDocument", async ({ id, file, category }, { rejectWithValue }) => {
+  try {
+    return await carerService.updateDocument(id, file, category);
+  } catch (error: any) {
+    return rejectWithValue(error?.message || "Failed to update document");
+  }
+});
 
 export const deleteCarerDocument = createAsyncThunk<
   string,
@@ -104,7 +148,6 @@ export const deleteCarerDocument = createAsyncThunk<
     return rejectWithValue(error?.message || "Failed to delete document");
   }
 });
-
 
 
 export const uploadProfileMedia = createAsyncThunk<
@@ -190,21 +233,71 @@ const carerSlice = createSlice({
         state.error = action.payload || "Failed to upload profile photo";
       })
       .addCase(fetchCarerDocuments.pending, (state) => {
-        state.loading = true;
+        state.documentsLoading = true;
         state.error = null;
       })
-
       .addCase(
         fetchCarerDocuments.fulfilled,
         (state, action: PayloadAction<CarerDocument[]>) => {
-          state.loading = false;
+          state.documentsLoading = false;
           state.documents = action.payload;
         },
       )
-
       .addCase(fetchCarerDocuments.rejected, (state, action) => {
-        state.loading = false;
+        state.documentsLoading = false;
         state.error = action.payload || "Failed to fetch documents";
+      })
+
+      .addCase(uploadCarerDocument.pending, (state) => {
+        state.uploadingDocument = true;
+        state.error = null;
+      })
+      .addCase(
+        uploadCarerDocument.fulfilled,
+        (state, action: PayloadAction<CarerDocument>) => {
+          state.uploadingDocument = false;
+          state.documents.push(action.payload);
+        },
+      )
+      .addCase(uploadCarerDocument.rejected, (state, action) => {
+        state.uploadingDocument = false;
+        state.error = action.payload || "Failed to upload document";
+      })
+
+      .addCase(uploadCarerDocuments.pending, (state) => {
+        state.batchUploading = true;
+        state.error = null;
+      })
+      .addCase(
+        uploadCarerDocuments.fulfilled,
+        (state) => {
+          state.batchUploading = false;
+        },
+      )
+      .addCase(uploadCarerDocuments.rejected, (state, action) => {
+        state.batchUploading = false;
+        state.error = action.payload || "Failed to upload documents";
+      })
+
+      .addCase(updateCarerDocument.pending, (state) => {
+        state.uploadingDocument = true;
+        state.error = null;
+      })
+      .addCase(
+        updateCarerDocument.fulfilled,
+        (state, action: PayloadAction<CarerDocument>) => {
+          state.uploadingDocument = false;
+          const index = state.documents.findIndex(
+            (doc) => doc.id === action.payload.id,
+          );
+          if (index !== -1) {
+            state.documents[index] = action.payload;
+          }
+        },
+      )
+      .addCase(updateCarerDocument.rejected, (state, action) => {
+        state.uploadingDocument = false;
+        state.error = action.payload || "Failed to update document";
       })
 
       .addCase(updateCarerAvailability.pending, (state) => {
@@ -223,18 +316,21 @@ const carerSlice = createSlice({
         state.error = action.payload || "Failed to update availability";
       })
 
-      .addCase(deleteCarerDocument.pending, (state) => {
+      .addCase(deleteCarerDocument.pending, (state, action) => {
+        state.deletingDocumentId = action.meta.arg;
         state.error = null;
       })
       .addCase(
         deleteCarerDocument.fulfilled,
         (state, action: PayloadAction<string>) => {
+          state.deletingDocumentId = null;
           state.documents = state.documents.filter(
             (doc) => doc.id !== action.payload,
           );
         },
       )
       .addCase(deleteCarerDocument.rejected, (state, action) => {
+        state.deletingDocumentId = null;
         state.error = action.payload || "Failed to delete document";
       })
       .addCase(uploadProfileMedia.pending, (state) => {

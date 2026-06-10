@@ -90,6 +90,30 @@ export const carerService = {
       body: formData,
     });
   },
+  async uploadDocuments(files: Record<string, File>) {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    const formData = new FormData();
+    Object.entries(files).forEach(([key, file]) => {
+      formData.append(key, file);
+    });
+
+    return apiFetch("/carer/profile/documents", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+  },
+
   async getDocuments() {
     const token =
       typeof window !== "undefined"
@@ -146,6 +170,29 @@ export const carerService = {
       },
     });
   },
+  async updateDocument(id: string, file: File, category: string) {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("category", category);
+
+    return apiFetch(`/carer/profile/document/${id}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+  },
+
   async uploadProfileMedia(
     photo?: File,
     video?: File

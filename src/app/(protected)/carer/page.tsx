@@ -34,6 +34,7 @@ function CarerDashboardContent() {
   const [activeTab, setActiveTab] = useState<TabType>("overview");
   const [onboardingDone, setOnboardingDone] = useState(true);
   const [onboardingStep, setOnboardingStep] = useState(2);
+  const [initialStepSet, setInitialStepSet] = useState(false);
   const [isClient, setIsClient] = useState(false);
 
   const dispatch = useAppDispatch();
@@ -43,7 +44,7 @@ function CarerDashboardContent() {
     dispatch(fetchCarerDocuments());
   }, [dispatch]);
 
-  const { profile, documents, loading } = useAppSelector((state) => state.carer);
+  const { profile, documents, loading, documentsLoading, batchUploading, deletingDocumentId } = useAppSelector((state) => state.carer);
   const profileUser = profile?.user;
 
   const portal = useCarerPortal({
@@ -69,7 +70,7 @@ function CarerDashboardContent() {
       console.log("[Onboarding Flow] Setting onboardingDone to:", localStorageDone);
     }
 
-    if (profile) {
+    if (profile && !initialStepSet) {
       const isComplianceUploaded = documents && documents.length > 0;
       const isProfileSetup = !!(profile.bio && profile.experience && profile.address);
       
@@ -82,8 +83,9 @@ function CarerDashboardContent() {
       } else {
         setOnboardingStep(4);
       }
+      setInitialStepSet(true);
     }
-  }, [profile, documents, isOnboardingParam]);
+  }, [profile, documents, isOnboardingParam, initialStepSet]);
 
   const showOnboarding =
     isClient && !onboardingDone && portal.applicationStatus !== "approved";
@@ -109,22 +111,18 @@ function CarerDashboardContent() {
                   complianceDocs={portal.complianceDocs}
                   uploadingDocType={portal.uploadingDocType}
                   uploadProgress={portal.uploadProgress}
+                  documentsLoading={documentsLoading}
+                  batchUploading={batchUploading}
+                  deletingDocumentId={deletingDocumentId}
+                  isOnboarding={true}
+                  selectedFiles={portal.selectedFiles}
+                  handleBatchUpload={portal.handleBatchUpload}
                   handleDocUpload={portal.handleDocUpload}
+                  handleUpdateDoc={portal.handleUpdateDoc}
                   setPreviewDoc={portal.setPreviewDoc}
                   setDocToDelete={portal.setDocToDelete}
+                  onNext={() => setOnboardingStep(3)}
                 />
-                <div className="flex justify-end pt-4 border-t border-gold-300/10">
-                  <Button
-                    onClick={() => setOnboardingStep(3)}
-                    disabled={portal.complianceDocs.length === 0}
-                    variant="primary"
-                    size="sm"
-                    fullWidth={false}
-                    className="px-8 shadow-gold"
-                  >
-                    Continue to Profile Setup
-                  </Button>
-                </div>
               </div>
             )}
 
@@ -227,7 +225,14 @@ function CarerDashboardContent() {
               complianceDocs={portal.complianceDocs}
               uploadingDocType={portal.uploadingDocType}
               uploadProgress={portal.uploadProgress}
+              documentsLoading={documentsLoading}
+              batchUploading={batchUploading}
+              deletingDocumentId={deletingDocumentId}
+              isOnboarding={false}
+              selectedFiles={portal.selectedFiles}
+              handleBatchUpload={portal.handleBatchUpload}
               handleDocUpload={portal.handleDocUpload}
+              handleUpdateDoc={portal.handleUpdateDoc}
               setPreviewDoc={portal.setPreviewDoc}
               setDocToDelete={portal.setDocToDelete}
             />

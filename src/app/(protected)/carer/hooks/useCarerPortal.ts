@@ -8,11 +8,13 @@ import {
 } from "../utils/validation";
 import { useAppDispatch } from "@/store/hooks";
 import {
-  fetchCarerDocuments,
   updateCarerProfile,
   deleteCarerDocument,
+  uploadCarerDocument,
+  updateCarerDocument,
+  uploadCarerDocuments,
+  fetchCarerDocuments,
 } from "@/store/slices/carerSlice";
-import { carerService } from "@/services/carer/carer.service";
 import {
   CarerProfile,
 } from "@/types/carer.types";
@@ -69,6 +71,7 @@ export function useCarerPortal({
     id: doc.id,
     name: doc.fileName,
     type: doc.fileCategory,
+    fileType: doc.fileType,
     uploadDate: doc.createdAt,
     status:
       doc.status === "VERIFIED"
@@ -84,8 +87,10 @@ export function useCarerPortal({
   const [uploadProgress, setUploadProgress] = useState(0);
   const [previewDoc, setPreviewDoc] = useState<ComplianceDoc | null>(null);
 
-  // Compliance Upload Validation States
   const [docToDelete, setDocToDelete] = useState<string | null>(null);
+  
+  // Batch Upload States
+  const [selectedFiles, setSelectedFiles] = useState<Record<string, File>>({});
 
   const dispatch = useAppDispatch();
 
@@ -182,9 +187,22 @@ export function useCarerPortal({
       "Driver's License": "DRIVERS_LICENSE",
       "Criminal Record Check": "CRIMINAL_RECORD_CHECK",
       "Dementia Support Certificate": "DEMENTIA_SUPPORT",
-      "Nurses Registry License": "NURSES_REGISTRY",
-      "Business Insurance": "BUSINESS_INSURANCE",
+      "Mandatory Care Certificate": "CARE_CERTIFICATE",
+      "Business Insurance Certificate": "BUSINESS_INSURANCE",
     };
+
+    const categoryMapForBatch: Record<string, string> = {
+      "Driver's License": "drivers_license",
+      "Criminal Record Check": "criminal_record_check",
+      "Dementia Support Certificate": "dementia_support",
+      "Mandatory Care Certificate": "care_certificate",
+      "Business Insurance Certificate": "business_insurance",
+    };
+
+    const key = categoryMapForBatch[type];
+    if (key) {
+      setSelectedFiles((prev) => ({ ...prev, [key]: file }));
+    }
 
     let progressInterval: any;
     try {
@@ -203,18 +221,17 @@ export function useCarerPortal({
 
       const category = categoryMap[type];
 
-      await carerService.uploadDocument(file, category);
+      await dispatch(uploadCarerDocument({ file, category })).unwrap();
 
       clearInterval(progressInterval);
       setUploadProgress(100);
-
-      // Refresh documents list from Redux after successful upload
-      dispatch(fetchCarerDocuments());
 
       showSuccessToast(
         "Document Uploaded",
         `Document "${file.name}" uploaded successfully!`,
       );
+      
+      dispatch(fetchCarerDocuments());
 
       setTimeout(() => {
         setUploadProgress(0);
@@ -230,16 +247,123 @@ export function useCarerPortal({
       setUploadingDocType(null);
     }
   };
+
+  const handleBatchUpload = async () => {
+    if (Object.keys(selectedFiles).length === 0) return false;
+    try {
+      await dispatch(uploadCarerDocuments(selectedFiles)).unwrap();
+      showSuccessToast(
+        "Documents Uploaded",
+        "All documents were successfully uploaded.",
+      );
+      setSelectedFiles({});
+      dispatch(fetchCarerDocuments());
+      return true;
+    } catch (error: any) {
+      showErrorToast("Upload Failed", error || "Failed to upload documents.");
+      return false;
+    }
+  };
+
   const handleDeleteDoc = async (id: string) => {
+    const docInfo = complianceDocs.find((d) => d.id === id);
+
     try {
       await dispatch(deleteCarerDocument(id)).unwrap();
       showSuccessToast("Document Deleted", "Document successfully deleted.");
+      dispatch(fetchCarerDocuments());
+
+      if (docInfo) {
+        const backendToBatchKey: Record<string, string> = {
+          DRIVERS_LICENSE: "drivers_license",
+          CRIMINAL_RECORD_CHECK: "criminal_record_check",
+          DEMENTIA_SUPPORT: "dementia_support",
+          CARE_CERTIFICATE: "care_certificate",
+          BUSINESS_INSURANCE: "business_insurance",
+        };
+        const key = backendToBatchKey[docInfo.type];
+        if (key) {
+          setSelectedFiles((prev) => {
+            const newFiles = { ...prev };
+            delete newFiles[key];
+            return newFiles;
+          });
+        }
+      }
     } catch (error: any) {
       const errorMsg =
         typeof error === "string"
           ? error
           : error?.message || "Failed to delete document. Please try again.";
       showErrorToast("Delete Failed", errorMsg);
+    }
+  };
+
+  const handleUpdateDoc = async (
+    id: string,
+    type: string,
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const allowedTypes = [
+      "application/pdf",
+      "image/png",
+      "image/jpeg",
+      "image/jpg",
+    ];
+    const allowedExtensions = [".pdf", ".png", ".jpg", ".jpeg"];
+    const fileExtension = "." + file.name.split(".").pop()?.toLowerCase();
+
+    if (
+      !allowedTypes.includes(file.type) &&
+      !allowedExtensions.includes(fileExtension)
+    ) {
+      showErrorToast(
+        "Invalid Format",
+        "Invalid file type. Only PDF, PNG, and JPG/JPEG document uploads are allowed.",
+      );
+      return;
+    }
+
+    const maxDocSize = 10 * 1024 * 1024;
+    if (file.size > maxDocSize) {
+      showErrorToast(
+        "File Too Large",
+        `File "${file.name}" is too large. Maximum allowed size is 10 MB.`,
+      );
+      return;
+    }
+
+    const categoryMap: Record<string, string> = {
+      "Driver's License": "DRIVERS_LICENSE",
+      "Criminal Record Check": "CRIMINAL_RECORD_CHECK",
+      "Dementia Support Certificate": "DEMENTIA_SUPPORT",
+      "Business Insurance Certificate": "BUSINESS_INSURANCE",
+      "Mandatory Care Certificate": "CARE_CERTIFICATE",
+      DRIVERS_LICENSE: "DRIVERS_LICENSE",
+      CRIMINAL_RECORD_CHECK: "CRIMINAL_RECORD_CHECK",
+      DEMENTIA_SUPPORT: "DEMENTIA_SUPPORT",
+      BUSINESS_INSURANCE: "BUSINESS_INSURANCE",
+      CARE_CERTIFICATE: "CARE_CERTIFICATE",
+    };
+
+    const category = categoryMap[type] || type;
+
+    try {
+      await dispatch(updateCarerDocument({ id, file, category })).unwrap();
+      showSuccessToast(
+        "Document Replaced",
+        `Document "${file.name}" replaced successfully!`,
+      );
+      dispatch(fetchCarerDocuments());
+    } catch (error: any) {
+      const errorMsg =
+        typeof error === "string"
+          ? error
+          : error?.message || "Failed to replace document.";
+      showErrorToast("Replace Failed", errorMsg);
     }
   };
 
@@ -281,6 +405,9 @@ export function useCarerPortal({
     docToDelete,
     setDocToDelete,
     handleDocUpload,
+    handleBatchUpload,
+    selectedFiles,
     handleDeleteDoc,
+    handleUpdateDoc,
   };
 }

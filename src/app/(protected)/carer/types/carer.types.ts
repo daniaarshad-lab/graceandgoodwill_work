@@ -2,6 +2,7 @@ export interface ComplianceDoc {
   id: string;
   name: string;
   type: string;
+  fileType: string;
   uploadDate: string;
   status: "verified" | "pending" | "failed";
   size: string;

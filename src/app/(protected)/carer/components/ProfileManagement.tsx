@@ -131,9 +131,8 @@ export default function ProfileManagement({
             value={bio}
             onChange={(e) => setBio(e.target.value)}
             placeholder="Write a warm, compassionate bio for matching with care recipients..."
-            className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 text-sm ${
-              errors.bio ? "border-red-500" : "border-gray-300/20"
-            }`}
+            className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 text-sm ${errors.bio ? "border-red-500" : "border-gray-300/20"
+              }`}
           ></textarea>
           {errors.bio && (
             <p className="text-xs text-red-500 font-medium">{errors.bio}</p>
@@ -141,7 +140,7 @@ export default function ProfileManagement({
         </div>
 
         <Input
-          label="Contact Address Details"
+          label="Home Address"
           value={address}
           onChange={(e) => setAddress(e.target.value)}
           placeholder="Enter full physical address"

@@ -85,9 +85,8 @@ export default function ContactForm() {
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
             placeholder="Enter your full name"
-            className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 text-sm ${
-              errors.fullName ? "border-red-500" : "border-gold-muted/20"
-            }`}
+            className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 text-sm ${errors.fullName ? "border-red-500" : "border-gold-muted/20"
+              }`}
           />
           {errors.fullName && (
             <p className="text-[10px] text-red-500 font-medium">
@@ -105,9 +104,8 @@ export default function ContactForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="name@example.com"
-            className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 text-sm ${
-              errors.email ? "border-red-500" : "border-gold-muted/20"
-            }`}
+            className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 text-sm ${errors.email ? "border-red-500" : "border-gold-muted/20"
+              }`}
           />
           {errors.email && (
             <p className="text-[10px] text-red-500 font-medium">
@@ -159,6 +157,8 @@ export default function ContactForm() {
             <option value="dementia">Dementia & Complex Care</option>
             <option value="palliative">Palliative Care</option>
             <option value="rehab">Post-Operative / Rehab</option>
+            <option value="rehab">Couple Live-in Care </option>
+
             <option value="other">Other Specialist Support</option>
           </select>
         </div>
@@ -175,9 +175,8 @@ export default function ContactForm() {
             value={location}
             onChange={(e) => setLocation(e.target.value)}
             placeholder="e.g. London, Manchester"
-            className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 text-sm ${
-              errors.location ? "border-red-500" : "border-gold-muted/20"
-            }`}
+            className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 text-sm ${errors.location ? "border-red-500" : "border-gold-muted/20"
+              }`}
           />
           {errors.location && (
             <p className="text-[10px] text-red-500 font-medium">
@@ -194,9 +193,8 @@ export default function ContactForm() {
             type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
-            className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 text-sm ${
-              errors.startDate ? "border-red-500" : "border-gold-muted/20"
-            }`}
+            className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 text-sm ${errors.startDate ? "border-red-500" : "border-gold-muted/20"
+              }`}
           />
           {errors.startDate && (
             <p className="text-[10px] text-red-500 font-medium">

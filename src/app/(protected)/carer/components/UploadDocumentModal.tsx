@@ -28,7 +28,7 @@ export default function UploadDocumentModal({
                   {previewDoc.name}
                 </h4>
                 <p className="text-[10px] text-gold-100/50 mt-0.5">
-                  {previewDoc.type} • Mock Document Previewer
+                  {previewDoc.type} • Document Preview
                 </p>
               </div>
               <button
@@ -39,23 +39,66 @@ export default function UploadDocumentModal({
               </button>
             </div>
 
-            {/* Mock document visual scan placeholder */}
-            <div className="h-80 w-full rounded-xl border border-gold-300/10 bg-navy-950 flex flex-col items-center justify-center p-6 text-center space-y-4">
-              <div className="h-16 w-16 rounded-full bg-gold-DEFAULT/10 flex items-center justify-center text-4xl text-gold-DEFAULT">
-                📄
-              </div>
-              <div className="space-y-1">
-                <h5 className="text-sm font-semibold text-gold-200">
-                  Grace & Goodwill Document Scanner
-                </h5>
-                <p className="text-xs text-gold-100/60 max-w-sm mx-auto">
-                  [Mocked PDF rendering of {previewDoc.type}]. Secure storage
-                  node confirmed. Credential verification matches user registry.
-                </p>
-              </div>
-              <span className="text-[10px] uppercase font-bold tracking-widest text-emerald-400 border border-emerald-500/30 bg-emerald-500/5 px-3 py-1 rounded-full">
-                Secure SSL Validated
-              </span>
+            {/* Real document preview */}
+            <div className="h-80 w-full rounded-xl border border-gold-300/10 bg-navy-950 overflow-hidden">
+              {previewDoc.previewUrl ? (
+                (() => {
+                  const isImage =
+                    previewDoc.name?.match(/\.(png|jpg|jpeg|gif|webp)$/i) ||
+                    previewDoc.previewUrl?.match(/\.(png|jpg|jpeg|gif|webp)/i);
+                  const isPdf =
+                    previewDoc.name?.match(/\.pdf$/i) ||
+                    previewDoc.previewUrl?.match(/\.pdf/i);
+
+                  if (isImage) {
+                    return (
+                      <img
+                        src={previewDoc.previewUrl}
+                        alt={previewDoc.name}
+                        className="w-full h-full object-contain"
+                      />
+                    );
+                  }
+
+                  if (isPdf) {
+                    return (
+                      <iframe
+                        src={previewDoc.previewUrl}
+                        title={previewDoc.name}
+                        className="w-full h-full"
+                      />
+                    );
+                  }
+
+                  return (
+                    <div className="flex flex-col items-center justify-center h-full p-6 text-center space-y-4">
+                      <div className="h-16 w-16 rounded-full bg-gold-DEFAULT/10 flex items-center justify-center text-4xl text-gold-DEFAULT">
+                        📄
+                      </div>
+                      <p className="text-xs text-gold-100/60">
+                        Preview not available for this file type.
+                      </p>
+                      <a
+                        href={previewDoc.previewUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs font-semibold text-gold-DEFAULT hover:underline"
+                      >
+                        Open in New Tab →
+                      </a>
+                    </div>
+                  );
+                })()
+              ) : (
+                <div className="flex flex-col items-center justify-center h-full p-6 text-center space-y-4">
+                  <div className="h-16 w-16 rounded-full bg-gold-DEFAULT/10 flex items-center justify-center text-4xl text-gold-DEFAULT">
+                    📄
+                  </div>
+                  <p className="text-xs text-gold-100/60">
+                    No preview URL available for this document.
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className="flex justify-end pt-2">

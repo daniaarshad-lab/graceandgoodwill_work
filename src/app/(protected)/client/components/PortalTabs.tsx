@@ -16,9 +16,9 @@ export default function PortalTabs({
   setActiveTab,
 }: PortalTabsProps) {
   const tabs = [
+    { id: "request", label: "Submit Care Request" },
     { id: "overview", label: "Dashboard Overview" },
     { id: "profile", label: "Profile Management" },
-    { id: "request", label: "Submit Care Request" },
     { id: "carers", label: "Carer Profiles" },
     { id: "tracking", label: "Track Requests" },
     { id: "enquiry", label: "Support & Enquiries" },

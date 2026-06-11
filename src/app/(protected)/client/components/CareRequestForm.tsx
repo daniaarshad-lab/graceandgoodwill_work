@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 import SectionCard from "./shared/SectionCard";
 import Input from "@/components/Input";
 import Select from "@/components/Select";
@@ -55,6 +57,17 @@ export default function CareRequestForm({
   onSubmit,
   setActiveTab,
 }: CareRequestFormProps) {
+  const [isEmergencyOpen, setIsEmergencyOpen] = useState(false);
+  // TODO: The client needs to provide the actual WhatsApp number for emergency care.
+  const WHATSAPP_NUMBER = "<TO_BE_PROVIDED_BY_CLIENT>";
+  const WHATSAPP_MESSAGE = encodeURIComponent(
+    "Hello, I need emergency care support within the next 24 hours."
+  );
+
+  const handleWhatsAppRedirect = () => {
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MESSAGE}`, "_blank");
+  };
+
   return (
     <SectionCard className="max-w-3xl mx-auto space-y-6">
       <div className="border-b border-gold-300/10 pb-4">
@@ -99,18 +112,29 @@ export default function CareRequestForm({
             value={careType}
             onChange={(e) => setCareType(e.target.value)}
             options={[
-              { value: "Companion Support", label: "Companion Support" },
+              {
+                value: "Companion Support",
+                label: "Companion Live-in Care",
+              },
               {
                 value: "24/7 Live-in Companion Support",
                 label: "24/7 Live-in Care",
               },
               {
                 value: "Post-Operative Rehabilitation",
-                label: "Rehabilitation Care",
+                label: "Rehabilitation Live-in Care",
               },
               {
                 value: "Elderly Dementia Support",
-                label: "Dementia Support",
+                label: "Dementia Live-in Care",
+              },
+              {
+                value: "Palliative Care",
+                label: "Palliative Live-in Care",
+              },
+              {
+                value: "Couple Care",
+                label: "Couple Live-in Care",
               },
             ]}
           />
@@ -141,9 +165,8 @@ export default function CareRequestForm({
             value={support}
             onChange={(e) => setSupport(e.target.value)}
             placeholder="Describe specific client details, medication support, mobility support, and daily routines..."
-            className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 text-sm ${
-              errors.support ? "border-red-500" : "border-gray-300/20"
-            }`}
+            className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 text-sm ${errors.support ? "border-red-500" : "border-gray-300/20"
+              }`}
           ></textarea>
           {errors.support && (
             <p className="text-xs text-red-500 font-medium">{errors.support}</p>
@@ -192,6 +215,56 @@ export default function CareRequestForm({
           </Button>
         </div>
       </form>
+
+      {/* Emergency Care Section */}
+      <div className="mt-8 border-t border-gold-300/10 pt-6">
+        <div className="rounded-xl border border-gold-300/20 bg-navy-950 shadow-[0_0_15px_rgba(160,128,84,0.05)] hover:border-gold-300/30 hover:bg-navy-900/60 transition-all duration-300 overflow-hidden">
+          <div
+            className="p-5 flex justify-between items-center cursor-pointer group"
+            onClick={() => setIsEmergencyOpen(!isEmergencyOpen)}
+          >
+            <div>
+              <h3 className="text-base font-bold text-gold-100 flex items-center gap-2">
+                <span className="text-red-500">🚨</span> Emergency Care
+              </h3>
+              {!isEmergencyOpen && (
+                <p className="text-sm text-gold-100/60 mt-1 pr-4">
+                  Need urgent support within the next 24 hours? Our emergency team is here to help.
+                </p>
+              )}
+            </div>
+            <div className="text-gold-200/50 group-hover:text-gold-100 transition-colors shrink-0 ml-4">
+              <ChevronDown
+                className={`w-5 h-5 transition-transform duration-300 ${
+                  isEmergencyOpen ? "rotate-180" : ""
+                }`}
+              />
+            </div>
+          </div>
+
+          <div
+            className={`transition-all duration-300 ease-in-out px-5 ${
+              isEmergencyOpen ? "max-h-96 pb-5 opacity-100" : "max-h-0 opacity-0"
+            }`}
+          >
+            <div className="pt-4 border-t border-gold-300/10">
+              <div className="bg-navy-900/50 rounded-lg p-4 border border-gold-300/5 mb-5">
+                <p className="text-sm text-gold-100/80 leading-relaxed">
+                  If care is needed urgently within the next 24 hours, our emergency support team can help you arrange care as quickly as possible. Contact us immediately using the button below.
+                </p>
+              </div>
+              <Button
+                type="button"
+                variant="whatsapp"
+                onClick={handleWhatsAppRedirect}
+                fullWidth={false}
+              >
+                🚨 Contact Emergency Team
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
     </SectionCard>
   );
 }

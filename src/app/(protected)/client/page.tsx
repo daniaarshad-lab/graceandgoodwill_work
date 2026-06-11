@@ -44,7 +44,7 @@ type TabType =
 
 export default function ClientDashboard() {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState<TabType>("overview");
+  const [activeTab, setActiveTab] = useState<TabType>("request");
 
   // Custom hook containing state + handlers
   const portal = useClientPortal({ user });

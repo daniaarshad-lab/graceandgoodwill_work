@@ -21,6 +21,7 @@ import OnboardingStepper from "./components/OnboardingStepper";
 import OnboardingProfileSetup from "./components/OnboardingProfileSetup";
 import OnboardingMembership from "./components/OnboardingMembership";
 import Button from "@/components/Button";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
 type TabType = "overview" | "profile" | "compliance" | "availability";
 
@@ -71,21 +72,32 @@ function CarerDashboardContent() {
     }
 
     if (profile && !initialStepSet) {
-      const isComplianceUploaded = documents && documents.length > 0;
-      const isProfileSetup = !!(profile.bio && profile.experience && profile.address);
-      
-      console.log("[Onboarding Flow] isComplianceUploaded:", isComplianceUploaded, "isProfileSetup:", isProfileSetup);
-      
-      if (!isComplianceUploaded) {
-        setOnboardingStep(2);
-      } else if (!isProfileSetup) {
-        setOnboardingStep(3);
+      const savedStep = localStorage.getItem("carer_onboarding_step");
+      if (savedStep) {
+        setOnboardingStep(parseInt(savedStep, 10));
       } else {
-        setOnboardingStep(4);
+        const isComplianceUploaded = documents && documents.length >= 5;
+        const isProfileSetup = !!(profile.bio && profile.experience && profile.address);
+        
+        console.log("[Onboarding Flow] isComplianceUploaded:", isComplianceUploaded, "isProfileSetup:", isProfileSetup);
+        
+        if (!isComplianceUploaded) {
+          setOnboardingStep(2);
+        } else if (!isProfileSetup) {
+          setOnboardingStep(3);
+        } else {
+          setOnboardingStep(4);
+        }
       }
       setInitialStepSet(true);
     }
   }, [profile, documents, isOnboardingParam, initialStepSet]);
+
+  useEffect(() => {
+    if (initialStepSet) {
+      localStorage.setItem("carer_onboarding_step", onboardingStep.toString());
+    }
+  }, [onboardingStep, initialStepSet]);
 
   const showOnboarding =
     isClient && !onboardingDone && portal.applicationStatus !== "approved";
@@ -122,6 +134,7 @@ function CarerDashboardContent() {
                   setPreviewDoc={portal.setPreviewDoc}
                   setDocToDelete={portal.setDocToDelete}
                   onNext={() => setOnboardingStep(3)}
+                  onBack={() => router.push("/register")}
                 />
               </div>
             )}
@@ -129,19 +142,58 @@ function CarerDashboardContent() {
             {onboardingStep === 3 && (
               <OnboardingProfileSetup
                 onComplete={() => setOnboardingStep(4)}
+                onBack={() => setOnboardingStep(2)}
               />
             )}
 
             {onboardingStep === 4 && (
               <OnboardingMembership
-                onComplete={() => {
-                  localStorage.setItem("carer_onboarding_done", "true");
-                  setOnboardingDone(true);
-                  if (isOnboardingParam) {
-                    router.replace("/carer");
-                  }
-                }}
+                onComplete={() => setOnboardingStep(5)}
+                onBack={() => setOnboardingStep(3)}
               />
+            )}
+
+            {onboardingStep === 5 && (
+              <div className="flex flex-col items-center justify-center py-16 px-8 text-center bg-gradient-to-b from-navy-900/40 to-navy-950/60 border border-gold-300/10 rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] backdrop-blur-md max-w-2xl mx-auto mt-6">
+                <div className="w-20 h-20 bg-gradient-to-br from-gold-200/20 to-gold-200/5 rounded-full flex items-center justify-center border border-gold-200/30 mb-8 shadow-[0_0_20px_rgba(245,212,160,0.1)]">
+                  <svg className="w-10 h-10 text-gold-200 drop-shadow-[0_2px_4px_rgba(245,212,160,0.3)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                
+                <h3 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-gold-200 to-gold-50 tracking-tight mb-4">
+                  Onboarding Complete!
+                </h3>
+                
+                <p className="text-gold-100/60 max-w-md mx-auto leading-relaxed mb-10 text-[14px]">
+                  Thank you for completing your professional profile. Your application is now under review by the Grace & Goodwill team.
+                </p>
+                
+                <div className="flex flex-col items-center gap-5 w-full">
+                  <button
+                    onClick={() => {
+                      localStorage.setItem("carer_onboarding_done", "true");
+                      localStorage.removeItem("carer_onboarding_step");
+                      setOnboardingDone(true);
+                      if (isOnboardingParam) {
+                        router.replace("/carer");
+                      }
+                    }}
+                    className="flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl bg-gradient-to-b from-gold-200 to-gold-200/80 border border-gold-200/20 text-navy-950 text-[14px] font-bold tracking-wide shadow-[0_4px_15px_rgba(245,212,160,0.2)] hover:shadow-[0_6px_20px_rgba(245,212,160,0.3)] hover:-translate-y-[1px] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gold-200/50 w-full max-w-[280px]"
+                  >
+                    Go to Dashboard
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+
+                  <button
+                    onClick={() => setOnboardingStep(4)}
+                    className="flex items-center gap-1.5 text-[12.5px] font-medium text-gold-100/50 hover:text-gold-200 transition-colors tracking-wide focus:outline-none"
+                  >
+                    <ArrowLeft className="w-3.5 h-3.5" />
+                    Back to Membership
+                  </button>
+                </div>
+              </div>
             )}
           </div>
         </div>

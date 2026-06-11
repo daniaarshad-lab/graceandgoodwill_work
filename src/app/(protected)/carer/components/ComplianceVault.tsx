@@ -1,7 +1,8 @@
 import SectionCard from "./shared/SectionCard";
 import { ComplianceDoc } from "../types/carer.types";
+import React, { useState, useRef } from "react";
+import { Upload, FileText, CheckCircle2, AlertCircle, Trash2, Eye, Loader2, ArrowLeft, ArrowRight } from "lucide-react";
 import Button from "@/components/Button";
-import { Eye, Trash2, FileText, RefreshCw, Loader2 } from "lucide-react";
 
 interface ComplianceVaultProps {
   complianceDocs: ComplianceDoc[];
@@ -25,6 +26,7 @@ interface ComplianceVaultProps {
   setPreviewDoc: (doc: ComplianceDoc) => void;
   setDocToDelete: (id: string) => void;
   onNext?: () => void;
+  onBack?: () => void;
 }
 
 const categoryDisplayMap: Record<string, string> = {
@@ -50,6 +52,7 @@ export default function ComplianceVault({
   setPreviewDoc,
   setDocToDelete,
   onNext,
+  onBack,
 }: ComplianceVaultProps) {
   const docTypes = [
     "Driver's License",
@@ -83,99 +86,136 @@ export default function ComplianceVault({
 
   return (
     <div className="space-y-6">
+      {/* Navigation Row */}
+      {isOnboarding && (
+        <div className="flex justify-between items-center w-full max-w-5xl mx-auto pb-4">
+          {onBack ? (
+            <button
+              onClick={onBack}
+              className="flex items-center gap-1.5 px-5 py-2 rounded-lg border border-gold-300/10 bg-navy-900/30 backdrop-blur-md text-gold-200/80 text-[12.5px] font-medium tracking-wide hover:bg-navy-800/40 hover:border-gold-300/20 hover:text-gold-50 hover:-translate-y-[1px] hover:shadow-[0_2px_10px_rgba(212,175,55,0.05)] transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-gold-DEFAULT/30"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              Back
+            </button>
+          ) : <div />}
+          
+          {onNext && (
+            <button
+              onClick={onNext}
+              disabled={complianceDocs.length === 0}
+              className="flex items-center gap-1.5 px-6 py-2 rounded-lg bg-gradient-to-b from-gold-200 to-gold-200/80 border border-gold-200/20 text-navy-950 text-[12.5px] font-semibold tracking-wide shadow-[0_2px_8px_rgba(245,212,160,0.15)] hover:shadow-[0_4px_12px_rgba(245,212,160,0.25)] hover:-translate-y-[1px] transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-gold-200/50 disabled:opacity-50 disabled:hover:transform-none disabled:hover:shadow-none ml-auto"
+            >
+              Continue
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
+      )}
+
       {/* Main Document Upload Grid */}
-      <div className={`grid grid-cols-1 ${isOnboarding ? "md:grid-cols-2" : ""} gap-6`}>
-        {/* File Upload Dropzones Card */}
-        {isOnboarding && (
-          <SectionCard className="space-y-6">
-            <h3 className="text-lg font-bold text-gold-200 border-b border-gold-300/10 pb-4">
-              Compliance Document Upload
-            </h3>
-            <p className="text-xs text-gold-100/60 leading-relaxed">
-              Upload official scans or photos (PDF, PNG, JPG) of your credentials
-              to become a verified live-in carer. Ensure documents are clearly
-              readable.
-            </p>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+        {/* Left Panel: Update Documents */}
+        <SectionCard className="space-y-6">
+          <h3 className="text-lg font-bold text-gold-200 border-b border-gold-300/10 pb-4">
+            Document Management
+          </h3>
+          <p className="text-xs text-gold-100/60 leading-relaxed">
+            Upload or update official scans or photos (PDF, PNG, JPG) of your credentials. 
+            Ensure documents are clearly readable to stay compliant.
+          </p>
 
-            {/* Reusable document type uploads */}
-            {docTypes.map((docType) => {
-              const fileKey = categoryMapForSelection[docType];
-              const selectedFile = selectedFiles[fileKey];
-              return (
-                <div
-                  key={docType}
-                  className="p-4 rounded-xl border border-gold-300/10 bg-navy-950/20 flex flex-col sm:flex-row justify-between items-center gap-4"
-                >
-                  <div className="space-y-1 text-center sm:text-left">
-                    <h4 className="text-xs font-semibold text-gold-50">
-                      {docType}
-                    </h4>
-                    {selectedFile ? (
-                      <p className="text-[10px] text-emerald-400">
-                        Selected: {selectedFile.name}
-                      </p>
-                    ) : (
-                      <p className="text-[10px] text-gold-100/50">
-                        Required for credential validation
-                      </p>
-                    )}
-                  </div>
+          {/* Reusable document type uploads */}
+          {docTypes.map((docType) => {
+            const fileKey = categoryMapForSelection[docType];
+            const selectedFile = selectedFiles[fileKey];
+            
+            const backendType = {
+              "Driver's License": "DRIVERS_LICENSE",
+              "Criminal Record Check": "CRIMINAL_RECORD_CHECK",
+              "Dementia Support Certificate": "DEMENTIA_SUPPORT",
+              "Mandatory Care Certificate": "CARE_CERTIFICATE",
+              "Business Insurance Certificate": "BUSINESS_INSURANCE",
+            }[docType];
+            
+            const uploadedDoc = complianceDocs.find((doc) => doc.type === backendType);
+            const displayName = selectedFile ? selectedFile.name : uploadedDoc ? uploadedDoc.name : null;
 
-                  <Button
-                    asChild
-                    variant="ghost-gold"
-                    size="sm"
-                    fullWidth={false}
-                  >
-                    <label className="cursor-pointer">
-                      Upload File
-                      <input
-                        type="file"
-                        accept=".pdf,.png,.jpg,.jpeg"
-                        className="hidden"
-                        onChange={(e) => handleDocUpload(docType, e)}
-                      />
-                    </label>
-                  </Button>
-                </div>
-              );
-            })}
-
-            <div className="pt-4 border-t border-gold-300/10 flex justify-end gap-3">
-              <Button
-                variant="primary"
-                onClick={async () => {
-                  const success = await handleBatchUpload();
-                  if (success && onNext) {
-                    onNext();
-                  }
-                }}
-                disabled={!hasAllRequiredDocs || batchUploading}
+            return (
+              <div
+                key={docType}
+                className="p-4 rounded-xl border border-gold-300/10 bg-navy-950/20 flex flex-col sm:flex-row justify-between items-center gap-4 transition-colors hover:bg-navy-950/40"
               >
-                {batchUploading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Uploading...
-                  </>
-                ) : (
-                  "Upload All"
-                )}
-              </Button>
-              {onNext && (
+                <div className="space-y-1 text-center sm:text-left">
+                  <h4 className="text-xs font-semibold text-gold-50">
+                    {docType}
+                  </h4>
+                  {displayName ? (
+                    <p className="text-[10px] text-emerald-400">
+                      Selected: {displayName}
+                    </p>
+                  ) : (
+                    <p className="text-[10px] text-gold-100/50">
+                      Required for credential validation
+                    </p>
+                  )}
+                </div>
+
+                <Button
+                  asChild
+                  variant="ghost-gold"
+                  size="sm"
+                  fullWidth={false}
+                >
+                  <label className="cursor-pointer">
+                    {displayName ? "Update File" : "Upload File"}
+                    <input
+                      type="file"
+                      accept=".pdf,.png,.jpg,.jpeg"
+                      className="hidden"
+                      onChange={(e) => {
+                        if (uploadedDoc) {
+                          handleUpdateDoc(uploadedDoc.id, backendType!, e);
+                        } else {
+                          handleDocUpload(docType, e);
+                        }
+                      }}
+                    />
+                  </label>
+                </Button>
+              </div>
+            );
+          })}
+
+          {isOnboarding && (
+            <div className="space-y-6 pt-4 border-t border-gold-300/10">
+              {/* Batch Upload Row */}
+              <div className="flex justify-center w-full pt-4 border-t border-gold-300/10">
                 <Button
                   variant="primary"
-                  onClick={onNext}
-                  disabled={complianceDocs.length === 0}
-                  className="px-8 shadow-gold"
+                  onClick={async () => {
+                    const success = await handleBatchUpload();
+                    if (success && onNext) {
+                      onNext();
+                    }
+                  }}
+                  disabled={!hasAllRequiredDocs || batchUploading}
+                  className="w-full md:w-auto md:min-w-[280px] shadow-gold py-3"
                 >
-                  Next
+                  {batchUploading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Uploading...
+                    </>
+                  ) : (
+                    "Upload All Documents"
+                  )}
                 </Button>
-              )}
+              </div>
             </div>
-          </SectionCard>
-        )}
+          )}
+        </SectionCard>
 
-        {/* Vault Documents Uploaded List */}
+        {/* Right Panel: Vault Documents Uploaded List */}
         <SectionCard className="space-y-6">
           <h3 className="text-lg font-bold text-gold-200 border-b border-gold-300/10 pb-4">
             Compliance Records Vault
@@ -238,6 +278,23 @@ export default function ComplianceVault({
                         </span>
                       )}
 
+                      <Button
+                        asChild
+                        variant="ghost-gold"
+                        size="sm"
+                        className="h-8 px-3 text-[10px]"
+                      >
+                        <label className="cursor-pointer">
+                          Update File
+                          <input
+                            type="file"
+                            accept=".pdf,.png,.jpg,.jpeg"
+                            className="hidden"
+                            onChange={(e) => handleUpdateDoc(doc.id, doc.type, e)}
+                          />
+                        </label>
+                      </Button>
+
                       <button
                         onClick={() => setPreviewDoc(doc)}
                         className="p-1.5 text-gold-200 hover:text-gold-50 transition-colors"
@@ -245,26 +302,6 @@ export default function ComplianceVault({
                       >
                         <Eye className="w-4 h-4" />
                       </button>
-                      {!isOnboarding && (
-                        <Button
-                          asChild
-                          variant="ghost-gold"
-                          size="sm"
-                          className="h-8 px-3 text-[10px]"
-                        >
-                          <label className="cursor-pointer">
-                            Update File
-                            <input
-                              type="file"
-                              accept=".pdf,.png,.jpg,.jpeg"
-                              className="hidden"
-                              onChange={(e) =>
-                                handleUpdateDoc(doc.id, doc.type, e)
-                              }
-                            />
-                          </label>
-                        </Button>
-                      )}
                       <button
                         onClick={() => setDocToDelete(doc.id)}
                         className="p-1.5 text-red-500 hover:text-red-400 transition-colors"

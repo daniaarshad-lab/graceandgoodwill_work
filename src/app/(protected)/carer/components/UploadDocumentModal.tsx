@@ -16,6 +16,15 @@ export default function UploadDocumentModal({
   setDocToDelete,
   confirmDelete,
 }: UploadDocumentModalProps) {
+  function getFullUrl(url: string | null | undefined) {
+    if (!url) return "";
+    if (url.startsWith("http")) return url;
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+    return `${apiUrl}${url}`;
+  }
+
+  const fullPreviewUrl = previewDoc ? getFullUrl(previewDoc.previewUrl) : "";
+
   return (
     <>
       {/* PDF Preview Modal Overlay */}
@@ -41,19 +50,19 @@ export default function UploadDocumentModal({
 
             {/* Real document preview */}
             <div className="h-80 w-full rounded-xl border border-gold-300/10 bg-navy-950 overflow-hidden">
-              {previewDoc.previewUrl ? (
+              {fullPreviewUrl ? (
                 (() => {
                   const isImage =
                     previewDoc.name?.match(/\.(png|jpg|jpeg|gif|webp)$/i) ||
-                    previewDoc.previewUrl?.match(/\.(png|jpg|jpeg|gif|webp)/i);
+                    fullPreviewUrl.match(/\.(png|jpg|jpeg|gif|webp)/i);
                   const isPdf =
                     previewDoc.name?.match(/\.pdf$/i) ||
-                    previewDoc.previewUrl?.match(/\.pdf/i);
+                    fullPreviewUrl.match(/\.pdf/i);
 
                   if (isImage) {
                     return (
                       <img
-                        src={previewDoc.previewUrl}
+                        src={fullPreviewUrl}
                         alt={previewDoc.name}
                         className="w-full h-full object-contain"
                       />
@@ -63,7 +72,7 @@ export default function UploadDocumentModal({
                   if (isPdf) {
                     return (
                       <iframe
-                        src={previewDoc.previewUrl}
+                        src={fullPreviewUrl}
                         title={previewDoc.name}
                         className="w-full h-full"
                       />
@@ -76,16 +85,21 @@ export default function UploadDocumentModal({
                         📄
                       </div>
                       <p className="text-xs text-gold-100/60">
-                        Preview not available for this file type.
+                        Preview is not available for this file type.
                       </p>
-                      <a
-                        href={previewDoc.previewUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs font-semibold text-gold-DEFAULT hover:underline"
+                      <Button
+                        asChild
+                        variant="ghost-gold"
+                        size="sm"
                       >
-                        Open in New Tab →
-                      </a>
+                        <a
+                          href={fullPreviewUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Open Document
+                        </a>
+                      </Button>
                     </div>
                   );
                 })()

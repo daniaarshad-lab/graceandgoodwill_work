@@ -5,14 +5,16 @@ import { uploadProfileMedia } from "@/store/slices/carerSlice";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 import SectionCard from "./shared/SectionCard";
 import Button from "@/components/Button";
-import { Camera, Video, AlertCircle, FileVideo, Check } from "lucide-react";
+import { Upload, X, Check, AlertCircle, ArrowLeft, ArrowRight, Camera, Video, FileVideo } from "lucide-react";
 
 interface OnboardingProfileSetupProps {
   onComplete: () => void;
+  onBack: () => void;
 }
 
 export default function OnboardingProfileSetup({
   onComplete,
+  onBack,
 }: OnboardingProfileSetupProps) {
   const dispatch = useAppDispatch();
   const profile = useAppSelector((state) => state.carer.profile);
@@ -43,6 +45,16 @@ export default function OnboardingProfileSetup({
     const file = e.target.files?.[0];
     if (!file) return;
 
+    const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"];
+    const validExtensions = [".jpg", ".jpeg", ".png", ".webp", ".gif"];
+    const ext = "." + file.name.split(".").pop()?.toLowerCase();
+
+    if (!validTypes.includes(file.type) && !validExtensions.includes(ext)) {
+      showErrorToast("Invalid Format", "Only JPEG, PNG, WEBP and GIF images are allowed.");
+      e.target.value = "";
+      return;
+    }
+
     setPhotoFile(file);
     setPhotoPreview(URL.createObjectURL(file));
   };
@@ -51,8 +63,13 @@ export default function OnboardingProfileSetup({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (!file.type.startsWith("video/")) {
-      showErrorToast("Invalid Format", "Please select a valid video file.");
+    const validTypes = ["video/mp4", "video/webm", "video/ogg", "video/quicktime"];
+    const validExtensions = [".mp4", ".webm", ".ogg", ".mov"];
+    const ext = "." + file.name.split(".").pop()?.toLowerCase();
+
+    if (!validTypes.includes(file.type) && !validExtensions.includes(ext)) {
+      showErrorToast("Invalid Format", "Only MP4, WebM, OGG and QuickTime videos are allowed.");
+      e.target.value = "";
       return;
     }
 
@@ -110,7 +127,36 @@ export default function OnboardingProfileSetup({
   const isFormValid = (!!photoFile || !!existingPhotoUrl) && (!!videoFile || !!existingVideoUrl);
 
   return (
-    <SectionCard className="max-w-3xl mx-auto space-y-8 p-6 md:p-8 border border-gold-300/10 bg-gradient-to-b from-navy-900/60 to-navy-950/80 shadow-elegant">
+    <div className="space-y-6">
+      {/* Navigation Row */}
+      <div className="flex justify-between items-center w-full max-w-3xl mx-auto pb-4">
+        <button
+          onClick={onBack}
+          className="flex items-center gap-1.5 px-5 py-2 rounded-lg border border-gold-300/10 bg-navy-900/30 backdrop-blur-md text-gold-200/80 text-[12.5px] font-medium tracking-wide hover:bg-navy-800/40 hover:border-gold-300/20 hover:text-gold-50 hover:-translate-y-[1px] hover:shadow-[0_2px_10px_rgba(212,175,55,0.05)] transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-gold-DEFAULT/30"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" />
+          Back
+        </button>
+        <button
+          onClick={handleSaveAndContinue}
+          disabled={!isFormValid || isSubmitting}
+          className="flex items-center gap-1.5 px-6 py-2 rounded-lg bg-gradient-to-b from-gold-200 to-gold-200/80 border border-gold-200/20 text-navy-950 text-[12.5px] font-semibold tracking-wide shadow-[0_2px_8px_rgba(245,212,160,0.15)] hover:shadow-[0_4px_12px_rgba(245,212,160,0.25)] hover:-translate-y-[1px] transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-gold-200/50 disabled:opacity-50 disabled:hover:transform-none disabled:hover:shadow-none ml-auto"
+        >
+          {isSubmitting ? (
+            <span className="flex items-center gap-2">
+              <div className="w-4 h-4 border-2 border-navy-900 border-t-transparent rounded-full animate-spin"></div>
+              Uploading...
+            </span>
+          ) : (
+            <>
+              Continue
+              <ArrowRight className="w-3.5 h-3.5" />
+            </>
+          )}
+        </button>
+      </div>
+
+      <SectionCard className="max-w-3xl mx-auto space-y-8 p-6 md:p-8 border border-gold-300/10 bg-gradient-to-b from-navy-900/60 to-navy-950/80 shadow-elegant">
       <div className="text-center md:text-left border-b border-gold-300/10 pb-4">
         <h3 className="text-xl font-bold text-gold-200">
           Upload Profile Media
@@ -154,7 +200,9 @@ export default function OnboardingProfileSetup({
           </label>
 
           <p className="text-[11px] text-gold-100/40 leading-normal max-w-xs">
-            Upload a professional, friendly, high-resolution headshot. Supports JPEG and PNG formats.
+            Upload a professional, friendly, high-resolution headshot.
+            <br />
+            Supported formats: JPEG, PNG, WEBP and GIF.
           </p>
           {(photoFile || existingPhotoUrl) && (
             <span className="inline-flex items-center gap-1 text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
@@ -214,8 +262,11 @@ export default function OnboardingProfileSetup({
           <div className="flex items-start gap-1.5 text-left max-w-xs">
             <AlertCircle className="w-3.5 h-3.5 text-gold-DEFAULT shrink-0 mt-0.5" />
             <p className="text-[10px] text-gold-100/40 leading-normal">
-              Self-record a short profile message introducing yourself.
-              Must be exactly <strong className="text-gold-300">45 to 60 seconds</strong> in length.
+              Self-record a short profile introduction.
+              <br />
+              Supported formats: MP4, WebM, OGG and QuickTime.
+              <br />
+              Video length must be exactly <strong className="text-gold-300">45 to 60 seconds</strong>.
             </p>
           </div>
           {(videoUploaded || existingVideoUrl) && (
@@ -225,27 +276,7 @@ export default function OnboardingProfileSetup({
           )}
         </div>
       </div>
-
-      {/* Continue Action Button */}
-      <div className="pt-4 border-t border-gold-300/10 flex justify-end">
-        <Button
-          onClick={handleSaveAndContinue}
-          disabled={!isFormValid || isSubmitting}
-          variant="primary"
-          size="sm"
-          fullWidth={false}
-          className="px-8 py-3 font-semibold shadow-gold"
-        >
-          {isSubmitting ? (
-            <span className="flex items-center gap-2">
-              <div className="w-4 h-4 border-2 border-navy-900 border-t-transparent rounded-full animate-spin"></div>
-              Uploading...
-            </span>
-          ) : (
-            "Save & Continue"
-          )}
-        </Button>
-      </div>
     </SectionCard>
+    </div>
   );
 }

@@ -26,7 +26,7 @@ export default function StepProfessionalInfo({ portal, onNext, onBack }: Props) 
         <div className="space-y-4">
           <div className="space-y-2">
             <label className="text-sm font-medium text-gold-200">
-              Professional Summary / About Me (*)
+              Professional Summary / About Me *
             </label>
             <div className="text-xs text-gold-100/60 mb-3 space-y-1">
               <p>Please use this section to tell prospective clients and families about:</p>
@@ -45,18 +45,21 @@ export default function StepProfessionalInfo({ portal, onNext, onBack }: Props) 
               placeholder="Write your professional summary here..."
               className="w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 text-sm border-gray-300/20"
             />
+            <p className="text-xs text-gold-100/60 mt-2">
+              This information will appear on your public carer profile and will be visible to prospective clients and families.
+            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Input 
-              label="Years of Care Experience (*)" 
+              label="Years of Care Experience *" 
               type="number"
               value={experience} 
               onChange={(e) => setExperience(e.target.value)} 
               placeholder="e.g. 5" 
             />
             <Input 
-              label="Care Specialisms (*)" 
+              label="Care Specialisms *" 
               value={specialties} 
               onChange={(e) => setSpecialties(e.target.value)} 
               placeholder="e.g. Dementia, Palliative" 

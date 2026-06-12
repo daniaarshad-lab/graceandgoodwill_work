@@ -13,8 +13,8 @@ export default function StepInsuranceDocs({ portal, onNext, onBack }: Props) {
   const { complianceDocs, handleDocUpload, handleUpdateDoc } = portal;
 
   const insuranceDocs = [
-    { type: "PUBLIC_LIABILITY", label: "Public Liability Insurance (*)" },
-    { type: "PROFESSIONAL_INDEMNITY", label: "Professional Indemnity Insurance (*)" },
+    { type: "PUBLIC_LIABILITY", label: "Public Liability Insurance *" },
+    { type: "PROFESSIONAL_INDEMNITY", label: "Professional Indemnity Insurance *" },
   ];
 
   return (

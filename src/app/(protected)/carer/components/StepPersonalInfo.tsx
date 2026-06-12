@@ -29,23 +29,31 @@ export default function StepPersonalInfo({ portal, onNext, onBack }: Props) {
         <h3 className="text-xl font-bold text-gold-200 border-b border-gold-300/10 pb-4">
           Personal Information
         </h3>
-        <p className="text-sm text-gold-100/60 mb-4">All items marked with (*) are compulsory.</p>
+        <p className="text-sm text-gold-100/60 mb-4">All items marked with * are compulsory.</p>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Input label="First Name (*)" value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="First Name" />
-          <Input label="Last Name (*)" value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Last Name" />
-          <Input label="Date of Birth (*)" type="date" value={dateOfBirth ? dateOfBirth.split('T')[0] : ''} onChange={(e) => setDateOfBirth(e.target.value)} placeholder="DD/MM/YYYY" />
-          <Input label="Address (*)" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Full Address" />
-          <Input label="Email Address (*)" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
-          <PhoneInput label="Mobile Number (*)" value={phone} onChange={setPhone} placeholder="Mobile Number" />
+          <Input 
+            label="Full Name *" 
+            value={`${firstName || ''} ${lastName || ''}`.trim()} 
+            onChange={(e) => {
+              const parts = e.target.value.split(' ');
+              setFirstName(parts[0] || '');
+              setLastName(parts.slice(1).join(' ') || '');
+            }} 
+            placeholder="Full Name" 
+          />
+          <Input label="Date of Birth *" type="date" value={dateOfBirth ? dateOfBirth.split('T')[0] : ''} onChange={(e) => setDateOfBirth(e.target.value)} placeholder="DD/MM/YYYY" />
+          <Input label="Address *" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Full Address" />
+          <Input label="Email Address *" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
+          <PhoneInput label="Mobile Number *" value={phone} onChange={setPhone} placeholder="Mobile Number" />
         </div>
 
         <div className="pt-6 mt-6 border-t border-gold-300/10">
-          <h4 className="text-lg font-semibold text-gold-200 mb-4">Emergency Contact Details (*)</h4>
+          <h4 className="text-lg font-semibold text-gold-200 mb-4">Emergency Contact Details *</h4>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Input label="Contact Name" value={emergencyContactName} onChange={(e) => setEmergencyContactName(e.target.value)} placeholder="Name" />
-            <PhoneInput label="Contact Number" value={emergencyContactNumber} onChange={setEmergencyContactNumber} placeholder="Phone" />
-            <Input label="Relationship" value={emergencyContactRelation} onChange={(e) => setEmergencyContactRelation(e.target.value)} placeholder="e.g. Spouse, Parent" />
+            <Input label="Contact Name *" value={emergencyContactName} onChange={(e) => setEmergencyContactName(e.target.value)} placeholder="Name" />
+            <PhoneInput label="Contact Number *" value={emergencyContactNumber} onChange={setEmergencyContactNumber} placeholder="Phone" />
+            <Input label="Relationship *" value={emergencyContactRelation} onChange={(e) => setEmergencyContactRelation(e.target.value)} placeholder="e.g. Spouse, Parent" />
           </div>
         </div>
       </SectionCard>

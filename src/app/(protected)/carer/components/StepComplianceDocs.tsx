@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import SectionCard from "./shared/SectionCard";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
@@ -11,6 +11,7 @@ interface Props {
 }
 
 export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
+  const [additionalRefsCount, setAdditionalRefsCount] = useState(3);
   const {
     employmentHistory, setEmploymentHistory,
     dbsUpdateServiceNumber, setDbsUpdateServiceNumber,
@@ -18,10 +19,10 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
   } = portal;
 
   const requiredDocs = [
-    { type: "ENHANCED_DBS", label: "Enhanced DBS Certificate (*)" },
-    { type: "CV", label: "CV / Resume (*)" },
-    { type: "REFERENCE_1", label: "Professional Reference 1 (*)" },
-    { type: "REFERENCE_2", label: "Professional Reference 2 (*)" },
+    { type: "ENHANCED_DBS", label: "Enhanced DBS Certificate *" },
+    { type: "CV", label: "CV / Resume *" },
+    { type: "REFERENCE_1", label: "Professional Reference 1 *" },
+    { type: "REFERENCE_2", label: "Professional Reference 2 *" },
   ];
 
   return (
@@ -37,6 +38,27 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
           ))}
         </div>
 
+        <div className="pt-6 pb-2">
+          <h4 className="text-lg font-semibold text-gold-200 mb-4">Additional References (Optional)</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {Array.from({ length: additionalRefsCount }).map((_, index) => (
+              <DocUploadRow 
+                key={`ADDITIONAL_REFERENCE_${index + 1}`} 
+                label="Upload Additional Reference" 
+                type={`ADDITIONAL_REFERENCE_${index + 1}`} 
+                portal={portal} 
+              />
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={() => setAdditionalRefsCount(prev => prev + 1)}
+            className="mt-4 text-sm font-semibold text-gold-DEFAULT hover:text-gold-200 transition-colors inline-block"
+          >
+            + Add Another Reference
+          </button>
+        </div>
+
         <div className="space-y-4 pt-4 border-t border-gold-300/10">
           <Input 
             label="DBS Update Service Number (if subscribed)" 
@@ -47,7 +69,7 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
 
           <div className="space-y-2">
             <label className="text-sm font-medium text-gold-200">
-              Employment History (Last 5 Years) (*)
+              Employment History (Last 5 Years) *
             </label>
             <p className="text-xs text-gold-100/60 mb-2">
               Please provide your employment history covering the last 5 years, including an explanation for any employment gaps.

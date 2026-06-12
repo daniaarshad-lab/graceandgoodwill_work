@@ -43,7 +43,7 @@ export default function StepIdentityVerification({ portal, onNext, onBack }: Pro
         <div className="space-y-6">
           <div className="p-5 rounded-xl border border-gold-300/10 bg-navy-900/30 space-y-4">
             <div>
-              <h4 className="text-sm font-semibold text-gold-50">Passport or Driving Licence (*)</h4>
+              <h4 className="text-sm font-semibold text-gold-50">Passport or Driving Licence *</h4>
               <p className="text-xs text-gold-100/60 mt-1">Please upload EITHER your Passport OR your Driving Licence.</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -53,11 +53,11 @@ export default function StepIdentityVerification({ portal, onNext, onBack }: Pro
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <DocUploadRow label="Proof of Address (issued within last 3 months) (*)" type="PROOF_OF_ADDRESS" portal={portal}>
+            <DocUploadRow label="Proof of Address (issued within last 3 months) *" type="PROOF_OF_ADDRESS" portal={portal}>
               <div className="mt-2">
-                <p className="text-gold-100/80 mb-1.5 font-medium">Accepted documents:</p>
+                <p className="text-gold-100/80 mb-1.5 font-medium">Accepted Proof of Address Documents:</p>
                 <ul className="list-disc pl-4 space-y-1 text-gold-100/60">
-                  <li>Utility Bill (gas, electricity or water)</li>
+                  <li>Utility Bill (Gas, Electricity or Water)</li>
                   <li>Council Tax Bill</li>
                   <li>Bank Statement</li>
                   <li>Credit Card Statement</li>
@@ -69,11 +69,11 @@ export default function StepIdentityVerification({ portal, onNext, onBack }: Pro
             </DocUploadRow>
 
             <div className="space-y-4">
-              <DocUploadRow label="Right to Work in the UK (*)" type="RIGHT_TO_WORK" portal={portal} />
+              <DocUploadRow label="Right to Work in the UK *" type="RIGHT_TO_WORK" portal={portal} />
               
-              <DocUploadRow label="Proof of National Insurance Number (*)" type="NI_PROOF" portal={portal}>
+              <DocUploadRow label="Proof of National Insurance Number *" type="NI_PROOF" portal={portal}>
                 <div className="mt-2">
-                  <p className="text-gold-100/80 mb-1.5 font-medium">Accepted documents:</p>
+                  <p className="text-gold-100/80 mb-1.5 font-medium">Accepted Documents:</p>
                   <ul className="list-disc pl-4 space-y-1 text-gold-100/60">
                     <li>HMRC Letter</li>
                     <li>Payslip</li>
@@ -107,11 +107,11 @@ export default function StepIdentityVerification({ portal, onNext, onBack }: Pro
 
               {hasOwnVehiclePref && (
                 <div className="mt-5 pt-5 border-t border-gold-300/10">
-                  <h5 className="text-sm font-medium text-gold-200 mb-2">Business Use Insurance Cover (*)</h5>
+                  <h5 className="text-sm font-medium text-gold-200 mb-2">Business Use Insurance Cover *</h5>
                   <div className="bg-navy-950/40 p-4 rounded-xl border border-gold-300/10">
                     <DocUploadRow label="Upload Certificate" type="BUSINESS_INSURANCE" portal={portal} />
                     <p className="text-xs text-red-400 mt-3 leading-relaxed bg-red-950/20 p-2 rounded border border-red-900/30">
-                      Social, Domestic & Pleasure insurance alone should not be accepted where a carer intends to transport clients in their own vehicle.
+                      Social, Domestic & Pleasure insurance alone is not accepted where a carer intends to transport clients in their own vehicle.
                     </p>
                   </div>
                 </div>

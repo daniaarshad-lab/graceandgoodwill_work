@@ -25,64 +25,13 @@ export default function StepDeclaration({ portal, onNext, onBack }: Props) {
 
   const profile = useAppSelector((state) => state.carer.profile);
 
-  const validateAllCompulsoryFields = () => {
-    const missing = [];
-    const {
-      firstName, lastName, dateOfBirth, address, email, phone, 
-      emergencyContactName, emergencyContactNumber, emergencyContactRelation,
-      complianceDocs, drivingPreferences, bio, experience, specialties, employmentHistory
-    } = portal;
-    
-    if (!firstName || !lastName || !dateOfBirth || !address || !email || !phone || !emergencyContactName || !emergencyContactNumber || !emergencyContactRelation) {
-      missing.push("Personal Information");
-    }
-
-    const hasPassportOrDL = complianceDocs.some((d: any) => d.type === "PASSPORT" || d.type === "DRIVERS_LICENSE");
-    const hasDL = complianceDocs.some((d: any) => d.type === "DRIVERS_LICENSE");
-    const hasProofOfAddress = complianceDocs.some((d: any) => d.type === "PROOF_OF_ADDRESS");
-    const hasRightToWork = complianceDocs.some((d: any) => d.type === "RIGHT_TO_WORK");
-    const hasNiProof = complianceDocs.some((d: any) => d.type === "NI_PROOF");
-    
-    let identityValid = hasPassportOrDL && hasProofOfAddress && hasRightToWork && hasNiProof;
-    if (hasDL) {
-       const hasOwnVehiclePref = (drivingPreferences || []).includes("I am happy to transport clients in my own vehicle");
-       if (hasOwnVehiclePref && !complianceDocs.some((d: any) => d.type === "BUSINESS_INSURANCE")) {
-          identityValid = false;
-       }
-    }
-    if (!identityValid) missing.push("Identity Verification");
-
-    if (!bio || !experience || !specialties) missing.push("Professional Information");
-
-    const requiredTraining = ["SAFEGUARDING_ADULTS", "MOVING_AND_HANDLING", "MEDICATION_ADMINISTRATION", "BASIC_LIFE_SUPPORT", "INFECTION_PREVENTION", "HEALTH_AND_SAFETY", "FIRE_SAFETY", "FOOD_HYGIENE", "GDPR"];
-    if (!requiredTraining.every(type => complianceDocs.some((d: any) => d.type === type))) missing.push("Mandatory Care Training");
-
-    const requiredCompliance = ["ENHANCED_DBS", "CV", "REFERENCE_1", "REFERENCE_2"];
-    if (!requiredCompliance.every(type => complianceDocs.some((d: any) => d.type === type)) || !employmentHistory) missing.push("Required Compliance Documents");
-
-    const requiredInsurance = ["PUBLIC_LIABILITY", "PROFESSIONAL_INDEMNITY"];
-    if (!requiredInsurance.every(type => complianceDocs.some((d: any) => d.type === type))) missing.push("Insurance Documents");
-
-    if (!profile?.introVideoUrl) missing.push("Video Introduction");
-
-    return missing;
-  };
-
   const handleNext = async () => {
     if (!isFormComplete) {
-      showErrorToast("Incomplete", "Please agree to all declarations before submitting your profile.");
-      return;
-    }
-    const missingSections = validateAllCompulsoryFields();
-    if (missingSections.length > 0) {
-      showErrorToast("Incomplete Profile", `Please complete the following sections: ${missingSections.join(", ")}`);
+      showErrorToast("Incomplete", "Please agree to all declarations before continuing.");
       return;
     }
 
-    const success = await handleSaveProfile();
-    if (success) {
-      onNext();
-    }
+    onNext();
   };
 
   return (
@@ -102,7 +51,7 @@ export default function StepDeclaration({ portal, onNext, onBack }: Props) {
               <Check className={`absolute w-3.5 h-3.5 text-navy-950 transition-opacity ${declarations.accuracy ? 'opacity-100' : 'opacity-0'}`} />
             </div>
             <span className="text-sm text-gold-100/80 group-hover:text-gold-50 select-none">
-              I declare that all the information provided in this profile is accurate and truthful. (*)
+              I declare that all the information provided in this profile is accurate and truthful. *
             </span>
           </div>
 
@@ -115,7 +64,7 @@ export default function StepDeclaration({ portal, onNext, onBack }: Props) {
               <Check className={`absolute w-3.5 h-3.5 text-navy-950 transition-opacity ${declarations.checks ? 'opacity-100' : 'opacity-0'}`} />
             </div>
             <span className="text-sm text-gold-100/80 group-hover:text-gold-50 select-none">
-              I consent to compliance and reference checks. (*)
+              I consent to compliance and reference checks. *
             </span>
           </div>
 
@@ -128,7 +77,7 @@ export default function StepDeclaration({ portal, onNext, onBack }: Props) {
               <Check className={`absolute w-3.5 h-3.5 text-navy-950 transition-opacity ${declarations.share ? 'opacity-100' : 'opacity-0'}`} />
             </div>
             <span className="text-sm text-gold-100/80 group-hover:text-gold-50 select-none">
-              I consent for my profile information to be shared with prospective clients for matching purposes. (*)
+              I consent for my profile information to be shared with prospective clients for matching purposes. *
             </span>
           </div>
         </div>
@@ -142,9 +91,9 @@ export default function StepDeclaration({ portal, onNext, onBack }: Props) {
           type="button" 
           variant="primary" 
           onClick={handleNext} 
-          disabled={!isFormComplete || isProfileSaving}
+          disabled={!isFormComplete}
         >
-          {isProfileSaving ? "Submitting..." : "Submit Profile for Verification"}
+          Save & Continue
         </Button>
       </div>
     </div>

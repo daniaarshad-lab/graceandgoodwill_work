@@ -135,7 +135,10 @@ export default function StepVideoIntro({ portal, onNext, onBack }: Props) {
           />
 
           <div className="flex-1 space-y-3">
-            <h4 className="text-sm font-semibold text-gold-50">Upload Video Introduction (45s to 1 min) (*)</h4>
+            <h4 className="text-sm font-semibold text-gold-50">Upload Video Introduction (Maximum 1 minute)*</h4>
+            <p className="text-xs text-gold-100/60 mt-1">
+              Videos longer than 1 minute should not be accepted by the system.
+            </p>
             <div className="flex items-start gap-1.5 text-left">
               <AlertCircle className="w-4 h-4 text-gold-DEFAULT shrink-0 mt-0.5" />
               <p className="text-xs text-gold-100/60 leading-relaxed">

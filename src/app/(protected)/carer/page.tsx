@@ -9,6 +9,7 @@ import {
 } from "@/store/slices/carerSlice";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCarerPortal } from "./hooks/useCarerPortal";
+import { showErrorToast } from "@/utils/toast";
 
 import DashboardOverview from "./components/DashboardOverview";
 import ProfileManagement from "./components/ProfileManagement";
@@ -114,6 +115,49 @@ function CarerDashboardContent() {
     
   console.log("[Onboarding Flow] Render check -> isClient:", isClient, "onboardingDone:", onboardingDone, "status:", portal.applicationStatus, "=> showOnboarding:", showOnboarding);
 
+  const validateAllCompulsoryFields = () => {
+    const missing = [];
+    const {
+      firstName, lastName, dateOfBirth, address, email, phone, 
+      emergencyContactName, emergencyContactNumber, emergencyContactRelation,
+      complianceDocs, drivingPreferences, bio, experience, specialties, employmentHistory
+    } = portal;
+    
+    if (!firstName || !lastName || !dateOfBirth || !address || !email || !phone || !emergencyContactName || !emergencyContactNumber || !emergencyContactRelation) {
+      missing.push("Personal Information");
+    }
+
+    const hasPassportOrDL = complianceDocs.some((d: any) => d.type === "PASSPORT" || d.type === "DRIVERS_LICENSE");
+    const hasDL = complianceDocs.some((d: any) => d.type === "DRIVERS_LICENSE");
+    const hasProofOfAddress = complianceDocs.some((d: any) => d.type === "PROOF_OF_ADDRESS");
+    const hasRightToWork = complianceDocs.some((d: any) => d.type === "RIGHT_TO_WORK");
+    const hasNiProof = complianceDocs.some((d: any) => d.type === "NI_PROOF");
+    
+    let identityValid = hasPassportOrDL && hasProofOfAddress && hasRightToWork && hasNiProof;
+    if (hasDL) {
+       const hasOwnVehiclePref = (drivingPreferences || []).includes("I am happy to transport clients in my own vehicle");
+       if (hasOwnVehiclePref && !complianceDocs.some((d: any) => d.type === "BUSINESS_INSURANCE")) {
+          identityValid = false;
+       }
+    }
+    if (!identityValid) missing.push("Identity Verification");
+
+    if (!bio || !experience || !specialties) missing.push("Professional Information");
+
+    const requiredTraining = ["SAFEGUARDING_ADULTS", "MOVING_AND_HANDLING", "MEDICATION_ADMINISTRATION", "BASIC_LIFE_SUPPORT", "INFECTION_PREVENTION", "HEALTH_AND_SAFETY", "FIRE_SAFETY", "FOOD_HYGIENE", "GDPR"];
+    if (!requiredTraining.every((type: string) => complianceDocs.some((d: any) => d.type === type))) missing.push("Mandatory Care Training");
+
+    const requiredCompliance = ["ENHANCED_DBS", "CV", "REFERENCE_1", "REFERENCE_2"];
+    if (!requiredCompliance.every((type: string) => complianceDocs.some((d: any) => d.type === type)) || !employmentHistory) missing.push("Required Compliance Documents");
+
+    const requiredInsurance = ["PUBLIC_LIABILITY", "PROFESSIONAL_INDEMNITY"];
+    if (!requiredInsurance.every((type: string) => complianceDocs.some((d: any) => d.type === type))) missing.push("Insurance Documents");
+
+    if (!profile?.introVideoUrl) missing.push("Video Introduction");
+
+    return missing;
+  };
+
   // Dedicated Onboarding View Flow
   if (showOnboarding) {
     return (
@@ -201,8 +245,26 @@ function CarerDashboardContent() {
 
             {onboardingStep === 11 && (
               <OnboardingMembership
-                onComplete={() => setOnboardingStep(12)}
+                onComplete={async () => {
+                  if (!portal.declarations?.accuracy || !portal.declarations?.checks || !portal.declarations?.share) {
+                    showErrorToast("Incomplete", "Please agree to all declarations before submitting your profile.");
+                    setOnboardingStep(10);
+                    return;
+                  }
+
+                  const missingSections = validateAllCompulsoryFields();
+                  if (missingSections.length > 0) {
+                    showErrorToast("Incomplete Profile", `Please complete the following sections: ${missingSections.join(", ")}`);
+                    return;
+                  }
+
+                  const success = await portal.handleSaveProfile();
+                  if (success) {
+                    setOnboardingStep(12);
+                  }
+                }}
                 onBack={() => setOnboardingStep(10)}
+                isSubmitting={portal.isProfileSaving}
               />
             )}
 

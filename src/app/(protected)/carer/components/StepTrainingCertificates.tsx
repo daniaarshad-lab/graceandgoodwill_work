@@ -38,7 +38,7 @@ export default function StepTrainingCertificates({ portal, onNext, onBack }: Pro
             return (
               <div key={docItem.type} className="p-4 rounded-xl border border-gold-300/10 bg-navy-950/40 flex flex-col gap-2">
                 <div className="flex justify-between items-start">
-                  <span className="text-xs font-medium text-gold-50">{docItem.label} (*)</span>
+                  <span className="text-xs font-medium text-gold-50">{docItem.label} *</span>
                   {doc && (
                     <span className="text-[9px] font-bold text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded-full border border-emerald-500/20">
                       Uploaded

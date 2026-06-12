@@ -39,6 +39,7 @@ export function useCarerPortal({
   const [specialties, setSpecialties] = useState("");
   const [experience, setExperience] = useState("");
   const [address, setAddress] = useState("");
+  const [postcode, setPostcode] = useState("");
   const [canDrive, setCanDrive] = useState<"yes" | "no" | "">("");
   const [hasBusinessInsurance, setHasBusinessInsurance] = useState<"yes" | "no" | "">("");
 
@@ -63,6 +64,7 @@ export function useCarerPortal({
       setSpecialties(profile.careSpecialties ?? "");
       setExperience(profile.experience ?? "");
       setAddress(profile.address ?? "");
+      setPostcode(profile.postcode ?? "");
       setCanDrive(profile.canDrive === true ? "yes" : profile.canDrive === false ? "no" : "");
       
       if (profile.emergencyContactName) setEmergencyContactName(profile.emergencyContactName);
@@ -117,8 +119,8 @@ export function useCarerPortal({
 
   const dispatch = useAppDispatch();
 
-  const handleSaveProfile = async (e: React.FormEvent): Promise<boolean> => {
-    e.preventDefault();
+  const handleSaveProfile = async (e?: React.FormEvent): Promise<boolean> => {
+    if (e) e.preventDefault();
 
     const formData = {
       experience,
@@ -144,6 +146,7 @@ export function useCarerPortal({
       careSpecialties: specialties,
       experience,
       address,
+      postcode,
       canDrive: canDrive === "yes" ? true : canDrive === "no" ? false : undefined,
       hasBusinessInsurance: hasBusinessInsurance === "yes" ? true : hasBusinessInsurance === "no" ? false : undefined,
       dateOfBirth,
@@ -276,6 +279,65 @@ export function useCarerPortal({
       showErrorToast("Upload Failed", errorMsg);
     } finally {
       setUploadingDocType(null);
+    }
+  };
+
+  const stageDocUpload = (
+    type: string,
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const allowedTypes = [
+      "application/pdf",
+      "image/png",
+      "image/jpeg",
+      "image/jpg",
+    ];
+    const allowedExtensions = [".pdf", ".png", ".jpg", ".jpeg"];
+    const fileExtension = "." + file.name.split(".").pop()?.toLowerCase();
+
+    if (
+      !allowedTypes.includes(file.type) &&
+      !allowedExtensions.includes(fileExtension)
+    ) {
+      showErrorToast(
+        "Invalid Format",
+        "Invalid file type. Only PDF, PNG, and JPG/JPEG document uploads are allowed.",
+      );
+      return;
+    }
+
+    const maxDocSize = 10 * 1024 * 1024;
+    if (file.size > maxDocSize) {
+      showErrorToast(
+        "File Too Large",
+        `File "${file.name}" is too large. Maximum allowed size is 10 MB.`,
+      );
+      return;
+    }
+
+    const key = type.toLowerCase();
+    setSelectedFiles((prev) => ({ ...prev, [key]: file }));
+  };
+
+  const handleStepBatchUpload = async (step: number) => {
+    if (Object.keys(selectedFiles).length === 0) return true; // Nothing to upload, allow proceed
+    
+    try {
+      // @ts-ignore
+      await dispatch(uploadCarerStepDocuments({ step, files: selectedFiles })).unwrap();
+      showSuccessToast(
+        "Documents Uploaded",
+        `Step ${step} documents successfully uploaded.`,
+      );
+      setSelectedFiles({});
+      dispatch(fetchCarerDocuments());
+      return true;
+    } catch (error: any) {
+      showErrorToast("Upload Failed", error || "Failed to upload step documents.");
+      return false;
     }
   };
 
@@ -415,6 +477,8 @@ export function useCarerPortal({
     setExperience,
     address,
     setAddress,
+    postcode,
+    setPostcode,
     canDrive,
     setCanDrive,
     hasBusinessInsurance,
@@ -453,7 +517,9 @@ export function useCarerPortal({
     docToDelete,
     setDocToDelete,
     handleDocUpload,
+    stageDocUpload,
     handleBatchUpload,
+    handleStepBatchUpload,
     selectedFiles,
     handleDeleteDoc,
     handleUpdateDoc,

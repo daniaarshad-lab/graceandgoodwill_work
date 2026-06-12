@@ -6,14 +6,26 @@ import adminReducer from "./slices/adminSlice";
 import notificationReducer from "./slices/notificationSlice";
 import { toastMiddleware } from "./toastMiddleware";
 
+import { combineReducers } from "@reduxjs/toolkit";
+
+const appReducer = combineReducers({
+  auth: authReducer,
+  carer: carerReducer,
+  client: clientReducer,
+  admin: adminReducer,
+  notification: notificationReducer,
+});
+
+const rootReducer = (state: any, action: any) => {
+  if (action.type === "auth/logout/fulfilled") {
+    // Reset state to initial state on logout
+    state = undefined;
+  }
+  return appReducer(state, action);
+};
+
 export const store = configureStore({
-  reducer: {
-    auth: authReducer,
-    carer: carerReducer,
-    client: clientReducer,
-    admin: adminReducer,
-    notification: notificationReducer,
-  },
+  reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,

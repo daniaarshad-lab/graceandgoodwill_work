@@ -43,6 +43,8 @@ export const authService = {
   async logout(): Promise<void> {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
+    localStorage.removeItem("carer_onboarding_step");
+    localStorage.removeItem("carer_onboarding_done");
   },
 
   async getMe() {
@@ -63,6 +65,8 @@ export const authService = {
       if (typeof window !== "undefined") {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
+        localStorage.removeItem("carer_onboarding_step");
+        localStorage.removeItem("carer_onboarding_done");
       }
       throw error;
     }

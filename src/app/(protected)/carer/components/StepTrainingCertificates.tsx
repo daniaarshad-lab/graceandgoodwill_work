@@ -2,6 +2,7 @@ import React from "react";
 import SectionCard from "./shared/SectionCard";
 import Button from "@/components/Button";
 import { ComplianceDoc } from "../types/carer.types";
+import { showErrorToast } from "@/utils/toast";
 
 interface Props {
   portal: any;
@@ -10,7 +11,7 @@ interface Props {
 }
 
 export default function StepTrainingCertificates({ portal, onNext, onBack }: Props) {
-  const { complianceDocs, handleDocUpload, handleUpdateDoc } = portal;
+  const { complianceDocs, stageDocUpload, handleUpdateDoc, selectedFiles } = portal;
 
   const trainingDocs = [
     { type: "SAFEGUARDING_ADULTS", label: "Safeguarding Adults" },
@@ -24,6 +25,15 @@ export default function StepTrainingCertificates({ portal, onNext, onBack }: Pro
     { type: "GDPR", label: "GDPR / Data Protection" },
   ];
 
+  const handleNext = async (e: React.MouseEvent) => {
+    e.preventDefault();
+
+    const success = await portal.handleStepBatchUpload(5);
+    if (success) {
+      onNext();
+    }
+  };
+
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       <SectionCard className="space-y-6 p-6 md:p-8">
@@ -31,22 +41,33 @@ export default function StepTrainingCertificates({ portal, onNext, onBack }: Pro
           Mandatory Care Training Certificates
         </h3>
         <p className="text-sm text-gold-100/60 mb-4">Please upload your valid training certificates for the following compulsory modules:</p>
+        
+        <div className="bg-red-950/20 p-3 rounded-lg border border-red-900/30 mb-6">
+          <p className="text-xs text-red-400 leading-relaxed font-medium">
+            * Important: Please ensure all uploaded certificates are in-date and have not expired. Out-of-date documents will not be accepted.
+          </p>
+        </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {trainingDocs.map((docItem) => {
             const doc = complianceDocs.find((d: ComplianceDoc) => d.type === docItem.type);
+            const isStaged = !!selectedFiles[docItem.type.toLowerCase()];
             return (
               <div key={docItem.type} className="p-4 rounded-xl border border-gold-300/10 bg-navy-950/40 flex flex-col gap-2">
                 <div className="flex justify-between items-start">
                   <span className="text-xs font-medium text-gold-50">{docItem.label} *</span>
-                  {doc && (
+                  {doc ? (
                     <span className="text-[9px] font-bold text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded-full border border-emerald-500/20">
                       Uploaded
                     </span>
-                  )}
+                  ) : isStaged ? (
+                    <span className="text-[9px] font-bold text-gold-400 bg-gold-500/10 px-1.5 py-0.5 rounded-full border border-gold-500/20">
+                      Selected
+                    </span>
+                  ) : null}
                 </div>
                 <label className="cursor-pointer text-[11px] font-semibold text-gold-DEFAULT hover:text-gold-200 inline-block mt-auto pt-2">
-                  {doc ? "Update File" : "Choose File"}
+                  {doc ? "Update File" : isStaged ? "Change Selected" : "Choose File"}
                   <input 
                     type="file" 
                     accept=".pdf,.png,.jpg,.jpeg" 
@@ -55,7 +76,7 @@ export default function StepTrainingCertificates({ portal, onNext, onBack }: Pro
                       if (doc) {
                         handleUpdateDoc(doc.id, docItem.type, e);
                       } else {
-                        handleDocUpload(docItem.type, e);
+                        stageDocUpload(docItem.type, e);
                       }
                     }} 
                   />
@@ -68,7 +89,7 @@ export default function StepTrainingCertificates({ portal, onNext, onBack }: Pro
 
       <div className="flex justify-between items-center pt-4 gap-4">
         <Button type="button" variant="ghost-gold" onClick={onBack}>Back</Button>
-        <Button type="button" variant="primary" onClick={onNext}>Save & Continue</Button>
+        <Button type="button" variant="primary" onClick={handleNext}>Save & Continue</Button>
       </div>
     </div>
   );

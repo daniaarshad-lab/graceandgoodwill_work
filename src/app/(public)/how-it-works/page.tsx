@@ -71,7 +71,7 @@ export default function HowItWorksPage() {
           <div className="flex items-center justify-center gap-4 mb-8">
             <div className="h-px w-10 bg-gradient-to-r from-transparent to-gold-400/50" />
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight  text-gold-100">
-              Simple to begin. Supportive throughout.
+              Simple to begin,supportive throughout
             </h1>
             <div className="h-px w-10 bg-gradient-to-l from-transparent text-gold-100" />
           </div>

@@ -65,7 +65,8 @@ function CarerDashboardContent() {
 
   useEffect(() => {
     setIsClient(true);
-    const localStorageDone = localStorage.getItem("carer_onboarding_done") === "true";
+    if (!user?.id) return;
+    const localStorageDone = localStorage.getItem(`carer_onboarding_done_${user.id}`) === "true";
     
     console.log("[Onboarding Flow] isOnboardingParam:", isOnboardingParam);
     console.log("[Onboarding Flow] localStorageDone:", localStorageDone);
@@ -73,7 +74,7 @@ function CarerDashboardContent() {
     if (isOnboardingParam) {
       // Force onboarding if explicitly requested by URL
       setOnboardingDone(false);
-      localStorage.removeItem("carer_onboarding_done");
+      localStorage.removeItem(`carer_onboarding_done_${user.id}`);
       console.log("[Onboarding Flow] Setting onboardingDone to FALSE due to query param.");
     } else {
       setOnboardingDone(localStorageDone);
@@ -81,7 +82,7 @@ function CarerDashboardContent() {
     }
 
     if (profile && !initialStepSet) {
-      const savedStep = localStorage.getItem("carer_onboarding_step");
+      const savedStep = localStorage.getItem(`carer_onboarding_step_${user.id}`);
       if (savedStep) {
         setOnboardingStep(parseInt(savedStep, 10));
       } else {
@@ -102,13 +103,13 @@ function CarerDashboardContent() {
       }
       setInitialStepSet(true);
     }
-  }, [profile, documents, isOnboardingParam, initialStepSet]);
+  }, [profile, documents, isOnboardingParam, initialStepSet, user?.id]);
 
   useEffect(() => {
-    if (initialStepSet) {
-      localStorage.setItem("carer_onboarding_step", onboardingStep.toString());
+    if (initialStepSet && user?.id) {
+      localStorage.setItem(`carer_onboarding_step_${user.id}`, onboardingStep.toString());
     }
-  }, [onboardingStep, initialStepSet]);
+  }, [onboardingStep, initialStepSet, user?.id]);
 
   const showOnboarding =
     isClient && !onboardingDone && portal.applicationStatus !== "approved";
@@ -287,8 +288,10 @@ function CarerDashboardContent() {
                 <div className="flex flex-col items-center gap-5 w-full">
                   <button
                     onClick={() => {
-                      localStorage.setItem("carer_onboarding_done", "true");
-                      localStorage.removeItem("carer_onboarding_step");
+                      if (user?.id) {
+                        localStorage.setItem(`carer_onboarding_done_${user.id}`, "true");
+                        localStorage.removeItem(`carer_onboarding_step_${user.id}`);
+                      }
                       setOnboardingDone(true);
                       if (isOnboardingParam) {
                         router.replace("/carer");

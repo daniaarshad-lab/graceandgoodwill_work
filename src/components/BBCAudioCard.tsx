@@ -103,7 +103,7 @@ export default function BBCAudioCard() {
 
         <div className="relative z-20 flex flex-col space-y-4 sm:space-y-5 mt-auto mb-0">
           <h3 className="text-lg font-bold text-gold-50 drop-shadow-lg leading-tight">
-            Exclusive BBC Care Interviews
+            Exclusive BBC Radio Interview
           </h3>
 
           <div className="flex gap-2">

@@ -3,6 +3,7 @@ import SectionCard from "./shared/SectionCard";
 import Button from "@/components/Button";
 import { ComplianceDoc } from "../types/carer.types";
 import { Check } from "lucide-react";
+import { showErrorToast } from "@/utils/toast";
 
 interface Props {
   portal: any;
@@ -13,7 +14,7 @@ interface Props {
 export default function StepIdentityVerification({ portal, onNext, onBack }: Props) {
   const {
     drivingPreferences, setDrivingPreferences,
-    complianceDocs, handleDocUpload, handleUpdateDoc
+    complianceDocs, handleUpdateDoc, selectedFiles
   } = portal;
 
   const drivingOptions = [
@@ -22,6 +23,27 @@ export default function StepIdentityVerification({ portal, onNext, onBack }: Pro
   ];
 
   const safePreferences = drivingPreferences || [];
+  const hasOwnVehiclePref = safePreferences.includes(drivingOptions[0]);
+
+  const handleNext = async (e: React.MouseEvent) => {
+    e.preventDefault();
+
+    // Save driving preferences
+    const syntheticEvent = { preventDefault: () => {} } as React.FormEvent;
+    await portal.handleSaveProfile(syntheticEvent);
+
+    const success = await portal.handleStepBatchUpload(2);
+    if (success) {
+      onNext();
+    }
+  };
+
+  // const drivingOptions = [
+  //   "I am happy to transport clients in my own vehicle",
+  //   "I am happy to drive a client's vehicle (subject to the client's insurance arrangements)"
+  // ];
+
+  // const safePreferences = drivingPreferences || [];
 
   const handlePreferenceToggle = (pref: string) => {
     setDrivingPreferences((prev: string[]) => {
@@ -30,8 +52,7 @@ export default function StepIdentityVerification({ portal, onNext, onBack }: Pro
     });
   };
 
-  const hasOwnVehiclePref = safePreferences.includes(drivingOptions[0]);
-  const hasDrivingLicence = complianceDocs.some((d: ComplianceDoc) => d.type === "DRIVERS_LICENSE");
+  const hasDrivingLicence = complianceDocs.some((d: ComplianceDoc) => d.type === "DRIVERS_LICENSE") || !!selectedFiles["drivers_license"];
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
@@ -123,29 +144,34 @@ export default function StepIdentityVerification({ portal, onNext, onBack }: Pro
 
       <div className="flex justify-between items-center pt-4 gap-4">
         <Button type="button" variant="ghost-gold" onClick={onBack}>Back</Button>
-        <Button type="button" variant="primary" onClick={onNext}>Save & Continue</Button>
+        <Button type="button" variant="primary" onClick={handleNext}>Save & Continue</Button>
       </div>
     </div>
   );
 }
 
 function DocUploadRow({ label, type, portal, children }: { label: string, type: string, portal: any, children?: React.ReactNode }) {
-  const { complianceDocs, handleDocUpload, handleUpdateDoc } = portal;
+  const { complianceDocs, stageDocUpload, handleUpdateDoc, selectedFiles } = portal;
   const doc = complianceDocs.find((d: ComplianceDoc) => d.type === type);
+  const isStaged = !!selectedFiles[type.toLowerCase()];
   
   return (
     <div className="p-4 rounded-xl border border-gold-300/10 bg-navy-950/40 flex flex-col gap-2">
       <div className="flex justify-between items-start">
         <span className="text-sm font-medium text-gold-50">{label}</span>
-        {doc && (
+        {doc ? (
           <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20 shrink-0 ml-2">
             Uploaded
           </span>
-        )}
+        ) : isStaged ? (
+          <span className="text-[10px] font-bold text-gold-400 bg-gold-500/10 px-2 py-0.5 rounded-full border border-gold-500/20 shrink-0 ml-2">
+            Selected
+          </span>
+        ) : null}
       </div>
       {children && <div className="text-[11px] leading-relaxed">{children}</div>}
       <label className="cursor-pointer text-xs font-semibold text-gold-DEFAULT hover:text-gold-200 inline-block mt-1">
-        {doc ? "Update File" : "Choose File"}
+        {doc ? "Update File" : isStaged ? "Change Selected" : "Choose File"}
         <input 
           type="file" 
           accept=".pdf,.png,.jpg,.jpeg" 
@@ -154,7 +180,7 @@ function DocUploadRow({ label, type, portal, children }: { label: string, type: 
             if (doc) {
               handleUpdateDoc(doc.id, type, e);
             } else {
-              handleDocUpload(type, e);
+              stageDocUpload(type, e);
             }
           }} 
         />

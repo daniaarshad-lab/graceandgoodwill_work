@@ -38,27 +38,34 @@ function StaticSiteHeader() {
             height={48}
             className="h-8 w-8 sm:h-12 sm:w-12 object-contain drop-shadow-elegant transition-transform duration-300 group-hover:scale-105"
           />
-          <span
-            className="
-          font-['Cinzel']
-          text-[14px]
-          sm:text-[20px]
-          font-medium
-          tracking-[0.15em]
-          sm:tracking-[0.25em]
-          uppercase
-          text-[#D4AF7A]
-          transition-colors
-          group-hover:text-[#E5C79A]
-        "
-            style={{
-              textShadow: "0 1px 2px rgba(0,0,0,0.4)",
-            }}
-          >
-            GRACE & GOODWILL
-                      <p className="mx-2 text-sm font-medium  text-[#c7ae85] font-sans tracking-[2.5px]">Care Defined By Integrity</p>
-
-          </span>
+          <div className="flex flex-col items-center justify-center">
+            <span
+              className="
+                font-['Cinzel']
+                text-[14px]
+                sm:text-[20px]
+                font-medium
+                tracking-[0.15em]
+                sm:tracking-[0.25em]
+                uppercase
+                text-[#D4AF7A]
+                transition-colors
+                group-hover:text-[#E5C79A]
+              "
+              style={{
+                textShadow: "0 1px 2px rgba(0,0,0,0.4)",
+              }}
+            >
+              GRACE & GOODWILL
+            </span>
+            <div className="flex items-center gap-2 sm:gap-3 mt-0.5">
+              <div className="h-[1px] w-4 sm:w-8 lg:w-12 bg-gradient-to-r from-transparent to-[#c7ae85]/70"></div>
+              <span className="text-[9px] sm:text-[10px] font-medium text-[#c7ae85] font-sans tracking-[0.15em] sm:tracking-[0.25em] uppercase whitespace-nowrap">
+                Care Defined By Integrity
+              </span>
+              <div className="h-[1px] w-4 sm:w-8 lg:w-12 bg-gradient-to-l from-transparent to-[#c7ae85]/70"></div>
+            </div>
+          </div>
           
         </Link>
 

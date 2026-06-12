@@ -23,7 +23,7 @@ const ONBOARDING_STEPS: StepItem[] = [
   { id: 8, label: "Additional", description: "Quals" },
   { id: 9, label: "Video", description: "Intro" },
   { id: 10, label: "Declaration", description: "Consent" },
-  { id: 11, label: "Membership", description: "Plan" },
+  { id: 11, label: "Service Options", description: "Plan" },
   { id: 12, label: "Complete", description: "Ready" },
 ];
 

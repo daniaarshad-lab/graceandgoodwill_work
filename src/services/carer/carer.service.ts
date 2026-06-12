@@ -114,6 +114,30 @@ export const carerService = {
     });
   },
 
+  async uploadStepDocuments(step: number, files: Record<string, File>) {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    const formData = new FormData();
+    Object.entries(files).forEach(([key, file]) => {
+      formData.append(key, file);
+    });
+
+    return apiFetch(`/carer/profile/documents/step-${step}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+  },
+
   async getDocuments() {
     const token =
       typeof window !== "undefined"

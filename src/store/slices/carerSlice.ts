@@ -124,6 +124,18 @@ export const uploadCarerDocuments = createAsyncThunk<
   }
 });
 
+export const uploadCarerStepDocuments = createAsyncThunk<
+  CarerDocument[],
+  { step: number; files: Record<string, File> },
+  { rejectValue: string }
+>("carer/uploadStepDocuments", async ({ step, files }, { rejectWithValue }) => {
+  try {
+    return await carerService.uploadStepDocuments(step, files);
+  } catch (error: any) {
+    return rejectWithValue(error?.message || `Failed to upload documents for step ${step}`);
+  }
+});
+
 export const updateCarerDocument = createAsyncThunk<
   CarerDocument,
   { id: string; file: File; category: string },
@@ -277,6 +289,21 @@ const carerSlice = createSlice({
       .addCase(uploadCarerDocuments.rejected, (state, action) => {
         state.batchUploading = false;
         state.error = action.payload || "Failed to upload documents";
+      })
+
+      .addCase(uploadCarerStepDocuments.pending, (state) => {
+        state.batchUploading = true;
+        state.error = null;
+      })
+      .addCase(
+        uploadCarerStepDocuments.fulfilled,
+        (state) => {
+          state.batchUploading = false;
+        },
+      )
+      .addCase(uploadCarerStepDocuments.rejected, (state, action) => {
+        state.batchUploading = false;
+        state.error = action.payload || "Failed to upload step documents";
       })
 
       .addCase(updateCarerDocument.pending, (state) => {

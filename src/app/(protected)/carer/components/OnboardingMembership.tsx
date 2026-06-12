@@ -29,7 +29,7 @@ export default function OnboardingMembership({
         "Direct chat with clients",
         "Basic document storage",
       ],
-      buttonText: "Choose Basic",
+      buttonText: "Continue Without a Paid Subscription \u2192",
       popular: false,
     },
     {
@@ -69,7 +69,7 @@ export default function OnboardingMembership({
       <SectionCard className="max-w-5xl mx-auto space-y-8 p-6 md:p-10 border border-gold-300/10 bg-gradient-to-b from-navy-900/60 to-navy-950/80 shadow-elegant">
       <div className="text-center space-y-2 max-w-2xl mx-auto">
         <h3 className="text-2xl font-bold text-gold-50">
-          Choose Your Membership Plan
+          Choose Your Service Option
         </h3>
         <p className="text-xs text-gold-100/60 leading-relaxed">
           Select the node tier that fits your professional schedule. You can upgrade, downgrade, or cancel at any time.
@@ -147,7 +147,9 @@ export default function OnboardingMembership({
                     setSelectedPlan(plan.name);
                   }}
                   disabled={isSubmitting}
-                  className={`w-full py-3 rounded-xl text-[13px] font-bold tracking-wide transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-navy-950 ${
+                  className={`w-full py-3 px-2 rounded-xl font-bold tracking-wide transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-navy-950 ${
+                    plan.name === "Basic Node" ? "text-[11px] whitespace-normal leading-snug" : "text-[13px]"
+                  } ${
                     isSelected
                       ? "bg-gradient-to-b from-gold-200 to-gold-100 text-navy-950 shadow-[0_4px_15px_rgba(212,175,55,0.3)]"
                       : plan.popular
@@ -162,22 +164,9 @@ export default function OnboardingMembership({
           );
         })}
       </div>
-
-      <div className="pt-6 pb-2 text-center">
-        <button 
-          onClick={() => {
-            setSelectedPlan(null);
-            onComplete();
-          }}
-          disabled={isSubmitting}
-          className={`text-[12px] font-medium text-gold-100/50 hover:text-gold-200 hover:underline transition-colors tracking-wide ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
-        >
-          {isSubmitting ? "Submitting..." : "Continue Without a Membership Subscription \u2192"}
-        </button>
-      </div>
     </SectionCard>
 
-      <div className="flex flex-col sm:flex-row justify-between items-center pt-6 gap-4 max-w-5xl mx-auto w-full">
+    <div className="flex flex-col sm:flex-row justify-between items-center pt-6 gap-4 max-w-5xl mx-auto w-full">
         <Button 
           type="button" 
           variant="ghost-gold" 

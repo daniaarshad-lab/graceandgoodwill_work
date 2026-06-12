@@ -139,13 +139,11 @@ export default function HomePage() {
           {/* Card 2: BBC Audio Feature */}
           <BBCAudioCard />
           {/* Card 1: BDaily Press Feature */}
-          <div className="group rounded-[2rem] border border-gold-300/10 bg-navy-900/60 shadow-elegant backdrop-blur-lg hover:border-gold-300/20 hover:-translate-y-1 transition-all duration-300 flex flex-col h-full relative overflow-hidden z-0 group/media">
-
-            <div className="relative w-full flex-grow flex flex-col justify-between p-8">
-              {/* Background Image restricted to top section */}
+          <div className="group rounded-[2rem] border border-gold-300/10 bg-navy-900/60 shadow-elegant backdrop-blur-lg hover:border-gold-300/20 transition-all duration-300 flex flex-col h-full overflow-hidden">
+            <div className="relative w-full flex-grow flex flex-col justify-between p-6 sm:p-8 min-h-[340px] group/media">
               <div className="absolute inset-0 z-0">
                 <div className="absolute inset-0 bg-navy-950/20 mix-blend-multiply z-10 pointer-events-none" />
-                <div className="absolute inset-0 bg-gradient-to-t from-navy-950/95 via-navy-950/50 to-transparent z-10 pointer-events-none transition-opacity duration-500" />
+                <div className="absolute inset-0 bg-gradient-to-t from-navy-950 via-navy-950/80 via-40% to-transparent z-10 pointer-events-none transition-opacity duration-500" />
                 <Image
                   src={bbcImage2}
                   alt="BDaily Press Feature"
@@ -154,31 +152,26 @@ export default function HomePage() {
                 />
               </div>
 
-              <div className="space-y-6 relative z-10 h-full flex flex-col">
-                {/* Card Header & Badge */}
-                <div className="flex justify-between items-center">
-                  <span className="px-3.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-gold-muted/10 text-gold-200 border border-gold-muted/20">
-                    BDaily
-                  </span>
+              <div className="relative z-20 flex justify-center items-center w-full">
+                <span className="px-3.5 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest bg-navy-950/70 backdrop-blur-md text-gold-300 border border-gold-400/20 flex items-center gap-1.5 shadow-sm">
+                  <Newspaper className="w-3.5 h-3.5 text-gold-300/80" />
+                  BDaily Press Feature
+                </span>
+              </div>
 
-                  <Newspaper className="w-5 h-5 text-gold-300/40 group-hover:text-gold-300 transition-colors" />
-                </div>
-
-                <div className="space-y-2 mt-auto mb-0">
-                  <h3 className="text-lg font-bold text-gold-100 group-hover:text-gold-50 transition-colors drop-shadow-md">
-                    Gateshead Care Firm Grows From Lived Experience
-                  </h3>
-                  <p className="text-xs text-gold-100/60 leading-relaxed drop-shadow-md">
-                    Read how Grace & Goodwill expands its impact by drawing on
-                    personal, lived experiences to deliver high-quality,
-                    compassionate live-in care support.
-                  </p>
-                </div>
+              <div className="relative z-20 flex flex-col space-y-2 mt-auto mb-0 pt-16">
+                <h3 className="text-lg font-bold text-gold-100 group-hover:text-gold-50 transition-colors drop-shadow-md leading-tight">
+                  Gateshead Care Firm Grows From Lived Experience
+                </h3>
+                <p className="text-xs text-gold-100/80 leading-relaxed drop-shadow-md">
+                  Read how Grace & Goodwill expands its impact by drawing on
+                  personal, lived experiences to deliver high-quality,
+                  compassionate live-in care support.
+                </p>
               </div>
             </div>
 
-            {/* Bottom Dark Blue Panel */}
-            <div className="px-8 pb-8 pt-5 bg-gradient-to-b from-navy-950/95 to-navy-900/90 relative z-10 shrink-0">
+            <div className="px-6 pb-6 pt-4 sm:px-8 sm:pb-8 sm:pt-5 bg-gradient-to-b from-navy-950/95 to-navy-900/90 relative z-10 shrink-0">
               <Button asChild variant="secondary" size="sm" fullWidth>
                 <a
                   href="https://bdaily.co.uk/articles/2025/08/17/gateshead-care-firm-grows-from-lived-experience"
@@ -194,21 +187,11 @@ export default function HomePage() {
           </div>
 
           {/* Card 3: Regional Press Feature */}
-          <div className="group rounded-[2rem] border border-gold-300/10 bg-navy-900/60 p-8 shadow-elegant backdrop-blur-lg hover:border-gold-300/20 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between space-y-8 h-full">
-            <div className="space-y-6">
-              {/* Card Header & Badge */}
-              <div className="flex justify-between items-center">
-                <span className="px-3.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-gold-muted/10 text-gold-200 border border-gold-muted/20">
-                  Press Feature
-                </span>
-
-                <Newspaper className="w-5 h-5 text-gold-300/40 group-hover:text-gold-300 transition-colors" />
-              </div>
-
-              {/* Graphic Element: Premium Image Block */}
-              <div className="h-32 rounded-2xl relative overflow-hidden border border-gold-300/10 group-hover:border-gold-300/30 transition-colors duration-500 group/media">
+          <div className="group rounded-[2rem] border border-gold-300/10 bg-navy-900/60 shadow-elegant backdrop-blur-lg hover:border-gold-300/20 transition-all duration-300 flex flex-col h-full overflow-hidden">
+            <div className="relative w-full flex-grow flex flex-col justify-between p-6 sm:p-8 min-h-[340px] group/media">
+              <div className="absolute inset-0 z-0">
                 <div className="absolute inset-0 bg-navy-950/20 mix-blend-multiply z-10 pointer-events-none" />
-                <div className="absolute inset-0 bg-gradient-to-t from-navy-950/95 via-navy-950/50 to-transparent z-10 pointer-events-none transition-opacity duration-500" />
+                <div className="absolute inset-0 bg-gradient-to-t from-navy-950 via-navy-950/80 via-40% to-transparent z-10 pointer-events-none transition-opacity duration-500" />
                 <Image
                   src={bbcImage3}
                   alt="Press Feature"
@@ -217,11 +200,18 @@ export default function HomePage() {
                 />
               </div>
 
-              <div className="space-y-2">
-                <h3 className="text-lg font-bold text-gold-100 group-hover:text-gold-50 transition-colors">
+              <div className="relative z-20 flex justify-center items-center w-full">
+                <span className="px-3.5 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest bg-navy-950/70 backdrop-blur-md text-gold-300 border border-gold-400/20 flex items-center gap-1.5 shadow-sm">
+                  <Newspaper className="w-3.5 h-3.5 text-gold-300/80" />
+                  Press Feature
+                </span>
+              </div>
+
+              <div className="relative z-20 flex flex-col space-y-2 mt-auto mb-0 pt-16">
+                <h3 className="text-lg font-bold text-gold-100 group-hover:text-gold-50 transition-colors drop-shadow-md leading-tight">
                   Redefining Care Standards
                 </h3>
-                <p className="text-xs text-gold-100/60 leading-relaxed">
+                <p className="text-xs text-gold-100/80 leading-relaxed drop-shadow-md">
                   Review the media publication documenting the launch of Grace &
                   Goodwill&apos;s client-centric alignment framework and our
                   dedication to continuity of support.
@@ -229,17 +219,19 @@ export default function HomePage() {
               </div>
             </div>
 
-            <Button asChild variant="secondary" size="sm" fullWidth>
-              <a
-                href="https://www.ne-bic.co.uk/customer-stories/aurea-launches-compassionate-care-company-shaped-by-lived-experience/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="gap-2"
-              >
-                <ExternalLink className="w-4 h-4" />
-                Read Article
-              </a>
-            </Button>
+            <div className="px-6 pb-6 pt-4 sm:px-8 sm:pb-8 sm:pt-5 bg-gradient-to-b from-navy-950/95 to-navy-900/90 relative z-10 shrink-0">
+              <Button asChild variant="secondary" size="sm" fullWidth>
+                <a
+                  href="https://www.ne-bic.co.uk/customer-stories/aurea-launches-compassionate-care-company-shaped-by-lived-experience/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="gap-2"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  Read Article
+                </a>
+              </Button>
+            </div>
           </div>
         </div>
       </section>

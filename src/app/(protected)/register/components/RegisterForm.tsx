@@ -103,7 +103,7 @@ export default function RegisterForm() {
             fullWidth
             className="py-2.5 rounded-lg font-semibold"
           >
-            Family / Client
+            Family or Client
           </Button>
           <Button
             type="button"

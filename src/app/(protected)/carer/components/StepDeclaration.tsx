@@ -25,13 +25,14 @@ export default function StepDeclaration({ portal, onNext, onBack }: Props) {
 
   const profile = useAppSelector((state) => state.carer.profile);
 
-  const handleNext = async () => {
-    if (!isFormComplete) {
-      showErrorToast("Incomplete", "Please agree to all declarations before continuing.");
-      return;
-    }
+  const handleNext = async (e: React.MouseEvent) => {
+    e.preventDefault();
 
-    onNext();
+    const syntheticEvent = { preventDefault: () => {} } as React.FormEvent;
+    const success = await portal.handleSaveProfile(syntheticEvent);
+    if (success) {
+      onNext();
+    }
   };
 
   return (

@@ -42,6 +42,21 @@ export function useCarerPortal({
   const [canDrive, setCanDrive] = useState<"yes" | "no" | "">("");
   const [hasBusinessInsurance, setHasBusinessInsurance] = useState<"yes" | "no" | "">("");
 
+  // New Fields
+  const [dateOfBirth, setDateOfBirth] = useState(user?.dateOfBirth || "");
+  const [emergencyContactName, setEmergencyContactName] = useState("");
+  const [emergencyContactNumber, setEmergencyContactNumber] = useState("");
+  const [emergencyContactRelation, setEmergencyContactRelation] = useState("");
+  const [drivingPreferences, setDrivingPreferences] = useState<string[]>([]);
+  const [dbsUpdateServiceNumber, setDbsUpdateServiceNumber] = useState("");
+  const [employmentHistory, setEmploymentHistory] = useState("");
+  const [declarations, setDeclarations] = useState({
+    accuracy: false,
+    checks: false,
+    share: false,
+  });
+
+
   useEffect(() => {
     if (profile) {
       setBio(profile.bio ?? "");
@@ -49,6 +64,14 @@ export function useCarerPortal({
       setExperience(profile.experience ?? "");
       setAddress(profile.address ?? "");
       setCanDrive(profile.canDrive === true ? "yes" : profile.canDrive === false ? "no" : "");
+      
+      if (profile.emergencyContactName) setEmergencyContactName(profile.emergencyContactName);
+      if (profile.emergencyContactNumber) setEmergencyContactNumber(profile.emergencyContactNumber);
+      if (profile.emergencyContactRelation) setEmergencyContactRelation(profile.emergencyContactRelation);
+      if (profile.drivingPreferences) setDrivingPreferences(profile.drivingPreferences);
+      if (profile.dbsUpdateServiceNumber) setDbsUpdateServiceNumber(profile.dbsUpdateServiceNumber);
+      if (profile.employmentHistory) setEmploymentHistory(profile.employmentHistory as string);
+      if (profile.declarations) setDeclarations(profile.declarations as any);
 
     }
   }, [profile]);
@@ -123,6 +146,14 @@ export function useCarerPortal({
       address,
       canDrive: canDrive === "yes" ? true : canDrive === "no" ? false : undefined,
       hasBusinessInsurance: hasBusinessInsurance === "yes" ? true : hasBusinessInsurance === "no" ? false : undefined,
+      dateOfBirth,
+      emergencyContactName,
+      emergencyContactNumber,
+      emergencyContactRelation,
+      drivingPreferences,
+      dbsUpdateServiceNumber,
+      employmentHistory,
+      declarations,
     };
 
     try {
@@ -219,7 +250,7 @@ export function useCarerPortal({
         });
       }, 100);
 
-      const category = categoryMap[type];
+      const category = categoryMap[type] || type;
 
       await dispatch(uploadCarerDocument({ file, category })).unwrap();
 
@@ -388,6 +419,23 @@ export function useCarerPortal({
     setCanDrive,
     hasBusinessInsurance,
     setHasBusinessInsurance,
+
+    dateOfBirth,
+    setDateOfBirth,
+    emergencyContactName,
+    setEmergencyContactName,
+    emergencyContactNumber,
+    setEmergencyContactNumber,
+    emergencyContactRelation,
+    setEmergencyContactRelation,
+    drivingPreferences,
+    setDrivingPreferences,
+    dbsUpdateServiceNumber,
+    setDbsUpdateServiceNumber,
+    employmentHistory,
+    setEmploymentHistory,
+    declarations,
+    setDeclarations,
 
     profileErrors,
     isProfileSaving,

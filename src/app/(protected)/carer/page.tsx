@@ -18,7 +18,15 @@ import UploadDocumentModal from "./components/UploadDocumentModal";
 import PortalHeader from "./components/PortalHeader";
 import PortalTabs from "./components/PortalTabs";
 import OnboardingStepper from "./components/OnboardingStepper";
-import OnboardingProfileSetup from "./components/OnboardingProfileSetup";
+import StepPersonalInfo from "./components/StepPersonalInfo";
+import StepIdentityVerification from "./components/StepIdentityVerification";
+import StepProfessionalInfo from "./components/StepProfessionalInfo";
+import StepTrainingCertificates from "./components/StepTrainingCertificates";
+import StepComplianceDocs from "./components/StepComplianceDocs";
+import StepInsuranceDocs from "./components/StepInsuranceDocs";
+import StepAdditionalQuals from "./components/StepAdditionalQuals";
+import StepVideoIntro from "./components/StepVideoIntro";
+import StepDeclaration from "./components/StepDeclaration";
 import OnboardingMembership from "./components/OnboardingMembership";
 import Button from "@/components/Button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
@@ -76,17 +84,19 @@ function CarerDashboardContent() {
       if (savedStep) {
         setOnboardingStep(parseInt(savedStep, 10));
       } else {
-        const isComplianceUploaded = documents && documents.length >= 5;
+        const isComplianceUploaded = documents && documents.length >= 10;
         const isProfileSetup = !!(profile.bio && profile.experience && profile.address);
         
         console.log("[Onboarding Flow] isComplianceUploaded:", isComplianceUploaded, "isProfileSetup:", isProfileSetup);
         
-        if (!isComplianceUploaded) {
+        if (!profileUser?.dateOfBirth) {
           setOnboardingStep(2);
         } else if (!isProfileSetup) {
-          setOnboardingStep(3);
-        } else {
           setOnboardingStep(4);
+        } else if (!isComplianceUploaded) {
+          setOnboardingStep(6);
+        } else {
+          setOnboardingStep(10);
         }
       }
       setInitialStepSet(true);
@@ -118,42 +128,85 @@ function CarerDashboardContent() {
 
           <div className="transition-all duration-500">
             {onboardingStep === 2 && (
-              <div className="space-y-6">
-                <ComplianceVault
-                  complianceDocs={portal.complianceDocs}
-                  uploadingDocType={portal.uploadingDocType}
-                  uploadProgress={portal.uploadProgress}
-                  documentsLoading={documentsLoading}
-                  batchUploading={batchUploading}
-                  deletingDocumentId={deletingDocumentId}
-                  isOnboarding={true}
-                  selectedFiles={portal.selectedFiles}
-                  handleBatchUpload={portal.handleBatchUpload}
-                  handleDocUpload={portal.handleDocUpload}
-                  handleUpdateDoc={portal.handleUpdateDoc}
-                  setPreviewDoc={portal.setPreviewDoc}
-                  setDocToDelete={portal.setDocToDelete}
-                  onNext={() => setOnboardingStep(3)}
-                  onBack={() => router.push("/register")}
-                />
-              </div>
+              <StepPersonalInfo
+                portal={portal}
+                onNext={() => setOnboardingStep(3)}
+                onBack={() => router.push("/register")}
+              />
             )}
 
             {onboardingStep === 3 && (
-              <OnboardingProfileSetup
-                onComplete={() => setOnboardingStep(4)}
+              <StepIdentityVerification
+                portal={portal}
+                onNext={() => setOnboardingStep(4)}
                 onBack={() => setOnboardingStep(2)}
               />
             )}
 
             {onboardingStep === 4 && (
-              <OnboardingMembership
-                onComplete={() => setOnboardingStep(5)}
+              <StepProfessionalInfo
+                portal={portal}
+                onNext={() => setOnboardingStep(5)}
                 onBack={() => setOnboardingStep(3)}
               />
             )}
 
             {onboardingStep === 5 && (
+              <StepTrainingCertificates
+                portal={portal}
+                onNext={() => setOnboardingStep(6)}
+                onBack={() => setOnboardingStep(4)}
+              />
+            )}
+
+            {onboardingStep === 6 && (
+              <StepComplianceDocs
+                portal={portal}
+                onNext={() => setOnboardingStep(7)}
+                onBack={() => setOnboardingStep(5)}
+              />
+            )}
+
+            {onboardingStep === 7 && (
+              <StepInsuranceDocs
+                portal={portal}
+                onNext={() => setOnboardingStep(8)}
+                onBack={() => setOnboardingStep(6)}
+              />
+            )}
+
+            {onboardingStep === 8 && (
+              <StepAdditionalQuals
+                portal={portal}
+                onNext={() => setOnboardingStep(9)}
+                onBack={() => setOnboardingStep(7)}
+              />
+            )}
+
+            {onboardingStep === 9 && (
+              <StepVideoIntro
+                portal={portal}
+                onNext={() => setOnboardingStep(10)}
+                onBack={() => setOnboardingStep(8)}
+              />
+            )}
+
+            {onboardingStep === 10 && (
+              <StepDeclaration
+                portal={portal}
+                onNext={() => setOnboardingStep(11)}
+                onBack={() => setOnboardingStep(9)}
+              />
+            )}
+
+            {onboardingStep === 11 && (
+              <OnboardingMembership
+                onComplete={() => setOnboardingStep(12)}
+                onBack={() => setOnboardingStep(10)}
+              />
+            )}
+
+            {onboardingStep === 12 && (
               <div className="flex flex-col items-center justify-center py-16 px-8 text-center bg-gradient-to-b from-navy-900/40 to-navy-950/60 border border-gold-300/10 rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] backdrop-blur-md max-w-2xl mx-auto mt-6">
                 <div className="w-20 h-20 bg-gradient-to-br from-gold-200/20 to-gold-200/5 rounded-full flex items-center justify-center border border-gold-200/30 mb-8 shadow-[0_0_20px_rgba(245,212,160,0.1)]">
                   <svg className="w-10 h-10 text-gold-200 drop-shadow-[0_2px_4px_rgba(245,212,160,0.3)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -186,7 +239,7 @@ function CarerDashboardContent() {
                   </button>
 
                   <button
-                    onClick={() => setOnboardingStep(4)}
+                    onClick={() => setOnboardingStep(11)}
                     className="flex items-center gap-1.5 text-[12.5px] font-medium text-gold-100/50 hover:text-gold-200 transition-colors tracking-wide focus:outline-none"
                   >
                     <ArrowLeft className="w-3.5 h-3.5" />

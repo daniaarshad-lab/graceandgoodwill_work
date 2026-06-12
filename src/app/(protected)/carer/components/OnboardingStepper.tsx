@@ -12,13 +12,19 @@ export interface OnboardingStepperProps {
   setCurrentStep: (step: number) => void;
 }
 
-// Configuration-driven step definitions
 const ONBOARDING_STEPS: StepItem[] = [
-  { id: 1, label: "Registration", description: "Account created" },
-  { id: 2, label: "Compliance", description: "Verify documents" },
-  { id: 3, label: "Profile", description: "Photo & video" },
-  { id: 4, label: "Membership", description: "Select your plan" },
-  { id: 5, label: "Complete", description: "Ready to work" },
+  { id: 1, label: "Register", description: "Created" },
+  { id: 2, label: "Personal", description: "Info" },
+  { id: 3, label: "Identity", description: "Docs" },
+  { id: 4, label: "Professional", description: "Info" },
+  { id: 5, label: "Training", description: "Certs" },
+  { id: 6, label: "Compliance", description: "Docs" },
+  { id: 7, label: "Insurance", description: "Docs" },
+  { id: 8, label: "Additional", description: "Quals" },
+  { id: 9, label: "Video", description: "Intro" },
+  { id: 10, label: "Declaration", description: "Consent" },
+  { id: 11, label: "Membership", description: "Plan" },
+  { id: 12, label: "Complete", description: "Ready" },
 ];
 
 /**
@@ -73,7 +79,7 @@ interface StepperStepItemProps {
 const StepperStepItem = memo(({ step, index, totalSteps, currentStep, onStepClick }: StepperStepItemProps) => {
   const isCompleted = step.id < currentStep;
   const isActive = step.id === currentStep;
-  const isClickable = step.id <= currentStep && step.id >= 2 && step.id <= 4;
+  const isClickable = step.id <= currentStep && step.id >= 2 && step.id <= 11;
 
   return (
     <div
@@ -151,28 +157,28 @@ export default function OnboardingStepper({ currentStep, setCurrentStep }: Onboa
   // Memoize click handler to prevent unnecessary re-renders of step items
   const handleStepClick = useCallback(
     (step: StepItem) => {
-      // Logic requirement: only allow clicking steps that are completed or active (between 2 and 4)
-      if (step.id <= currentStep && step.id >= 2 && step.id <= 4) {
+      if (step.id <= currentStep && step.id >= 2 && step.id <= 11) {
         setCurrentStep(step.id);
       }
     },
     [currentStep, setCurrentStep]
   );
 
-  // Calculate overall progress based on the current step
   const calculateProgress = () => {
     switch (currentStep) {
-      case 1:
-        return 25;
-      case 2:
-        return 50;
-      case 3:
-        return 75;
-      case 4:
-      case 5:
-        return 100;
-      default:
-        return 0;
+      case 1: return 8;
+      case 2: return 16;
+      case 3: return 25;
+      case 4: return 33;
+      case 5: return 41;
+      case 6: return 50;
+      case 7: return 58;
+      case 8: return 66;
+      case 9: return 75;
+      case 10: return 83;
+      case 11: return 91;
+      case 12: return 100;
+      default: return 0;
     }
   };
 
@@ -182,8 +188,8 @@ export default function OnboardingStepper({ currentStep, setCurrentStep }: Onboa
       <StepperHeader progress={calculateProgress()} />
 
       {/* Classic Horizontal Stepper */}
-      <div className="w-full max-w-5xl mx-auto pb-4">
-        <div className="flex justify-between items-start w-full relative">
+      <div className="w-full mx-auto pb-4 overflow-x-auto hide-scrollbar">
+        <div className="flex justify-between items-start min-w-[900px] w-full relative px-2">
           {ONBOARDING_STEPS.map((step, index) => (
             <StepperStepItem
               key={step.id}

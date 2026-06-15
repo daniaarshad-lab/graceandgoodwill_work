@@ -28,6 +28,20 @@ export default function StepTrainingCertificates({ portal, onNext, onBack }: Pro
   const handleNext = async (e: React.MouseEvent) => {
     e.preventDefault();
 
+    const missingDocs = trainingDocs.filter(docItem => {
+      const doc = complianceDocs.find((d: ComplianceDoc) => d.type === docItem.type);
+      const isStaged = !!selectedFiles[docItem.type.toLowerCase()];
+      return !doc && !isStaged;
+    });
+
+    if (missingDocs.length > 0) {
+      showErrorToast(
+        "Validation Error", 
+        `Please upload certificates for: ${missingDocs.map(d => d.label).join(", ")}`
+      );
+      return;
+    }
+
     const success = await portal.handleStepBatchUpload(5);
     if (success) {
       onNext();

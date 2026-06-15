@@ -21,6 +21,20 @@ export default function StepInsuranceDocs({ portal, onNext, onBack }: Props) {
   const handleNext = async (e: React.MouseEvent) => {
     e.preventDefault();
 
+    const missingDocs = insuranceDocs.filter(docItem => {
+      const doc = complianceDocs.find((d: ComplianceDoc) => d.type === docItem.type);
+      const isStaged = !!selectedFiles[docItem.type.toLowerCase()];
+      return !doc && !isStaged;
+    });
+
+    if (missingDocs.length > 0) {
+      showErrorToast(
+        "Validation Error", 
+        `Please upload: ${missingDocs.map(d => d.label.replace(" *", "")).join(", ")}`
+      );
+      return;
+    }
+
     const success = await portal.handleStepBatchUpload(7);
     if (success) {
       onNext();

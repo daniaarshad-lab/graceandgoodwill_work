@@ -55,8 +55,45 @@ export default function StepPersonalInfo({ portal, onNext, onBack }: Props) {
   const handleNext = async (e: React.MouseEvent) => {
     e.preventDefault();
     
+    if (!firstName?.trim() || !lastName?.trim()) {
+      showErrorToast("Validation Error", "Full Name is required.");
+      return;
+    }
+    if (!dateOfBirth) {
+      showErrorToast("Validation Error", "Date of Birth is required.");
+      return;
+    }
+    if (!address?.trim()) {
+      showErrorToast("Validation Error", "Address is required.");
+      return;
+    }
+    if (!postcode?.trim()) {
+      showErrorToast("Validation Error", "Postcode is required.");
+      return;
+    }
+    if (!email?.trim()) {
+      showErrorToast("Validation Error", "Email Address is required.");
+      return;
+    }
+    if (!phone?.trim()) {
+      showErrorToast("Validation Error", "Mobile Number is required.");
+      return;
+    }
+    if (!emergencyContactName?.trim()) {
+      showErrorToast("Validation Error", "Emergency Contact Name is required.");
+      return;
+    }
+    if (!emergencyContactNumber?.trim()) {
+      showErrorToast("Validation Error", "Emergency Contact Number is required.");
+      return;
+    }
+    if (!emergencyContactRelation?.trim()) {
+      showErrorToast("Validation Error", "Emergency Contact Relationship is required.");
+      return;
+    }
+
     const syntheticEvent = { preventDefault: () => {} } as React.FormEvent;
-    const success = await portal.handleSaveProfile(syntheticEvent);
+    const success = await portal.handleSaveProfile(syntheticEvent, 2);
     if (success) {
       onNext();
     }
@@ -109,7 +146,7 @@ export default function StepPersonalInfo({ portal, onNext, onBack }: Props) {
         <div className="pt-6 mt-6 border-t border-gold-300/10">
           <h4 className="text-lg font-semibold text-gold-200 mb-4">Emergency Contact Details *</h4>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Input label="Email Address *" value={emergencyContactName} onChange={(e) => setEmergencyContactName(e.target.value)} placeholder="Name" />
+            <Input label="Contact Name *" value={emergencyContactName} onChange={(e) => setEmergencyContactName(e.target.value)} placeholder="Name" />
             <PhoneInput label="Contact Number *" value={emergencyContactNumber} onChange={setEmergencyContactNumber} placeholder="Phone" />
             <Input label="Relationship *" value={emergencyContactRelation} onChange={(e) => setEmergencyContactRelation(e.target.value)} placeholder="e.g. Spouse, Parent" />
           </div>

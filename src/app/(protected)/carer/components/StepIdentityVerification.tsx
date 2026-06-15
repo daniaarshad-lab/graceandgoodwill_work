@@ -25,12 +25,42 @@ export default function StepIdentityVerification({ portal, onNext, onBack }: Pro
   const safePreferences = drivingPreferences || [];
   const hasOwnVehiclePref = safePreferences.includes(drivingOptions[0]);
 
+  const hasPassport = complianceDocs.some((d: ComplianceDoc) => d.type === "PASSPORT") || !!selectedFiles["passport"];
+  const hasDL = complianceDocs.some((d: ComplianceDoc) => d.type === "DRIVERS_LICENSE") || !!selectedFiles["drivers_license"];
+  const hasPassportOrDL = hasPassport || hasDL;
+  
+  const hasProofOfAddress = complianceDocs.some((d: ComplianceDoc) => d.type === "PROOF_OF_ADDRESS") || !!selectedFiles["proof_of_address"];
+  const hasRightToWork = complianceDocs.some((d: ComplianceDoc) => d.type === "RIGHT_TO_WORK") || !!selectedFiles["right_to_work"];
+  const hasNiProof = complianceDocs.some((d: ComplianceDoc) => d.type === "NI_PROOF") || !!selectedFiles["ni_proof"];
+  const hasBusinessInsurance = complianceDocs.some((d: ComplianceDoc) => d.type === "BUSINESS_INSURANCE") || !!selectedFiles["business_insurance"];
+
   const handleNext = async (e: React.MouseEvent) => {
     e.preventDefault();
 
+    if (!hasPassportOrDL) {
+      showErrorToast("Validation Error", "Please upload either your Passport or Driving Licence.");
+      return;
+    }
+    if (!hasProofOfAddress) {
+      showErrorToast("Validation Error", "Proof of Address is required.");
+      return;
+    }
+    if (!hasRightToWork) {
+      showErrorToast("Validation Error", "Right to Work in the UK is required.");
+      return;
+    }
+    if (!hasNiProof) {
+      showErrorToast("Validation Error", "Proof of National Insurance Number is required.");
+      return;
+    }
+    if (hasDL && hasOwnVehiclePref && !hasBusinessInsurance) {
+      showErrorToast("Validation Error", "Business Use Insurance is required since you selected 'I am happy to transport clients in my own vehicle'.");
+      return;
+    }
+
     // Save driving preferences
     const syntheticEvent = { preventDefault: () => {} } as React.FormEvent;
-    await portal.handleSaveProfile(syntheticEvent);
+    await portal.handleSaveProfile(syntheticEvent, 3);
 
     const success = await portal.handleStepBatchUpload(2);
     if (success) {

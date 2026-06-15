@@ -9,11 +9,16 @@ import {
 import { useAppDispatch } from "@/store/hooks";
 import {
   updateCarerProfile,
+  updateCarerStep2,
+  updateCarerStep3,
+  updateCarerStep10,
   deleteCarerDocument,
   uploadCarerDocument,
   updateCarerDocument,
   uploadCarerDocuments,
   fetchCarerDocuments,
+  uploadCarerStepDocuments,
+  submitCarerProfile,
 } from "@/store/slices/carerSlice";
 import {
   CarerProfile,
@@ -60,9 +65,15 @@ export function useCarerPortal({
 
   useEffect(() => {
     if (profile) {
-      setBio(profile.bio ?? "");
-      setSpecialties(profile.careSpecialties ?? "");
-      setExperience(profile.experience ?? "");
+      setBio(profile.summary ?? profile.bio ?? "");
+      
+      if (Array.isArray(profile.careSpecialties)) {
+        setSpecialties(profile.careSpecialties.join(", "));
+      } else {
+        setSpecialties(profile.careSpecialties ?? "");
+      }
+
+      setExperience(profile.experienceYears?.toString() ?? profile.experience ?? "");
       setAddress(profile.address ?? "");
       setPostcode(profile.postcode ?? "");
       setCanDrive(profile.canDrive === true ? "yes" : profile.canDrive === false ? "no" : "");
@@ -84,10 +95,11 @@ export function useCarerPortal({
   );
   const [isProfileSaving, setIsProfileSaving] = useState(false);
 
-  // Application status — mock until API is available
-  const [applicationStatus] = useState<"pending" | "approved" | "rejected">(
-    "pending",
-  );
+  // Application status dynamically derived from profile user status
+  const applicationStatus: "pending" | "approved" | "rejected" =
+    profile?.user?.status === "APPROVED"
+      ? "approved"
+      : "pending";
   const [membershipActive] = useState(true);
   const [membershipExpiry] = useState("");
 
@@ -119,64 +131,104 @@ export function useCarerPortal({
 
   const dispatch = useAppDispatch();
 
-  const handleSaveProfile = async (e?: React.FormEvent): Promise<boolean> => {
+  const handleSaveProfile = async (e?: React.FormEvent, step?: number): Promise<boolean> => {
     if (e) e.preventDefault();
 
-    const formData = {
-      experience,
-      bio,
-      address,
-    };
-
-    const errors = validateProfileForm(formData);
-
-    if (Object.keys(errors).length > 0) {
-      setProfileErrors(errors);
-      showErrorToast(
-        "Validation Error",
-        "Please correct the errors in the profile form before saving.",
-      );
-      return false;
-    }
-
     setProfileErrors({});
-
-    const payload = {
-      bio,
-      careSpecialties: specialties,
-      experience,
-      address,
-      postcode,
-      canDrive: canDrive === "yes" ? true : canDrive === "no" ? false : undefined,
-      hasBusinessInsurance: hasBusinessInsurance === "yes" ? true : hasBusinessInsurance === "no" ? false : undefined,
-      dateOfBirth,
-      emergencyContactName,
-      emergencyContactNumber,
-      emergencyContactRelation,
-      drivingPreferences,
-      dbsUpdateServiceNumber,
-      employmentHistory,
-      declarations,
-    };
+    setIsProfileSaving(true);
 
     try {
-      setIsProfileSaving(true);
-      await dispatch(updateCarerProfile(payload)).unwrap();
+      if (step === 2) {
+        const payload = {
+          firstName,
+          lastName,
+          email,
+          phoneNumber: phone,
+          address,
+          postcode,
+          dateOfBirth,
+          emergencyContactName,
+          emergencyContactNumber,
+          emergencyContactRelation,
+        };
+        await dispatch(updateCarerProfile(personalPayloadCheck(payload))).unwrap();
+      } else if (step === 3) {
+        const payload = {
+          drivingPreferences,
+          canDrive: canDrive === "yes" ? "true" : canDrive === "no" ? "false" : undefined,
+          hasBusinessInsurance: hasBusinessInsurance === "yes" ? "true" : hasBusinessInsurance === "no" ? "false" : undefined,
+        };
+        await dispatch(updateCarerStep2(payload)).unwrap();
+      } else if (step === 4) {
+        const payload = {
+          summary: bio,
+          experienceYears: parseInt(experience, 10) || 0,
+          careSpecialties: specialties.split(",").map((s) => s.trim()).filter(Boolean),
+        };
+        await dispatch(updateCarerStep3(payload)).unwrap();
+      } else if (step === 10 || step === 11) {
+        const payload = {
+          accuracy: declarations.accuracy ? "true" : "false",
+          checks: declarations.checks ? "true" : "false",
+          share: declarations.share ? "true" : "false",
+        };
+        await dispatch(updateCarerStep10(payload)).unwrap();
+      } else {
+        const personalPayload = {
+          firstName,
+          lastName,
+          email,
+          phoneNumber: phone,
+          address,
+          postcode,
+          dateOfBirth,
+          emergencyContactName,
+          emergencyContactNumber,
+          emergencyContactRelation,
+        };
+        await dispatch(updateCarerProfile(personalPayloadCheck(personalPayload))).unwrap();
+
+        const professionalPayload = {
+          summary: bio,
+          experienceYears: parseInt(experience, 10) || 0,
+          careSpecialties: specialties.split(",").map((s) => s.trim()).filter(Boolean),
+        };
+        await dispatch(updateCarerStep3(professionalPayload)).unwrap();
+
+        const step2Payload = {
+          drivingPreferences,
+          canDrive: canDrive === "yes" ? "true" : canDrive === "no" ? "false" : undefined,
+          hasBusinessInsurance: hasBusinessInsurance === "yes" ? "true" : hasBusinessInsurance === "no" ? "false" : undefined,
+        };
+        await dispatch(updateCarerStep2(step2Payload)).unwrap();
+      }
+
       showSuccessToast(
-        "Profile Updated",
-        "Profile successfully updated and saved!",
+        "Profile Saved",
+        "Your profile information has been saved successfully.",
       );
       return true;
     } catch (error: any) {
       const errorMsg =
         typeof error === "string"
           ? error
-          : error?.message || "Failed to update profile.";
+          : error?.message || "Failed to save profile information.";
       showErrorToast("Error", errorMsg);
       return false;
     } finally {
       setIsProfileSaving(false);
     }
+  };
+
+  // Helper to filter out undefined personal payload fields to avoid schema mismatch
+  const personalPayloadCheck = (payload: any) => {
+    const clean: any = {};
+    Object.entries(payload).forEach(([k, v]) => {
+      if (v !== undefined && v !== null && v !== "") {
+        clean[k] = v;
+      }
+    });
+    return clean;
   };
 
   const handleDocUpload = async (
@@ -323,15 +375,26 @@ export function useCarerPortal({
   };
 
   const handleStepBatchUpload = async (step: number) => {
-    if (Object.keys(selectedFiles).length === 0) return true; // Nothing to upload, allow proceed
+    const hasFiles = Object.keys(selectedFiles).length > 0;
+    if (!hasFiles && step !== 6) return true; // Nothing to upload, allow proceed unless step 6 (has text fields)
     
     try {
+      let textFields: Record<string, string> | undefined = undefined;
+      if (step === 6) {
+        textFields = {
+          dbsUpdateServiceNumber: dbsUpdateServiceNumber ?? "",
+          employmentHistory: employmentHistory ?? "",
+        };
+      }
+
       // @ts-ignore
-      await dispatch(uploadCarerStepDocuments({ step, files: selectedFiles })).unwrap();
-      showSuccessToast(
-        "Documents Uploaded",
-        `Step ${step} documents successfully uploaded.`,
-      );
+      await dispatch(uploadCarerStepDocuments({ step, files: selectedFiles, textFields })).unwrap();
+      if (hasFiles) {
+        showSuccessToast(
+          "Documents Uploaded",
+          `Step ${step} documents successfully uploaded.`,
+        );
+      }
       setSelectedFiles({});
       dispatch(fetchCarerDocuments());
       return true;
@@ -460,6 +523,23 @@ export function useCarerPortal({
     }
   };
 
+  const submitProfile = async (): Promise<boolean> => {
+    setIsProfileSaving(true);
+    try {
+      await dispatch(submitCarerProfile()).unwrap();
+      showSuccessToast(
+        "Profile Submitted",
+        "Your profile has been successfully submitted for verification.",
+      );
+      return true;
+    } catch (error: any) {
+      showErrorToast("Submission Failed", error || "Failed to submit profile.");
+      return false;
+    } finally {
+      setIsProfileSaving(false);
+    }
+  };
+
   return {
     firstName,
     setFirstName,
@@ -523,5 +603,6 @@ export function useCarerPortal({
     selectedFiles,
     handleDeleteDoc,
     handleUpdateDoc,
+    submitProfile,
   };
 }

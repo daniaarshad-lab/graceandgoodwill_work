@@ -29,8 +29,27 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
   const handleNext = async (e: React.MouseEvent) => {
     e.preventDefault();
 
-    const syntheticEvent = { preventDefault: () => {} } as React.FormEvent;
-    await portal.handleSaveProfile(syntheticEvent);
+    const missingDocs = requiredDocs.filter(docItem => {
+      const doc = complianceDocs.find((d: ComplianceDoc) => d.type === docItem.type);
+      const isStaged = !!selectedFiles[docItem.type.toLowerCase()];
+      return !doc && !isStaged;
+    });
+
+    if (missingDocs.length > 0) {
+      showErrorToast(
+        "Validation Error", 
+        `Please upload: ${missingDocs.map(d => d.label.replace(" *", "")).join(", ")}`
+      );
+      return;
+    }
+
+    if (!employmentHistory || employmentHistory.trim().length < 20) {
+      showErrorToast(
+        "Validation Error", 
+        "Please provide your employment history details (minimum 20 characters)."
+      );
+      return;
+    }
 
     const success = await portal.handleStepBatchUpload(6);
     if (success) {

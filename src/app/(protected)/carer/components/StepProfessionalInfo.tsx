@@ -21,8 +21,22 @@ export default function StepProfessionalInfo({ portal, onNext, onBack }: Props) 
   const handleNext = async (e: React.MouseEvent) => {
     e.preventDefault();
 
+    if (!bio || bio.trim().length < 50) {
+      showErrorToast("Validation Error", "Professional Summary / About Me is required (minimum 50 characters).");
+      return;
+    }
+    if (experience === undefined || experience === null || experience === "" || parseInt(experience, 10) < 0) {
+      showErrorToast("Validation Error", "Years of Care Experience must be a non-negative number.");
+      return;
+    }
+    const selectedArray = (specialties as string || "").split(",").map((s: string) => s.trim()).filter(Boolean);
+    if (selectedArray.length === 0) {
+      showErrorToast("Validation Error", "Please select at least one Care Specialism.");
+      return;
+    }
+
     const syntheticEvent = { preventDefault: () => {} } as React.FormEvent;
-    const success = await portal.handleSaveProfile(syntheticEvent);
+    const success = await portal.handleSaveProfile(syntheticEvent, 4);
     if (success) {
       onNext();
     }

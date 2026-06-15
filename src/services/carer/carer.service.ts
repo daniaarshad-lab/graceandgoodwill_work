@@ -114,7 +114,7 @@ export const carerService = {
     });
   },
 
-  async uploadStepDocuments(step: number, files: Record<string, File>) {
+  async uploadStepDocuments(step: number, files: Record<string, File>, textFields?: Record<string, string>) {
     const token =
       typeof window !== "undefined"
         ? localStorage.getItem("accessToken")
@@ -128,6 +128,14 @@ export const carerService = {
     Object.entries(files).forEach(([key, file]) => {
       formData.append(key, file);
     });
+
+    if (textFields) {
+      Object.entries(textFields).forEach(([key, val]) => {
+        if (val !== undefined && val !== null) {
+          formData.append(key, val);
+        }
+      });
+    }
 
     return apiFetch(`/carer/profile/documents/step-${step}`, {
       method: "POST",
@@ -246,6 +254,84 @@ export const carerService = {
         Authorization: `Bearer ${token}`,
       },
       body: formData,
+    });
+  },
+
+  async updateStep2(payload: any): Promise<CarerProfile> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch("/carer/profile/step-2", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async updateStep3(payload: any): Promise<CarerProfile> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch("/carer/profile/step-3", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async updateStep10(payload: any): Promise<CarerProfile> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch("/carer/profile/step-10", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async submitProfile(): Promise<any> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch("/carer/profile/submit", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
   }
 };

@@ -259,10 +259,10 @@ function CarerDashboardContent() {
                     return;
                   }
 
-                  const success = await portal.handleSaveProfile();
-                  if (success) {
-                    setOnboardingStep(12);
-                  }
+                   const success = await portal.submitProfile();
+                   if (success) {
+                     setOnboardingStep(12);
+                   }
                 }}
                 onBack={() => setOnboardingStep(10)}
                 isSubmitting={portal.isProfileSaving}

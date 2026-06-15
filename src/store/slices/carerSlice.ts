@@ -59,6 +59,54 @@ export const updateCarerProfile = createAsyncThunk<
   }
 });
 
+export const updateCarerStep2 = createAsyncThunk<
+  CarerProfile,
+  any,
+  { rejectValue: string }
+>("carer/updateStep2", async (payload, { rejectWithValue }) => {
+  try {
+    return await carerService.updateStep2(payload);
+  } catch (error: any) {
+    return rejectWithValue(error?.response?.data?.message || error?.message || "Failed to update step 2 preferences");
+  }
+});
+
+export const updateCarerStep3 = createAsyncThunk<
+  CarerProfile,
+  any,
+  { rejectValue: string }
+>("carer/updateStep3", async (payload, { rejectWithValue }) => {
+  try {
+    return await carerService.updateStep3(payload);
+  } catch (error: any) {
+    return rejectWithValue(error?.response?.data?.message || error?.message || "Failed to update professional information");
+  }
+});
+
+export const updateCarerStep10 = createAsyncThunk<
+  CarerProfile,
+  any,
+  { rejectValue: string }
+>("carer/updateStep10", async (payload, { rejectWithValue }) => {
+  try {
+    return await carerService.updateStep10(payload);
+  } catch (error: any) {
+    return rejectWithValue(error?.response?.data?.message || error?.message || "Failed to update declarations");
+  }
+});
+
+export const submitCarerProfile = createAsyncThunk<
+  any,
+  void,
+  { rejectValue: string }
+>("carer/submitProfile", async (_, { rejectWithValue }) => {
+  try {
+    return await carerService.submitProfile();
+  } catch (error: any) {
+    return rejectWithValue(error?.response?.data?.message || error?.message || "Failed to submit profile");
+  }
+});
+
 export const uploadCarerProfilePhoto = createAsyncThunk<
   CarerProfile,
   File,
@@ -126,11 +174,11 @@ export const uploadCarerDocuments = createAsyncThunk<
 
 export const uploadCarerStepDocuments = createAsyncThunk<
   CarerDocument[],
-  { step: number; files: Record<string, File> },
+  { step: number; files: Record<string, File>; textFields?: Record<string, string> },
   { rejectValue: string }
->("carer/uploadStepDocuments", async ({ step, files }, { rejectWithValue }) => {
+>("carer/uploadStepDocuments", async ({ step, files, textFields }, { rejectWithValue }) => {
   try {
-    return await carerService.uploadStepDocuments(step, files);
+    return await carerService.uploadStepDocuments(step, files, textFields);
   } catch (error: any) {
     return rejectWithValue(error?.message || `Failed to upload documents for step ${step}`);
   }
@@ -227,6 +275,54 @@ const carerSlice = createSlice({
       .addCase(updateCarerProfile.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Failed to update carer profile";
+      })
+
+      .addCase(updateCarerStep2.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(
+        updateCarerStep2.fulfilled,
+        (state, action: PayloadAction<CarerProfile>) => {
+          state.loading = false;
+          state.profile = action.payload;
+        },
+      )
+      .addCase(updateCarerStep2.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Failed to update step 2";
+      })
+
+      .addCase(updateCarerStep3.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(
+        updateCarerStep3.fulfilled,
+        (state, action: PayloadAction<CarerProfile>) => {
+          state.loading = false;
+          state.profile = action.payload;
+        },
+      )
+      .addCase(updateCarerStep3.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Failed to update step 3";
+      })
+
+      .addCase(updateCarerStep10.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(
+        updateCarerStep10.fulfilled,
+        (state, action: PayloadAction<CarerProfile>) => {
+          state.loading = false;
+          state.profile = action.payload;
+        },
+      )
+      .addCase(updateCarerStep10.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Failed to update declarations";
       })
 
       .addCase(uploadCarerProfilePhoto.pending, (state) => {

@@ -58,16 +58,18 @@ export default function StepVideoIntro({ portal, onNext, onBack }: Props) {
     video.src = URL.createObjectURL(file);
   };
 
-  const uploadVideo = async () => {
-    if (!videoFile) return;
+  const uploadVideo = async (): Promise<boolean> => {
+    if (!videoFile) return true;
     setIsSubmittingMedia(true);
     try {
       await dispatch(
         uploadProfileMedia({ video: videoFile })
       ).unwrap();
       showSuccessToast("Success", "Video uploaded successfully!");
+      return true;
     } catch (err: unknown) {
       showErrorToast("Upload Failed", typeof err === "string" ? err : "Failed to upload video");
+      return false;
     } finally {
       setIsSubmittingMedia(false);
     }
@@ -80,8 +82,9 @@ export default function StepVideoIntro({ portal, onNext, onBack }: Props) {
       return;
     }
 
-    if (videoFile && !existingVideoUrl) {
-      await uploadVideo();
+    if (videoFile) {
+      const success = await uploadVideo();
+      if (!success) return;
     }
 
     onNext();

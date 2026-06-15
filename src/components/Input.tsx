@@ -20,6 +20,11 @@ export default function Input({
 
   const inputType = isPassword ? (showPassword ? "text" : "password") : type;
 
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+
+  const maxDate = yesterday.toISOString().split("T")[0];
+
   return (
     <div className="space-y-2">
       <label className="form-label">{label}</label>
@@ -28,9 +33,8 @@ export default function Input({
         <input
           {...props}
           type={inputType}
-          className={`w-full rounded-xl border py-3 outline-none focus:ring-2 focus:ring-primary ${
-            isPassword ? "pl-4 pr-12" : "px-4"
-          } ${error ? "border-red-500" : "border-gray-300"} ${className}`}
+          className={`w-full rounded-xl border py-3 outline-none focus:ring-2 focus:ring-primary ${isPassword ? "pl-4 pr-12" : "px-4"
+            } ${error ? "border-red-500" : "border-gray-300"} ${className}`}
         />
 
         {isPassword && (

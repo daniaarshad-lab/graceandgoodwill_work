@@ -38,9 +38,9 @@ function CarerDashboardContent() {
   const { user } = useAuth();
   const searchParams = useSearchParams();
   const router = useRouter();
-  
+
   const isOnboardingParam = searchParams.get("onboarding") === "true";
-  
+
   const [activeTab, setActiveTab] = useState<TabType>("overview");
   const [onboardingDone, setOnboardingDone] = useState(true);
   const [onboardingStep, setOnboardingStep] = useState(2);
@@ -67,18 +67,12 @@ function CarerDashboardContent() {
     setIsClient(true);
     if (!user?.id) return;
     const localStorageDone = localStorage.getItem(`carer_onboarding_done_${user.id}`) === "true";
-    
-    console.log("[Onboarding Flow] isOnboardingParam:", isOnboardingParam);
-    console.log("[Onboarding Flow] localStorageDone:", localStorageDone);
-
     if (isOnboardingParam) {
       // Force onboarding if explicitly requested by URL
       setOnboardingDone(false);
       localStorage.removeItem(`carer_onboarding_done_${user.id}`);
-      console.log("[Onboarding Flow] Setting onboardingDone to FALSE due to query param.");
     } else {
       setOnboardingDone(localStorageDone);
-      console.log("[Onboarding Flow] Setting onboardingDone to:", localStorageDone);
     }
 
     if (profile && !initialStepSet) {
@@ -88,9 +82,9 @@ function CarerDashboardContent() {
       } else {
         const isComplianceUploaded = documents && documents.length >= 10;
         const isProfileSetup = !!(profile.bio && profile.experience && profile.address);
-        
+
         console.log("[Onboarding Flow] isComplianceUploaded:", isComplianceUploaded, "isProfileSetup:", isProfileSetup);
-        
+
         if (!profileUser?.dateOfBirth) {
           setOnboardingStep(2);
         } else if (!isProfileSetup) {
@@ -113,17 +107,16 @@ function CarerDashboardContent() {
 
   const showOnboarding =
     isClient && !onboardingDone && portal.applicationStatus !== "approved";
-    
-  console.log("[Onboarding Flow] Render check -> isClient:", isClient, "onboardingDone:", onboardingDone, "status:", portal.applicationStatus, "=> showOnboarding:", showOnboarding);
+
 
   const validateAllCompulsoryFields = () => {
     const missing = [];
     const {
-      firstName, lastName, dateOfBirth, address, email, phone, 
+      firstName, lastName, dateOfBirth, address, email, phone,
       emergencyContactName, emergencyContactNumber, emergencyContactRelation,
       complianceDocs, drivingPreferences, bio, experience, specialties, employmentHistory
     } = portal;
-    
+
     if (!firstName || !lastName || !dateOfBirth || !address || !email || !phone || !emergencyContactName || !emergencyContactNumber || !emergencyContactRelation) {
       missing.push("Personal Information");
     }
@@ -133,13 +126,13 @@ function CarerDashboardContent() {
     const hasProofOfAddress = complianceDocs.some((d: any) => d.type === "PROOF_OF_ADDRESS");
     const hasRightToWork = complianceDocs.some((d: any) => d.type === "RIGHT_TO_WORK");
     const hasNiProof = complianceDocs.some((d: any) => d.type === "NI_PROOF");
-    
+
     let identityValid = hasPassportOrDL && hasProofOfAddress && hasRightToWork && hasNiProof;
     if (hasDL) {
-       const hasOwnVehiclePref = (drivingPreferences || []).includes("I am happy to transport clients in my own vehicle");
-       if (hasOwnVehiclePref && !complianceDocs.some((d: any) => d.type === "BUSINESS_INSURANCE")) {
-          identityValid = false;
-       }
+      const hasOwnVehiclePref = (drivingPreferences || []).includes("I am happy to transport clients in my own vehicle");
+      if (hasOwnVehiclePref && !complianceDocs.some((d: any) => d.type === "BUSINESS_INSURANCE")) {
+        identityValid = false;
+      }
     }
     if (!identityValid) missing.push("Identity Verification");
 
@@ -259,10 +252,10 @@ function CarerDashboardContent() {
                     return;
                   }
 
-                   const success = await portal.submitProfile();
-                   if (success) {
-                     setOnboardingStep(12);
-                   }
+                  const success = await portal.submitProfile();
+                  if (success) {
+                    setOnboardingStep(12);
+                  }
                 }}
                 onBack={() => setOnboardingStep(10)}
                 isSubmitting={portal.isProfileSaving}
@@ -276,15 +269,15 @@ function CarerDashboardContent() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
-                
+
                 <h3 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-gold-200 to-gold-50 tracking-tight mb-4">
                   Onboarding Complete!
                 </h3>
-                
+
                 <p className="text-gold-100/60 max-w-md mx-auto leading-relaxed mb-10 text-[14px]">
                   Thank you for completing your professional profile. Your application is now under review by the Grace & Goodwill team.
                 </p>
-                
+
                 <div className="flex flex-col items-center gap-5 w-full">
                   <button
                     onClick={() => {

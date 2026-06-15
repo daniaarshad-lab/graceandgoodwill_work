@@ -6,62 +6,76 @@ import Button from "@/components/Button";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import Image from "next/image";
+import EmergencyButton from "@/components/EmergencyButton";
 
 const BBCAudioCard = dynamic(() => import("@/components/BBCAudioCard"));
 
 export default function HomePage() {
   return (
     <main className="overflow-x-hidden min-h-[calc(100vh-80px)] bg-navy-950 pt-12 pb-16 md:pt-20 md:pb-24 text-gold-100">
-      <section className="container-wrapper flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between pb-16">
-        <div className="max-w-2xl space-y-6">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight   text-gold-100">
-            Live In Care Services Across The UK
+      <section className="container-wrapper relative flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between pb-16">
+        
+        {/* Featured on BBC Radio Badge (Top Right) */}
+        <div className="absolute -top-12 right-4 lg:-top-16 lg:-right-24 xl:-right-32 z-30 flex items-center gap-3 bg-navy-900 border border-gold-muted/30 px-4 py-2 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.3)] backdrop-blur-md hover:border-gold-400/50 hover:shadow-[0_0_15px_rgba(247,215,116,0.15)] transition-all cursor-default">
+          <span className="text-[10px] sm:text-xs font-semibold text-gold-200 uppercase tracking-widest hidden sm:inline-block">
+            Featured On
+          </span>
+          <div className="flex items-center gap-1.5">
+            {/* BBC Logo Blocks */}
+            <div className="flex gap-0.5">
+              <span className="bg-white text-black text-[10px] sm:text-[11px] font-bold px-1 py-0.5 rounded-sm leading-none">B</span>
+              <span className="bg-white text-black text-[10px] sm:text-[11px] font-bold px-1 py-0.5 rounded-sm leading-none">B</span>
+              <span className="bg-white text-black text-[10px] sm:text-[11px] font-bold px-1 py-0.5 rounded-sm leading-none">C</span>
+            </div>
+            <span className="text-white font-bold tracking-[0.2em] text-xs sm:text-sm">
+              RADIO
+            </span>
+          </div>
+        </div>
+
+        <div className="max-w-2xl space-y-6 mt-8 lg:mt-0">
+        
+          
+          <h1 className="text-4xl sm:text-5xl lg:text-[4rem] font-serif font-medium leading-[1.1] tracking-tight text-white drop-shadow-md">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#D4AF37] via-[#F7D774] to-[#E6C35C]">
+              Live In Care Services
+            </span><br />
+            Across The UK
           </h1>
-         
 
-
-          <div className="prose max-w-xl text-gold-200 space-y-2">
+          <div className="max-w-xl text-gold-100/80 space-y-4 text-lg sm:text-xl leading-relaxed font-light">
             <p>
               Helping families across the UK find trusted live in care with
               compassion, continuity, and genuine human support.
             </p>
-            <p>
+            <p className="text-base sm:text-lg opacity-80">
               At Grace & Goodwill, we carefully match families with professional
               carers to provide safe, personal, and dependable care at home.
             </p>
-            <p>
+            <p className="text-base sm:text-lg opacity-80">
               From everyday support to urgent care needs, our team is here to
               guide families with integrity, reassurance, and a truly personal
               approach.
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-4">
+          <div className="flex flex-col xl:flex-row items-center gap-3 xl:gap-4 flex-wrap xl:flex-nowrap w-full max-w-[100%] overflow-visible">
             <Button
               asChild
               variant="goldDarker"
               fullWidth={false}
-              className="w-full sm:w-auto"
+              className="h-14 px-6 w-full sm:w-max shrink-0"
             >
               <Link href="/contact" prefetch={false}>
                 Request Care
               </Link>
             </Button>
-            <Button
-              asChild
-              variant="goldBrown"
-              fullWidth={false}
-              className="w-full sm:w-auto"
-            >
-              <Link href="/emergency-care" prefetch={false}>
-                Emergency Care
-              </Link>
-            </Button>
+            <EmergencyButton />
             <Button
               asChild
               variant="whatsapp"
               fullWidth={false}
-              className="w-full sm:w-auto gap-2 group"
+              className="h-14 px-6 w-full sm:w-max shrink-0 gap-2 group"
             >
               <a
                 href="https://wa.me/447700000000?text=Hello%2C%20I'd%20like%20to%20enquire%20about%20live%20in%20care%20services%20from%20Grace%20%26%20Goodwill."
@@ -203,7 +217,7 @@ export default function HomePage() {
               <div className="relative z-20 flex justify-center items-center w-full">
                 <span className="px-3.5 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest bg-navy-950/70 backdrop-blur-md text-gold-300 border border-gold-400/20 flex items-center gap-1.5 shadow-sm">
                   <Newspaper className="w-3.5 h-3.5 text-gold-300/80" />
-                  Press Feature
+                  BIC Press Feature
                 </span>
               </div>
 

@@ -27,7 +27,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="bg-navy-950 text-gold-100 flex flex-col min-h-screen">
+      <body suppressHydrationWarning className="bg-navy-950 text-gold-100 flex flex-col min-h-screen">
         {children}
         <ToastProvider />
       </body>

@@ -16,5 +16,6 @@ export const mapCarerProfileToUICarer = (carer: CarerProfile): Carer => {
       carer.availability === "AVAILABLE" ? "Available" : "Limited Availability",
     bio: carer.summary || carer.bio || "Not Provided",
     avatarBg: "bg-amber-500/20 text-amber-300 border-amber-500/30",
+    introVideoUrl: carer.introVideoUrl || null,
   };
 };

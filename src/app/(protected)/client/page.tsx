@@ -90,6 +90,8 @@ export default function ClientDashboard() {
               setAddress={portal.setCareAddress}
               notes={portal.careNotes}
               setNotes={portal.setCareNotes}
+              adminMatching={portal.adminMatching}
+              setAdminMatching={portal.setAdminMatching}
               errors={portal.careErrors}
               isSubmitting={portal.isCareSubmitting}
               onSubmit={portal.handleCareSubmit}

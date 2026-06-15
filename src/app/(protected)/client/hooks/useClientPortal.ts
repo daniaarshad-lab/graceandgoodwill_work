@@ -32,6 +32,7 @@ export function useClientPortal({ user }: UseClientPortalProps) {
   const [careDuration, setCareDuration] = useState("");
   const [careAddress, setCareAddress] = useState("");
   const [careNotes, setCareNotes] = useState("");
+  const [adminMatching, setAdminMatching] = useState(true);
 
   const [careErrors, setCareErrors] = useState<Record<string, string>>({});
   const [isCareSubmitting, setIsCareSubmitting] = useState(false);
@@ -76,6 +77,7 @@ export function useClientPortal({ user }: UseClientPortalProps) {
       additionalNotes: careNotes,
 
       shiftType: "MORNING",
+      adminMatching,
     };
 
     try {
@@ -172,5 +174,7 @@ export function useClientPortal({ user }: UseClientPortalProps) {
     setSelectedCarer,
     handleRequestIntro,
     confirmIntroRequest,
+    adminMatching,
+    setAdminMatching,
   };
 }

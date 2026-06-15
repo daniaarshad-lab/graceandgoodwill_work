@@ -6,6 +6,7 @@ export interface Carer {
   availability: "Available" | "Limited Availability" | "Unavailable";
   bio: string;
   avatarBg: string;
+  introVideoUrl?: string | null;
 }
 
 export interface CareRequest {
@@ -16,6 +17,7 @@ export interface CareRequest {
   duration: string;
   status: "Pending" | "Reviewing" | "Matched" | "Completed";
   progress: number;
+  adminMatching?: boolean;
 }
 
 // Enquiry statuses matching backend lifecycle

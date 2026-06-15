@@ -60,6 +60,7 @@ export interface CreateCareRequestPayload {
 
   additionalNotes?: string;
   shiftType: string;
+  adminMatching?: boolean;
 }
 
 export interface ClientState {
@@ -99,6 +100,7 @@ export interface CareRequest {
 
   status: string;
   isEmergency: boolean;
+  adminMatching?: boolean;
 
   createdAt: string;
   updatedAt: string;
@@ -134,6 +136,7 @@ export interface CarerProfile {
   lastName: string;
   bio: string | null;
   profilePhotoUrl: string | null;
+  introVideoUrl?: string | null;
   experienceYears: number | null;
   hourlyRate: number | null;
   availability: string | null;

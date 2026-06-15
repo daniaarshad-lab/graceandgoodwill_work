@@ -80,6 +80,17 @@ export default function CarerProfiles({
               <p className="text-xs text-gold-100/60 leading-relaxed pt-2 border-t border-gold-300/10">
                 {carer.bio}
               </p>
+
+              {/* Embedded Video Player */}
+              {carer.introVideoUrl && (
+                <div className="aspect-video w-full rounded-xl overflow-hidden border border-gold-300/10 bg-black shadow-inner relative mt-4">
+                  <video
+                    src={carer.introVideoUrl}
+                    controls
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+              )}
             </div>
 
             <Button

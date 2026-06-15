@@ -25,6 +25,8 @@ interface CareRequestFormProps {
   setAddress: (val: string) => void;
   notes: string;
   setNotes: (val: string) => void;
+  adminMatching: boolean;
+  setAdminMatching: (val: boolean) => void;
   errors: Record<string, string>;
   isSubmitting: boolean;
   onSubmit: (e: React.FormEvent) => void;
@@ -52,6 +54,8 @@ export default function CareRequestForm({
   setAddress,
   notes,
   setNotes,
+  adminMatching,
+  setAdminMatching,
   errors,
   isSubmitting,
   onSubmit,
@@ -192,6 +196,76 @@ export default function CareRequestForm({
             placeholder="Special dietary preferences, pets, or hobbies..."
             className="w-full rounded-xl border border-gray-300/20 bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 text-sm"
           ></textarea>
+        </div>
+
+        <div className="space-y-3 pt-2">
+          <label className="text-sm font-semibold text-gold-200">
+            Carer Matching Preference
+          </label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Admin Match Card */}
+            <div
+              onClick={() => setAdminMatching(true)}
+              className={`p-4 rounded-xl border cursor-pointer transition-all duration-300 flex flex-col justify-between h-32 relative ${
+                adminMatching
+                  ? "bg-gold-500/5 border-gold-300/40 shadow-[0_0_15px_rgba(245,212,160,0.08)]"
+                  : "bg-navy-950 border-gray-300/10 hover:border-gold-300/20 hover:bg-navy-900/40"
+              }`}
+            >
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-sm font-bold text-gold-100 flex items-center gap-1.5">
+                    🌟 Automatic Matching
+                  </h4>
+                  {adminMatching && (
+                    <span className="text-[10px] bg-gold-200/20 text-gold-200 font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                      Recommended
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs text-gold-100/60 leading-relaxed pt-1">
+                  Let our care coordinators hand-pick and introduce the most compatible and qualified carers for your specific needs.
+                </p>
+              </div>
+              <div className="flex items-center gap-2 mt-2">
+                <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition-all ${
+                  adminMatching ? "border-gold-300" : "border-gray-500"
+                }`}>
+                  {adminMatching && <div className="w-2 h-2 rounded-full bg-gold-300" />}
+                </div>
+                <span className="text-[11px] font-medium text-gold-100/80">Select this preference</span>
+              </div>
+            </div>
+
+            {/* Self Select Card */}
+            <div
+              onClick={() => setAdminMatching(false)}
+              className={`p-4 rounded-xl border cursor-pointer transition-all duration-300 flex flex-col justify-between h-32 relative ${
+                !adminMatching
+                  ? "bg-gold-500/5 border-gold-300/40 shadow-[0_0_15px_rgba(245,212,160,0.08)]"
+                  : "bg-navy-950 border-gray-300/10 hover:border-gold-300/20 hover:bg-navy-900/40"
+              }`}
+            >
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-sm font-bold text-gold-100 flex items-center gap-1.5">
+                    🔍 Browse Independently
+                  </h4>
+                </div>
+                <p className="text-xs text-gold-100/60 leading-relaxed pt-1">
+                  Explore available carer profiles in your area, view their expertise, and request introductions yourself.
+                </p>
+              </div>
+              <div className="flex items-center gap-2 mt-2">
+                <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition-all ${
+                  !adminMatching ? "border-gold-300" : "border-gray-500"
+                }`}>
+                  {!adminMatching && <div className="w-2 h-2 rounded-full bg-gold-300" />}
+                </div>
+                <span className="text-[11px] font-medium text-gold-100/80">Select this preference</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="flex justify-end gap-3 pt-2">

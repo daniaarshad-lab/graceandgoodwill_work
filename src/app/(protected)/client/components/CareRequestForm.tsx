@@ -206,11 +206,10 @@ export default function CareRequestForm({
             {/* Admin Match Card */}
             <div
               onClick={() => setAdminMatching(true)}
-              className={`p-4 rounded-xl border cursor-pointer transition-all duration-300 flex flex-col justify-between h-32 relative ${
-                adminMatching
-                  ? "bg-gold-500/5 border-gold-300/40 shadow-[0_0_15px_rgba(245,212,160,0.08)]"
-                  : "bg-navy-950 border-gray-300/10 hover:border-gold-300/20 hover:bg-navy-900/40"
-              }`}
+              className={`p-4 rounded-xl border cursor-pointer transition-all duration-300 flex flex-col justify-between relative ${adminMatching
+                ? "bg-gold-500/5 border-gold-300/40 shadow-[0_0_15px_rgba(245,212,160,0.08)]"
+                : "bg-navy-950 border-gray-300/10 hover:border-gold-300/20 hover:bg-navy-900/40"
+                }`}
             >
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
@@ -228,9 +227,8 @@ export default function CareRequestForm({
                 </p>
               </div>
               <div className="flex items-center gap-2 mt-2">
-                <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition-all ${
-                  adminMatching ? "border-gold-300" : "border-gray-500"
-                }`}>
+                <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition-all ${adminMatching ? "border-gold-300" : "border-gray-500"
+                  }`}>
                   {adminMatching && <div className="w-2 h-2 rounded-full bg-gold-300" />}
                 </div>
                 <span className="text-[11px] font-medium text-gold-100/80">Select this preference</span>
@@ -240,11 +238,10 @@ export default function CareRequestForm({
             {/* Self Select Card */}
             <div
               onClick={() => setAdminMatching(false)}
-              className={`p-4 rounded-xl border cursor-pointer transition-all duration-300 flex flex-col justify-between h-32 relative ${
-                !adminMatching
-                  ? "bg-gold-500/5 border-gold-300/40 shadow-[0_0_15px_rgba(245,212,160,0.08)]"
-                  : "bg-navy-950 border-gray-300/10 hover:border-gold-300/20 hover:bg-navy-900/40"
-              }`}
+              className={`p-4 rounded-xl border cursor-pointer transition-all duration-300 flex flex-col justify-between relative ${!adminMatching
+                ? "bg-gold-500/5 border-gold-300/40 shadow-[0_0_15px_rgba(245,212,160,0.08)]"
+                : "bg-navy-950 border-gray-300/10 hover:border-gold-300/20 hover:bg-navy-900/40"
+                }`}
             >
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
@@ -257,9 +254,8 @@ export default function CareRequestForm({
                 </p>
               </div>
               <div className="flex items-center gap-2 mt-2">
-                <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition-all ${
-                  !adminMatching ? "border-gold-300" : "border-gray-500"
-                }`}>
+                <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition-all ${!adminMatching ? "border-gold-300" : "border-gray-500"
+                  }`}>
                   {!adminMatching && <div className="w-2 h-2 rounded-full bg-gold-300" />}
                 </div>
                 <span className="text-[11px] font-medium text-gold-100/80">Select this preference</span>
@@ -309,17 +305,15 @@ export default function CareRequestForm({
             </div>
             <div className="text-gold-200/50 group-hover:text-gold-100 transition-colors shrink-0 ml-4">
               <ChevronDown
-                className={`w-5 h-5 transition-transform duration-300 ${
-                  isEmergencyOpen ? "rotate-180" : ""
-                }`}
+                className={`w-5 h-5 transition-transform duration-300 ${isEmergencyOpen ? "rotate-180" : ""
+                  }`}
               />
             </div>
           </div>
 
           <div
-            className={`transition-all duration-300 ease-in-out px-5 ${
-              isEmergencyOpen ? "max-h-96 pb-5 opacity-100" : "max-h-0 opacity-0"
-            }`}
+            className={`transition-all duration-300 ease-in-out px-5 ${isEmergencyOpen ? "max-h-96 pb-5 opacity-100" : "max-h-0 opacity-0"
+              }`}
           >
             <div className="pt-4 border-t border-gold-300/10">
               <div className="bg-navy-900/50 rounded-lg p-4 border border-gold-300/5 mb-5">

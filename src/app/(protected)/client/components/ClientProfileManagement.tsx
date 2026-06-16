@@ -2,9 +2,7 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import {
-  updateClientProfile,
-} from "@/store/slices/clientSlice";
+import { updateClientProfile } from "@/store/slices/clientSlice";
 import SectionCard from "./shared/SectionCard";
 import Input from "@/components/Input";
 import PhoneInput from "@/components/PhoneInput";
@@ -61,7 +59,10 @@ export default function ClientProfileManagement() {
         }),
       ).unwrap();
 
-      showSuccessToast("Profile Updated", "Profile details successfully updated!");
+      showSuccessToast(
+        "Profile Updated",
+        "Profile details successfully updated!",
+      );
     } catch (err: any) {
       showErrorToast("Update Failed", err || "Failed to update profile.");
     } finally {
@@ -116,17 +117,29 @@ export default function ClientProfileManagement() {
           />
         </div>
 
-        <h4 className="font-semibold text-gold-50 text-sm pt-4 border-t border-gold-300/10">Location Details</h4>
+        <h4 className="font-semibold text-gold-50 text-sm pt-4 border-t border-gold-300/10">
+          Location Details
+        </h4>
 
-        <Input
-          label="Address"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-          placeholder="Enter full physical address"
-          disabled={loading || isSaving}
-        />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Input
+            label="Address"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            placeholder="Enter full physical address"
+            disabled={loading || isSaving}
+          />
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <Input
+            label="Postcode"
+            value={pincode}
+            onChange={(e) => setPincode(e.target.value)}
+            placeholder="e.g. SW1A 1AA"
+            disabled={loading || isSaving}
+          />
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Input
             label="City"
             value={city}
@@ -140,14 +153,6 @@ export default function ClientProfileManagement() {
             value={stateField}
             onChange={(e) => setStateField(e.target.value)}
             placeholder="e.g. Greater London"
-            disabled={loading || isSaving}
-          />
-
-          <Input
-            label="Pincode / Postcode"
-            value={pincode}
-            onChange={(e) => setPincode(e.target.value)}
-            placeholder="e.g. SW1A 1AA"
             disabled={loading || isSaving}
           />
         </div>

@@ -66,7 +66,7 @@ export function useCarerPortal({
   useEffect(() => {
     if (profile) {
       setBio(profile.summary ?? profile.bio ?? "");
-      
+
       if (Array.isArray(profile.careSpecialties)) {
         setSpecialties(profile.careSpecialties.join(", "));
       } else {
@@ -77,7 +77,7 @@ export function useCarerPortal({
       setAddress(profile.address ?? "");
       setPostcode(profile.postcode ?? "");
       setCanDrive(profile.canDrive === true ? "yes" : profile.canDrive === false ? "no" : "");
-      
+
       if (profile.emergencyContactName) setEmergencyContactName(profile.emergencyContactName);
       if (profile.emergencyContactNumber) setEmergencyContactNumber(profile.emergencyContactNumber);
       if (profile.emergencyContactRelation) setEmergencyContactRelation(profile.emergencyContactRelation);
@@ -125,7 +125,7 @@ export function useCarerPortal({
   const [previewDoc, setPreviewDoc] = useState<ComplianceDoc | null>(null);
 
   const [docToDelete, setDocToDelete] = useState<string | null>(null);
-  
+
   // Batch Upload States
   const [selectedFiles, setSelectedFiles] = useState<Record<string, File>>({});
 
@@ -316,7 +316,7 @@ export function useCarerPortal({
         "Document Uploaded",
         `Document "${file.name}" uploaded successfully!`,
       );
-      
+
       dispatch(fetchCarerDocuments());
 
       setTimeout(() => {
@@ -377,7 +377,7 @@ export function useCarerPortal({
   const handleStepBatchUpload = async (step: number) => {
     const hasFiles = Object.keys(selectedFiles).length > 0;
     if (!hasFiles && step !== 6) return true; // Nothing to upload, allow proceed unless step 6 (has text fields)
-    
+
     try {
       let textFields: Record<string, string> | undefined = undefined;
       if (step === 6) {

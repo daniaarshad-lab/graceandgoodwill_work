@@ -18,7 +18,7 @@ interface SupportEnquiryManagementProps {
 export default function SupportEnquiryManagement({
   enquiries,
   selectedEnquiry,
-  setSelectedEnquiry,
+  setSelectedEnquiry: _setSelectedEnquiry,
   loadEnquiryDetails,
   handleRespondToEnquiry,
   handleUpdateEnquiryStatus,
@@ -86,6 +86,23 @@ export default function SupportEnquiryManagement({
       return a.isRead ? 1 : -1; // unread (isRead: false) first
     });
 
+  const getStatusDisplayLabel = (status: string) => {
+    switch (status) {
+      case "RESOLVED":
+      case "RESPONDED":
+        return "Responded";
+      case "PENDING":
+      case "OPEN":
+        return "Pending";
+      case "IN_PROGRESS":
+        return "In Progress";
+      case "CLOSED":
+        return "Closed";
+      default:
+        return status;
+    }
+  };
+
   const getStatusBadgeClass = (status: string) => {
     switch (status) {
       case "RESOLVED":
@@ -95,9 +112,9 @@ export default function SupportEnquiryManagement({
       case "OPEN":
         return "bg-amber-500/10 text-amber-400 border border-amber-500/20 animate-pulse";
       case "IN_PROGRESS":
-        return "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20";
+        return "bg-blue-500/10 text-blue-400 border border-blue-500/20";
       case "CLOSED":
-        return "bg-rose-500/10 text-rose-400 border border-rose-500/20";
+        return "bg-gray-500/10 text-gray-400 border border-gray-500/20";
       default:
         return "bg-navy-900 border border-gold-300/10 text-gold-100/60";
     }
@@ -162,7 +179,7 @@ export default function SupportEnquiryManagement({
                         : "bg-navy-950/40 text-gold-100/60 border border-gold-300/5 hover:text-gold hover:border-gold-300/20"
                     }`}
                   >
-                    {status}
+                    {status === "ALL" ? "All" : getStatusDisplayLabel(status)}
                   </button>
                 ),
               )}
@@ -219,7 +236,7 @@ export default function SupportEnquiryManagement({
                       <span
                         className={`rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider ${getStatusBadgeClass(enq.status)}`}
                       >
-                        {enq.status}
+                        {getStatusDisplayLabel(enq.status)}
                       </span>
                     </div>
                     <div className="text-[10px] text-gold-100/40 mb-2 truncate">
@@ -252,7 +269,7 @@ export default function SupportEnquiryManagement({
                     <span
                       className={`rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider ${getStatusBadgeClass(selectedEnquiry.status)}`}
                     >
-                      {selectedEnquiry.status}
+                      {getStatusDisplayLabel(selectedEnquiry.status)}
                     </span>
                   </div>
                   <div className="text-xs text-gold-100/40">

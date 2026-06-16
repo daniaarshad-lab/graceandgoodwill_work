@@ -120,89 +120,120 @@ export default function AdminDashboard() {
 
         {/* --- MAIN OPERATIONAL CONSOLES --- */}
         <div className="transition-all duration-300">
-          {portal.activeTab === "overview" && (
-            <AdminOverview
-              stats={portal.stats}
-              activities={portal.activities}
-              setActiveTab={portal.setActiveTab}
-              isLiveActive={portal.isLiveActive}
-              setIsLiveActive={portal.setIsLiveActive}
-            />
-          )}
+          {portal.loading ? (
+            <div className="flex flex-col items-center justify-center p-20 space-y-4">
+              <div className="w-12 h-12 border-4 border-gold border-t-transparent rounded-full animate-spin" />
+              <p className="text-sm text-gold-100/60 font-semibold">
+                Loading dashboard data...
+              </p>
+            </div>
+          ) : portal.error ? (
+            <div className="rounded-2xl border border-red-500/20 bg-red-950/10 p-8 text-center text-red-400 max-w-xl mx-auto space-y-4">
+              <p className="font-semibold text-sm">
+                Failed to load admin console data
+              </p>
+              <p className="text-xs text-red-500/80">{portal.error}</p>
+              <button
+                onClick={() => window.location.reload()}
+                className="px-4 py-2 text-xs font-bold text-navy-950 bg-gold hover:bg-gold-200 rounded-xl transition duration-300"
+              >
+                Retry Load
+              </button>
+            </div>
+          ) : (
+            <>
+              {portal.activeTab === "overview" && (
+                <AdminOverview
+                  stats={portal.stats}
+                  activities={portal.activities}
+                  setActiveTab={portal.setActiveTab}
+                  isLiveActive={portal.isLiveActive}
+                  setIsLiveActive={portal.setIsLiveActive}
+                />
+              )}
 
-          {/* TAB 2: CARER APPLICATIONS */}
-          {portal.activeTab === "carers" && (
-            <CarerApplications
-              carers={portal.carers}
-              onReject={portal.handleRejectCarer}
-              setSelectedCarerForApproval={portal.setSelectedCarerForApproval}
-              onUpdateDocumentStatus={portal.handleUpdateDocumentStatus}
-            />
-          )}
+              {/* TAB 2: CARER APPLICATIONS */}
+              {portal.activeTab === "carers" && (
+                <CarerApplications
+                  carers={portal.carers}
+                  onReject={portal.handleRejectCarer}
+                  setSelectedCarerForApproval={
+                    portal.setSelectedCarerForApproval
+                  }
+                  onUpdateDocumentStatus={portal.handleUpdateDocumentStatus}
+                />
+              )}
 
-          {/* TAB 3: CLIENT CARE REQUESTS */}
-          {portal.activeTab === "requests" && (
-            <ClientRequests
-              requests={portal.requests}
-              setSelectedRequestForMatching={
-                portal.setSelectedRequestForMatching
-              }
-              setActiveTab={portal.setActiveTab}
-            />
-          )}
+              {/* TAB 3: CLIENT CARE REQUESTS */}
+              {portal.activeTab === "requests" && (
+                <ClientRequests
+                  requests={portal.requests}
+                  setSelectedRequestForMatching={
+                    portal.setSelectedRequestForMatching
+                  }
+                  setActiveTab={portal.setActiveTab}
+                />
+              )}
 
-          {/* TAB 4: AUTOMATED MATCHING PANEL */}
-          {portal.activeTab === "matching" && (
-            <MatchingPanel
-              requests={portal.requests}
-              carers={portal.carers}
-              selectedRequest={portal.selectedRequestForMatching}
-              setSelectedRequest={portal.setSelectedRequestForMatching}
-              onCreateMatch={(reqId, carerId) => {
-                const req = portal.requests.find((r) => r.id === reqId);
-                const car = portal.carers.find((c) => c.id === carerId);
-                if (req && car) {
-                  setMatchingRequest(req);
-                  setMatchingCarer(car);
-                }
-              }}
-            />
-          )}
+              {/* TAB 4: AUTOMATED MATCHING PANEL */}
+              {portal.activeTab === "matching" && (
+                <MatchingPanel
+                  requests={portal.requests}
+                  carers={portal.carers}
+                  selectedRequest={portal.selectedRequestForMatching}
+                  setSelectedRequest={portal.setSelectedRequestForMatching}
+                  onAssign={async (
+                    requestId,
+                    carerUserId,
+                    carerName,
+                    clientName,
+                  ) => {
+                    await portal.handleAssignCarerToCareRequest(
+                      requestId,
+                      carerUserId,
+                      carerName,
+                      clientName,
+                    );
+                  }}
+                />
+              )}
 
-          {/* TAB 5: ACTIVE PLACEMENTS TRACKING */}
-          {portal.activeTab === "placements" && (
-            <PlacementTracking
-              placements={portal.placements}
-              carers={portal.carers}
-              onToggleContactRelease={portal.handleToggleContactRelease}
-              onReassignCarer={portal.handleOverridePlacementCarer}
-            />
-          )}
+              {/* TAB 5: ACTIVE PLACEMENTS TRACKING */}
+              {portal.activeTab === "placements" && (
+                <PlacementTracking
+                  placements={portal.placements}
+                  carers={portal.carers}
+                  onToggleContactRelease={portal.handleToggleContactRelease}
+                  onReassignCarer={portal.handleOverridePlacementCarer}
+                />
+              )}
 
-          {/* TAB 6: EMERGENCY CASES TRIAGE */}
-          {portal.activeTab === "emergency" && (
-            <EmergencyCases
-              requests={portal.requests}
-              carers={portal.carers}
-              onCreateMatch={portal.handleCreatePlacement}
-            />
-          )}
+              {/* TAB 6: EMERGENCY CASES TRIAGE */}
+              {portal.activeTab === "emergency" && (
+                <EmergencyCases
+                  requests={portal.requests}
+                  carers={portal.carers}
+                  onCreateMatch={portal.handleCreatePlacement}
+                />
+              )}
 
-          {/* TAB 7: BILLING & INVOICES */}
-          {portal.activeTab === "billing" && (
-            <BillingManagement placements={portal.placements} />
-          )}
+              {/* TAB 7: BILLING & INVOICES */}
+              {portal.activeTab === "billing" && (
+                <BillingManagement placements={portal.placements} />
+              )}
 
-          {/* TAB 8: SUPPORT & ENQUIRIES */}
-          {portal.activeTab === "enquiries" && (
-            <SupportEnquiryManagement
-              enquiries={portal.enquiries}
-              selectedEnquiry={portal.selectedEnquiry}
-              setSelectedEnquiry={portal.setSelectedEnquiry}
-              loadEnquiryDetails={portal.loadEnquiryDetails}
-              handleRespondToEnquiry={portal.handleRespondToEnquiry}
-              handleUpdateEnquiryStatus={portal.handleUpdateEnquiryStatus}
-            />
+              {/* TAB 8: SUPPORT & ENQUIRIES */}
+              {portal.activeTab === "enquiries" && (
+                <SupportEnquiryManagement
+                  enquiries={portal.enquiries}
+                  selectedEnquiry={portal.selectedEnquiry}
+                  setSelectedEnquiry={portal.setSelectedEnquiry}
+                  loadEnquiryDetails={portal.loadEnquiryDetails}
+                  handleRespondToEnquiry={portal.handleRespondToEnquiry}
+                  handleUpdateEnquiryStatus={portal.handleUpdateEnquiryStatus}
+                />
+              )}
+            </>
           )}
         </div>
       </div>

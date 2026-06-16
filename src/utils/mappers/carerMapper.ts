@@ -8,9 +8,10 @@ export const mapCarerProfileToUICarer = (carer: CarerProfile): Carer => {
     experience: carer.experienceYears
       ? `${carer.experienceYears} Years`
       : "Not Provided",
-    specialties:
-      carer.careSpecialties && carer.careSpecialties.length > 0
-        ? carer.careSpecialties.join(", ")
+    specialties: Array.isArray(carer.careSpecialties)
+      ? carer.careSpecialties.join(", ")
+      : typeof carer.careSpecialties === "string"
+        ? carer.careSpecialties
         : "No Specialties Available",
     availability:
       carer.availability === "AVAILABLE" ? "Available" : "Limited Availability",

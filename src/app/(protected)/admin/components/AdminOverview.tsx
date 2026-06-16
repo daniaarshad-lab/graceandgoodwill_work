@@ -1,6 +1,13 @@
 import SectionCard from "./shared/SectionCard";
 import { UseAdminPortalReturn } from "../hooks/useAdminPortal";
-import { Users, ClipboardList, Calendar, AlertTriangle } from "lucide-react";
+import {
+  Users,
+  ClipboardList,
+  Calendar,
+  AlertTriangle,
+  MessageSquare,
+  UserCheck,
+} from "lucide-react";
 
 interface AdminOverviewProps {
   stats: UseAdminPortalReturn["stats"];
@@ -19,12 +26,35 @@ export default function AdminOverview({
 }: AdminOverviewProps) {
   return (
     <div className="space-y-8">
-      {/* 4-Column Grid Stat Cards */}
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Card 1: Total Carers */}
+      {/* 6-Card responsive grid (3 columns on desktop, 2 on tablet, 1 on mobile) */}
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {/* Card 1: Total Clients */}
+        <div
+          onClick={() => setActiveTab("requests")}
+          className="cursor-pointer rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-gold-300/30 flex flex-col justify-between"
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-gold-200/60">
+                Total Clients
+              </p>
+              <h3 className="mt-2 text-3xl font-bold text-gold-200">
+                {stats.totalClients}
+              </h3>
+            </div>
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gold/10 text-gold">
+              <Users className="h-6 w-6" strokeWidth={2} />
+            </div>
+          </div>
+          <p className="mt-4 text-xs text-gold-100/40">
+            Registered client accounts
+          </p>
+        </div>
+
+        {/* Card 2: Total Carers */}
         <div
           onClick={() => setActiveTab("carers")}
-          className="cursor-pointer rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-gold-300/30"
+          className="cursor-pointer rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-gold-300/30 flex flex-col justify-between"
         >
           <div className="flex items-center justify-between">
             <div>
@@ -36,18 +66,18 @@ export default function AdminOverview({
               </h3>
             </div>
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gold/10 text-gold">
-              <Users className="h-6 w-6" strokeWidth={2} />
+              <UserCheck className="h-6 w-6" strokeWidth={2} />
             </div>
           </div>
           <p className="mt-4 text-xs text-gold-100/40">
-            Registered carer pool profiles
+            Registered carer profiles
           </p>
         </div>
 
-        {/* Card 2: Pending Reviews */}
+        {/* Card 3: Pending Approvals */}
         <div
           onClick={() => setActiveTab("carers")}
-          className="cursor-pointer rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-gold-300/30"
+          className="cursor-pointer rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-gold-300/30 flex flex-col justify-between"
         >
           <div className="flex items-center justify-between">
             <div>
@@ -63,14 +93,14 @@ export default function AdminOverview({
             </div>
           </div>
           <p className="mt-4 text-xs text-gold-DEFAULT/60">
-            Carer applications awaiting DBS review
+            Carer applications awaiting review
           </p>
         </div>
 
-        {/* Card 3: Active Placements */}
+        {/* Card 4: Active Placements */}
         <div
           onClick={() => setActiveTab("placements")}
-          className="cursor-pointer rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-gold-300/30"
+          className="cursor-pointer rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-gold-300/30 flex flex-col justify-between"
         >
           <div className="flex items-center justify-between">
             <div>
@@ -90,10 +120,10 @@ export default function AdminOverview({
           </p>
         </div>
 
-        {/* Card 4: Emergency Cases */}
+        {/* Card 5: Emergency Cases */}
         <div
           onClick={() => setActiveTab("emergency")}
-          className="relative cursor-pointer overflow-hidden rounded-2xl border border-rose-500/20 bg-navy-900/60 p-6 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-rose-500/40"
+          className="relative cursor-pointer overflow-hidden rounded-2xl border border-rose-500/20 bg-navy-900/60 p-6 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-rose-500/40 flex flex-col justify-between"
         >
           {stats.emergencyCases > 0 && (
             <span className="absolute right-3 top-3 flex h-2 w-2">
@@ -115,7 +145,30 @@ export default function AdminOverview({
             </div>
           </div>
           <p className="mt-4 text-xs text-rose-400/60">
-            High priority care cases awaiting assignment
+            High priority care cases awaiting action
+          </p>
+        </div>
+
+        {/* Card 6: Open Support Enquiries */}
+        <div
+          onClick={() => setActiveTab("enquiries")}
+          className="cursor-pointer rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-gold-300/30 flex flex-col justify-between"
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-gold-200/60">
+                Open Support Enquiries
+              </p>
+              <h3 className="mt-2 text-3xl font-bold text-amber-500">
+                {stats.unreadEnquiries}
+              </h3>
+            </div>
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-500/10 text-amber-500">
+              <MessageSquare className="h-6 w-6" strokeWidth={2} />
+            </div>
+          </div>
+          <p className="mt-4 text-xs text-amber-500/60">
+            Client enquiries requiring attention
           </p>
         </div>
       </div>

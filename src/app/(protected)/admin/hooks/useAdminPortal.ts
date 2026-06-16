@@ -6,7 +6,6 @@ import {
   AdminActivity,
 } from "../types/admin.types";
 import { adminService } from "@/services/admin/admin.service";
-import { Enquiry } from "@/app/(protected)/client/types/client-ui.types";
 
 // Helper to map backend document category to frontend status with file URLs and IDs
 const getDocDetails = (docs: any[], category: string) => {
@@ -85,15 +84,21 @@ const mapBackendCarers = (backendCarers: any[]): CarerApplication[] => {
       status = "Approved";
     } else if (user.status === "SUSPENDED") {
       status = "Rejected";
+    } else if (user.status === "PENDING") {
+      status = "Pending";
     }
 
-    // Map specialties checking both careSpecialties string and careTypes array
+    // Map specialties checking both careSpecialties string/array and careTypes array
     let specialtiesList: string[] = [];
     if (profile.careSpecialties) {
-      specialtiesList = profile.careSpecialties
-        .split(",")
-        .map((s: string) => s.trim())
-        .filter(Boolean);
+      specialtiesList = Array.isArray(profile.careSpecialties)
+        ? profile.careSpecialties
+        : typeof profile.careSpecialties === "string"
+          ? profile.careSpecialties
+              .split(",")
+              .map((s: string) => s.trim())
+              .filter(Boolean)
+          : [];
     } else if (profile.careTypes && Array.isArray(profile.careTypes)) {
       specialtiesList = profile.careTypes;
     }
@@ -128,7 +133,8 @@ const mapBackendRequests = (backendClients: any[]): ClientRequest[] => {
     const careRequests = profile.careRequests || [];
 
     careRequests.forEach((req: any) => {
-      let status: "Unmatched" | "Matched" | "Reviewing" | "Emergency" = "Unmatched";
+      let status: "Unmatched" | "Matched" | "Reviewing" | "Emergency" =
+        "Unmatched";
       if (req.status === "MATCHED" || req.status === "PLACEMENT_CONFIRMED") {
         status = "Matched";
       } else if (req.isEmergency) {
@@ -151,8 +157,13 @@ const mapBackendRequests = (backendClients: any[]): ClientRequest[] => {
         careType: req.careCategory || "General Care",
         location: req.city || profile.city || "London",
         urgency,
-        startDate: req.startDate ? new Date(req.startDate).toISOString().split('T')[0] : "As soon as possible",
-        notes: req.additionalNotes || req.requirements || "No additional notes provided.",
+        startDate: req.startDate
+          ? new Date(req.startDate).toISOString().split("T")[0]
+          : "As soon as possible",
+        notes:
+          req.additionalNotes ||
+          req.requirements ||
+          "No additional notes provided.",
         status,
         email: client.email || req.requestorEmail || "",
         phone: client.phoneNumber || req.requestorPhone || "No phone listed",
@@ -179,16 +190,25 @@ const mapBackendPlacements = (backendPlacements: any[]): Placement[] => {
     const approvedIntroForClient = carerIntros.find(
       (i: any) =>
         i.status === "APPROVED" &&
-        (i.careRequest?.clientProfileId === p.clientProfileId || i.careRequestId === p.careRequestId)
+        (i.careRequest?.clientProfileId === p.clientProfileId ||
+          i.careRequestId === p.careRequestId),
     );
     const intro = careReq.introductions?.find(
-      (i: any) => i.carerProfileId === p.carerProfileId
+      (i: any) => i.carerProfileId === p.carerProfileId,
     );
     const contactDetailsReleased = approvedIntroForClient
       ? true
-      : (intro ? intro.status === "APPROVED" : false);
+      : intro
+        ? intro.status === "APPROVED"
+        : false;
 
-    let status: "Pending" | "Reviewing" | "Matched" | "Active" | "Completed" | "Emergency" = "Matched";
+    let status:
+      | "Pending"
+      | "Reviewing"
+      | "Matched"
+      | "Active"
+      | "Completed"
+      | "Emergency" = "Matched";
     if (p.status === "ACTIVE") {
       status = contactDetailsReleased ? "Active" : "Matched";
     } else if (p.status === "COMPLETED") {
@@ -200,14 +220,20 @@ const mapBackendPlacements = (backendPlacements: any[]): Placement[] => {
     const timeline = [];
     timeline.push({
       title: "Match Created",
-      timestamp: new Date(p.createdAt).toISOString().replace("T", " ").substring(0, 16),
+      timestamp: new Date(p.createdAt)
+        .toISOString()
+        .replace("T", " ")
+        .substring(0, 16),
       description: `Admin assigned ${carerUser.firstName} ${carerUser.lastName} to ${clientUser.firstName} ${clientUser.lastName}.`,
     });
 
     if (contactDetailsReleased) {
       timeline.push({
         title: "Contacts Approved & Released",
-        timestamp: new Date(p.updatedAt).toISOString().replace("T", " ").substring(0, 16),
+        timestamp: new Date(p.updatedAt)
+          .toISOString()
+          .replace("T", " ")
+          .substring(0, 16),
         description: "Admin approved contact detail sharing.",
       });
     }
@@ -223,7 +249,9 @@ const mapBackendPlacements = (backendPlacements: any[]): Placement[] => {
       urgency,
       status,
       contactDetailsReleased,
-      startDate: p.startDate ? new Date(p.startDate).toISOString().split('T')[0] : "Pending",
+      startDate: p.startDate
+        ? new Date(p.startDate).toISOString().split("T")[0]
+        : "Pending",
       timeline,
     };
   });
@@ -249,6 +277,9 @@ export function useAdminPortal() {
   const [selectedEnquiry, setSelectedEnquiry] = useState<any | null>(null);
 
   const [isLiveActive, setIsLiveActive] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [totalClientsCount, setTotalClientsCount] = useState(0);
 
   const prevCarersRef = useRef<CarerApplication[]>([]);
   const prevRequestsRef = useRef<ClientRequest[]>([]);
@@ -273,69 +304,105 @@ export function useAdminPortal() {
   );
 
   // Compare new carers with previous carers to log changes
-  const checkCarersDiff = useCallback((newCarers: CarerApplication[]) => {
-    const prev = prevCarersRef.current;
-    if (prev.length > 0) {
-      newCarers.forEach((c) => {
-        const old = prev.find((pc) => pc.id === c.id);
-        if (!old) {
-          logActivity(`New carer registered: ${c.name}`, "info");
-        } else if (old.status !== c.status) {
-          if (c.status === "Approved") {
-            logActivity(`Carer application for ${c.name} was Approved.`, "success");
-          } else if (c.status === "Rejected") {
-            logActivity(`Carer application for ${c.name} was Suspended/Rejected.`, "error");
+  const checkCarersDiff = useCallback(
+    (newCarers: CarerApplication[]) => {
+      const prev = prevCarersRef.current;
+      if (prev.length > 0) {
+        newCarers.forEach((c) => {
+          const old = prev.find((pc) => pc.id === c.id);
+          if (!old) {
+            logActivity(`New carer registered: ${c.name}`, "info");
+          } else if (old.status !== c.status) {
+            if (c.status === "Approved") {
+              logActivity(
+                `Carer application for ${c.name} was Approved.`,
+                "success",
+              );
+            } else if (c.status === "Rejected") {
+              logActivity(
+                `Carer application for ${c.name} was Suspended/Rejected.`,
+                "error",
+              );
+            }
           }
-        }
-      });
-    }
-    prevCarersRef.current = newCarers;
-  }, [logActivity]);
+        });
+      }
+      prevCarersRef.current = newCarers;
+    },
+    [logActivity],
+  );
 
-  const checkRequestsDiff = useCallback((newRequests: ClientRequest[]) => {
-    const prev = prevRequestsRef.current;
-    if (prev.length > 0) {
-      newRequests.forEach((r) => {
-        const old = prev.find((pr) => pr.id === r.id);
-        if (!old) {
-          logActivity(`New client care request received from ${r.clientName}`, "info");
-        } else if (old.status !== r.status) {
-          logActivity(`Request for ${r.clientName} status changed to ${r.status}.`, "success");
-        }
-      });
-    }
-    prevRequestsRef.current = newRequests;
-  }, [logActivity]);
+  const checkRequestsDiff = useCallback(
+    (newRequests: ClientRequest[]) => {
+      const prev = prevRequestsRef.current;
+      if (prev.length > 0) {
+        newRequests.forEach((r) => {
+          const old = prev.find((pr) => pr.id === r.id);
+          if (!old) {
+            logActivity(
+              `New client care request received from ${r.clientName}`,
+              "info",
+            );
+          } else if (old.status !== r.status) {
+            logActivity(
+              `Request for ${r.clientName} status changed to ${r.status}.`,
+              "success",
+            );
+          }
+        });
+      }
+      prevRequestsRef.current = newRequests;
+    },
+    [logActivity],
+  );
 
-  const checkPlacementsDiff = useCallback((newPlacements: Placement[]) => {
-    const prev = prevPlacementsRef.current;
-    if (prev.length > 0) {
-      newPlacements.forEach((p) => {
-        const old = prev.find((pp) => pp.id === p.id);
-        if (!old) {
-          logActivity(`New placement match created: ${p.carerName} with ${p.clientName}.`, "success");
-        } else if (old.status !== p.status) {
-          logActivity(`Placement for ${p.clientName} status changed to ${p.status}.`, "info");
-        }
-      });
-    }
-    prevPlacementsRef.current = newPlacements;
-  }, [logActivity]);
+  const checkPlacementsDiff = useCallback(
+    (newPlacements: Placement[]) => {
+      const prev = prevPlacementsRef.current;
+      if (prev.length > 0) {
+        newPlacements.forEach((p) => {
+          const old = prev.find((pp) => pp.id === p.id);
+          if (!old) {
+            logActivity(
+              `New placement match created: ${p.carerName} with ${p.clientName}.`,
+              "success",
+            );
+          } else if (old.status !== p.status) {
+            logActivity(
+              `Placement for ${p.clientName} status changed to ${p.status}.`,
+              "info",
+            );
+          }
+        });
+      }
+      prevPlacementsRef.current = newPlacements;
+    },
+    [logActivity],
+  );
 
-  const checkEnquiriesDiff = useCallback((newEnquiries: any[]) => {
-    const prev = prevEnquiriesRef.current;
-    if (prev.length > 0) {
-      newEnquiries.forEach((e) => {
-        const old = prev.find((pe) => pe.id === e.id);
-        if (!old) {
-          logActivity(`New support enquiry received from ${e.name}.`, "warning");
-        } else if (old.status !== e.status) {
-          logActivity(`Enquiry from ${e.name} status updated to ${e.status}.`, "info");
-        }
-      });
-    }
-    prevEnquiriesRef.current = newEnquiries;
-  }, [logActivity]);
+  const checkEnquiriesDiff = useCallback(
+    (newEnquiries: any[]) => {
+      const prev = prevEnquiriesRef.current;
+      if (prev.length > 0) {
+        newEnquiries.forEach((e) => {
+          const old = prev.find((pe) => pe.id === e.id);
+          if (!old) {
+            logActivity(
+              `New support enquiry received from ${e.name}.`,
+              "warning",
+            );
+          } else if (old.status !== e.status) {
+            logActivity(
+              `Enquiry from ${e.name} status updated to ${e.status}.`,
+              "info",
+            );
+          }
+        });
+      }
+      prevEnquiriesRef.current = newEnquiries;
+    },
+    [logActivity],
+  );
 
   const [activities, setActivities] = useState<AdminActivity[]>([
     {
@@ -360,56 +427,77 @@ export function useAdminPortal() {
   const [selectedPlacementForReassign, setSelectedPlacementForReassign] =
     useState<Placement | null>(null);
 
-
-
   // Load carers from backend API
   const loadCarers = useCallback(async () => {
     try {
       const data = await adminService.getCarers();
       const mapped = mapBackendCarers(data);
+      checkCarersDiff(mapped);
       setCarers(mapped);
     } catch (err: any) {
       console.error("Failed to load carers:", err.message);
+      throw err;
     }
-  }, []);
+  }, [checkCarersDiff]);
 
   // Load client requests from backend API
   const loadRequests = useCallback(async () => {
     try {
       const data = await adminService.getClients();
+      setTotalClientsCount(data.length);
       const mapped = mapBackendRequests(data);
+      checkRequestsDiff(mapped);
       setRequests(mapped);
     } catch (err: any) {
       console.error("Failed to load client requests:", err.message);
+      throw err;
     }
-  }, []);
+  }, [checkRequestsDiff]);
 
   // Load placements from backend API
   const loadPlacements = useCallback(async () => {
     try {
       const data = await adminService.getPlacements();
       const mapped = mapBackendPlacements(data);
+      checkPlacementsDiff(mapped);
       setPlacements(mapped);
     } catch (err: any) {
       console.error("Failed to load placements:", err.message);
+      throw err;
     }
-  }, []);
+  }, [checkPlacementsDiff]);
 
   // Load enquiries from backend API
   const loadEnquiries = useCallback(async () => {
     try {
       const data = await adminService.getEnquiries();
+      checkEnquiriesDiff(data);
       setEnquiries(data);
     } catch (err: any) {
       console.error("Failed to load enquiries:", err.message);
+      throw err;
     }
-  }, []);
+  }, [checkEnquiriesDiff]);
 
   useEffect(() => {
-    loadCarers();
-    loadRequests();
-    loadPlacements();
-    loadEnquiries();
+    const loadAllData = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        await Promise.all([
+          loadCarers(),
+          loadRequests(),
+          loadPlacements(),
+          loadEnquiries(),
+        ]);
+      } catch (err: any) {
+        console.error("Failed to load admin dashboard data:", err);
+        setError(err?.message || "Failed to load dashboard data");
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadAllData();
   }, [loadCarers, loadRequests, loadPlacements, loadEnquiries]);
 
   // Action: Approve Carer Application
@@ -478,6 +566,37 @@ export function useAdminPortal() {
     [requests, carers, logActivity, loadRequests, loadPlacements],
   );
 
+  const handleAssignCarerToCareRequest = useCallback(
+    async (
+      careRequestId: string,
+      carerUserId: string,
+      carerName: string,
+      clientName: string,
+    ) => {
+      try {
+        await adminService.assignCarerToCareRequest(careRequestId, carerUserId);
+        logActivity(
+          `Successfully matched carer ${carerName} to client request ${clientName}.`,
+          "success",
+        );
+        setSelectedRequestForMatching(null);
+        setActiveTab("placements");
+        await loadRequests();
+        await loadPlacements();
+      } catch (err: any) {
+        logActivity(`Failed to assign carer: ${err.message}`, "error");
+        throw err;
+      }
+    },
+    [
+      logActivity,
+      setSelectedRequestForMatching,
+      setActiveTab,
+      loadRequests,
+      loadPlacements,
+    ],
+  );
+
   // Action: Toggle Contact Details Release
   const handleToggleContactRelease = useCallback(
     async (placementId: string) => {
@@ -492,16 +611,19 @@ export function useAdminPortal() {
 
         if (rawPlace) {
           const carerIntros = rawPlace.carerProfile?.introductions || [];
-          const intro = carerIntros.find(
-            (i: any) => i.careRequest?.clientProfileId === rawPlace.clientProfileId
-          ) || rawPlace.careRequest?.introductions.find(
-            (i: any) => i.carerProfileId === rawPlace.carerProfileId
-          );
+          const intro =
+            carerIntros.find(
+              (i: any) =>
+                i.careRequest?.clientProfileId === rawPlace.clientProfileId,
+            ) ||
+            rawPlace.careRequest?.introductions.find(
+              (i: any) => i.carerProfileId === rawPlace.carerProfileId,
+            );
 
           if (intro) {
             await adminService.updateIntroductionStatus(
               intro.id,
-              released ? "APPROVED" : "PENDING"
+              released ? "APPROVED" : "PENDING",
             );
           } else if (rawPlace.careRequestId) {
             await adminService.createDirectMatch({
@@ -520,7 +642,10 @@ export function useAdminPortal() {
 
         await loadPlacements();
       } catch (err: any) {
-        logActivity(`Failed to toggle contact release: ${err.message}`, "error");
+        logActivity(
+          `Failed to toggle contact release: ${err.message}`,
+          "error",
+        );
       }
     },
     [placements, logActivity, loadPlacements],
@@ -535,18 +660,18 @@ export function useAdminPortal() {
       try {
         await adminService.replaceCarerInPlacement(
           placementId,
-          newCarer.carerProfileId!
+          newCarer.carerProfileId!,
         );
 
-        logActivity(
-          `Reassigned placement for ${newCarer.name}.`,
-          "warning",
-        );
+        logActivity(`Reassigned placement for ${newCarer.name}.`, "warning");
 
         setSelectedPlacementForReassign(null);
         await loadPlacements();
       } catch (err: any) {
-        logActivity(`Failed to reassign placement carer: ${err.message}`, "error");
+        logActivity(
+          `Failed to reassign placement carer: ${err.message}`,
+          "error",
+        );
       }
     },
     [carers, logActivity, loadPlacements],
@@ -571,39 +696,49 @@ export function useAdminPortal() {
     [loadCarers, logActivity],
   );
 
-  const loadEnquiryDetails = useCallback(async (id: string) => {
-    try {
-      const data = await adminService.getEnquiryDetails(id);
-      setSelectedEnquiry(data);
-      await loadEnquiries();
-    } catch (err: any) {
-      console.error("Failed to load enquiry details:", err.message);
-    }
-  }, [loadEnquiries]);
+  const loadEnquiryDetails = useCallback(
+    async (id: string) => {
+      try {
+        const data = await adminService.getEnquiryDetails(id);
+        setSelectedEnquiry(data);
+        await loadEnquiries();
+      } catch (err: any) {
+        console.error("Failed to load enquiry details:", err.message);
+      }
+    },
+    [loadEnquiries],
+  );
 
-  const handleRespondToEnquiry = useCallback(async (id: string, message: string) => {
-    try {
-      await adminService.respondToEnquiry(id, message);
-      logActivity("Sent response to enquiry.", "success");
-      await loadEnquiryDetails(id);
-    } catch (err: any) {
-      logActivity(`Failed to send response: ${err.message}`, "error");
-    }
-  }, [loadEnquiryDetails, logActivity]);
+  const handleRespondToEnquiry = useCallback(
+    async (id: string, message: string) => {
+      try {
+        await adminService.respondToEnquiry(id, message);
+        logActivity("Sent response to enquiry.", "success");
+        await loadEnquiryDetails(id);
+      } catch (err: any) {
+        logActivity(`Failed to send response: ${err.message}`, "error");
+      }
+    },
+    [loadEnquiryDetails, logActivity],
+  );
 
-  const handleUpdateEnquiryStatus = useCallback(async (id: string, status: string) => {
-    try {
-      await adminService.updateEnquiryStatus(id, status);
-      logActivity(`Updated enquiry status to ${status}.`, "success");
-      await loadEnquiryDetails(id);
-    } catch (err: any) {
-      logActivity(`Failed to update status: ${err.message}`, "error");
-    }
-  }, [loadEnquiryDetails, logActivity]);
+  const handleUpdateEnquiryStatus = useCallback(
+    async (id: string, status: string) => {
+      try {
+        await adminService.updateEnquiryStatus(id, status);
+        logActivity(`Updated enquiry status to ${status}.`, "success");
+        await loadEnquiryDetails(id);
+      } catch (err: any) {
+        logActivity(`Failed to update status: ${err.message}`, "error");
+      }
+    },
+    [loadEnquiryDetails, logActivity],
+  );
 
   const stats = {
     totalCarers: carers.length,
     pendingCarers: carers.filter((c) => c.status === "Pending").length,
+    totalClients: totalClientsCount,
     activePlacements: placements.filter(
       (p) => p.status === "Active" || p.status === "Matched",
     ).length,
@@ -623,6 +758,8 @@ export function useAdminPortal() {
     isLiveActive,
     setIsLiveActive,
     stats,
+    loading,
+    error,
     selectedCarerForApproval,
     setSelectedCarerForApproval,
     selectedRequestForMatching,
@@ -632,6 +769,7 @@ export function useAdminPortal() {
     handleApproveCarer,
     handleRejectCarer,
     handleCreatePlacement,
+    handleAssignCarerToCareRequest,
     handleToggleContactRelease,
     handleOverridePlacementCarer,
     handleUpdateDocumentStatus,

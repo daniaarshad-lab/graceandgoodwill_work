@@ -227,6 +227,47 @@ export const adminService = {
     });
   },
 
+  async getSuggestions(careRequestId: string): Promise<any[]> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch(`/admin/care-requests/${careRequestId}/suggestions`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
+  async assignCarerToCareRequest(
+    careRequestId: string,
+    carerUserId: string,
+  ): Promise<any> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch("/admin/matches/care-request", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ careRequestId, carerUserId }),
+    });
+  },
+
   async getEnquiries(): Promise<any[]> {
     const token =
       typeof window !== "undefined"

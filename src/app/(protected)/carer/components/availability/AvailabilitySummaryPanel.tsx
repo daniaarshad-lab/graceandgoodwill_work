@@ -159,10 +159,9 @@ export default function AvailabilitySummaryPanel({
             outline-none cursor-pointer
             focus:ring-2 focus:ring-gold-muted/50 focus:ring-offset-2 focus:ring-offset-navy-950
             disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0
-            ${
-              hasChanges && !isSaving
-                ? "bg-[#b59469] text-navy-950 hover:bg-[#c9a87d] hover:-translate-y-[1px] hover:shadow-[0_8px_30px_rgba(160,128,84,0.24)] active:translate-y-0 active:shadow-none"
-                : "bg-gold-muted/15 text-gold-100/50 border border-gold-muted/20"
+            ${hasChanges && !isSaving
+              ? "bg-[#b59469] text-navy-950 hover:bg-[#c9a87d] hover:-translate-y-[1px] hover:shadow-[0_8px_30px_rgba(160,128,84,0.24)] active:translate-y-0 active:shadow-none"
+              : "bg-gold-muted/15 text-gold-100/50 border border-gold-muted/20"
             }`}
         >
           {isSaving ? (

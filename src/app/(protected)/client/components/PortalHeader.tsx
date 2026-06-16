@@ -17,8 +17,11 @@ export default function PortalHeader({ user }: PortalHeaderProps) {
   const dispatch = useAppDispatch();
   const profile = useAppSelector((state) => state.client.profile);
 
-  const displayUser = profile?.user || user;
-  const profilePhotoUrl = profile?.profilePhotoUrl;
+  const displayUser = profile?.user ?? user;
+  const profilePhotoUrl =
+    profile?.profilePhotoUrl ||
+    user?.clientProfile?.profilePhotoUrl ||
+    "";
 
   const getPhotoUrl = (url: string | null | undefined) => {
     if (!url) return "";

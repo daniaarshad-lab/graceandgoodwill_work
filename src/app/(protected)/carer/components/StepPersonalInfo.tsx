@@ -13,28 +13,51 @@ interface Props {
 
 export default function StepPersonalInfo({ portal, onNext, onBack }: Props) {
   const {
-    firstName, setFirstName,
-    lastName, setLastName,
-    phone, setPhone,
-    email, setEmail,
-    dateOfBirth, setDateOfBirth,
-    address, setAddress,
-    postcode, setPostcode,
-    emergencyContactName, setEmergencyContactName,
-    emergencyContactNumber, setEmergencyContactNumber,
-    emergencyContactRelation, setEmergencyContactRelation,
+    firstName,
+    setFirstName,
+    lastName,
+    setLastName,
+    phone,
+    setPhone,
+    email,
+    setEmail,
+    dateOfBirth,
+    setDateOfBirth,
+    address,
+    setAddress,
+    postcode,
+    setPostcode,
+    emergencyContactName,
+    setEmergencyContactName,
+    emergencyContactNumber,
+    setEmergencyContactNumber,
+    emergencyContactRelation,
+    setEmergencyContactRelation,
   } = portal;
 
   const [postcodeSuggestions, setPostcodeSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const handlePostcodeChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePostcodeChange = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const val = e.target.value;
     setPostcode(val);
 
+    if (val.trim()) {
+      setErrors((prev) => {
+        const copy = { ...prev };
+        delete copy.postcode;
+        return copy;
+      });
+    }
+
     if (val.length > 2) {
       try {
-        const res = await fetch(`https://api.postcodes.io/postcodes/${val}/autocomplete`);
+        const res = await fetch(
+          `https://api.postcodes.io/postcodes/${val}/autocomplete`,
+        );
         const data = await res.json();
         if (data.status === 200) {
           setPostcodeSuggestions(data.result || []);
@@ -55,44 +78,45 @@ export default function StepPersonalInfo({ portal, onNext, onBack }: Props) {
   const handleNext = async (e: React.MouseEvent) => {
     e.preventDefault();
 
+    const newErrors: Record<string, string> = {};
+
     if (!firstName?.trim() || !lastName?.trim()) {
-      showErrorToast("Validation Error", "Full Name is required.");
-      return;
+      newErrors.fullName = "Full Name is required";
     }
     if (!dateOfBirth) {
-      showErrorToast("Validation Error", "Date of Birth is required.");
-      return;
+      newErrors.dateOfBirth = "Date of Birth is required";
     }
     if (!address?.trim()) {
-      showErrorToast("Validation Error", "Address is required.");
-      return;
+      newErrors.address = "Address is required";
     }
     if (!postcode?.trim()) {
-      showErrorToast("Validation Error", "Postcode is required.");
-      return;
+      newErrors.postcode = "Postcode is required";
     }
     if (!email?.trim()) {
-      showErrorToast("Validation Error", "Email Address is required.");
-      return;
+      newErrors.email = "Email Address is required";
     }
     if (!phone?.trim()) {
-      showErrorToast("Validation Error", "Mobile Number is required.");
-      return;
+      newErrors.phone = "Mobile Number is required";
     }
     if (!emergencyContactName?.trim()) {
-      showErrorToast("Validation Error", "Emergency Contact Name is required.");
-      return;
+      newErrors.emergencyContactName = "Emergency Contact Name is required";
     }
     if (!emergencyContactNumber?.trim()) {
-      showErrorToast("Validation Error", "Emergency Contact Number is required.");
-      return;
+      newErrors.emergencyContactNumber = "Emergency Contact Number is required";
     }
     if (!emergencyContactRelation?.trim()) {
-      showErrorToast("Validation Error", "Emergency Contact Relationship is required.");
+      newErrors.emergencyContactRelation =
+        "Emergency Contact Relationship is required";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
 
-    const syntheticEvent = { preventDefault: () => { } } as React.FormEvent;
+    setErrors({});
+
+    const syntheticEvent = { preventDefault: () => {} } as React.FormEvent;
     const success = await portal.handleSaveProfile(syntheticEvent, 2);
     if (success) {
       onNext();
@@ -103,8 +127,8 @@ export default function StepPersonalInfo({ portal, onNext, onBack }: Props) {
     const d = new Date();
     d.setDate(d.getDate() - 1);
     const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
 
@@ -116,37 +140,81 @@ export default function StepPersonalInfo({ portal, onNext, onBack }: Props) {
         <h3 className="text-xl font-bold text-gold-200 border-b border-gold-300/10 pb-4">
           Personal Information
         </h3>
-        <p className="text-sm text-gold-100/60 mb-4">All items marked with * are compulsory.</p>
+        <p className="text-sm text-gold-100/60 mb-4">
+          All items marked with * are compulsory.
+        </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Input
             label="Full Name *"
-            value={`${firstName || ''} ${lastName || ''}`.trim()}
+            value={`${firstName || ""} ${lastName || ""}`.trim()}
             onChange={(e) => {
-              const parts = e.target.value.split(' ');
-              setFirstName(parts[0] || '');
-              setLastName(parts.slice(1).join(' ') || '');
+              const val = e.target.value;
+              const parts = val.split(" ");
+              setFirstName(parts[0] || "");
+              setLastName(parts.slice(1).join(" ") || "");
+              if (parts[0]?.trim() && parts.slice(1).join(" ")?.trim()) {
+                setErrors((prev) => {
+                  const copy = { ...prev };
+                  delete copy.fullName;
+                  return copy;
+                });
+              }
             }}
             placeholder="Full Name"
+            error={errors.fullName}
           />
           <Input
             label="Date of Birth *"
             type="date"
-            value={dateOfBirth ? dateOfBirth.split('T')[0] : ''}
+            value={dateOfBirth ? dateOfBirth.split("T")[0] : ""}
             onChange={(e) => {
               const val = e.target.value;
               if (val && val > maxDate) {
-                showErrorToast("Validation Error", "Date of Birth cannot be today or a future date.");
+                showErrorToast(
+                  "Validation Error",
+                  "Date of Birth cannot be today or a future date.",
+                );
                 return;
               }
               setDateOfBirth(val);
+              if (val) {
+                setErrors((prev) => {
+                  const copy = { ...prev };
+                  delete copy.dateOfBirth;
+                  return copy;
+                });
+              }
             }}
             placeholder="DD/MM/YYYY"
             max={maxDate}
+            error={errors.dateOfBirth}
           />
-          <Input label="Address *" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Full Address" />
+          <Input
+            label="Address *"
+            value={address}
+            onChange={(e) => {
+              const val = e.target.value;
+              setAddress(val);
+              if (val.trim()) {
+                setErrors((prev) => {
+                  const copy = { ...prev };
+                  delete copy.address;
+                  return copy;
+                });
+              }
+            }}
+            placeholder="Full Address"
+            error={errors.address}
+          />
           <div className="relative">
-            <Input label="Postcode *" value={postcode} onChange={handlePostcodeChange} placeholder="Postcode" />
+            <Input
+              label="Postcode *"
+              value={postcode}
+              onChange={handlePostcodeChange}
+              placeholder="Postcode"
+              error={errors.postcode}
+            />
             {showSuggestions && postcodeSuggestions.length > 0 && (
               <ul className="absolute z-50 w-full mt-1 bg-navy-900 border border-gold-300/20 rounded-md shadow-[0_8px_30px_rgba(0,0,0,0.5)] max-h-48 overflow-y-auto">
                 {postcodeSuggestions.map((p) => (
@@ -156,6 +224,11 @@ export default function StepPersonalInfo({ portal, onNext, onBack }: Props) {
                     onClick={() => {
                       setPostcode(p);
                       setShowSuggestions(false);
+                      setErrors((prev) => {
+                        const copy = { ...prev };
+                        delete copy.postcode;
+                        return copy;
+                      });
                     }}
                   >
                     {p}
@@ -164,25 +237,112 @@ export default function StepPersonalInfo({ portal, onNext, onBack }: Props) {
               </ul>
             )}
           </div>
-          <Input label="Email Address *" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
-          <PhoneInput label="Mobile Number *" value={phone} onChange={setPhone} placeholder="Mobile Number" />
+          <Input
+            label="Email Address *"
+            type="email"
+            value={email}
+            onChange={(e) => {
+              const val = e.target.value;
+              setEmail(val);
+              if (val.trim()) {
+                setErrors((prev) => {
+                  const copy = { ...prev };
+                  delete copy.email;
+                  return copy;
+                });
+              }
+            }}
+            placeholder="Email"
+            error={errors.email}
+          />
+          <PhoneInput
+            label="Mobile Number *"
+            value={phone}
+            onChange={(val) => {
+              setPhone(val);
+              if (val.trim()) {
+                setErrors((prev) => {
+                  const copy = { ...prev };
+                  delete copy.phone;
+                  return copy;
+                });
+              }
+            }}
+            placeholder="Mobile Number"
+            error={errors.phone}
+          />
         </div>
 
         <div className="pt-6 mt-6 border-t border-gold-300/10">
-          <h4 className="text-lg font-semibold text-gold-200 mb-4">Emergency Contact Details *</h4>
+          <h4 className="text-lg font-semibold text-gold-200 mb-4">
+            Emergency Contact Details *
+          </h4>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Input label="Contact Name *" value={emergencyContactName} onChange={(e) => setEmergencyContactName(e.target.value)} placeholder="Name" />
-            <PhoneInput label="Contact Number *" value={emergencyContactNumber} onChange={setEmergencyContactNumber} placeholder="Phone" />
-            <Input label="Relationship *" value={emergencyContactRelation} onChange={(e) => setEmergencyContactRelation(e.target.value)} placeholder="e.g. Spouse, Parent" />
+            <Input
+              label="Contact Name *"
+              value={emergencyContactName}
+              onChange={(e) => {
+                const val = e.target.value;
+                setEmergencyContactName(val);
+                if (val.trim()) {
+                  setErrors((prev) => {
+                    const copy = { ...prev };
+                    delete copy.emergencyContactName;
+                    return copy;
+                  });
+                }
+              }}
+              placeholder="Name"
+              error={errors.emergencyContactName}
+            />
+            <PhoneInput
+              label="Contact Number *"
+              value={emergencyContactNumber}
+              onChange={(val) => {
+                setEmergencyContactNumber(val);
+                if (val.trim()) {
+                  setErrors((prev) => {
+                    const copy = { ...prev };
+                    delete copy.emergencyContactNumber;
+                    return copy;
+                  });
+                }
+              }}
+              placeholder="Phone"
+              error={errors.emergencyContactNumber}
+            />
+            <Input
+              label="Relationship *"
+              value={emergencyContactRelation}
+              onChange={(e) => {
+                const val = e.target.value;
+                setEmergencyContactRelation(val);
+                if (val.trim()) {
+                  setErrors((prev) => {
+                    const copy = { ...prev };
+                    delete copy.emergencyContactRelation;
+                    return copy;
+                  });
+                }
+              }}
+              placeholder="e.g. Spouse, Parent"
+              error={errors.emergencyContactRelation}
+            />
           </div>
         </div>
       </SectionCard>
 
       <div className="flex justify-between items-center pt-4 gap-4">
         {onBack ? (
-          <Button type="button" variant="ghost-gold" onClick={onBack}>Back</Button>
-        ) : <div />}
-        <Button type="button" variant="primary" onClick={handleNext}>Save & Continue</Button>
+          <Button type="button" variant="ghost-gold" onClick={onBack}>
+            Back
+          </Button>
+        ) : (
+          <div />
+        )}
+        <Button type="button" variant="primary" onClick={handleNext}>
+          Save & Continue
+        </Button>
       </div>
     </div>
   );

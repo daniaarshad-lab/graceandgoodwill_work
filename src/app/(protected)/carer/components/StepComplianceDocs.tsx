@@ -19,6 +19,8 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
     complianceDocs, handleUpdateDoc, selectedFiles
   } = portal;
 
+  const [submitted, setSubmitted] = useState(false);
+
   const requiredDocs = [
     { type: "ENHANCED_DBS", label: "Enhanced DBS Certificate *" },
     { type: "CV", label: "CV / Resume *" },
@@ -26,28 +28,24 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
     { type: "REFERENCE_2", label: "Professional Reference 2 *" },
   ];
 
+  const missingDocs = requiredDocs.filter(docItem => {
+    const doc = complianceDocs.find((d: ComplianceDoc) => d.type === docItem.type);
+    const isStaged = !!selectedFiles[docItem.type.toLowerCase()];
+    return !doc && !isStaged;
+  });
+
+  const errors = {
+    missingDocs: missingDocs.length > 0 ? `Please upload: ${missingDocs.map(d => d.label.replace(" *", "")).join(", ")}` : "",
+    employmentHistory: (!employmentHistory || employmentHistory.trim().length < 20) ? "Please provide your employment history details (minimum 20 characters)." : ""
+  };
+
+  const hasErrors = Object.values(errors).some(Boolean);
+
   const handleNext = async (e: React.MouseEvent) => {
     e.preventDefault();
+    setSubmitted(true);
 
-    const missingDocs = requiredDocs.filter(docItem => {
-      const doc = complianceDocs.find((d: ComplianceDoc) => d.type === docItem.type);
-      const isStaged = !!selectedFiles[docItem.type.toLowerCase()];
-      return !doc && !isStaged;
-    });
-
-    if (missingDocs.length > 0) {
-      showErrorToast(
-        "Validation Error", 
-        `Please upload: ${missingDocs.map(d => d.label.replace(" *", "")).join(", ")}`
-      );
-      return;
-    }
-
-    if (!employmentHistory || employmentHistory.trim().length < 20) {
-      showErrorToast(
-        "Validation Error", 
-        "Please provide your employment history details (minimum 20 characters)."
-      );
+    if (hasErrors) {
       return;
     }
 
@@ -70,10 +68,27 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
           </p>
         </div>
 
+        {submitted && errors.missingDocs && (
+          <p className="text-xs text-red-500 font-semibold mb-4 bg-red-950/15 border border-red-900/35 p-3 rounded-xl">
+            {errors.missingDocs}
+          </p>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {requiredDocs.map((docItem) => (
-            <DocUploadRow key={docItem.type} label={docItem.label} type={docItem.type} portal={portal} />
-          ))}
+          {requiredDocs.map((docItem) => {
+            const doc = complianceDocs.find((d: ComplianceDoc) => d.type === docItem.type);
+            const isStaged = !!selectedFiles[docItem.type.toLowerCase()];
+            const isMissing = !doc && !isStaged;
+            return (
+              <DocUploadRow 
+                key={docItem.type} 
+                label={docItem.label} 
+                type={docItem.type} 
+                portal={portal} 
+                isMissing={submitted && isMissing}
+              />
+            );
+          })}
         </div>
 
         <div className="pt-6 pb-2">
@@ -117,8 +132,11 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
               value={employmentHistory}
               onChange={(e) => setEmploymentHistory(e.target.value)}
               placeholder="e.g. 2020-2023: Care Assistant at ABC Care Home. 2023-Present: Independent Carer. Gap in 2019 due to travel..."
-              className="w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 text-sm border-gray-300/20"
+              className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 text-sm ${submitted && errors.employmentHistory ? 'border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]' : 'border-gray-300/20'}`}
             />
+            {submitted && errors.employmentHistory && (
+              <p className="text-xs text-red-500 font-semibold mt-1">{errors.employmentHistory}</p>
+            )}
           </div>
         </div>
       </SectionCard>
@@ -131,13 +149,13 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
   );
 }
 
-function DocUploadRow({ label, type, portal }: { label: string, type: string, portal: any }) {
+function DocUploadRow({ label, type, portal, isMissing }: { label: string, type: string, portal: any, isMissing?: boolean }) {
   const { complianceDocs, stageDocUpload, handleUpdateDoc, selectedFiles } = portal;
   const doc = complianceDocs.find((d: ComplianceDoc) => d.type === type);
   const isStaged = !!selectedFiles[type.toLowerCase()];
   
   return (
-    <div className="p-4 rounded-xl border border-gold-300/10 bg-navy-950/40 flex flex-col gap-2">
+    <div className={`p-4 rounded-xl border flex flex-col gap-2 transition-all ${isMissing ? 'border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)] bg-red-950/5' : 'border-gold-300/10 bg-navy-950/40'}`}>
       <div className="flex justify-between items-start">
         <span className="text-sm font-medium text-gold-50">{label}</span>
         {doc ? (

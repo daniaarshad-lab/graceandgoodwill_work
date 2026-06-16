@@ -2,6 +2,7 @@ import SectionCard from "./shared/SectionCard";
 import StatusBadge from "./shared/StatusBadge";
 import { ComplianceDoc } from "../types/carer.types";
 import Button from "@/components/Button";
+import { groupDatesIntoRanges, formatRangeDisplay } from "../utils/date.utils";
 
 interface DashboardOverviewProps {
   applicationStatus: "pending" | "approved" | "rejected";
@@ -119,22 +120,38 @@ export default function DashboardOverview({
       {/* Profile completeness Quick Stats widget */}
       <SectionCard className="space-y-4">
         <h4 className="font-bold text-gold-200 text-sm">Dashboard Overview</h4>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="rounded-2xl border border-gold-300/10 bg-navy-950/40 p-4 text-center">
+        <div className="grid grid-cols-1 gap-4">
+          <div className="flex items-center justify-between rounded-2xl border border-gold-300/10 bg-navy-950/40 p-4">
+            <p className="text-[10px] text-gold-100/50 uppercase tracking-wider font-semibold">
+              Docs Uploaded
+            </p>
             <p className="text-2xl font-semibold text-gold-50">
               {complianceDocs.length}
             </p>
-            <p className="text-[10px] text-gold-100/50 mt-1 uppercase tracking-wider">
-              Docs Uploaded
-            </p>
           </div>
-          <div className="rounded-2xl border border-gold-300/10 bg-navy-950/40 p-4 text-center">
-            <p className="text-2xl font-semibold text-gold-50">
-              {availability.length}
+          <div className="rounded-2xl border border-gold-300/10 bg-navy-950/40 p-4 space-y-2.5 h-[160px] flex flex-col">
+            <p className="text-[10px] text-gold-100/50 uppercase tracking-wider font-semibold">
+              Selected Dates
             </p>
-            <p className="text-[10px] text-gold-100/50 mt-1 uppercase tracking-wider">
-              Available Dates
-            </p>
+            {availability.length === 0 ? (
+              <p className="text-xs text-gold-100/35 flex-1 flex items-center">
+                No availability selected yet
+              </p>
+            ) : (
+              <ul className="text-xs text-gold-100/80 space-y-1.5 overflow-y-auto pr-1 flex-1 scroll-smooth">
+                {groupDatesIntoRanges(availability).map((range) => (
+                  <li
+                    key={`${range.start}-${range.end}`}
+                    className="flex items-start gap-2"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-gold-DEFAULT mt-1.5 flex-shrink-0" />
+                    <span className="leading-tight">
+                      {formatRangeDisplay(range)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
       </SectionCard>

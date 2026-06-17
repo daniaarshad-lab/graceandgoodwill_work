@@ -9,8 +9,6 @@ import Link from "next/link";
 
 interface CarerApplicationsProps {
   carers: CarerApplication[];
-  onReject: (id: string) => void;
-  setSelectedCarerForApproval: (carer: CarerApplication | null) => void;
   onUpdateDocumentStatus?: (
     docId: string,
     status: "VERIFIED" | "REJECTED",
@@ -26,8 +24,6 @@ interface CarerApplicationsProps {
 
 export default function CarerApplications({
   carers,
-  onReject,
-  setSelectedCarerForApproval,
   onUpdateDocumentStatus,
   page,
   totalPages,
@@ -166,40 +162,16 @@ export default function CarerApplications({
               </div>
             </div>
 
-            <div className="flex items-center gap-3 border-t border-gold-300/5 pt-4">
+            <div className="border-t border-gold-300/5 pt-4">
               <Button
                 onClick={() => setSelectedCarer(carer)}
-                variant="ghost-gold"
+                variant="primary"
                 size="sm"
                 fullWidth
                 className="text-center"
               >
                 View Details
               </Button>
-
-              {carer.status === "Pending" && (
-                <>
-                  <Button
-                    onClick={() => {
-                      setSelectedCarerForApproval(carer);
-                    }}
-                    variant="primary"
-                    size="sm"
-                    fullWidth
-                  >
-                    Approve Carer
-                  </Button>
-                  <Button
-                    onClick={() => onReject(carer.id)}
-                    variant="danger"
-                    size="sm"
-                    fullWidth={false}
-                    className="px-3"
-                  >
-                    Reject
-                  </Button>
-                </>
-              )}
             </div>
           </SectionCard>
         ))}

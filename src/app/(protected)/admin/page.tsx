@@ -171,10 +171,6 @@ function AdminDashboardContent() {
               {portal.activeTab === "carers" && (
                 <CarerApplications
                   carers={portal.carers}
-                  onReject={portal.handleRejectCarer}
-                  setSelectedCarerForApproval={
-                    portal.setSelectedCarerForApproval
-                  }
                   onUpdateDocumentStatus={portal.handleUpdateDocumentStatus}
                   page={portal.carersPagination.page}
                   totalPages={portal.carersPagination.totalPages}

@@ -10,6 +10,7 @@ export interface CarerUser {
 }
 
 export interface CarerProfile {
+  dateOfBirth: any;
   id: string;
   userId: string;
   user?: CarerUser;
@@ -76,7 +77,7 @@ export interface UpdateCarerProfilePayload {
 
   canDrive?: boolean;
   hasBusinessInsurance?: boolean;
-  
+
   dateOfBirth?: string;
   emergencyContactName?: string;
   emergencyContactNumber?: string;

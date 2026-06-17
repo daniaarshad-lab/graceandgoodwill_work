@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   CarerApplication,
   ClientRequest,
@@ -6,6 +7,15 @@ import {
   AdminActivity,
 } from "../types/admin.types";
 import { adminService } from "@/services/admin/admin.service";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import {
+  fetchAdminCarers,
+  fetchAdminCareRequests,
+  setCarersPage,
+  setCarersStatus,
+  setCareRequestsPage,
+  setCareRequestsStatus,
+} from "@/store/slices/adminSlice";
 
 // Helper to map backend document category to frontend status with file URLs and IDs
 const getDocDetails = (docs: any[], category: string) => {
@@ -124,54 +134,50 @@ const mapBackendCarers = (backendCarers: any[]): CarerApplication[] => {
   });
 };
 
-// Helper to map backend client structures to frontend ClientRequest format
-const mapBackendRequests = (backendClients: any[]): ClientRequest[] => {
-  const requestsList: ClientRequest[] = [];
+// Helper to map backend direct careRequest structures to frontend ClientRequest format
+const mapBackendCareRequests = (careRequests: any[]): ClientRequest[] => {
+  return careRequests.map((req: any) => {
+    const profile = req.clientProfile || {};
+    const clientUser = profile.user || {};
 
-  backendClients.forEach((client: any) => {
-    const profile = client.clientProfile || {};
-    const careRequests = profile.careRequests || [];
+    let status: "Unmatched" | "Matched" | "Reviewing" | "Emergency" =
+      "Unmatched";
+    if (req.status === "MATCHED" || req.status === "PLACEMENT_CONFIRMED") {
+      status = "Matched";
+    } else if (req.isEmergency) {
+      status = "Emergency";
+    } else if (req.status === "UNDER_REVIEW") {
+      status = "Reviewing";
+    }
 
-    careRequests.forEach((req: any) => {
-      let status: "Unmatched" | "Matched" | "Reviewing" | "Emergency" =
-        "Unmatched";
-      if (req.status === "MATCHED" || req.status === "PLACEMENT_CONFIRMED") {
-        status = "Matched";
-      } else if (req.isEmergency) {
-        status = "Emergency";
-      } else if (req.status === "UNDER_REVIEW") {
-        status = "Reviewing";
-      }
+    let urgency: "Standard" | "High" | "Emergency" = "Standard";
+    if (req.isEmergency) {
+      urgency = "Emergency";
+    } else if (req.status === "MATCHING_CARERS") {
+      urgency = "High";
+    }
 
-      let urgency: "Standard" | "High" | "Emergency" = "Standard";
-      if (req.isEmergency) {
-        urgency = "Emergency";
-      } else if (req.status === "MATCHING_CARERS") {
-        urgency = "High";
-      }
-
-      requestsList.push({
-        id: req.id,
-        clientProfileId: profile.id,
-        clientName: `${client.firstName} ${client.lastName}`,
-        careType: req.careCategory || "General Care",
-        location: req.city || profile.city || "London",
-        urgency,
-        startDate: req.startDate
-          ? new Date(req.startDate).toISOString().split("T")[0]
-          : "As soon as possible",
-        notes:
-          req.additionalNotes ||
-          req.requirements ||
-          "No additional notes provided.",
-        status,
-        email: client.email || req.requestorEmail || "",
-        phone: client.phoneNumber || req.requestorPhone || "No phone listed",
-      });
-    });
+    return {
+      id: req.id,
+      clientProfileId: req.clientProfileId,
+      clientName:
+        `${clientUser.firstName || ""} ${clientUser.lastName || ""}`.trim() ||
+        "Unknown Client",
+      careType: req.careCategory || "General Care",
+      location: req.city || profile.city || "London",
+      urgency,
+      startDate: req.startDate
+        ? new Date(req.startDate).toISOString().split("T")[0]
+        : "As soon as possible",
+      notes:
+        req.additionalNotes ||
+        req.requirements ||
+        "No additional notes provided.",
+      status,
+      email: clientUser.email || req.requestorEmail || "",
+      phone: clientUser.phoneNumber || req.requestorPhone || "No phone listed",
+    };
   });
-
-  return requestsList;
 };
 
 // Helper to map backend placement structures to frontend Placement format
@@ -268,10 +274,23 @@ export type AdminTabType =
   | "enquiries";
 
 export function useAdminPortal() {
-  const [activeTab, setActiveTab] = useState<AdminTabType>("overview");
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get("tab") as AdminTabType;
+  const [activeTab, setActiveTab] = useState<AdminTabType>(
+    (tabParam && ["overview", "carers", "requests", "matching", "placements", "emergency", "billing", "enquiries"].includes(tabParam))
+      ? tabParam
+      : "overview"
+  );
 
-  const [carers, setCarers] = useState<CarerApplication[]>([]);
-  const [requests, setRequests] = useState<ClientRequest[]>([]);
+  const dispatch = useAppDispatch();
+  const carersPagination = useAppSelector((state) => state.admin.carers);
+  const requestsPagination = useAppSelector(
+    (state) => state.admin.careRequests,
+  );
+
+  const carers = mapBackendCarers(carersPagination.items);
+  const requests = mapBackendCareRequests(requestsPagination.items);
+
   const [placements, setPlacements] = useState<Placement[]>([]);
   const [enquiries, setEnquiries] = useState<any[]>([]);
   const [selectedEnquiry, setSelectedEnquiry] = useState<any | null>(null);
@@ -280,6 +299,11 @@ export function useAdminPortal() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [totalClientsCount, setTotalClientsCount] = useState(0);
+
+  // States for lightweight counts to keep Overview stats correct
+  const [totalCarersCount, setTotalCarersCount] = useState(0);
+  const [pendingCarersCount, setPendingCarersCount] = useState(0);
+  const [emergencyCasesCount, setEmergencyCasesCount] = useState(0);
 
   const prevCarersRef = useRef<CarerApplication[]>([]);
   const prevRequestsRef = useRef<ClientRequest[]>([]);
@@ -356,6 +380,19 @@ export function useAdminPortal() {
     [logActivity],
   );
 
+  // Compare new carers/requests to log changes
+  useEffect(() => {
+    if (carers.length > 0) {
+      checkCarersDiff(carers);
+    }
+  }, [carers, checkCarersDiff]);
+
+  useEffect(() => {
+    if (requests.length > 0) {
+      checkRequestsDiff(requests);
+    }
+  }, [requests, checkRequestsDiff]);
+
   const checkPlacementsDiff = useCallback(
     (newPlacements: Placement[]) => {
       const prev = prevPlacementsRef.current;
@@ -427,32 +464,56 @@ export function useAdminPortal() {
   const [selectedPlacementForReassign, setSelectedPlacementForReassign] =
     useState<Placement | null>(null);
 
-  // Load carers from backend API
-  const loadCarers = useCallback(async () => {
+  // Load total stats counters
+  const loadStatsCounts = useCallback(async () => {
     try {
-      const data = await adminService.getCarers();
-      const mapped = mapBackendCarers(data);
-      checkCarersDiff(mapped);
-      setCarers(mapped);
-    } catch (err: any) {
-      console.error("Failed to load carers:", err.message);
-      throw err;
+      const [allCarersRes, pendingCarersRes, emergencyRequestsRes, clientData] =
+        await Promise.all([
+          adminService.getCarers(1, 1, "ALL"),
+          adminService.getCarers(1, 1, "PENDING"),
+          adminService.getCareRequests(1, 1, "EMERGENCY"),
+          adminService.getClients(),
+        ]);
+      setTotalCarersCount(allCarersRes.total || 0);
+      setPendingCarersCount(pendingCarersRes.total || 0);
+      setEmergencyCasesCount(emergencyRequestsRes.total || 0);
+      setTotalClientsCount(clientData.length);
+    } catch (err) {
+      console.error("Failed to load stats counts:", err);
     }
-  }, [checkCarersDiff]);
+  }, []);
 
-  // Load client requests from backend API
-  const loadRequests = useCallback(async () => {
-    try {
-      const data = await adminService.getClients();
-      setTotalClientsCount(data.length);
-      const mapped = mapBackendRequests(data);
-      checkRequestsDiff(mapped);
-      setRequests(mapped);
-    } catch (err: any) {
-      console.error("Failed to load client requests:", err.message);
-      throw err;
-    }
-  }, [checkRequestsDiff]);
+  // Load carers from backend API (paginated)
+  const loadCarers = useCallback(() => {
+    dispatch(
+      fetchAdminCarers({
+        page: carersPagination.page,
+        limit: carersPagination.limit,
+        status: carersPagination.status,
+      }),
+    );
+  }, [
+    dispatch,
+    carersPagination.page,
+    carersPagination.limit,
+    carersPagination.status,
+  ]);
+
+  // Load client requests from backend API (paginated)
+  const loadRequests = useCallback(() => {
+    dispatch(
+      fetchAdminCareRequests({
+        page: requestsPagination.page,
+        limit: requestsPagination.limit,
+        status: requestsPagination.status,
+      }),
+    );
+  }, [
+    dispatch,
+    requestsPagination.page,
+    requestsPagination.limit,
+    requestsPagination.status,
+  ]);
 
   // Load placements from backend API
   const loadPlacements = useCallback(async () => {
@@ -479,16 +540,16 @@ export function useAdminPortal() {
     }
   }, [checkEnquiriesDiff]);
 
+  // Handle initial data loading for unpaginated components & counts
   useEffect(() => {
     const loadAllData = async () => {
       setLoading(true);
       setError(null);
       try {
         await Promise.all([
-          loadCarers(),
-          loadRequests(),
           loadPlacements(),
           loadEnquiries(),
+          loadStatsCounts(),
         ]);
       } catch (err: any) {
         console.error("Failed to load admin dashboard data:", err);
@@ -498,7 +559,17 @@ export function useAdminPortal() {
       }
     };
     loadAllData();
-  }, [loadCarers, loadRequests, loadPlacements, loadEnquiries]);
+  }, [loadPlacements, loadEnquiries, loadStatsCounts]);
+
+  // Refetch carers whenever page, limit, or status changes
+  useEffect(() => {
+    loadCarers();
+  }, [loadCarers]);
+
+  // Refetch requests whenever page, limit, or status changes
+  useEffect(() => {
+    loadRequests();
+  }, [loadRequests]);
 
   // Action: Approve Carer Application
   const handleApproveCarer = useCallback(
@@ -509,13 +580,14 @@ export function useAdminPortal() {
           `Carer has been Approved and account activated.`,
           "success",
         );
-        await loadCarers();
+        loadCarers();
+        loadStatsCounts();
       } catch (err: any) {
         logActivity(`Failed to approve carer: ${err.message}`, "error");
       }
       setSelectedCarerForApproval(null);
     },
-    [loadCarers, logActivity],
+    [loadCarers, loadStatsCounts, logActivity],
   );
 
   // Action: Reject Carer Application
@@ -524,13 +596,14 @@ export function useAdminPortal() {
       try {
         await adminService.updateCarerStatus(carerId, "SUSPENDED");
         logActivity(`Carer has been Suspended/Rejected.`, "error");
-        await loadCarers();
+        loadCarers();
+        loadStatsCounts();
       } catch (err: any) {
         logActivity(`Failed to reject carer: ${err.message}`, "error");
       }
       setSelectedCarerForApproval(null);
     },
-    [loadCarers, logActivity],
+    [loadCarers, loadStatsCounts, logActivity],
   );
 
   const handleCreatePlacement = useCallback(
@@ -557,13 +630,21 @@ export function useAdminPortal() {
         setSelectedRequestForMatching(null);
         setActiveTab("placements");
 
-        await loadRequests();
+        loadRequests();
         await loadPlacements();
+        loadStatsCounts();
       } catch (err: any) {
         logActivity(`Failed to create placement: ${err.message}`, "error");
       }
     },
-    [requests, carers, logActivity, loadRequests, loadPlacements],
+    [
+      requests,
+      carers,
+      logActivity,
+      loadRequests,
+      loadPlacements,
+      loadStatsCounts,
+    ],
   );
 
   const handleAssignCarerToCareRequest = useCallback(
@@ -581,8 +662,9 @@ export function useAdminPortal() {
         );
         setSelectedRequestForMatching(null);
         setActiveTab("placements");
-        await loadRequests();
+        loadRequests();
         await loadPlacements();
+        loadStatsCounts();
       } catch (err: any) {
         logActivity(`Failed to assign carer: ${err.message}`, "error");
         throw err;
@@ -594,6 +676,7 @@ export function useAdminPortal() {
       setActiveTab,
       loadRequests,
       loadPlacements,
+      loadStatsCounts,
     ],
   );
 
@@ -685,7 +768,8 @@ export function useAdminPortal() {
           `Document has been ${status === "VERIFIED" ? "Approved" : "Rejected"}.`,
           status === "VERIFIED" ? "success" : "warning",
         );
-        await loadCarers();
+        loadCarers();
+        loadStatsCounts();
       } catch (err: any) {
         logActivity(
           `Failed to update document status: ${err.message}`,
@@ -693,7 +777,7 @@ export function useAdminPortal() {
         );
       }
     },
-    [loadCarers, logActivity],
+    [loadCarers, loadStatsCounts, logActivity],
   );
 
   const loadEnquiryDetails = useCallback(
@@ -736,15 +820,13 @@ export function useAdminPortal() {
   );
 
   const stats = {
-    totalCarers: carers.length,
-    pendingCarers: carers.filter((c) => c.status === "Pending").length,
+    totalCarers: totalCarersCount,
+    pendingCarers: pendingCarersCount,
     totalClients: totalClientsCount,
     activePlacements: placements.filter(
       (p) => p.status === "Active" || p.status === "Matched",
     ).length,
-    emergencyCases: requests.filter(
-      (r) => r.status === "Emergency" || r.urgency === "Emergency",
-    ).length,
+    emergencyCases: emergencyCasesCount,
     unreadEnquiries: enquiries.filter((e) => !e.isRead).length,
   };
 
@@ -779,6 +861,16 @@ export function useAdminPortal() {
     loadEnquiryDetails,
     handleRespondToEnquiry,
     handleUpdateEnquiryStatus,
+
+    // Pagination helpers and states
+    carersPagination,
+    requestsPagination,
+    setCarersPage: (page: number) => dispatch(setCarersPage(page)),
+    setCarersStatus: (status: string) => dispatch(setCarersStatus(status)),
+    setRequestsPage: (page: number) => dispatch(setCareRequestsPage(page)),
+    setRequestsStatus: (status: string) =>
+      dispatch(setCareRequestsStatus(status)),
+    loadStatsCounts,
   };
 }
 export type UseAdminPortalReturn = ReturnType<typeof useAdminPortal>;

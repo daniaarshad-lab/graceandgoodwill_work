@@ -85,6 +85,9 @@ export function useCarerPortal({
       if (profile.dbsUpdateServiceNumber) setDbsUpdateServiceNumber(profile.dbsUpdateServiceNumber);
       if (profile.employmentHistory) setEmploymentHistory(profile.employmentHistory as string);
       if (profile.declarations) setDeclarations(profile.declarations as any);
+      if (profile.user?.dateOfBirth) {
+        setDateOfBirth(profile.user.dateOfBirth.split("T")[0]);
+      }
 
     }
   }, [profile]);

@@ -20,7 +20,11 @@ export const adminService = {
     });
   },
 
-  async getCarers(): Promise<any[]> {
+  async getCarers(
+    page: number = 1,
+    limit: number = 10,
+    status: string = "ALL",
+  ): Promise<any> {
     const token =
       typeof window !== "undefined"
         ? localStorage.getItem("accessToken")
@@ -30,7 +34,41 @@ export const adminService = {
       throw new Error("No token found");
     }
 
-    return apiFetch("/admin/carers", {
+    const query = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+      status,
+    }).toString();
+
+    return apiFetch(`/admin/carers?${query}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
+  async getCareRequests(
+    page: number = 1,
+    limit: number = 10,
+    status: string = "ALL",
+  ): Promise<any> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    const query = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+      status,
+    }).toString();
+
+    return apiFetch(`/admin/care-requests?${query}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,

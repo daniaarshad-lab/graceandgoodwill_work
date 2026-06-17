@@ -4,6 +4,8 @@ import StatusBadge from "./shared/StatusBadge";
 import { CarerApplication } from "../types/admin.types";
 import Button from "@/components/Button";
 import { ExternalLink, Check, X } from "lucide-react";
+import Pagination from "./shared/Pagination";
+import Link from "next/link";
 
 interface CarerApplicationsProps {
   carers: CarerApplication[];
@@ -13,6 +15,13 @@ interface CarerApplicationsProps {
     docId: string,
     status: "VERIFIED" | "REJECTED",
   ) => Promise<void> | void;
+
+  page: number;
+  totalPages: number;
+  totalItems: number;
+  status: string;
+  onPageChange: (page: number) => void;
+  onStatusChange: (status: string) => void;
 }
 
 export default function CarerApplications({
@@ -20,18 +29,16 @@ export default function CarerApplications({
   onReject,
   setSelectedCarerForApproval,
   onUpdateDocumentStatus,
+  page,
+  totalPages,
+  totalItems,
+  status,
+  onPageChange,
+  onStatusChange,
 }: CarerApplicationsProps) {
-  const [filter, setFilter] = useState<
-    "All" | "Pending" | "Approved" | "Rejected"
-  >("Pending");
   const [selectedCarer, setSelectedCarer] = useState<CarerApplication | null>(
     null,
   );
-
-  const filteredCarers = carers.filter((c) => {
-    if (filter === "All") return true;
-    return c.status === filter;
-  });
 
   return (
     <div className="space-y-6">
@@ -46,26 +53,26 @@ export default function CarerApplications({
           </p>
         </div>
 
-        <div className="flex rounded-xl bg-navy-950 p-1 border border-gold-300/10 gap-1">
-          {(["All", "Pending", "Approved", "Rejected"] as const).map((tab) => (
-            <Button
-              key={tab}
-              onClick={() => setFilter(tab)}
-              variant="selectable"
-              isSelected={filter === tab}
-              size="sm"
-              fullWidth={false}
-              className="rounded-lg px-4 py-1.5 text-xs tracking-wide"
-            >
-              {tab}
-            </Button>
-          ))}
+        <div className="flex items-center gap-3">
+          <label className="text-xs font-bold tracking-wider uppercase text-gold-200/60">
+            Filter Status:
+          </label>
+          <select
+            value={status}
+            onChange={(e) => onStatusChange(e.target.value)}
+            className="rounded-xl border border-gold-300/10 bg-navy-950 px-4 py-2 text-xs font-bold text-gold-200 outline-none focus:border-gold-300/30 transition duration-300 cursor-pointer"
+          >
+            <option value="ALL">All</option>
+            <option value="PENDING">Pending</option>
+            <option value="APPROVED">Approved</option>
+            <option value="REJECTED">Rejected</option>
+          </select>
         </div>
       </div>
 
       {/* Grid of Carer Application Cards */}
       <div className="grid gap-6 md:grid-cols-2">
-        {filteredCarers.map((carer) => (
+        {carers.map((carer) => (
           <SectionCard
             key={carer.id}
             className="flex flex-col justify-between space-y-6"
@@ -126,51 +133,31 @@ export default function CarerApplications({
                       </p>
 
                       <span
-                        className={`mt-1 inline-block font-bold uppercase tracking-wider ${
+                        className={`mt-1 inline-block text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${
                           doc.status === "Verified"
-                            ? "text-emerald-400"
+                            ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
                             : doc.status === "Uploaded"
-                              ? "text-gold-DEFAULT"
-                              : "text-rose-400"
+                              ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                              : doc.status === "Rejected"
+                                ? "bg-rose-500/10 text-rose-400 border border-rose-500/20"
+                                : "bg-gray-500/10 text-gray-400 border border-gray-500/20"
                         }`}
                       >
-                        {doc.status}
+                        {doc.status === "Uploaded" ? "PENDING" : doc.status.toUpperCase()}
                       </span>
 
-                      {doc.id && doc.fileUrl && (
-                        <div className="mt-2 flex items-center justify-center gap-2 border-t border-gold-300/5 pt-1.5 w-full">
-                          <a
-                            href={doc.fileUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-gold-100/40 hover:text-gold flex items-center gap-0.5"
-                            title="View Document"
+                      {doc.id && doc.fileUrl ? (
+                        <div className="mt-2 w-full border-t border-gold-300/5 pt-1.5 flex justify-center">
+                          <Link
+                            href={`/admin/carers/${carer.id}/document-review?documentId=${doc.id}`}
+                            className="text-gold hover:text-gold-light font-bold text-[9px] uppercase tracking-wider flex items-center gap-1 transition duration-200"
                           >
-                            <ExternalLink className="h-3 w-3" />
-                          </a>
-
-                          {doc.status !== "Verified" && (
-                            <>
-                              <button
-                                onClick={() =>
-                                  onUpdateDocumentStatus?.(doc.id!, "VERIFIED")
-                                }
-                                className="text-emerald-500 hover:text-emerald-400 p-0.5 rounded hover:bg-emerald-500/10 transition"
-                                title="Approve Document"
-                              >
-                                <Check className="h-3 w-3" />
-                              </button>
-                              <button
-                                onClick={() =>
-                                  onUpdateDocumentStatus?.(doc.id!, "REJECTED")
-                                }
-                                className="text-rose-500 hover:text-rose-400 p-0.5 rounded hover:bg-rose-500/10 transition"
-                                title="Reject Document"
-                              >
-                                <X className="h-3 w-3" />
-                              </button>
-                            </>
-                          )}
+                            View Document
+                          </Link>
+                        </div>
+                      ) : (
+                        <div className="mt-2 w-full border-t border-gold-300/5 pt-1.5 text-center text-[9px] text-gold-100/20 uppercase font-semibold">
+                          Unavailable
                         </div>
                       )}
                     </div>
@@ -216,12 +203,6 @@ export default function CarerApplications({
             </div>
           </SectionCard>
         ))}
-
-        {filteredCarers.length === 0 && (
-          <div className="col-span-2 rounded-2xl border border-gold-300/10 p-12 text-center text-gold-100/50">
-            No carers found in the &apos;{filter}&apos; category.
-          </div>
-        )}
       </div>
 
       {/* Details Side-Drawer / Modal */}
@@ -438,6 +419,19 @@ export default function CarerApplications({
             </div>
           </div>
         </div>
+      )}
+
+      {carers.length === 0 ? (
+        <div className="rounded-2xl border border-gold-300/10 p-12 text-center text-gold-100/50">
+          No carer applications found.
+        </div>
+      ) : (
+        <Pagination
+          currentPage={page}
+          totalPages={totalPages}
+          totalItems={totalItems}
+          onPageChange={onPageChange}
+        />
       )}
     </div>
   );

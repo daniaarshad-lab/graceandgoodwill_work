@@ -42,7 +42,22 @@ const SupportEnquiryManagement = dynamic(
   { ssr: false },
 );
 
+import { Suspense } from "react";
+
 export default function AdminDashboard() {
+  return (
+    <Suspense fallback={
+      <main className="min-h-screen bg-navy-950 py-10 text-gold-100 flex flex-col items-center justify-center space-y-4">
+        <div className="w-12 h-12 border-4 border-gold border-t-transparent rounded-full animate-spin" />
+        <p className="text-sm text-gold-100/60 font-semibold">Loading admin console...</p>
+      </main>
+    }>
+      <AdminDashboardContent />
+    </Suspense>
+  );
+}
+
+function AdminDashboardContent() {
   const { user } = useAuth();
   const portal = useAdminPortal();
 
@@ -161,6 +176,12 @@ export default function AdminDashboard() {
                     portal.setSelectedCarerForApproval
                   }
                   onUpdateDocumentStatus={portal.handleUpdateDocumentStatus}
+                  page={portal.carersPagination.page}
+                  totalPages={portal.carersPagination.totalPages}
+                  totalItems={portal.carersPagination.totalItems}
+                  status={portal.carersPagination.status}
+                  onPageChange={portal.setCarersPage}
+                  onStatusChange={portal.setCarersStatus}
                 />
               )}
 
@@ -172,6 +193,12 @@ export default function AdminDashboard() {
                     portal.setSelectedRequestForMatching
                   }
                   setActiveTab={portal.setActiveTab}
+                  page={portal.requestsPagination.page}
+                  totalPages={portal.requestsPagination.totalPages}
+                  totalItems={portal.requestsPagination.totalItems}
+                  status={portal.requestsPagination.status}
+                  onPageChange={portal.setRequestsPage}
+                  onStatusChange={portal.setRequestsStatus}
                 />
               )}
 

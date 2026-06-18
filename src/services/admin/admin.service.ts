@@ -95,7 +95,11 @@ export const adminService = {
     });
   },
 
-  async updateDocumentStatus(docId: string, status: string): Promise<any> {
+  async updateDocumentStatus(
+    docId: string,
+    status: string,
+    rejectionReason?: string,
+  ): Promise<any> {
     const token =
       typeof window !== "undefined"
         ? localStorage.getItem("accessToken")
@@ -105,12 +109,17 @@ export const adminService = {
       throw new Error("No token found");
     }
 
+    const body: { status: string; rejectionReason?: string } = { status };
+    if (status === "REJECTED") {
+      body.rejectionReason = rejectionReason || "";
+    }
+
     return apiFetch(`/admin/carers/document/${docId}/status`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ status }),
+      body: JSON.stringify(body),
     });
   },
 

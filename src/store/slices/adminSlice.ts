@@ -88,11 +88,11 @@ export const fetchDocumentDetails = createAsyncThunk<
 
 export const verifyDocument = createAsyncThunk<
   { docId: string; status: string },
-  string,
+  { docId: string; notes?: string },
   { rejectValue: string }
->("admin/verifyDocument", async (docId, { rejectWithValue }) => {
+>("admin/verifyDocument", async ({ docId, notes }, { rejectWithValue }) => {
   try {
-    await adminService.updateDocumentStatus(docId, "VERIFIED");
+    await adminService.updateDocumentStatus(docId, "VERIFIED", notes);
     return { docId, status: "Verified" };
   } catch (error: any) {
     return rejectWithValue(error?.message || "Failed to verify document");
@@ -101,11 +101,11 @@ export const verifyDocument = createAsyncThunk<
 
 export const rejectDocument = createAsyncThunk<
   { docId: string; status: string },
-  string,
+  { docId: string; rejectionReason: string },
   { rejectValue: string }
->("admin/rejectDocument", async (docId, { rejectWithValue }) => {
+>("admin/rejectDocument", async ({ docId, rejectionReason }, { rejectWithValue }) => {
   try {
-    await adminService.updateDocumentStatus(docId, "REJECTED");
+    await adminService.updateDocumentStatus(docId, "REJECTED", rejectionReason);
     return { docId, status: "Rejected" };
   } catch (error: any) {
     return rejectWithValue(error?.message || "Failed to reject document");

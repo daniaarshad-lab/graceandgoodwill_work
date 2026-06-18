@@ -75,6 +75,7 @@ function DocumentReviewContent() {
   const [activeDocId, setActiveDocId] = useState<string | null>(documentId);
   const [submittingAction, setSubmittingAction] = useState<"VERIFY" | "REJECT" | null>(null);
   const [notes, setNotes] = useState<Record<string, string>>({});
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   useEffect(() => {
     if (carerId) {
@@ -97,11 +98,17 @@ function DocumentReviewContent() {
     }
   }, [activeDoc, activeDocId]);
 
+  useEffect(() => {
+    setValidationError(null);
+  }, [activeDocId]);
+
   const handleVerify = async () => {
     if (!activeDoc) return;
+    setValidationError(null);
     setSubmittingAction("VERIFY");
     try {
-      await dispatch(verifyDocument(activeDoc.id)).unwrap();
+      const docNotes = notes[activeDoc.id] || "";
+      await dispatch(verifyDocument({ docId: activeDoc.id, notes: docNotes })).unwrap();
       showSuccessToast("Document Verified", "The document status has been updated to VERIFIED.");
       router.push("/admin?tab=carers");
     } catch (err: any) {
@@ -113,9 +120,15 @@ function DocumentReviewContent() {
 
   const handleReject = async () => {
     if (!activeDoc) return;
+    const docNotes = (notes[activeDoc.id] || "").trim();
+    if (!docNotes) {
+      setValidationError("Please provide a rejection reason before rejecting this document.");
+      return;
+    }
+    setValidationError(null);
     setSubmittingAction("REJECT");
     try {
-      await dispatch(rejectDocument(activeDoc.id)).unwrap();
+      await dispatch(rejectDocument({ docId: activeDoc.id, rejectionReason: docNotes })).unwrap();
       showSuccessToast("Document Rejected", "The document status has been updated to REJECTED.");
       router.push("/admin?tab=carers");
     } catch (err: any) {
@@ -501,7 +514,7 @@ function DocumentReviewContent() {
                   {/* ADMIN NOTES */}
                   <div className="space-y-2 pt-2 border-t border-gold-300/5">
                     <label className="text-xs uppercase font-bold text-gold-200/60 block">
-                      Admin Notes
+                      Admin Notes {validationError && <span className="text-rose-500 font-bold ml-1">*</span>}
                     </label>
                     <textarea
                       value={notes[activeDoc.id] || ""}
@@ -511,11 +524,23 @@ function DocumentReviewContent() {
                           ...prev,
                           [activeDoc.id]: val,
                         }));
+                        if (val.trim()) {
+                          setValidationError(null);
+                        }
                       }}
                       placeholder="Add notes about this document review (e.g. key credentials verified, reason for rejection...)"
                       rows={2}
-                      className="w-full rounded-xl border border-gold-300/10 bg-navy-950 p-3 text-xs text-gold-100 placeholder-gold-100/20 outline-none focus:border-gold-300/30 transition duration-300 resize-none animate-none"
+                      className={`w-full rounded-xl bg-navy-950 p-3 text-xs text-gold-100 placeholder-gold-100/20 outline-none transition duration-300 resize-none animate-none border ${
+                        validationError
+                          ? "border-rose-500 focus:border-rose-500 focus:ring-1 focus:ring-rose-500/20"
+                          : "border-gold-300/10 focus:border-gold-300/30"
+                      }`}
                     />
+                    {validationError && (
+                      <p className="text-[10px] text-rose-400 font-semibold mt-1">
+                        {validationError}
+                      </p>
+                    )}
                   </div>
                 </div>
 

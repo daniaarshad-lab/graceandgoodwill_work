@@ -5,6 +5,7 @@ import Input from "@/components/Input";
 import Select from "@/components/Select";
 import PhoneInput from "@/components/PhoneInput";
 import Button from "@/components/Button";
+import EmergencyButton from "@/components/EmergencyButton";
 
 interface CareRequestFormProps {
   fullName: string;
@@ -321,14 +322,10 @@ export default function CareRequestForm({
                   If care is needed urgently within the next 24 hours, our emergency support team can help you arrange care as quickly as possible. Contact us immediately using the button below.
                 </p>
               </div>
-              <Button
-                type="button"
-                variant="whatsapp"
+              <EmergencyButton
                 onClick={handleWhatsAppRedirect}
-                fullWidth={false}
-              >
-                🚨 Contact Emergency Team
-              </Button>
+                className="w-full"
+              />
             </div>
           </div>
         </div>

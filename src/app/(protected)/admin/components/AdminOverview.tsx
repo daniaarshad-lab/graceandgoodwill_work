@@ -173,11 +173,15 @@ export default function AdminOverview({
         </div>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-3">
+      <div className="grid gap-8 lg:grid-cols-3 items-stretch">
         {/* Left 2 Columns: Live Activities Log */}
         <div className="lg:col-span-2">
-          <SectionCard className="h-full">
-            <div className="mb-6 flex items-center justify-between">
+          <SectionCard
+            className="flex flex-col"
+            style={{ height: "450px", minHeight: "450px", maxHeight: "450px", overflow: "hidden" }}
+          >
+            {/* Fixed header */}
+            <div className="mb-6 flex items-center justify-between flex-shrink-0">
               <div>
                 <h3 className="text-lg font-bold text-gold-200">
                   Recent System Events
@@ -188,11 +192,10 @@ export default function AdminOverview({
               </div>
               <button
                 onClick={() => setIsLiveActive(!isLiveActive)}
-                className={`flex items-center space-x-2 rounded-full px-3 py-1 text-xs font-semibold border transition duration-300 cursor-pointer ${
-                  isLiveActive
-                    ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20"
-                    : "bg-amber-500/10 text-amber-500 border-amber-500/30 hover:bg-amber-500/20"
-                }`}
+                className={`flex items-center space-x-2 rounded-full px-3 py-1 text-xs font-semibold border transition duration-300 cursor-pointer ${isLiveActive
+                  ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20"
+                  : "bg-amber-500/10 text-amber-500 border-amber-500/30 hover:bg-amber-500/20"
+                  }`}
               >
                 <span className="relative flex h-2 w-2">
                   {isLiveActive && (
@@ -206,44 +209,59 @@ export default function AdminOverview({
               </button>
             </div>
 
-            <div className="flow-root">
-              <ul className="-my-5 divide-y divide-gold-300/5">
-                {activities.map((act) => (
-                  <li key={act.id} className="py-4">
-                    <div className="flex items-start space-x-3">
-                      <div className="mt-1 flex-shrink-0">
-                        {act.type === "success" && (
-                          <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400"></span>
-                        )}
-                        {act.type === "warning" && (
-                          <span className="flex h-2.5 w-2.5 rounded-full bg-gold"></span>
-                        )}
-                        {act.type === "error" && (
-                          <span className="flex h-2.5 w-2.5 rounded-full bg-rose-400"></span>
-                        )}
-                        {act.type === "info" && (
-                          <span className="flex h-2.5 w-2.5 rounded-full bg-gold-100/40"></span>
-                        )}
+            {/* Scrollable events list */}
+            <div
+              className="flex-1 min-h-0 overflow-y-auto pr-1"
+              style={{ scrollbarWidth: "thin", scrollbarColor: "rgba(160,128,84,0.18) transparent" }}
+            >
+              <style>{`
+                .events-scroll::-webkit-scrollbar { width: 4px; }
+                .events-scroll::-webkit-scrollbar-track { background: transparent; }
+                .events-scroll::-webkit-scrollbar-thumb { background-color: rgba(160,128,84,0.18); border-radius: 20px; }
+                .events-scroll::-webkit-scrollbar-thumb:hover { background-color: rgba(160,128,84,0.36); }
+              `}</style>
+              <div className="flow-root events-scroll">
+                <ul className="-my-5 divide-y divide-gold-300/5">
+                  {activities.map((act) => (
+                    <li key={act.id} className="py-4">
+                      <div className="flex items-start space-x-3">
+                        <div className="mt-1 flex-shrink-0">
+                          {act.type === "success" && (
+                            <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400"></span>
+                          )}
+                          {act.type === "warning" && (
+                            <span className="flex h-2.5 w-2.5 rounded-full bg-gold"></span>
+                          )}
+                          {act.type === "error" && (
+                            <span className="flex h-2.5 w-2.5 rounded-full bg-rose-400"></span>
+                          )}
+                          {act.type === "info" && (
+                            <span className="flex h-2.5 w-2.5 rounded-full bg-gold-100/40"></span>
+                          )}
+                        </div>
+                        <div className="flex-1 space-y-1">
+                          <p className="text-sm font-medium text-gold-100/90">
+                            {act.message}
+                          </p>
+                          <p className="text-xs text-gold-100/40">
+                            {act.timestamp}
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex-1 space-y-1">
-                        <p className="text-sm font-medium text-gold-100/90">
-                          {act.message}
-                        </p>
-                        <p className="text-xs text-gold-100/40">
-                          {act.timestamp}
-                        </p>
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </SectionCard>
         </div>
 
         {/* Right 1 Column: Direct Shortcuts */}
         <div>
-          <SectionCard className="space-y-6">
+          <SectionCard
+            className="flex flex-col space-y-6"
+            style={{ height: "450px", minHeight: "450px", maxHeight: "450px" }}
+          >
             <div>
               <h3 className="text-lg font-bold text-gold-200">
                 Placement Action Board
@@ -301,7 +319,7 @@ export default function AdminOverview({
             </div>
 
             {/* Quick platform status widget */}
-            <div className="rounded-xl bg-navy-950/50 p-4 border border-gold-300/5">
+            <div className="rounded-xl bg-navy-950/50 p-4 border border-gold-300/5 mt-auto">
               <h4 className="text-xs font-semibold uppercase tracking-wider text-gold-200/60 mb-2">
                 Operational Status
               </h4>

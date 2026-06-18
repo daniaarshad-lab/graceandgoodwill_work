@@ -56,12 +56,36 @@ const mapBackendCarers = (backendCarers: any[]): CarerApplication[] => {
     const profile = user.carerProfile || {};
     const rawDocs = profile.documents || [];
 
-    const documents = [
-      getDocDetails(rawDocs, "CRIMINAL_RECORD_CHECK"),
-      getDocDetails(rawDocs, "DRIVERS_LICENSE"),
-      getDocDetails(rawDocs, "DEMENTIA_SUPPORT"),
-      getDocDetails(rawDocs, "NURSES_REGISTRY"),
-    ];
+    const categoryNames: Record<string, string> = {
+      CRIMINAL_RECORD_CHECK: "DBS Certificate",
+      DRIVERS_LICENSE: "Driver's License",
+      DEMENTIA_SUPPORT: "Dementia Certificate",
+      NURSES_REGISTRY: "Nurses Registry",
+      PASSPORT: "Passport",
+      RIGHT_TO_WORK: "Right to Work",
+      PROOF_OF_ADDRESS: "Proof of Address",
+      NATIONAL_INSURANCE: "National Insurance",
+      PUBLIC_LIABILITY_INSURANCE: "Public Liability Insurance",
+      BUSINESS_INSURANCE: "Business Insurance",
+      PROFESSIONAL_INDEMNITY: "Professional Indemnity",
+      MANDATORY_TRAINING: "Mandatory Training",
+      SPECIALIST_TRAINING: "Specialist Training",
+    };
+
+    const documents = rawDocs.map((doc: any) => {
+      const name = categoryNames[doc.fileCategory] || doc.fileName || doc.fileCategory || "Unnamed Document";
+      let status: "Uploaded" | "Missing" | "Verified" | "Rejected" = "Uploaded";
+      if (doc.status === "VERIFIED") status = "Verified";
+      else if (doc.status === "REJECTED") status = "Rejected";
+
+      return {
+        id: doc.id,
+        name,
+        status,
+        fileCategory: doc.fileCategory,
+        fileUrl: doc.fileUrl,
+      };
+    });
 
     let availabilityStr = "Not configured";
     if (profile.availability) {

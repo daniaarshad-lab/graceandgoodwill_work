@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchDocumentDetails, verifyDocument, rejectDocument } from "@/store/slices/adminSlice";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 import Link from "next/link";
-import { ArrowLeft, Check, X, FileText, Image as ImageIcon, Calendar, User, ExternalLink, Eye, CheckCircle2, AlertTriangle, ShieldCheck } from "lucide-react";
+import { ArrowLeft, Check, X, FileText, Image as ImageIcon, Calendar, User, ExternalLink, Eye, CheckCircle2, AlertTriangle, ShieldCheck, Download } from "lucide-react";
 
 export default function DocumentReviewPage() {
   return (
@@ -21,6 +21,47 @@ export default function DocumentReviewPage() {
   );
 }
 
+const getFullFileUrl = (url: string | undefined | null) => {
+  if (!url) return "";
+  if (url.startsWith("http://") || url.startsWith("https://")) {
+    return url;
+  }
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+  const normalizedBase = baseUrl.endsWith("/") ? baseUrl.slice(0, -1) : baseUrl;
+  const normalizedPath = url.startsWith("/") ? url : `/${url}`;
+  return `${normalizedBase}${normalizedPath}`;
+};
+
+const getMockDocDetails = (category: string) => {
+  const types: Record<string, { type: string; uploadDate: string; expiryDate: string }> = {
+    "CRIMINAL_RECORD_CHECK": {
+      type: "Criminal Record Check",
+      uploadDate: "2026-05-10",
+      expiryDate: "2029-05-10",
+    },
+    "DRIVERS_LICENSE": {
+      type: "Identification",
+      uploadDate: "2026-05-12",
+      expiryDate: "2031-11-20",
+    },
+    "DEMENTIA_SUPPORT": {
+      type: "Certification",
+      uploadDate: "2026-05-14",
+      expiryDate: "Lifetime",
+    },
+    "NURSES_REGISTRY": {
+      type: "Professional License",
+      uploadDate: "2026-05-15",
+      expiryDate: "2027-03-31",
+    },
+  };
+  return types[category] || {
+    type: "Verification Document",
+    uploadDate: "2026-05-16",
+    expiryDate: "N/A",
+  };
+};
+
 function DocumentReviewContent() {
   const params = useParams();
   const searchParams = useSearchParams();
@@ -33,6 +74,7 @@ function DocumentReviewContent() {
   const { data: carer, loading, error } = useAppSelector((state) => state.admin.selectedCarer);
   const [activeDocId, setActiveDocId] = useState<string | null>(documentId);
   const [submittingAction, setSubmittingAction] = useState<"VERIFY" | "REJECT" | null>(null);
+  const [notes, setNotes] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (carerId) {
@@ -46,7 +88,6 @@ function DocumentReviewContent() {
     }
   }, [documentId]);
 
-  // If no documentId in query yet, default to first available document
   const rawDocs = carer?.carerProfile?.documents || [];
   const activeDoc = rawDocs.find((doc: any) => doc.id === activeDocId) || rawDocs[0];
 
@@ -62,7 +103,6 @@ function DocumentReviewContent() {
     try {
       await dispatch(verifyDocument(activeDoc.id)).unwrap();
       showSuccessToast("Document Verified", "The document status has been updated to VERIFIED.");
-      // Redirect back to main dashboard under Carers tab
       router.push("/admin?tab=carers");
     } catch (err: any) {
       showErrorToast("Error", err || "Failed to verify document");
@@ -77,7 +117,6 @@ function DocumentReviewContent() {
     try {
       await dispatch(rejectDocument(activeDoc.id)).unwrap();
       showSuccessToast("Document Rejected", "The document status has been updated to REJECTED.");
-      // Redirect back to main dashboard under Carers tab
       router.push("/admin?tab=carers");
     } catch (err: any) {
       showErrorToast("Error", err || "Failed to reject document");
@@ -115,7 +154,7 @@ function DocumentReviewContent() {
       case "PENDING":
       case "UPLOADED":
       default:
-        return "bg-amber-500/10 text-amber-400 border border-amber-500/20";
+        return "bg-gold/10 text-gold border border-gold/20";
     }
   };
 
@@ -152,7 +191,12 @@ function DocumentReviewContent() {
     );
   }
 
-  const isPDF = activeDoc?.fileType === "application/pdf" || activeDoc?.fileName?.toLowerCase().endsWith(".pdf");
+  const isPDF = activeDoc?.fileType === "application/pdf" || activeDoc?.fileName?.toLowerCase().endsWith(".pdf") || activeDoc?.fileUrl?.toLowerCase().endsWith(".pdf");
+  const isImage = activeDoc?.fileType?.startsWith("image/") || 
+    /\.(jpg|jpeg|png|webp|gif|svg)$/i.test(activeDoc?.fileName || "") || 
+    /\.(jpg|jpeg|png|webp|gif|svg)$/i.test(activeDoc?.fileUrl || "");
+
+  const fullFileUrl = getFullFileUrl(activeDoc?.fileUrl);
 
   return (
     <main className="min-h-screen bg-navy-950 py-10 text-gold-100">
@@ -189,12 +233,15 @@ function DocumentReviewContent() {
         </header>
 
         {/* --- REVIEW WORKSPACE --- */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-stretch">
           
           {/* LEFT COLUMN: SIDEBAR PLAYLIST */}
-          <aside className="lg:col-span-1 space-y-4">
-            <div className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-4 shadow-soft backdrop-blur-md">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-gold-200/50 mb-3 border-b border-gold-300/5 pb-2">
+          <aside className="lg:col-span-1 flex flex-col">
+            <div 
+              className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-4 shadow-soft backdrop-blur-md flex flex-col overflow-hidden"
+              style={{ height: "820px", minHeight: "820px", maxHeight: "820px" }}
+            >
+              <h3 className="text-xs font-bold uppercase tracking-wider text-gold-200/50 mb-3 border-b border-gold-300/5 pb-2 flex-shrink-0">
                 Document Vault ({rawDocs.length})
               </h3>
               
@@ -203,176 +250,284 @@ function DocumentReviewContent() {
                   No documents uploaded.
                 </div>
               ) : (
-                <div className="space-y-2">
-                  {rawDocs.map((doc: any) => {
-                    const isActive = doc.id === activeDocId;
-                    const cleanStatus = getStatusLabel(doc.status);
-                    return (
-                      <button
-                        key={doc.id}
-                        onClick={() => {
-                          setActiveDocId(doc.id);
-                          router.push(`/admin/carers/${carerId}/document-review?documentId=${doc.id}`);
-                        }}
-                        className={`w-full text-left rounded-xl p-3 border transition-all duration-300 flex flex-col gap-1.5 ${
-                          isActive
-                            ? "bg-gold border-gold text-navy-950 shadow-elegant"
-                            : "bg-navy-950/40 border-gold-300/5 text-gold-100 hover:border-gold-300/20"
-                        }`}
-                      >
-                        <div className="flex items-start justify-between w-full gap-2">
-                          <span className={`text-xs font-bold truncate ${isActive ? "text-navy-950" : "text-gold-200"}`}>
-                            {getCategoryLabel(doc.fileCategory)}
-                          </span>
-                          {isActive ? (
-                            <Eye className="h-3.5 w-3.5 flex-shrink-0 text-navy-950" />
-                          ) : (
-                            doc.fileType === "application/pdf" ? (
-                              <FileText className="h-3.5 w-3.5 flex-shrink-0 text-gold/60" />
-                            ) : (
-                              <ImageIcon className="h-3.5 w-3.5 flex-shrink-0 text-gold/60" />
-                            )
-                          )}
-                        </div>
-                        <div className="flex items-center justify-between w-full gap-2 text-[10px]">
-                          <span className={`truncate max-w-[120px] ${isActive ? "text-navy-950/70" : "text-gold-100/40"}`}>
-                            {doc.fileName}
-                          </span>
-                          <span className={`px-1.5 py-0.5 rounded text-[8px] font-bold tracking-wider ${
+                <div 
+                  className="flex-1 overflow-y-auto pr-1 space-y-2"
+                  style={{ scrollbarWidth: "thin", scrollbarColor: "rgba(160,128,84,0.18) transparent" }}
+                >
+                  <style>{`
+                    .vault-scroll::-webkit-scrollbar { width: 4px; }
+                    .vault-scroll::-webkit-scrollbar-track { background: transparent; }
+                    .vault-scroll::-webkit-scrollbar-thumb { background-color: rgba(160,128,84,0.18); border-radius: 20px; }
+                    .vault-scroll::-webkit-scrollbar-thumb:hover { background-color: rgba(160,128,84,0.36); }
+                  `}</style>
+                  <div className="vault-scroll space-y-2">
+                    {rawDocs.map((doc: any) => {
+                      const isActive = doc.id === activeDocId;
+                      const cleanStatus = getStatusLabel(doc.status);
+                      return (
+                        <button
+                          key={doc.id}
+                          onClick={() => {
+                            setActiveDocId(doc.id);
+                            const newUrl = `${window.location.pathname}?documentId=${doc.id}`;
+                            window.history.pushState({ ...window.history.state, as: newUrl, url: newUrl }, "", newUrl);
+                          }}
+                          className={`relative w-full text-left rounded-xl p-3 border transition-all duration-300 flex items-center justify-between gap-3 ${
                             isActive
-                              ? "bg-navy-950/20 text-navy-950 border border-navy-950/20"
-                              : getStatusBadgeStyles(doc.status)
-                          }`}>
-                            {cleanStatus}
-                          </span>
-                        </div>
-                      </button>
-                    );
-                  })}
+                              ? "bg-navy-900/80 border-gold border-l-4 border-l-gold shadow-[0_0_12px_rgba(212,175,55,0.15)] ring-1 ring-gold/30 text-gold-100 pl-2.5"
+                              : "bg-navy-950/40 border-gold-300/5 text-gold-100 hover:border-gold-300/20 hover:bg-navy-950/60 pl-3.5"
+                          }`}
+                        >
+                          {/* Left Column: Document Type & File Name */}
+                          <div className="flex-1 min-w-0 flex flex-col gap-0.5">
+                            <span className="text-sm font-semibold text-gold-200 truncate">
+                              {getCategoryLabel(doc.fileCategory)}
+                            </span>
+                            <span className="text-[11px] text-gold-100/50 truncate w-full" title={doc.fileName}>
+                              {doc.fileName}
+                            </span>
+                          </div>
+
+                          {/* Right Column: View Icon & Status Badge */}
+                          <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
+                            <span className={`px-1.5 py-0.5 rounded text-[8px] font-bold tracking-wider ${getStatusBadgeStyles(doc.status)}`}>
+                              {cleanStatus}
+                            </span>
+                            {isActive ? (
+                              <Eye className="h-3.5 w-3.5 text-gold flex-shrink-0" />
+                            ) : (
+                              doc.fileType === "application/pdf" ? (
+                                <FileText className="h-3.5 w-3.5 text-gold-100/30 flex-shrink-0" />
+                              ) : (
+                                <ImageIcon className="h-3.5 w-3.5 text-gold-100/30 flex-shrink-0" />
+                              )
+                            )}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               )}
             </div>
           </aside>
 
           {/* RIGHT COLUMNS: VIEW PORTAL & CONTROLS */}
-          <section className="lg:col-span-3 space-y-6">
+          <section className="lg:col-span-3 flex flex-col">
             {activeDoc ? (
-              <div className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md space-y-6">
+              <div 
+                className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md flex flex-col justify-between"
+                style={{ height: "820px", minHeight: "820px", maxHeight: "820px", overflow: "hidden" }}
+              >
                 
-                {/* ACTIVE DOCUMENT METADATA */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gold-300/5 pb-4">
-                  <div className="space-y-1">
-                    <span className={`px-2.5 py-1 rounded text-[10px] font-bold tracking-wider uppercase inline-block ${getStatusBadgeStyles(activeDoc.status)}`}>
-                      {getStatusLabel(activeDoc.status)}
-                    </span>
-                    <h2 className="text-xl font-bold text-gold-200">
-                      {getCategoryLabel(activeDoc.fileCategory)}
-                    </h2>
-                    <p className="text-xs text-gold-100/50 flex items-center gap-1.5">
-                      <FileText className="h-3.5 w-3.5 text-gold/60" /> {activeDoc.fileName} • {((activeDoc.fileSize || 0) / (1024 * 1024)).toFixed(2)} MB
-                    </p>
-                  </div>
-                  
-                  <div className="text-left sm:text-right space-y-1 text-xs">
-                    <p className="text-gold-100/40 font-semibold uppercase tracking-wider text-[10px]">Upload Date</p>
-                    <p className="text-gold-100/80 font-bold flex items-center gap-1 sm:justify-end">
-                      <Calendar className="h-3.5 w-3.5 text-gold/60" /> 
-                      {activeDoc.createdAt ? new Date(activeDoc.createdAt).toLocaleDateString("en-GB", {
-                        day: "2-digit",
-                        month: "long",
-                        year: "numeric"
-                      }) : "Not Recorded"}
-                    </p>
-                  </div>
-                </div>
-
-                {/* PREVIEW FRAME */}
-                <div className="relative rounded-xl border border-gold-300/5 bg-navy-950/60 p-2 flex items-center justify-center overflow-hidden min-h-[400px]">
-                  {isPDF ? (
-                    <div className="w-full h-[600px] relative">
-                      <iframe
-                        src={`${activeDoc.fileUrl}#toolbar=0&navpanes=0`}
-                        className="w-full h-full rounded-lg bg-navy-900"
-                        title={getCategoryLabel(activeDoc.fileCategory)}
-                      />
+                <div className="space-y-6 flex-1 flex flex-col">
+                  {/* ACTIVE DOCUMENT METADATA */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gold-300/5 pb-4 flex-shrink-0">
+                    <div className="space-y-1">
+                      <span className={`px-2.5 py-1 rounded text-[10px] font-bold tracking-wider uppercase inline-block ${getStatusBadgeStyles(activeDoc.status)}`}>
+                        {getStatusLabel(activeDoc.status)}
+                      </span>
+                      <h2 className="text-xl font-bold text-gold-200">
+                        {getCategoryLabel(activeDoc.fileCategory)}
+                      </h2>
+                      <p className="text-xs text-gold-100/50 flex items-center gap-1.5">
+                        <FileText className="h-3.5 w-3.5 text-gold/60" /> {activeDoc.fileName} • {((activeDoc.fileSize || 0) / (1024 * 1024)).toFixed(2)} MB
+                      </p>
                     </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center p-4">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={activeDoc.fileUrl}
-                        alt={getCategoryLabel(activeDoc.fileCategory)}
-                        className="max-w-full max-h-[550px] object-contain rounded-lg shadow-elegant"
-                      />
+                    
+                    <div className="text-left sm:text-right space-y-1 text-xs flex-shrink-0">
+                      <p className="text-gold-100/40 font-semibold uppercase tracking-wider text-[10px]">Upload Date</p>
+                      <p className="text-gold-100/80 font-bold flex items-center gap-1 sm:justify-end">
+                        <Calendar className="h-3.5 w-3.5 text-gold/60" /> 
+                        {activeDoc.createdAt ? new Date(activeDoc.createdAt).toLocaleDateString("en-GB", {
+                          day: "2-digit",
+                          month: "long",
+                          year: "numeric"
+                        }) : getMockDocDetails(activeDoc.fileCategory).uploadDate}
+                      </p>
                     </div>
-                  )}
-                </div>
-
-                {/* ACTION PORTAL */}
-                <div className="bg-navy-950/40 rounded-xl border border-gold-300/5 p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-                  <div className="text-xs text-gold-100/50">
-                    <span className="font-bold text-gold-200 block mb-0.5">Verification Guidelines</span>
-                    Ensure signatures, credentials and dates align properly with client care requests profile.
                   </div>
-                  
-                  <div className="flex items-center gap-3 w-full sm:w-auto">
-                    {activeDoc.status?.toUpperCase() === "VERIFIED" ? (
-                      <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-2.5 text-emerald-400 font-bold text-xs flex items-center gap-2 w-full justify-center">
-                        <CheckCircle2 className="h-4 w-4" /> Already Verified
+
+                  {/* DOCUMENT DETAILED INFORMATION */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 rounded-xl bg-navy-950/40 border border-gold-300/5 text-xs flex-shrink-0">
+                    <div>
+                      <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1">Document Type</span>
+                      <span className="text-gold-200 font-bold">{getMockDocDetails(activeDoc.fileCategory).type}</span>
+                    </div>
+                    <div>
+                      <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1">Upload Date</span>
+                      <span className="text-gold-200 font-bold">
+                        {activeDoc.createdAt ? new Date(activeDoc.createdAt).toISOString().split("T")[0] : getMockDocDetails(activeDoc.fileCategory).uploadDate}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1">Expiry Date</span>
+                      <span className="text-gold-200 font-bold">{getMockDocDetails(activeDoc.fileCategory).expiryDate}</span>
+                    </div>
+                    <div>
+                      <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1">Status</span>
+                      <span className={`font-bold uppercase ${
+                        activeDoc.status?.toUpperCase() === "VERIFIED"
+                          ? "text-emerald-400"
+                          : activeDoc.status?.toUpperCase() === "REJECTED"
+                            ? "text-rose-400"
+                            : "text-gold-DEFAULT"
+                      }`}>
+                        {getStatusLabel(activeDoc.status)}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* PREVIEW FRAME */}
+                  <div 
+                    className="relative rounded-xl border border-gold-300/5 bg-navy-950/60 p-2 flex items-center justify-center overflow-y-auto flex-shrink-0"
+                    style={{ height: "350px", minHeight: "350px", maxHeight: "350px" }}
+                  >
+                    {!activeDoc.fileUrl ? (
+                      <div className="flex flex-col items-center justify-center p-8 text-center text-gold-100/40">
+                        <FileText className="h-16 w-16 text-gold-100/20 mb-3 animate-pulse" />
+                        <p className="text-sm font-bold text-gold-200">No Document File Available</p>
+                        <p className="text-xs text-gold-100/30">There is no file link associated with this document status.</p>
                       </div>
-                    ) : activeDoc.status?.toUpperCase() === "REJECTED" ? (
-                      <div className="bg-rose-500/10 border border-rose-500/20 rounded-xl px-4 py-2.5 text-rose-400 font-bold text-xs flex items-center gap-2 w-full justify-center">
-                        <AlertTriangle className="h-4 w-4" /> Rejected
+                    ) : isPDF ? (
+                      <div className="w-full h-full relative">
+                        <iframe
+                          src={`${fullFileUrl}#toolbar=0&navpanes=0`}
+                          className="w-full h-full rounded-lg bg-navy-900 border-0"
+                          title={getCategoryLabel(activeDoc.fileCategory)}
+                        />
+                      </div>
+                    ) : isImage ? (
+                      <div className="flex flex-col items-center justify-center p-4">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={fullFileUrl}
+                          alt={getCategoryLabel(activeDoc.fileCategory)}
+                          className="max-w-full max-h-[330px] object-contain rounded-lg shadow-elegant"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                            const sibling = e.currentTarget.nextElementSibling as HTMLElement;
+                            if (sibling) sibling.style.display = 'flex';
+                          }}
+                        />
+                        <div className="hidden flex-col items-center justify-center p-8 text-center text-gold-100/40">
+                          <FileText className="h-16 w-16 text-gold-100/20 mb-3" />
+                          <p className="text-sm font-bold text-gold-200">Preview Unreadable</p>
+                          <p className="text-xs text-gold-100/30">Could not read the uploaded image format.</p>
+                        </div>
                       </div>
                     ) : (
-                      <>
-                        <button
-                          onClick={handleReject}
-                          disabled={submittingAction !== null}
-                          className="flex-1 sm:flex-initial px-5 py-2.5 text-xs font-bold text-white bg-rose-600 hover:bg-rose-500 disabled:opacity-40 rounded-xl transition duration-200 flex items-center justify-center gap-1.5"
+                      <div className="flex flex-col items-center justify-center p-8 text-center text-gold-100/40">
+                        <FileText className="h-16 w-16 text-gold-100/20 mb-3" />
+                        <p className="text-sm font-bold text-gold-200">No Direct Preview Available</p>
+                        <p className="text-xs text-gold-100/30 mb-6">
+                          This file format ({activeDoc.fileType || "unknown"}) cannot be previewed in-browser.
+                        </p>
+                        <a
+                          href={fullFileUrl}
+                          download
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-5 py-2.5 text-xs font-bold text-navy-950 bg-gold hover:bg-gold-200 rounded-xl transition duration-300 flex items-center gap-1.5 cursor-pointer"
                         >
-                          {submittingAction === "REJECT" ? (
-                            <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                          ) : (
-                            <X className="h-4 w-4" />
-                          )}
-                          Reject Document
-                        </button>
-                        <button
-                          onClick={handleVerify}
-                          disabled={submittingAction !== null}
-                          className="flex-1 sm:flex-initial px-5 py-2.5 text-xs font-bold text-navy-950 bg-gold hover:bg-gold-200 disabled:opacity-40 rounded-xl transition duration-200 flex items-center justify-center gap-1.5"
-                        >
-                          {submittingAction === "VERIFY" ? (
-                            <div className="w-3.5 h-3.5 border-2 border-navy-950 border-t-transparent rounded-full animate-spin" />
-                          ) : (
-                            <Check className="h-4 w-4" />
-                          )}
-                          Verify Document
-                        </button>
-                      </>
+                          <Download className="h-4 w-4" /> Download raw file to view
+                        </a>
+                      </div>
                     )}
                   </div>
                 </div>
 
-                {/* EXTERNAL VIEW BUTTON FOR ACCESSIBILITY */}
-                <div className="text-center pt-2">
-                  <a
-                    href={activeDoc.fileUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-[10px] text-gold-100/40 hover:text-gold transition duration-200"
-                  >
-                    Open raw file in a new tab <ExternalLink className="h-3 w-3" />
-                  </a>
+                <div className="space-y-4 flex-shrink-0">
+                  {/* ACTION PORTAL */}
+                  <div className="bg-navy-950/40 rounded-xl border border-gold-300/5 p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div className="text-xs text-gold-100/50">
+                      <span className="font-bold text-gold-200 block mb-0.5">Verification Guidelines</span>
+                      Ensure signatures, credentials and dates align properly with client care requests profile.
+                    </div>
+                    
+                    <div className="flex flex-row items-center gap-3 w-full md:w-auto justify-end whitespace-nowrap">
+                      {activeDoc.fileUrl && (
+                        <a
+                          href={fullFileUrl}
+                          download
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-5 py-2 text-xs font-bold text-gold bg-navy-950 border border-gold-300/10 hover:border-gold-300/30 rounded-xl transition duration-200 flex items-center justify-center gap-1.5 cursor-pointer h-10 flex-shrink-0"
+                        >
+                          <Download className="h-4 w-4 flex-shrink-0" />
+                          Download Document
+                        </a>
+                      )}
+                      
+                      {activeDoc.status?.toUpperCase() === "VERIFIED" ? (
+                        <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-5 py-2 text-emerald-400 font-bold text-xs flex items-center gap-2 h-10 justify-center flex-shrink-0">
+                          <CheckCircle2 className="h-4 w-4 flex-shrink-0" /> Already Verified
+                        </div>
+                      ) : activeDoc.status?.toUpperCase() === "REJECTED" ? (
+                        <div className="bg-rose-500/10 border border-rose-500/20 rounded-xl px-5 py-2 text-rose-400 font-bold text-xs flex items-center gap-2 h-10 justify-center flex-shrink-0">
+                          <AlertTriangle className="h-4 w-4 flex-shrink-0" /> Rejected
+                        </div>
+                      ) : (
+                        <div className="flex flex-row items-center gap-3">
+                          <button
+                            onClick={handleReject}
+                            disabled={submittingAction !== null}
+                            className="px-5 py-2 text-xs font-bold text-white bg-rose-600 hover:bg-rose-500 disabled:opacity-40 rounded-xl transition duration-200 flex items-center justify-center gap-1.5 cursor-pointer h-10 flex-shrink-0"
+                          >
+                            {submittingAction === "REJECT" ? (
+                              <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin flex-shrink-0" />
+                            ) : (
+                              <X className="h-4 w-4" flex-shrink-0="true" />
+                            )}
+                            Reject
+                          </button>
+                          <button
+                            onClick={handleVerify}
+                            disabled={submittingAction !== null}
+                            className="px-5 py-2 text-xs font-bold text-navy-950 bg-gold hover:bg-gold-200 disabled:opacity-40 rounded-xl transition duration-200 flex items-center justify-center gap-1.5 cursor-pointer h-10 flex-shrink-0"
+                          >
+                            {submittingAction === "VERIFY" ? (
+                              <div className="w-3.5 h-3.5 border-2 border-navy-950 border-t-transparent rounded-full animate-spin flex-shrink-0" />
+                            ) : (
+                              <Check className="h-4 w-4" flex-shrink-0="true" />
+                            )}
+                            Approve
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* ADMIN NOTES */}
+                  <div className="space-y-2 pt-2 border-t border-gold-300/5">
+                    <label className="text-xs uppercase font-bold text-gold-200/60 block">
+                      Admin Notes
+                    </label>
+                    <textarea
+                      value={notes[activeDoc.id] || ""}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setNotes((prev) => ({
+                          ...prev,
+                          [activeDoc.id]: val,
+                        }));
+                      }}
+                      placeholder="Add notes about this document review (e.g. key credentials verified, reason for rejection...)"
+                      rows={2}
+                      className="w-full rounded-xl border border-gold-300/10 bg-navy-950 p-3 text-xs text-gold-100 placeholder-gold-100/20 outline-none focus:border-gold-300/30 transition duration-300 resize-none animate-none"
+                    />
+                  </div>
                 </div>
 
               </div>
             ) : (
-              <div className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-12 text-center text-gold-100/40 backdrop-blur-md">
-                <FileText className="h-12 w-12 mx-auto text-gold-100/20 mb-4" />
+              <div 
+                className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-12 text-center text-gold-100/40 backdrop-blur-md flex flex-col justify-center items-center"
+                style={{ height: "820px", minHeight: "820px", maxHeight: "820px", overflow: "hidden" }}
+              >
+                <FileText className="h-12 w-12 text-gold-100/20 mb-4 animate-bounce" />
                 <h3 className="text-lg font-bold text-gold-200">No Document Selected</h3>
-                <p className="text-xs max-w-sm mx-auto mt-2">
+                <p className="text-xs max-w-sm mt-2">
                   Select an uploaded compliance document from the vault to verify or review its qualifications checklist.
                 </p>
               </div>

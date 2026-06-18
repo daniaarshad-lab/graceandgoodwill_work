@@ -25,12 +25,16 @@ export default function PortalTabs({
   ] as const;
 
   return (
-    <div className="flex border-b border-gold-300/10 pb-1 overflow-x-auto gap-2">
+    <div
+      className="flex flex-nowrap items-center border-b border-gold-300/10 pb-1 overflow-x-auto gap-1"
+      style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+    >
+      <style>{`.client-tabs-nav::-webkit-scrollbar { display: none; }`}</style>
       {tabs.map((tab) => (
         <button
           key={tab.id}
           onClick={() => setActiveTab(tab.id as TabType)}
-          className={`px-5 py-3 text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap ${
+          className={`px-5 py-3 text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap flex-shrink-0 ${
             activeTab === tab.id
               ? "border-b-2 border-gold-DEFAULT text-gold-DEFAULT bg-gold-DEFAULT/5"
               : "text-gold-200/60 hover:text-gold-50"

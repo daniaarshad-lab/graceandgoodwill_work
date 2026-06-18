@@ -99,17 +99,21 @@ function AdminDashboardContent() {
         </header>
 
         {/* --- NAVIGATION TABS BAR --- */}
-        <nav className="flex flex-wrap gap-2 border-b border-gold-300/10 pb-4">
+        <nav
+          className="flex flex-nowrap items-center gap-1 border-b border-gold-300/10 pb-1 overflow-x-auto overflow-y-hidden"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
+          <style>{`.admin-tabs-nav::-webkit-scrollbar { display: none; }`}</style>
           {(Object.keys(tabLabels) as AdminTabType[]).map((tab) => {
             const isActive = portal.activeTab === tab;
             return (
               <button
                 key={tab}
                 onClick={() => portal.setActiveTab(tab)}
-                className={`relative rounded-xl px-4 py-3 text-xs font-bold tracking-wider uppercase transition-all ${
+                className={`px-5 py-3 text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap flex-shrink-0 ${
                   isActive
-                    ? "bg-gold text-navy-950 shadow-elegant"
-                    : "bg-navy-900/50 text-gold-100/60 border border-gold-300/5 hover:text-gold hover:border-gold-300/20"
+                    ? "border-b-2 border-gold-DEFAULT text-gold-DEFAULT bg-gold-DEFAULT/5"
+                    : "text-gold-200/60 hover:text-gold-50"
                 }`}
               >
                 {tabLabels[tab]}

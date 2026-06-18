@@ -128,20 +128,32 @@ export default function MatchingPanel({
         </p>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3 items-start">
+      <div className="flex flex-col lg:flex-row items-stretch gap-6 w-full">
         {/* Left Side: Client Care Requests list */}
-        <div className="lg:col-span-1 space-y-4">
-          <SectionCard>
-            <h4 className="text-sm font-bold uppercase tracking-wider text-gold-200 border-b border-gold-300/10 pb-3 mb-4">
+        <div className="w-full lg:w-1/3 flex flex-col">
+          <SectionCard
+            className="flex flex-col overflow-hidden w-full h-[700px] min-h-[700px] max-h-[700px]"
+            style={{ height: "700px", minHeight: "700px", maxHeight: "700px" }}
+          >
+            <h4 className="text-sm font-bold uppercase tracking-wider text-gold-200 border-b border-gold-300/10 pb-3 mb-4 flex-shrink-0">
               Client Care Requests
             </h4>
 
             {requests.length === 0 ? (
-              <div className="text-center py-8 text-gold-100/30 text-xs">
+              <div className="text-center py-8 text-gold-100/30 text-xs flex-1 flex items-center justify-center">
                 No active care requests found.
               </div>
             ) : (
-              <div className="space-y-3 max-h-[600px] overflow-y-auto pr-1 scrollbar-thin">
+              <div
+                className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden pr-1 match-scroll space-y-3"
+                style={{ scrollbarWidth: "thin", scrollbarColor: "rgba(160,128,84,0.18) transparent" }}
+              >
+                <style>{`
+                  .match-scroll::-webkit-scrollbar { width: 4px; }
+                  .match-scroll::-webkit-scrollbar-track { background: transparent; }
+                  .match-scroll::-webkit-scrollbar-thumb { background-color: rgba(160,128,84,0.18); border-radius: 20px; }
+                  .match-scroll::-webkit-scrollbar-thumb:hover { background-color: rgba(160,128,84,0.36); }
+                `}</style>
                 {requests.map((req) => {
                   const isSelected = selectedRequest?.id === req.id;
                   return (
@@ -209,9 +221,12 @@ export default function MatchingPanel({
         </div>
 
         {/* Right Side: Carer Suggestions Panel */}
-        <div className="lg:col-span-2 space-y-4">
-          <SectionCard>
-            <div className="border-b border-gold-300/10 pb-3 mb-4">
+        <div className="w-full lg:w-2/3 flex flex-col">
+          <SectionCard
+            className="flex flex-col overflow-hidden w-full h-[700px] min-h-[700px] max-h-[700px]"
+            style={{ height: "700px", minHeight: "700px", maxHeight: "700px" }}
+          >
+            <div className="border-b border-gold-300/10 pb-3 mb-4 flex-shrink-0">
               <h4 className="text-sm font-bold uppercase tracking-wider text-gold-200">
                 Carer Recommendations
               </h4>
@@ -226,182 +241,190 @@ export default function MatchingPanel({
               )}
             </div>
 
-            {!selectedRequest ? (
-              <div className="flex flex-col items-center justify-center p-16 text-center border border-dashed border-gold-300/10 rounded-2xl bg-navy-950/10">
-                <Sparkles className="h-10 w-10 text-gold-100/20 mb-3 animate-pulse" />
-                <h5 className="font-bold text-gold-200 text-sm mb-1">
-                  Run Match Pairing
-                </h5>
-                <p className="text-xs text-gold-100/40 max-w-sm">
-                  Please select &ldquo;Find Matches&rdquo; on any care request
-                  in the left list to load candidate compatibility suggestions.
-                </p>
-              </div>
-            ) : loading ? (
-              <div className="space-y-4">
-                <SuggestionSkeleton />
-                <SuggestionSkeleton />
-                <SuggestionSkeleton />
-              </div>
-            ) : error ? (
-              <div className="flex flex-col items-center justify-center p-12 text-center border border-rose-500/15 rounded-2xl bg-rose-500/5">
-                <AlertCircle className="h-8 w-8 text-rose-400 mb-2" />
-                <p className="text-xs text-rose-300 mb-4">{error}</p>
-                <Button
-                  onClick={() => loadSuggestions(selectedRequest.id)}
-                  variant="danger"
-                  size="sm"
-                  fullWidth={false}
+            <div className="flex-1 min-h-0 flex flex-col justify-center">
+              {!selectedRequest ? (
+                <div className="flex flex-col items-center justify-center p-16 text-center border border-dashed border-gold-300/10 rounded-2xl bg-navy-950/10">
+                  <Sparkles className="h-10 w-10 text-gold-100/20 mb-3 animate-pulse" />
+                  <h5 className="font-bold text-gold-200 text-sm mb-1">
+                    Run Match Pairing
+                  </h5>
+                  <p className="text-xs text-gold-100/40 max-w-sm">
+                    Please select &ldquo;Find Matches&rdquo; on any care request
+                    in the left list to load candidate compatibility suggestions.
+                  </p>
+                </div>
+              ) : loading ? (
+                <div
+                  className="flex-1 overflow-y-auto pr-1 match-scroll space-y-4"
+                  style={{ scrollbarWidth: "thin", scrollbarColor: "rgba(160,128,84,0.18) transparent" }}
                 >
-                  Retry Load
-                </Button>
-              </div>
-            ) : suggestions.length === 0 ? (
-              <div className="flex flex-col items-center justify-center p-16 text-center border border-dashed border-gold-300/10 rounded-2xl bg-navy-950/20 space-y-3">
-                <User className="h-10 w-10 text-gold-100/20" />
-                <h5 className="font-bold text-gold-200 text-sm">
-                  No Suggestions Found
-                </h5>
-                <p className="text-xs text-gold-100/40 max-w-md leading-relaxed">
-                  No suitable carers found for this care request. Please review
-                  the request details or wait for additional carers to become
-                  available.
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {suggestions.map((suggestion) => {
-                  const { carer, scoreBreakdown, totalScore } = suggestion;
-                  const fullName = `${carer.firstName} ${carer.lastName}`;
-                  const photoUrl = getFullUrl(carer.profilePhotoUrl);
+                  <SuggestionSkeleton />
+                  <SuggestionSkeleton />
+                  <SuggestionSkeleton />
+                </div>
+              ) : error ? (
+                <div className="flex flex-col items-center justify-center p-12 text-center border border-rose-500/15 rounded-2xl bg-rose-500/5">
+                  <AlertCircle className="h-8 w-8 text-rose-400 mb-2" />
+                  <p className="text-xs text-rose-300 mb-4">{error}</p>
+                  <Button
+                    onClick={() => loadSuggestions(selectedRequest.id)}
+                    variant="danger"
+                    size="sm"
+                    fullWidth={false}
+                  >
+                    Retry Load
+                  </Button>
+                </div>
+              ) : suggestions.length === 0 ? (
+                <div className="flex flex-col items-center justify-center p-16 text-center border border-dashed border-gold-300/10 rounded-2xl bg-navy-950/20 space-y-3">
+                  <User className="h-10 w-10 text-gold-100/20" />
+                  <h5 className="font-bold text-gold-200 text-sm">
+                    No Suggestions Found
+                  </h5>
+                  <p className="text-xs text-gold-100/40 max-w-md leading-relaxed">
+                    No suitable carers found for this care request. Please review
+                    the request details or wait for additional carers to become
+                    available.
+                  </p>
+                </div>
+              ) : (
+                <div
+                  className="flex-1 overflow-y-auto pr-1 match-scroll space-y-4"
+                  style={{ scrollbarWidth: "thin", scrollbarColor: "rgba(160,128,84,0.18) transparent" }}
+                >
+                  {suggestions.map((suggestion) => {
+                    const { carer, scoreBreakdown, totalScore } = suggestion;
+                    const fullName = `${carer.firstName} ${carer.lastName}`;
+                    const photoUrl = getFullUrl(carer.profilePhotoUrl);
 
-                  return (
-                    <div
-                      key={carer.id}
-                      className="rounded-xl border border-gold-300/10 bg-navy-950/30 p-5 transition-all hover:border-gold-300/20 hover:bg-navy-950/50 flex flex-col md:flex-row gap-5 items-start justify-between"
-                    >
-                      {/* Left: Carer Profile Details */}
-                      <div className="flex gap-4 items-start flex-1 min-w-0">
-                        {photoUrl ? (
-                          <img
-                            src={photoUrl}
-                            alt={fullName}
-                            className="h-14 w-14 rounded-full object-cover border border-gold-300/20 shrink-0 shadow"
-                          />
-                        ) : (
-                          <div className="h-14 w-14 rounded-full bg-gold-DEFAULT/10 border border-gold-DEFAULT/20 flex items-center justify-center text-gold-DEFAULT shrink-0 shadow">
-                            <User className="h-6 w-6" />
-                          </div>
-                        )}
+                    return (
+                      <div
+                        key={carer.id}
+                        className="rounded-xl border border-gold-300/10 bg-navy-950/30 p-5 transition-all hover:border-gold-300/20 hover:bg-navy-950/50 flex flex-col md:flex-row gap-5 items-start justify-between"
+                      >
+                        {/* Left: Carer Profile Details */}
+                        <div className="flex gap-4 items-start flex-1 min-w-0">
+                          {photoUrl ? (
+                            <img
+                              src={photoUrl}
+                              alt={fullName}
+                              className="h-14 w-14 rounded-full object-cover border border-gold-300/20 shrink-0 shadow"
+                            />
+                          ) : (
+                            <div className="h-14 w-14 rounded-full bg-gold-DEFAULT/10 border border-gold-DEFAULT/20 flex items-center justify-center text-gold-DEFAULT shrink-0 shadow">
+                              <User className="h-6 w-6" />
+                            </div>
+                          )}
 
-                        <div className="space-y-2 min-w-0 flex-1">
-                          <div>
-                            <h5 className="font-bold text-gold-50 text-base leading-tight truncate">
-                              {fullName}
-                            </h5>
-                            <p className="text-xs text-gold-100/50 mt-0.5">
-                              {carer.city} •{" "}
-                              {carer.experience || "No experience listed"}{" "}
-                              Experience
-                            </p>
-                          </div>
+                          <div className="space-y-2 min-w-0 flex-1">
+                            <div>
+                              <h5 className="font-bold text-gold-50 text-base leading-tight truncate">
+                                {fullName}
+                              </h5>
+                              <p className="text-xs text-gold-100/50 mt-0.5">
+                                {carer.city} •{" "}
+                                {carer.experience || "No experience listed"}{" "}
+                                Experience
+                              </p>
+                            </div>
 
-                          {/* Matching Scores Grid */}
-                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-gold-300/5">
-                            <div className="rounded-lg bg-gold-DEFAULT/5 border border-gold-DEFAULT/15 px-3 py-1.5 text-center">
-                              <span className="block text-[8px] font-bold text-gold/60 uppercase">
-                                Total Match
-                              </span>
-                              <span className="text-sm font-black text-gold">
-                                {totalScore}%
-                              </span>
-                            </div>
-                            <div className="rounded-lg bg-blue-500/5 border border-blue-500/15 px-3 py-1.5 text-center">
-                              <span className="block text-[8px] font-bold text-blue-400/60 uppercase">
-                                Location
-                              </span>
-                              <span className="text-sm font-black text-blue-400">
-                                {scoreBreakdown.location || 0}%
-                              </span>
-                            </div>
-                            <div className="rounded-lg bg-emerald-500/5 border border-emerald-500/15 px-3 py-1.5 text-center">
-                              <span className="block text-[8px] font-bold text-emerald-400/60 uppercase">
-                                Specialty
-                              </span>
-                              <span className="text-sm font-black text-emerald-400">
-                                {scoreBreakdown.specialty || 0}%
-                              </span>
-                            </div>
-                            <div className="rounded-lg bg-purple-500/5 border border-purple-500/15 px-3 py-1.5 text-center">
-                              <span className="block text-[8px] font-bold text-purple-400/60 uppercase">
-                                Availability
-                              </span>
-                              <span className="text-sm font-black text-purple-400">
-                                {scoreBreakdown.availability || 0}%
-                              </span>
-                            </div>
-                          </div>
-
-                          {/* Specialties */}
-                          {carer.careSpecialties &&
-                            carer.careSpecialties.length > 0 && (
-                              <div className="pt-2">
-                                <span className="text-[10px] uppercase font-bold text-gold-200/40 tracking-wider">
-                                  Care Specialties
+                            {/* Matching Scores Grid */}
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-gold-300/5">
+                              <div className="rounded-lg bg-gold-DEFAULT/5 border border-gold-DEFAULT/15 px-3 py-1.5 text-center">
+                                <span className="block text-[8px] font-bold text-gold/60 uppercase">
+                                  Total Match
                                 </span>
-                                <div className="flex flex-wrap gap-1.5 mt-1.5">
-                                  {carer.careSpecialties.map((spec: string) => (
-                                    <span
-                                      key={spec}
-                                      className="rounded bg-navy-950 px-2 py-0.5 text-[10px] text-gold-200/80 border border-gold-300/5"
-                                    >
-                                      {spec}
-                                    </span>
-                                  ))}
-                                </div>
+                                <span className="text-sm font-black text-gold">
+                                  {totalScore}%
+                                </span>
                               </div>
+                              <div className="rounded-lg bg-blue-500/5 border border-blue-500/15 px-3 py-1.5 text-center">
+                                <span className="block text-[8px] font-bold text-blue-400/60 uppercase">
+                                  Location
+                                </span>
+                                <span className="text-sm font-black text-blue-400">
+                                  {scoreBreakdown.location || 0}%
+                                </span>
+                              </div>
+                              <div className="rounded-lg bg-emerald-500/5 border border-emerald-500/15 px-3 py-1.5 text-center">
+                                <span className="block text-[8px] font-bold text-emerald-400/60 uppercase">
+                                  Specialty
+                                </span>
+                                <span className="text-sm font-black text-emerald-400">
+                                  {scoreBreakdown.specialty || 0}%
+                                </span>
+                              </div>
+                              <div className="rounded-lg bg-purple-500/5 border border-purple-500/15 px-3 py-1.5 text-center">
+                                <span className="block text-[8px] font-bold text-purple-400/60 uppercase">
+                                  Availability
+                                </span>
+                                <span className="text-sm font-black text-purple-400">
+                                  {scoreBreakdown.availability || 0}%
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Specialties */}
+                            {carer.careSpecialties &&
+                              carer.careSpecialties.length > 0 && (
+                                <div className="pt-2">
+                                  <span className="text-[10px] uppercase font-bold text-gold-200/40 tracking-wider">
+                                    Care Specialties
+                                  </span>
+                                  <div className="flex flex-wrap gap-1.5 mt-1.5">
+                                    {carer.careSpecialties.map((spec: string) => (
+                                      <span
+                                        key={spec}
+                                        className="rounded bg-navy-950 px-2 py-0.5 text-[10px] text-gold-200/80 border border-gold-300/5"
+                                      >
+                                        {spec}
+                                      </span>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                          </div>
+                        </div>
+
+                        {/* Right: Actions */}
+                        <div className="flex md:flex-col gap-2 shrink-0 w-full md:w-auto">
+                          <Button
+                            onClick={() => setViewingCarer(suggestion)}
+                            variant="ghost-gold"
+                            size="sm"
+                            fullWidth
+                            className="flex items-center justify-center gap-1.5"
+                          >
+                            <Eye className="h-3.5 w-3.5" />
+                            View Profile
+                          </Button>
+                          <Button
+                            onClick={() => handleAssign(carer.userId, fullName)}
+                            disabled={assigningId !== null}
+                            variant="primary"
+                            size="sm"
+                            fullWidth
+                            className="flex items-center justify-center gap-1.5"
+                          >
+                            {assigningId === carer.userId ? (
+                              <>
+                                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                Assigning...
+                              </>
+                            ) : (
+                              <>
+                                <Check className="h-3.5 w-3.5" />
+                                Assign
+                              </>
                             )}
+                          </Button>
                         </div>
                       </div>
-
-                      {/* Right: Actions */}
-                      <div className="flex md:flex-col gap-2 shrink-0 w-full md:w-auto">
-                        <Button
-                          onClick={() => setViewingCarer(suggestion)}
-                          variant="ghost-gold"
-                          size="sm"
-                          fullWidth
-                          className="flex items-center justify-center gap-1.5"
-                        >
-                          <Eye className="h-3.5 w-3.5" />
-                          View Profile
-                        </Button>
-                        <Button
-                          onClick={() => handleAssign(carer.userId, fullName)}
-                          disabled={assigningId !== null}
-                          variant="primary"
-                          size="sm"
-                          fullWidth
-                          className="flex items-center justify-center gap-1.5"
-                        >
-                          {assigningId === carer.userId ? (
-                            <>
-                              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                              Assigning...
-                            </>
-                          ) : (
-                            <>
-                              <Check className="h-3.5 w-3.5" />
-                              Assign
-                            </>
-                          )}
-                        </Button>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           </SectionCard>
         </div>
       </div>

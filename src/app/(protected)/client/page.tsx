@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { useAuth } from "@/contexts/AuthContext";
 import { useClientPortal } from "./hooks/useClientPortal";
 
 import PortalHeader from "./components/PortalHeader";
-import PortalTabs from "./components/PortalTabs";
+import PortalTabs, { TabType } from "./components/PortalTabs";
 
 const DashboardOverview = dynamic(
   () => import("./components/DashboardOverview"),
@@ -34,17 +35,27 @@ const IntroductionModal = dynamic(
   { ssr: false },
 );
 
-type TabType =
-  | "overview"
-  | "profile"
-  | "request"
-  | "carers"
-  | "tracking"
-  | "enquiry";
-
 export default function ClientDashboard() {
   const { user } = useAuth();
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get("tab") as TabType;
   const [activeTab, setActiveTab] = useState<TabType>("request");
+
+  useEffect(() => {
+    if (
+      tabParam &&
+      [
+        "request",
+        "overview",
+        "profile",
+        "carers",
+        "tracking",
+        "enquiry",
+      ].includes(tabParam)
+    ) {
+      setActiveTab(tabParam);
+    }
+  }, [tabParam]);
 
   // Custom hook containing state + handlers
   const portal = useClientPortal({ user });

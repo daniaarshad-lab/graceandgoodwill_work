@@ -17,7 +17,7 @@ import ComplianceVault from "./components/ComplianceVault";
 import AvailabilitySchedule from "./components/AvailabilitySchedule";
 import UploadDocumentModal from "./components/UploadDocumentModal";
 import PortalHeader from "./components/PortalHeader";
-import PortalTabs from "./components/PortalTabs";
+import PortalTabs, { TabType } from "./components/PortalTabs";
 import OnboardingStepper from "./components/OnboardingStepper";
 import StepPersonalInfo from "./components/StepPersonalInfo";
 import StepIdentityVerification from "./components/StepIdentityVerification";
@@ -32,8 +32,6 @@ import OnboardingMembership from "./components/OnboardingMembership";
 import Button from "@/components/Button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
-type TabType = "overview" | "profile" | "compliance" | "availability";
-
 function CarerDashboardContent() {
   const { user } = useAuth();
   const searchParams = useSearchParams();
@@ -41,7 +39,17 @@ function CarerDashboardContent() {
 
   const isOnboardingParam = searchParams.get("onboarding") === "true";
 
+  const tabParam = searchParams.get("tab") as TabType;
   const [activeTab, setActiveTab] = useState<TabType>("overview");
+
+  useEffect(() => {
+    if (
+      tabParam &&
+      ["overview", "profile", "compliance", "availability"].includes(tabParam)
+    ) {
+      setActiveTab(tabParam);
+    }
+  }, [tabParam]);
   const [onboardingDone, setOnboardingDone] = useState(true);
   const [onboardingStep, setOnboardingStep] = useState(2);
   const [initialStepSet, setInitialStepSet] = useState(false);
@@ -54,7 +62,14 @@ function CarerDashboardContent() {
     dispatch(fetchCarerDocuments());
   }, [dispatch]);
 
-  const { profile, documents, loading, documentsLoading, batchUploading, deletingDocumentId } = useAppSelector((state) => state.carer);
+  const {
+    profile,
+    documents,
+    loading,
+    documentsLoading,
+    batchUploading,
+    deletingDocumentId,
+  } = useAppSelector((state) => state.carer);
   const profileUser = profile?.user;
 
   const portal = useCarerPortal({
@@ -66,7 +81,8 @@ function CarerDashboardContent() {
   useEffect(() => {
     setIsClient(true);
     if (!user?.id) return;
-    const localStorageDone = localStorage.getItem(`carer_onboarding_done_${user.id}`) === "true";
+    const localStorageDone =
+      localStorage.getItem(`carer_onboarding_done_${user.id}`) === "true";
     if (isOnboardingParam) {
       // Force onboarding if explicitly requested by URL
       setOnboardingDone(false);
@@ -76,14 +92,25 @@ function CarerDashboardContent() {
     }
 
     if (profile && !initialStepSet) {
-      const savedStep = localStorage.getItem(`carer_onboarding_step_${user.id}`);
+      const savedStep = localStorage.getItem(
+        `carer_onboarding_step_${user.id}`,
+      );
       if (savedStep) {
         setOnboardingStep(parseInt(savedStep, 10));
       } else {
         const isComplianceUploaded = documents && documents.length >= 10;
-        const isProfileSetup = !!(profile.bio && profile.experience && profile.address);
+        const isProfileSetup = !!(
+          profile.bio &&
+          profile.experience &&
+          profile.address
+        );
 
-        console.log("[Onboarding Flow] isComplianceUploaded:", isComplianceUploaded, "isProfileSetup:", isProfileSetup);
+        console.log(
+          "[Onboarding Flow] isComplianceUploaded:",
+          isComplianceUploaded,
+          "isProfileSetup:",
+          isProfileSetup,
+        );
 
         if (!profileUser?.dateOfBirth) {
           setOnboardingStep(2);
@@ -101,51 +128,119 @@ function CarerDashboardContent() {
 
   useEffect(() => {
     if (initialStepSet && user?.id) {
-      localStorage.setItem(`carer_onboarding_step_${user.id}`, onboardingStep.toString());
+      localStorage.setItem(
+        `carer_onboarding_step_${user.id}`,
+        onboardingStep.toString(),
+      );
     }
   }, [onboardingStep, initialStepSet, user?.id]);
 
   const showOnboarding =
     isClient && !onboardingDone && portal.applicationStatus !== "approved";
 
-
   const validateAllCompulsoryFields = () => {
     const missing = [];
     const {
-      firstName, lastName, dateOfBirth, address, email, phone,
-      emergencyContactName, emergencyContactNumber, emergencyContactRelation,
-      complianceDocs, drivingPreferences, bio, experience, specialties, employmentHistory
+      firstName,
+      lastName,
+      dateOfBirth,
+      address,
+      email,
+      phone,
+      emergencyContactName,
+      emergencyContactNumber,
+      emergencyContactRelation,
+      complianceDocs,
+      drivingPreferences,
+      bio,
+      experience,
+      specialties,
+      employmentHistory,
     } = portal;
 
-    if (!firstName || !lastName || !dateOfBirth || !address || !email || !phone || !emergencyContactName || !emergencyContactNumber || !emergencyContactRelation) {
+    if (
+      !firstName ||
+      !lastName ||
+      !dateOfBirth ||
+      !address ||
+      !email ||
+      !phone ||
+      !emergencyContactName ||
+      !emergencyContactNumber ||
+      !emergencyContactRelation
+    ) {
       missing.push("Personal Information");
     }
 
-    const hasPassportOrDL = complianceDocs.some((d: any) => d.type === "PASSPORT" || d.type === "DRIVERS_LICENSE");
+    const hasPassportOrDL = complianceDocs.some(
+      (d: any) => d.type === "PASSPORT" || d.type === "DRIVERS_LICENSE",
+    );
     const hasDL = complianceDocs.some((d: any) => d.type === "DRIVERS_LICENSE");
-    const hasProofOfAddress = complianceDocs.some((d: any) => d.type === "PROOF_OF_ADDRESS");
-    const hasRightToWork = complianceDocs.some((d: any) => d.type === "RIGHT_TO_WORK");
+    const hasProofOfAddress = complianceDocs.some(
+      (d: any) => d.type === "PROOF_OF_ADDRESS",
+    );
+    const hasRightToWork = complianceDocs.some(
+      (d: any) => d.type === "RIGHT_TO_WORK",
+    );
     const hasNiProof = complianceDocs.some((d: any) => d.type === "NI_PROOF");
 
-    let identityValid = hasPassportOrDL && hasProofOfAddress && hasRightToWork && hasNiProof;
+    let identityValid =
+      hasPassportOrDL && hasProofOfAddress && hasRightToWork && hasNiProof;
     if (hasDL) {
-      const hasOwnVehiclePref = (drivingPreferences || []).includes("I am happy to transport clients in my own vehicle");
-      if (hasOwnVehiclePref && !complianceDocs.some((d: any) => d.type === "BUSINESS_INSURANCE")) {
+      const hasOwnVehiclePref = (drivingPreferences || []).includes(
+        "I am happy to transport clients in my own vehicle",
+      );
+      if (
+        hasOwnVehiclePref &&
+        !complianceDocs.some((d: any) => d.type === "BUSINESS_INSURANCE")
+      ) {
         identityValid = false;
       }
     }
     if (!identityValid) missing.push("Identity Verification");
 
-    if (!bio || !experience || !specialties) missing.push("Professional Information");
+    if (!bio || !experience || !specialties)
+      missing.push("Professional Information");
 
-    const requiredTraining = ["SAFEGUARDING_ADULTS", "MOVING_AND_HANDLING", "MEDICATION_ADMINISTRATION", "BASIC_LIFE_SUPPORT", "INFECTION_PREVENTION", "HEALTH_AND_SAFETY", "FIRE_SAFETY", "FOOD_HYGIENE", "GDPR"];
-    if (!requiredTraining.every((type: string) => complianceDocs.some((d: any) => d.type === type))) missing.push("Mandatory Care Training");
+    const requiredTraining = [
+      "SAFEGUARDING_ADULTS",
+      "MOVING_AND_HANDLING",
+      "MEDICATION_ADMINISTRATION",
+      "BASIC_LIFE_SUPPORT",
+      "INFECTION_PREVENTION",
+      "HEALTH_AND_SAFETY",
+      "FIRE_SAFETY",
+      "FOOD_HYGIENE",
+      "GDPR",
+    ];
+    if (
+      !requiredTraining.every((type: string) =>
+        complianceDocs.some((d: any) => d.type === type),
+      )
+    )
+      missing.push("Mandatory Care Training");
 
-    const requiredCompliance = ["ENHANCED_DBS", "CV", "REFERENCE_1", "REFERENCE_2"];
-    if (!requiredCompliance.every((type: string) => complianceDocs.some((d: any) => d.type === type)) || !employmentHistory) missing.push("Required Compliance Documents");
+    const requiredCompliance = [
+      "ENHANCED_DBS",
+      "CV",
+      "REFERENCE_1",
+      "REFERENCE_2",
+    ];
+    if (
+      !requiredCompliance.every((type: string) =>
+        complianceDocs.some((d: any) => d.type === type),
+      ) ||
+      !employmentHistory
+    )
+      missing.push("Required Compliance Documents");
 
     const requiredInsurance = ["PUBLIC_LIABILITY", "PROFESSIONAL_INDEMNITY"];
-    if (!requiredInsurance.every((type: string) => complianceDocs.some((d: any) => d.type === type))) missing.push("Insurance Documents");
+    if (
+      !requiredInsurance.every((type: string) =>
+        complianceDocs.some((d: any) => d.type === type),
+      )
+    )
+      missing.push("Insurance Documents");
 
     if (!profile?.introVideoUrl) missing.push("Video Introduction");
 
@@ -240,15 +335,25 @@ function CarerDashboardContent() {
             {onboardingStep === 11 && (
               <OnboardingMembership
                 onComplete={async () => {
-                  if (!portal.declarations?.accuracy || !portal.declarations?.checks || !portal.declarations?.share) {
-                    showErrorToast("Incomplete", "Please agree to all declarations before submitting your profile.");
+                  if (
+                    !portal.declarations?.accuracy ||
+                    !portal.declarations?.checks ||
+                    !portal.declarations?.share
+                  ) {
+                    showErrorToast(
+                      "Incomplete",
+                      "Please agree to all declarations before submitting your profile.",
+                    );
                     setOnboardingStep(10);
                     return;
                   }
 
                   const missingSections = validateAllCompulsoryFields();
                   if (missingSections.length > 0) {
-                    showErrorToast("Incomplete Profile", `Please complete the following sections: ${missingSections.join(", ")}`);
+                    showErrorToast(
+                      "Incomplete Profile",
+                      `Please complete the following sections: ${missingSections.join(", ")}`,
+                    );
                     return;
                   }
 
@@ -265,8 +370,18 @@ function CarerDashboardContent() {
             {onboardingStep === 12 && (
               <div className="flex flex-col items-center justify-center py-16 px-8 text-center bg-gradient-to-b from-navy-900/40 to-navy-950/60 border border-gold-300/10 rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] backdrop-blur-md max-w-2xl mx-auto mt-6">
                 <div className="w-20 h-20 bg-gradient-to-br from-gold-200/20 to-gold-200/5 rounded-full flex items-center justify-center border border-gold-200/30 mb-8 shadow-[0_0_20px_rgba(245,212,160,0.1)]">
-                  <svg className="w-10 h-10 text-gold-200 drop-shadow-[0_2px_4px_rgba(245,212,160,0.3)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  <svg
+                    className="w-10 h-10 text-gold-200 drop-shadow-[0_2px_4px_rgba(245,212,160,0.3)]"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
                   </svg>
                 </div>
 
@@ -275,15 +390,21 @@ function CarerDashboardContent() {
                 </h3>
 
                 <p className="text-gold-100/60 max-w-md mx-auto leading-relaxed mb-10 text-[14px]">
-                  Thank you for completing your professional profile. Your application is now under review by the Grace & Goodwill team.
+                  Thank you for completing your professional profile. Your
+                  application is now under review by the Grace & Goodwill team.
                 </p>
 
                 <div className="flex flex-col items-center gap-5 w-full">
                   <button
                     onClick={() => {
                       if (user?.id) {
-                        localStorage.setItem(`carer_onboarding_done_${user.id}`, "true");
-                        localStorage.removeItem(`carer_onboarding_step_${user.id}`);
+                        localStorage.setItem(
+                          `carer_onboarding_done_${user.id}`,
+                          "true",
+                        );
+                        localStorage.removeItem(
+                          `carer_onboarding_step_${user.id}`,
+                        );
                       }
                       setOnboardingDone(true);
                       if (isOnboardingParam) {
@@ -402,9 +523,7 @@ function CarerDashboardContent() {
           )}
 
           {activeTab === "availability" && (
-            <AvailabilitySchedule
-              isProfileLoading={loading}
-            />
+            <AvailabilitySchedule isProfileLoading={loading} />
           )}
         </div>
       </div>

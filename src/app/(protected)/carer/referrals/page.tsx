@@ -9,7 +9,7 @@ import {
 } from "@/store/slices/carerSlice";
 import {
   fetchReferrals,
-  createCarerReferral,
+  submitCarerReferralThunk,
   resetReferralStatus,
 } from "@/store/slices/referralSlice";
 import { useCarerPortal } from "../hooks/useCarerPortal";
@@ -49,11 +49,9 @@ function CarerReferralsContent() {
 
   const handleReferralSubmit = async (formData: FormData): Promise<boolean> => {
     try {
-      await dispatch(createCarerReferral(formData)).unwrap();
-      showSuccessToast(
-        "Referral Submitted",
-        "Referral submitted successfully. An invitation email will be sent to the candidate.",
-      );
+      await dispatch(submitCarerReferralThunk(formData)).unwrap();
+      showSuccessToast("Referral submitted successfully.");
+      dispatch(fetchReferrals());
       return true;
     } catch (err: any) {
       showErrorToast("Submission Failed", err || "Failed to submit referral");
@@ -74,21 +72,19 @@ function CarerReferralsContent() {
 
         <PortalTabs activeTab="referrals" />
 
-        <div className="grid gap-8 lg:grid-cols-3">
-          <div className="lg:col-span-1">
+        <div className="grid grid-cols-1 lg:grid-cols-10 gap-8 items-stretch lg:h-[750px]">
+          <div className="lg:col-span-4 h-full">
             <ReferralFormCarer
               onSubmit={handleReferralSubmit}
               submitting={submitting}
             />
           </div>
-          <div className="lg:col-span-2">
-            <div className="rounded-3xl border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md">
-              <ReferralDashboard
-                referrals={referrals}
-                loading={loading}
-                filterType="CARER"
-              />
-            </div>
+          <div className="lg:col-span-6 h-full rounded-3xl border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md">
+            <ReferralDashboard
+              referrals={referrals}
+              loading={loading}
+              filterType="CARER"
+            />
           </div>
         </div>
       </div>

@@ -1,12 +1,18 @@
 import React, { useState } from "react";
-import { toast } from "sonner";
+import Input from "@/components/Input";
+import PhoneInput from "@/components/PhoneInput";
+import {
+  validateFirstName,
+  validateLastName,
+  validateEmail,
+  validatePhone,
+} from "@/lib/validation";
 
 interface ReferralFormClientProps {
   onSubmit: (data: {
     firstName: string;
     lastName: string;
     email: string;
-    phone?: string;
   }) => Promise<boolean>;
   submitting: boolean;
 }
@@ -19,59 +25,118 @@ export default function ReferralFormClient({
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [emailError, setEmailError] = useState("");
-  const [phoneError, setPhoneError] = useState("");
 
-  const validateEmail = (val: string) => {
-    if (!val) return true;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(val)) {
-      setEmailError("Please enter a valid email address");
-      return false;
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validate = () => {
+    const tempErrors: Record<string, string> = {};
+
+    const firstNameError = validateFirstName(firstName);
+    if (firstNameError) {
+      tempErrors.firstName = firstNameError;
     }
-    setEmailError("");
-    return true;
+
+    const lastNameError = validateLastName(lastName);
+    if (lastNameError) {
+      tempErrors.lastName = lastNameError;
+    }
+
+    const emailError = validateEmail(email);
+    if (emailError) {
+      tempErrors.email = emailError;
+    }
+
+    if (phone.trim()) {
+      const phoneError = validatePhone(phone);
+      if (phoneError && phoneError !== "Phone number is required") {
+        tempErrors.phone = phoneError;
+      }
+    }
+
+    setErrors(tempErrors);
+    return Object.keys(tempErrors).length === 0;
   };
 
-  const validatePhone = (val: string) => {
-    if (!val) {
-      setPhoneError("");
-      return true;
+  const handleFirstNameChange = (val: string) => {
+    setFirstName(val);
+    if (val.trim()) {
+      setErrors((prev) => {
+        const copy = { ...prev };
+        delete copy.firstName;
+        return copy;
+      });
     }
-    const phoneRegex = /^[+\s()0-9]{7,20}$/;
-    if (!phoneRegex.test(val)) {
-      setPhoneError("Please enter a valid phone number");
-      return false;
-    }
-    setPhoneError("");
-    return true;
   };
 
-  // Form validity check
-  const isFormValid =
-    firstName.trim() !== "" &&
-    lastName.trim() !== "" &&
-    email.trim() !== "" &&
-    !emailError &&
-    !phoneError;
+  const handleLastNameChange = (val: string) => {
+    setLastName(val);
+    if (val.trim()) {
+      setErrors((prev) => {
+        const copy = { ...prev };
+        delete copy.lastName;
+        return copy;
+      });
+    }
+  };
+
+  const handleEmailChange = (val: string) => {
+    setEmail(val);
+    const trimmed = val.trim();
+    if (trimmed) {
+      const emailError = validateEmail(trimmed);
+      if (!emailError) {
+        setErrors((prev) => {
+          const copy = { ...prev };
+          delete copy.email;
+          return copy;
+        });
+      } else {
+        if (errors.email) {
+          setErrors((prev) => ({
+            ...prev,
+            email: emailError,
+          }));
+        }
+      }
+    }
+  };
+
+  const handlePhoneChange = (val: string) => {
+    setPhone(val);
+    const trimmed = val.trim();
+    if (!trimmed) {
+      setErrors((prev) => {
+        const copy = { ...prev };
+        delete copy.phone;
+        return copy;
+      });
+    } else {
+      const phoneError = validatePhone(trimmed);
+      if (!phoneError || phoneError === "Phone number is required") {
+        setErrors((prev) => {
+          const copy = { ...prev };
+          delete copy.phone;
+          return copy;
+        });
+      } else {
+        if (errors.phone) {
+          setErrors((prev) => ({
+            ...prev,
+            phone: phoneError,
+          }));
+        }
+      }
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isFormValid) return;
-
-    const isEmailValid = validateEmail(email);
-    const isPhoneValid = validatePhone(phone);
-
-    if (!isEmailValid || !isPhoneValid) {
-      toast.error("Please correct the form errors before submitting");
-      return;
-    }
+    if (!validate()) return;
 
     const payload = {
-      firstName,
-      lastName,
-      email,
-      phone: phone.trim() !== "" ? phone : undefined,
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
+      email: email.trim(),
     };
 
     const success = await onSubmit(payload);
@@ -81,6 +146,7 @@ export default function ReferralFormClient({
       setLastName("");
       setEmail("");
       setPhone("");
+      setErrors({});
     }
   };
 
@@ -110,95 +176,43 @@ export default function ReferralFormClient({
           {/* Form Fields */}
           <div className="space-y-5">
             <div className="grid gap-4 sm:grid-cols-2">
-              {/* First Name */}
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-gold-200 uppercase tracking-widest">
-                  First Name *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Eleanor"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  disabled={submitting}
-                  className="w-full rounded-xl bg-navy-950/80 border border-gold-300/15 focus:border-gold px-4 py-3 text-xs text-gold-100 focus:outline-none transition duration-300 focus:ring-1 focus:ring-gold-DEFAULT/20"
-                />
-              </div>
-
-              {/* Last Name */}
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-gold-200 uppercase tracking-widest">
-                  Last Name *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Vance"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  disabled={submitting}
-                  className="w-full rounded-xl bg-navy-950/80 border border-gold-300/15 focus:border-gold px-4 py-3 text-xs text-gold-100 focus:outline-none transition duration-300 focus:ring-1 focus:ring-gold-DEFAULT/20"
-                />
-              </div>
-            </div>
-
-            {/* Email Address */}
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-bold text-gold-200 uppercase tracking-widest">
-                Email Address *
-              </label>
-              <input
-                type="email"
-                required
-                placeholder="e.g. eleanor.v@example.com"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  if (emailError) validateEmail(e.target.value);
-                }}
-                onBlur={(e) => validateEmail(e.target.value)}
+              <Input
+                label="First Name *"
+                placeholder="e.g. Eleanor"
+                value={firstName}
+                onChange={(e) => handleFirstNameChange(e.target.value)}
                 disabled={submitting}
-                className={`w-full rounded-xl bg-navy-950/80 border px-4 py-3 text-xs text-gold-100 focus:outline-none transition duration-300 focus:ring-1 ${
-                  emailError
-                    ? "border-rose-500/50 focus:border-rose-500 focus:ring-rose-500/20"
-                    : "border-gold-300/15 focus:border-gold focus:ring-gold-DEFAULT/20"
-                }`}
+                error={errors.firstName}
               />
-              {emailError && (
-                <p className="text-[10px] font-semibold text-rose-400 mt-1 flex items-center gap-1">
-                  <span>⚠️</span> {emailError}
-                </p>
-              )}
+
+              <Input
+                label="Last Name *"
+                placeholder="e.g. Vance"
+                value={lastName}
+                onChange={(e) => handleLastNameChange(e.target.value)}
+                disabled={submitting}
+                error={errors.lastName}
+              />
             </div>
 
-            {/* Phone Number (Optional) */}
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-bold text-gold-200 uppercase tracking-widest">
-                Phone Number (Optional)
-              </label>
-              <input
-                type="tel"
-                placeholder="e.g. +44 7700 900555"
-                value={phone}
-                onChange={(e) => {
-                  setPhone(e.target.value);
-                  if (phoneError) validatePhone(e.target.value);
-                }}
-                onBlur={(e) => validatePhone(e.target.value)}
-                disabled={submitting}
-                className={`w-full rounded-xl bg-navy-950/80 border px-4 py-3 text-xs text-gold-100 focus:outline-none transition duration-300 focus:ring-1 ${
-                  phoneError
-                    ? "border-rose-500/50 focus:border-rose-500 focus:ring-rose-500/20"
-                    : "border-gold-300/15 focus:border-gold focus:ring-gold-DEFAULT/20"
-                }`}
-              />
-              {phoneError && (
-                <p className="text-[10px] font-semibold text-rose-400 mt-1 flex items-center gap-1">
-                  <span>⚠️</span> {phoneError}
-                </p>
-              )}
-            </div>
+            <Input
+              label="Email Address *"
+              type="email"
+              placeholder="e.g. eleanor.v@example.com"
+              value={email}
+              onChange={(e) => handleEmailChange(e.target.value)}
+              disabled={submitting}
+              error={errors.email}
+            />
+
+            <PhoneInput
+              label="Phone Number (Optional)"
+              placeholder="e.g. +44 7700 900555"
+              value={phone}
+              onChange={handlePhoneChange}
+              error={errors.phone}
+              disabled={submitting}
+            />
           </div>
         </div>
 
@@ -206,13 +220,13 @@ export default function ReferralFormClient({
         <div className="space-y-6 pt-4">
           <button
             type="submit"
-            disabled={!isFormValid || submitting}
+            disabled={submitting}
             className="w-full relative overflow-hidden group rounded-xl px-5 py-3.5 text-xs font-bold tracking-widest uppercase transition-all duration-300 transform select-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-gold-DEFAULT/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none bg-gradient-to-r from-gold-300 via-gold-DEFAULT to-gold-200 text-navy-950 shadow-[0_4px_12px_rgba(212,175,122,0.15)] hover:shadow-[0_6px_20px_rgba(212,175,122,0.3)] hover:-translate-y-[1px] active:translate-y-0 active:shadow-none"
           >
             {submitting ? (
               <span className="flex items-center justify-center gap-2">
                 <span className="w-4 h-4 border-2 border-navy-950 border-t-transparent animate-spin rounded-full"></span>
-                Sending Referral...
+                Submitting...
               </span>
             ) : (
               "Send Referral"

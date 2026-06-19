@@ -1,116 +1,114 @@
-import { Referral } from "@/types/referral";
+import { apiFetch } from "@/lib/api";
+import {
+  Referral,
+  CarerReferralResponse,
+  ClientReferralRequest,
+  ClientReferralResponse,
+} from "@/types/referral";
 
-// In-memory mock storage for referrals to allow dynamic additions during session
-let mockReferrals: Referral[] = [
-  {
-    id: "ref-1",
-    firstName: "Alexander",
-    lastName: "Hamilton",
-    email: "alexander.h@example.com",
-    phone: "+44 7700 900077",
-    type: "CARER",
-    status: "APPROVED",
-    submittedDate: "2026-06-05T10:30:00.000Z",
-    notes: "Highly experienced live-in carer.",
-    resumeName: "alexander_cv.pdf",
-  },
-  {
-    id: "ref-2",
-    firstName: "Sarah",
-    lastName: "Connor",
-    email: "sarah.c@example.com",
-    phone: "+44 7700 900123",
-    type: "CLIENT",
-    status: "EMAIL_SENT",
-    submittedDate: "2026-06-12T14:15:00.000Z",
-  },
-  {
-    id: "ref-3",
-    firstName: "Bruce",
-    lastName: "Wayne",
-    email: "bruce.w@example.com",
-    phone: "+44 7700 900999",
-    type: "CARER",
-    status: "REGISTERED",
-    submittedDate: "2026-06-15T09:00:00.000Z",
-    resumeName: "wayne_resume.docx",
-  },
-  {
-    id: "ref-4",
-    firstName: "Diana",
-    lastName: "Prince",
-    email: "diana.p@example.com",
-    phone: "+44 7700 900456",
-    type: "CLIENT",
-    status: "PENDING",
-    submittedDate: "2026-06-18T16:45:00.000Z",
-  },
-];
+// Retrieve list from localStorage or fallback to empty array
+const getPersistedReferrals = (): Referral[] => {
+  if (typeof window === "undefined") return [];
+  try {
+    const stored = localStorage.getItem("grace_goodwill_referrals");
+    return stored ? JSON.parse(stored) : [];
+  } catch {
+    return [];
+  }
+};
+
+const savePersistedReferrals = (referrals: Referral[]) => {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem("grace_goodwill_referrals", JSON.stringify(referrals));
+  } catch (err) {
+    console.error("Failed to save referrals to localStorage", err);
+  }
+};
 
 export const referralService = {
   async getReferrals(): Promise<Referral[]> {
-    // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, 600));
-    return [...mockReferrals];
+    return getPersistedReferrals();
   },
 
-  async submitCarerReferral(formData: FormData): Promise<Referral> {
-    await new Promise((resolve) => setTimeout(resolve, 800));
+  async submitCarerReferral(
+    formData: FormData,
+  ): Promise<CarerReferralResponse> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
 
-    const firstName = formData.get("firstName") as string;
-    const lastName = formData.get("lastName") as string;
-    const email = formData.get("email") as string;
-    const phone = formData.get("phone") as string;
-    const notes = formData.get("notes") as string;
-    const resume = formData.get("resume") as File;
-
-    if (!firstName || !lastName || !email || !phone || !resume) {
-      throw new Error("Missing required referral fields");
+    if (!token) {
+      throw new Error("No token found");
     }
 
-    const newReferral: Referral = {
-      id: `ref-${Date.now()}`,
-      firstName,
-      lastName,
-      email,
-      phone,
+    const response = await apiFetch("/carer/referral", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    const typedResponse = response as CarerReferralResponse;
+
+    // Map response and append to mock referrals list so that it dynamically populates lists
+    const mapped: Referral = {
+      id: typedResponse.id,
+      firstName: typedResponse.firstName,
+      lastName: typedResponse.lastName,
+      email: typedResponse.email,
+      phone: typedResponse.phoneNumber,
       type: "CARER",
       status: "PENDING",
-      submittedDate: new Date().toISOString(),
-      notes: notes || undefined,
-      resumeName: resume.name,
+      submittedDate: typedResponse.createdAt,
+      resumeName: typedResponse.cvUrl.split("/").pop() || "cv.pdf",
     };
 
-    mockReferrals = [newReferral, ...mockReferrals];
-    return newReferral;
+    const currentList = getPersistedReferrals();
+    savePersistedReferrals([mapped, ...currentList]);
+
+    return typedResponse;
   },
 
-  async submitClientReferral(data: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone?: string;
-  }): Promise<Referral> {
-    await new Promise((resolve) => setTimeout(resolve, 800));
+  async submitClientReferral(
+    payload: ClientReferralRequest,
+  ): Promise<ClientReferralResponse> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
 
-    const { firstName, lastName, email, phone } = data;
-
-    if (!firstName || !lastName || !email) {
-      throw new Error("Missing required referral fields");
+    if (!token) {
+      throw new Error("No token found");
     }
 
-    const newReferral: Referral = {
-      id: `ref-${Date.now()}`,
-      firstName,
-      lastName,
-      email,
-      phone: phone || undefined,
+    const response = await apiFetch("/client/referral", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const typedResponse = response as ClientReferralResponse;
+
+    const mapped: Referral = {
+      id: typedResponse.id,
+      firstName: typedResponse.firstName,
+      lastName: typedResponse.lastName,
+      email: typedResponse.email,
+      phone: typedResponse.phoneNumber || undefined,
       type: "CLIENT",
-      status: "EMAIL_SENT",
-      submittedDate: new Date().toISOString(),
+      status: "PENDING",
+      submittedDate: typedResponse.createdAt,
     };
 
-    mockReferrals = [newReferral, ...mockReferrals];
-    return newReferral;
+    const currentList = getPersistedReferrals();
+    savePersistedReferrals([mapped, ...currentList]);
+
+    return typedResponse;
   },
 };

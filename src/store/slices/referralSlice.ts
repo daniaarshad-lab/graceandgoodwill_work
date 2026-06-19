@@ -1,5 +1,11 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { ReferralState, Referral } from "@/types/referral";
+import {
+  ReferralState,
+  Referral,
+  CarerReferralResponse,
+  ClientReferralRequest,
+  ClientReferralResponse,
+} from "@/types/referral";
 import { referralService } from "@/services/referralService";
 
 const initialState: ReferralState = {
@@ -8,6 +14,7 @@ const initialState: ReferralState = {
   submitting: false,
   success: false,
   error: null,
+  referral: null,
 };
 
 export const fetchReferrals = createAsyncThunk(
@@ -21,8 +28,8 @@ export const fetchReferrals = createAsyncThunk(
   },
 );
 
-export const createCarerReferral = createAsyncThunk(
-  "referral/createCarerReferral",
+export const submitCarerReferralThunk = createAsyncThunk(
+  "referral/submitCarerReferral",
   async (formData: FormData, { rejectWithValue }) => {
     try {
       return await referralService.submitCarerReferral(formData);
@@ -32,19 +39,11 @@ export const createCarerReferral = createAsyncThunk(
   },
 );
 
-export const createClientReferral = createAsyncThunk(
-  "referral/createClientReferral",
-  async (
-    data: {
-      firstName: string;
-      lastName: string;
-      email: string;
-      phone?: string;
-    },
-    { rejectWithValue },
-  ) => {
+export const submitClientReferralThunk = createAsyncThunk(
+  "referral/submitClientReferral",
+  async (payload: ClientReferralRequest, { rejectWithValue }) => {
     try {
-      return await referralService.submitClientReferral(data);
+      return await referralService.submitClientReferral(payload);
     } catch (err: any) {
       return rejectWithValue(err.message || "Failed to submit client referral");
     }
@@ -58,6 +57,7 @@ const referralSlice = createSlice({
     resetReferralStatus(state) {
       state.success = false;
       state.error = null;
+      state.referral = null;
     },
   },
   extraReducers: (builder) => {
@@ -78,41 +78,49 @@ const referralSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       })
-      // Create Carer Referral
-      .addCase(createCarerReferral.pending, (state) => {
+      // Submit Carer Referral
+      .addCase(submitCarerReferralThunk.pending, (state) => {
         state.submitting = true;
         state.success = false;
         state.error = null;
+        state.referral = null;
       })
       .addCase(
-        createCarerReferral.fulfilled,
-        (state, action: PayloadAction<Referral>) => {
+        submitCarerReferralThunk.fulfilled,
+        (state, action: PayloadAction<CarerReferralResponse>) => {
           state.submitting = false;
           state.success = true;
-          state.referrals = [action.payload, ...state.referrals];
+          state.referral = action.payload;
+          state.error = null;
         },
       )
-      .addCase(createCarerReferral.rejected, (state, action) => {
+      .addCase(submitCarerReferralThunk.rejected, (state, action) => {
         state.submitting = false;
+        state.success = false;
         state.error = action.payload as string;
+        state.referral = null;
       })
-      // Create Client Referral
-      .addCase(createClientReferral.pending, (state) => {
+      // Submit Client Referral
+      .addCase(submitClientReferralThunk.pending, (state) => {
         state.submitting = true;
         state.success = false;
         state.error = null;
+        state.referral = null;
       })
       .addCase(
-        createClientReferral.fulfilled,
-        (state, action: PayloadAction<Referral>) => {
+        submitClientReferralThunk.fulfilled,
+        (state, action: PayloadAction<ClientReferralResponse>) => {
           state.submitting = false;
           state.success = true;
-          state.referrals = [action.payload, ...state.referrals];
+          state.referral = action.payload;
+          state.error = null;
         },
       )
-      .addCase(createClientReferral.rejected, (state, action) => {
+      .addCase(submitClientReferralThunk.rejected, (state, action) => {
         state.submitting = false;
+        state.success = false;
         state.error = action.payload as string;
+        state.referral = null;
       });
   },
 });

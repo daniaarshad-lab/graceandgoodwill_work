@@ -18,21 +18,51 @@ export interface Referral {
   resumeName?: string;
 }
 
+export interface CarerReferralRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  cv: File;
+}
+
+export interface CarerReferralResponse {
+  id: string;
+  referrerId: string;
+  type: "CARER" | "CLIENT";
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  cvUrl: string;
+  createdAt: string;
+}
+
+export interface ClientReferralRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
+export interface ClientReferralResponse {
+  id: string;
+  referrerId: string;
+  type: "CARER" | "CLIENT";
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string | null;
+  cvUrl: string | null;
+  createdAt: string;
+}
+
 export interface ReferralState {
   referrals: Referral[];
   loading: boolean;
   submitting: boolean;
   success: boolean;
   error: string | null;
-}
-
-export interface CreateCarerReferralInput {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  resume: File;
-  notes?: string;
+  referral: CarerReferralResponse | ClientReferralResponse | null;
 }
 
 export interface CreateClientReferralInput {

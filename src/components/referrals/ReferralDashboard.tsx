@@ -171,17 +171,16 @@ export default function ReferralDashboard({
               👥
             </div>
             <h4 className="text-sm font-bold text-gold-200">
-              No referrals submitted yet
+              No referrals found
             </h4>
             <p className="text-xs text-gold-100/40 max-w-xs leading-relaxed">
-              Refer someone and track their progress here. Invite your friends
-              to experience premium care definied by integrity.
+              Your submitted referrals will appear here once available.
             </p>
           </div>
         ) : (
           <div className="flex-grow flex flex-col min-h-0">
             {/* Desktop Table Container */}
-            <div className="hidden md:flex flex-col flex-grow overflow-hidden rounded-2xl border border-gold-300/10 bg-navy-950/30 shadow-[0_0_20px_rgba(0,0,0,0.15)] h-[440px]">
+            <div className="hidden md:flex flex-col flex-grow overflow-hidden rounded-2xl border border-gold-300/10 bg-navy-950/30 shadow-[0_0_20px_rgba(0,0,0,0.15)] min-h-0">
               <div className="overflow-y-auto referral-scroll flex-grow pr-0.5">
                 <table className="w-full text-left border-collapse table-fixed">
                   <thead>

@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   fetchReferrals,
-  createClientReferral,
+  submitClientReferralThunk,
   resetReferralStatus,
 } from "@/store/slices/referralSlice";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
@@ -34,14 +34,11 @@ function ClientReferralsContent() {
     firstName: string;
     lastName: string;
     email: string;
-    phone?: string;
   }): Promise<boolean> => {
     try {
-      await dispatch(createClientReferral(data)).unwrap();
-      showSuccessToast(
-        "Referral Sent",
-        "Referral submitted successfully. Invitation email sent to the referred client.",
-      );
+      await dispatch(submitClientReferralThunk(data)).unwrap();
+      showSuccessToast("Client referred successfully");
+      dispatch(fetchReferrals());
       return true;
     } catch (err: any) {
       showErrorToast("Submission Failed", err || "Failed to submit referral");

@@ -209,7 +209,7 @@ export const adminService = {
 
   async replaceCarerInPlacement(
     placementId: string,
-    newCarerProfileId: string,
+    carerUserId: string,
   ): Promise<any> {
     const token =
       typeof window !== "undefined"
@@ -220,13 +220,25 @@ export const adminService = {
       throw new Error("No token found");
     }
 
-    return apiFetch(`/admin/placements/${placementId}/replace`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ newCarerProfileId }),
+    console.log("Replace Payload", {
+      carerUserId,
+      placementId,
     });
+
+    try {
+      const response = await apiFetch("/admin/placements/replace", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ carerUserId, placementId }),
+      });
+      console.log("Replace API Success", response);
+      return response;
+    } catch (err: any) {
+      console.error("Replace API Error", err);
+      throw err;
+    }
   },
 
   async updateIntroductionStatus(

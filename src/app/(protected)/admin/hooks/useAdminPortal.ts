@@ -8,6 +8,7 @@ import {
 } from "../types/admin.types";
 import { adminService } from "@/services/admin/admin.service";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { toast } from "sonner";
 import {
   fetchAdminCarers,
   fetchAdminCareRequests,
@@ -18,37 +19,37 @@ import {
 } from "@/store/slices/adminSlice";
 
 // Helper to map backend document category to frontend status with file URLs and IDs
-const getDocDetails = (docs: any[], category: string) => {
-  const doc = docs.find((d: any) => d.fileCategory === category);
+// const getDocDetails = (docs: any[], category: string) => {
+//   const doc = docs.find((d: any) => d.fileCategory === category);
 
-  const categoryNames: Record<string, string> = {
-    CRIMINAL_RECORD_CHECK: "DBS Certificate",
-    DRIVERS_LICENSE: "Driver's License",
-    DEMENTIA_SUPPORT: "Dementia Cert",
-    NURSES_REGISTRY: "Nurses Registry",
-  };
+//   const categoryNames: Record<string, string> = {
+//     CRIMINAL_RECORD_CHECK: "DBS Certificate",
+//     DRIVERS_LICENSE: "Driver's License",
+//     DEMENTIA_SUPPORT: "Dementia Cert",
+//     NURSES_REGISTRY: "Nurses Registry",
+//   };
 
-  const name = categoryNames[category] || category;
+//   const name = categoryNames[category] || category;
 
-  if (!doc) {
-    return {
-      name,
-      status: "Missing" as const,
-    };
-  }
+//   if (!doc) {
+//     return {
+//       name,
+//       status: "Missing" as const,
+//     };
+//   }
 
-  let status: "Uploaded" | "Missing" | "Verified" | "Rejected" = "Uploaded";
-  if (doc.status === "VERIFIED") status = "Verified";
-  else if (doc.status === "REJECTED") status = "Rejected";
+//   let status: "Uploaded" | "Missing" | "Verified" | "Rejected" = "Uploaded";
+//   if (doc.status === "VERIFIED") status = "Verified";
+//   else if (doc.status === "REJECTED") status = "Rejected";
 
-  return {
-    id: doc.id,
-    name,
-    status,
-    fileCategory: doc.fileCategory,
-    fileUrl: doc.fileUrl,
-  };
-};
+//   return {
+//     id: doc.id,
+//     name,
+//     status,
+//     fileCategory: doc.fileCategory,
+//     fileUrl: doc.fileUrl,
+//   };
+// };
 
 // Helper to map backend carer structures to frontend CarerApplication format
 const mapBackendCarers = (backendCarers: any[]): CarerApplication[] => {
@@ -767,14 +768,16 @@ export function useAdminPortal() {
       try {
         await adminService.replaceCarerInPlacement(
           placementId,
-          newCarer.carerProfileId!,
+          newCarer.id,
         );
 
+        toast.success(`Successfully reassigned carer to ${newCarer.name}`);
         logActivity(`Reassigned placement for ${newCarer.name}.`, "warning");
 
         setSelectedPlacementForReassign(null);
         await loadPlacements();
       } catch (err: any) {
+        toast.error(err.message || "Failed to reassign placement carer");
         logActivity(
           `Failed to reassign placement carer: ${err.message}`,
           "error",

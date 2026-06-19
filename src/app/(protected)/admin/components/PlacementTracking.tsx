@@ -214,60 +214,66 @@ export default function PlacementTracking({
                   Critical Placement Tools
                 </p>
 
-                {isReassigning ? (
-                  <div className="flex items-center gap-3 w-full sm:w-auto">
-                    <select
-                      value={selectedNewCarerId}
-                      onChange={(e) => setSelectedNewCarerId(e.target.value)}
-                      className="rounded-lg bg-navy-950 border border-gold-300/10 px-3 py-2 text-xs text-gold-200 focus:outline-none"
-                    >
-                      <option value="">Select Replacement Carer...</option>
-                      {approvedCarers
-                        .filter((c) => c.id !== place.carerId)
-                        .map((c) => (
-                          <option key={c.id} value={c.id}>
-                            {c.name} ({c.city} - {c.experience})
-                          </option>
-                        ))}
-                    </select>
+                {place.status === "Active" || place.status === "Matched" ? (
+                  isReassigning ? (
+                    <div className="flex items-center gap-3 w-full sm:w-auto">
+                      <select
+                        value={selectedNewCarerId}
+                        onChange={(e) => setSelectedNewCarerId(e.target.value)}
+                        className="rounded-lg bg-navy-950 border border-gold-300/10 px-3 py-2 text-xs text-gold-200 focus:outline-none"
+                      >
+                        <option value="">Select Replacement Carer...</option>
+                        {approvedCarers
+                          .filter((c) => c.id !== place.carerId)
+                          .map((c) => (
+                            <option key={c.id} value={c.id}>
+                              {c.name} ({c.city} - {c.experience})
+                            </option>
+                          ))}
+                      </select>
 
-                    <Button
-                      onClick={() => {
-                        if (selectedNewCarerId) {
-                          onReassignCarer(place.id, selectedNewCarerId);
+                      <Button
+                        onClick={() => {
+                          if (selectedNewCarerId) {
+                            onReassignCarer(place.id, selectedNewCarerId);
+                            setReassignPlacementId(null);
+                            setSelectedNewCarerId("");
+                          }
+                        }}
+                        disabled={!selectedNewCarerId}
+                        variant="primary"
+                        size="sm"
+                        fullWidth={false}
+                      >
+                        Reassign
+                      </Button>
+                      <Button
+                        onClick={() => {
                           setReassignPlacementId(null);
                           setSelectedNewCarerId("");
-                        }
-                      }}
-                      disabled={!selectedNewCarerId}
-                      variant="primary"
-                      size="sm"
-                      fullWidth={false}
-                    >
-                      Reassign
-                    </Button>
+                        }}
+                        variant="ghost-gold"
+                        size="sm"
+                        fullWidth={false}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  ) : (
                     <Button
-                      onClick={() => {
-                        setReassignPlacementId(null);
-                        setSelectedNewCarerId("");
-                      }}
+                      onClick={() => setReassignPlacementId(place.id)}
                       variant="ghost-gold"
                       size="sm"
                       fullWidth={false}
+                      className="font-bold bg-navy-950/40 border border-gold-300/15"
                     >
-                      Cancel
+                      Manual Override (Reassign Carer)
                     </Button>
-                  </div>
+                  )
                 ) : (
-                  <Button
-                    onClick={() => setReassignPlacementId(place.id)}
-                    variant="ghost-gold"
-                    size="sm"
-                    fullWidth={false}
-                    className="font-bold bg-navy-950/40 border border-gold-300/15"
-                  >
-                    Manual Override (Reassign Carer)
-                  </Button>
+                  <span className="text-xs text-rose-400 font-semibold italic bg-rose-500/10 px-3 py-1.5 rounded-lg border border-rose-500/20">
+                    Reassignment disabled: Placement is {place.status.toLowerCase()} (contract inactive)
+                  </span>
                 )}
               </div>
             </SectionCard>

@@ -151,7 +151,7 @@ export default function ReferralFormClient({
   };
 
   return (
-    <div className="h-full flex flex-col justify-between rounded-3xl border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-[0_0_30px_rgba(212,175,122,0.03)] backdrop-blur-md">
+    <div className="h-full flex flex-col justify-between rounded-3xl border border-gold-300/10 bg-navy-900/40 p-4 sm:p-6 lg:p-8 shadow-[0_0_30px_rgba(212,175,122,0.03)] backdrop-blur-md">
       <form
         onSubmit={handleSubmit}
         className="space-y-6 flex-grow flex flex-col justify-between"

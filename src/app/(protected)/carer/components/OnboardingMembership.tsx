@@ -66,7 +66,7 @@ export default function OnboardingMembership({
 
   return (
     <div className="space-y-6">
-      <SectionCard className="max-w-5xl mx-auto space-y-8 p-6 md:p-10 border border-gold-300/10 bg-gradient-to-b from-navy-900/60 to-navy-950/80 shadow-elegant">
+      <SectionCard className="max-w-5xl mx-auto space-y-8 p-4 sm:p-6 md:p-10 border border-gold-300/10 bg-gradient-to-b from-navy-900/60 to-navy-950/80 shadow-elegant">
       <div className="text-center space-y-2 max-w-2xl mx-auto">
         <h3 className="text-2xl font-bold text-gold-50">
           Choose Your Service Option
@@ -75,7 +75,7 @@ export default function OnboardingMembership({
           Select the node tier that fits your professional schedule. You can upgrade, downgrade, or cancel at any time.
         </p>
       </div>
-
+ 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
         {plans.map((plan) => {
           const IconComponent = plan.icon;
@@ -84,7 +84,7 @@ export default function OnboardingMembership({
             <div
               key={plan.name}
               onClick={() => setSelectedPlan(plan.name)}
-              className={`relative flex flex-col justify-between rounded-2xl border p-8 transition-all duration-300 group cursor-pointer ${
+              className={`relative flex flex-col justify-between rounded-2xl border p-5 sm:p-8 transition-all duration-300 group cursor-pointer ${
                 isSelected
                   ? "border-gold-200 shadow-[0_0_20px_rgba(212,175,55,0.3)] bg-gradient-to-b from-gold-900/40 via-navy-900/60 to-navy-950/80 -translate-y-2 ring-1 ring-gold-200"
                   : plan.popular

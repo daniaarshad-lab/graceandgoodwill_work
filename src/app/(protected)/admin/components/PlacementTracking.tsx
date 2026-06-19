@@ -216,11 +216,11 @@ export default function PlacementTracking({
 
                 {place.status === "Active" || place.status === "Matched" ? (
                   isReassigning ? (
-                    <div className="flex items-center gap-3 w-full sm:w-auto">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
                       <select
                         value={selectedNewCarerId}
                         onChange={(e) => setSelectedNewCarerId(e.target.value)}
-                        className="rounded-lg bg-navy-950 border border-gold-300/10 px-3 py-2 text-xs text-gold-200 focus:outline-none"
+                        className="w-full sm:w-auto rounded-lg bg-navy-950 border border-gold-300/10 px-3 py-2 text-xs text-gold-200 focus:outline-none"
                       >
                         <option value="">Select Replacement Carer...</option>
                         {approvedCarers

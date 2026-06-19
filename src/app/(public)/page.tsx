@@ -16,7 +16,7 @@ export default function HomePage() {
       <section className="container-wrapper relative flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between pb-16">
         
         {/* Featured on BBC Radio Badge (Top Right) */}
-        <div className="absolute -top-12 right-4 lg:-top-16 lg:-right-24 xl:-right-32 z-30 flex items-center gap-3 bg-navy-900 border border-gold-muted/30 px-4 py-2 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.3)] backdrop-blur-md hover:border-gold-400/50 hover:shadow-[0_0_15px_rgba(247,215,116,0.15)] transition-all cursor-default">
+        <div className="relative lg:absolute mb-6 lg:mb-0 lg:-top-16 lg:-right-24 xl:-right-32 z-30 inline-flex items-center gap-3 bg-navy-900 border border-gold-muted/30 px-4 py-2 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.3)] backdrop-blur-md hover:border-gold-400/50 hover:shadow-[0_0_15px_rgba(247,215,116,0.15)] transition-all cursor-default">
           <span className="text-[10px] sm:text-xs font-semibold text-gold-200 uppercase tracking-widest hidden sm:inline-block">
             Featured On
           </span>

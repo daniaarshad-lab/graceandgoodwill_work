@@ -154,9 +154,9 @@ export default function SupportEnquiryManagement({
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 min-h-[600px] h-[calc(100vh-280px)]">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 h-auto lg:h-[calc(100vh-280px)] lg:min-h-[600px]">
         {/* LEFT COLUMN: LIST OF ENQUIRIES */}
-        <div className="lg:col-span-2 rounded-2xl border border-gold-300/10 bg-navy-900/40 p-4 flex flex-col h-full overflow-hidden shadow-soft backdrop-blur-md">
+        <div className="w-full lg:col-span-2 rounded-2xl border border-gold-300/10 bg-navy-900/40 p-4 flex flex-col h-[400px] lg:h-full overflow-hidden shadow-soft backdrop-blur-md">
           {/* SEARCH & FILTERS */}
           <div className="space-y-3 mb-4 shrink-0">
             <input
@@ -256,7 +256,7 @@ export default function SupportEnquiryManagement({
         </div>
 
         {/* RIGHT COLUMN: DETAILS & THREAD */}
-        <div className="lg:col-span-3 rounded-2xl border border-gold-300/10 bg-navy-900/40 p-5 flex flex-col h-full overflow-hidden shadow-soft backdrop-blur-md">
+        <div className="w-full lg:col-span-3 rounded-2xl border border-gold-300/10 bg-navy-900/40 p-5 flex flex-col h-[500px] lg:h-full overflow-hidden shadow-soft backdrop-blur-md">
           {selectedEnquiry ? (
             <div className="flex flex-col h-full">
               {/* HEADER INFO */}

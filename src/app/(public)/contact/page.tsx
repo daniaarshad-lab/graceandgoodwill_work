@@ -23,7 +23,7 @@ export default function ContactPage() {
 
             {/* Dynamic Heading & Description */}
             <div className="space-y-4">
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight  text-gold-100">
+              <h1 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight text-gold-100">
                 Trusted Live In Care Support Across The UK
               </h1>
 

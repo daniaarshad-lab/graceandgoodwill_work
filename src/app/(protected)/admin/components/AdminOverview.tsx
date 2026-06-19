@@ -177,8 +177,7 @@ export default function AdminOverview({
         {/* Left 2 Columns: Live Activities Log */}
         <div className="lg:col-span-2">
           <SectionCard
-            className="flex flex-col"
-            style={{ height: "450px", minHeight: "450px", maxHeight: "450px", overflow: "hidden" }}
+            className="flex flex-col h-auto lg:h-[450px] lg:min-h-[450px] lg:max-h-[450px] overflow-hidden"
           >
             {/* Fixed header */}
             <div className="mb-6 flex items-center justify-between flex-shrink-0">
@@ -259,8 +258,7 @@ export default function AdminOverview({
         {/* Right 1 Column: Direct Shortcuts */}
         <div>
           <SectionCard
-            className="flex flex-col space-y-6"
-            style={{ height: "450px", minHeight: "450px", maxHeight: "450px" }}
+            className="flex flex-col space-y-6 h-auto lg:h-[450px] lg:min-h-[450px] lg:max-h-[450px]"
           >
             <div>
               <h3 className="text-lg font-bold text-gold-200">

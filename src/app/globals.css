@@ -73,6 +73,12 @@
     height: 100%;
   }
 
+  @media (max-width: 639px) {
+    html {
+      font-size: 87.5%; /* Reduces base size from 16px to 14px on mobile devices (< 640px) to scale down rem-based typography by one step */
+    }
+  }
+
   body {
     margin: 0;
     min-height: 100vh;
@@ -169,8 +175,41 @@
     width: 100%;
     max-width: 1400px;
     margin: 0 auto;
-    padding-left: 24px;
-    padding-right: 24px;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .container-wrapper {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container-wrapper {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+
+  /* Reusable thin scrollbar utility */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(160, 128, 84, 0.18) transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 5px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(212, 175, 122, 0.15);
+    border-radius: 9999px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(212, 175, 122, 0.3);
   }
 }
 
@@ -429,23 +468,25 @@
 
 @media (max-width: 768px) {
   .asl-root {
-    padding: 24px 16px;
+    padding: 16px;
     align-items: center;
     height: auto;
-    min-height: 100vh;
+    min-height: calc(100vh - 80px);
+    min-height: calc(100dvh - 80px);
     overflow-y: auto;
   }
 
   .asl-wrapper {
     height: auto;
+    max-width: 480px;
   }
 
   .asl-card {
     border-radius: 24px;
-    max-width: 480px;
-    margin: 0 auto;
     width: 100%;
-    height: 780px;
+    height: auto;
+    min-height: 500px;
+    max-height: calc(100dvh - 80px - 32px);
   }
 
   .asl-left {
@@ -453,7 +494,7 @@
   }
 
   .asl-right {
-    padding: 44px 40px;
+    padding: 36px 28px;
     width: 100%;
     border-radius: 24px;
     justify-content: center;
@@ -463,17 +504,17 @@
   }
 
   .asl-title {
-    font-size: 1.75rem;
+    font-size: 1.65rem;
   }
 
   .asl-header {
-    margin-bottom: 28px;
+    margin-bottom: 24px;
   }
 }
 
 @media (max-width: 480px) {
   .asl-root {
-    padding: 16px 12px;
+    padding: 12px 10px;
     align-items: center;
   }
 
@@ -484,7 +525,9 @@
   .asl-card {
     border-radius: 20px;
     max-width: 100%;
-    height: 780px;
+    height: auto;
+    min-height: 480px;
+    max-height: calc(100dvh - 80px - 24px);
     transform: none !important;
   }
 
@@ -493,7 +536,7 @@
   }
 
   .asl-right {
-    padding: 36px 24px 44px;
+    padding: 28px 20px 36px;
     border-radius: 20px;
     justify-content: center;
     overflow-y: auto;
@@ -502,11 +545,11 @@
   }
 
   .asl-title {
-    font-size: 1.5rem;
+    font-size: 1.35rem;
   }
 
   .asl-header {
-    margin-bottom: 24px;
+    margin-bottom: 20px;
   }
 }
 

@@ -198,7 +198,8 @@ export default function BillingManagement({
             </h3>
 
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm text-gold-100/70">
+              {/* Desktop table */}
+              <table className="hidden md:table w-full text-left text-sm text-gold-100/70">
                 <thead>
                   <tr className="border-b border-gold-300/10 text-xs font-bold uppercase tracking-wider text-gold-100/40">
                     <th className="py-3 px-2">ID</th>
@@ -292,6 +293,79 @@ export default function BillingManagement({
                   )}
                 </tbody>
               </table>
+
+              {/* Mobile Card List */}
+              <div className="block md:hidden space-y-4">
+                {invoices.length === 0 ? (
+                  <p className="py-8 text-center text-gold-100/30 text-xs">No invoice records found.</p>
+                ) : (
+                  invoices.map((inv) => (
+                    <div key={inv.id} className="p-4 rounded-xl border border-gold-300/10 bg-navy-950/40 space-y-3">
+                      <div className="flex justify-between items-center">
+                        <span className="font-mono font-bold text-gold text-xs">{inv.id}</span>
+                        <span
+                          className={`inline-flex rounded-full px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider ${
+                            inv.status === "Paid"
+                              ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                              : inv.status === "Pending"
+                                ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                                : "bg-rose-500/10 text-rose-400 border border-rose-500/20 animate-pulse"
+                          }`}
+                        >
+                          {inv.status}
+                        </span>
+                      </div>
+
+                      <div className="space-y-1.5 text-xs">
+                        <div className="flex justify-between">
+                          <span className="text-gold-100/40 font-semibold">Client:</span>
+                          <span className="text-gold-100 font-semibold">{inv.clientName}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gold-100/40 font-semibold">Carer:</span>
+                          <span className="text-gold-100/70">{inv.carerName}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gold-100/40 font-semibold">Hours:</span>
+                          <span>{inv.hours} hrs @ £{inv.rate}/hr</span>
+                        </div>
+                        <div className="flex justify-between border-t border-gold-300/5 pt-1.5 mt-1.5">
+                          <span className="text-gold-100/40 font-semibold">Due Date:</span>
+                          <span>{inv.dueDate}</span>
+                        </div>
+                        <div className="flex justify-between items-center text-sm font-bold text-gold-200 pt-1">
+                          <span>Amount:</span>
+                          <span>£{inv.amount.toFixed(2)}</span>
+                        </div>
+                      </div>
+
+                      <div className="flex justify-end gap-2 pt-2 border-t border-gold-300/5">
+                        {inv.status !== "Paid" && (
+                          <button
+                            onClick={() => handleMarkAsPaid(inv.id)}
+                            className="rounded bg-emerald-500/20 border border-emerald-500/30 hover:bg-emerald-500/40 px-3 py-1.5 text-xs font-bold text-emerald-300 uppercase transition-all"
+                          >
+                            Mark Paid
+                          </button>
+                        )}
+                        {inv.status !== "Paid" && (
+                          <button
+                            onClick={() => handleSendReminder(inv.id)}
+                            className="rounded bg-navy-950 border border-gold-300/10 hover:border-gold-300/30 px-3 py-1.5 text-xs font-bold text-gold-200 uppercase transition-all"
+                          >
+                            Remind
+                          </button>
+                        )}
+                        {inv.status === "Paid" && (
+                          <span className="text-xs text-emerald-400 font-bold uppercase py-1.5">
+                            Cleared
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
           </div>
         </div>

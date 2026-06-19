@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -21,14 +21,31 @@ function StaticSiteHeader() {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const toggleMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+  const toggleMenu = useCallback(() => setIsMobileMenuOpen((v) => !v), []);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [pathname]);
+
+  // Lock background scroll when drawer is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMobileMenuOpen]);
 
   return (
     <header className="sticky top-0 z-50 w-full h-20 border-b border-navy-800 bg-navy-950/95 backdrop-blur flex items-center">
       <div className="container-wrapper flex items-center justify-between py-4">
         <Link
           href="/"
-          className="flex items-center gap-2 sm:gap-3 text-white group"
+          className="flex items-center gap-2 sm:gap-3 text-white group flex-shrink-0"
           onClick={() => setIsMobileMenuOpen(false)}
         >
           <Image
@@ -66,12 +83,11 @@ function StaticSiteHeader() {
               <div className="h-[1px] w-4 sm:w-8 lg:w-12 bg-gradient-to-l from-transparent to-[#c7ae85]/70"></div>
             </div>
           </div>
-          
         </Link>
 
         {/* Mobile menu button */}
         <button
-          className="md:hidden flex items-center text-gold-200 hover:text-gold-50 transition p-2 -mr-2"
+          className="xl:hidden flex items-center text-gold-200 hover:text-gold-50 transition p-2 -mr-2"
           onClick={toggleMenu}
           aria-label="Toggle menu"
         >
@@ -82,7 +98,7 @@ function StaticSiteHeader() {
           )}
         </button>
 
-        <nav className="hidden items-center gap-4 lg:gap-6 md:flex">
+        <nav className="hidden items-center gap-4 lg:gap-6 xl:flex">
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
             return (
@@ -90,7 +106,7 @@ function StaticSiteHeader() {
                 key={link.href}
                 href={link.href}
                 prefetch={false}
-                className={`text-[13px] lg:text-sm font-medium transition hover:text-gold-50 ${
+                className={`text-[13px] lg:text-sm font-medium transition hover:text-gold-50 whitespace-nowrap ${
                   isActive ? "text-gold-50" : "text-gold-200"
                 }`}
               >
@@ -104,7 +120,7 @@ function StaticSiteHeader() {
             <Link
               href="/login"
               prefetch={false}
-              className={`text-[13px] lg:text-sm font-semibold hover:text-gold-50 ${
+              className={`text-[13px] lg:text-sm font-semibold hover:text-gold-50 whitespace-nowrap ${
                 pathname === "/login" ? "text-gold-50" : "text-gold-200"
               }`}
             >
@@ -114,39 +130,78 @@ function StaticSiteHeader() {
         </nav>
       </div>
 
-      {/* Mobile Navigation Dropdown */}
+      {/* Mobile Navigation Overlay + Slide-over Drawer */}
       {isMobileMenuOpen && (
-        <div className="absolute top-20 left-0 right-0 bg-navy-950 border-b border-navy-800 shadow-xl md:hidden overflow-y-auto max-h-[calc(100vh-80px)]">
-          <nav className="flex flex-col px-6 py-6 gap-4">
-            {navLinks.map((link) => {
-              const isActive = pathname === link.href;
-              return (
+        <>
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+            onClick={() => setIsMobileMenuOpen(false)}
+            aria-hidden="true"
+          />
+          <div className="fixed top-0 right-0 bottom-0 w-80 max-w-[85vw] bg-navy-950 border-l border-navy-800 shadow-2xl z-50 flex flex-col p-6 overflow-y-auto animate-slide-in">
+            <style>{`
+              @keyframes slideIn {
+                from { transform: translateX(100%); }
+                to { transform: translateX(0); }
+              }
+              .animate-slide-in {
+                animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+              }
+            `}</style>
+            
+            <div className="flex items-center justify-between pb-6 border-b border-navy-800 mb-6">
+              <span className="text-xs font-semibold text-gold-300 uppercase tracking-widest">
+                Navigation
+              </span>
+              <button
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-gold-200 hover:text-gold-50 transition p-2 -mr-2"
+                aria-label="Close menu"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <nav className="flex flex-col gap-2">
+              <Link
+                href="/"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`text-base font-medium transition py-3 min-h-[44px] flex items-center border-b border-gold-300/5 hover:text-gold-50 ${
+                  pathname === "/" ? "text-gold-50" : "text-gold-200"
+                }`}
+              >
+                Home
+              </Link>
+              {navLinks.map((link) => {
+                const isActive = pathname === link.href;
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    prefetch={false}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`text-base font-medium transition py-3 min-h-[44px] flex items-center border-b border-gold-300/5 hover:text-gold-50 ${
+                      isActive ? "text-gold-50" : "text-gold-200"
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
+
+              <div className="pt-6">
                 <Link
-                  key={link.href}
-                  href={link.href}
+                  href="/login"
                   prefetch={false}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className={`text-base font-medium transition py-2 border-b border-gold-300/10 hover:text-gold-50 ${
-                    isActive ? "text-gold-50" : "text-gold-200"
-                  }`}
+                  className="flex items-center justify-center w-full rounded-full bg-gold-DEFAULT px-6 py-2.5 text-sm font-bold text-navy-950 transition hover:bg-gold-400"
                 >
-                  {link.label}
+                  Login
                 </Link>
-              );
-            })}
-
-            <div className="pt-4 pb-2">
-              <Link
-                href="/login"
-                prefetch={false}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="flex items-center justify-center w-full rounded-full bg-gold-DEFAULT px-6 py-2.5 text-sm font-bold text-navy-950 transition hover:bg-gold-400"
-              >
-                Login
-              </Link>
-            </div>
-          </nav>
-        </div>
+              </div>
+            </nav>
+          </div>
+        </>
       )}
     </header>
   );

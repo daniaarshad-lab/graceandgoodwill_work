@@ -308,9 +308,10 @@ export default function CarerApplications({
                   Compliance Documents
                 </h5>
 
-                <div className="border border-gold-300/10 rounded-xl bg-navy-950/40 overflow-hidden flex flex-col w-full">
-                  <div className="max-h-[380px] overflow-y-auto pr-1">
-                    <table className="w-full text-left border-collapse text-xs">
+                  <div className="border border-gold-300/10 rounded-xl bg-navy-950/40 overflow-hidden flex flex-col w-full">
+                  <div className="max-h-[380px] overflow-y-auto overflow-x-auto pr-1">
+                    {/* Desktop/Tablet Table */}
+                    <table className="hidden md:table w-full text-left border-collapse text-xs">
                       <thead>
                         <tr className="border-b border-gold-300/10 bg-navy-950/80 text-[10px] uppercase tracking-wider text-gold-200/60 sticky top-0 z-10">
                           <th className="py-3 px-4 font-bold">Document Name</th>
@@ -367,6 +368,54 @@ export default function CarerApplications({
                         })}
                       </tbody>
                     </table>
+
+                    {/* Mobile Card List */}
+                    <div className="block md:hidden divide-y divide-gold-300/5">
+                      {selectedCarer.documents.map((doc) => {
+                        const meta = getMockDocDetails(doc.name);
+                        return (
+                          <div key={doc.name} className="p-4 space-y-2 text-gold-100/80 hover:bg-gold-500/5 transition">
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <p className="font-semibold text-gold-200 text-sm">{doc.name}</p>
+                                <p className="text-[10px] text-gold-100/50 mt-0.5">{meta.type}</p>
+                              </div>
+                              <span
+                                className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded ${
+                                  doc.status === "Verified"
+                                    ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                                    : doc.status === "Uploaded"
+                                      ? "bg-gold/10 text-gold border border-gold/20"
+                                      : doc.status === "Rejected"
+                                        ? "bg-rose-500/10 text-rose-400 border border-rose-500/20"
+                                        : "bg-gray-500/10 text-gray-400 border border-gray-500/20"
+                                }`}
+                              >
+                                {doc.status === "Uploaded" ? "PENDING" : doc.status.toUpperCase()}
+                              </span>
+                            </div>
+                            <div className="flex justify-between items-center text-[10px] text-gold-100/40">
+                              <span>Uploaded: {meta.uploadDate}</span>
+                              <span>Expires: {meta.expiryDate}</span>
+                            </div>
+                            <div className="pt-2 flex justify-end">
+                              {doc.id && doc.fileUrl ? (
+                                <Link
+                                  href={`/admin/carers/${selectedCarer.id}/document-review?documentId=${doc.id}`}
+                                  className="rounded-xl bg-gold text-navy-950 font-bold px-3.5 py-1.5 text-xs hover:bg-gold-200 transition duration-200"
+                                >
+                                  Review Document
+                                </Link>
+                              ) : (
+                                <span className="text-[10px] text-gold-100/25 font-bold uppercase">
+                                  Review Unavailable
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
               </div>

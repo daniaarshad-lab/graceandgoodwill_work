@@ -28,18 +28,12 @@ const values = [
 function SiteFooter() {
   return (
     <footer className="bg-navy-950 py-6 sm:py-8 border-t border-navy-800">
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row justify-center items-center md:items-stretch divide-y md:divide-y-0 md:divide-x divide-navy-800">
+      <div className="container-wrapper">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-4 lg:gap-8">
           {values.map((val, idx) => (
             <div
               key={idx}
-              className={`flex flex-col justify-center items-center space-y-4 sm:space-y-5 flex-1 ${
-                idx === 0
-                  ? "md:pr-6 lg:pr-8 pb-6 md:pb-0"
-                  : idx === values.length - 1
-                    ? "md:pl-6 lg:pl-8 pt-6 md:pt-0"
-                    : "md:px-6 lg:px-8 py-6 md:py-0"
-              }`}
+              className="flex flex-col justify-center items-center space-y-4 sm:space-y-5"
             >
               <div className="flex-shrink-0">
                 {val.icon ? (

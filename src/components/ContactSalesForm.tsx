@@ -160,7 +160,7 @@ export default function ContactSalesForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-navy-950/80 p-8 md:p-12 rounded-3xl border border-gold-400/10 shadow-xl space-y-6 backdrop-blur-sm"
+      className="bg-navy-950/80 p-4 sm:p-8 md:p-12 rounded-3xl border border-gold-400/10 shadow-xl space-y-6 backdrop-blur-sm"
     >
       <div className="grid md:grid-cols-2 gap-6">
         <div className="space-y-2">

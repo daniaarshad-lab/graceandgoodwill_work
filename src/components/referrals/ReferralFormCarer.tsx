@@ -232,7 +232,7 @@ export default function ReferralFormCarer({
   return (
     <form
       onSubmit={handleSubmit}
-      className="h-full flex flex-col justify-between rounded-3xl border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md space-y-6"
+      className="h-full flex flex-col justify-between rounded-3xl border border-gold-300/10 bg-navy-900/40 p-4 sm:p-6 lg:p-8 shadow-elegant backdrop-blur-md space-y-6"
     >
       <div className="space-y-6 flex-grow flex flex-col">
         <div>

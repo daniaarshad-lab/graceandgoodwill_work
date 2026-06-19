@@ -72,7 +72,7 @@ export default function PortalTabs({
         <button
           key={tab.id}
           onClick={() => handleTabClick(tab.id as TabType, tab.href)}
-          className={`px-5 py-3 text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap flex-shrink-0 ${
+          className={`px-3 sm:px-5 py-3 min-h-[44px] text-xs sm:text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap flex-shrink-0 ${
             activeTab === tab.id
               ? "border-b-2 border-gold-DEFAULT text-gold-DEFAULT bg-gold-DEFAULT/5"
               : "text-gold-200/60 hover:text-gold-50"

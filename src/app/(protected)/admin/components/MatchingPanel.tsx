@@ -132,8 +132,7 @@ export default function MatchingPanel({
         {/* Left Side: Client Care Requests list */}
         <div className="w-full lg:w-1/3 flex flex-col">
           <SectionCard
-            className="flex flex-col overflow-hidden w-full h-[700px] min-h-[700px] max-h-[700px]"
-            style={{ height: "700px", minHeight: "700px", maxHeight: "700px" }}
+            className="flex flex-col overflow-hidden w-full h-[400px] lg:h-[700px] lg:min-h-[700px] lg:max-h-[700px]"
           >
             <h4 className="text-sm font-bold uppercase tracking-wider text-gold-200 border-b border-gold-300/10 pb-3 mb-4 flex-shrink-0">
               Client Care Requests
@@ -223,8 +222,7 @@ export default function MatchingPanel({
         {/* Right Side: Carer Suggestions Panel */}
         <div className="w-full lg:w-2/3 flex flex-col">
           <SectionCard
-            className="flex flex-col overflow-hidden w-full h-[700px] min-h-[700px] max-h-[700px]"
-            style={{ height: "700px", minHeight: "700px", maxHeight: "700px" }}
+            className="flex flex-col overflow-hidden w-full h-[500px] lg:h-[700px] lg:min-h-[700px] lg:max-h-[700px]"
           >
             <div className="border-b border-gold-300/10 pb-3 mb-4 flex-shrink-0">
               <h4 className="text-sm font-bold uppercase tracking-wider text-gold-200">
@@ -387,7 +385,7 @@ export default function MatchingPanel({
                         </div>
 
                         {/* Right: Actions */}
-                        <div className="flex md:flex-col gap-2 shrink-0 w-full md:w-auto">
+                        <div className="flex flex-col sm:flex-row md:flex-col gap-2 shrink-0 w-full md:w-auto">
                           <Button
                             onClick={() => setViewingCarer(suggestion)}
                             variant="ghost-gold"

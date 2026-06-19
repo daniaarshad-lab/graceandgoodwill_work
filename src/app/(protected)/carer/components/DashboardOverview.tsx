@@ -129,7 +129,7 @@ export default function DashboardOverview({
               {complianceDocs.length}
             </p>
           </div>
-          <div className="rounded-2xl border border-gold-300/10 bg-navy-950/40 p-4 space-y-2.5 h-[160px] flex flex-col">
+          <div className="rounded-2xl border border-gold-300/10 bg-navy-950/40 p-4 space-y-2.5 min-h-[160px] flex flex-col">
             <p className="text-[10px] text-gold-100/50 uppercase tracking-wider font-semibold">
               Selected Dates
             </p>

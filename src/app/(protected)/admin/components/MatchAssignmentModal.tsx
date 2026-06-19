@@ -34,7 +34,7 @@ export default function MatchAssignmentModal({
           </button>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 text-xs text-gold-100/80">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-gold-100/80">
           <div className="rounded-xl bg-navy-950 p-4 border border-gold-300/5 space-y-2">
             <h5 className="font-bold text-gold-200 uppercase tracking-wider text-[10px]">
               Client File Specs

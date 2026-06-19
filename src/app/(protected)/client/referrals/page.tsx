@@ -53,7 +53,7 @@ function ClientReferralsContent() {
 
         <PortalTabs activeTab="referrals" />
 
-        <div className="grid grid-cols-1 lg:grid-cols-10 gap-8 items-stretch lg:h-[680px]">
+        <div className="grid grid-cols-1 lg:grid-cols-10 gap-8 items-stretch lg:min-h-[680px]">
           <div className="lg:col-span-4 h-full">
             <ReferralFormClient
               onSubmit={handleReferralSubmit}

@@ -110,7 +110,7 @@ function AdminDashboardContent() {
               <button
                 key={tab}
                 onClick={() => portal.setActiveTab(tab)}
-                className={`px-5 py-3 text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap flex-shrink-0 ${
+                className={`px-3 sm:px-5 py-3 min-h-[44px] text-xs sm:text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap flex-shrink-0 ${
                   isActive
                     ? "border-b-2 border-gold-DEFAULT text-gold-DEFAULT bg-gold-DEFAULT/5"
                     : "text-gold-200/60 hover:text-gold-50"

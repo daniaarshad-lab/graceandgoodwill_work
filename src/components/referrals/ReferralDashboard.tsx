@@ -1,19 +1,33 @@
 import React, { useState } from "react";
-import { Referral, ReferralStatus } from "@/types/referral";
+import { Referral, ReferralStatus, ClientReferralResponse } from "@/types/referral";
 
 interface ReferralDashboardProps {
-  referrals: Referral[];
+  referrals: Array<Referral | ClientReferralResponse>;
   loading: boolean;
   filterType?: "CARER" | "CLIENT";
+  statusFilter?: string;
+  onStatusFilterChange?: (status: string) => void;
 }
 
 export default function ReferralDashboard({
   referrals,
   loading,
   filterType,
+  statusFilter,
+  onStatusFilterChange,
 }: ReferralDashboardProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("ALL");
+  const [localStatusFilter, setLocalStatusFilter] = useState<string>("ALL");
+
+  const currentStatusFilter = statusFilter !== undefined ? statusFilter : localStatusFilter;
+
+  const handleStatusFilterChange = (val: string) => {
+    if (onStatusFilterChange) {
+      onStatusFilterChange(val);
+    } else {
+      setLocalStatusFilter(val);
+    }
+  };
 
   const formatDate = (dateStr: string) => {
     try {
@@ -28,9 +42,9 @@ export default function ReferralDashboard({
     }
   };
 
-  const getStatusBadge = (status: ReferralStatus) => {
+  const getStatusBadge = (status: string) => {
     const statusMap: Record<
-      ReferralStatus,
+      string,
       { label: string; classes: string }
     > = {
       PENDING: {
@@ -87,11 +101,11 @@ export default function ReferralDashboard({
           r.email.toLowerCase().includes(q),
       );
     }
-    if (statusFilter !== "ALL") {
-      list = list.filter((r) => r.status === statusFilter);
+    if (!onStatusFilterChange && currentStatusFilter !== "ALL") {
+      list = list.filter((r) => r.status === currentStatusFilter);
     }
     return list;
-  }, [referrals, filterType, searchQuery, statusFilter]);
+  }, [referrals, filterType, searchQuery, currentStatusFilter, onStatusFilterChange]);
 
   return (
     <div className="h-full flex flex-col justify-between space-y-5">
@@ -142,16 +156,14 @@ export default function ReferralDashboard({
 
           {/* Status Filter Dropdown */}
           <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
+            value={currentStatusFilter}
+            onChange={(e) => handleStatusFilterChange(e.target.value)}
             className="rounded-xl bg-navy-950/80 border border-gold-300/15 focus:border-gold px-4 py-2.5 text-xs text-gold-200 focus:outline-none focus:ring-1 focus:ring-gold-DEFAULT/20 cursor-pointer"
           >
             <option value="ALL">All Statuses</option>
             <option value="PENDING">Pending</option>
-            <option value="EMAIL_SENT">Email Sent</option>
             <option value="REGISTERED">Registered</option>
             <option value="APPROVED">Approved</option>
-            <option value="REJECTED">Rejected</option>
           </select>
         </div>
       </div>
@@ -193,36 +205,39 @@ export default function ReferralDashboard({
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gold-300/5 text-[12.5px] text-gold-100/80">
-                    {filteredReferrals.map((ref) => (
-                      <tr
-                        key={ref.id}
-                        className="hover:bg-gold-DEFAULT/5 cursor-pointer transition-colors duration-200"
-                      >
-                        <td className="py-3.5 px-5 font-semibold text-gold-200 truncate">
-                          {ref.firstName} {ref.lastName}
-                        </td>
-                        <td className="py-3.5 px-5 text-gold-100/50 font-mono truncate">
-                          {ref.email}
-                        </td>
-                        <td className="py-3.5 px-5">
-                          <span
-                            className={`inline-flex items-center text-[9px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-md ${
-                              ref.type === "CARER"
-                                ? "bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/20"
-                                : "bg-[#2563eb]/10 text-[#60a5fa] border border-[#2563eb]/20"
-                            }`}
-                          >
-                            {ref.type}
-                          </span>
-                        </td>
-                        <td className="py-3.5 px-5 text-gold-100/40">
-                          {formatDate(ref.submittedDate)}
-                        </td>
-                        <td className="py-3.5 px-5">
-                          {getStatusBadge(ref.status)}
-                        </td>
-                      </tr>
-                    ))}
+                    {filteredReferrals.map((ref) => {
+                      const submittedDate = (ref as Referral).submittedDate || (ref as ClientReferralResponse).createdAt;
+                      return (
+                        <tr
+                          key={ref.id}
+                          className="hover:bg-gold-DEFAULT/5 cursor-pointer transition-colors duration-200"
+                        >
+                          <td className="py-3.5 px-5 font-semibold text-gold-200 truncate">
+                            {ref.firstName} {ref.lastName}
+                          </td>
+                          <td className="py-3.5 px-5 text-gold-100/50 font-mono truncate">
+                            {ref.email}
+                          </td>
+                          <td className="py-3.5 px-5">
+                            <span
+                              className={`inline-flex items-center text-[9px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-md ${
+                                ref.type === "CARER"
+                                  ? "bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/20"
+                                  : "bg-[#2563eb]/10 text-[#60a5fa] border border-[#2563eb]/20"
+                              }`}
+                            >
+                              {ref.type}
+                            </span>
+                          </td>
+                          <td className="py-3.5 px-5 text-gold-100/40">
+                            {formatDate(submittedDate)}
+                          </td>
+                          <td className="py-3.5 px-5">
+                            {getStatusBadge(ref.status)}
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
@@ -230,39 +245,42 @@ export default function ReferralDashboard({
 
             {/* Mobile Cards Container */}
             <div className="block md:hidden overflow-y-auto referral-scroll max-h-[440px] space-y-3 pr-1">
-              {filteredReferrals.map((ref) => (
-                <div
-                  key={ref.id}
-                  className="rounded-2xl border border-gold-300/10 bg-navy-950/20 p-4 space-y-3"
-                >
-                  <div className="flex justify-between items-start">
-                    <div className="min-w-0">
-                      <h4 className="text-xs font-bold text-gold-200 truncate">
-                        {ref.firstName} {ref.lastName}
-                      </h4>
-                      <p className="text-[11px] text-gold-100/40 font-mono truncate">
-                        {ref.email}
-                      </p>
+              {filteredReferrals.map((ref) => {
+                const submittedDate = (ref as Referral).submittedDate || (ref as ClientReferralResponse).createdAt;
+                return (
+                  <div
+                    key={ref.id}
+                    className="rounded-2xl border border-gold-300/10 bg-navy-950/20 p-4 space-y-3"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="min-w-0">
+                        <h4 className="text-xs font-bold text-gold-200 truncate">
+                          {ref.firstName} {ref.lastName}
+                        </h4>
+                        <p className="text-[11px] text-gold-100/40 font-mono truncate">
+                          {ref.email}
+                        </p>
+                      </div>
+                      {getStatusBadge(ref.status)}
                     </div>
-                    {getStatusBadge(ref.status)}
-                  </div>
 
-                  <div className="flex items-center justify-between text-[11px] border-t border-gold-300/5 pt-2.5">
-                    <span
-                      className={`inline-flex items-center text-[9px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-md ${
-                        ref.type === "CARER"
-                          ? "bg-[#D4AF37]/10 text-[#D4AF37]"
-                          : "bg-[#2563eb]/10 text-[#60a5fa]"
-                      }`}
-                    >
-                      {ref.type}
-                    </span>
-                    <span className="text-gold-100/40">
-                      {formatDate(ref.submittedDate)}
-                    </span>
+                    <div className="flex items-center justify-between text-[11px] border-t border-gold-300/5 pt-2.5">
+                      <span
+                        className={`inline-flex items-center text-[9px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-md ${
+                          ref.type === "CARER"
+                            ? "bg-[#D4AF37]/10 text-[#D4AF37]"
+                            : "bg-[#2563eb]/10 text-[#60a5fa]"
+                        }`}
+                      >
+                        {ref.type}
+                      </span>
+                      <span className="text-gold-100/40">
+                        {formatDate(submittedDate)}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}

@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, Suspense } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useAuth } from "@/contexts/AuthContext";
 import {
-  fetchReferrals,
+  fetchClientReferralsThunk,
   submitClientReferralThunk,
   resetReferralStatus,
 } from "@/store/slices/referralSlice";
@@ -18,15 +18,19 @@ import ReferralDashboard from "@/components/referrals/ReferralDashboard";
 function ClientReferralsContent() {
   const { user } = useAuth();
   const dispatch = useAppDispatch();
+  const [statusFilter, setStatusFilter] = useState("ALL");
 
   useEffect(() => {
-    dispatch(fetchReferrals());
+    dispatch(fetchClientReferralsThunk(statusFilter));
+  }, [dispatch, statusFilter]);
+
+  useEffect(() => {
     return () => {
       dispatch(resetReferralStatus());
     };
   }, [dispatch]);
 
-  const { referrals, loading, submitting } = useAppSelector(
+  const { clientReferrals, loading, submitting } = useAppSelector(
     (state) => state.referral,
   );
 
@@ -38,7 +42,7 @@ function ClientReferralsContent() {
     try {
       await dispatch(submitClientReferralThunk(data)).unwrap();
       showSuccessToast("Client referred successfully");
-      dispatch(fetchReferrals());
+      dispatch(fetchClientReferralsThunk(statusFilter));
       return true;
     } catch (err: any) {
       showErrorToast("Submission Failed", err || "Failed to submit referral");
@@ -62,9 +66,11 @@ function ClientReferralsContent() {
           </div>
           <div className="lg:col-span-6 h-full rounded-3xl border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-[0_0_30px_rgba(212,175,122,0.03)] backdrop-blur-md">
             <ReferralDashboard
-              referrals={referrals}
+              referrals={clientReferrals}
               loading={loading}
               filterType="CLIENT"
+              statusFilter={statusFilter}
+              onStatusFilterChange={setStatusFilter}
             />
           </div>
         </div>

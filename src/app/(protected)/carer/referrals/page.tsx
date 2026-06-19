@@ -8,7 +8,7 @@ import {
   fetchCarerDocuments,
 } from "@/store/slices/carerSlice";
 import {
-  fetchReferrals,
+  fetchCarerReferralsThunk,
   submitCarerReferralThunk,
   resetReferralStatus,
 } from "@/store/slices/referralSlice";
@@ -23,19 +23,24 @@ import ReferralDashboard from "@/components/referrals/ReferralDashboard";
 function CarerReferralsContent() {
   const { user } = useAuth();
   const dispatch = useAppDispatch();
+  const [statusFilter, setStatusFilter] = useState("ALL");
 
-  // Load profiles, documents, and referrals on mount
+  // Load profiles, documents on mount
   useEffect(() => {
     dispatch(fetchCarerProfile());
     dispatch(fetchCarerDocuments());
-    dispatch(fetchReferrals());
     return () => {
       dispatch(resetReferralStatus());
     };
   }, [dispatch]);
 
+  // Load referrals when statusFilter changes
+  useEffect(() => {
+    dispatch(fetchCarerReferralsThunk(statusFilter));
+  }, [dispatch, statusFilter]);
+
   const { profile, documents } = useAppSelector((state) => state.carer);
-  const { referrals, loading, submitting } = useAppSelector(
+  const { carerReferrals, loading, submitting } = useAppSelector(
     (state) => state.referral,
   );
 
@@ -51,7 +56,7 @@ function CarerReferralsContent() {
     try {
       await dispatch(submitCarerReferralThunk(formData)).unwrap();
       showSuccessToast("Referral submitted successfully.");
-      dispatch(fetchReferrals());
+      dispatch(fetchCarerReferralsThunk(statusFilter));
       return true;
     } catch (err: any) {
       showErrorToast("Submission Failed", err || "Failed to submit referral");
@@ -81,9 +86,11 @@ function CarerReferralsContent() {
           </div>
           <div className="lg:col-span-6 h-full rounded-3xl border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md">
             <ReferralDashboard
-              referrals={referrals}
+              referrals={carerReferrals}
               loading={loading}
               filterType="CARER"
+              statusFilter={statusFilter}
+              onStatusFilterChange={setStatusFilter}
             />
           </div>
         </div>

@@ -10,6 +10,8 @@ import { referralService } from "@/services/referralService";
 
 const initialState: ReferralState = {
   referrals: [],
+  clientReferrals: [],
+  carerReferrals: [],
   loading: false,
   submitting: false,
   success: false,
@@ -24,6 +26,28 @@ export const fetchReferrals = createAsyncThunk(
       return await referralService.getReferrals();
     } catch (err: any) {
       return rejectWithValue(err.message || "Failed to load referrals");
+    }
+  },
+);
+
+export const fetchClientReferralsThunk = createAsyncThunk(
+  "referral/fetchClientReferrals",
+  async (status: string, { rejectWithValue }) => {
+    try {
+      return await referralService.getClientReferrals(status);
+    } catch (err: any) {
+      return rejectWithValue(err.message || "Failed to load client referrals");
+    }
+  },
+);
+
+export const fetchCarerReferralsThunk = createAsyncThunk(
+  "referral/fetchCarerReferrals",
+  async (status: string, { rejectWithValue }) => {
+    try {
+      return await referralService.getCarerReferrals(status);
+    } catch (err: any) {
+      return rejectWithValue(err.message || "Failed to load carer referrals");
     }
   },
 );
@@ -75,6 +99,40 @@ const referralSlice = createSlice({
         },
       )
       .addCase(fetchReferrals.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      // Fetch Client Referrals
+      .addCase(fetchClientReferralsThunk.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(
+        fetchClientReferralsThunk.fulfilled,
+        (state, action: PayloadAction<ClientReferralResponse[]>) => {
+          state.loading = false;
+          state.clientReferrals = action.payload;
+          state.error = null;
+        },
+      )
+      .addCase(fetchClientReferralsThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      // Fetch Carer Referrals
+      .addCase(fetchCarerReferralsThunk.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(
+        fetchCarerReferralsThunk.fulfilled,
+        (state, action: PayloadAction<CarerReferralResponse[]>) => {
+          state.loading = false;
+          state.carerReferrals = action.payload;
+          state.error = null;
+        },
+      )
+      .addCase(fetchCarerReferralsThunk.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })

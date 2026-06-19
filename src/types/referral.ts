@@ -36,6 +36,7 @@ export interface CarerReferralResponse {
   phoneNumber: string;
   cvUrl: string;
   createdAt: string;
+  status: string;
 }
 
 export interface ClientReferralRequest {
@@ -54,10 +55,13 @@ export interface ClientReferralResponse {
   phoneNumber: string | null;
   cvUrl: string | null;
   createdAt: string;
+  status: string;
 }
 
 export interface ReferralState {
   referrals: Referral[];
+  clientReferrals: ClientReferralResponse[];
+  carerReferrals: CarerReferralResponse[];
   loading: boolean;
   submitting: boolean;
   success: boolean;

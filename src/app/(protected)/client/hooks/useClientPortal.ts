@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Carer } from "../types/client-ui.types";
-import { validateCareForm } from "../utils/validation";
+import { validateCareForm, scrollToFirstError } from "../utils/validation";
 import { useAppDispatch } from "@/store/hooks";
 import {
   createCareRequest,
@@ -48,6 +48,7 @@ export function useClientPortal({ user }: UseClientPortalProps) {
       fullName: careFullName,
       email: careEmail,
       phone: carePhone,
+      careType: careType,
       support: careSupport,
       startDate: careStartDate,
       duration: careDuration,
@@ -58,6 +59,7 @@ export function useClientPortal({ user }: UseClientPortalProps) {
 
     if (Object.keys(errors).length > 0) {
       setCareErrors(errors);
+      scrollToFirstError();
       return;
     }
     const payload = {
@@ -80,6 +82,7 @@ export function useClientPortal({ user }: UseClientPortalProps) {
       adminMatching,
     };
 
+    setIsCareSubmitting(true);
     try {
       await dispatch(createCareRequest(payload)).unwrap();
       await dispatch(fetchCareRequests());
@@ -99,7 +102,16 @@ export function useClientPortal({ user }: UseClientPortalProps) {
         typeof error === "string"
           ? error
           : error?.message || "Failed to submit care request.";
-      showErrorToast("Error", errorMsg);
+      
+      const isValidationError = 
+        errorMsg.toLowerCase().includes("validation") ||
+        errorMsg.toLowerCase().includes("required") ||
+        errorMsg.toLowerCase().includes("missing") ||
+        errorMsg.toLowerCase().includes("please select");
+
+      if (!isValidationError) {
+        showErrorToast("Error", errorMsg);
+      }
     } finally {
       setIsCareSubmitting(false);
     }

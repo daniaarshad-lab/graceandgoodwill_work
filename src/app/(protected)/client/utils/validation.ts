@@ -2,6 +2,7 @@ export function validateCareForm(data: {
   fullName: string;
   email: string;
   phone: string;
+  careType: string;
   support: string;
   startDate: string;
   duration: string;
@@ -25,6 +26,10 @@ export function validateCareForm(data: {
     errors.phone = "Phone number is required.";
   } else if (!/^\+?[0-9\s\-()]{7,15}$/.test(data.phone.trim())) {
     errors.phone = "Please enter a valid phone number (7-15 digits).";
+  }
+
+  if (!data.careType || !data.careType.trim()) {
+    errors.careType = "Care type is required.";
   }
 
   if (!data.support.trim()) {
@@ -67,4 +72,13 @@ export function validateEnquiryForm(data: {
   }
 
   return errors;
+}
+
+export function scrollToFirstError() {
+  setTimeout(() => {
+    const firstErrorElement = document.querySelector(".text-red-500, .border-red-500");
+    if (firstErrorElement) {
+      firstErrorElement.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, 100);
 }

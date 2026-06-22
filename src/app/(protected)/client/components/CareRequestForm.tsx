@@ -116,7 +116,12 @@ export default function CareRequestForm({
             label="Care Type Required"
             value={careType}
             onChange={(e) => setCareType(e.target.value)}
+            error={errors.careType}
             options={[
+              {
+                value: "",
+                label: "Select care type...",
+              },
               {
                 value: "Companion Support",
                 label: "Companion Live-in Care",

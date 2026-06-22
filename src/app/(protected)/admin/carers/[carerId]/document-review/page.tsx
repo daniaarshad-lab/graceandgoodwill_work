@@ -109,8 +109,9 @@ function DocumentReviewContent() {
     try {
       const docNotes = notes[activeDoc.id] || "";
       await dispatch(verifyDocument({ docId: activeDoc.id, notes: docNotes })).unwrap();
-      showSuccessToast("Document Verified", "The document status has been updated to VERIFIED.");
-      router.push("/admin?tab=carers");
+      showSuccessToast("Document Approved", "The document has been approved successfully.");
+      // Re-fetch to ensure local state is fully in sync with server
+      dispatch(fetchDocumentDetails(carerId));
     } catch (err: any) {
       showErrorToast("Error", err || "Failed to verify document");
     } finally {
@@ -129,8 +130,9 @@ function DocumentReviewContent() {
     setSubmittingAction("REJECT");
     try {
       await dispatch(rejectDocument({ docId: activeDoc.id, rejectionReason: docNotes })).unwrap();
-      showSuccessToast("Document Rejected", "The document status has been updated to REJECTED.");
-      router.push("/admin?tab=carers");
+      showSuccessToast("Document Rejected", "The document has been rejected.");
+      // Re-fetch to ensure local state is fully in sync with server
+      dispatch(fetchDocumentDetails(carerId));
     } catch (err: any) {
       showErrorToast("Error", err || "Failed to reject document");
     } finally {
@@ -161,6 +163,7 @@ function DocumentReviewContent() {
     const cleanStatus = status?.toUpperCase() || "PENDING";
     switch (cleanStatus) {
       case "VERIFIED":
+      case "APPROVED":
         return "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
       case "REJECTED":
         return "bg-rose-500/10 text-rose-400 border border-rose-500/20";
@@ -174,6 +177,7 @@ function DocumentReviewContent() {
   const getStatusLabel = (status: string) => {
     const cleanStatus = status?.toUpperCase() || "PENDING";
     if (cleanStatus === "UPLOADED" || cleanStatus === "PENDING") return "PENDING";
+    if (cleanStatus === "VERIFIED") return "APPROVED";
     return cleanStatus;
   };
 
@@ -380,7 +384,7 @@ function DocumentReviewContent() {
                     <div>
                       <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1">Status</span>
                       <span className={`font-bold uppercase ${
-                        activeDoc.status?.toUpperCase() === "VERIFIED"
+                        activeDoc.status?.toUpperCase() === "VERIFIED" || activeDoc.status?.toUpperCase() === "APPROVED"
                           ? "text-emerald-400"
                           : activeDoc.status?.toUpperCase() === "REJECTED"
                             ? "text-rose-400"
@@ -472,13 +476,13 @@ function DocumentReviewContent() {
                         </a>
                       )}
                       
-                      {activeDoc.status?.toUpperCase() === "VERIFIED" ? (
+                      {activeDoc.status?.toUpperCase() === "VERIFIED" || activeDoc.status?.toUpperCase() === "APPROVED" ? (
                         <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-5 py-2 text-emerald-400 font-bold text-xs flex items-center gap-2 h-10 justify-center flex-shrink-0">
-                          <CheckCircle2 className="h-4 w-4 flex-shrink-0" /> Already Verified
+                          <CheckCircle2 className="h-4 w-4 flex-shrink-0" /> Approved ✓
                         </div>
                       ) : activeDoc.status?.toUpperCase() === "REJECTED" ? (
                         <div className="bg-rose-500/10 border border-rose-500/20 rounded-xl px-5 py-2 text-rose-400 font-bold text-xs flex items-center gap-2 h-10 justify-center flex-shrink-0">
-                          <AlertTriangle className="h-4 w-4 flex-shrink-0" /> Rejected
+                          <X className="h-4 w-4 flex-shrink-0" /> Rejected ✕
                         </div>
                       ) : (
                         <div className="flex flex-row items-center gap-3">

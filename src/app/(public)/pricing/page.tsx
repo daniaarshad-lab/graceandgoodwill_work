@@ -8,88 +8,70 @@ const NewsletterForm = dynamic(() => import("@/components/NewsletterForm"));
 
 const carerPlans = [
   {
-    name: "Bronze",
-    price: "£9.99",
-    period: "per month + VAT",
-    tagline: "Essential membership for independent professional carers.",
+    name: "Free Membership",
+    price: "£0",
+    period: "Forever",
+    tagline: "Join the Grace & Goodwill network and apply for placements without any membership fee.",
     features: [
       "Placement alerts by email",
-      "15% discount on mandatory care training",
+      "Basic carer profile",
+      "Ability to apply for placements",
+      "Access to discounted face-to-face training rates",
+      "Access to discounted e-learning rates",
     ],
-    cta: "Join Bronze",
+    cta: "Create Free Profile",
     href: "/register",
     featured: false,
     premium: false,
     badge: "",
   },
   {
-    name: "Platinum",
-    price: "£19.99",
-    period: "per month + VAT",
-    tagline: "Advanced tools and premium support for active carers.",
+    name: "Gold Elite Membership",
+    price: "£29.99",
+    period: "per month (VAT Included)",
+    tagline: "Premium tier for active professionals seeking first access to placements.",
     features: [
       "Priority placement alerts",
-      "25% discount on mandatory care training",
-      "Early access to new placements",
-      "Reduced compliance package fees",
-    ],
-    cta: "Join Platinum",
-    href: "/register",
-    featured: true,
-    premium: false,
-    badge: "Most Popular",
-  },
-  {
-    name: "Gold Elite",
-    price: "£29.99",
-    period: "per month + VAT",
-    tagline: "The ultimate membership for established care professionals.",
-    features: [
-      "Emergency placements with enhanced rates priority",
-      "First access to higher paying placements",
-      "50% discount on mandatory care training",
-      "Priority DBS and compliance processing",
-      "Featured carer profile",
+      "First access to premium placements",
+      "Emergency placement priority",
+      "Featured profile",
+      "Certificate storage",
+      "Compliance expiry reminders",
+      "Professional profile enhancement",
+      "Priority compliance review",
+      "Enhanced placement opportunities",
+      "Advanced training discounts",
+      "End of Life Care Pathway",
+      "DBS support and guidance",
     ],
     cta: "Join Gold Elite",
     href: "/register",
+    featured: true,
+    premium: false,
+    badge: "Most Popular",
+  },
+  {
+    name: "Grace & Goodwill Verified Professional™",
+    price: "Additional £10",
+    period: "per month (VAT Included)",
+    tagline: "Earned status reserved for carers demonstrating excellence, trust and values.",
+    features: [
+      "Grace & Goodwill Verified Professional™ badge",
+      "Contacted first for premium placements",
+      "Priority phone calls, email, and WhatsApp alerts",
+      "Priority matching opportunities",
+      "Appear before all other carers in search results",
+      "Featured in client and emergency searches",
+      "Priority access to enhanced-rate emergency placements",
+      "Premium profile highlight with verified frame",
+      "Increased visibility across platform",
+      "All Gold Elite Membership benefits included",
+    ],
+    cta: "Join Gold Elite + Verification",
+    href: "/register",
     featured: false,
     premium: true,
-    badge: "Premium",
-  },
-];
-
-const academyPlans = [
-  {
-    name: "Academy Partner Membership",
-    price: "£499",
-    period: "per month + VAT",
-    tagline: "Up to 5 staff",
-    features: [
-      "Up to 2 mandatory training sessions per month",
-      "Electronic certificates",
-      "Training records maintained and securely stored for 18 months",
-    ],
-    cta: "Become a Partner",
-    href: "/contact",
-    featured: false,
-    badge: "",
-  },
-  {
-    name: "Academy Professional Membership",
-    price: "£699",
-    period: "per month + VAT",
-    tagline: "6–10 staff",
-    features: [
-      "Up to 2 mandatory training sessions per month",
-      "Electronic certificates",
-      "Training records maintained and securely stored for 24 months",
-      "15% discount on additional training courses such as complex care, stoma care and specialist training",
-    ],
-    cta: "Become a Professional",
-    href: "/contact",
-    featured: true,
-    badge: "Most Popular",
+    badge: "Verified Professional™",
   },
 ];
 
@@ -112,14 +94,6 @@ export default function PricingPage() {
         </div>
 
         <div className="container-wrapper relative z-10 text-center flex flex-col items-center">
-          {/* Eyebrow label & Gold accent line restored to premium style */}
-          {/* <div className="flex items-center gap-4 mb-8">
-            <div className="h-px w-10 bg-gradient-to-r from-transparent to-gold-400/50" />
-            <p className="text-xs uppercase tracking-[0.4em] text-gold-400 font-bold">
-              GRACE &amp; GOODWILL • MEMBERSHIP PLANS
-            </p>
-            <div className="h-px w-10 bg-gradient-to-l from-transparent to-gold-400/50" />
-          </div> */}
           <div className="flex items-center justify-center gap-4 mb-8">
             <div className="h-px w-10 bg-gradient-to-r from-transparent to-gold-400/50" />
             <h1 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight text-gold-100">
@@ -127,13 +101,9 @@ export default function PricingPage() {
             </h1>
             <div className="h-px w-10 bg-gradient-to-l from-transparent to-gold-400/50" />
           </div>
-          {/* <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight mb-6 text-gold-100 tracking-wide max-w-4xl">
-            Membership Plans
-          </h1> */}
 
           <p className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-gold-200/80 sm:text-base">
-            Flexible membership options for professional carers and care
-            providers.
+            Flexible membership options for professional carers.
           </p>
         </div>
       </section>
@@ -234,7 +204,7 @@ export default function PricingPage() {
                   }}
                 />
 
-                <div className="mb-8 flex flex-col items-center gap-1">
+                <div className="mb-6 flex flex-col items-center gap-1">
                   <span
                     className={[
                       "text-4xl font-bold tracking-tight leading-none transition-colors duration-500 font-serif",
@@ -250,11 +220,16 @@ export default function PricingPage() {
                       {plan.period}
                     </span>
                   )}
+                  {plan.premium && (
+                    <span className="text-[11px] font-bold text-gold-200/80 mt-1 uppercase tracking-wide">
+                      Total value: £39.99/month (VAT Included)
+                    </span>
+                  )}
                 </div>
 
                 {/* Feature list with clean whitespace spacing */}
                 <div className="mb-10 flex-1 flex flex-col justify-center min-h-[220px]">
-                  <ul className="flex flex-col space-y-5">
+                  <ul className="flex flex-col space-y-4">
                     {plan.features.map((feature) => (
                       <li
                         key={feature}
@@ -310,196 +285,6 @@ export default function PricingPage() {
         </div>
       </section>
 
-      {/* ── Care Academy Memberships ── */}
-      <section className="container-wrapper pt-12 pb-20">
-        <div className="text-center mb-16 space-y-5">
-          <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide">
-            Care Academy Memberships
-          </h2>
-          <div className="h-px w-24 bg-gradient-to-r from-transparent via-gold-400/50 to-transparent mx-auto" />
-        </div>
-
-        <div className="grid gap-6 md:grid-cols-2 max-w-5xl mx-auto items-stretch pt-4">
-          {academyPlans.map((plan) => (
-            <div
-              key={plan.name}
-              className={[
-                "relative flex flex-col rounded-3xl p-6 sm:p-8 lg:p-10 border group transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] transform h-full",
-                plan.featured
-                  ? "border-gold-400/40 shadow-[0_15px_40px_rgba(212,175,55,0.08)] ring-1 ring-gold-muted/20 scale-[1.02] z-10 md:-translate-y-2 " +
-                    "hover:scale-[1.03] hover:-translate-y-3 hover:shadow-[0_20px_50px_rgba(212,175,55,0.15)] hover:border-gold-400/60"
-                  : "border-gold-muted/15 shadow-md scale-100 opacity-80 md:translate-y-0 " +
-                    "hover:scale-[1.01] hover:-translate-y-1 hover:opacity-100 hover:border-gold-muted/30 hover:shadow-[0_12px_40px_rgba(160,128,84,0.06)]",
-              ].join(" ")}
-              style={{
-                background: plan.featured
-                  ? "linear-gradient(145deg, rgba(20,33,61,0.95) 0%, rgba(10,17,40,0.98) 100%)"
-                  : "rgba(10,17,40,0.5)",
-              }}
-            >
-              {/* Badge positioned completely cleanly above the border */}
-              {plan.badge && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20 whitespace-nowrap">
-                  <span
-                    className={[
-                      "inline-flex items-center rounded-full px-5 py-1.5 text-[10px] font-bold uppercase tracking-widest shadow-md",
-                      plan.featured
-                        ? "text-navy-950 border border-gold-300/30"
-                        : "text-gold-100 border border-gold-400/40 bg-navy-950 shadow-[0_0_15px_rgba(212,175,55,0.15)]",
-                    ].join(" ")}
-                    style={{
-                      background: plan.featured
-                        ? "linear-gradient(135deg, #e8ba7a 0%, #d4af37 100%)"
-                        : undefined,
-                    }}
-                  >
-                    {plan.badge}
-                  </span>
-                </div>
-              )}
-
-              <div className="relative z-10 flex flex-col h-full">
-                {/* Plan name & tagline */}
-                <div className="mb-6 text-center">
-                  <h3
-                    className={[
-                      "text-2xl font-serif tracking-wide transition-colors duration-500",
-                      plan.featured
-                        ? "text-gold-50 group-hover:text-white"
-                        : "text-gold-200 group-hover:text-gold-100",
-                    ].join(" ")}
-                  >
-                    {plan.name}
-                  </h3>
-                  <p className="mt-3 text-sm text-gold-200/60 leading-relaxed font-light min-h-[40px]">
-                    {plan.tagline}
-                  </p>
-                </div>
-
-                <div
-                  className="mb-6 h-px w-full"
-                  style={{
-                    background: plan.featured
-                      ? "linear-gradient(to right, transparent, rgba(212,175,55,0.4), transparent)"
-                      : "linear-gradient(to right, transparent, rgba(160,128,84,0.15), transparent)",
-                  }}
-                />
-
-                <div className="mb-8 flex flex-col items-center gap-1">
-                  <span
-                    className={[
-                      "text-4xl font-bold tracking-tight leading-none transition-colors duration-500 font-serif",
-                      plan.featured
-                        ? "text-gold-50 group-hover:text-white"
-                        : "text-gold-200 group-hover:text-gold-100",
-                    ].join(" ")}
-                  >
-                    {plan.price}
-                  </span>
-                  {plan.period && (
-                    <span className="text-xs font-medium text-gold-200/50 uppercase tracking-widest mt-2">
-                      {plan.period}
-                    </span>
-                  )}
-                </div>
-
-                {/* Feature list with clean whitespace spacing */}
-                <div className="mb-10 flex-1 flex flex-col justify-center min-h-[220px]">
-                  <ul className="flex flex-col space-y-5">
-                    {plan.features.map((feature) => (
-                      <li
-                        key={feature}
-                        className="flex items-start gap-4 text-sm text-gold-100/85 leading-relaxed font-light"
-                      >
-                        <span
-                          className="mt-0.5 flex h-4.5 w-4.5 flex-shrink-0 items-center justify-center rounded-full"
-                          style={{
-                            background: plan.featured
-                              ? "rgba(212,175,55,0.15)"
-                              : "rgba(160,128,84,0.10)",
-                          }}
-                        >
-                          <Check
-                            className="h-3 w-3"
-                            style={{
-                              color: plan.featured ? "#d4af37" : "#A08054",
-                            }}
-                            strokeWidth={2.5}
-                          />
-                        </span>
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="mt-auto">
-                  <Button
-                    asChild
-                    variant={plan.featured ? "primary" : "ghost-gold"}
-                    fullWidth
-                  >
-                    <Link href={plan.href} prefetch={false}>
-                      {plan.cta}
-                    </Link>
-                  </Button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── Training Without Membership ── */}
-      <section className="container-wrapper pt-12 pb-20">
-        <div className="relative rounded-3xl p-10 lg:p-14 overflow-hidden border border-gold-400/20 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-10">
-          <div
-            className="absolute inset-0 pointer-events-none opacity-30"
-            style={{
-              background:
-                "linear-gradient(135deg, rgba(20,33,61,0.9) 0%, rgba(10,17,40,0.98) 100%)",
-            }}
-          />
-          <div
-            className="absolute inset-0 pointer-events-none opacity-20"
-            style={{
-              background:
-                "radial-gradient(circle at 0% 100%, #A08054 0%, transparent 60%)",
-            }}
-          />
-
-          <div className="relative z-10 md:max-w-2xl text-center md:text-left">
-            <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide mb-4">
-              Training Without Membership
-            </h2>
-            <p className="text-sm leading-relaxed text-gold-200/80 sm:text-base">
-              Access our industry-leading care training modules without a full
-              membership commitment.
-            </p>
-            <div className="mt-6 flex items-center justify-center md:justify-start gap-4">
-              <span className="text-4xl font-bold tracking-tight text-gold-100 font-serif">
-                £99
-              </span>
-              <span className="text-sm font-medium text-gold-200/50 uppercase tracking-widest max-w-[150px] text-left leading-tight">
-                per person per training session + VAT
-              </span>
-            </div>
-          </div>
-
-          <div className="relative z-10 w-full md:w-auto">
-            <Button
-              asChild
-              variant="outline"
-              className="w-full md:w-auto whitespace-nowrap py-4 px-8 text-lg"
-            >
-              <Link href="/contact" prefetch={false}>
-                Book Training Session
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </section>
-
       {/* ── Membership Conditions ── */}
       <section className="container-wrapper pt-12 pb-24 border-t border-gold-muted/10">
         <div className="max-w-4xl mx-auto">
@@ -514,28 +299,20 @@ export default function PricingPage() {
             <div className="space-y-6 bg-navy-900/40 p-8 rounded-2xl border border-gold-muted/5">
               <h3 className="text-xl font-serif text-gold-100 mb-6 flex items-center gap-3">
                 <span className="w-8 h-px bg-gold-400/50" />
-                Membership Options
+                General Policy
               </h3>
-              <ul className="space-y-4">
-                <li className="flex items-start gap-4">
-                  <span className="mt-1 h-1.5 w-1.5 rounded-full bg-gold-400 flex-shrink-0" />
-                  <div>
-                    <h4 className="text-gold-50 font-medium mb-1">Option A</h4>
-                    <p className="text-sm text-gold-200/60 leading-relaxed font-light">
-                      Members may access discounted benefits after maintaining
-                      membership for 3 months.
-                    </p>
-                  </div>
+              <ul className="space-y-4 text-sm text-gold-200/80">
+                <li className="flex items-start gap-3 leading-relaxed">
+                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-gold-400 flex-shrink-0" />
+                  <span>All memberships are cancellable at any time.</span>
                 </li>
-                <li className="flex items-start gap-4">
-                  <span className="mt-1 h-1.5 w-1.5 rounded-full bg-gold-400 flex-shrink-0" />
-                  <div>
-                    <h4 className="text-gold-50 font-medium mb-1">Option B</h4>
-                    <p className="text-sm text-gold-200/60 leading-relaxed font-light">
-                      Members may pay 3 months upfront and receive benefits
-                      immediately.
-                    </p>
-                  </div>
+                <li className="flex items-start gap-3 leading-relaxed">
+                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-gold-400 flex-shrink-0" />
+                  <span>Approved carers can apply for placements immediately once approved.</span>
+                </li>
+                <li className="flex items-start gap-3 leading-relaxed">
+                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-gold-400 flex-shrink-0" />
+                  <span>Approved carers can begin working immediately after profile activation.</span>
                 </li>
               </ul>
             </div>
@@ -543,19 +320,24 @@ export default function PricingPage() {
             <div className="space-y-6 bg-navy-900/40 p-8 rounded-2xl border border-gold-muted/5">
               <h3 className="text-xl font-serif text-gold-100 mb-6 flex items-center gap-3">
                 <span className="w-8 h-px bg-gold-400/50" />
-                Upfront Payment Terms
+                Premium Benefit Terms
               </h3>
-              <ul className="space-y-4">
-                {[
-                  "3 Months Upfront",
-                  "6 Months Upfront",
-                  "12 Months Upfront",
-                ].map((term) => (
-                  <li key={term} className="flex items-center gap-4">
-                    <span className="h-1.5 w-1.5 rounded-full bg-gold-400 flex-shrink-0" />
-                    <span className="text-gold-50 font-medium">{term}</span>
-                  </li>
-                ))}
+              <p className="text-xs text-gold-100/60 leading-relaxed font-light mb-3">
+                Premium placement priority, enhanced opportunities, advanced discounts, and Verified Professional eligibility require:
+              </p>
+              <ul className="space-y-3 text-sm text-gold-200/80">
+                <li className="flex items-center gap-3">
+                  <span className="h-1.5 w-1.5 rounded-full bg-gold-400 flex-shrink-0" />
+                  <span className="text-gold-50 font-medium">Active Gold Elite Membership</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <span className="h-1.5 w-1.5 rounded-full bg-gold-400 flex-shrink-0" />
+                  <span className="text-gold-50 font-medium">Minimum 3 consecutive months active membership</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <span className="h-1.5 w-1.5 rounded-full bg-gold-400 flex-shrink-0" />
+                  <span className="text-gold-50 font-medium">Completion of verification requirements</span>
+                </li>
               </ul>
             </div>
           </div>

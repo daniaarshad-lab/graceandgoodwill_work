@@ -77,7 +77,8 @@ export default function StepVideoIntro({
     if (!videoFile) return true;
     setIsSubmittingMedia(true);
     try {
-      await dispatch(uploadProfileMedia({ video: videoFile })).unwrap();
+      const response = await dispatch(uploadProfileMedia({ video: videoFile })).unwrap();
+      console.log("[Video Upload debug] response from uploadProfileMedia:", response);
       showSuccessToast("Success", "Video uploaded successfully!");
       return true;
     } catch (err: unknown) {
@@ -120,21 +121,19 @@ export default function StepVideoIntro({
         </h3>
 
         <div
-          className={`flex flex-col md:flex-row gap-6 items-center bg-navy-950/40 p-6 rounded-2xl border transition-all ${
-            errorMsg
+          className={`flex flex-col md:flex-row gap-6 items-center bg-navy-950/40 p-6 rounded-2xl border transition-all ${errorMsg
               ? "border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]"
               : "border-gold-300/5"
-          }`}
+            }`}
         >
           <div
             onClick={() => !isSubmittingMedia && videoInputRef.current?.click()}
-            className={`h-32 w-full max-w-[200px] border border-dashed rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all duration-300 ${
-              videoFile || existingVideoUrl
+            className={`h-32 w-full max-w-[200px] border border-dashed rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all duration-300 ${videoFile || existingVideoUrl
                 ? "bg-gold-DEFAULT/5 border-gold-DEFAULT text-gold-DEFAULT"
                 : errorMsg
                   ? "border-red-500/50 text-red-500 bg-red-950/5"
                   : "border-gold-muted/20 hover:border-gold-DEFAULT/50 text-gold-muted/40"
-            }`}
+              }`}
           >
             {videoFile ? (
               <div className="flex flex-col items-center space-y-2">

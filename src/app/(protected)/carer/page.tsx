@@ -19,7 +19,6 @@ import UploadDocumentModal from "./components/UploadDocumentModal";
 import PortalHeader from "./components/PortalHeader";
 import PortalTabs, { TabType } from "./components/PortalTabs";
 import OnboardingStepper from "./components/OnboardingStepper";
-import StepPersonalInfo from "./components/StepPersonalInfo";
 import StepIdentityVerification from "./components/StepIdentityVerification";
 import StepProfessionalInfo from "./components/StepProfessionalInfo";
 import StepTrainingCertificates from "./components/StepTrainingCertificates";
@@ -29,6 +28,7 @@ import StepAdditionalQuals from "./components/StepAdditionalQuals";
 import StepVideoIntro from "./components/StepVideoIntro";
 import StepDeclaration from "./components/StepDeclaration";
 import OnboardingMembership from "./components/OnboardingMembership";
+import StepReviewSubmit from "./components/StepReviewSubmit";
 import Button from "@/components/Button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
@@ -52,6 +52,28 @@ function CarerDashboardContent() {
   }, [tabParam]);
   const [onboardingDone, setOnboardingDone] = useState(true);
   const [onboardingStep, setOnboardingStep] = useState(2);
+  const [selectedPlan, setSelectedPlanState] = useState<string | null>(null);
+
+  const setSelectedPlan = (plan: string | null) => {
+    setSelectedPlanState(plan);
+    if (user?.id) {
+      if (plan) {
+        localStorage.setItem(`carer_selected_plan_${user.id}`, plan);
+      } else {
+        localStorage.removeItem(`carer_selected_plan_${user.id}`);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (user?.id) {
+      const plan = localStorage.getItem(`carer_selected_plan_${user.id}`);
+      if (plan) {
+        setSelectedPlanState(plan);
+      }
+    }
+  }, [user?.id]);
+
   const [initialStepSet, setInitialStepSet] = useState(false);
   const [isClient, setIsClient] = useState(false);
 
@@ -115,11 +137,11 @@ function CarerDashboardContent() {
         if (!profileUser?.dateOfBirth) {
           setOnboardingStep(2);
         } else if (!isProfileSetup) {
-          setOnboardingStep(4);
+          setOnboardingStep(3);
         } else if (!isComplianceUploaded) {
-          setOnboardingStep(6);
+          setOnboardingStep(5);
         } else {
-          setOnboardingStep(10);
+          setOnboardingStep(9);
         }
       }
       setInitialStepSet(true);
@@ -261,7 +283,7 @@ function CarerDashboardContent() {
 
           <div className="transition-all duration-500">
             {onboardingStep === 2 && (
-              <StepPersonalInfo
+              <StepIdentityVerification
                 portal={portal}
                 onNext={() => setOnboardingStep(3)}
                 onBack={() => router.push("/register")}
@@ -269,7 +291,7 @@ function CarerDashboardContent() {
             )}
 
             {onboardingStep === 3 && (
-              <StepIdentityVerification
+              <StepProfessionalInfo
                 portal={portal}
                 onNext={() => setOnboardingStep(4)}
                 onBack={() => setOnboardingStep(2)}
@@ -277,7 +299,7 @@ function CarerDashboardContent() {
             )}
 
             {onboardingStep === 4 && (
-              <StepProfessionalInfo
+              <StepTrainingCertificates
                 portal={portal}
                 onNext={() => setOnboardingStep(5)}
                 onBack={() => setOnboardingStep(3)}
@@ -285,7 +307,7 @@ function CarerDashboardContent() {
             )}
 
             {onboardingStep === 5 && (
-              <StepTrainingCertificates
+              <StepComplianceDocs
                 portal={portal}
                 onNext={() => setOnboardingStep(6)}
                 onBack={() => setOnboardingStep(4)}
@@ -293,7 +315,7 @@ function CarerDashboardContent() {
             )}
 
             {onboardingStep === 6 && (
-              <StepComplianceDocs
+              <StepInsuranceDocs
                 portal={portal}
                 onNext={() => setOnboardingStep(7)}
                 onBack={() => setOnboardingStep(5)}
@@ -301,7 +323,7 @@ function CarerDashboardContent() {
             )}
 
             {onboardingStep === 7 && (
-              <StepInsuranceDocs
+              <StepAdditionalQuals
                 portal={portal}
                 onNext={() => setOnboardingStep(8)}
                 onBack={() => setOnboardingStep(6)}
@@ -309,7 +331,7 @@ function CarerDashboardContent() {
             )}
 
             {onboardingStep === 8 && (
-              <StepAdditionalQuals
+              <StepVideoIntro
                 portal={portal}
                 onNext={() => setOnboardingStep(9)}
                 onBack={() => setOnboardingStep(7)}
@@ -317,10 +339,12 @@ function CarerDashboardContent() {
             )}
 
             {onboardingStep === 9 && (
-              <StepVideoIntro
-                portal={portal}
+              <OnboardingMembership
+                selectedPlan={selectedPlan}
+                setSelectedPlan={setSelectedPlan}
                 onNext={() => setOnboardingStep(10)}
                 onBack={() => setOnboardingStep(8)}
+                isSubmitting={portal.isProfileSaving}
               />
             )}
 
@@ -333,8 +357,11 @@ function CarerDashboardContent() {
             )}
 
             {onboardingStep === 11 && (
-              <OnboardingMembership
-                onComplete={async () => {
+              <StepReviewSubmit
+                portal={portal}
+                selectedPlan={selectedPlan}
+                onBack={() => setOnboardingStep(10)}
+                onSubmit={async () => {
                   if (
                     !portal.declarations?.accuracy ||
                     !portal.declarations?.checks ||
@@ -362,7 +389,6 @@ function CarerDashboardContent() {
                     setOnboardingStep(12);
                   }
                 }}
-                onBack={() => setOnboardingStep(10)}
                 isSubmitting={portal.isProfileSaving}
               />
             )}
@@ -386,12 +412,12 @@ function CarerDashboardContent() {
                 </div>
 
                 <h3 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-gold-200 to-gold-50 tracking-tight mb-4">
-                  Onboarding Complete!
+                  Thank you.
                 </h3>
 
                 <p className="text-gold-100/60 max-w-md mx-auto leading-relaxed mb-10 text-[14px]">
-                  Thank you for completing your professional profile. Your
-                  application is now under review by the Grace & Goodwill team.
+                  Your profile is now pending review by Grace & Goodwill.<br /><br />
+                  We will verify your documents and contact you regarding approval.
                 </p>
 
                 <div className="flex flex-col items-center gap-5 w-full">
@@ -418,11 +444,11 @@ function CarerDashboardContent() {
                   </button>
 
                   <button
-                    onClick={() => setOnboardingStep(11)}
+                    onClick={() => setOnboardingStep(9)}
                     className="flex items-center gap-1.5 text-[12.5px] font-medium text-gold-100/50 hover:text-gold-200 transition-colors tracking-wide focus:outline-none"
                   >
                     <ArrowLeft className="w-3.5 h-3.5" />
-                    Back to Membership
+                    Back to Selection
                   </button>
                 </div>
               </div>

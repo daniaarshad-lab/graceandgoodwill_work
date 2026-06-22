@@ -40,10 +40,10 @@ export default function StepProfessionalInfo({
         : "",
     experience:
       experience === undefined ||
-      experience === null ||
-      experience === "" ||
-      isNaN(parsedExp) ||
-      parsedExp < 0
+        experience === null ||
+        experience === "" ||
+        isNaN(parsedExp) ||
+        parsedExp < 0
         ? "Years of Care Experience must be a non-negative number."
         : "",
     specialties:
@@ -62,7 +62,7 @@ export default function StepProfessionalInfo({
       return;
     }
 
-    const syntheticEvent = { preventDefault: () => {} } as React.FormEvent;
+    const syntheticEvent = { preventDefault: () => { } } as React.FormEvent;
     const success = await portal.handleSaveProfile(syntheticEvent, 4);
     if (success) {
       onNext();

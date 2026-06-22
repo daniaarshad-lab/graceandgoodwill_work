@@ -116,7 +116,7 @@ export default function StepPersonalInfo({ portal, onNext, onBack }: Props) {
 
     setErrors({});
 
-    const syntheticEvent = { preventDefault: () => {} } as React.FormEvent;
+    const syntheticEvent = { preventDefault: () => { } } as React.FormEvent;
     const success = await portal.handleSaveProfile(syntheticEvent, 2);
     if (success) {
       onNext();

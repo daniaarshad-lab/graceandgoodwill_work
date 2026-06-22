@@ -90,11 +90,10 @@ export default function StepTrainingCertificates({
             return (
               <div
                 key={docItem.type}
-                className={`p-4 rounded-xl border flex flex-col gap-2 transition-all ${
-                  submitted && isMissing
+                className={`p-4 rounded-xl border flex flex-col gap-2 transition-all ${submitted && isMissing
                     ? "border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)] bg-red-950/5"
                     : "border-gold-300/10 bg-navy-950/40"
-                }`}
+                  }`}
               >
                 <div className="flex justify-between items-start">
                   <span className="text-xs font-medium text-gold-50">

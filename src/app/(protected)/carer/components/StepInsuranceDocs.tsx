@@ -63,11 +63,10 @@ export default function StepInsuranceDocs({ portal, onNext, onBack }: Props) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <div
-              className={`transition-all rounded-xl border ${
-                submitted && errors.publicLiability
+              className={`transition-all rounded-xl border ${submitted && errors.publicLiability
                   ? "border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]"
                   : "border-transparent"
-              }`}
+                }`}
             >
               <DocUploadRow
                 label="Public Liability Insurance *"
@@ -84,11 +83,10 @@ export default function StepInsuranceDocs({ portal, onNext, onBack }: Props) {
 
           <div className="space-y-2">
             <div
-              className={`transition-all rounded-xl border ${
-                submitted && errors.professionalIndemnity
+              className={`transition-all rounded-xl border ${submitted && errors.professionalIndemnity
                   ? "border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]"
                   : "border-transparent"
-              }`}
+                }`}
             >
               <DocUploadRow
                 label="Professional Indemnity Insurance *"

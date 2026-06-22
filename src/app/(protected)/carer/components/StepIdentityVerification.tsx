@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import SectionCard from "./shared/SectionCard";
 import Button from "@/components/Button";
+import Input from "@/components/Input";
+import PhoneInput from "@/components/PhoneInput";
 import { ComplianceDoc } from "../types/carer.types";
 import { Check } from "lucide-react";
 import { showErrorToast } from "@/utils/toast";
@@ -17,14 +19,39 @@ export default function StepIdentityVerification({
   onBack,
 }: Props) {
   const {
+    firstName,
+    setFirstName,
+    lastName,
+    setLastName,
+    phone,
+    setPhone,
+    email,
+    setEmail,
+    dateOfBirth,
+    setDateOfBirth,
+    address,
+    setAddress,
+    postcode,
+    setPostcode,
+    emergencyContactName,
+    setEmergencyContactName,
+    emergencyContactNumber,
+    setEmergencyContactNumber,
+    emergencyContactRelation,
+    setEmergencyContactRelation,
     drivingPreferences,
     setDrivingPreferences,
     complianceDocs,
     handleUpdateDoc,
     selectedFiles,
+    canDrive,
+    hasBusinessInsurance,
   } = portal;
 
   const [submitted, setSubmitted] = useState(false);
+  const [postcodeSuggestions, setPostcodeSuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const drivingOptions = [
     "I am happy to transport clients in my own vehicle",
@@ -51,12 +78,12 @@ export default function StepIdentityVerification({
   const hasNiProof =
     complianceDocs.some((d: ComplianceDoc) => d.type === "NI_PROOF") ||
     !!selectedFiles["ni_proof"];
-  const hasBusinessInsurance =
+  const hasBusinessInsuranceDoc =
     complianceDocs.some(
       (d: ComplianceDoc) => d.type === "BUSINESS_INSURANCE",
     ) || !!selectedFiles["business_insurance"];
 
-  const errors = {
+  const docErrors = {
     passportOrDL: !hasPassportOrDL
       ? "Please upload either your Passport or Driving Licence."
       : "",
@@ -66,37 +93,117 @@ export default function StepIdentityVerification({
       ? "Proof of National Insurance Number is required."
       : "",
     businessInsurance:
-      hasDL && hasOwnVehiclePref && !hasBusinessInsurance
+      hasDL && hasOwnVehiclePref && !hasBusinessInsuranceDoc
         ? "Business Use Insurance is required since you selected 'I am happy to transport clients in my own vehicle'."
         : "",
   };
 
-  const hasErrors = Object.values(errors).some(Boolean);
+  const hasDocErrors = Object.values(docErrors).some(Boolean);
+
+  const handlePostcodeChange = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const val = e.target.value;
+    setPostcode(val);
+
+    if (val.trim()) {
+      setErrors((prev) => {
+        const copy = { ...prev };
+        delete copy.postcode;
+        return copy;
+      });
+    }
+
+    if (val.length > 2) {
+      try {
+        const res = await fetch(
+          `https://api.postcodes.io/postcodes/${val}/autocomplete`,
+        );
+        const data = await res.json();
+        if (data.status === 200) {
+          setPostcodeSuggestions(data.result || []);
+          setShowSuggestions(true);
+        } else {
+          setPostcodeSuggestions([]);
+          setShowSuggestions(false);
+        }
+      } catch (err) {
+        console.error("Postcode fetch error", err);
+      }
+    } else {
+      setPostcodeSuggestions([]);
+      setShowSuggestions(false);
+    }
+  };
+
+  const getLocalYesterdayDateString = () => {
+    const d = new Date();
+    d.setDate(d.getDate() - 1);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const maxDate = getLocalYesterdayDateString();
 
   const handleNext = async (e: React.MouseEvent) => {
     e.preventDefault();
     setSubmitted(true);
 
-    if (hasErrors) {
+    const newErrors: Record<string, string> = {};
+
+    // Validate Personal Info
+    if (!firstName?.trim() || !lastName?.trim()) {
+      newErrors.fullName = "Full Name is required";
+    }
+    if (!dateOfBirth) {
+      newErrors.dateOfBirth = "Date of Birth is required";
+    }
+    if (!address?.trim()) {
+      newErrors.address = "Address is required";
+    }
+    if (!postcode?.trim()) {
+      newErrors.postcode = "Postcode is required";
+    }
+    if (!email?.trim()) {
+      newErrors.email = "Email Address is required";
+    }
+    if (!phone?.trim()) {
+      newErrors.phone = "Mobile Number is required";
+    }
+    if (!emergencyContactName?.trim()) {
+      newErrors.emergencyContactName = "Emergency Contact Name is required";
+    }
+    if (!emergencyContactNumber?.trim()) {
+      newErrors.emergencyContactNumber = "Emergency Contact Number is required";
+    }
+    if (!emergencyContactRelation?.trim()) {
+      newErrors.emergencyContactRelation =
+        "Emergency Contact Relationship is required";
+    }
+
+    if (Object.keys(newErrors).length > 0 || hasDocErrors) {
+      setErrors(newErrors);
       return;
     }
 
-    // Save driving preferences
-    const syntheticEvent = { preventDefault: () => {} } as React.FormEvent;
+    setErrors({});
+
+    // Save Personal Information (backend step 2)
+    const syntheticEvent = { preventDefault: () => { } } as React.FormEvent;
+    let success = await portal.handleSaveProfile(syntheticEvent, 2);
+    if (!success) return;
+
+    // Save Driving Preferences / vehicle info (backend step 3)
     await portal.handleSaveProfile(syntheticEvent, 3);
 
-    const success = await portal.handleStepBatchUpload(2);
+    // Upload identity documents (backend step 2)
+    success = await portal.handleStepBatchUpload(2);
     if (success) {
       onNext();
     }
   };
-
-  // const drivingOptions = [
-  //   "I am happy to transport clients in my own vehicle",
-  //   "I am happy to drive a client's vehicle (subject to the client's insurance arrangements)"
-  // ];
-
-  // const safePreferences = drivingPreferences || [];
 
   const handlePreferenceToggle = (pref: string) => {
     setDrivingPreferences((prev: string[]) => {
@@ -113,14 +220,212 @@ export default function StepIdentityVerification({
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
+      {/* Part 1: Personal Information Card */}
       <SectionCard className="space-y-6 p-6 md:p-8">
         <h3 className="text-xl font-bold text-gold-200 border-b border-gold-300/10 pb-4">
-          Identity Verification
+          Personal Information
+        </h3>
+        <p className="text-sm text-gold-100/60 mb-4">
+          All items marked with * are compulsory.
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Input
+            label="Full Name *"
+            value={`${firstName || ""} ${lastName || ""}`.trim()}
+            onChange={(e) => {
+              const val = e.target.value;
+              const parts = val.split(" ");
+              setFirstName(parts[0] || "");
+              setLastName(parts.slice(1).join(" ") || "");
+              if (parts[0]?.trim() && parts.slice(1).join(" ")?.trim()) {
+                setErrors((prev) => {
+                  const copy = { ...prev };
+                  delete copy.fullName;
+                  return copy;
+                });
+              }
+            }}
+            placeholder="Full Name"
+            error={errors.fullName}
+          />
+          <Input
+            label="Date of Birth *"
+            type="date"
+            value={dateOfBirth ? dateOfBirth.split("T")[0] : ""}
+            onChange={(e) => {
+              const val = e.target.value;
+              if (val && val > maxDate) {
+                showErrorToast(
+                  "Validation Error",
+                  "Date of Birth cannot be today or a future date.",
+                );
+                return;
+              }
+              setDateOfBirth(val);
+              if (val) {
+                setErrors((prev) => {
+                  const copy = { ...prev };
+                  delete copy.dateOfBirth;
+                  return copy;
+                });
+              }
+            }}
+            placeholder="DD/MM/YYYY"
+            max={maxDate}
+            error={errors.dateOfBirth}
+          />
+          <Input
+            label="Address *"
+            value={address}
+            onChange={(e) => {
+              const val = e.target.value;
+              setAddress(val);
+              if (val.trim()) {
+                setErrors((prev) => {
+                  const copy = { ...prev };
+                  delete copy.address;
+                  return copy;
+                });
+              }
+            }}
+            placeholder="Full Address"
+            error={errors.address}
+          />
+          <div className="relative">
+            <Input
+              label="Postcode *"
+              value={postcode}
+              onChange={handlePostcodeChange}
+              placeholder="Postcode"
+              error={errors.postcode}
+            />
+            {showSuggestions && postcodeSuggestions.length > 0 && (
+              <ul className="absolute z-50 w-full mt-1 bg-navy-900 border border-gold-300/20 rounded-md shadow-[0_8px_30px_rgba(0,0,0,0.5)] max-h-48 overflow-y-auto">
+                {postcodeSuggestions.map((p) => (
+                  <li
+                    key={p}
+                    className="px-4 py-2 text-sm text-gold-100 hover:bg-gold-DEFAULT/10 cursor-pointer"
+                    onClick={() => {
+                      setPostcode(p);
+                      setShowSuggestions(false);
+                      setErrors((prev) => {
+                        const copy = { ...prev };
+                        delete copy.postcode;
+                        return copy;
+                      });
+                    }}
+                  >
+                    {p}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+          <Input
+            label="Email Address *"
+            type="email"
+            value={email}
+            onChange={(e) => {
+              const val = e.target.value;
+              setEmail(val);
+              if (val.trim()) {
+                setErrors((prev) => {
+                  const copy = { ...prev };
+                  delete copy.email;
+                  return copy;
+                });
+              }
+            }}
+            placeholder="Email"
+            error={errors.email}
+          />
+          <PhoneInput
+            label="Mobile Number *"
+            value={phone}
+            onChange={(val) => {
+              setPhone(val);
+              if (val.trim()) {
+                setErrors((prev) => {
+                  const copy = { ...prev };
+                  delete copy.phone;
+                  return copy;
+                });
+              }
+            }}
+            placeholder="Mobile Number"
+            error={errors.phone}
+          />
+        </div>
+
+        <div className="pt-6 mt-6 border-t border-gold-300/10">
+          <h4 className="text-lg font-semibold text-gold-200 mb-4">
+            Emergency Contact Details *
+          </h4>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Input
+              label="Contact Name *"
+              value={emergencyContactName}
+              onChange={(e) => {
+                const val = e.target.value;
+                setEmergencyContactName(val);
+                if (val.trim()) {
+                  setErrors((prev) => {
+                    const copy = { ...prev };
+                    delete copy.emergencyContactName;
+                    return copy;
+                  });
+                }
+              }}
+              placeholder="Name"
+              error={errors.emergencyContactName}
+            />
+            <PhoneInput
+              label="Contact Number *"
+              value={emergencyContactNumber}
+              onChange={(val) => {
+                setEmergencyContactNumber(val);
+                if (val.trim()) {
+                  setErrors((prev) => {
+                    const copy = { ...prev };
+                    delete copy.emergencyContactNumber;
+                    return copy;
+                  });
+                }
+              }}
+              placeholder="Phone"
+              error={errors.emergencyContactNumber}
+            />
+            <Input
+              label="Relationship *"
+              value={emergencyContactRelation}
+              onChange={(e) => {
+                const val = e.target.value;
+                setEmergencyContactRelation(val);
+                if (val.trim()) {
+                  setErrors((prev) => {
+                    const copy = { ...prev };
+                    delete copy.emergencyContactRelation;
+                    return copy;
+                  });
+                }
+              }}
+              placeholder="e.g. Spouse, Parent"
+              error={errors.emergencyContactRelation}
+            />
+          </div>
+        </div>
+      </SectionCard>
+
+      {/* Part 2: Identity Documents Card */}
+      <SectionCard className="space-y-6 p-6 md:p-8">
+        <h3 className="text-xl font-bold text-gold-200 border-b border-gold-300/10 pb-4">
+          Identity Documents
         </h3>
 
         <div className="space-y-6">
           <div
-            className={`p-5 rounded-xl border bg-navy-900/30 space-y-4 transition-all ${submitted && errors.passportOrDL ? "border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]" : "border-gold-300/10"}`}
+            className={`p-5 rounded-xl border bg-navy-900/30 space-y-4 transition-all ${submitted && docErrors.passportOrDL ? "border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]" : "border-gold-300/10"}`}
           >
             <div>
               <h4 className="text-sm font-semibold text-gold-50">
@@ -138,9 +443,9 @@ export default function StepIdentityVerification({
                 portal={portal}
               />
             </div>
-            {submitted && errors.passportOrDL && (
+            {submitted && docErrors.passportOrDL && (
               <p className="text-xs text-red-500 font-semibold">
-                {errors.passportOrDL}
+                {docErrors.passportOrDL}
               </p>
             )}
           </div>
@@ -148,7 +453,7 @@ export default function StepIdentityVerification({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <div
-                className={`transition-all rounded-xl border ${submitted && errors.proofOfAddress ? "border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]" : "border-transparent"}`}
+                className={`transition-all rounded-xl border ${submitted && docErrors.proofOfAddress ? "border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]" : "border-transparent"}`}
               >
                 <DocUploadRow
                   label="Proof of Address (issued within last 3 months) *"
@@ -171,9 +476,9 @@ export default function StepIdentityVerification({
                   </div>
                 </DocUploadRow>
               </div>
-              {submitted && errors.proofOfAddress && (
+              {submitted && docErrors.proofOfAddress && (
                 <p className="text-xs text-red-500 font-semibold px-1">
-                  {errors.proofOfAddress}
+                  {docErrors.proofOfAddress}
                 </p>
               )}
             </div>
@@ -181,7 +486,7 @@ export default function StepIdentityVerification({
             <div className="space-y-6">
               <div className="space-y-2">
                 <div
-                  className={`transition-all rounded-xl border ${submitted && errors.rightToWork ? "border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]" : "border-transparent"}`}
+                  className={`transition-all rounded-xl border ${submitted && docErrors.rightToWork ? "border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]" : "border-transparent"}`}
                 >
                   <DocUploadRow
                     label="Right to Work in the UK *"
@@ -189,16 +494,16 @@ export default function StepIdentityVerification({
                     portal={portal}
                   />
                 </div>
-                {submitted && errors.rightToWork && (
+                {submitted && docErrors.rightToWork && (
                   <p className="text-xs text-red-500 font-semibold px-1">
-                    {errors.rightToWork}
+                    {docErrors.rightToWork}
                   </p>
                 )}
               </div>
 
               <div className="space-y-2">
                 <div
-                  className={`transition-all rounded-xl border ${submitted && errors.niProof ? "border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]" : "border-transparent"}`}
+                  className={`transition-all rounded-xl border ${submitted && docErrors.niProof ? "border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]" : "border-transparent"}`}
                 >
                   <DocUploadRow
                     label="Proof of National Insurance Number *"
@@ -218,9 +523,9 @@ export default function StepIdentityVerification({
                     </div>
                   </DocUploadRow>
                 </div>
-                {submitted && errors.niProof && (
+                {submitted && docErrors.niProof && (
                   <p className="text-xs text-red-500 font-semibold px-1">
-                    {errors.niProof}
+                    {docErrors.niProof}
                   </p>
                 )}
               </div>
@@ -263,16 +568,16 @@ export default function StepIdentityVerification({
                     Business Use Insurance Cover *
                   </h5>
                   <div
-                    className={`bg-navy-950/40 p-4 rounded-xl border space-y-2 transition-all ${submitted && errors.businessInsurance ? "border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]" : "border-gold-300/10"}`}
+                    className={`bg-navy-950/40 p-4 rounded-xl border space-y-2 transition-all ${submitted && docErrors.businessInsurance ? "border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]" : "border-gold-300/10"}`}
                   >
                     <DocUploadRow
                       label="Upload Certificate"
                       type="BUSINESS_INSURANCE"
                       portal={portal}
                     />
-                    {submitted && errors.businessInsurance && (
+                    {submitted && docErrors.businessInsurance && (
                       <p className="text-xs text-red-500 font-semibold">
-                        {errors.businessInsurance}
+                        {docErrors.businessInsurance}
                       </p>
                     )}
                     <p className="text-xs text-red-400 mt-3 leading-relaxed bg-red-950/20 p-2 rounded border border-red-900/30">

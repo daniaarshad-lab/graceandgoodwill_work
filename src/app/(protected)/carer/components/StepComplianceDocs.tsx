@@ -59,9 +59,9 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
     <div className="space-y-6 max-w-4xl mx-auto">
       <SectionCard className="space-y-6 p-6 md:p-8">
         <h3 className="text-xl font-bold text-gold-200 border-b border-gold-300/10 pb-4">
-        Required Compliance Documents
+          Required Compliance Documents
         </h3>
-        
+
         <div className="bg-red-950/20 p-3 rounded-lg border border-red-900/30">
           <p className="text-xs text-red-400 leading-relaxed font-medium">
             * Important: Please ensure all uploaded documents (like your DBS certificate) are in-date and have not expired. Out-of-date documents will not be accepted.
@@ -80,11 +80,11 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
             const isStaged = !!selectedFiles[docItem.type.toLowerCase()];
             const isMissing = !doc && !isStaged;
             return (
-              <DocUploadRow 
-                key={docItem.type} 
-                label={docItem.label} 
-                type={docItem.type} 
-                portal={portal} 
+              <DocUploadRow
+                key={docItem.type}
+                label={docItem.label}
+                type={docItem.type}
+                portal={portal}
                 isMissing={submitted && isMissing}
               />
             );
@@ -95,11 +95,11 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
           <h4 className="text-lg font-semibold text-gold-200 mb-4">Additional References (Optional)</h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {Array.from({ length: additionalRefsCount }).map((_, index) => (
-              <DocUploadRow 
-                key={`ADDITIONAL_REFERENCE_${index + 1}`} 
-                label="Upload Additional Reference" 
-                type={`ADDITIONAL_REFERENCE_${index + 1}`} 
-                portal={portal} 
+              <DocUploadRow
+                key={`ADDITIONAL_REFERENCE_${index + 1}`}
+                label="Upload Additional Reference"
+                type={`ADDITIONAL_REFERENCE_${index + 1}`}
+                portal={portal}
               />
             ))}
           </div>
@@ -113,11 +113,11 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
         </div>
 
         <div className="space-y-4 pt-4 border-t border-gold-300/10">
-          <Input 
-            label="DBS Update Service Number (if subscribed)" 
-            value={dbsUpdateServiceNumber} 
-            onChange={(e) => setDbsUpdateServiceNumber(e.target.value)} 
-            placeholder="Enter DBS Update Service Number" 
+          <Input
+            label="DBS Update Service Number (if subscribed)"
+            value={dbsUpdateServiceNumber}
+            onChange={(e) => setDbsUpdateServiceNumber(e.target.value)}
+            placeholder="Enter DBS Update Service Number"
           />
 
           <div className="space-y-2">
@@ -153,7 +153,7 @@ function DocUploadRow({ label, type, portal, isMissing }: { label: string, type:
   const { complianceDocs, stageDocUpload, handleUpdateDoc, selectedFiles } = portal;
   const doc = complianceDocs.find((d: ComplianceDoc) => d.type === type);
   const isStaged = !!selectedFiles[type.toLowerCase()];
-  
+
   return (
     <div className={`p-4 rounded-xl border flex flex-col gap-2 transition-all ${isMissing ? 'border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)] bg-red-950/5' : 'border-gold-300/10 bg-navy-950/40'}`}>
       <div className="flex justify-between items-start">
@@ -170,17 +170,17 @@ function DocUploadRow({ label, type, portal, isMissing }: { label: string, type:
       </div>
       <label className="cursor-pointer text-xs font-semibold text-gold-DEFAULT hover:text-gold-200 inline-block mt-1">
         {doc ? "Update File" : isStaged ? "Change Selected" : "Choose File"}
-        <input 
-          type="file" 
-          accept=".pdf,.png,.jpg,.jpeg" 
-          className="hidden" 
+        <input
+          type="file"
+          accept=".pdf,.png,.jpg,.jpeg"
+          className="hidden"
           onChange={(e) => {
             if (doc) {
               handleUpdateDoc(doc.id, type, e);
             } else {
               stageDocUpload(type, e);
             }
-          }} 
+          }}
         />
       </label>
     </div>

@@ -65,6 +65,7 @@ export function useCarerPortal({
 
   useEffect(() => {
     if (profile) {
+      console.log("[Video Upload debug] loaded profile in useCarerPortal:", profile);
       setBio(profile.summary ?? profile.bio ?? "");
 
       if (Array.isArray(profile.careSpecialties)) {
@@ -206,10 +207,10 @@ export function useCarerPortal({
         await dispatch(updateCarerStep2(step2Payload)).unwrap();
       }
 
-      showSuccessToast(
-        "Profile Saved",
-        "Your profile information has been saved successfully.",
-      );
+      // showSuccessToast(
+      //   "Profile Saved",
+      //   "Your profile information has been saved successfully.",
+      // );
       return true;
     } catch (error: any) {
       const errorMsg =
@@ -607,5 +608,7 @@ export function useCarerPortal({
     handleDeleteDoc,
     handleUpdateDoc,
     submitProfile,
+    profile,
+    introVideoUrl: profile?.introVideoUrl || null,
   };
 }

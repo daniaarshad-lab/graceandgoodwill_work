@@ -14,16 +14,16 @@ export interface OnboardingStepperProps {
 
 const ONBOARDING_STEPS: StepItem[] = [
   { id: 1, label: "Register", description: "Created" },
-  { id: 2, label: "Personal", description: "Info" },
-  { id: 3, label: "Identity", description: "Docs" },
-  { id: 4, label: "Professional", description: "Info" },
-  { id: 5, label: "Training", description: "Certs" },
-  { id: 6, label: "Compliance", description: "Docs" },
-  { id: 7, label: "Insurance", description: "Docs" },
-  { id: 8, label: "Additional", description: "Quals" },
-  { id: 9, label: "Video", description: "Intro" },
+  { id: 2, label: "Identity", description: "Docs" },
+  { id: 3, label: "Professional", description: "Info" },
+  { id: 4, label: "Training", description: "Certs" },
+  { id: 5, label: "Compliance", description: "Docs" },
+  { id: 6, label: "Insurance", description: "Docs" },
+  { id: 7, label: "Additional", description: "Quals" },
+  { id: 8, label: "Video", description: "Intro" },
+  { id: 9, label: "Selection", description: "Options" },
   { id: 10, label: "Declaration", description: "Consent" },
-  { id: 11, label: "Service Options", description: "Plan" },
+  { id: 11, label: "Review", description: "Submit" },
   { id: 12, label: "Complete", description: "Ready" },
 ];
 
@@ -167,16 +167,16 @@ export default function OnboardingStepper({ currentStep, setCurrentStep }: Onboa
   const calculateProgress = () => {
     switch (currentStep) {
       case 1: return 8;
-      case 2: return 16;
+      case 2: return 17;
       case 3: return 25;
       case 4: return 33;
-      case 5: return 41;
+      case 5: return 42;
       case 6: return 50;
       case 7: return 58;
-      case 8: return 66;
+      case 8: return 67;
       case 9: return 75;
       case 10: return 83;
-      case 11: return 91;
+      case 11: return 92;
       case 12: return 100;
       default: return 0;
     }
@@ -189,7 +189,7 @@ export default function OnboardingStepper({ currentStep, setCurrentStep }: Onboa
 
       {/* Classic Horizontal Stepper */}
       <div className="w-full mx-auto pb-4 overflow-x-auto hide-scrollbar">
-        <div className="flex justify-between items-start min-w-[900px] w-full relative px-2">
+        <div className="flex justify-between items-start min-w-[1020px] w-full relative px-2">
           {ONBOARDING_STEPS.map((step, index) => (
             <StepperStepItem
               key={step.id}

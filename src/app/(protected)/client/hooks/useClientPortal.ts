@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Carer } from "../types/client-ui.types";
 import { validateCareForm, scrollToFirstError } from "../utils/validation";
 import { useAppDispatch } from "@/store/hooks";
@@ -39,6 +39,11 @@ export function useClientPortal({ user }: UseClientPortalProps) {
   const [isCareSubmitting, setIsCareSubmitting] = useState(false);
   // --- STATE FOR REQUEST INTRODUCTION ---
   const [selectedCarer, setSelectedCarer] = useState<Carer | null>(null);
+
+  // --- HANDLERS: CLIENT PLACEMENTS ---
+  const fetchPlacements = useCallback(() => {
+    dispatch(getClientPlacements());
+  }, [dispatch]);
 
   // --- HANDLERS: CARE REQUEST SUBMISSION ---
   const handleCareSubmit = async (e: React.FormEvent) => {
@@ -163,7 +168,7 @@ export function useClientPortal({ user }: UseClientPortalProps) {
     placements,
     placementsLoading,
     placementsError,
-    fetchPlacements: () => dispatch(getClientPlacements()),
+    fetchPlacements,
 
     careFullName,
     setCareFullName,

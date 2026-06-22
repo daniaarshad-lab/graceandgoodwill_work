@@ -8,6 +8,7 @@ import {
   IntroductionRequestPayload,
   IntroductionRequest,
   UpdateClientProfilePayload,
+  ClientPlacement,
 } from "@/types/client.types";
 import { CreateEnquiryPayload } from "@/types/client.types";
 import { Carer } from "@/app/(protected)/client/types/client-ui.types";
@@ -17,6 +18,9 @@ const initialState: ClientState = {
   profile: null,
   careRequests: [],
   carers: [],
+  placements: [],
+  placementsLoading: false,
+  placementsError: null,
 
   enquiries: [],
   selectedEnquiry: null,
@@ -135,6 +139,9 @@ const clientSlice = createSlice({
     clearClientProfile(state) {
       state.profile = null;
       state.careRequests = [];
+      state.placements = [];
+      state.placementsLoading = false;
+      state.placementsError = null;
 
       state.enquiries = [];
       state.selectedEnquiry = null;
@@ -316,6 +323,25 @@ const clientSlice = createSlice({
       state.loading = false;
       state.error = action.payload || "Failed to fetch carers";
     });
+
+    // getClientPlacements
+    builder.addCase(getClientPlacements.pending, (state) => {
+      state.placementsLoading = true;
+      state.placementsError = null;
+    });
+
+    builder.addCase(
+      getClientPlacements.fulfilled,
+      (state, action: PayloadAction<ClientPlacement[]>) => {
+        state.placementsLoading = false;
+        state.placements = action.payload;
+      },
+    );
+
+    builder.addCase(getClientPlacements.rejected, (state, action) => {
+      state.placementsLoading = false;
+      state.placementsError = action.payload || "Failed to fetch placements";
+    });
   },
 });
 
@@ -364,6 +390,19 @@ export const sendEnquiryMessage = createAsyncThunk<
     }
   },
 );
+
+export const getClientPlacements = createAsyncThunk<
+  ClientPlacement[],
+  void,
+  { rejectValue: string }
+>("client/getClientPlacements", async (_, { rejectWithValue }) => {
+  try {
+    return await clientService.getPlacements();
+  } catch (error: any) {
+    console.error("[Thunk: getClientPlacements] Error:", error);
+    return rejectWithValue(error?.message || "Failed to fetch client placements");
+  }
+});
 
 export const { clearClientProfile } = clientSlice.actions;
 

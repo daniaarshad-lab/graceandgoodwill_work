@@ -7,6 +7,7 @@ import {
   IntroductionRequestPayload,
   IntroductionRequest,
   UpdateClientProfilePayload,
+  ClientPlacement,
 } from "@/types/client.types";
 
 export const clientService = {
@@ -219,5 +220,23 @@ export const clientService = {
       },
     });
     return response;
+  },
+
+  async getPlacements(): Promise<ClientPlacement[]> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch("/client/placements", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
   },
 };

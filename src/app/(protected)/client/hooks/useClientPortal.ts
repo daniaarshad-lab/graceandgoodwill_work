@@ -6,6 +6,7 @@ import {
   createCareRequest,
   fetchCareRequests,
   requestIntroduction,
+  getClientPlacements,
 } from "@/store/slices/clientSlice";
 import { useAppSelector } from "@/store/hooks";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
@@ -18,7 +19,7 @@ export function useClientPortal({ user }: UseClientPortalProps) {
   const dispatch = useAppDispatch();
 
   // --- CORE DATA STATES ---
-  const { careRequests, carers } = useAppSelector((state) => state.client);
+  const { careRequests, carers, placements, placementsLoading, placementsError } = useAppSelector((state) => state.client);
 
   // --- FORM STATES: CARE REQUEST ---
   const [careFullName, setCareFullName] = useState(
@@ -159,6 +160,10 @@ export function useClientPortal({ user }: UseClientPortalProps) {
   return {
     careRequests,
     carers,
+    placements,
+    placementsLoading,
+    placementsError,
+    fetchPlacements: () => dispatch(getClientPlacements()),
 
     careFullName,
     setCareFullName,

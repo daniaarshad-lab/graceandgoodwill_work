@@ -63,10 +63,37 @@ export interface CreateCareRequestPayload {
   adminMatching?: boolean;
 }
 
+export interface ClientPlacement {
+  id: string;
+  carerProfileId: string;
+  clientProfileId: string;
+  careRequestId: string | null;
+  hourlyRate: string | number;
+  status: "ACTIVE" | "COMPLETED" | "TERMINATED" | "CANCELLED" | "PENDING" | "MATCHING" | "APPROVED";
+  startDate: string;
+  endDate: string | null;
+  createdAt: string;
+  updatedAt: string;
+  carerProfile: {
+    id: string;
+    user: {
+      id: string;
+      firstName: string;
+      lastName: string;
+      email: string;
+      phoneNumber: string;
+    };
+  };
+  careRequest: CareRequest | null;
+}
+
 export interface ClientState {
   profile: ClientProfile | null;
   careRequests: CareRequest[];
   carers: Carer[];
+  placements: ClientPlacement[];
+  placementsLoading: boolean;
+  placementsError: string | null;
 
   enquiries: any[];
   selectedEnquiry: any | null;

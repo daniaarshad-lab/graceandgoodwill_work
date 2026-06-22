@@ -60,6 +60,12 @@ export default function ClientDashboard() {
   // Custom hook containing state + handlers
   const portal = useClientPortal({ user });
 
+  useEffect(() => {
+    if (activeTab === "tracking") {
+      portal.fetchPlacements();
+    }
+  }, [activeTab, portal.fetchPlacements]);
+
   return (
     <main className="min-h-screen bg-navy-950 py-10 text-gold-100">
       <div className="container-wrapper space-y-8">
@@ -120,7 +126,13 @@ export default function ClientDashboard() {
 
           {/* TAB 4: REQUEST TRACKING */}
           {activeTab === "tracking" && (
-            <RequestTracking careRequests={portal.careRequests} />
+            <RequestTracking
+              placements={portal.placements}
+              loading={portal.placementsLoading}
+              error={portal.placementsError}
+              onRetry={portal.fetchPlacements}
+              setActiveTab={setActiveTab}
+            />
           )}
 
           {/* TAB 5: SUPPORT & ENQUIRIES */}

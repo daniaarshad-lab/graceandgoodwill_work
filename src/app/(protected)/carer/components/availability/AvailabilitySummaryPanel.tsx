@@ -16,6 +16,7 @@ interface AvailabilitySummaryPanelProps {
   ) => void;
   isSaving: boolean;
   hasChanges: boolean;
+  isValid: boolean;
 }
 
 export default function AvailabilitySummaryPanel({
@@ -25,6 +26,7 @@ export default function AvailabilitySummaryPanel({
   onQuickAction,
   isSaving,
   hasChanges,
+  isValid,
 }: AvailabilitySummaryPanelProps) {
   const ranges = useMemo(
     () => groupDatesIntoRanges(selectedDates),
@@ -153,13 +155,13 @@ export default function AvailabilitySummaryPanel({
         <button
           type="button"
           onClick={onSave}
-          disabled={isSaving || !hasChanges}
+          disabled={isSaving || !hasChanges || !isValid}
           className={`w-full py-3 rounded-xl text-sm font-semibold
             transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]
             outline-none cursor-pointer
             focus:ring-2 focus:ring-gold-muted/50 focus:ring-offset-2 focus:ring-offset-navy-950
             disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0
-            ${hasChanges && !isSaving
+            ${hasChanges && !isSaving && isValid
               ? "bg-[#b59469] text-navy-950 hover:bg-[#c9a87d] hover:-translate-y-[1px] hover:shadow-[0_8px_30px_rgba(160,128,84,0.24)] active:translate-y-0 active:shadow-none"
               : "bg-gold-muted/15 text-gold-100/50 border border-gold-muted/20"
             }`}

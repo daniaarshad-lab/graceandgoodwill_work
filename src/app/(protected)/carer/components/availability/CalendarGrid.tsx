@@ -40,7 +40,7 @@ export default function CalendarGrid({
   const [currentYear, setCurrentYear] = useState(now.getFullYear());
   const [currentMonth, setCurrentMonth] = useState(now.getMonth());
   const [hoverDate, setHoverDate] = useState<string | null>(null);
-  const [selectionMode, setSelectionMode] = useState<"single" | "range">("single");
+  const selectionMode = "range";
 
   const handlePrevMonth = useCallback(() => {
     setCurrentMonth((prev) => {
@@ -119,12 +119,12 @@ export default function CalendarGrid({
 
   // Compute preview range (hover feedback while building a range)
   const previewSet = useMemo<Set<string>>(() => {
-    if (selectionMode !== "range" || !rangeStart) return new Set();
+    if (!rangeStart) return new Set();
     if (!hoverDate) return new Set([rangeStart]);
     const lo = rangeStart < hoverDate ? rangeStart : hoverDate;
     const hi = rangeStart < hoverDate ? hoverDate : rangeStart;
     return new Set(expandRange(lo, hi));
-  }, [selectionMode, rangeStart, hoverDate]);
+  }, [rangeStart, hoverDate]);
 
   // Compute range position for each cell
   const getRangePosition = useCallback(
@@ -159,40 +159,45 @@ export default function CalendarGrid({
     [rangeStart, hoverDate]
   );
 
+  const isAdjacentToSelected = useCallback((dateStr: string) => {
+    const prev = getPrevDay(dateStr);
+    const next = getNextDayStr(dateStr);
+    return selectedDates.has(prev) || selectedDates.has(next);
+  }, [selectedDates]);
+
   // Date click handler — implements range selection
   const handleDateMouseDown = useCallback(
     (dateStr: string) => {
-      if (selectionMode === "single") {
-        onToggleDate(dateStr);
-      } else {
-        if (rangeStart === null) {
-          // First click: if date is already selected, just toggle it off
-          if (selectedDates.has(dateStr)) {
-            onToggleDate(dateStr);
-          } else {
-            // Start a new range selection
-            onSetRangeStart(dateStr);
-          }
+      if (rangeStart === null) {
+        // First click: if date is already selected, just toggle it off
+        if (selectedDates.has(dateStr)) {
+          onToggleDate(dateStr);
+        } else if (isAdjacentToSelected(dateStr)) {
+          // If it is adjacent to existing selection, add it immediately to merge
+          onToggleDate(dateStr);
         } else {
-          // Second click: complete the range
-          const lo = rangeStart < dateStr ? rangeStart : dateStr;
-          const hi = rangeStart < dateStr ? dateStr : rangeStart;
-          onAddRange(lo, hi);
-          onSetRangeStart(null);
-          setHoverDate(null);
+          // Start a new range selection
+          onSetRangeStart(dateStr);
         }
+      } else {
+        // Second click: complete the range
+        const lo = rangeStart < dateStr ? rangeStart : dateStr;
+        const hi = rangeStart < dateStr ? dateStr : rangeStart;
+        onAddRange(lo, hi);
+        onSetRangeStart(null);
+        setHoverDate(null);
       }
     },
-    [selectionMode, rangeStart, selectedDates, onToggleDate, onSetRangeStart, onAddRange]
+    [rangeStart, selectedDates, onToggleDate, onSetRangeStart, onAddRange, isAdjacentToSelected]
   );
 
   const handleDateMouseEnter = useCallback(
     (dateStr: string) => {
-      if (selectionMode === "range" && rangeStart) {
+      if (rangeStart) {
         setHoverDate(dateStr);
       }
     },
-    [selectionMode, rangeStart]
+    [rangeStart]
   );
 
   return (
@@ -242,43 +247,7 @@ export default function CalendarGrid({
         </div>
       </div>
 
-      {/* Selection Mode Toggle */}
-      <div className="flex items-center gap-1.5 mb-4 p-0.5 bg-navy-950/45 border border-gold-300/6 rounded-xl w-fit">
-        <button
-          type="button"
-          onClick={() => {
-            setSelectionMode("single");
-            onSetRangeStart(null);
-            setHoverDate(null);
-          }}
-          className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 cursor-pointer ${selectionMode === "single"
-              ? "bg-gold-DEFAULT/15 text-gold-50 border border-gold-DEFAULT/20"
-              : "text-gold-100/50 hover:text-gold-100 border border-transparent"
-            }`}
-        >
-          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="3" y="3" width="18" height="18" rx="2" />
-          </svg>
-          Single Day
-        </button>
-        <button
-          type="button"
-          onClick={() => setSelectionMode("range")}
-          className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 cursor-pointer ${selectionMode === "range"
-              ? "bg-gold-DEFAULT/15 text-gold-50 border border-gold-DEFAULT/20"
-              : "text-gold-100/50 hover:text-gold-100 border border-transparent"
-            }`}
-        >
-          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="3" y="4" width="18" height="16" rx="2" />
-            <path d="M16 2v4" />
-            <path d="M8 2v4" />
-            <path d="M3 10h18" />
-            <path d="M17 14l-3 3 3 3" />
-          </svg>
-          Date Range
-        </button>
-      </div>
+
 
       {/* Range selection hint */}
       {rangeStart && (
@@ -369,12 +338,12 @@ function ChevronRight() {
 
 function getPrevDay(dateStr: string): string {
   const [y, m, d] = dateStr.split("-").map(Number);
-  const date = new Date(y, m - 1, d - 1);
+  const date = new Date(y, m - 1, d - 1, 12, 0, 0);
   return toISODateString(date);
 }
 
 function getNextDayStr(dateStr: string): string {
   const [y, m, d] = dateStr.split("-").map(Number);
-  const date = new Date(y, m - 1, d + 1);
+  const date = new Date(y, m - 1, d + 1, 12, 0, 0);
   return toISODateString(date);
 }

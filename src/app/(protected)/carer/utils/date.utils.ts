@@ -22,7 +22,7 @@ const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 export function isValidDateString(dateStr: string): boolean {
   if (!ISO_DATE_RE.test(dateStr)) return false;
   const [y, m, d] = dateStr.split("-").map(Number);
-  const date = new Date(y, m - 1, d);
+  const date = new Date(y, m - 1, d, 12, 0, 0);
   return (
     date.getFullYear() === y &&
     date.getMonth() === m - 1 &&
@@ -106,7 +106,7 @@ export function sortDatesAscending(dates: string[]): string[] {
 /** Returns the next calendar day after a given ISO date string */
 export function getNextDay(dateStr: string): string {
   const [y, m, d] = dateStr.split("-").map(Number);
-  const date = new Date(y, m - 1, d + 1);
+  const date = new Date(y, m - 1, d + 1, 12, 0, 0);
   return toISODateString(date);
 }
 

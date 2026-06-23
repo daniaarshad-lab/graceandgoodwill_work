@@ -9,7 +9,10 @@ import {
   expandRange,
   toISODateString,
   DateRange,
+  groupDatesIntoRanges,
+  rangeDayCount,
 } from "../utils/date.utils";
+import { Info } from "lucide-react";
 
 import SectionCard from "./shared/SectionCard";
 import CalendarGrid from "./availability/CalendarGrid";
@@ -169,13 +172,19 @@ export default function AvailabilitySchedule({
     [selectedDates],
   );
 
+  const isValid = useMemo(() => {
+    const ranges = groupDatesIntoRanges(selectedDatesArray);
+    if (ranges.length === 0) return false;
+    return ranges.every((range) => rangeDayCount(range) >= 3);
+  }, [selectedDatesArray]);
+
   // ─── Render ────────────────────────────────────────────────────────────────
 
   return (
     <SectionCard className="max-w-6xl mx-auto !p-0 overflow-hidden">
       <div className="flex flex-col lg:flex-row min-h-[560px]">
         {/* Left: Calendar */}
-        <div className="flex-1 p-6 lg:p-8">
+        <div className="flex-1 p-6 lg:p-8 flex flex-col">
           {/* Section Header */}
           <div className="mb-5">
             <h3 className="text-lg font-bold text-gold-200">
@@ -187,16 +196,40 @@ export default function AvailabilitySchedule({
             </p>
           </div>
 
+          {/* Availability Guidance Notice */}
+          <div className="mb-6 p-4 rounded-xl bg-navy-900/40 border border-gold-300/10 flex items-start gap-3 backdrop-blur-md">
+            <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gold-DEFAULT/10 border border-gold-DEFAULT/20 flex items-center justify-center text-gold-DEFAULT">
+              <Info className="w-4 h-4 text-gold-DEFAULT" />
+            </div>
+            <div className="flex-1 space-y-1">
+              <p className="text-xs font-semibold text-gold-200">
+                Please provide a minimum of 3 consecutive available days.
+              </p>
+              <p className="text-xs text-gold-100/60 leading-relaxed font-light">
+                We recommend adding as much future availability as possible, ideally several months in advance, so families can plan care well ahead of time and view your future availability.
+              </p>
+            </div>
+          </div>
+
           {isProfileLoading || !isHydrated ? (
-            <CalendarSkeleton />
+            <div className="flex-1">
+              <CalendarSkeleton />
+            </div>
           ) : (
-            <CalendarGrid
-              selectedDates={selectedDates}
-              onAddRange={handleAddRange}
-              onToggleDate={handleToggleDate}
-              rangeStart={rangeStart}
-              onSetRangeStart={setRangeStart}
-            />
+            <div className="flex-1 flex flex-col">
+              <CalendarGrid
+                selectedDates={selectedDates}
+                onAddRange={handleAddRange}
+                onToggleDate={handleToggleDate}
+                rangeStart={rangeStart}
+                onSetRangeStart={setRangeStart}
+              />
+              {!isValid && (
+                <p className="text-red-500 text-xs font-semibold mt-4">
+                  Please provide a minimum of 3 consecutive available days.
+                </p>
+              )}
+            </div>
           )}
         </div>
 
@@ -216,6 +249,7 @@ export default function AvailabilitySchedule({
               onQuickAction={handleQuickAction}
               isSaving={isSaving}
               hasChanges={hasChanges}
+              isValid={isValid}
             />
           )}
         </div>

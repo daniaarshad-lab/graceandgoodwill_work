@@ -419,6 +419,228 @@ export default function CarerApplications({
                   </div>
                 </div>
               </div>
+
+              {/* ========================================
+                  1. REGISTRATION INFORMATION
+                 ======================================== */}
+              <div className="border-t border-gold-300/10 pt-6">
+                <h5 className="text-base font-bold text-gold-200 mb-4 uppercase tracking-wide">
+                  Registration Information
+                </h5>
+                <div className="rounded-xl border border-gold-300/10 bg-navy-950/40 p-5 shadow-soft">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="text-xs text-gold-100/40 font-semibold uppercase block mb-1">
+                        Registered Since
+                      </span>
+                      <p className="text-gold-200 font-bold">04 Jun 2026</p>
+                    </div>
+                    <div>
+                      <span className="text-xs text-gold-100/40 font-semibold uppercase block mb-1">
+                        Duration With Grace & Goodwill
+                      </span>
+                      <p className="text-gold-200 font-bold">19 Days</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* ========================================
+                  2. CURRENT AVAILABILITY
+                 ======================================== */}
+              <div className="border-t border-gold-300/10 pt-6">
+                <h5 className="text-base font-bold text-gold-200 mb-4 uppercase tracking-wide">
+                  Current Availability
+                </h5>
+                <div className="rounded-xl border border-gold-300/10 bg-navy-950/40 p-5 shadow-soft">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <div>
+                      <span className="text-xs text-gold-100/40 font-semibold uppercase block mb-1">
+                        Available From
+                      </span>
+                      <p className="text-gold-200 font-bold">08:00 AM</p>
+                    </div>
+                    <div>
+                      <span className="text-xs text-gold-100/40 font-semibold uppercase block mb-1">
+                        Available Until
+                      </span>
+                      <p className="text-gold-200 font-bold">08:00 PM</p>
+                    </div>
+                    <div>
+                      <span className="text-xs text-gold-100/40 font-semibold uppercase block mb-1">
+                        Consecutive Available Days
+                      </span>
+                      <p className="text-gold-200 font-bold">5 Days (Mon - Fri)</p>
+                    </div>
+                    <div>
+                      <span className="text-xs text-gold-100/40 font-semibold uppercase block mb-1">
+                        Current Availability Status
+                      </span>
+                      <div>
+                        <span className="inline-flex rounded-full px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                          Available
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* ========================================
+                  3. PLACEMENT HISTORY
+                 ======================================== */}
+              <div className="border-t border-gold-300/10 pt-6">
+                <h5 className="text-base font-bold text-gold-200 mb-4 uppercase tracking-wide">
+                  Placement History
+                </h5>
+                <div className="border border-gold-300/10 rounded-xl bg-navy-950/40 overflow-hidden flex flex-col w-full">
+                  <div className="max-h-[300px] overflow-y-auto overflow-x-auto pr-1">
+                    <table className="w-full text-left border-collapse text-xs">
+                      <thead>
+                        <tr className="border-b border-gold-300/10 bg-navy-950/80 text-[10px] uppercase tracking-wider text-gold-200/60 sticky top-0 z-10">
+                          <th className="py-3 px-4 font-bold">Client Name</th>
+                          <th className="py-3 px-4 font-bold">Client Address</th>
+                          <th className="py-3 px-4 font-bold">Placement Start Date</th>
+                          <th className="py-3 px-4 font-bold">Placement End Date</th>
+                          <th className="py-3 px-4 font-bold">Placement Status</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gold-300/5">
+                        <tr className="transition duration-200 hover:bg-gold-500/5 text-gold-100/80">
+                          <td className="py-3.5 px-4 font-semibold text-gold-200">Winston Churchill</td>
+                          <td className="py-3.5 px-4 text-gold-100/50">10 Downing Street, London, SW1A 2AA</td>
+                          <td className="py-3.5 px-4 text-gold-100/40">2026-05-29</td>
+                          <td className="py-3.5 px-4 text-gold-100/40">Ongoing</td>
+                          <td className="py-3.5 px-4">
+                            <span className="inline-block text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                              Active
+                            </span>
+                          </td>
+                        </tr>
+                        <tr className="transition duration-200 hover:bg-gold-500/5 text-gold-100/80">
+                          <td className="py-3.5 px-4 font-semibold text-gold-200">Arthur Pendelton</td>
+                          <td className="py-3.5 px-4 text-gold-100/50">42 Baker Street, London, NW1 6XE</td>
+                          <td className="py-3.5 px-4 text-gold-100/40">2026-01-15</td>
+                          <td className="py-3.5 px-4 text-gold-100/40">2026-04-30</td>
+                          <td className="py-3.5 px-4">
+                            <span className="inline-block text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                              Completed
+                            </span>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              {/* ========================================
+                  4. INTERNAL NOTES TIMELINE
+                 ======================================== */}
+              <div className="border-t border-gold-300/10 pt-6">
+                <h5 className="text-base font-bold text-gold-200 mb-4 uppercase tracking-wide">
+                  Internal Notes Timeline
+                </h5>
+                <div className="space-y-4">
+                  <div className="relative pl-6 border-l-2 border-gold-300/20 space-y-4">
+                    {/* Note 1 */}
+                    <div className="relative">
+                      <span className="absolute -left-[31px] top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-gold-DEFAULT text-navy-950 text-[10px] font-black">
+                        •
+                      </span>
+                      <div className="rounded-xl border border-gold-300/10 bg-navy-950/40 p-4 space-y-2">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                          <h6 className="text-sm font-bold text-gold-200">Performance Review</h6>
+                          <span className="text-[10px] text-gold-100/40 font-mono">24 Jun 2026 - 10:35 AM</span>
+                        </div>
+                        <p className="text-xs text-gold-100/70">Client reported excellent communication.</p>
+                        <div className="flex items-center gap-1.5 text-[10px] text-gold-100/30">
+                          <span className="font-semibold uppercase">Admin:</span>
+                          <span>Sarah Connor</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Note 2 */}
+                    <div className="relative">
+                      <span className="absolute -left-[31px] top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-gold-DEFAULT text-navy-950 text-[10px] font-black">
+                        •
+                      </span>
+                      <div className="rounded-xl border border-gold-300/10 bg-navy-950/40 p-4 space-y-2">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                          <h6 className="text-sm font-bold text-gold-200">Initial Document Audit</h6>
+                          <span className="text-[10px] text-gold-100/40 font-mono">04 Jun 2026 - 02:15 PM</span>
+                        </div>
+                        <p className="text-xs text-gold-100/70">DBS and professional licenses verified successfully during registry check.</p>
+                        <div className="flex items-center gap-1.5 text-[10px] text-gold-100/30">
+                          <span className="font-semibold uppercase">Admin:</span>
+                          <span>James Bond</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* ========================================
+                  5. COMMUNICATION & FEEDBACK HISTORY
+                 ======================================== */}
+              <div className="border-t border-gold-300/10 pt-6">
+                <h5 className="text-base font-bold text-gold-200 mb-4 uppercase tracking-wide">
+                  Communication & Feedback History
+                </h5>
+                <div className="space-y-4">
+                  <div className="relative pl-6 border-l-2 border-gold-300/20 space-y-4">
+                    {/* Item 1 */}
+                    <div className="relative">
+                      <span className="absolute -left-[31px] top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-gold-DEFAULT text-navy-950 text-[10px] font-black">
+                        •
+                      </span>
+                      <div className="rounded-xl border border-gold-300/10 bg-navy-950/40 p-4 space-y-2">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                          <span className="inline-flex rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                            Client Feedback
+                          </span>
+                          <span className="text-[10px] text-gold-100/40 font-mono">22 Jun 2026 - 04:30 PM</span>
+                        </div>
+                        <p className="text-xs text-gold-100/70">Helena was extremely patient and supportive during Churchill's morning session. Family expressed sincere gratitude.</p>
+                      </div>
+                    </div>
+
+                    {/* Item 2 */}
+                    <div className="relative">
+                      <span className="absolute -left-[31px] top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-gold-DEFAULT text-navy-950 text-[10px] font-black">
+                        •
+                      </span>
+                      <div className="rounded-xl border border-gold-300/10 bg-navy-950/40 p-4 space-y-2">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                          <span className="inline-flex rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                            Concerns Raised
+                          </span>
+                          <span className="text-[10px] text-gold-100/40 font-mono">10 Jun 2026 - 11:00 AM</span>
+                        </div>
+                        <p className="text-xs text-gold-100/70">Slight delay reported in arrival due to local transport strike. Issue resolved with prompt notification.</p>
+                      </div>
+                    </div>
+
+                    {/* Item 3 */}
+                    <div className="relative">
+                      <span className="absolute -left-[31px] top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-gold-DEFAULT text-navy-950 text-[10px] font-black">
+                        •
+                      </span>
+                      <div className="rounded-xl border border-gold-300/10 bg-navy-950/40 p-4 space-y-2">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                          <span className="inline-flex rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                            Follow-up Actions
+                          </span>
+                          <span className="text-[10px] text-gold-100/40 font-mono">05 Jun 2026 - 09:00 AM</span>
+                        </div>
+                        <p className="text-xs text-gold-100/70">Conducted onboarding telephone verification with the carer to review guidelines.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div className="flex gap-4 border-t border-gold-300/10 pt-4 flex-shrink-0">

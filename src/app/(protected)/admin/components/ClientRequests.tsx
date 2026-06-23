@@ -5,6 +5,7 @@ import { ClientRequest } from "../types/admin.types";
 import { UseAdminPortalReturn } from "../hooks/useAdminPortal";
 import Button from "@/components/Button";
 import Pagination from "./shared/Pagination";
+import Link from "next/link";
 
 interface ClientRequestsProps {
   requests: ClientRequest[];
@@ -125,23 +126,35 @@ export default function ClientRequests({
               </div>
             </div>
 
-            {req.status !== "Matched" ? (
-              <Button
-                onClick={() => {
-                  setSelectedRequestForMatching(req);
-                  setActiveTab("matching");
-                }}
-                variant={req.urgency === "Emergency" ? "danger" : "primary"}
-                size="sm"
-                fullWidth
-              >
-                Match Available Carer ➔
-              </Button>
-            ) : (
-              <div className="flex items-center justify-center rounded-xl bg-emerald-500/10 p-3 text-center border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
-                ✓ Placement Assigned & Tracked
-              </div>
-            )}
+            <div className="flex flex-col gap-2 mt-4">
+              {req.status !== "Matched" ? (
+                <Button
+                  onClick={() => {
+                    setSelectedRequestForMatching(req);
+                    setActiveTab("matching");
+                  }}
+                  variant={req.urgency === "Emergency" ? "danger" : "primary"}
+                  size="sm"
+                  fullWidth
+                >
+                  Match Available Carer ➔
+                </Button>
+              ) : (
+                <div className="flex items-center justify-center rounded-xl bg-emerald-500/10 p-3 text-center border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
+                  ✓ Placement Assigned & Tracked
+                </div>
+              )}
+              
+              <Link href={`/admin/clients/${req.clientProfileId || req.id}`} className="w-full">
+                <Button
+                  variant="ghost-gold"
+                  size="sm"
+                  fullWidth
+                >
+                  View Details / Manage Client
+                </Button>
+              </Link>
+            </div>
           </SectionCard>
         ))}
       </div>

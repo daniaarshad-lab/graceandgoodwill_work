@@ -4,6 +4,7 @@ import StatusBadge from "./shared/StatusBadge";
 import { Placement, CarerApplication } from "../types/admin.types";
 import { UseAdminPortalReturn } from "../hooks/useAdminPortal";
 import Button from "@/components/Button";
+import Link from "next/link";
 
 interface PlacementTrackingProps {
   placements: Placement[];
@@ -79,9 +80,12 @@ export default function PlacementTracking({
               <div className="flex flex-wrap items-start justify-between gap-4 border-b border-gold-300/5 pb-4">
                 <div>
                   <div className="flex items-center space-x-3">
-                    <h4 className="text-lg font-bold text-gold-200">
+                    <Link
+                      href={`/admin/clients/${place.clientId}`}
+                      className="text-lg font-bold text-gold-200 hover:text-gold hover:underline transition duration-200 cursor-pointer"
+                    >
                       {place.clientName}
-                    </h4>
+                    </Link>
                     <span className="text-gold-100/40">➔</span>
                     <h4 className="text-lg font-bold text-gold">
                       {place.carerName}

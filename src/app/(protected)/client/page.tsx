@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { useAuth } from "@/contexts/AuthContext";
 import { useClientPortal } from "./hooks/useClientPortal";
@@ -34,12 +34,18 @@ const IntroductionModal = dynamic(
   () => import("./components/IntroductionModal"),
   { ssr: false },
 );
+const ClientOnboarding = dynamic(
+  () => import("./components/ClientOnboarding"),
+  { ssr: false },
+);
 
 export default function ClientDashboard() {
   const { user } = useAuth();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const tabParam = searchParams.get("tab") as TabType;
   const [activeTab, setActiveTab] = useState<TabType>("request");
+  const [isOnboarding, setIsOnboarding] = useState<boolean>(false);
 
   useEffect(() => {
     if (
@@ -57,6 +63,25 @@ export default function ClientDashboard() {
     }
   }, [tabParam]);
 
+  useEffect(() => {
+    if (!user) return;
+    const hasCompleted = localStorage.getItem(`client_onboarding_done_${user.id}`) === "true";
+    const wantsOnboarding = searchParams.get("onboarding") === "true";
+    if (wantsOnboarding && !hasCompleted) {
+      setIsOnboarding(true);
+    }
+  }, [user, searchParams]);
+
+  const handleOnboardingComplete = (journey: "match" | "browse") => {
+    if (user?.id) {
+      localStorage.setItem(`client_onboarding_done_${user.id}`, "true");
+    }
+    setIsOnboarding(false);
+    const targetTab = journey === "browse" ? "carers" : "request";
+    setActiveTab(targetTab);
+    router.push(`/client?tab=${targetTab}`);
+  };
+
   // Custom hook containing state + handlers
   const portal = useClientPortal({ user });
 
@@ -65,6 +90,16 @@ export default function ClientDashboard() {
       portal.fetchPlacements();
     }
   }, [activeTab, portal.fetchPlacements]);
+
+  if (isOnboarding) {
+    return (
+      <main className="min-h-screen bg-navy-950 py-10 text-gold-100 flex items-center justify-center">
+        <div className="container-wrapper w-full max-w-3xl">
+          <ClientOnboarding user={user} onComplete={handleOnboardingComplete} />
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-navy-950 py-10 text-gold-100">

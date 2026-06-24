@@ -11,12 +11,14 @@ import {
   MapPin,
   Calendar,
   Clock,
-  CreditCard,
   History,
   ShieldCheck,
   AlertTriangle,
+  DollarSign,
+  CheckCircle,
 } from "lucide-react";
 import { adminService } from "@/services/admin/admin.service";
+import { showSuccessToast, showErrorToast } from "@/utils/toast";
 
 // Define strict types for client detail view
 interface ClientDetail {
@@ -26,7 +28,7 @@ interface ClientDetail {
   phone: string;
   address: string;
   clientSince: string; // ISO date
-  status: string; // PENDING, UNDER_REVIEW, VERIFIED, REJECTED
+  status: string; // PENDING, UNDER_REVIEW, VERIFIED, REJECTED, APPROVED
   agreedWeeklyFee: number;
   totalPaidSoFar: number;
   placementHistory: {
@@ -35,82 +37,6 @@ interface ClientDetail {
     status: string; // Active, Matched, Completed
   }[];
 }
-
-// Complete mock database for fallbacks based on UI specifications and mock files
-const mockClientsDb: Record<string, ClientDetail> = {
-  "req-5": {
-    id: "req-5",
-    name: "Winston Churchill",
-    email: "w.churchill@downingstreet.gov.uk",
-    phone: "+44 7700 910777",
-    address: "10 Downing Street, London, SW1A 2AA",
-    clientSince: "2025-10-12",
-    status: "VERIFIED",
-    agreedWeeklyFee: 600.0,
-    totalPaidSoFar: 19200.0,
-    placementHistory: [
-      {
-        startDate: "2026-05-29",
-        carerName: "Helena Rostova",
-        status: "Active",
-      },
-    ],
-  },
-  "req-1": {
-    id: "req-1",
-    name: "Arthur Pendelton",
-    email: "a.pendelton@gmail.com",
-    phone: "+44 7700 910901",
-    address: "42 Baker Street, London, NW1 6XE",
-    clientSince: "2026-01-15",
-    status: "VERIFIED",
-    agreedWeeklyFee: 450.0,
-    totalPaidSoFar: 9450.0,
-    placementHistory: [
-      {
-        startDate: "2026-06-01",
-        carerName: "Eleanor Vance",
-        status: "Matched",
-      },
-    ],
-  },
-  "req-2": {
-    id: "req-2",
-    name: "Margaret Thatcher (Family)",
-    email: "thatcher.family@yahoo.com",
-    phone: "+44 7700 910344",
-    address: "12 Belgrave Square, London, SW1X 8PG",
-    clientSince: "2026-04-01",
-    status: "VERIFIED",
-    agreedWeeklyFee: 350.0,
-    totalPaidSoFar: 4200.0,
-    placementHistory: [],
-  },
-  "req-3": {
-    id: "req-3",
-    name: "Jonathan Harker",
-    email: "harker.j@harker-solicitors.co.uk",
-    phone: "+44 7700 910112",
-    address: "Carfax Abbey, London, SE1 9SG",
-    clientSince: "2026-05-20",
-    status: "UNDER_REVIEW",
-    agreedWeeklyFee: 550.0,
-    totalPaidSoFar: 0.0,
-    placementHistory: [],
-  },
-  "req-4": {
-    id: "req-4",
-    name: "Penelope Featherington",
-    email: "p.featherington@whistledown.com",
-    phone: "+44 7700 910887",
-    address: "14 Royal Crescent, Bath, BA1 2LS",
-    clientSince: "2026-03-10",
-    status: "PENDING",
-    agreedWeeklyFee: 280.0,
-    totalPaidSoFar: 1120.0,
-    placementHistory: [],
-  },
-};
 
 export default function ClientDetailsPage() {
   return (
@@ -138,117 +64,132 @@ function ClientDetailsContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function loadClientData() {
-      setLoading(true);
-      setError(null);
-      try {
-        let backendClient = null;
-        try {
-          const clients = await adminService.getClients();
-          backendClient = clients.find(
-            (c: any) => c.id === id || c.clientProfile?.id === id,
-          );
-        } catch (fetchErr) {
-          console.warn("Backend getClients failed, using mock path:", fetchErr);
-        }
+  // Fee input and action states
+  const [weeklyFeeInput, setWeeklyFeeInput] = useState<string>("");
+  const [savingFee, setSavingFee] = useState(false);
+  const [approvingClient, setApprovingClient] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
-        let clientPlacements: any[] = [];
-        try {
-          const placements = await adminService.getPlacements();
-          clientPlacements = placements.filter(
-            (p: any) =>
-              p.clientProfileId === id ||
-              p.clientProfile?.userId === id ||
-              (backendClient &&
-                p.clientProfileId === backendClient.clientProfile?.id),
-          );
-        } catch (fetchPlacementsErr) {
-          console.warn("Backend getPlacements failed:", fetchPlacementsErr);
-        }
+  async function loadClientData() {
+    setError(null);
+    try {
+      const res = await adminService.getClientDetails(id);
+      if (res) {
+        const userObj = res.user || res;
+        const firstName = userObj.firstName || res.firstName || "";
+        const lastName = userObj.lastName || res.lastName || "";
+        const email = userObj.email || res.email || "No email listed";
+        const phoneNumber = userObj.phoneNumber || res.phoneNumber || "No phone listed";
 
-        if (backendClient) {
-          const profile = backendClient.clientProfile || {};
-          const user = backendClient;
-          const createdAtDate =
-            profile.createdAt || user.createdAt || new Date().toISOString();
-          const status = profile.status || user.status || "PENDING";
+        const history = (res.placements || []).map((p: any) => {
+          const carerUser = p.carerProfile?.user || {};
+          const carerName = p.carerName ||
+            `${carerUser.firstName || "Unknown"} ${carerUser.lastName || "Carer"}`.trim() ||
+            "Assigned Carer";
 
-          const history = clientPlacements.map((p: any) => {
-            const carerUser = p.carerProfile?.user || {};
-            let pStatus = "Matched";
-            if (p.status === "ACTIVE") pStatus = "Active";
-            else if (p.status === "COMPLETED") pStatus = "Completed";
+          return {
+            startDate: p.startDate || p.createdAt || "Pending",
+            carerName: carerName,
+            status: p.status || "Active",
+          };
+        });
 
-            return {
-              startDate: p.startDate
-                ? new Date(p.startDate).toISOString().split("T")[0]
-                : "Pending",
-              carerName: `${carerUser.firstName || "Unknown"} ${carerUser.lastName || "Carer"}`.trim(),
-              status: pStatus,
-            };
-          });
+        // Compute total paid from invoices if available
+        const totalPaidSoFar = (res.invoices || []).reduce((acc: number, inv: any) => {
+          if (inv.status?.toUpperCase() === "PAID") {
+            return acc + (parseFloat(inv.amount) || 0);
+          }
+          return acc;
+        }, 0) || 0.0;
 
-          const activePlacement = clientPlacements.find(
-            (p: any) => p.status === "ACTIVE" || p.status === "CREATED",
-          );
-          const agreedWeeklyFee = activePlacement
-            ? parseFloat(activePlacement.hourlyRate) * 40
-            : mockClientsDb[id]?.agreedWeeklyFee || 500.0;
-
-          const totalPaidSoFar =
-            mockClientsDb[id]?.totalPaidSoFar || 0.0;
-
-          setClient({
-            id: user.id,
-            name: `${user.firstName} ${user.lastName}`,
-            email: user.email,
-            phone: user.phoneNumber || "No phone listed",
-            address:
-              profile.address ||
-              (profile.city ? `${profile.city}, UK` : "No address listed"),
-            clientSince: createdAtDate,
-            status: status,
-            agreedWeeklyFee: agreedWeeklyFee,
-            totalPaidSoFar: totalPaidSoFar,
-            placementHistory:
-              history.length > 0
-                ? history
-                : mockClientsDb[id]?.placementHistory || [],
-          });
-        } else {
-          const mockClient = mockClientsDb[id];
-          if (mockClient) {
-            setClient(mockClient);
-          } else {
-            setClient({
-              id: id,
-              name: "Registered Client",
-              email: "client@graceandgoodwill.co.uk",
-              phone: "+44 7700 900000",
-              address: "London, UK",
-              clientSince: new Date().toISOString(),
-              status: "PENDING",
-              agreedWeeklyFee: 400.0,
-              totalPaidSoFar: 0.0,
-              placementHistory: [],
-            });
+        let agreedWeeklyFee = 0.0;
+        if (res.weeklyFee !== undefined && res.weeklyFee !== null) {
+          const parsed = parseFloat(res.weeklyFee);
+          if (!isNaN(parsed)) {
+            agreedWeeklyFee = parsed;
           }
         }
-      } catch (err: any) {
-        console.error("Failed to load client details:", err);
-        setError(
-          err.message || "An unexpected error occurred while loading client details.",
-        );
-      } finally {
-        setLoading(false);
-      }
-    }
 
+        setClient({
+          id: res.id || id,
+          name: `${firstName} ${lastName}`.trim() || "Registered Client",
+          email: email,
+          phone: phoneNumber,
+          address:
+            res.address || "No address listed",
+          clientSince: res.createdAt || new Date().toISOString(),
+          status: res.status || "PENDING",
+          agreedWeeklyFee: agreedWeeklyFee,
+          totalPaidSoFar: totalPaidSoFar,
+          placementHistory: history,
+        });
+
+        // Set initial weekly fee input value
+        setWeeklyFeeInput(agreedWeeklyFee > 0 ? String(agreedWeeklyFee) : "");
+      } else {
+        setError("Requested client profile could not be found.");
+      }
+    } catch (err: any) {
+      console.error("Failed to load client details:", err);
+      setError(
+        err.message || "An unexpected error occurred while loading client details.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
     if (id) {
+      setLoading(true);
       loadClientData();
     }
   }, [id]);
+
+  // Action to save weekly fee
+  const handleSaveWeeklyFee = async () => {
+    setValidationError(null);
+    if (!weeklyFeeInput || weeklyFeeInput.trim() === "") {
+      setValidationError("Weekly fee is required.");
+      return;
+    }
+    const feeVal = parseFloat(weeklyFeeInput);
+    if (isNaN(feeVal) || feeVal <= 0) {
+      setValidationError("Weekly fee must be greater than 0.");
+      return;
+    }
+    setSavingFee(true);
+    try {
+      await adminService.updateClientWeeklyFee(id, feeVal);
+      showSuccessToast("Weekly Fee Saved", "The weekly fee has been successfully updated.");
+      await loadClientData();
+    } catch (err: any) {
+      console.error(err);
+      setValidationError(err.message || "Failed to save weekly fee.");
+    } finally {
+      setSavingFee(false);
+    }
+  };
+
+  // Action to approve client
+  const handleApproveClient = async () => {
+    setValidationError(null);
+    if (!client || client.agreedWeeklyFee <= 0) {
+      setValidationError("Weekly fee must be set and saved before approving the client.");
+      return;
+    }
+    setApprovingClient(true);
+    try {
+      await adminService.approveClient(id);
+      showSuccessToast("Client Approved", "The client account has been successfully approved.");
+      await loadClientData();
+    } catch (err: any) {
+      console.error(err);
+      setValidationError(err.message || "Failed to approve client.");
+    } finally {
+      setApprovingClient(false);
+    }
+  };
 
   // Duration calculation for "How long client has been with Grace & Goodwill"
   const getDurationWithUs = (dateString: string) => {
@@ -339,10 +280,10 @@ function ClientDetailsContent() {
             {error || "The requested client could not be found."}
           </p>
           <button
-            onClick={() => router.push("/admin?tab=placements")}
+            onClick={() => router.push("/admin?tab=clients")}
             className="px-5 py-2.5 text-xs font-bold text-navy-950 bg-gold hover:bg-gold-200 rounded-xl transition duration-300 flex items-center gap-1.5 mx-auto"
           >
-            <ArrowLeft className="h-4 w-4" /> Back to Dashboard
+            <ArrowLeft className="h-4 w-4" /> Back to Client Registry
           </button>
         </div>
       </main>
@@ -358,10 +299,10 @@ function ClientDetailsContent() {
         <header className="rounded-2xl border border-gold-300/10 bg-gradient-to-r from-navy-900 via-navy-950 to-navy-900 p-6 shadow-soft backdrop-blur-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <Link
-              href="/admin?tab=placements"
+              href="/admin?tab=clients"
               className="inline-flex items-center gap-1 text-xs font-semibold text-gold/60 hover:text-gold transition duration-200 mb-2 cursor-pointer"
             >
-              <ArrowLeft className="h-3.5 w-3.5" /> Back to Dashboard Overview
+              <ArrowLeft className="h-3.5 w-3.5" /> Back to Client Registry
             </Link>
             <h1 className="text-xl tracking-tight text-gold-200 sm:text-2xl font-bold flex items-center gap-2">
               <ShieldCheck className="h-6 w-6 text-gold" /> Client Details
@@ -406,7 +347,7 @@ function ClientDetailsContent() {
                   <span className="text-gold-100/40 font-semibold flex items-center gap-1.5">
                     <Calendar className="h-4 w-4 text-gold/60" /> Registered Since:
                   </span>
-                  <span className="text-gold-200 font-bold">
+                  <span className="text-gold-200 font-bold font-mono">
                     {new Date(client.clientSince).toLocaleDateString("en-GB", {
                       day: "2-digit",
                       month: "long",
@@ -436,6 +377,22 @@ function ClientDetailsContent() {
                     {currentPlacementStatus}
                   </span>
                 </div>
+
+                {/* Approve Client action button */}
+                {client.status !== "APPROVED" && (
+                  <button
+                    onClick={handleApproveClient}
+                    disabled={approvingClient}
+                    className="w-full mt-4 px-4 py-2.5 text-xs font-bold text-navy-950 bg-gold hover:bg-gold-200 disabled:opacity-40 rounded-xl transition duration-300 flex items-center justify-center gap-1.5 cursor-pointer"
+                  >
+                    {approvingClient ? (
+                      <div className="w-3.5 h-3.5 border-2 border-navy-950 border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <CheckCircle className="h-4 w-4" />
+                    )}
+                    Approve Client
+                  </button>
+                )}
               </div>
             </div>
 
@@ -451,11 +408,17 @@ function ClientDetailsContent() {
                     Agreed Weekly Fee
                   </span>
                   <div className="text-3xl font-black text-gold flex items-center gap-1">
-                    £
-                    {client.agreedWeeklyFee.toLocaleString("en-GB", {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })}
+                    {client.agreedWeeklyFee && client.agreedWeeklyFee > 0 ? (
+                      <>
+                        £
+                        {client.agreedWeeklyFee.toLocaleString("en-GB", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
+                      </>
+                    ) : (
+                      "Not Assigned"
+                    )}
                   </div>
                 </div>
 
@@ -470,6 +433,50 @@ function ClientDetailsContent() {
                       maximumFractionDigits: 2,
                     })}
                   </div>
+                </div>
+
+                {/* Weekly Fee admin management input controls */}
+                <div className="space-y-3 pt-4 border-t border-gold-300/5">
+                  <label className="text-[9px] font-black uppercase tracking-wider text-gold-200/50 block">
+                    Weekly Fee Management
+                  </label>
+                  <div className="flex gap-2">
+                    <div className="relative flex-1">
+                      <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gold-100/40 font-mono text-xs pointer-events-none">
+                        £
+                      </span>
+                      <input
+                        type="number"
+                        value={weeklyFeeInput}
+                        onChange={(e) => {
+                          setWeeklyFeeInput(e.target.value);
+                          setValidationError(null);
+                        }}
+                        placeholder="Enter fee..."
+                        className={`w-full bg-navy-950 border rounded-xl pl-7 pr-3 py-2 text-xs text-gold-100 placeholder-gold-100/20 outline-none transition duration-200 ${
+                          validationError
+                            ? "border-rose-500/80 focus:border-rose-500"
+                            : "border-gold-300/10 focus:border-gold-300/30"
+                        }`}
+                      />
+                    </div>
+                    <button
+                      onClick={handleSaveWeeklyFee}
+                      disabled={savingFee}
+                      className="px-4 py-2 text-xs font-bold text-navy-950 bg-gold hover:bg-gold-200 disabled:opacity-40 rounded-xl transition duration-300 flex items-center justify-center whitespace-nowrap cursor-pointer"
+                    >
+                      {savingFee ? (
+                        <div className="w-3.5 h-3.5 border-2 border-navy-950 border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        "Save"
+                      )}
+                    </button>
+                  </div>
+                  {validationError && (
+                    <p className="text-[10px] text-rose-400 font-semibold mt-1">
+                      {validationError}
+                    </p>
+                  )}
                 </div>
 
                 <div className="rounded-xl bg-navy-950/50 p-3 border border-gold-300/5">
@@ -580,11 +587,11 @@ function ClientDetailsContent() {
                           className="hover:bg-navy-900/20 transition duration-150"
                         >
                           <td className="py-3 px-2 font-mono font-semibold text-gold-200">
-                            {new Date(hist.startDate).toLocaleDateString("en-GB", {
+                            {hist.startDate !== "Pending" ? new Date(hist.startDate).toLocaleDateString("en-GB", {
                               day: "2-digit",
                               month: "short",
                               year: "numeric",
-                            })}
+                            }) : "Pending"}
                           </td>
                           <td className="py-3 px-2 font-semibold text-gold-100">
                             {hist.carerName}

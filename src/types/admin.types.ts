@@ -23,6 +23,7 @@ export interface AdminState {
   error: string | null;
   carers: PaginationData<any>;
   careRequests: PaginationData<any>;
+  clients: PaginationData<any>;
   selectedCarer: {
     data: any | null;
     loading: boolean;

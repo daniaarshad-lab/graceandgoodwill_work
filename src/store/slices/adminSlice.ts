@@ -26,6 +26,16 @@ const initialState: AdminState = {
     loading: false,
     error: null,
   },
+  clients: {
+    items: [],
+    page: 1,
+    limit: 10,
+    totalItems: 0,
+    totalPages: 0,
+    status: "ALL",
+    loading: false,
+    error: null,
+  },
   selectedCarer: {
     data: null,
     loading: false,
@@ -66,6 +76,18 @@ export const fetchAdminCareRequests = createAsyncThunk<
     return await adminService.getCareRequests(page, limit, status);
   } catch (error: any) {
     return rejectWithValue(error?.message || "Failed to fetch care requests");
+  }
+});
+
+export const fetchAdminClients = createAsyncThunk<
+  { items: any[]; total: number; page: number; limit: number },
+  { page: number; limit: number; status: string },
+  { rejectValue: string }
+>("admin/fetchClients", async ({ page, limit, status }, { rejectWithValue }) => {
+  try {
+    return await adminService.getClients(page, limit, status);
+  } catch (error: any) {
+    return rejectWithValue(error?.message || "Failed to fetch clients");
   }
 });
 
@@ -142,6 +164,17 @@ const adminSlice = createSlice({
       state.careRequests.limit = action.payload;
       state.careRequests.page = 1;
     },
+    setClientsPage(state, action: PayloadAction<number>) {
+      state.clients.page = action.payload;
+    },
+    setClientsStatus(state, action: PayloadAction<string>) {
+      state.clients.status = action.payload;
+      state.clients.page = 1;
+    },
+    setClientsLimit(state, action: PayloadAction<number>) {
+      state.clients.limit = action.payload;
+      state.clients.page = 1;
+    },
   },
   extraReducers: (builder) => {
     // fetchAdminDashboardStats
@@ -191,6 +224,22 @@ const adminSlice = createSlice({
     builder.addCase(fetchAdminCareRequests.rejected, (state, action) => {
       state.careRequests.loading = false;
       state.careRequests.error = action.payload || "Failed to fetch care requests";
+    });
+
+    // fetchAdminClients
+    builder.addCase(fetchAdminClients.pending, (state) => {
+      state.clients.loading = true;
+      state.clients.error = null;
+    });
+    builder.addCase(fetchAdminClients.fulfilled, (state, action) => {
+      state.clients.loading = false;
+      state.clients.items = action.payload.items || [];
+      state.clients.totalItems = action.payload.total || 0;
+      state.clients.totalPages = Math.ceil((action.payload.total || 0) / state.clients.limit);
+    });
+    builder.addCase(fetchAdminClients.rejected, (state, action) => {
+      state.clients.loading = false;
+      state.clients.error = action.payload || "Failed to fetch clients";
     });
 
     // fetchDocumentDetails
@@ -289,6 +338,9 @@ export const {
   setCareRequestsPage,
   setCareRequestsStatus,
   setCareRequestsLimit,
+  setClientsPage,
+  setClientsStatus,
+  setClientsLimit,
 } = adminSlice.actions;
 
 export default adminSlice.reducer;

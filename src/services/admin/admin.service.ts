@@ -123,7 +123,11 @@ export const adminService = {
     });
   },
 
-  async getClients(): Promise<any[]> {
+  async getClients(
+    page: number = 1,
+    limit: number = 10,
+    status: string = "ALL",
+  ): Promise<any> {
     const token =
       typeof window !== "undefined"
         ? localStorage.getItem("accessToken")
@@ -133,7 +137,13 @@ export const adminService = {
       throw new Error("No token found");
     }
 
-    return apiFetch("/admin/clients", {
+    const query = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+      status,
+    }).toString();
+
+    return apiFetch(`/admin/clients?${query}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -398,6 +408,62 @@ export const adminService = {
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ status }),
+    });
+  },
+
+  async getClientDetails(id: string): Promise<any> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch(`/admin/clients/${id}/details`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
+  async updateClientWeeklyFee(id: string, weeklyFee: number): Promise<any> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch(`/admin/clients/${id}/weekly-fee`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ weeklyFee }),
+    });
+  },
+
+  async approveClient(id: string): Promise<any> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch(`/admin/clients/${id}/approve`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
   },
 };

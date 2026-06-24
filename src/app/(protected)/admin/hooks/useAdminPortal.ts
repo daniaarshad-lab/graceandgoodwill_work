@@ -12,10 +12,16 @@ import { toast } from "sonner";
 import {
   fetchAdminCarers,
   fetchAdminCareRequests,
+  fetchAdminClients,
   setCarersPage,
   setCarersStatus,
+  setCarersLimit,
   setCareRequestsPage,
   setCareRequestsStatus,
+  setCareRequestsLimit,
+  setClientsPage,
+  setClientsStatus,
+  setClientsLimit,
 } from "@/store/slices/adminSlice";
 
 // Helper to map backend document category to frontend status with file URLs and IDs
@@ -50,6 +56,29 @@ import {
 //     fileUrl: doc.fileUrl,
 //   };
 // };
+
+// Helper to map backend client structures to ClientRegistry format
+const mapBackendClients = (backendClients: any[]): any[] => {
+  return backendClients.map((client: any) => {
+    const profile = client.clientProfile || {};
+    return {
+      id: client.id,
+      name: `${client.firstName || ""} ${client.lastName || ""}`.trim() || "Registered Client",
+      email: client.email || "No email listed",
+      phone: client.phoneNumber || "No phone listed",
+      status: client.status || "PENDING",
+      createdAt: client.createdAt,
+      
+      address: profile.address || "No address listed",
+      city: profile.city || "Unknown",
+      postcode: profile.postcode || "",
+      weeklyFee: profile.weeklyFee || 0,
+      profileStatus: profile.status || "PENDING",
+      adminMatching: profile.adminMatching || false,
+      profileCreatedAt: profile.createdAt || client.createdAt,
+    };
+  });
+};
 
 // Helper to map backend carer structures to frontend CarerApplication format
 const mapBackendCarers = (backendCarers: any[]): CarerApplication[] => {
@@ -291,6 +320,7 @@ const mapBackendPlacements = (backendPlacements: any[]): Placement[] => {
 export type AdminTabType =
   | "overview"
   | "carers"
+  | "clients"
   | "requests"
   | "matching"
   | "placements"
@@ -302,7 +332,7 @@ export function useAdminPortal() {
   const searchParams = useSearchParams();
   const tabParam = searchParams.get("tab") as AdminTabType;
   const [activeTab, setActiveTab] = useState<AdminTabType>(
-    (tabParam && ["overview", "carers", "requests", "matching", "placements", "emergency", "billing", "enquiries"].includes(tabParam))
+    (tabParam && ["overview", "carers", "clients", "requests", "matching", "placements", "emergency", "billing", "enquiries"].includes(tabParam))
       ? tabParam
       : "overview"
   );
@@ -312,9 +342,11 @@ export function useAdminPortal() {
   const requestsPagination = useAppSelector(
     (state) => state.admin.careRequests,
   );
+  const clientsPagination = useAppSelector((state) => state.admin.clients);
 
   const carers = mapBackendCarers(carersPagination.items);
   const requests = mapBackendCareRequests(requestsPagination.items);
+  const clients = mapBackendClients(clientsPagination.items);
 
   const [placements, setPlacements] = useState<Placement[]>([]);
   const [enquiries, setEnquiries] = useState<any[]>([]);
@@ -492,17 +524,17 @@ export function useAdminPortal() {
   // Load total stats counters
   const loadStatsCounts = useCallback(async () => {
     try {
-      const [allCarersRes, pendingCarersRes, emergencyRequestsRes, clientData] =
+      const [allCarersRes, pendingCarersRes, emergencyRequestsRes, clientsRes] =
         await Promise.all([
           adminService.getCarers(1, 1, "ALL"),
           adminService.getCarers(1, 1, "PENDING"),
           adminService.getCareRequests(1, 1, "EMERGENCY"),
-          adminService.getClients(),
+          adminService.getClients(1, 1, "ALL"),
         ]);
       setTotalCarersCount(allCarersRes.total || 0);
       setPendingCarersCount(pendingCarersRes.total || 0);
       setEmergencyCasesCount(emergencyRequestsRes.total || 0);
-      setTotalClientsCount(clientData.length);
+      setTotalClientsCount(clientsRes.total || 0);
     } catch (err) {
       console.error("Failed to load stats counts:", err);
     }
@@ -586,6 +618,21 @@ export function useAdminPortal() {
     loadAllData();
   }, [loadPlacements, loadEnquiries, loadStatsCounts]);
 
+  const loadClients = useCallback(() => {
+    dispatch(
+      fetchAdminClients({
+        page: clientsPagination.page,
+        limit: clientsPagination.limit,
+        status: clientsPagination.status,
+      }),
+    );
+  }, [
+    dispatch,
+    clientsPagination.page,
+    clientsPagination.limit,
+    clientsPagination.status,
+  ]);
+
   // Refetch carers whenever page, limit, or status changes
   useEffect(() => {
     loadCarers();
@@ -595,6 +642,11 @@ export function useAdminPortal() {
   useEffect(() => {
     loadRequests();
   }, [loadRequests]);
+
+  // Refetch clients whenever page, limit, or status changes
+  useEffect(() => {
+    loadClients();
+  }, [loadClients]);
 
   // Action: Approve Carer Application
   const handleApproveCarer = useCallback(
@@ -862,6 +914,7 @@ export function useAdminPortal() {
     setActiveTab,
     carers,
     requests,
+    clients,
     placements,
     activities,
     isLiveActive,
@@ -892,11 +945,17 @@ export function useAdminPortal() {
     // Pagination helpers and states
     carersPagination,
     requestsPagination,
+    clientsPagination,
     setCarersPage: (page: number) => dispatch(setCarersPage(page)),
     setCarersStatus: (status: string) => dispatch(setCarersStatus(status)),
+    setCarersLimit: (limit: number) => dispatch(setCarersLimit(limit)),
     setRequestsPage: (page: number) => dispatch(setCareRequestsPage(page)),
     setRequestsStatus: (status: string) =>
       dispatch(setCareRequestsStatus(status)),
+    setRequestsLimit: (limit: number) => dispatch(setCareRequestsLimit(limit)),
+    setClientsPage: (page: number) => dispatch(setClientsPage(page)),
+    setClientsStatus: (status: string) => dispatch(setClientsStatus(status)),
+    setClientsLimit: (limit: number) => dispatch(setClientsLimit(limit)),
     loadStatsCounts,
   };
 }

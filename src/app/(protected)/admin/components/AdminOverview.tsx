@@ -30,7 +30,7 @@ export default function AdminOverview({
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {/* Card 1: Total Clients */}
         <div
-          onClick={() => setActiveTab("requests")}
+          onClick={() => setActiveTab("clients")}
           className="cursor-pointer rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-gold-300/30 flex flex-col justify-between"
         >
           <div className="flex items-center justify-between">

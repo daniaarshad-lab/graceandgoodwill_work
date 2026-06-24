@@ -16,6 +16,9 @@ const CarerApplications = dynamic(
 const ClientRequests = dynamic(() => import("./components/ClientRequests"), {
   ssr: false,
 });
+const ClientRegistry = dynamic(() => import("./components/ClientRegistry"), {
+  ssr: false,
+});
 const MatchingPanel = dynamic(() => import("./components/MatchingPanel"), {
   ssr: false,
 });
@@ -69,6 +72,7 @@ function AdminDashboardContent() {
   const tabLabels: Record<AdminTabType, string> = {
     overview: "Dashboard Overview",
     carers: "Carer Applications",
+    clients: "Client Registry",
     requests: "Client Requests",
     matching: "Matching Assistant",
     placements: "Tracking & Overrides",
@@ -182,6 +186,26 @@ function AdminDashboardContent() {
                   status={portal.carersPagination.status}
                   onPageChange={portal.setCarersPage}
                   onStatusChange={portal.setCarersStatus}
+                  limit={portal.carersPagination.limit}
+                  onLimitChange={portal.setCarersLimit}
+                />
+              )}
+
+              {/* TAB 2.5: CLIENT REGISTRY */}
+              {portal.activeTab === "clients" && (
+                <ClientRegistry
+                  clients={portal.clients}
+                  page={portal.clientsPagination.page}
+                  totalPages={portal.clientsPagination.totalPages}
+                  totalItems={portal.clientsPagination.totalItems}
+                  status={portal.clientsPagination.status}
+                  onPageChange={portal.setClientsPage}
+                  onStatusChange={portal.setClientsStatus}
+                  limit={portal.clientsPagination.limit}
+                  onLimitChange={portal.setClientsLimit}
+                  loading={portal.clientsPagination.loading}
+                  error={portal.clientsPagination.error}
+                  setActiveTab={portal.setActiveTab}
                 />
               )}
 

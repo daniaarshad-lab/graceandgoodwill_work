@@ -22,6 +22,9 @@ const initialState: ClientState = {
   placementsLoading: false,
   placementsError: null,
 
+  interestList: [],
+  interestListLoading: false,
+
   enquiries: [],
   selectedEnquiry: null,
 
@@ -29,6 +32,7 @@ const initialState: ClientState = {
   error: null,
 };
 
+// ... existing thunks ...
 export const fetchClientProfile = createAsyncThunk<
   ClientProfile,
   void,
@@ -38,6 +42,73 @@ export const fetchClientProfile = createAsyncThunk<
     return await clientService.getProfile();
   } catch (error: any) {
     return rejectWithValue(error?.message || "Failed to fetch client profile");
+  }
+});
+
+// Add interest list thunks here:
+export const fetchInterestList = createAsyncThunk<
+  any[],
+  void,
+  { rejectValue: string }
+>("client/fetchInterestList", async (_, { rejectWithValue }) => {
+  try {
+    const response = await clientService.getInterestList();
+    console.log("fetchInterestList response:", response);
+    const list = response.interestList;
+    console.log("extracted list:", list);
+    if (!Array.isArray(list)) return [];
+    
+    // Check if the backend returned nested carer profiles or direct objects
+    const interestListCarers = list
+      .filter((item: any) => item !== null && item !== undefined)
+      .map((item: any) => {
+        const carerData = item.carerProfile || item.carer;
+        let mapped;
+        if (carerData) {
+          mapped = mapCarerProfileToUICarer(carerData);
+        } else {
+          mapped = mapCarerProfileToUICarer(item);
+        }
+
+        // The user says the response contains carerProfileId
+        if (item.carerProfileId) {
+          mapped.id = item.carerProfileId;
+        }
+
+        return mapped;
+      });
+    
+    return interestListCarers;
+  } catch (error: any) {
+    console.error("Failed to fetch interest list:", error);
+    return rejectWithValue(error?.message || "Failed to fetch interest list");
+  }
+});
+
+export const addToInterestList = createAsyncThunk<
+  void,
+  string,
+  { rejectValue: string }
+>("client/addToInterestList", async (carerProfileId, { dispatch, rejectWithValue }) => {
+  try {
+    await clientService.addToInterestList(carerProfileId);
+    dispatch(fetchInterestList()); // Refresh interest list
+  } catch (error: any) {
+    return rejectWithValue(error?.message || "Failed to add to interest list");
+  }
+});
+
+export const removeFromInterestList = createAsyncThunk<
+  string,
+  string,
+  { rejectValue: string }
+>("client/removeFromInterestList", async (carerProfileId, { dispatch, rejectWithValue }) => {
+  try {
+    await clientService.removeFromInterestList(carerProfileId);
+    dispatch(fetchInterestList()); // Refresh interest list
+    return carerProfileId;
+  } catch (error: any) {
+    return rejectWithValue(error?.message || "Failed to remove from interest list");
   }
 });
 
@@ -124,10 +195,13 @@ export const fetchCarers = createAsyncThunk<
 >("client/fetchCarers", async (_, { rejectWithValue }) => {
   try {
     const response = await clientService.getCarers();
+    if (!response || !Array.isArray(response)) {
+      return [];
+    }
     const mapped = response.map(mapCarerProfileToUICarer);
     return mapped;
   } catch (error: any) {
-    console.error("[Thunk: fetchCarers] Error:", error);
+    console.error("Failed to fetch carers from API:", error);
     return rejectWithValue(error?.message || "Failed to fetch carers");
   }
 });
@@ -341,6 +415,20 @@ const clientSlice = createSlice({
     builder.addCase(getClientPlacements.rejected, (state, action) => {
       state.placementsLoading = false;
       state.placementsError = action.payload || "Failed to fetch placements";
+    });
+
+    // Interest List
+    builder.addCase(fetchInterestList.pending, (state) => {
+      state.interestListLoading = true;
+      state.error = null;
+    });
+    builder.addCase(fetchInterestList.fulfilled, (state, action) => {
+      state.interestListLoading = false;
+      state.interestList = action.payload;
+    });
+    builder.addCase(fetchInterestList.rejected, (state, action) => {
+      state.interestListLoading = false;
+      state.error = action.payload || "Failed to fetch interest list";
     });
   },
 });

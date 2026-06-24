@@ -15,7 +15,11 @@ export default function ClientOnboarding({ user, onComplete }: ClientOnboardingP
 
   const handleContinue = () => {
     if (selectedOption) {
-      setStep(2);
+      if (selectedOption === "browse") {
+        onComplete("browse");
+      } else {
+        setStep(2);
+      }
     }
   };
 

@@ -30,6 +30,10 @@ const SupportEnquiryPanel = dynamic(
   () => import("./components/enquiry/SupportEnquiryPanel"),
   { ssr: false },
 );
+const InterestListPanel = dynamic(
+  () => import("./components/InterestListPanel"),
+  { ssr: false },
+);
 const IntroductionModal = dynamic(
   () => import("./components/IntroductionModal"),
   { ssr: false },
@@ -57,6 +61,7 @@ export default function ClientDashboard() {
         "carers",
         "tracking",
         "enquiry",
+        "interest-list",
       ].includes(tabParam)
     ) {
       setActiveTab(tabParam);
@@ -77,9 +82,13 @@ export default function ClientDashboard() {
       localStorage.setItem(`client_onboarding_done_${user.id}`, "true");
     }
     setIsOnboarding(false);
-    const targetTab = journey === "browse" ? "carers" : "request";
-    setActiveTab(targetTab);
-    router.push(`/client?tab=${targetTab}`);
+    if (journey === "browse") {
+      router.push("/client/browse-carers");
+    } else {
+      const targetTab = "request";
+      setActiveTab(targetTab);
+      router.push(`/client?tab=${targetTab}`);
+    }
   };
 
   // Custom hook containing state + handlers
@@ -172,6 +181,9 @@ export default function ClientDashboard() {
 
           {/* TAB 5: SUPPORT & ENQUIRIES */}
           {activeTab === "enquiry" && <SupportEnquiryPanel />}
+
+          {/* TAB 6: INTEREST LIST */}
+          {activeTab === "interest-list" && <InterestListPanel onRequestIntro={portal.handleRequestIntro} />}
         </div>
       </div>
 

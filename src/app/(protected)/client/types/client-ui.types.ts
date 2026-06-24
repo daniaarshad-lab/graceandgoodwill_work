@@ -7,6 +7,12 @@ export interface Carer {
   bio: string;
   avatarBg: string;
   introVideoUrl?: string | null;
+  location?: string;
+  qualifications?: string;
+  profilePhotoUrl?: string | null;
+  fullBiography?: string;
+  experienceDetails?: string;
+  availabilityDetails?: string[];
 }
 
 export interface CareRequest {

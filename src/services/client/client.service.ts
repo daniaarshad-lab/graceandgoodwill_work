@@ -239,4 +239,35 @@ export const clientService = {
       },
     });
   },
+
+  async getInterestList() {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+
+    return apiFetch("/client/interest-list", {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  },
+
+  async addToInterestList(carerProfileId: string) {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+
+    return apiFetch("/client/interest-list", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ carerProfileId }),
+    });
+  },
+
+  async removeFromInterestList(carerProfileId: string) {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+
+    return apiFetch(`/client/interest-list/${carerProfileId}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  },
 };

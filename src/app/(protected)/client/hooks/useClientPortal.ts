@@ -85,7 +85,6 @@ export function useClientPortal({ user }: UseClientPortalProps) {
       additionalNotes: careNotes,
 
       shiftType: "MORNING",
-      adminMatching,
     };
 
     setIsCareSubmitting(true);

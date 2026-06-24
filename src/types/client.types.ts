@@ -95,6 +95,9 @@ export interface ClientState {
   placementsLoading: boolean;
   placementsError: string | null;
 
+  interestList: any[]; // The backend might return carer objects or joined entities. We'll map them to UI Carer objects later if needed.
+  interestListLoading: boolean;
+
   enquiries: any[];
   selectedEnquiry: any | null;
 

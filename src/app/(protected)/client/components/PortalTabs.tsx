@@ -9,6 +9,7 @@ export type TabType =
   | "carers"
   | "tracking"
   | "enquiry"
+  | "interest-list"
   | "referrals";
 
 interface PortalTabsProps {
@@ -35,6 +36,7 @@ export default function PortalTabs({
     },
     { id: "profile", label: "Profile Management", href: "/client?tab=profile" },
     { id: "carers", label: "Carer Profiles", href: "/client?tab=carers" },
+    { id: "interest-list", label: "Interest List ❤️", href: "/client?tab=interest-list" },
     { id: "tracking", label: "Track Requests", href: "/client?tab=tracking" },
     {
       id: "enquiry",

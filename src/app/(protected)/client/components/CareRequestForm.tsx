@@ -26,13 +26,15 @@ interface CareRequestFormProps {
   setAddress: (val: string) => void;
   notes: string;
   setNotes: (val: string) => void;
-  adminMatching: boolean;
-  setAdminMatching: (val: boolean) => void;
+  isOngoing: boolean;
+  setIsOngoing: (val: boolean) => void;
+  weeklyPayRange: { min: number; max: number } | null;
+  setWeeklyPayRange: (val: { min: number; max: number } | null) => void;
   errors: Record<string, string>;
   isSubmitting: boolean;
   onSubmit: (e: React.FormEvent) => void;
   setActiveTab: (
-    tab: "overview" | "request" | "carers" | "tracking" | "enquiry",
+    tab: "overview" | "request" | "carers" | "tracking" | "enquiry" | "applications",
   ) => void;
 }
 
@@ -55,8 +57,10 @@ export default function CareRequestForm({
   setAddress,
   notes,
   setNotes,
-  adminMatching,
-  setAdminMatching,
+  isOngoing,
+  setIsOngoing,
+  weeklyPayRange,
+  setWeeklyPayRange,
   errors,
   isSubmitting,
   onSubmit,
@@ -157,12 +161,52 @@ export default function CareRequestForm({
             error={errors.startDate}
           />
 
+          <div className="flex flex-col space-y-2">
+            <Input
+              label="Expected Duration of Care"
+              value={duration}
+              onChange={(e) => setDuration(e.target.value)}
+              placeholder="e.g. 3 Months"
+              error={errors.duration}
+              disabled={isOngoing}
+            />
+            <label className="flex items-center gap-2 text-sm text-gold-200 mt-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={isOngoing}
+                onChange={(e) => {
+                  setIsOngoing(e.target.checked);
+                  if (e.target.checked) {
+                    setDuration("");
+                  }
+                }}
+                className="w-4 h-4 rounded border-gold-300/20 bg-navy-950 text-gold-DEFAULT focus:ring-gold-DEFAULT focus:ring-offset-navy-950"
+              />
+              This is an ongoing / permanent request
+            </label>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Input
-            label="Expected Duration of Care"
-            value={duration}
-            onChange={(e) => setDuration(e.target.value)}
-            placeholder="e.g. 3 Months, Ongoing"
-            error={errors.duration}
+            label="Weekly Pay Range - Minimum (£)"
+            value={weeklyPayRange?.min?.toString() || ""}
+            onChange={(e) => {
+              const val = parseInt(e.target.value) || 0;
+              setWeeklyPayRange({ min: val, max: weeklyPayRange?.max || val });
+            }}
+            placeholder="e.g. 800"
+            type="number"
+          />
+          <Input
+            label="Weekly Pay Range - Maximum (£)"
+            value={weeklyPayRange?.max?.toString() || ""}
+            onChange={(e) => {
+              const val = parseInt(e.target.value) || 0;
+              setWeeklyPayRange({ min: weeklyPayRange?.min || 0, max: val });
+            }}
+            placeholder="e.g. 1200"
+            type="number"
           />
         </div>
 

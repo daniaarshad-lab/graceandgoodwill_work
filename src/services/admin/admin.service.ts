@@ -466,4 +466,62 @@ export const adminService = {
       },
     });
   },
+
+  /** GET /admin/care-requests/:id/applications — list applications for a care request */
+  async getCareRequestApplications(careRequestId: string): Promise<any[]> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch(`/admin/care-requests/${careRequestId}/applications`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
+  /** PATCH /admin/care-requests/:id/status — update care request status */
+  async updateCareRequestStatus(careRequestId: string, status: string): Promise<any> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch(`/admin/care-requests/${careRequestId}/status`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ status }),
+    });
+  },
+
+  /** POST /admin/invoices/trigger-billing-run — trigger a billing run */
+  async triggerBillingRun(): Promise<any> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch("/admin/invoices/trigger-billing-run", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
 };

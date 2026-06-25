@@ -1,11 +1,9 @@
 import { useState, useCallback } from "react";
-import { Carer } from "../types/client-ui.types";
 import { validateCareForm, scrollToFirstError } from "../utils/validation";
 import { useAppDispatch } from "@/store/hooks";
 import {
   createCareRequest,
   fetchCareRequests,
-  requestIntroduction,
   getClientPlacements,
 } from "@/store/slices/clientSlice";
 import { useAppSelector } from "@/store/hooks";
@@ -34,11 +32,11 @@ export function useClientPortal({ user }: UseClientPortalProps) {
   const [careAddress, setCareAddress] = useState("");
   const [careNotes, setCareNotes] = useState("");
   const [adminMatching, setAdminMatching] = useState(true);
+  const [isOngoing, setIsOngoing] = useState(false);
+  const [weeklyPayRange, setWeeklyPayRange] = useState<{ min: number; max: number } | null>(null);
 
   const [careErrors, setCareErrors] = useState<Record<string, string>>({});
   const [isCareSubmitting, setIsCareSubmitting] = useState(false);
-  // --- STATE FOR REQUEST INTRODUCTION ---
-  const [selectedCarer, setSelectedCarer] = useState<Carer | null>(null);
 
   // --- HANDLERS: CLIENT PLACEMENTS ---
   const fetchPlacements = useCallback(() => {
@@ -85,6 +83,8 @@ export function useClientPortal({ user }: UseClientPortalProps) {
       additionalNotes: careNotes,
 
       shiftType: "MORNING",
+      isOngoing,
+      weeklyPayRange: weeklyPayRange ? `£${weeklyPayRange.min} - £${weeklyPayRange.max} per week` : undefined,
     };
 
     setIsCareSubmitting(true);
@@ -102,6 +102,8 @@ export function useClientPortal({ user }: UseClientPortalProps) {
       setCareDuration("");
       setCareAddress("");
       setCareNotes("");
+      setIsOngoing(false);
+      setWeeklyPayRange(null);
     } catch (error: any) {
       const errorMsg =
         typeof error === "string"
@@ -119,45 +121,6 @@ export function useClientPortal({ user }: UseClientPortalProps) {
       }
     } finally {
       setIsCareSubmitting(false);
-    }
-  };
-
-  // --- HANDLERS: REQUEST INTRODUCTION ---
-  const handleRequestIntro = (carer: Carer) => {
-    setSelectedCarer(carer);
-  };
-
-  const confirmIntroRequest = async (careRequestId: string) => {
-    if (!selectedCarer) return;
-
-    if (!careRequestId) {
-      showErrorToast(
-        "Introduction Failed",
-        "Please select a care request first.",
-      );
-      return;
-    }
-
-    try {
-      await dispatch(
-        requestIntroduction({
-          careRequestId,
-          carerProfileId: selectedCarer.id,
-        }),
-      ).unwrap();
-
-      showSuccessToast(
-        "Introduction Requested",
-        `Your introduction request for ${selectedCarer.name} has been submitted! Our care coordinator will contact you shortly.`,
-      );
-    } catch (error: any) {
-      const errorMsg =
-        typeof error === "string"
-          ? error
-          : error?.message || "Failed to submit introduction request.";
-      showErrorToast("Request Failed", errorMsg);
-    } finally {
-      setSelectedCarer(null);
     }
   };
 
@@ -191,11 +154,11 @@ export function useClientPortal({ user }: UseClientPortalProps) {
     isCareSubmitting,
     handleCareSubmit,
 
-    selectedCarer,
-    setSelectedCarer,
-    handleRequestIntro,
-    confirmIntroRequest,
     adminMatching,
     setAdminMatching,
+    isOngoing,
+    setIsOngoing,
+    weeklyPayRange,
+    setWeeklyPayRange,
   };
 }

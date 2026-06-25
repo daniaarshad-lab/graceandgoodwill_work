@@ -237,23 +237,27 @@ function ClientDetailsContent() {
   };
 
   const getCurrentPlacementStatus = (history: ClientDetail["placementHistory"]) => {
-    if (history.length === 0) return "Unmatched";
-    const activePlacement = history.find((p) => p.status === "Active");
-    if (activePlacement) return "Active";
-    const matchedPlacement = history.find((p) => p.status === "Matched");
-    if (matchedPlacement) return "Matched";
-    return "Completed";
+    if (history.length === 0) return "NEW_ENQUIRY";
+    const activePlacement = history.find((p) => p.status === "PLACEMENT_STARTED" || p.status === "ONGOING");
+    if (activePlacement) return activePlacement.status;
+    const matchedPlacement = history.find((p) => p.status === "PLACEMENT_CONFIRMED");
+    if (matchedPlacement) return "PLACEMENT_CONFIRMED";
+    return "COMPLETED";
   };
 
   const getPlacementStatusBadgeStyles = (status: string) => {
     switch (status) {
-      case "Active":
+      case "PLACEMENT_STARTED":
+      case "ONGOING":
         return "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
-      case "Matched":
+      case "PLACEMENT_CONFIRMED":
         return "bg-amber-500/10 text-amber-400 border border-amber-500/20";
-      case "Completed":
+      case "NEW_ENQUIRY":
+        return "bg-navy-900 border border-gold-300/10 text-gold-200/50";
+      case "COMPLETED":
         return "bg-blue-500/10 text-blue-400 border border-blue-500/20";
-      case "Unmatched":
+      case "CANCELLED":
+        return "bg-red-500/10 text-red-400 border border-red-500/20";
       default:
         return "bg-navy-950 text-gold-100/40 border border-gold-300/5";
     }
@@ -325,7 +329,7 @@ function ClientDetailsContent() {
                     client.status,
                   )}`}
                 >
-                  {client.status}
+                  {client.status === "PLACEMENT_STARTED" ? "Active" : client.status === "PLACEMENT_CONFIRMED" ? "Matched" : client.status}
                 </span>
               </p>
             </div>
@@ -374,7 +378,7 @@ function ClientDetailsContent() {
                       currentPlacementStatus,
                     )}`}
                   >
-                    {currentPlacementStatus}
+                    {currentPlacementStatus === "PLACEMENT_STARTED" ? "ACTIVE" : currentPlacementStatus === "PLACEMENT_CONFIRMED" ? "MATCHED" : currentPlacementStatus}
                   </span>
                 </div>
 

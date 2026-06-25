@@ -90,3 +90,46 @@ export interface UpdateCarerProfilePayload {
 
 /** Array of ISO date strings sent to PUT /carer/profile/availability */
 export type UpdateAvailabilityPayload = string[];
+
+/** Care request as returned by GET /carer/care-requests */
+export interface CarerCareRequest {
+  id: string;
+  clientProfileId: string;
+  startDate: string;
+  duration: string;
+  endDate?: string | null;
+  isOngoing?: boolean;
+  weeklyPayRange?: { min: number; max: number } | null;
+  careCategory: string;
+  requirements: string;
+  address: string;
+  city?: string | null;
+  postcode?: string | null;
+  status: string;
+  shiftType: string;
+  adminMatching?: boolean;
+  isEmergency: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** Full detail for a single care request: GET /carer/care-request/:id */
+export interface CarerCareRequestDetail extends CarerCareRequest {
+  requestorName?: string;
+  requestorEmail?: string;
+  requestorPhone?: string;
+  additionalNotes?: string | null;
+  scheduleNotes?: string | null;
+  clientProfile?: {
+    id: string;
+    city?: string | null;
+    postcode?: string | null;
+    address?: string | null;
+  };
+  [key: string]: any; // allow additional backend fields
+}
+
+/** Payload for POST /carer/care-requests/:id/apply (body may be empty) */
+export interface CarerApplicationPayload {
+  coverNote?: string;
+}

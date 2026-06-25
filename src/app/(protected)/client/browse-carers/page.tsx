@@ -5,12 +5,11 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useAuth } from "@/contexts/AuthContext";
-import { fetchCarers, fetchCareRequests, requestIntroduction, fetchInterestList, addToInterestList, removeFromInterestList } from "@/store/slices/clientSlice";
+import { fetchCarers, fetchCareRequests, fetchInterestList, addToInterestList, removeFromInterestList } from "@/store/slices/clientSlice";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 import { Carer } from "../types/client-ui.types";
 
 import Button from "@/components/Button";
-import IntroductionModal from "../components/IntroductionModal";
 import { 
   ArrowLeft, 
   MapPin, 
@@ -44,7 +43,6 @@ export default function BrowseCarersPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSpecialty, setSelectedSpecialty] = useState<string>("All");
   const [selectedCarer, setSelectedCarer] = useState<Carer | null>(null);
-  const [introCarer, setIntroCarer] = useState<Carer | null>(null);
   const [activeModalTab, setActiveModalTab] = useState<"bio" | "experience" | "qualifications">("bio");
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [processingId, setProcessingId] = useState<string | null>(null);
@@ -79,31 +77,6 @@ export default function BrowseCarersPage() {
       return matchesSearch && matchesSpecialty;
     });
   }, [carers, searchTerm, selectedSpecialty]);
-
-  const handleOpenIntro = (carer: Carer) => {
-    setIntroCarer(carer);
-  };
-
-  const handleConfirmIntro = async (careRequestId: string) => {
-    if (!introCarer) return;
-    try {
-      await dispatch(
-        requestIntroduction({
-          careRequestId,
-          carerProfileId: introCarer.id,
-        })
-      ).unwrap();
-      
-      showSuccessToast(
-        "Introduction Requested",
-        `Your request to be introduced to ${introCarer.name} was successfully submitted. Our team will contact you shortly.`
-      );
-    } catch (err: any) {
-      showErrorToast("Request Failed", err?.message || "Failed to submit introduction request.");
-    } finally {
-      setIntroCarer(null);
-    }
-  };
 
   const handleWishlistToggle = async (carer: Carer) => {
     const isWishlisted = interestList.some((w: Carer) => w.id === carer.id);
@@ -329,12 +302,6 @@ export default function BrowseCarersPage() {
                       className="flex-1 px-4 py-2 bg-navy-950/50 hover:bg-navy-950/80 border border-gold-300/10 hover:border-gold-300/20 text-gold-100 hover:text-white rounded-xl text-xs font-semibold tracking-wide transition-all text-center cursor-pointer"
                     >
                       View Profile
-                    </button>
-                    <button
-                      onClick={() => handleOpenIntro(carer)}
-                      className="flex-1 px-4 py-2 bg-[#b59469] hover:bg-[#b59469]/90 text-navy-950 hover:text-white rounded-xl text-xs font-semibold tracking-wide transition-all text-center cursor-pointer"
-                    >
-                      Request Intro
                     </button>
                   </div>
                   <button
@@ -586,33 +553,11 @@ export default function BrowseCarersPage() {
                           ? "Maximum 8 allowed" 
                           : "Interest List"}
                   </Button>
-                  <Button
-                    onClick={() => {
-                      setSelectedCarer(null);
-                      setIsVideoPlaying(false);
-                      handleOpenIntro(selectedCarer);
-                    }}
-                    variant="primary"
-                    size="sm"
-                    className="flex-1 sm:flex-none font-semibold"
-                  >
-                    Request Introduction
-                  </Button>
                 </div>
               </div>
 
             </div>
           </div>
-        )}
-
-        {/* Request Introduction Modal Dialog */}
-        {introCarer && (
-          <IntroductionModal
-            carer={introCarer}
-            careRequests={careRequests}
-            onCancel={() => setIntroCarer(null)}
-            onConfirm={handleConfirmIntro}
-          />
         )}
 
       </div>

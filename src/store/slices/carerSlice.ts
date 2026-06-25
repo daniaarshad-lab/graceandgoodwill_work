@@ -4,6 +4,8 @@ import {
   CarerProfile,
   UpdateCarerProfilePayload,
   UpdateAvailabilityPayload,
+  CarerCareRequest,
+  CarerCareRequestDetail,
 } from "@/types/carer.types";
 import { CarerDocument } from "@/app/(protected)/carer/types/carer.types";
 
@@ -18,6 +20,14 @@ interface CarerState {
   uploadingDocument: boolean;
   batchUploading: boolean;
   deletingDocumentId: string | null;
+
+  /** Placement opportunities */
+  careRequests: CarerCareRequest[];
+  careRequestsLoading: boolean;
+  careRequestsError: string | null;
+  selectedCareRequest: CarerCareRequestDetail | null;
+  selectedCareRequestLoading: boolean;
+  applyingToCareRequest: boolean;
 }
 
 const initialState: CarerState = {
@@ -29,6 +39,13 @@ const initialState: CarerState = {
   uploadingDocument: false,
   batchUploading: false,
   deletingDocumentId: null,
+
+  careRequests: [],
+  careRequestsLoading: false,
+  careRequestsError: null,
+  selectedCareRequest: null,
+  selectedCareRequestLoading: false,
+  applyingToCareRequest: false,
 };
 
 export const fetchCarerProfile = createAsyncThunk<
@@ -234,6 +251,54 @@ export const uploadProfileMedia = createAsyncThunk<
   }
 );
 
+// --- Placement Opportunities Thunks ---
+export const fetchCarerCareRequests = createAsyncThunk<
+  CarerCareRequest[],
+  void,
+  { rejectValue: string }
+>("carer/fetchCareRequests", async (_, { rejectWithValue }) => {
+  try {
+    const data = await carerService.getCareRequests();
+    
+    // Safely extract the array whether it's wrapped in data, items, or returned directly
+    if (Array.isArray(data)) {
+      return data;
+    } else if (data && typeof data === "object") {
+      // Look for any property that is an array
+      const arrayValue = Object.values(data).find(Array.isArray);
+      if (arrayValue) return arrayValue as CarerCareRequest[];
+    }
+    
+    return [];
+  } catch (error: any) {
+    return rejectWithValue(error?.message || "Failed to fetch placement opportunities");
+  }
+});
+
+export const fetchCarerCareRequestById = createAsyncThunk<
+  CarerCareRequestDetail,
+  string,
+  { rejectValue: string }
+>("carer/fetchCareRequestById", async (id, { rejectWithValue }) => {
+  try {
+    return await carerService.getCareRequestById(id);
+  } catch (error: any) {
+    return rejectWithValue(error?.message || "Failed to fetch placement details");
+  }
+});
+
+export const applyToCarerCareRequest = createAsyncThunk<
+  any,
+  string,
+  { rejectValue: string }
+>("carer/applyToCareRequest", async (careRequestId, { rejectWithValue }) => {
+  try {
+    return await carerService.applyToCareRequest(careRequestId);
+  } catch (error: any) {
+    return rejectWithValue(error?.message || "Failed to apply to placement");
+  }
+});
+
 const carerSlice = createSlice({
   name: "carer",
   initialState,
@@ -241,6 +306,9 @@ const carerSlice = createSlice({
     clearCarerProfile(state) {
       state.profile = null;
       state.error = null;
+    },
+    clearSelectedCareRequest(state) {
+      state.selectedCareRequest = null;
     },
   },
   extraReducers: (builder) => {
@@ -470,10 +538,45 @@ const carerSlice = createSlice({
       .addCase(uploadProfileMedia.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Failed to upload profile media";
+      })
+
+      // --- Placement Opportunities ---
+      .addCase(fetchCarerCareRequests.pending, (state) => {
+        state.careRequestsLoading = true;
+        state.careRequestsError = null;
+      })
+      .addCase(fetchCarerCareRequests.fulfilled, (state, action: PayloadAction<CarerCareRequest[]>) => {
+        state.careRequestsLoading = false;
+        state.careRequests = action.payload;
+      })
+      .addCase(fetchCarerCareRequests.rejected, (state, action) => {
+        state.careRequestsLoading = false;
+        state.careRequestsError = action.payload || "Failed to fetch placement opportunities";
+      })
+
+      .addCase(fetchCarerCareRequestById.pending, (state) => {
+        state.selectedCareRequestLoading = true;
+      })
+      .addCase(fetchCarerCareRequestById.fulfilled, (state, action: PayloadAction<CarerCareRequestDetail>) => {
+        state.selectedCareRequestLoading = false;
+        state.selectedCareRequest = action.payload;
+      })
+      .addCase(fetchCarerCareRequestById.rejected, (state, action) => {
+        state.selectedCareRequestLoading = false;
+      })
+
+      .addCase(applyToCarerCareRequest.pending, (state) => {
+        state.applyingToCareRequest = true;
+      })
+      .addCase(applyToCarerCareRequest.fulfilled, (state) => {
+        state.applyingToCareRequest = false;
+      })
+      .addCase(applyToCarerCareRequest.rejected, (state) => {
+        state.applyingToCareRequest = false;
       });
   },
 });
 
-export const { clearCarerProfile } = carerSlice.actions;
+export const { clearCarerProfile, clearSelectedCareRequest } = carerSlice.actions;
 
 export default carerSlice.reducer;

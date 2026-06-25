@@ -194,15 +194,7 @@ const mapBackendCareRequests = (careRequests: any[]): ClientRequest[] => {
     const profile = req.clientProfile || {};
     const clientUser = profile.user || {};
 
-    let status: "Unmatched" | "Matched" | "Reviewing" | "Emergency" =
-      "Unmatched";
-    if (req.status === "MATCHED" || req.status === "PLACEMENT_CONFIRMED") {
-      status = "Matched";
-    } else if (req.isEmergency) {
-      status = "Emergency";
-    } else if (req.status === "UNDER_REVIEW") {
-      status = "Reviewing";
-    }
+    let status = req.status || "NEW_ENQUIRY";
 
     let urgency: "Standard" | "High" | "Emergency" = "Standard";
     if (req.isEmergency) {
@@ -956,6 +948,8 @@ export function useAdminPortal() {
     setClientsPage: (page: number) => dispatch(setClientsPage(page)),
     setClientsStatus: (status: string) => dispatch(setClientsStatus(status)),
     setClientsLimit: (limit: number) => dispatch(setClientsLimit(limit)),
+    refreshRequests: loadRequests,
+    refreshPlacements: loadPlacements,
     loadStatsCounts,
   };
 }

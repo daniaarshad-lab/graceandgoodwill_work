@@ -18,6 +18,9 @@ interface BillingManagementProps {
   placements: Placement[];
 }
 
+import { adminService } from "@/services/admin/admin.service";
+import { showSuccessToast, showErrorToast } from "@/utils/toast";
+
 export default function BillingManagement({
   placements,
 }: BillingManagementProps) {
@@ -61,6 +64,7 @@ export default function BillingManagement({
   const [customRate, setCustomRate] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+  const [triggeringBilling, setTriggeringBilling] = useState(false);
 
   // Statistics
   const totalInvoiced = invoices.reduce((sum, inv) => sum + inv.amount, 0);
@@ -139,6 +143,23 @@ export default function BillingManagement({
             payouts.
           </p>
         </div>
+        <button
+          onClick={async () => {
+            setTriggeringBilling(true);
+            try {
+              const res = await adminService.triggerBillingRun();
+              showSuccessToast("Billing Run Triggered", res.message || "Billing run completed successfully.");
+            } catch (err: any) {
+              showErrorToast("Billing Run Failed", err.message || "An error occurred.");
+            } finally {
+              setTriggeringBilling(false);
+            }
+          }}
+          disabled={triggeringBilling}
+          className="rounded-xl bg-gold hover:bg-gold-600 px-4 py-2.5 text-xs font-bold tracking-wider uppercase text-navy-950 shadow-elegant transition-all flex items-center justify-center disabled:opacity-50"
+        >
+          {triggeringBilling ? "Triggering..." : "Trigger Billing Run"}
+        </button>
       </div>
 
       {/* METRICS ROW */}

@@ -29,6 +29,7 @@ import StepVideoIntro from "./components/StepVideoIntro";
 import StepDeclaration from "./components/StepDeclaration";
 import OnboardingMembership from "./components/OnboardingMembership";
 import StepReviewSubmit from "./components/StepReviewSubmit";
+import PlacementOpportunities from "./components/PlacementOpportunities";
 import Button from "@/components/Button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
@@ -45,7 +46,7 @@ function CarerDashboardContent() {
   useEffect(() => {
     if (
       tabParam &&
-      ["overview", "profile", "compliance", "availability"].includes(tabParam)
+      ["overview", "profile", "compliance", "availability", "opportunities"].includes(tabParam)
     ) {
       setActiveTab(tabParam);
     }
@@ -550,6 +551,10 @@ function CarerDashboardContent() {
 
           {activeTab === "availability" && (
             <AvailabilitySchedule isProfileLoading={loading} />
+          )}
+
+          {activeTab === "opportunities" && (
+            <PlacementOpportunities />
           )}
         </div>
       </div>

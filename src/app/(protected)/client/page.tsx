@@ -34,8 +34,9 @@ const InterestListPanel = dynamic(
   () => import("./components/InterestListPanel"),
   { ssr: false },
 );
-const IntroductionModal = dynamic(
-  () => import("./components/IntroductionModal"),
+
+const ClientApplicationsPanel = dynamic(
+  () => import("./components/ClientApplicationsPanel"),
   { ssr: false },
 );
 const ClientOnboarding = dynamic(
@@ -62,6 +63,7 @@ export default function ClientDashboard() {
         "tracking",
         "enquiry",
         "interest-list",
+        "applications",
       ].includes(tabParam)
     ) {
       setActiveTab(tabParam);
@@ -110,12 +112,19 @@ export default function ClientDashboard() {
     );
   }
 
+  // Check if client has any client-managed requests
+  const hasClientManagedRequests = portal.careRequests?.some((req: any) => !req.adminMatching) || false;
+
   return (
     <main className="min-h-screen bg-navy-950 py-10 text-gold-100">
       <div className="container-wrapper space-y-8">
         <PortalHeader user={user} />
 
-        <PortalTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+        <PortalTabs 
+          activeTab={activeTab} 
+          setActiveTab={setActiveTab} 
+          hasClientManagedRequests={hasClientManagedRequests}
+        />
 
         <div className="transition-all duration-300">
           {/* TAB 1: DASHBOARD OVERVIEW */}
@@ -151,8 +160,10 @@ export default function ClientDashboard() {
               setAddress={portal.setCareAddress}
               notes={portal.careNotes}
               setNotes={portal.setCareNotes}
-              adminMatching={portal.adminMatching}
-              setAdminMatching={portal.setAdminMatching}
+              isOngoing={portal.isOngoing}
+              setIsOngoing={portal.setIsOngoing}
+              weeklyPayRange={portal.weeklyPayRange}
+              setWeeklyPayRange={portal.setWeeklyPayRange}
               errors={portal.careErrors}
               isSubmitting={portal.isCareSubmitting}
               onSubmit={portal.handleCareSubmit}
@@ -164,7 +175,6 @@ export default function ClientDashboard() {
           {activeTab === "carers" && (
             <CarerProfiles
               carers={portal.carers}
-              onRequestIntro={portal.handleRequestIntro}
             />
           )}
 
@@ -183,19 +193,13 @@ export default function ClientDashboard() {
           {activeTab === "enquiry" && <SupportEnquiryPanel />}
 
           {/* TAB 6: INTEREST LIST */}
-          {activeTab === "interest-list" && <InterestListPanel onRequestIntro={portal.handleRequestIntro} />}
+          {activeTab === "interest-list" && <InterestListPanel />}
+
+          {/* TAB 7: APPLICATIONS */}
+          {activeTab === "applications" && <ClientApplicationsPanel />}
         </div>
       </div>
 
-      {/* --- CONFIRMATION DIALOG MODAL FOR REQUESTING INTRODUCTION --- */}
-      {portal.selectedCarer && (
-        <IntroductionModal
-          carer={portal.selectedCarer}
-          careRequests={portal.careRequests}
-          onCancel={() => portal.setSelectedCarer(null)}
-          onConfirm={portal.confirmIntroRequest}
-        />
-      )}
     </main>
   );
 }

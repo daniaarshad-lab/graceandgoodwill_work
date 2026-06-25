@@ -18,7 +18,7 @@ export default function StatusBadge({ status }: StatusBadgeProps) {
       return "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
     }
 
-    if (s === "pending" || s === "reviewing" || s === "unmatched") {
+    if (s === "pending" || s === "reviewing" || s === "new_enquiry" || s === "under_review" || s === "awaiting_consultation" || s === "open_for_applications") {
       return "bg-gold-DEFAULT/10 text-gold-DEFAULT border border-gold-DEFAULT/20";
     }
 

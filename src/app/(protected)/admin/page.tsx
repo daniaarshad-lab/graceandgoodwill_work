@@ -223,6 +223,7 @@ function AdminDashboardContent() {
                   status={portal.requestsPagination.status}
                   onPageChange={portal.setRequestsPage}
                   onStatusChange={portal.setRequestsStatus}
+                  refreshRequests={portal.refreshRequests}
                 />
               )}
 
@@ -256,6 +257,7 @@ function AdminDashboardContent() {
                   carers={portal.carers}
                   onToggleContactRelease={portal.handleToggleContactRelease}
                   onReassignCarer={portal.handleOverridePlacementCarer}
+                  refreshPlacements={portal.refreshPlacements}
                 />
               )}
 

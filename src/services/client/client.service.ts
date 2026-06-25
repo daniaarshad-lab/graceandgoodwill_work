@@ -4,8 +4,7 @@ import {
   CreateCareRequestPayload,
   CareRequest,
   CreateEnquiryPayload,
-  IntroductionRequestPayload,
-  IntroductionRequest,
+  CareRequestApplication,
   UpdateClientProfilePayload,
   ClientPlacement,
 } from "@/types/client.types";
@@ -181,9 +180,8 @@ export const clientService = {
     });
   },
 
-  async requestIntroduction(
-    payload: IntroductionRequestPayload,
-  ): Promise<IntroductionRequest> {
+  /** GET /client/care-requests/:id/applications — get applications for a care request */
+  async getCareRequestApplications(careRequestId: string): Promise<CareRequestApplication[]> {
     const token =
       typeof window !== "undefined"
         ? localStorage.getItem("accessToken")
@@ -193,14 +191,12 @@ export const clientService = {
       throw new Error("No token found");
     }
 
-    const response = await apiFetch("/client/introduction", {
-      method: "POST",
+    return apiFetch(`/client/care-requests/${careRequestId}/applications`, {
+      method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(payload),
     });
-    return response;
   },
 
   async getCarers() {

@@ -5,12 +5,15 @@ import { Placement, CarerApplication } from "../types/admin.types";
 import { UseAdminPortalReturn } from "../hooks/useAdminPortal";
 import Button from "@/components/Button";
 import Link from "next/link";
+import { adminService } from "@/services/admin/admin.service";
+import { showSuccessToast, showErrorToast } from "@/utils/toast";
 
 interface PlacementTrackingProps {
   placements: Placement[];
   carers: CarerApplication[];
   onToggleContactRelease: UseAdminPortalReturn["handleToggleContactRelease"];
   onReassignCarer: UseAdminPortalReturn["handleOverridePlacementCarer"];
+  refreshPlacements?: () => void;
 }
 
 export default function PlacementTracking({
@@ -18,10 +21,12 @@ export default function PlacementTracking({
   carers,
   onToggleContactRelease,
   onReassignCarer,
+  refreshPlacements,
 }: PlacementTrackingProps) {
   const [filter, setFilter] = useState<
-    "All" | "Active" | "Matched" | "Completed"
+    "All" | "PLACEMENT_STARTED" | "PLACEMENT_CONFIRMED" | "COMPLETED" | "ONGOING" | "CANCELLED"
   >("All");
+  const [updatingStatusFor, setUpdatingStatusFor] = useState<string | null>(null);
   const [expandedPlacementId, setExpandedPlacementId] = useState<string | null>(
     null,
   );
@@ -40,6 +45,23 @@ export default function PlacementTracking({
     return carers.filter((c) => c.status === "Approved");
   }, [carers]);
 
+  const handleUpdateStatus = async (placementId: string, newStatus: string) => {
+    setUpdatingStatusFor(placementId);
+    try {
+      await adminService.updatePlacementStatus(placementId, newStatus);
+      showSuccessToast("Status Updated", "Placement status successfully updated.");
+      if (refreshPlacements) {
+        refreshPlacements();
+      } else {
+        window.location.reload();
+      }
+    } catch (error: any) {
+      showErrorToast("Failed to update status", error.message);
+    } finally {
+      setUpdatingStatusFor(null);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gold-300/10 pb-4">
@@ -53,18 +75,25 @@ export default function PlacementTracking({
           </p>
         </div>
 
-        <div className="flex rounded-xl bg-navy-950 p-1 border border-gold-300/10 gap-1">
-          {(["All", "Active", "Matched", "Completed"] as const).map((tab) => (
+        <div className="flex flex-wrap rounded-xl bg-navy-950 p-1 border border-gold-300/10 gap-1 max-w-full overflow-x-auto">
+          {[
+            { label: "All", value: "All" },
+            { label: "Active", value: "PLACEMENT_STARTED" },
+            { label: "Matched", value: "PLACEMENT_CONFIRMED" },
+            { label: "Completed", value: "COMPLETED" },
+            { label: "Ongoing", value: "ONGOING" },
+            { label: "Cancelled", value: "CANCELLED" },
+          ].map((tab) => (
             <Button
-              key={tab}
-              onClick={() => setFilter(tab)}
+              key={tab.value}
+              onClick={() => setFilter(tab.value as any)}
               variant="selectable"
-              isSelected={filter === tab}
+              isSelected={filter === tab.value}
               size="sm"
               fullWidth={false}
-              className="rounded-lg px-4 py-1.5 text-xs tracking-wide"
+              className="rounded-lg px-4 py-1.5 text-xs tracking-wide whitespace-nowrap"
             >
-              {tab}
+              {tab.label}
             </Button>
           ))}
         </div>
@@ -98,7 +127,18 @@ export default function PlacementTracking({
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <StatusBadge status={place.status} />
+                  <select
+                    value={place.status}
+                    disabled={updatingStatusFor === place.id}
+                    onChange={(e) => handleUpdateStatus(place.id, e.target.value)}
+                    className="rounded-full border border-gold-300/20 bg-navy-950 px-3 py-1 text-[10px] font-bold text-gold-200 outline-none focus:border-gold-300/50 transition duration-300 cursor-pointer"
+                  >
+                    <option value="PLACEMENT_CONFIRMED">Matched</option>
+                    <option value="PLACEMENT_STARTED">Active</option>
+                    <option value="ONGOING">Ongoing</option>
+                    <option value="COMPLETED">Completed</option>
+                    <option value="CANCELLED">Cancelled</option>
+                  </select>
                   <Button
                     onClick={() =>
                       setExpandedPlacementId(isExpanded ? null : place.id)
@@ -218,7 +258,7 @@ export default function PlacementTracking({
                   Critical Placement Tools
                 </p>
 
-                {place.status === "Active" || place.status === "Matched" ? (
+                {place.status?.toUpperCase() === "PLACEMENT_STARTED" || place.status?.toUpperCase() === "ONGOING" ? (
                   isReassigning ? (
                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
                       <select

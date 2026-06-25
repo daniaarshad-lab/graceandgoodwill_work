@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { adminService } from "@/services/admin/admin.service";
-import { AdminDashboardStats, AdminState } from "@/types/admin.types";
+import { AdminDashboardStats, AdminState, AdminCareRequestApplication } from "@/types/admin.types";
 
 const initialState: AdminState = {
   stats: null,
@@ -41,6 +41,10 @@ const initialState: AdminState = {
     loading: false,
     error: null,
   },
+
+  selectedCareRequestApplications: [],
+  applicationsLoading: false,
+  applicationsError: null,
 };
 
 export const fetchAdminDashboardStats = createAsyncThunk<
@@ -134,6 +138,47 @@ export const rejectDocument = createAsyncThunk<
   }
 });
 
+/** Fetch applications for a specific care request */
+export const fetchAdminCareRequestApplications = createAsyncThunk<
+  AdminCareRequestApplication[],
+  string,
+  { rejectValue: string }
+>("admin/fetchCareRequestApplications", async (careRequestId, { rejectWithValue }) => {
+  try {
+    const data = await adminService.getCareRequestApplications(careRequestId);
+    return Array.isArray(data) ? data : [];
+  } catch (error: any) {
+    return rejectWithValue(error?.message || "Failed to fetch applications");
+  }
+});
+
+/** Update care request status */
+export const updateAdminCareRequestStatus = createAsyncThunk<
+  { careRequestId: string; status: string },
+  { careRequestId: string; status: string },
+  { rejectValue: string }
+>("admin/updateCareRequestStatus", async ({ careRequestId, status }, { rejectWithValue }) => {
+  try {
+    await adminService.updateCareRequestStatus(careRequestId, status);
+    return { careRequestId, status };
+  } catch (error: any) {
+    return rejectWithValue(error?.message || "Failed to update care request status");
+  }
+});
+
+/** Trigger billing run */
+export const triggerAdminBillingRun = createAsyncThunk<
+  any,
+  void,
+  { rejectValue: string }
+>("admin/triggerBillingRun", async (_, { rejectWithValue }) => {
+  try {
+    return await adminService.triggerBillingRun();
+  } catch (error: any) {
+    return rejectWithValue(error?.message || "Failed to trigger billing run");
+  }
+});
+
 const adminSlice = createSlice({
   name: "admin",
   initialState,
@@ -174,6 +219,10 @@ const adminSlice = createSlice({
     setClientsLimit(state, action: PayloadAction<number>) {
       state.clients.limit = action.payload;
       state.clients.page = 1;
+    },
+    clearCareRequestApplications(state) {
+      state.selectedCareRequestApplications = [];
+      state.applicationsError = null;
     },
   },
   extraReducers: (builder) => {
@@ -327,6 +376,20 @@ const adminSlice = createSlice({
         return user;
       });
     });
+
+    // fetchAdminCareRequestApplications
+    builder.addCase(fetchAdminCareRequestApplications.pending, (state) => {
+      state.applicationsLoading = true;
+      state.applicationsError = null;
+    });
+    builder.addCase(fetchAdminCareRequestApplications.fulfilled, (state, action: PayloadAction<AdminCareRequestApplication[]>) => {
+      state.applicationsLoading = false;
+      state.selectedCareRequestApplications = action.payload;
+    });
+    builder.addCase(fetchAdminCareRequestApplications.rejected, (state, action) => {
+      state.applicationsLoading = false;
+      state.applicationsError = action.payload || "Failed to fetch applications";
+    });
   },
 });
 
@@ -341,6 +404,7 @@ export const {
   setClientsPage,
   setClientsStatus,
   setClientsLimit,
+  clearCareRequestApplications,
 } = adminSlice.actions;
 
 export default adminSlice.reducer;

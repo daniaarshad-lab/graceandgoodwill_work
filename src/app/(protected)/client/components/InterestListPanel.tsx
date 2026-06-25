@@ -16,11 +16,7 @@ const SafeImage = ({ src, alt, fallback, className }: { src: string, alt: string
   return <Image src={src} alt={alt} fill className={className} onError={() => setError(true)} />;
 };
 
-interface InterestListPanelProps {
-  onRequestIntro: (carer: Carer) => void;
-}
-
-export default function InterestListPanel({ onRequestIntro }: InterestListPanelProps) {
+export default function InterestListPanel() {
   const dispatch = useAppDispatch();
   const { interestList, interestListLoading } = useAppSelector((state) => state.client);
   const [removingId, setRemovingId] = useState<string | null>(null);
@@ -174,14 +170,6 @@ export default function InterestListPanel({ onRequestIntro }: InterestListPanelP
                 >
                   <Trash2 className="w-3 h-3 mr-2" />
                   {removingId === carer.id ? "Removing..." : "Remove from Interest List"}
-                </Button>
-                <Button
-                  onClick={() => onRequestIntro(carer)}
-                  variant="secondary"
-                  size="sm"
-                  fullWidth
-                >
-                  Request Introduction
                 </Button>
               </div>
             </SectionCard>

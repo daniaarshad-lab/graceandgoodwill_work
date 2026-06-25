@@ -8,6 +8,7 @@ export type TabType =
   | "profile"
   | "carers"
   | "tracking"
+  | "applications"
   | "enquiry"
   | "interest-list"
   | "referrals";
@@ -15,11 +16,13 @@ export type TabType =
 interface PortalTabsProps {
   activeTab: TabType;
   setActiveTab?: (tab: TabType) => void;
+  hasClientManagedRequests?: boolean;
 }
 
 export default function PortalTabs({
   activeTab,
   setActiveTab,
+  hasClientManagedRequests = false,
 }: PortalTabsProps) {
   const router = useRouter();
 
@@ -38,13 +41,16 @@ export default function PortalTabs({
     { id: "carers", label: "Carer Profiles", href: "/client?tab=carers" },
     { id: "interest-list", label: "Interest List ❤️", href: "/client?tab=interest-list" },
     { id: "tracking", label: "Track Requests", href: "/client?tab=tracking" },
+    ...(hasClientManagedRequests
+      ? [{ id: "applications" as TabType, label: "Applications", href: "/client?tab=applications" }]
+      : []),
     {
       id: "enquiry",
       label: "Support & Enquiries",
       href: "/client?tab=enquiry",
     },
     { id: "referrals", label: "Refer a Client", href: "/client/referrals" },
-  ] as const;
+  ];
 
   const handleTabClick = (tabId: TabType, href: string) => {
     if (tabId === "referrals") {

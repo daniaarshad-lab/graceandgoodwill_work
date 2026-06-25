@@ -333,5 +333,62 @@ export const carerService = {
         Authorization: `Bearer ${token}`,
       },
     });
-  }
+  },
+
+  /** GET /carer/care-requests — list all available placement opportunities */
+  async getCareRequests(): Promise<any[]> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch("/carer/care-requests", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
+  /** GET /carer/care-request/:id — get full placement details */
+  async getCareRequestById(id: string): Promise<any> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch(`/carer/care-request/${id}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
+  /** POST /carer/care-requests/:id/apply — apply to a care request */
+  async applyToCareRequest(id: string): Promise<any> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch(`/carer/care-requests/${id}/apply`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
 };

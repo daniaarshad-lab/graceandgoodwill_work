@@ -60,7 +60,11 @@ export interface CreateCareRequestPayload {
 
   additionalNotes?: string;
   shiftType: string;
-  adminMatching?: boolean;
+
+  /** Whether this is an ongoing/permanent placement */
+  isOngoing?: boolean;
+  /** Weekly pay range for the placement */
+  weeklyPayRange?: string;
 }
 
 export interface ClientPlacement {
@@ -69,7 +73,7 @@ export interface ClientPlacement {
   clientProfileId: string;
   careRequestId: string | null;
   hourlyRate: string | number;
-  status: "ACTIVE" | "COMPLETED" | "TERMINATED" | "CANCELLED" | "PENDING" | "MATCHING" | "APPROVED";
+  status: "ACTIVE" | "COMPLETED" | "TERMINATED" | "CANCELLED" | "PENDING" | "MATCHING" | "APPROVED" | "ONGOING";
   startDate: string;
   endDate: string | null;
   createdAt: string;
@@ -101,6 +105,11 @@ export interface ClientState {
   enquiries: any[];
   selectedEnquiry: any | null;
 
+  /** Applications for a selected care request */
+  applications: CareRequestApplication[];
+  applicationsLoading: boolean;
+  applicationsError: string | null;
+
   loading: boolean;
   error: string | null;
 }
@@ -115,6 +124,8 @@ export interface CareRequest {
 
   startDate: string;
   duration: string;
+  /** Computed or set end date for the care request */
+  endDate?: string | null;
 
   additionalNotes?: string | null;
 
@@ -132,6 +143,11 @@ export interface CareRequest {
   isEmergency: boolean;
   adminMatching?: boolean;
 
+  /** Whether this care request is for ongoing/permanent care */
+  isOngoing?: boolean;
+  /** Weekly pay range for the placement */
+  weeklyPayRange?: { min: number; max: number } | null;
+
   createdAt: string;
   updatedAt: string;
 
@@ -145,19 +161,31 @@ export interface CreateEnquiryPayload {
   message: string;
 }
 
-export interface IntroductionRequestPayload {
-  careRequestId: string;
-  carerProfileId: string;
-}
-
-export interface IntroductionRequest {
+/** Application submitted by a carer for a care request */
+export interface CareRequestApplication {
   id: string;
   careRequestId: string;
   carerProfileId: string;
   status: string;
-  adminNotes: string | null;
   createdAt: string;
   updatedAt: string;
+  carerProfile?: {
+    id: string;
+    bio: string | null;
+    summary: string | null;
+    profilePhotoUrl: string | null;
+    experienceYears: number | null;
+    experience: string | null;
+    careSpecialties: string | null;
+    availability: string[];
+    user?: {
+      id: string;
+      firstName: string;
+      lastName: string;
+      email: string;
+      phoneNumber: string;
+    };
+  };
 }
 
 export interface CarerProfile {

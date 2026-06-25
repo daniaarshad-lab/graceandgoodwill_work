@@ -16,12 +16,10 @@ const SafeImage = ({ src, alt, fallback, className }: { src: string, alt: string
 
 interface CarerProfilesProps {
   carers: Carer[];
-  onRequestIntro: (carer: Carer) => void;
 }
 
 export default function CarerProfiles({
   carers,
-  onRequestIntro,
 }: CarerProfilesProps) {
   const dispatch = useAppDispatch();
   const { interestList } = useAppSelector((state) => state.client);
@@ -62,8 +60,7 @@ export default function CarerProfiles({
           Pre-screened Carers Index
         </h3>
         <p className="text-xs text-gold-100/60 leading-relaxed mt-1">
-          Browse profiles verified by Grace & Goodwill. You can request
-          introductions directly below or save them to your Interest List.
+          Browse profiles verified by Grace & Goodwill. You can save them to your Interest List.
         </p>
       </div>
 
@@ -170,14 +167,6 @@ export default function CarerProfiles({
                       : isMaxReached 
                         ? "Maximum 8 allowed" 
                         : "Add to Interest List"}
-                </Button>
-                <Button
-                  onClick={() => onRequestIntro(carer)}
-                  variant="secondary"
-                  size="sm"
-                  fullWidth
-                >
-                  Request Introduction
                 </Button>
               </div>
             </SectionCard>

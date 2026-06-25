@@ -30,7 +30,15 @@ export interface ClientRequest {
   urgency: "Standard" | "High" | "Emergency";
   startDate: string;
   notes: string;
-  status: "Unmatched" | "Matched" | "Reviewing" | "Emergency";
+  status:
+    | "NEW_ENQUIRY"
+    | "AWAITING_CONSULTATION"
+    | "OPEN_FOR_APPLICATIONS"
+    | "UNDER_REVIEW"
+    | "CLIENT_INTERVIEW_STAGE"
+    | "CARER_SELECTED"
+    | "CANCELLED"
+    | string;
   email: string;
   phone: string;
 }
@@ -51,12 +59,12 @@ export interface Placement {
   location: string;
   urgency: "Standard" | "High" | "Emergency";
   status:
-    | "Pending"
-    | "Reviewing"
-    | "Matched"
-    | "Active"
-    | "Completed"
-    | "Emergency";
+    | "PLACEMENT_CONFIRMED"
+    | "PLACEMENT_STARTED"
+    | "ONGOING"
+    | "COMPLETED"
+    | "CANCELLED"
+    | string;
   contactDetailsReleased: boolean;
   startDate: string;
   timeline: PlacementTimelineEvent[];

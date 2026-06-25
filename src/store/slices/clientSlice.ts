@@ -5,8 +5,7 @@ import {
   ClientState,
   CreateCareRequestPayload,
   CareRequest,
-  IntroductionRequestPayload,
-  IntroductionRequest,
+  CareRequestApplication,
   UpdateClientProfilePayload,
   ClientPlacement,
 } from "@/types/client.types";
@@ -27,6 +26,10 @@ const initialState: ClientState = {
 
   enquiries: [],
   selectedEnquiry: null,
+
+  applications: [],
+  applicationsLoading: false,
+  applicationsError: null,
 
   loading: false,
   error: null,
@@ -174,17 +177,17 @@ export const fetchCareRequests = createAsyncThunk<
   }
 });
 
-export const requestIntroduction = createAsyncThunk<
-  IntroductionRequest,
-  IntroductionRequestPayload,
+/** Fetch applications for a specific care request */
+export const fetchClientCareRequestApplications = createAsyncThunk<
+  CareRequestApplication[],
+  string,
   { rejectValue: string }
->("client/requestIntroduction", async (payload, { rejectWithValue }) => {
+>("client/fetchCareRequestApplications", async (careRequestId, { rejectWithValue }) => {
   try {
-    const response = await clientService.requestIntroduction(payload);
-    return response;
+    const data = await clientService.getCareRequestApplications(careRequestId);
+    return Array.isArray(data) ? data : [];
   } catch (error: any) {
-    console.error("[Thunk: requestIntroduction] Error:", error);
-    return rejectWithValue(error?.message || "Failed to request introduction");
+    return rejectWithValue(error?.message || "Failed to fetch applications");
   }
 });
 
@@ -220,7 +223,15 @@ const clientSlice = createSlice({
       state.enquiries = [];
       state.selectedEnquiry = null;
 
+      state.applications = [];
+      state.applicationsLoading = false;
+      state.applicationsError = null;
+
       state.error = null;
+    },
+    clearApplications(state) {
+      state.applications = [];
+      state.applicationsError = null;
     },
   },
   extraReducers: (builder) => {
@@ -366,19 +377,6 @@ const clientSlice = createSlice({
       state.loading = false;
       state.error = action.payload || "Failed to send enquiry message";
     });
-    builder.addCase(requestIntroduction.pending, (state) => {
-      state.loading = true;
-      state.error = null;
-    });
-
-    builder.addCase(requestIntroduction.fulfilled, (state) => {
-      state.loading = false;
-    });
-
-    builder.addCase(requestIntroduction.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.payload || "Failed to request introduction";
-    });
 
     builder.addCase(fetchCarers.pending, (state) => {
       state.loading = true;
@@ -429,6 +427,20 @@ const clientSlice = createSlice({
     builder.addCase(fetchInterestList.rejected, (state, action) => {
       state.interestListLoading = false;
       state.error = action.payload || "Failed to fetch interest list";
+    });
+
+    // Care Request Applications
+    builder.addCase(fetchClientCareRequestApplications.pending, (state) => {
+      state.applicationsLoading = true;
+      state.applicationsError = null;
+    });
+    builder.addCase(fetchClientCareRequestApplications.fulfilled, (state, action: PayloadAction<CareRequestApplication[]>) => {
+      state.applicationsLoading = false;
+      state.applications = action.payload;
+    });
+    builder.addCase(fetchClientCareRequestApplications.rejected, (state, action) => {
+      state.applicationsLoading = false;
+      state.applicationsError = action.payload || "Failed to fetch applications";
     });
   },
 });
@@ -492,6 +504,6 @@ export const getClientPlacements = createAsyncThunk<
   }
 });
 
-export const { clearClientProfile } = clientSlice.actions;
+export const { clearClientProfile, clearApplications } = clientSlice.actions;
 
 export default clientSlice.reducer;

@@ -95,14 +95,27 @@ export const fetchAdminClients = createAsyncThunk<
   }
 });
 
-export const fetchDocumentDetails = createAsyncThunk<
+/** Update carer account status (e.g. APPROVED) */
+export const updateAdminCarerStatus = createAsyncThunk<
+  { id: string; status: string },
+  { carerId: string; status: string },
+  { rejectValue: string }
+>("admin/updateCarerStatus", async ({ carerId, status }, { rejectWithValue }) => {
+  try {
+    const result = await adminService.updateCarerStatus(carerId, status);
+    return result;
+  } catch (error: any) {
+    return rejectWithValue(error?.message || "Failed to update carer status");
+  }
+});
+
+export const fetchCarerDetails = createAsyncThunk<
   any,
   string,
   { rejectValue: string }
->("admin/fetchDocumentDetails", async (carerId, { rejectWithValue }) => {
+>("admin/fetchCarerDetails", async (carerId, { rejectWithValue }) => {
   try {
-    const response = await adminService.getCarers(1, 1000, "ALL");
-    const carer = response.items.find((c: any) => c.id === carerId);
+    const carer = await adminService.getCarerDetails(carerId);
     if (!carer) {
       throw new Error("Carer not found");
     }
@@ -291,18 +304,18 @@ const adminSlice = createSlice({
       state.clients.error = action.payload || "Failed to fetch clients";
     });
 
-    // fetchDocumentDetails
-    builder.addCase(fetchDocumentDetails.pending, (state) => {
+    // fetchCarerDetails
+    builder.addCase(fetchCarerDetails.pending, (state) => {
       state.selectedCarer.loading = true;
       state.selectedCarer.error = null;
     });
-    builder.addCase(fetchDocumentDetails.fulfilled, (state, action) => {
+    builder.addCase(fetchCarerDetails.fulfilled, (state, action: PayloadAction<any>) => {
       state.selectedCarer.loading = false;
       state.selectedCarer.data = action.payload;
     });
-    builder.addCase(fetchDocumentDetails.rejected, (state, action) => {
+    builder.addCase(fetchCarerDetails.rejected, (state, action) => {
       state.selectedCarer.loading = false;
-      state.selectedCarer.error = action.payload || "Failed to fetch document details";
+      state.selectedCarer.error = action.payload || "Failed to fetch carer details";
     });
 
     // verifyDocument

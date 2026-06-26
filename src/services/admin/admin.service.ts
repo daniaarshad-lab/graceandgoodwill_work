@@ -48,6 +48,24 @@ export const adminService = {
     });
   },
 
+  async getCarerDetails(id: string): Promise<any> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch(`/admin/carers/${id}/details`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
   async getCareRequests(
     page: number = 1,
     limit: number = 10,

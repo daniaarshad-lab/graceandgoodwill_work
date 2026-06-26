@@ -4,7 +4,8 @@ import { Suspense, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { fetchDocumentDetails } from "@/store/slices/adminSlice";
+import { fetchCarerDetails, updateAdminCarerStatus } from "@/store/slices/adminSlice";
+import { showSuccessToast, showErrorToast } from "@/utils/toast";
 import {
   ArrowLeft,
   User,
@@ -23,6 +24,7 @@ import {
   DollarSign,
   MessageSquare,
   MessageCircle,
+  CheckCircle2,
 } from "lucide-react";
 
 // Types for carer extended details
@@ -249,10 +251,11 @@ function CarerDetailsContent() {
   );
 
   const [activeTab, setActiveTab] = useState<"profile" | "documents">("profile");
+  const [approvingCarer, setApprovingCarer] = useState(false);
 
   useEffect(() => {
     if (carerId) {
-      dispatch(fetchDocumentDetails(carerId));
+      dispatch(fetchCarerDetails(carerId));
     }
   }, [dispatch, carerId]);
 
@@ -390,6 +393,55 @@ function CarerDetailsContent() {
   // Duration with us
   const durationWithUs = getDurationWithUs(ext.registrationDate || profile.createdAt || carer.createdAt);
 
+  // --- Approve Carer validation ---
+  const isCarerAlreadyApproved = carer?.user?.status === "APPROVED" || carer?.status === "APPROVED";
+
+  const documentValidation = (() => {
+    const docs: any[] = rawDocs;
+    const missingCategories: string[] = [];
+    const unverifiedCategories: string[] = [];
+
+    for (const req of REQUIRED_DOCUMENT_CATEGORIES) {
+      const found = docs.find((d: any) => d.fileCategory === req.category);
+      if (!found) {
+        missingCategories.push(req.label);
+      } else if (found.status !== "VERIFIED") {
+        unverifiedCategories.push(req.label);
+      }
+    }
+
+    const allVerified = missingCategories.length === 0 && unverifiedCategories.length === 0;
+    let message = "";
+    if (missingCategories.length > 0) {
+      message = `Missing required documents: ${missingCategories.join(", ")}.`;
+    } else if (unverifiedCategories.length > 0) {
+      message = `Documents not yet verified: ${unverifiedCategories.join(", ")}.`;
+    }
+    if (!allVerified && !message) {
+      message = "All required compliance documents must be approved before approving this carer.";
+    }
+
+    return { allVerified, message };
+  })();
+
+  const canApproveCarer = !isCarerAlreadyApproved && documentValidation.allVerified;
+
+  const handleApproveCarer = async () => {
+    if (!canApproveCarer || approvingCarer) return;
+    setApprovingCarer(true);
+    try {
+      await dispatch(
+        updateAdminCarerStatus({ carerId: carer.user?.id || carer.id, status: "APPROVED" })
+      ).unwrap();
+      showSuccessToast("Carer Approved", `${carerName} has been approved successfully.`);
+      dispatch(fetchCarerDetails(carerId));
+    } catch (err: any) {
+      showErrorToast("Approval Failed", err || "Failed to approve carer. Please try again.");
+    } finally {
+      setApprovingCarer(false);
+    }
+  };
+
   return (
     <main className="min-h-screen bg-navy-950 py-10 text-gold-100">
       <div className="container-wrapper space-y-8 max-w-7xl mx-auto px-4">
@@ -410,29 +462,70 @@ function CarerDetailsContent() {
             </p>
           </div>
 
-          <div className="flex items-center gap-4 bg-navy-900/40 px-4 py-3 rounded-xl border border-gold-300/5">
-            <div className="h-10 w-10 rounded-full bg-gold/10 flex items-center justify-center text-gold border border-gold/20 font-bold uppercase">
-              {carerName.split(" ").map((n) => n[0]).join("")}
-            </div>
-            <div>
-              <p className="text-sm font-bold text-gold-200">{carerName}</p>
-              <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
-                <span
-                  className={`text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded ${getStatusBadgeStyles(
-                    carer.status
-                  )}`}
-                >
-                  {carer.status}
-                </span>
-                <span
-                  className={`text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded ${getStatusBadgeStyles(
-                    dbsStatus
-                  )}`}
-                >
-                  DBS: {dbsStatus}
-                </span>
+          <div className="flex items-center gap-4">
+            {/* Carer identity badge */}
+            <div className="flex items-center gap-4 bg-navy-900/40 px-4 py-3 rounded-xl border border-gold-300/5">
+              <div className="h-10 w-10 rounded-full bg-gold/10 flex items-center justify-center text-gold border border-gold/20 font-bold uppercase">
+                {carerName.split(" ").map((n) => n[0]).join("")}
+              </div>
+              <div>
+                <p className="text-sm font-bold text-gold-200">{carerName}</p>
+                <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
+                  <span
+                    className={`text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded ${getStatusBadgeStyles(
+                      carer.status
+                    )}`}
+                  >
+                    {carer.status}
+                  </span>
+                  <span
+                    className={`text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded ${getStatusBadgeStyles(
+                      dbsStatus
+                    )}`}
+                  >
+                    DBS: {dbsStatus}
+                  </span>
+                </div>
               </div>
             </div>
+
+            {/* Approve Carer Button */}
+            {isCarerAlreadyApproved ? (
+              <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-4 py-2.5 rounded-xl">
+                <CheckCircle2 className="h-4 w-4" />
+                <span className="text-xs font-bold uppercase tracking-wider">Approved</span>
+              </div>
+            ) : (
+              <div className="flex flex-col items-end gap-1">
+                <button
+                  onClick={handleApproveCarer}
+                  disabled={!canApproveCarer || approvingCarer}
+                  className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-300 ${
+                    canApproveCarer && !approvingCarer
+                      ? "bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-900/30 cursor-pointer"
+                      : "bg-navy-800/60 text-gold-100/30 border border-gold-300/10 cursor-not-allowed"
+                  }`}
+                >
+                  {approvingCarer ? (
+                    <>
+                      <div className="h-3.5 w-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      Approving...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="h-4 w-4" />
+                      Approve Carer
+                    </>
+                  )}
+                </button>
+                {!canApproveCarer && documentValidation.message && (
+                  <p className="text-[9px] text-amber-400/80 font-semibold max-w-[280px] text-right leading-tight">
+                    <AlertTriangle className="h-3 w-3 inline mr-0.5 -mt-0.5" />
+                    {documentValidation.message}
+                  </p>
+                )}
+              </div>
+            )}
           </div>
         </header>
 

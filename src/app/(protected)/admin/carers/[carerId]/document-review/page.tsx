@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { fetchDocumentDetails, verifyDocument, rejectDocument } from "@/store/slices/adminSlice";
+import { fetchCarerDetails, verifyDocument, rejectDocument } from "@/store/slices/adminSlice";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 import Link from "next/link";
 import { ArrowLeft, Check, X, FileText, Image as ImageIcon, Calendar, User, ExternalLink, Eye, CheckCircle2, AlertTriangle, ShieldCheck, Download } from "lucide-react";
@@ -79,7 +79,7 @@ function DocumentReviewContent() {
 
   useEffect(() => {
     if (carerId) {
-      dispatch(fetchDocumentDetails(carerId));
+      dispatch(fetchCarerDetails(carerId));
     }
   }, [dispatch, carerId]);
 
@@ -111,7 +111,7 @@ function DocumentReviewContent() {
       await dispatch(verifyDocument({ docId: activeDoc.id, notes: docNotes })).unwrap();
       showSuccessToast("Document Approved", "The document has been approved successfully.");
       // Re-fetch to ensure local state is fully in sync with server
-      dispatch(fetchDocumentDetails(carerId));
+      dispatch(fetchCarerDetails(carerId));
     } catch (err: any) {
       showErrorToast("Error", err || "Failed to verify document");
     } finally {
@@ -132,7 +132,7 @@ function DocumentReviewContent() {
       await dispatch(rejectDocument({ docId: activeDoc.id, rejectionReason: docNotes })).unwrap();
       showSuccessToast("Document Rejected", "The document has been rejected.");
       // Re-fetch to ensure local state is fully in sync with server
-      dispatch(fetchDocumentDetails(carerId));
+      dispatch(fetchCarerDetails(carerId));
     } catch (err: any) {
       showErrorToast("Error", err || "Failed to reject document");
     } finally {

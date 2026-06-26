@@ -39,50 +39,16 @@ const categoryDisplayMap: Record<string, string> = {
 
 export default function ComplianceVault({
   complianceDocs,
-  uploadingDocType,
-  uploadProgress,
   documentsLoading,
-  batchUploading,
   deletingDocumentId,
   isOnboarding,
-  selectedFiles,
-  handleBatchUpload,
-  handleDocUpload,
   handleUpdateDoc,
   setPreviewDoc,
   setDocToDelete,
   onNext,
   onBack,
 }: ComplianceVaultProps) {
-  const docTypes = [
-    "Driver's License",
-    "Criminal Record Check",
-    "Dementia Support Certificate",
-    "Mandatory Care Certificate",
-    "Business Insurance Certificate",
-  ] as const;
-
-  const categoryMapForSelection: Record<string, string> = {
-    "Driver's License": "drivers_license",
-    "Criminal Record Check": "criminal_record_check",
-    "Dementia Support Certificate": "dementia_support",
-    "Mandatory Care Certificate": "care_certificate",
-    "Business Insurance Certificate": "business_insurance",
-  };
-
-  const hasAllRequiredDocs = docTypes.every((docType) =>
-    complianceDocs.some(
-      (doc) =>
-        doc.type ===
-        {
-          "Driver's License": "DRIVERS_LICENSE",
-          "Criminal Record Check": "CRIMINAL_RECORD_CHECK",
-          "Dementia Support Certificate": "DEMENTIA_SUPPORT",
-          "Mandatory Care Certificate": "CARE_CERTIFICATE",
-          "Business Insurance Certificate": "BUSINESS_INSURANCE",
-        }[docType]
-    )
-  );
+  const allVerified = complianceDocs.length > 0 && complianceDocs.every(doc => doc.status === "verified" || doc.status === "VERIFIED");
 
   return (
     <div className="space-y-6">
@@ -113,111 +79,8 @@ export default function ComplianceVault({
       )}
 
       {/* Main Document Upload Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
-        {/* Left Panel: Update Documents */}
-        <SectionCard className="h-[600px] flex flex-col">
-          <h3 className="text-lg font-bold text-gold-200 border-b border-gold-300/10 pb-4 mb-4">
-            Document Management
-          </h3>
-          <p className="text-xs text-gold-100/60 leading-relaxed mb-4 shrink-0">
-            Upload or update official scans or photos (PDF, PNG, JPG) of your credentials.
-            Ensure documents are clearly readable to stay compliant.
-          </p>
-
-          {/* Reusable document type uploads (scrollable container) */}
-          <div className="flex-1 overflow-y-auto pr-1 custom-scrollbar space-y-4 mb-4">
-            {docTypes.map((docType) => {
-              const fileKey = categoryMapForSelection[docType];
-              const selectedFile = selectedFiles[fileKey];
-
-              const backendType = {
-                "Driver's License": "DRIVERS_LICENSE",
-                "Criminal Record Check": "CRIMINAL_RECORD_CHECK",
-                "Dementia Support Certificate": "DEMENTIA_SUPPORT",
-                "Mandatory Care Certificate": "CARE_CERTIFICATE",
-                "Business Insurance Certificate": "BUSINESS_INSURANCE",
-              }[docType];
-
-              const uploadedDoc = complianceDocs.find((doc) => doc.type === backendType);
-              const displayName = selectedFile ? selectedFile.name : uploadedDoc ? uploadedDoc.name : null;
-
-              return (
-                <div
-                  key={docType}
-                  className="p-4 rounded-xl border border-gold-300/10 bg-navy-950/20 flex flex-col sm:flex-row justify-between items-center gap-4 transition-colors hover:bg-navy-950/40"
-                >
-                  <div className="space-y-1 text-center sm:text-left">
-                    <h4 className="text-xs font-semibold text-gold-50">
-                      {docType}
-                    </h4>
-                    {displayName ? (
-                      <p className="text-[10px] text-emerald-400">
-                        Selected: {displayName}
-                      </p>
-                    ) : (
-                      <p className="text-[10px] text-gold-100/50">
-                        Required for credential validation
-                      </p>
-                    )}
-                  </div>
-
-                  <Button
-                    asChild
-                    variant="ghost-gold"
-                    size="sm"
-                    fullWidth={false}
-                  >
-                    <label className="cursor-pointer">
-                      {displayName ? "Update File" : "Upload File"}
-                      <input
-                        type="file"
-                        accept=".pdf,.png,.jpg,.jpeg"
-                        className="hidden"
-                        onChange={(e) => {
-                          if (uploadedDoc) {
-                            handleUpdateDoc(uploadedDoc.id, backendType!, e);
-                          } else {
-                            handleDocUpload(docType, e);
-                          }
-                        }}
-                      />
-                    </label>
-                  </Button>
-                </div>
-              );
-            })}
-          </div>
-
-          {isOnboarding && (
-            <div className="pt-4 border-t border-gold-300/10 shrink-0">
-              {/* Batch Upload Row */}
-              <div className="flex justify-center w-full">
-                <Button
-                  variant="primary"
-                  onClick={async () => {
-                    const success = await handleBatchUpload();
-                    if (success && onNext) {
-                      onNext();
-                    }
-                  }}
-                  disabled={!hasAllRequiredDocs || batchUploading}
-                  className="w-full md:w-auto md:min-w-[280px] shadow-gold py-3"
-                >
-                  {batchUploading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Uploading...
-                    </>
-                  ) : (
-                    "Upload All Documents"
-                  )}
-                </Button>
-              </div>
-            </div>
-          )}
-        </SectionCard>
-
-        {/* Right Panel: Vault Documents Uploaded List */}
+      <div className="max-w-4xl mx-auto">
+        {/* Vault Documents List */}
         <SectionCard className="h-[600px] flex flex-col">
           <h3 className="text-lg font-bold text-gold-200 border-b border-gold-300/10 pb-4 mb-4">
             Compliance Records Vault
@@ -237,8 +100,7 @@ export default function ComplianceVault({
                   <FileText className="w-5 h-5" />
                 </div>
                 <p className="text-xs text-gold-100/40">
-                  No documents uploaded yet. Upload items on the left to populate
-                  vault.
+                  No documents found.
                 </p>
               </div>
             ) : (
@@ -288,7 +150,7 @@ export default function ComplianceVault({
                           className="h-8 px-3 text-[10px]"
                         >
                           <label className="cursor-pointer">
-                            Update File
+                            Upload / Update File
                             <input
                               type="file"
                               accept=".pdf,.png,.jpg,.jpeg"

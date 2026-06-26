@@ -214,19 +214,8 @@ const getCarerExtendedDetails = (carerId: string): CarerExtended => {
   };
 };
 
-const REQUIRED_DOCUMENT_CATEGORIES = [
-  { category: DocumentFileType.ENHANCED_DBS_CERTIFICATE, label: "Enhanced DBS Certificate", type: FileCategory.COMPLIANCE },
-  { category: DocumentFileType.PASSPORT, label: "Passport", type: FileCategory.IDENTITY },
-  { category: DocumentFileType.DRIVING_LICENCE, label: "Driving Licence", type: FileCategory.IDENTITY },
-  { category: DocumentFileType.PROOF_OF_ADDRESS, label: "Proof of Address", type: FileCategory.IDENTITY },
-  { category: DocumentFileType.RIGHT_TO_WORK, label: "Right to Work", type: FileCategory.RIGHT_TO_WORK },
-  { category: DocumentFileType.NATIONAL_INSURANCE_PROOF, label: "National Insurance", type: FileCategory.IDENTITY },
-  { category: DocumentFileType.PUBLIC_LIABILITY_INSURANCE, label: "Public Liability Insurance", type: FileCategory.INSURANCE },
-  { category: DocumentFileType.PROFESSIONAL_INDEMNITY_INSURANCE, label: "Professional Indemnity Insurance", type: FileCategory.INSURANCE },
-  { category: DocumentFileType.CV_RESUME, label: "CV / Resume", type: FileCategory.PREVIOUS_EMPLOYMENT },
-  { category: DocumentFileType.PROFESSIONAL_REFERENCE_1, label: "Professional Reference 1", type: FileCategory.COMPLIANCE },
-  { category: DocumentFileType.PROFESSIONAL_REFERENCE_2, label: "Professional Reference 2", type: FileCategory.COMPLIANCE },
-];
+// Document categories are determined by the backend response
+
 
 export default function CarerDetailsPage() {
   return (
@@ -419,32 +408,14 @@ function CarerDetailsContent() {
 
   const documentValidation = (() => {
     const docs: any[] = rawDocs;
-    const missingCategories: string[] = [];
-    const unverifiedCategories: string[] = [];
-
-    for (const req of REQUIRED_DOCUMENT_CATEGORIES) {
-      const found = docs.find((d: any) => 
-        d.fileType === req.category ||
-        d.fileCategory === req.category ||
-        d.type === req.category ||
-        d.category === req.category
-      );
-      if (!found) {
-        missingCategories.push(req.label);
-      } else if (found.status !== "VERIFIED") {
-        unverifiedCategories.push(req.label);
-      }
-    }
-
-    const allVerified = missingCategories.length === 0 && unverifiedCategories.length === 0;
+    if (docs.length === 0) return { allVerified: false, message: "No compliance documents uploaded." };
+    
+    const unverifiedCount = docs.filter(d => d.status !== "VERIFIED").length;
+    const allVerified = unverifiedCount === 0;
+    
     let message = "";
-    if (missingCategories.length > 0) {
-      message = `Missing required documents: ${missingCategories.join(", ")}.`;
-    } else if (unverifiedCategories.length > 0) {
-      message = `Documents not yet verified: ${unverifiedCategories.join(", ")}.`;
-    }
-    if (!allVerified && !message) {
-      message = "All required compliance documents must be approved before approving this carer.";
+    if (!allVerified) {
+      message = `${unverifiedCount} document(s) not yet verified. All compliance documents must be approved before approving this carer.`;
     }
 
     return { allVerified, message };
@@ -891,161 +862,85 @@ function CarerDetailsContent() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gold-300/5">
-                    {REQUIRED_DOCUMENT_CATEGORIES.map((reqDoc) => {
-                      const uploaded = rawDocs.find(
-                        (d: any) => 
-                          d.fileType === reqDoc.category ||
-                          d.fileCategory === reqDoc.category ||
-                          d.type === reqDoc.category ||
-                          d.category === reqDoc.category ||
-                          d.name === reqDoc.label
-                      );
+                    {rawDocs.length === 0 ? (
+                      <tr>
+                        <td colSpan={6} className="py-8 text-center text-gold-100/40 text-xs">
+                          No compliance documents found.
+                        </td>
+                      </tr>
+                    ) : (
+                      rawDocs.map((uploaded: any, index: number) => {
+                        const rawCat = uploaded.fileType || uploaded.fileCategory || uploaded.type || uploaded.category || uploaded.name;
+                        let fileCategoryClean = rawCat
+                          ? rawCat
+                              .split("_")
+                              .map(
+                                (w: string) =>
+                                  w.charAt(0).toUpperCase() +
+                                  w.slice(1).toLowerCase()
+                              )
+                              .join(" ")
+                          : "Document";
 
-                      const mockMeta = getMockDocDetails(reqDoc.category);
-                      const finalUploadDate = uploaded?.createdAt
-                        ? new Date(uploaded.createdAt).toISOString().split("T")[0]
-                        : mockMeta.uploadDate;
+                        let displayName = uploaded.fileName || fileCategoryClean;
+                        
+                        if (rawCat === DocumentFileType.ADDITIONAL_REFERENCE) {
+                          displayName = `Additional Reference ${index + 1}`;
+                          fileCategoryClean = "Compliance";
+                        } else if (rawCat) {
+                          displayName = getDocumentFileLabel(rawCat as DocumentFileType) || displayName;
+                        }
 
-                      const finalExpiryDate = mockMeta.expiryDate;
-                      const statusLabel = uploaded
-                        ? uploaded.status === "VERIFIED"
+                        const finalUploadDate = uploaded.createdAt
+                          ? new Date(uploaded.createdAt).toISOString().split("T")[0]
+                          : "Unknown";
+
+                        const finalExpiryDate = "N/A";
+                        
+                        const statusLabel = uploaded.status === "VERIFIED"
                           ? "Verified"
                           : uploaded.status === "REJECTED"
                             ? "Rejected"
-                            : "Uploaded"
-                        : "Missing";
+                            : "Uploaded";
 
-                      return (
-                        <tr
-                          key={reqDoc.category}
-                          className="hover:bg-navy-900/20 transition duration-150"
-                        >
-                          <td className="py-3.5 px-4 font-bold text-gold-200">
-                            {reqDoc.label}
-                          </td>
-                          <td className="py-3.5 px-4 text-gold-100/60 font-semibold">
-                            {reqDoc.type}
-                          </td>
-                          <td className="py-3.5 px-4 font-mono text-gold-100/50">
-                            {uploaded ? finalUploadDate : "N/A"}
-                          </td>
-                          <td className="py-3.5 px-4 font-mono text-gold-100/50">
-                            {uploaded ? finalExpiryDate : "N/A"}
-                          </td>
-                          <td className="py-3.5 px-4">
-                            <span
-                              className={`inline-flex rounded px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider ${getStatusBadgeStyles(
-                                statusLabel
-                              )}`}
-                            >
-                              {statusLabel}
-                            </span>
-                          </td>
-                          <td className="py-3.5 px-4 text-right">
-                            {uploaded ? (
+                        return (
+                          <tr
+                            key={uploaded.id || index}
+                            className="hover:bg-navy-900/20 transition duration-150"
+                          >
+                            <td className="py-3.5 px-4 font-bold text-gold-200">
+                              {displayName}
+                            </td>
+                            <td className="py-3.5 px-4 text-gold-100/60 font-semibold">
+                              {fileCategoryClean}
+                            </td>
+                            <td className="py-3.5 px-4 font-mono text-gold-100/50">
+                              {finalUploadDate}
+                            </td>
+                            <td className="py-3.5 px-4 font-mono text-gold-100/50">
+                              {finalExpiryDate}
+                            </td>
+                            <td className="py-3.5 px-4">
+                              <span
+                                className={`inline-flex rounded px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider ${getStatusBadgeStyles(
+                                  statusLabel
+                                )}`}
+                              >
+                                {statusLabel}
+                              </span>
+                            </td>
+                            <td className="py-3.5 px-4 text-right">
                               <Link
                                 href={`/admin/carers/${carer.userId || carer.id}/document-review?documentId=${uploaded.id}`}
                                 className="inline-flex items-center gap-1 rounded-xl bg-gold text-navy-950 font-bold px-3 py-1 text-[10px] hover:bg-gold-200 transition duration-200 cursor-pointer"
                               >
                                 Review Document <ChevronRight className="h-3 w-3" />
                               </Link>
-                            ) : (
-                              <span className="text-[10px] font-bold text-gold-100/20 italic">
-                                Awaiting Upload
-                              </span>
-                            )}
-                          </td>
-                        </tr>
-                      );
-                    })}
-
-                    {/* Show other documents uploaded by carer that are not in the default required list */}
-                    {(() => {
-                      let additionalRefCounter = 1;
-                      return rawDocs
-                        .filter(
-                          (d: any) =>
-                            !REQUIRED_DOCUMENT_CATEGORIES.some(
-                              (req) => 
-                                req.category === d.fileType || 
-                                req.category === d.fileCategory || 
-                                req.category === d.type || 
-                                req.category === d.category || 
-                                req.label === d.name
-                            )
-                        )
-                        .map((uploaded: any) => {
-                          const rawCat = uploaded.fileType || uploaded.fileCategory || uploaded.type || uploaded.category || uploaded.name;
-                          let fileCategoryClean = rawCat
-                            ? rawCat
-                                .split("_")
-                                .map(
-                                  (w: string) =>
-                                    w.charAt(0).toUpperCase() +
-                                    w.slice(1).toLowerCase()
-                                )
-                                .join(" ")
-                            : "Custom Verification Document";
-
-                          let displayName = uploaded.fileName || fileCategoryClean;
-                          
-                          if (rawCat === DocumentFileType.ADDITIONAL_REFERENCE) {
-                            displayName = `Additional Reference ${additionalRefCounter}`;
-                            fileCategoryClean = "Compliance";
-                            additionalRefCounter++;
-                          } else if (rawCat) {
-                            displayName = getDocumentFileLabel(rawCat as DocumentFileType) || displayName;
-                          }
-
-                          const finalUploadDate = uploaded.createdAt
-                            ? new Date(uploaded.createdAt).toISOString().split("T")[0]
-                            : "N/A";
-
-                          const statusLabel =
-                            uploaded.status === "VERIFIED"
-                              ? "Verified"
-                              : uploaded.status === "REJECTED"
-                                ? "Rejected"
-                                : "Uploaded";
-
-                          return (
-                            <tr
-                              key={uploaded.id || Math.random()}
-                              className="hover:bg-navy-900/20 transition duration-150"
-                            >
-                              <td className="py-3.5 px-4 font-bold text-gold-200">
-                                {displayName}
-                              </td>
-                              <td className="py-3.5 px-4 text-gold-100/60 font-semibold">
-                                {fileCategoryClean}
-                              </td>
-                              <td className="py-3.5 px-4 font-mono text-gold-100/50">
-                                {finalUploadDate}
-                              </td>
-                              <td className="py-3.5 px-4 font-mono text-gold-100/50">
-                                N/A
-                              </td>
-                              <td className="py-3.5 px-4">
-                                <span
-                                  className={`inline-flex rounded px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider ${getStatusBadgeStyles(
-                                    statusLabel
-                                  )}`}
-                                >
-                                  {statusLabel}
-                                </span>
-                              </td>
-                              <td className="py-3.5 px-4 text-right">
-                                <Link
-                                  href={`/admin/carers/${carer.userId || carer.id}/document-review?documentId=${uploaded.id}`}
-                                  className="inline-flex items-center gap-1 rounded-xl bg-gold text-navy-950 font-bold px-3 py-1 text-[10px] hover:bg-gold-200 transition duration-200 cursor-pointer"
-                                >
-                                  Review Document <ChevronRight className="h-3 w-3" />
-                                </Link>
-                              </td>
-                            </tr>
-                          );
-                        });
-                    })()}
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
                   </tbody>
                 </table>
               </div>

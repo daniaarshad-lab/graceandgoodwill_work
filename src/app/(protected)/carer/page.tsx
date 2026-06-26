@@ -546,15 +546,9 @@ function CarerDashboardContent() {
           {activeTab === "compliance" && (
             <ComplianceVault
               complianceDocs={portal.complianceDocs}
-              uploadingDocType={portal.uploadingDocType}
-              uploadProgress={portal.uploadProgress}
               documentsLoading={documentsLoading}
-              batchUploading={batchUploading}
               deletingDocumentId={deletingDocumentId}
               isOnboarding={false}
-              selectedFiles={portal.selectedFiles}
-              handleBatchUpload={portal.handleBatchUpload}
-              handleDocUpload={portal.handleDocUpload}
               handleUpdateDoc={portal.handleUpdateDoc}
               setPreviewDoc={portal.setPreviewDoc}
               setDocToDelete={portal.setDocToDelete}

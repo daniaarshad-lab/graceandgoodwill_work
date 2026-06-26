@@ -944,7 +944,7 @@ function CarerDetailsContent() {
                           <td className="py-3.5 px-4 text-right">
                             {uploaded ? (
                               <Link
-                                href={`/admin/carers/${carer.id}/document-review?documentId=${uploaded.id}`}
+                                href={`/admin/carers/${carer.userId || carer.id}/document-review?documentId=${uploaded.id}`}
                                 className="inline-flex items-center gap-1 rounded-xl bg-gold text-navy-950 font-bold px-3 py-1 text-[10px] hover:bg-gold-200 transition duration-200 cursor-pointer"
                               >
                                 Review Document <ChevronRight className="h-3 w-3" />
@@ -1036,7 +1036,7 @@ function CarerDetailsContent() {
                               </td>
                               <td className="py-3.5 px-4 text-right">
                                 <Link
-                                  href={`/admin/carers/${carer.id}/document-review?documentId=${uploaded.id}`}
+                                  href={`/admin/carers/${carer.userId || carer.id}/document-review?documentId=${uploaded.id}`}
                                   className="inline-flex items-center gap-1 rounded-xl bg-gold text-navy-950 font-bold px-3 py-1 text-[10px] hover:bg-gold-200 transition duration-200 cursor-pointer"
                                 >
                                   Review Document <ChevronRight className="h-3 w-3" />

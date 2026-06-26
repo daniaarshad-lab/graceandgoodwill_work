@@ -82,8 +82,8 @@ const mapBackendClients = (backendClients: any[]): any[] => {
 
 // Helper to map backend carer structures to frontend CarerApplication format
 const mapBackendCarers = (backendCarers: any[]): CarerApplication[] => {
-  return backendCarers.map((user: any) => {
-    const profile = user.carerProfile || {};
+  return backendCarers.map((carer: any) => {
+    const profile = carer.carerProfile || {};
     const rawDocs = profile.documents || [];
 
     const categoryNames: Record<string, string> = {
@@ -144,11 +144,11 @@ const mapBackendCarers = (backendCarers: any[]): CarerApplication[] => {
     }
 
     let status: "Pending" | "Approved" | "Rejected" = "Pending";
-    if (user.status === "APPROVED" || user.status === "ACTIVE") {
+    if (carer.status === "APPROVED" || carer.status === "ACTIVE") {
       status = "Approved";
-    } else if (user.status === "SUSPENDED") {
+    } else if (carer.status === "SUSPENDED") {
       status = "Rejected";
-    } else if (user.status === "PENDING") {
+    } else if (carer.status === "PENDING") {
       status = "Pending";
     }
 
@@ -168,9 +168,9 @@ const mapBackendCarers = (backendCarers: any[]): CarerApplication[] => {
     }
 
     return {
-      id: user.id,
+      id: carer.id,
       carerProfileId: profile.id,
-      name: `${user.firstName} ${user.lastName}`,
+      name: `${carer.firstName || "Unknown"} ${carer.lastName || ""}`.trim(),
       experience:
         profile.experience ||
         (profile.experienceYears
@@ -182,8 +182,8 @@ const mapBackendCarers = (backendCarers: any[]): CarerApplication[] => {
       documents,
       availability: availabilityStr,
       status,
-      email: user.email,
-      phone: user.phoneNumber || "No phone listed",
+      email: carer.email || "No email",
+      phone: carer.phoneNumber || profile.phone || "No phone listed",
     };
   });
 };

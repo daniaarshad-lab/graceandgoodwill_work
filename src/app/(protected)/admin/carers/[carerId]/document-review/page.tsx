@@ -89,7 +89,20 @@ function DocumentReviewContent() {
     }
   }, [documentId]);
 
-  const rawDocs = carer?.carerProfile?.documents || [];
+  // Robustly extract documents from various possible backend paths
+  const extractDocuments = () => {
+    if (!carer) return [];
+    const profile = carer.carerProfile || {};
+    if (Array.isArray(profile.documents) && profile.documents.length > 0) return profile.documents;
+    if (Array.isArray(carer.documents) && carer.documents.length > 0) return carer.documents;
+    if (Array.isArray(carer.complianceDocuments) && carer.complianceDocuments.length > 0) return carer.complianceDocuments;
+    if (Array.isArray(profile.complianceDocuments) && profile.complianceDocuments.length > 0) return profile.complianceDocuments;
+    if (Array.isArray(carer.complianceDocs) && carer.complianceDocs.length > 0) return carer.complianceDocs;
+    if (Array.isArray(profile.complianceDocs) && profile.complianceDocs.length > 0) return profile.complianceDocs;
+    return profile.documents || carer.documents || [];
+  };
+
+  const rawDocs = extractDocuments();
   const activeDoc = rawDocs.find((doc: any) => doc.id === activeDocId) || rawDocs[0];
 
   useEffect(() => {

@@ -111,8 +111,9 @@ export function useCarerPortal({
   const complianceDocs: ComplianceDoc[] = documents.map((doc) => ({
     id: doc.id,
     name: doc.fileName,
-    type: doc.fileCategory,
+    type: doc.fileType,
     fileType: doc.fileType,
+    category: doc.fileCategory,
     uploadDate: doc.createdAt,
     status:
       doc.status === "VERIFIED"

@@ -3,6 +3,7 @@ import SectionCard from "./shared/SectionCard";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import { ComplianceDoc } from "../types/carer.types";
+import { DocumentFileType } from "@/types/document.types";
 import { showErrorToast } from "@/utils/toast";
 
 interface Props {
@@ -22,10 +23,10 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
   const [submitted, setSubmitted] = useState(false);
 
   const requiredDocs = [
-    { type: "ENHANCED_DBS", label: "Enhanced DBS Certificate *" },
-    { type: "CV", label: "CV / Resume *" },
-    { type: "REFERENCE_1", label: "Professional Reference 1 *" },
-    { type: "REFERENCE_2", label: "Professional Reference 2 *" },
+    { type: DocumentFileType.ENHANCED_DBS_CERTIFICATE, label: "Enhanced DBS Certificate *" },
+    { type: DocumentFileType.CV_RESUME, label: "CV / Resume *" },
+    { type: DocumentFileType.PROFESSIONAL_REFERENCE_1, label: "Professional Reference 1 *" },
+    { type: DocumentFileType.PROFESSIONAL_REFERENCE_2, label: "Professional Reference 2 *" },
   ];
 
   const missingDocs = requiredDocs.filter(docItem => {
@@ -94,14 +95,19 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
         <div className="pt-6 pb-2">
           <h4 className="text-lg font-semibold text-gold-200 mb-4">Additional References (Optional)</h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {Array.from({ length: additionalRefsCount }).map((_, index) => (
-              <DocUploadRow
-                key={`ADDITIONAL_REFERENCE_${index + 1}`}
-                label="Upload Additional Reference"
-                type={`ADDITIONAL_REFERENCE_${index + 1}`}
-                portal={portal}
-              />
-            ))}
+            {Array.from({ length: additionalRefsCount }).map((_, index) => {
+              const stageKey = `${DocumentFileType.ADDITIONAL_REFERENCE}_${index + 1}`;
+              return (
+                <DocUploadRow
+                  key={stageKey}
+                  label={`Additional Reference ${index + 1}`}
+                  type={DocumentFileType.ADDITIONAL_REFERENCE}
+                  stageKey={stageKey}
+                  index={index}
+                  portal={portal}
+                />
+              );
+            })}
           </div>
           <button
             type="button"
@@ -149,10 +155,20 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
   );
 }
 
-function DocUploadRow({ label, type, portal, isMissing }: { label: string, type: string, portal: any, isMissing?: boolean }) {
+function DocUploadRow({ label, type, portal, isMissing, stageKey, index }: { label: string, type: string, portal: any, isMissing?: boolean, stageKey?: string, index?: number }) {
   const { complianceDocs, stageDocUpload, handleUpdateDoc, selectedFiles } = portal;
-  const doc = complianceDocs.find((d: ComplianceDoc) => d.type === type);
-  const isStaged = !!selectedFiles[type.toLowerCase()];
+  
+  // For multiple documents of the same type (like ADDITIONAL_REFERENCE)
+  let doc;
+  if (index !== undefined) {
+    const docsOfType = complianceDocs.filter((d: ComplianceDoc) => d.type === type);
+    doc = docsOfType[index];
+  } else {
+    doc = complianceDocs.find((d: ComplianceDoc) => d.type === type);
+  }
+
+  const sKey = stageKey ? stageKey.toLowerCase() : type.toLowerCase();
+  const isStaged = !!selectedFiles[sKey];
 
   return (
     <div className={`p-4 rounded-xl border flex flex-col gap-2 transition-all ${isMissing ? 'border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)] bg-red-950/5' : 'border-gold-300/10 bg-navy-950/40'}`}>
@@ -176,9 +192,9 @@ function DocUploadRow({ label, type, portal, isMissing }: { label: string, type:
           className="hidden"
           onChange={(e) => {
             if (doc) {
-              handleUpdateDoc(doc.id, type, e);
+              handleUpdateDoc(doc.id, stageKey || type, e);
             } else {
-              stageDocUpload(type, e);
+              stageDocUpload(stageKey || type, e);
             }
           }}
         />

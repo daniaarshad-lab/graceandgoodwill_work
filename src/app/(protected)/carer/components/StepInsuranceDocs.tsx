@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import SectionCard from "./shared/SectionCard";
 import Button from "@/components/Button";
 import { ComplianceDoc } from "../types/carer.types";
+import { DocumentFileType } from "@/types/document.types";
 
 interface Props {
   portal: any;
@@ -14,12 +15,12 @@ export default function StepInsuranceDocs({ portal, onNext, onBack }: Props) {
   const [submitted, setSubmitted] = useState(false);
 
   const hasPublicLiability =
-    complianceDocs.some((d: ComplianceDoc) => d.type === "PUBLIC_LIABILITY") ||
-    !!selectedFiles["public_liability"];
+    complianceDocs.some((d: ComplianceDoc) => d.type === DocumentFileType.PUBLIC_LIABILITY_INSURANCE) ||
+    !!selectedFiles[DocumentFileType.PUBLIC_LIABILITY_INSURANCE.toLowerCase()];
   const hasProfessionalIndemnity =
     complianceDocs.some(
-      (d: ComplianceDoc) => d.type === "PROFESSIONAL_INDEMNITY",
-    ) || !!selectedFiles["professional_indemnity"];
+      (d: ComplianceDoc) => d.type === DocumentFileType.PROFESSIONAL_INDEMNITY_INSURANCE,
+    ) || !!selectedFiles[DocumentFileType.PROFESSIONAL_INDEMNITY_INSURANCE.toLowerCase()];
 
   const errors = {
     publicLiability: !hasPublicLiability
@@ -70,7 +71,7 @@ export default function StepInsuranceDocs({ portal, onNext, onBack }: Props) {
             >
               <DocUploadRow
                 label="Public Liability Insurance *"
-                type="PUBLIC_LIABILITY"
+                type={DocumentFileType.PUBLIC_LIABILITY_INSURANCE}
                 portal={portal}
               />
             </div>
@@ -90,7 +91,7 @@ export default function StepInsuranceDocs({ portal, onNext, onBack }: Props) {
             >
               <DocUploadRow
                 label="Professional Indemnity Insurance *"
-                type="PROFESSIONAL_INDEMNITY"
+                type={DocumentFileType.PROFESSIONAL_INDEMNITY_INSURANCE}
                 portal={portal}
               />
             </div>

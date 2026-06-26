@@ -1,6 +1,7 @@
 import React from "react";
 import SectionCard from "./shared/SectionCard";
 import Button from "@/components/Button";
+import { DocumentFileType } from "@/types/document.types";
 import { Check, AlertCircle, FileText, User, Briefcase, Shield, Video, Heart } from "lucide-react";
 
 interface Props {
@@ -48,34 +49,39 @@ export default function StepReviewSubmit({
 
   // Helper to count uploaded mandatory training documents
   const requiredTraining = [
-    "SAFEGUARDING_ADULTS",
-    "MOVING_AND_HANDLING",
-    "MEDICATION_ADMINISTRATION",
-    "BASIC_LIFE_SUPPORT",
-    "INFECTION_PREVENTION",
-    "HEALTH_AND_SAFETY",
-    "FIRE_SAFETY",
-    "FOOD_HYGIENE",
-    "GDPR",
+    DocumentFileType.SAFEGUARDING_ADULTS,
+    DocumentFileType.MOVING_AND_HANDLING,
+    DocumentFileType.MEDICATION_ADMINISTRATION,
+    DocumentFileType.BASIC_LIFE_SUPPORT_FIRST_AID,
+    DocumentFileType.INFECTION_PREVENTION_AND_CONTROL,
+    DocumentFileType.HEALTH_AND_SAFETY,
+    DocumentFileType.FIRE_SAFETY,
+    DocumentFileType.FOOD_HYGIENE,
+    DocumentFileType.GDPR_DATA_PROTECTION,
   ];
   const uploadedTrainingCount = requiredTraining.filter(hasDocType).length;
   const trainingComplete = uploadedTrainingCount === requiredTraining.length;
 
   // Identity docs check
-  const hasPassportOrDL = hasDocType("PASSPORT") || hasDocType("DRIVERS_LICENSE");
-  const hasProofOfAddress = hasDocType("PROOF_OF_ADDRESS");
-  const hasRightToWork = hasDocType("RIGHT_TO_WORK");
-  const hasNiProof = hasDocType("NI_PROOF");
+  const hasPassportOrDL = hasDocType(DocumentFileType.PASSPORT) || hasDocType(DocumentFileType.DRIVING_LICENCE);
+  const hasProofOfAddress = hasDocType(DocumentFileType.PROOF_OF_ADDRESS);
+  const hasRightToWork = hasDocType(DocumentFileType.RIGHT_TO_WORK);
+  const hasNiProof = hasDocType(DocumentFileType.NATIONAL_INSURANCE_PROOF);
   const identityComplete = hasPassportOrDL && hasProofOfAddress && hasRightToWork && hasNiProof;
 
   // Professional Compliance check
-  const requiredCompliance = ["ENHANCED_DBS", "CV", "REFERENCE_1", "REFERENCE_2"];
+  const requiredCompliance = [
+    DocumentFileType.ENHANCED_DBS_CERTIFICATE,
+    DocumentFileType.CV_RESUME,
+    DocumentFileType.PROFESSIONAL_REFERENCE_1,
+    DocumentFileType.PROFESSIONAL_REFERENCE_2,
+  ];
   const uploadedComplianceCount = requiredCompliance.filter(hasDocType).length;
   const complianceDocsComplete = uploadedComplianceCount === requiredCompliance.length && !!employmentHistory;
 
   // Insurance check
-  const hasPublicLiability = hasDocType("PUBLIC_LIABILITY");
-  const hasProfessionalIndemnity = hasDocType("PROFESSIONAL_INDEMNITY");
+  const hasPublicLiability = hasDocType(DocumentFileType.PUBLIC_LIABILITY_INSURANCE);
+  const hasProfessionalIndemnity = hasDocType(DocumentFileType.PROFESSIONAL_INDEMNITY_INSURANCE);
   const insuranceComplete = hasPublicLiability && hasProfessionalIndemnity;
 
   // Video check
@@ -93,7 +99,7 @@ export default function StepReviewSubmit({
   const needsBusinessInsurance = (drivingPreferences || []).includes(
     "I am happy to transport clients in my own vehicle"
   ) && canDrive === "yes";
-  const hasBusinessInsuranceDoc = hasDocType("BUSINESS_INSURANCE");
+  const hasBusinessInsuranceDoc = hasDocType(DocumentFileType.PUBLIC_LIABILITY_INSURANCE); // Assuming Step 2 used PUBLIC_LIABILITY_INSURANCE for this
   const drivingRequirementsValid = !needsBusinessInsurance || hasBusinessInsuranceDoc;
 
   // Overall validation

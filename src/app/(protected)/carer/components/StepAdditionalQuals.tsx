@@ -2,6 +2,7 @@ import React from "react";
 import SectionCard from "./shared/SectionCard";
 import Button from "@/components/Button";
 import { ComplianceDoc } from "../types/carer.types";
+import { DocumentFileType } from "@/types/document.types";
 
 interface Props {
   portal: any;
@@ -20,19 +21,19 @@ export default function StepAdditionalQuals({ portal, onNext, onBack }: Props) {
   };
 
   const optionalDocs = [
-    { type: "NVQ_2", label: "NVQ Level 2" },
-    { type: "NVQ_3", label: "NVQ Level 3" },
-    { type: "NVQ_4", label: "NVQ Level 4" },
-    { type: "NURSING_QUALIFICATION", label: "Nursing Qualifications" },
-    { type: "UNIVERSITY_QUALIFICATION", label: "University Qualifications" },
-    { type: "DEMENTIA_TRAINING", label: "Dementia Training" },
-    { type: "END_OF_LIFE_CARE", label: "End of Life Care Training" },
-    { type: "CATHETER_CARE", label: "Catheter Care Training" },
-    { type: "PEG_FEEDING", label: "PEG Feeding Training" },
-    { type: "STOMA_CARE", label: "Stoma Care Training" },
-    { type: "COMPLEX_CARE", label: "Complex Care Training" },
-    { type: "MEDICATION_COMPETENCY", label: "Medication Competency Assessments" },
-    { type: "OTHER_RELEVANT", label: "Any Other Relevant Certificates" }
+    { type: DocumentFileType.NVQ_LEVEL_2, label: "NVQ Level 2" },
+    { type: DocumentFileType.NVQ_LEVEL_3, label: "NVQ Level 3" },
+    { type: DocumentFileType.NVQ_LEVEL_4, label: "NVQ Level 4" },
+    { type: DocumentFileType.NURSING_QUALIFICATIONS, label: "Nursing Qualifications" },
+    { type: DocumentFileType.UNIVERSITY_QUALIFICATIONS, label: "University Qualifications" },
+    { type: DocumentFileType.DEMENTIA_TRAINING, label: "Dementia Training" },
+    { type: DocumentFileType.END_OF_LIFE_CARE_TRAINING, label: "End of Life Care Training" },
+    { type: DocumentFileType.CATHETER_CARE_TRAINING, label: "Catheter Care Training" },
+    { type: DocumentFileType.PEG_FEEDING_TRAINING, label: "PEG Feeding Training" },
+    { type: DocumentFileType.STOMA_CARE_TRAINING, label: "Stoma Care Training" },
+    { type: DocumentFileType.COMPLEX_CARE_TRAINING, label: "Complex Care Training" },
+    { type: DocumentFileType.MEDICATION_COMPETENCY_ASSESSMENT, label: "Medication Competency Assessments" },
+    { type: DocumentFileType.OTHER_RELEVANT_CERTIFICATE, label: "Any Other Relevant Certificates" }
   ];
 
   return (

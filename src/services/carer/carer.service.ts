@@ -102,7 +102,26 @@ export const carerService = {
 
     const formData = new FormData();
     Object.entries(files).forEach(([key, file]) => {
-      formData.append(key, file);
+      let mappedKey = key;
+      if (mappedKey === "national_insurance_proof") mappedKey = "ni_proof";
+      if (mappedKey === "driving_licence") mappedKey = "drivers_license";
+      
+      // Insurance documents mappings
+      if (mappedKey === "public_liability_insurance") mappedKey = "public_liability";
+      if (mappedKey === "professional_indemnity_insurance") mappedKey = "professional_indemnity";
+      
+      // Training documents mappings
+      if (mappedKey === "basic_life_support_first_aid") mappedKey = "basic_life_support";
+      if (mappedKey === "infection_prevention_and_control") mappedKey = "infection_prevention";
+      if (mappedKey === "gdpr_data_protection") mappedKey = "gdpr";
+
+      // Compliance documents mappings
+      if (mappedKey === "enhanced_dbs_certificate") mappedKey = "enhanced_dbs";
+      if (mappedKey === "cv_resume") mappedKey = "cv";
+      if (mappedKey === "professional_reference_1") mappedKey = "reference_1";
+      if (mappedKey === "professional_reference_2") mappedKey = "reference_2";
+
+      formData.append(mappedKey, file);
     });
 
     return apiFetch("/carer/profile/documents", {
@@ -126,7 +145,30 @@ export const carerService = {
 
     const formData = new FormData();
     Object.entries(files).forEach(([key, file]) => {
-      formData.append(key, file);
+      let mappedKey = key;
+      if (mappedKey === "national_insurance_proof") mappedKey = "ni_proof";
+      if (mappedKey === "driving_licence") mappedKey = "drivers_license";
+      
+      // Insurance documents mappings
+      if (mappedKey === "public_liability_insurance") {
+        mappedKey = step === 2 ? "business_insurance" : "public_liability";
+      }
+      if (mappedKey === "professional_indemnity_insurance") {
+        mappedKey = "professional_indemnity";
+      }
+      
+      // Training documents mappings
+      if (mappedKey === "basic_life_support_first_aid") mappedKey = "basic_life_support";
+      if (mappedKey === "infection_prevention_and_control") mappedKey = "infection_prevention";
+      if (mappedKey === "gdpr_data_protection") mappedKey = "gdpr";
+
+      // Compliance documents mappings
+      if (mappedKey === "enhanced_dbs_certificate") mappedKey = "enhanced_dbs";
+      if (mappedKey === "cv_resume") mappedKey = "cv";
+      if (mappedKey === "professional_reference_1") mappedKey = "reference_1";
+      if (mappedKey === "professional_reference_2") mappedKey = "reference_2";
+
+      formData.append(mappedKey, file);
     });
 
     if (textFields) {

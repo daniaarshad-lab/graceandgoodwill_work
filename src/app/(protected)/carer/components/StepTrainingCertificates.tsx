@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import SectionCard from "./shared/SectionCard";
 import Button from "@/components/Button";
 import { ComplianceDoc } from "../types/carer.types";
+import { DocumentFileType } from "@/types/document.types";
 
 interface Props {
   portal: any;
@@ -20,15 +21,15 @@ export default function StepTrainingCertificates({
   const [submitted, setSubmitted] = useState(false);
 
   const trainingDocs = [
-    { type: "SAFEGUARDING_ADULTS", label: "Safeguarding Adults" },
-    { type: "MOVING_AND_HANDLING", label: "Moving and Handling" },
-    { type: "MEDICATION_ADMINISTRATION", label: "Medication Administration" },
-    { type: "BASIC_LIFE_SUPPORT", label: "Basic Life Support / First Aid" },
-    { type: "INFECTION_PREVENTION", label: "Infection Prevention and Control" },
-    { type: "HEALTH_AND_SAFETY", label: "Health and Safety" },
-    { type: "FIRE_SAFETY", label: "Fire Safety" },
-    { type: "FOOD_HYGIENE", label: "Food Hygiene" },
-    { type: "GDPR", label: "GDPR / Data Protection" },
+    { type: DocumentFileType.SAFEGUARDING_ADULTS, label: "Safeguarding Adults" },
+    { type: DocumentFileType.MOVING_AND_HANDLING, label: "Moving and Handling" },
+    { type: DocumentFileType.MEDICATION_ADMINISTRATION, label: "Medication Administration" },
+    { type: DocumentFileType.BASIC_LIFE_SUPPORT_FIRST_AID, label: "Basic Life Support / First Aid" },
+    { type: DocumentFileType.INFECTION_PREVENTION_AND_CONTROL, label: "Infection Prevention and Control" },
+    { type: DocumentFileType.HEALTH_AND_SAFETY, label: "Health and Safety" },
+    { type: DocumentFileType.FIRE_SAFETY, label: "Fire Safety" },
+    { type: DocumentFileType.FOOD_HYGIENE, label: "Food Hygiene" },
+    { type: DocumentFileType.GDPR_DATA_PROTECTION, label: "GDPR / Data Protection" },
   ];
 
   const missingDocs = trainingDocs.filter((docItem) => {

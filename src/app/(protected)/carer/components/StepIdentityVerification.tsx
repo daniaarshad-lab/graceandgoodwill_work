@@ -4,6 +4,7 @@ import Button from "@/components/Button";
 import Input from "@/components/Input";
 import PhoneInput from "@/components/PhoneInput";
 import { ComplianceDoc } from "../types/carer.types";
+import { DocumentFileType } from "@/types/document.types";
 import { Check } from "lucide-react";
 import { showErrorToast } from "@/utils/toast";
 
@@ -62,26 +63,26 @@ export default function StepIdentityVerification({
   const hasOwnVehiclePref = safePreferences.includes(drivingOptions[0]);
 
   const hasPassport =
-    complianceDocs.some((d: ComplianceDoc) => d.type === "PASSPORT") ||
-    !!selectedFiles["passport"];
+    complianceDocs.some((d: ComplianceDoc) => d.type === DocumentFileType.PASSPORT) ||
+    !!selectedFiles[DocumentFileType.PASSPORT.toLowerCase()];
   const hasDL =
-    complianceDocs.some((d: ComplianceDoc) => d.type === "DRIVERS_LICENSE") ||
-    !!selectedFiles["drivers_license"];
+    complianceDocs.some((d: ComplianceDoc) => d.type === DocumentFileType.DRIVING_LICENCE) ||
+    !!selectedFiles[DocumentFileType.DRIVING_LICENCE.toLowerCase()];
   const hasPassportOrDL = hasPassport || hasDL;
 
   const hasProofOfAddress =
-    complianceDocs.some((d: ComplianceDoc) => d.type === "PROOF_OF_ADDRESS") ||
-    !!selectedFiles["proof_of_address"];
+    complianceDocs.some((d: ComplianceDoc) => d.type === DocumentFileType.PROOF_OF_ADDRESS) ||
+    !!selectedFiles[DocumentFileType.PROOF_OF_ADDRESS.toLowerCase()];
   const hasRightToWork =
-    complianceDocs.some((d: ComplianceDoc) => d.type === "RIGHT_TO_WORK") ||
-    !!selectedFiles["right_to_work"];
+    complianceDocs.some((d: ComplianceDoc) => d.type === DocumentFileType.RIGHT_TO_WORK) ||
+    !!selectedFiles[DocumentFileType.RIGHT_TO_WORK.toLowerCase()];
   const hasNiProof =
-    complianceDocs.some((d: ComplianceDoc) => d.type === "NI_PROOF") ||
-    !!selectedFiles["ni_proof"];
+    complianceDocs.some((d: ComplianceDoc) => d.type === DocumentFileType.NATIONAL_INSURANCE_PROOF) ||
+    !!selectedFiles[DocumentFileType.NATIONAL_INSURANCE_PROOF.toLowerCase()];
   const hasBusinessInsuranceDoc =
     complianceDocs.some(
-      (d: ComplianceDoc) => d.type === "BUSINESS_INSURANCE",
-    ) || !!selectedFiles["business_insurance"];
+      (d: ComplianceDoc) => d.type === DocumentFileType.PUBLIC_LIABILITY_INSURANCE,
+    ) || !!selectedFiles[DocumentFileType.PUBLIC_LIABILITY_INSURANCE.toLowerCase()];
 
   const docErrors = {
     passportOrDL: !hasPassportOrDL
@@ -215,8 +216,8 @@ export default function StepIdentityVerification({
   };
 
   const hasDrivingLicence =
-    complianceDocs.some((d: ComplianceDoc) => d.type === "DRIVERS_LICENSE") ||
-    !!selectedFiles["drivers_license"];
+    complianceDocs.some((d: ComplianceDoc) => d.type === DocumentFileType.DRIVING_LICENCE) ||
+    !!selectedFiles[DocumentFileType.DRIVING_LICENCE.toLowerCase()];
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
@@ -436,10 +437,10 @@ export default function StepIdentityVerification({
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <DocUploadRow label="Passport" type="PASSPORT" portal={portal} />
+              <DocUploadRow label="Passport" type={DocumentFileType.PASSPORT} portal={portal} />
               <DocUploadRow
                 label="Driving Licence"
-                type="DRIVERS_LICENSE"
+                type={DocumentFileType.DRIVING_LICENCE}
                 portal={portal}
               />
             </div>
@@ -457,7 +458,7 @@ export default function StepIdentityVerification({
               >
                 <DocUploadRow
                   label="Proof of Address (issued within last 3 months) *"
-                  type="PROOF_OF_ADDRESS"
+                  type={DocumentFileType.PROOF_OF_ADDRESS}
                   portal={portal}
                 >
                   <div className="mt-2">
@@ -490,7 +491,7 @@ export default function StepIdentityVerification({
                 >
                   <DocUploadRow
                     label="Right to Work in the UK *"
-                    type="RIGHT_TO_WORK"
+                    type={DocumentFileType.RIGHT_TO_WORK}
                     portal={portal}
                   />
                 </div>
@@ -507,7 +508,7 @@ export default function StepIdentityVerification({
                 >
                   <DocUploadRow
                     label="Proof of National Insurance Number *"
-                    type="NI_PROOF"
+                    type={DocumentFileType.NATIONAL_INSURANCE_PROOF}
                     portal={portal}
                   >
                     <div className="mt-2">
@@ -572,7 +573,7 @@ export default function StepIdentityVerification({
                   >
                     <DocUploadRow
                       label="Upload Certificate"
-                      type="BUSINESS_INSURANCE"
+                      type={DocumentFileType.PUBLIC_LIABILITY_INSURANCE}
                       portal={portal}
                     />
                     {submitted && docErrors.businessInsurance && (

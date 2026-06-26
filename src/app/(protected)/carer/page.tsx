@@ -31,7 +31,19 @@ import OnboardingMembership from "./components/OnboardingMembership";
 import StepReviewSubmit from "./components/StepReviewSubmit";
 import PlacementOpportunities from "./components/PlacementOpportunities";
 import Button from "@/components/Button";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import {
+  Shield,
+  Clock,
+  Heart,
+  TrendingUp,
+  MapPin,
+  Calendar,
+  Briefcase,
+  Star,
+  ArrowLeft,
+  ArrowRight,
+} from "lucide-react";
+import { DocumentFileType } from "@/types/document.types";
 
 function CarerDashboardContent() {
   const { user } = useAuth();
@@ -196,16 +208,16 @@ function CarerDashboardContent() {
     }
 
     const hasPassportOrDL = complianceDocs.some(
-      (d: any) => d.type === "PASSPORT" || d.type === "DRIVERS_LICENSE",
+      (d: any) => d.type === DocumentFileType.PASSPORT || d.type === DocumentFileType.DRIVING_LICENCE,
     );
-    const hasDL = complianceDocs.some((d: any) => d.type === "DRIVERS_LICENSE");
+    const hasDL = complianceDocs.some((d: any) => d.type === DocumentFileType.DRIVING_LICENCE);
     const hasProofOfAddress = complianceDocs.some(
-      (d: any) => d.type === "PROOF_OF_ADDRESS",
+      (d: any) => d.type === DocumentFileType.PROOF_OF_ADDRESS,
     );
     const hasRightToWork = complianceDocs.some(
-      (d: any) => d.type === "RIGHT_TO_WORK",
+      (d: any) => d.type === DocumentFileType.RIGHT_TO_WORK,
     );
-    const hasNiProof = complianceDocs.some((d: any) => d.type === "NI_PROOF");
+    const hasNiProof = complianceDocs.some((d: any) => d.type === DocumentFileType.NATIONAL_INSURANCE_PROOF);
 
     let identityValid =
       hasPassportOrDL && hasProofOfAddress && hasRightToWork && hasNiProof;
@@ -215,7 +227,7 @@ function CarerDashboardContent() {
       );
       if (
         hasOwnVehiclePref &&
-        !complianceDocs.some((d: any) => d.type === "BUSINESS_INSURANCE")
+        !complianceDocs.some((d: any) => d.type === DocumentFileType.PUBLIC_LIABILITY_INSURANCE)
       ) {
         identityValid = false;
       }
@@ -226,15 +238,15 @@ function CarerDashboardContent() {
       missing.push("Professional Information");
 
     const requiredTraining = [
-      "SAFEGUARDING_ADULTS",
-      "MOVING_AND_HANDLING",
-      "MEDICATION_ADMINISTRATION",
-      "BASIC_LIFE_SUPPORT",
-      "INFECTION_PREVENTION",
-      "HEALTH_AND_SAFETY",
-      "FIRE_SAFETY",
-      "FOOD_HYGIENE",
-      "GDPR",
+      DocumentFileType.SAFEGUARDING_ADULTS,
+      DocumentFileType.MOVING_AND_HANDLING,
+      DocumentFileType.MEDICATION_ADMINISTRATION,
+      DocumentFileType.BASIC_LIFE_SUPPORT_FIRST_AID,
+      DocumentFileType.INFECTION_PREVENTION_AND_CONTROL,
+      DocumentFileType.HEALTH_AND_SAFETY,
+      DocumentFileType.FIRE_SAFETY,
+      DocumentFileType.FOOD_HYGIENE,
+      DocumentFileType.GDPR_DATA_PROTECTION,
     ];
     if (
       !requiredTraining.every((type: string) =>
@@ -244,10 +256,10 @@ function CarerDashboardContent() {
       missing.push("Mandatory Care Training");
 
     const requiredCompliance = [
-      "ENHANCED_DBS",
-      "CV",
-      "REFERENCE_1",
-      "REFERENCE_2",
+      DocumentFileType.ENHANCED_DBS_CERTIFICATE,
+      DocumentFileType.CV_RESUME,
+      DocumentFileType.PROFESSIONAL_REFERENCE_1,
+      DocumentFileType.PROFESSIONAL_REFERENCE_2,
     ];
     if (
       !requiredCompliance.every((type: string) =>
@@ -257,7 +269,7 @@ function CarerDashboardContent() {
     )
       missing.push("Required Compliance Documents");
 
-    const requiredInsurance = ["PUBLIC_LIABILITY", "PROFESSIONAL_INDEMNITY"];
+    const requiredInsurance = [DocumentFileType.PUBLIC_LIABILITY_INSURANCE, DocumentFileType.PROFESSIONAL_INDEMNITY_INSURANCE];
     if (
       !requiredInsurance.every((type: string) =>
         complianceDocs.some((d: any) => d.type === type),

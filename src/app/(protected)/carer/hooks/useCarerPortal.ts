@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import {
   ComplianceDoc,
 } from "../types/carer.types";
+import { getDocumentFileLabel } from "@/types/document.types";
 import {
   validateProfileForm,
 } from "../utils/validation";
@@ -110,7 +111,7 @@ export function useCarerPortal({
   // Compliance documents — derived from Redux documents state
   const complianceDocs: ComplianceDoc[] = documents.map((doc) => ({
     id: doc.id,
-    name: doc.fileName,
+    name: doc.fileType ? getDocumentFileLabel(doc.fileType) : doc.fileName,
     type: doc.fileType,
     fileType: doc.fileType,
     category: doc.fileCategory,

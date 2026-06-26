@@ -6,6 +6,7 @@ import {
   Placement,
   AdminActivity,
 } from "../types/admin.types";
+import { getDocumentFileLabel } from "@/types/document.types";
 import { adminService } from "@/services/admin/admin.service";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { toast } from "sonner";
@@ -90,20 +91,10 @@ const mapBackendCarers = (backendCarers: any[]): CarerApplication[] => {
       CRIMINAL_RECORD_CHECK: "DBS Certificate",
       DRIVERS_LICENSE: "Driver's License",
       DEMENTIA_SUPPORT: "Dementia Certificate",
-      NURSES_REGISTRY: "Nurses Registry",
-      PASSPORT: "Passport",
-      RIGHT_TO_WORK: "Right to Work",
-      PROOF_OF_ADDRESS: "Proof of Address",
-      NATIONAL_INSURANCE: "National Insurance",
-      PUBLIC_LIABILITY_INSURANCE: "Public Liability Insurance",
-      BUSINESS_INSURANCE: "Business Insurance",
-      PROFESSIONAL_INDEMNITY: "Professional Indemnity",
-      MANDATORY_TRAINING: "Mandatory Training",
-      SPECIALIST_TRAINING: "Specialist Training",
     };
-
     const documents = rawDocs.map((doc: any) => {
-      const name = categoryNames[doc.fileCategory] || doc.fileName || doc.fileCategory || "Unnamed Document";
+      // Prioritize fileType for the document name, fallback to fileCategory or fileName
+      const name = doc.fileType ? getDocumentFileLabel(doc.fileType) : (categoryNames[doc.fileCategory] || doc.fileName || doc.fileCategory || "Unnamed Document");
       let status: "Uploaded" | "Missing" | "Verified" | "Rejected" = "Uploaded";
       if (doc.status === "VERIFIED") status = "Verified";
       else if (doc.status === "REJECTED") status = "Rejected";
@@ -113,6 +104,7 @@ const mapBackendCarers = (backendCarers: any[]): CarerApplication[] => {
         name,
         status,
         fileCategory: doc.fileCategory,
+        fileType: doc.fileType,
         fileUrl: doc.fileUrl,
       };
     });

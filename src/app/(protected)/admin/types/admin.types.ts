@@ -3,6 +3,7 @@ export interface DocumentStatus {
   name: string;
   status: "Uploaded" | "Missing" | "Verified" | "Rejected";
   fileCategory?: string;
+  fileType?: string;
   fileUrl?: string;
 }
 

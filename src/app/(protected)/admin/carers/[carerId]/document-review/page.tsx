@@ -7,6 +7,7 @@ import { fetchCarerDetails, verifyDocument, rejectDocument } from "@/store/slice
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 import Link from "next/link";
 import { ArrowLeft, Check, X, FileText, Image as ImageIcon, Calendar, User, ExternalLink, Eye, CheckCircle2, AlertTriangle, ShieldCheck, Download } from "lucide-react";
+import { getDocumentFileLabel } from "@/types/document.types";
 
 export default function DocumentReviewPage() {
   return (
@@ -153,24 +154,12 @@ function DocumentReviewContent() {
     }
   };
 
-  const getCategoryLabel = (category: string) => {
-    const mapping: Record<string, string> = {
-      CRIMINAL_RECORD_CHECK: "DBS Certificate",
-      DRIVERS_LICENSE: "Driver's License",
-      DEMENTIA_SUPPORT: "Dementia Certificate",
-      NURSES_REGISTRY: "Nurses Registry",
-      PASSPORT: "Passport",
-      RIGHT_TO_WORK: "Right to Work",
-      PROOF_OF_ADDRESS: "Proof of Address",
-      NATIONAL_INSURANCE: "National Insurance Number",
-      PUBLIC_LIABILITY_INSURANCE: "Public Liability Insurance",
-      BUSINESS_INSURANCE: "Business Insurance",
-      PROFESSIONAL_INDEMNITY: "Professional Indemnity Insurance",
-      MANDATORY_TRAINING: "Mandatory Training Certificate",
-      SPECIALIST_TRAINING: "Specialist Training Certificate",
-    };
-    return mapping[category] || category.split("_").map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" ");
+  const getDocumentName = (doc: any) => {
+    if (!doc) return "Unknown Document";
+    return doc.fileType ? getDocumentFileLabel(doc.fileType) : (doc.fileName || doc.fileCategory || "Unknown Document");
   };
+
+  const activeDocName = getDocumentName(activeDoc);
 
   const getStatusBadgeStyles = (status: string) => {
     const cleanStatus = status?.toUpperCase() || "PENDING";
@@ -311,7 +300,7 @@ function DocumentReviewContent() {
                           {/* Left Column: Document Type & File Name */}
                           <div className="flex-1 min-w-0 flex flex-col gap-0.5">
                             <span className="text-sm font-semibold text-gold-200 truncate">
-                              {getCategoryLabel(doc.fileCategory)}
+                              {getDocumentName(doc)}
                             </span>
                             <span className="text-[11px] text-gold-100/50 truncate w-full" title={doc.fileName}>
                               {doc.fileName}
@@ -358,7 +347,7 @@ function DocumentReviewContent() {
                         {getStatusLabel(activeDoc.status)}
                       </span>
                       <h2 className="text-xl font-bold text-gold-200">
-                        {getCategoryLabel(activeDoc.fileCategory)}
+                        {activeDocName}
                       </h2>
                       <p className="text-xs text-gold-100/50 flex items-center gap-1.5">
                         <FileText className="h-3.5 w-3.5 text-gold/60" /> {activeDoc.fileName} • {((activeDoc.fileSize || 0) / (1024 * 1024)).toFixed(2)} MB
@@ -373,7 +362,7 @@ function DocumentReviewContent() {
                           day: "2-digit",
                           month: "long",
                           year: "numeric"
-                        }) : getMockDocDetails(activeDoc.fileCategory).uploadDate}
+                        }) : getMockDocDetails(activeDoc.fileCategory || activeDoc.fileType).uploadDate}
                       </p>
                     </div>
                   </div>
@@ -382,17 +371,17 @@ function DocumentReviewContent() {
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 rounded-xl bg-navy-950/40 border border-gold-300/5 text-xs flex-shrink-0">
                     <div>
                       <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1">Document Type</span>
-                      <span className="text-gold-200 font-bold">{getMockDocDetails(activeDoc.fileCategory).type}</span>
+                      <span className="text-gold-200 font-bold">{getMockDocDetails(activeDoc.fileCategory || activeDoc.fileType).type}</span>
                     </div>
                     <div>
                       <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1">Upload Date</span>
                       <span className="text-gold-200 font-bold">
-                        {activeDoc.createdAt ? new Date(activeDoc.createdAt).toISOString().split("T")[0] : getMockDocDetails(activeDoc.fileCategory).uploadDate}
+                        {activeDoc.createdAt ? new Date(activeDoc.createdAt).toISOString().split("T")[0] : getMockDocDetails(activeDoc.fileCategory || activeDoc.fileType).uploadDate}
                       </span>
                     </div>
                     <div>
                       <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1">Expiry Date</span>
-                      <span className="text-gold-200 font-bold">{getMockDocDetails(activeDoc.fileCategory).expiryDate}</span>
+                      <span className="text-gold-200 font-bold">{getMockDocDetails(activeDoc.fileCategory || activeDoc.fileType).expiryDate}</span>
                     </div>
                     <div>
                       <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1">Status</span>
@@ -424,7 +413,7 @@ function DocumentReviewContent() {
                         <iframe
                           src={`${fullFileUrl}#toolbar=0&navpanes=0`}
                           className="w-full h-full rounded-lg bg-navy-900 border-0"
-                          title={getCategoryLabel(activeDoc.fileCategory)}
+                          title={activeDocName}
                         />
                       </div>
                     ) : isImage ? (
@@ -432,7 +421,7 @@ function DocumentReviewContent() {
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={fullFileUrl}
-                          alt={getCategoryLabel(activeDoc.fileCategory)}
+                          alt={activeDocName}
                           className="max-w-full max-h-[330px] object-contain rounded-lg shadow-elegant"
                           onError={(e) => {
                             e.currentTarget.style.display = 'none';

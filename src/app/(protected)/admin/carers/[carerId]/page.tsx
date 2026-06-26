@@ -870,9 +870,11 @@ function CarerDetailsContent() {
                       </tr>
                     ) : (
                       rawDocs.map((uploaded: any, index: number) => {
-                        const rawCat = uploaded.fileType || uploaded.fileCategory || uploaded.type || uploaded.category || uploaded.name;
-                        let fileCategoryClean = rawCat
-                          ? rawCat
+                        const typeSource = uploaded.fileType || uploaded.type || uploaded.name;
+                        const catSource = uploaded.fileCategory || uploaded.category;
+                        
+                        let fileCategoryClean = catSource
+                          ? catSource
                               .split("_")
                               .map(
                                 (w: string) =>
@@ -882,13 +884,13 @@ function CarerDetailsContent() {
                               .join(" ")
                           : "Document";
 
-                        let displayName = uploaded.fileName || fileCategoryClean;
+                        let displayName = uploaded.fileName || "Unnamed Document";
                         
-                        if (rawCat === DocumentFileType.ADDITIONAL_REFERENCE) {
+                        if (typeSource === DocumentFileType.ADDITIONAL_REFERENCE) {
                           displayName = `Additional Reference ${index + 1}`;
                           fileCategoryClean = "Compliance";
-                        } else if (rawCat) {
-                          displayName = getDocumentFileLabel(rawCat as DocumentFileType) || displayName;
+                        } else if (typeSource) {
+                          displayName = getDocumentFileLabel(typeSource as DocumentFileType) || displayName;
                         }
 
                         const finalUploadDate = uploaded.createdAt

@@ -6,18 +6,9 @@ import Button from "@/components/Button";
 
 interface ComplianceVaultProps {
   complianceDocs: ComplianceDoc[];
-  uploadingDocType: string | null;
-  uploadProgress: number;
   documentsLoading: boolean;
-  batchUploading: boolean;
   deletingDocumentId: string | null;
   isOnboarding: boolean;
-  selectedFiles: Record<string, File>;
-  handleBatchUpload: () => Promise<boolean | void> | void;
-  handleDocUpload: (
-    type: string,
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) => void;
   handleUpdateDoc: (
     id: string,
     type: string,
@@ -29,13 +20,7 @@ interface ComplianceVaultProps {
   onBack?: () => void;
 }
 
-const categoryDisplayMap: Record<string, string> = {
-  DRIVERS_LICENSE: "Driver's License",
-  CRIMINAL_RECORD_CHECK: "Criminal Record Check",
-  DEMENTIA_SUPPORT: "Dementia Support Certificate",
-  NURSES_REGISTRY: "Nurses Registry License",
-  BUSINESS_INSURANCE: "Business Insurance",
-};
+
 
 export default function ComplianceVault({
   complianceDocs,
@@ -48,7 +33,7 @@ export default function ComplianceVault({
   onNext,
   onBack,
 }: ComplianceVaultProps) {
-  const allVerified = complianceDocs.length > 0 && complianceDocs.every(doc => doc.status === "verified" || doc.status === "VERIFIED");
+  const allVerified = complianceDocs.length > 0 && complianceDocs.every(doc => doc.status === "verified");
 
   return (
     <div className="space-y-6">
@@ -122,8 +107,7 @@ export default function ComplianceVault({
                             {doc.name}
                           </h4>
                           <p className="text-[9px] text-gold-100/40 mt-0.5">
-                            {categoryDisplayMap[doc.type] || doc.type} •{" "}
-                            {doc.fileType || "Document"} • {doc.size}
+                            {doc.category ? doc.category.split("_").map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" ") : "Document"} • {doc.size}
                           </p>
                         </div>
                       </div>

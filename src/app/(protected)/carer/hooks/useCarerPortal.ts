@@ -276,11 +276,21 @@ export function useCarerPortal({
     }
 
     const categoryMap: Record<string, string> = {
-      "Driver's License": "DRIVERS_LICENSE",
-      "Criminal Record Check": "CRIMINAL_RECORD_CHECK",
-      "Dementia Support Certificate": "DEMENTIA_SUPPORT",
-      "Mandatory Care Certificate": "CARE_CERTIFICATE",
-      "Business Insurance Certificate": "BUSINESS_INSURANCE",
+      "Driver's License": "IDENTITY",
+      "Criminal Record Check": "COMPLIANCE",
+      "Dementia Support Certificate": "ADDITIONAL_TRAINING",
+      "Mandatory Care Certificate": "MANDATORY_TRAINING",
+      "Business Insurance Certificate": "INSURANCE",
+      "Business Insurance": "INSURANCE",
+    };
+
+    const typeMap: Record<string, string> = {
+      "Driver's License": "DRIVING_LICENCE",
+      "Criminal Record Check": "ENHANCED_DBS_CERTIFICATE",
+      "Dementia Support Certificate": "DEMENTIA_TRAINING",
+      "Mandatory Care Certificate": "OTHER_RELEVANT_CERTIFICATE",
+      "Business Insurance Certificate": "PUBLIC_LIABILITY_INSURANCE",
+      "Business Insurance": "PUBLIC_LIABILITY_INSURANCE",
     };
 
     const categoryMapForBatch: Record<string, string> = {
@@ -311,9 +321,10 @@ export function useCarerPortal({
         });
       }, 100);
 
-      const category = categoryMap[type] || type;
+      const category = categoryMap[type] || "MISC";
+      const documentType = typeMap[type] || "OTHER_RELEVANT_CERTIFICATE";
 
-      await dispatch(uploadCarerDocument({ file, category })).unwrap();
+      await dispatch(uploadCarerDocument({ file, category, type: documentType })).unwrap();
 
       clearInterval(progressInterval);
       setUploadProgress(100);

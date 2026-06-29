@@ -167,11 +167,11 @@ export const updateCarerAvailability = createAsyncThunk<
 
 export const uploadCarerDocument = createAsyncThunk<
   CarerDocument,
-  { file: File; category: string },
+  { file: File; category: string; type: string },
   { rejectValue: string }
->("carer/uploadDocument", async ({ file, category }, { rejectWithValue }) => {
+>("carer/uploadDocument", async ({ file, category, type }, { rejectWithValue }) => {
   try {
-    return await carerService.uploadDocument(file, category);
+    return await carerService.uploadDocument(file, category, type);
   } catch (error: any) {
     return rejectWithValue(error?.message || "Failed to upload document");
   }

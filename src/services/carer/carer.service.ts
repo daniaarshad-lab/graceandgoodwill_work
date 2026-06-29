@@ -67,7 +67,7 @@ export const carerService = {
     });
   },
 
-  async uploadDocument(file: File, category: string) {
+  async uploadDocument(file: File, category: string, type: string) {
     const token =
       typeof window !== "undefined"
         ? localStorage.getItem("accessToken")
@@ -81,6 +81,7 @@ export const carerService = {
 
     formData.append("file", file);
     formData.append("category", category);
+    formData.append("type", type);
 
     return apiFetch("/carer/profile/document", {
       method: "POST",

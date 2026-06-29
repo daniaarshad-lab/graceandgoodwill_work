@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchCarerDetails, updateAdminCarerStatus } from "@/store/slices/adminSlice";
+import { adminService } from "@/services/admin/admin.service";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 import { DocumentFileType, FileCategory, getDocumentFileLabel } from "@/types/document.types";
 import {
@@ -27,192 +28,6 @@ import {
   MessageCircle,
   CheckCircle2,
 } from "lucide-react";
-
-// Types for carer extended details
-interface CarerExtended {
-  registrationDate: string;
-  availableFrom: string;
-  availableUntil: string;
-  consecutiveDays: string;
-  availabilityStatus: string;
-  biography: string;
-  placements: {
-    clientName: string;
-    clientAddress: string;
-    startDate: string;
-    endDate: string;
-    status: string;
-  }[];
-  notes: {
-    title: string;
-    timestamp: string;
-    content: string;
-    adminName: string;
-  }[];
-  feedback: {
-    type: string;
-    timestamp: string;
-    content: string;
-  }[];
-}
-
-const getMockDocDetails = (category: string) => {
-  const types: Record<string, { type: string; uploadDate: string; expiryDate: string }> = {
-    "CRIMINAL_RECORD_CHECK": {
-      type: "Criminal Record Check",
-      uploadDate: "2026-05-10",
-      expiryDate: "2029-05-10",
-    },
-    "DRIVERS_LICENSE": {
-      type: "Identification",
-      uploadDate: "2026-05-12",
-      expiryDate: "2031-11-20",
-    },
-    "DEMENTIA_SUPPORT": {
-      type: "Certification",
-      uploadDate: "2026-05-14",
-      expiryDate: "Lifetime",
-    },
-    "NURSES_REGISTRY": {
-      type: "Professional License",
-      uploadDate: "2026-05-15",
-      expiryDate: "2027-03-31",
-    },
-    "PASSPORT": {
-      type: "Identification",
-      uploadDate: "2026-05-08",
-      expiryDate: "2036-05-08",
-    },
-    "RIGHT_TO_WORK": {
-      type: "Compliance Check",
-      uploadDate: "2026-05-08",
-      expiryDate: "N/A",
-    },
-    "PROOF_OF_ADDRESS": {
-      type: "Identification Verification",
-      uploadDate: "2026-05-09",
-      expiryDate: "N/A",
-    },
-  };
-  return types[category] || {
-    type: "Verification Document",
-    uploadDate: "2026-05-16",
-    expiryDate: "N/A",
-  };
-};
-
-const getCarerExtendedDetails = (carerId: string): CarerExtended => {
-  const db: Record<string, CarerExtended> = {
-    // Helena Rostova
-    "carer-1": {
-      registrationDate: "2026-06-04T10:00:00.000Z",
-      availableFrom: "08:00 AM",
-      availableUntil: "08:00 PM",
-      consecutiveDays: "5 Days (Mon - Fri)",
-      availabilityStatus: "Available",
-      biography: "Compassionate and dedicated carer with over 5 years of experience in elderly care, specialized in post-operative recovery, personal hygiene, and emotional support.",
-      placements: [
-        {
-          clientName: "Winston Churchill",
-          clientAddress: "10 Downing Street, London, SW1A 2AA",
-          startDate: "2026-05-29",
-          endDate: "Ongoing",
-          status: "Active",
-        },
-        {
-          clientName: "Arthur Pendelton",
-          clientAddress: "42 Baker Street, London, NW1 6XE",
-          startDate: "2026-01-15",
-          endDate: "2026-04-30",
-          status: "Completed",
-        }
-      ],
-      notes: [
-        {
-          title: "Performance Review",
-          timestamp: "24 Jun 2026 - 10:35 AM",
-          content: "Client reported excellent communication and reliability.",
-          adminName: "Sarah Connor"
-        },
-        {
-          title: "Initial Document Audit",
-          timestamp: "04 Jun 2026 - 02:15 PM",
-          content: "DBS and professional licenses verified successfully during registry check.",
-          adminName: "James Bond"
-        }
-      ],
-      feedback: [
-        {
-          type: "Client Feedback",
-          timestamp: "22 Jun 2026 - 04:30 PM",
-          content: "Helena was extremely patient and supportive during Churchill's morning session. Family expressed sincere gratitude."
-        },
-        {
-          type: "Concerns Raised",
-          timestamp: "10 Jun 2026 - 11:00 AM",
-          content: "Slight delay reported in arrival due to local transport strike. Issue resolved with prompt notification."
-        },
-        {
-          type: "Follow-up Actions",
-          timestamp: "05 Jun 2026 - 09:00 AM",
-          content: "Conducted onboarding telephone verification with the carer to review guidelines."
-        }
-      ]
-    },
-    // Eleanor Vance
-    "carer-2": {
-      registrationDate: "2026-05-15T09:00:00.000Z",
-      availableFrom: "09:00 AM",
-      availableUntil: "06:00 PM",
-      consecutiveDays: "3 Days (Tue - Thu)",
-      availabilityStatus: "Partially Available",
-      biography: "Specialist in dementia care and physical support, committed to promoting independence and dignity in comfortable residential environments.",
-      placements: [
-        {
-          clientName: "Arthur Pendelton",
-          clientAddress: "42 Baker Street, London, NW1 6XE",
-          startDate: "2026-06-01",
-          endDate: "Ongoing",
-          status: "Active",
-        }
-      ],
-      notes: [
-        {
-          title: "Dementia Cert Verification",
-          timestamp: "18 May 2026 - 11:00 AM",
-          content: "Verified dementia certificate from Alzheimer's Society.",
-          adminName: "Sarah Connor"
-        }
-      ],
-      feedback: [
-        {
-          type: "Client Feedback",
-          timestamp: "15 Jun 2026 - 02:00 PM",
-          content: "Eleanor is fantastic. Arthur really connects with her and feels much more confident during walks."
-        }
-      ]
-    }
-  };
-
-  return db[carerId] || {
-    registrationDate: "2026-06-10T12:00:00.000Z",
-    availableFrom: "09:00 AM",
-    availableUntil: "05:00 PM",
-    consecutiveDays: "4 Days (Mon - Thu)",
-    availabilityStatus: "Available",
-    biography: "Professional carer dedicated to providing exceptional support, daily assistance, and specialized therapeutic companionship.",
-    placements: [],
-    notes: [
-      {
-        title: "Profile Created",
-        timestamp: "10 Jun 2026 - 12:00 PM",
-        content: "Initial carer profile created and awaiting review.",
-        adminName: "James Bond"
-      }
-    ],
-    feedback: []
-  };
-};
 
 // Document categories are determined by the backend response
 
@@ -247,11 +62,39 @@ function CarerDetailsContent() {
   const [activeTab, setActiveTab] = useState<"profile" | "documents">("profile");
   const [approvingCarer, setApprovingCarer] = useState(false);
 
+  // Dynamic placement data from backend
+  const [carerPlacements, setCarerPlacements] = useState<any[]>([]);
+  const [placementsLoading, setPlacementsLoading] = useState(false);
+
   useEffect(() => {
     if (carerId) {
       dispatch(fetchCarerDetails(carerId));
     }
   }, [dispatch, carerId]);
+
+  // Fetch real placements for this carer once carer details are loaded
+  useEffect(() => {
+    const carerProfileId = carer?.carerProfile?.id;
+    if (!carerProfileId) return;
+
+    const loadPlacements = async () => {
+      setPlacementsLoading(true);
+      try {
+        const allPlacements = await adminService.getPlacements();
+        const filtered = (allPlacements || []).filter(
+          (p: any) => p.carerProfileId === carerProfileId
+        );
+        setCarerPlacements(filtered);
+      } catch (err) {
+        console.error("Failed to load carer placements:", err);
+        setCarerPlacements([]);
+      } finally {
+        setPlacementsLoading(false);
+      }
+    };
+
+    loadPlacements();
+  }, [carer?.carerProfile?.id]);
 
   // Duration calculation for "How long carer has been with Grace & Goodwill"
   const getDurationWithUs = (dateString: string) => {
@@ -276,9 +119,8 @@ function CarerDetailsContent() {
       return `${months} Month${months === 1 ? "" : "s"}`;
     }
 
-    return `${years} Year${years === 1 ? "" : "s"}${
-      months > 0 ? ` ${months} Month${months === 1 ? "" : "s"}` : ""
-    }`;
+    return `${years} Year${years === 1 ? "" : "s"}${months > 0 ? ` ${months} Month${months === 1 ? "" : "s"}` : ""
+      }`;
   };
 
   const getStatusBadgeStyles = (status: string) => {
@@ -337,31 +179,78 @@ function CarerDetailsContent() {
 
   // Resolve carer mapping details
   const profile = carer.carerProfile || {};
-  const carerName = `${carer.firstName} ${carer.lastName}`;
-  const ext = getCarerExtendedDetails(carer.id);
+  const carerName = `${carer.user?.firstName || carer.firstName || ""} ${carer.user?.lastName || carer.lastName || ""}`.trim() || "Unknown";
+  // Registration date from real backend data
+  const registrationDate = profile.createdAt || carer.user?.createdAt || carer.createdAt;
+
+  // Compute Location Text (Safe fallback to carer object directly)
+  const addressVal = profile.address || carer.address || carer.user?.address;
+  const cityVal = profile.city || carer.city || carer.user?.city;
+  const locationText = [addressVal, cityVal].filter(Boolean).join(", ") || "Unknown";
+
+  // Compute Experience
+  const expYears = profile.experienceYears || carer.experienceYears || carer.user?.experienceYears;
+  const expStr = profile.experience || carer.experience || carer.user?.experience;
+  const displayExperience = expStr || (expYears ? `${expYears} Years` : "No experience listed");
+
+  // Compute Biography
+  const bioSource = profile.bio || profile.summary || carer.bio || carer.summary || carer.user?.bio || carer.user?.summary || "No biography available.";
+
+  // Compute Hourly Rate
+  const hourlyRateSource = profile.hourlyRate || carer.hourlyRate || carer.user?.hourlyRate;
 
   // Compute specialties list
+  const careSpecSource = profile.careSpecialties || carer.careSpecialties || carer.user?.careSpecialties;
   let specialtiesList: string[] = [];
-  if (profile.careSpecialties) {
-    specialtiesList = Array.isArray(profile.careSpecialties)
-      ? profile.careSpecialties
-      : typeof profile.careSpecialties === "string"
-        ? profile.careSpecialties
-            .split(",")
-            .map((s: string) => s.trim())
-            .filter(Boolean)
+  if (careSpecSource) {
+    specialtiesList = Array.isArray(careSpecSource)
+      ? careSpecSource
+      : typeof careSpecSource === "string"
+        ? careSpecSource
+          .split(",")
+          .map((s: string) => s.trim())
+          .filter(Boolean)
         : [];
   } else if (profile.careTypes && Array.isArray(profile.careTypes)) {
     specialtiesList = profile.careTypes;
   }
 
-  // Availability string mapping
-  let availabilityStr = "Not configured";
-  if (profile.availability) {
-    if (typeof profile.availability === "string") {
-      availabilityStr = profile.availability;
-    } else if (Array.isArray(profile.availability)) {
-      const activeDays = profile.availability
+  // Availability mapping
+  const availSource = profile.availability || carer.availability || carer.user?.availability;
+  let availabilityStr = "No availability configured";
+  let availabilityStatus = "Not configured";
+  let consecutiveDays = "0 Days";
+  let availableHours = "[Backend Required]";
+
+  if (availSource && Array.isArray(availSource)) {
+    if (availSource.length > 0 && typeof availSource[0] === "string") {
+      availabilityStr = availSource.join(", ");
+
+      // Calculate consecutive available days from the date array
+      const sortedDates = availSource
+        .map((d: string) => new Date(d).getTime())
+        .filter((t: number) => !isNaN(t))
+        .sort((a: number, b: number) => a - b);
+
+      if (sortedDates.length > 0) {
+        let maxConsecutive = 1;
+        let currentConsecutive = 1;
+        for (let i = 1; i < sortedDates.length; i++) {
+          const diffDays = Math.round((sortedDates[i] - sortedDates[i - 1]) / (1000 * 60 * 60 * 24));
+          if (diffDays === 1) {
+            currentConsecutive++;
+            if (currentConsecutive > maxConsecutive) maxConsecutive = currentConsecutive;
+          } else if (diffDays > 1) {
+            currentConsecutive = 1;
+          }
+        }
+        consecutiveDays = `${maxConsecutive} Days`;
+        availabilityStatus = maxConsecutive >= 5 ? "Available" : "Partially Available";
+      } else {
+        consecutiveDays = "0 Days";
+      }
+    } else {
+      const activeDays = availSource
         .filter((d: any) => d.enabled)
         .map((d: any) => {
           const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -369,6 +258,8 @@ function CarerDetailsContent() {
         });
       if (activeDays.length > 0) {
         availabilityStr = `${activeDays.join(", ")}`;
+        consecutiveDays = `${activeDays.length} Days`;
+        availabilityStatus = activeDays.length >= 5 ? "Available" : "Partially Available";
       }
     }
   }
@@ -385,11 +276,11 @@ function CarerDetailsContent() {
     if (Array.isArray(profile.complianceDocs) && profile.complianceDocs.length > 0) return profile.complianceDocs;
     return profile.documents || carer.documents || [];
   };
-  
+
   const rawDocs = extractDocuments();
 
   const dbsDoc = rawDocs.find(
-    (d: any) => 
+    (d: any) =>
       d.fileType === DocumentFileType.ENHANCED_DBS_CERTIFICATE ||
       d.fileCategory === DocumentFileType.ENHANCED_DBS_CERTIFICATE ||
       d.type === DocumentFileType.ENHANCED_DBS_CERTIFICATE ||
@@ -401,18 +292,25 @@ function CarerDetailsContent() {
   }
 
   // Duration with us
-  const durationWithUs = getDurationWithUs(ext.registrationDate || profile.createdAt || carer.createdAt);
+  const durationWithUs = getDurationWithUs(registrationDate);
 
   // --- Approve Carer validation ---
   const isCarerAlreadyApproved = carer?.user?.status === "APPROVED" || carer?.status === "APPROVED";
 
+  // Notes and Feedback (Checking all possible nestings)
+  const carerNotes = carer.notes || profile.notes || carer.user?.notes || [];
+  const carerFeedback = carer.feedback || profile.feedback || carer.user?.feedback || [];
+
+  // Payment Method
+  const paymentMethod = profile.paymentMethod || carer.paymentMethod || carer.user?.paymentMethod || "[Backend Required: paymentMethod]";
+
   const documentValidation = (() => {
     const docs: any[] = rawDocs;
     if (docs.length === 0) return { allVerified: false, message: "No compliance documents uploaded." };
-    
+
     const unverifiedCount = docs.filter(d => d.status !== "VERIFIED").length;
     const allVerified = unverifiedCount === 0;
-    
+
     let message = "";
     if (!allVerified) {
       message = `${unverifiedCount} document(s) not yet verified. All compliance documents must be approved before approving this carer.`;
@@ -470,10 +368,10 @@ function CarerDetailsContent() {
                 <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
                   <span
                     className={`text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded ${getStatusBadgeStyles(
-                      carer.status
+                      carer.user?.status || carer.status
                     )}`}
                   >
-                    {carer.status}
+                    {carer.user?.status || carer.status}
                   </span>
                   <span
                     className={`text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded ${getStatusBadgeStyles(
@@ -497,11 +395,10 @@ function CarerDetailsContent() {
                 <button
                   onClick={handleApproveCarer}
                   disabled={!canApproveCarer || approvingCarer}
-                  className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-300 ${
-                    canApproveCarer && !approvingCarer
-                      ? "bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-900/30 cursor-pointer"
-                      : "bg-navy-800/60 text-gold-100/30 border border-gold-300/10 cursor-not-allowed"
-                  }`}
+                  className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-300 ${canApproveCarer && !approvingCarer
+                    ? "bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-900/30 cursor-pointer"
+                    : "bg-navy-800/60 text-gold-100/30 border border-gold-300/10 cursor-not-allowed"
+                    }`}
                 >
                   {approvingCarer ? (
                     <>
@@ -530,21 +427,19 @@ function CarerDetailsContent() {
         <nav className="flex items-center gap-1 border-b border-gold-300/10 pb-1 overflow-x-auto">
           <button
             onClick={() => setActiveTab("profile")}
-            className={`px-5 py-3 text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap cursor-pointer ${
-              activeTab === "profile"
-                ? "border-b-2 border-gold text-gold bg-gold/5"
-                : "text-gold-200/60 hover:text-gold-50"
-            }`}
+            className={`px-5 py-3 text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap cursor-pointer ${activeTab === "profile"
+              ? "border-b-2 border-gold text-gold bg-gold/5"
+              : "text-gold-200/60 hover:text-gold-50"
+              }`}
           >
             Profile Dossier
           </button>
           <button
             onClick={() => setActiveTab("documents")}
-            className={`px-5 py-3 text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap cursor-pointer ${
-              activeTab === "documents"
-                ? "border-b-2 border-gold text-gold bg-gold/5"
-                : "text-gold-200/60 hover:text-gold-50"
-            }`}
+            className={`px-5 py-3 text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap cursor-pointer ${activeTab === "documents"
+              ? "border-b-2 border-gold text-gold bg-gold/5"
+              : "text-gold-200/60 hover:text-gold-50"
+              }`}
           >
             Compliance Documents ({rawDocs.length})
           </button>
@@ -554,10 +449,10 @@ function CarerDetailsContent() {
         <div className="transition-all duration-300">
           {activeTab === "profile" && (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
-              
+
               {/* LEFT SIDEBAR: PROFILE & AVAILABILITY */}
               <aside className="lg:col-span-1 space-y-6 flex flex-col">
-                
+
                 {/* Profile Information */}
                 <div className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md space-y-5 flex-1">
                   <h3 className="text-xs font-bold uppercase tracking-wider text-gold-200/50 border-b border-gold-300/5 pb-3 flex items-center gap-2">
@@ -569,7 +464,9 @@ function CarerDetailsContent() {
                       <Mail className="h-4 w-4 text-gold flex-shrink-0" />
                       <div className="min-w-0">
                         <span className="text-[9px] uppercase font-bold tracking-wider text-gold-100/40 block">Email Address</span>
-                        <span className="font-semibold text-gold-200 truncate block" title={carer.email}>{carer.email}</span>
+                        <span className="font-semibold text-gold-200 truncate block" title={carer.user?.email || carer.email}>
+                          {carer.user?.email || carer.email || "No email listed"}
+                        </span>
                       </div>
                     </div>
 
@@ -577,7 +474,9 @@ function CarerDetailsContent() {
                       <Phone className="h-4 w-4 text-gold flex-shrink-0" />
                       <div className="min-w-0">
                         <span className="text-[9px] uppercase font-bold tracking-wider text-gold-100/40 block">Phone Number</span>
-                        <span className="font-semibold text-gold-200 block">{carer.phoneNumber || "No phone listed"}</span>
+                        <span className="font-semibold text-gold-200 block">
+                          {carer.user?.phoneNumber || carer.phoneNumber || "No phone listed"}
+                        </span>
                       </div>
                     </div>
 
@@ -585,8 +484,8 @@ function CarerDetailsContent() {
                       <MapPin className="h-4 w-4 text-gold flex-shrink-0" />
                       <div className="min-w-0">
                         <span className="text-[9px] uppercase font-bold tracking-wider text-gold-100/40 block">City & Address</span>
-                        <span className="font-semibold text-gold-200 truncate block" title={profile.city || "Unknown"}>
-                          {profile.address || profile.city || "Unknown"}
+                        <span className="font-semibold text-gold-200 truncate block" title={locationText}>
+                          {locationText}
                         </span>
                       </div>
                     </div>
@@ -596,7 +495,7 @@ function CarerDetailsContent() {
                         <Calendar className="h-3.5 w-3.5 text-gold/60" /> Registered:
                       </span>
                       <span className="text-gold-200 font-bold font-mono">
-                        {new Date(ext.registrationDate || profile.createdAt || carer.createdAt).toLocaleDateString("en-GB", {
+                        {new Date(registrationDate).toLocaleDateString("en-GB", {
                           day: "2-digit",
                           month: "short",
                           year: "numeric",
@@ -622,20 +521,20 @@ function CarerDetailsContent() {
                   <div className="space-y-4 text-xs">
                     <div className="flex items-center justify-between">
                       <span className="text-gold-100/40 font-semibold">Availability Status:</span>
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${getStatusBadgeStyles(ext.availabilityStatus)}`}>
-                        {ext.availabilityStatus}
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${getStatusBadgeStyles(availabilityStatus)}`}>
+                        {availabilityStatus}
                       </span>
                     </div>
 
                     <div className="flex items-center justify-between">
                       <span className="text-gold-100/40 font-semibold">Consecutive Days:</span>
-                      <span className="text-gold-200 font-bold">{ext.consecutiveDays}</span>
+                      <span className="text-gold-200 font-bold">{consecutiveDays}</span>
                     </div>
 
                     <div className="flex items-center justify-between">
                       <span className="text-gold-100/40 font-semibold">Available Hours:</span>
-                      <span className="text-gold-200 font-bold font-mono">
-                        {ext.availableFrom} - {ext.availableUntil}
+                      <span className="text-rose-400 font-bold font-mono text-[10px]">
+                        {availableHours}
                       </span>
                     </div>
 
@@ -657,18 +556,22 @@ function CarerDetailsContent() {
                   <div className="space-y-4 text-xs">
                     <div>
                       <span className="text-[9px] uppercase font-bold tracking-wider text-gold-100/40 block mb-1">Agreed Hourly Rate</span>
-                      <div className="text-2xl font-black text-gold">£15.00/hr</div>
+                      <div className="text-2xl font-black text-gold">
+                        {hourlyRateSource ? `£${parseFloat(hourlyRateSource).toFixed(2)}/hr` : "Not set"}
+                      </div>
                     </div>
 
                     <div>
                       <span className="text-[9px] uppercase font-bold tracking-wider text-gold-100/40 block mb-1">Payment Method</span>
-                      <div className="text-gold-200 font-bold">Bank Transfer (BACS)</div>
+                      <div className={paymentMethod.includes("Backend") ? "text-rose-400 font-bold text-opacity-80 font-mono text-[10px]" : "text-gold-200 font-bold"}>
+                        {paymentMethod}
+                      </div>
                     </div>
 
                     <div className="border-t border-gold-300/5 pt-3">
                       <span className="text-[9px] uppercase font-bold tracking-wider text-gold-100/40 block mb-1">Compliance Notes</span>
                       <p className="text-[11px] text-gold-100/50 italic leading-relaxed">
-                        Carer complies with tier 1 insurance requirements. Right to work audited. DBS record checked and verified.
+                        N/A
                       </p>
                     </div>
                   </div>
@@ -678,7 +581,7 @@ function CarerDetailsContent() {
 
               {/* RIGHT MAIN PANEL: EXPERIENCE, PLACEMENTS, NOTES, FEEDBACK */}
               <section className="lg:col-span-2 space-y-6 flex flex-col justify-between">
-                
+
                 {/* Experience & Specialties */}
                 <div className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md space-y-4">
                   <h3 className="text-xs font-bold uppercase tracking-wider text-gold-200/50 border-b border-gold-300/5 pb-3 flex items-center gap-2">
@@ -689,7 +592,7 @@ function CarerDetailsContent() {
                     <div className="text-xs flex items-center gap-2">
                       <span className="text-gold-100/40 font-semibold">Years of Experience:</span>
                       <span className="font-bold text-gold-200 bg-gold/10 px-2 py-0.5 rounded-md border border-gold/20">
-                        {profile.experience || (profile.experienceYears ? `${profile.experienceYears} Years` : "No experience listed")}
+                        {displayExperience}
                       </span>
                     </div>
 
@@ -714,7 +617,7 @@ function CarerDetailsContent() {
                     <div className="space-y-1 border-t border-gold-300/5 pt-3">
                       <span className="text-[9px] uppercase font-bold tracking-wider text-gold-100/40 block">Biography</span>
                       <p className="text-xs text-gold-100/70 leading-relaxed italic">
-                        "{ext.biography}"
+                        "{bioSource}"
                       </p>
                     </div>
                   </div>
@@ -738,42 +641,62 @@ function CarerDetailsContent() {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gold-300/5">
-                        {ext.placements.length === 0 ? (
+                        {placementsLoading ? (
+                          <tr>
+                            <td colSpan={5} className="py-8 text-center text-gold-100/30 font-semibold">
+                              <div className="flex items-center justify-center gap-2">
+                                <div className="h-4 w-4 border-2 border-gold/30 border-t-gold rounded-full animate-spin" />
+                                Loading placements...
+                              </div>
+                            </td>
+                          </tr>
+                        ) : carerPlacements.length === 0 ? (
                           <tr>
                             <td colSpan={5} className="py-8 text-center text-gold-100/30 font-semibold">
                               No placement history available
                             </td>
                           </tr>
                         ) : (
-                          ext.placements.map((hist, idx) => (
-                            <tr key={`${hist.clientName}-${idx}`} className="hover:bg-navy-900/20 transition duration-150">
-                              <td className="py-3 px-2 font-bold text-gold-200">{hist.clientName}</td>
-                              <td className="py-3 px-2 font-semibold text-gold-100/75 truncate max-w-[150px]" title={hist.clientAddress}>
-                                {hist.clientAddress}
-                              </td>
-                              <td className="py-3 px-2 font-mono font-semibold text-gold-100/50">
-                                {new Date(hist.startDate).toLocaleDateString("en-GB", {
-                                  day: "2-digit",
-                                  month: "short",
-                                  year: "numeric",
-                                })}
-                              </td>
-                              <td className="py-3 px-2 font-mono font-semibold text-gold-100/50">
-                                {hist.endDate === "Ongoing"
-                                  ? "Ongoing"
-                                  : new Date(hist.endDate).toLocaleDateString("en-GB", {
+                          carerPlacements.map((placement: any, idx: number) => {
+                            const clientUser = placement.clientProfile?.user || {};
+                            const clientName = `${clientUser.firstName || ""} ${clientUser.lastName || ""}`.trim() || "Unknown Client";
+                            const clientAddress = placement.clientProfile?.address || placement.clientProfile?.city || "Address not available";
+                            const startDate = placement.startDate;
+                            const endDate = placement.endDate;
+                            const status = placement.status || "ACTIVE";
+
+                            return (
+                              <tr key={placement.id || idx} className="hover:bg-navy-900/20 transition duration-150">
+                                <td className="py-3 px-2 font-bold text-gold-200">{clientName}</td>
+                                <td className="py-3 px-2 font-semibold text-gold-100/75 truncate max-w-[150px]" title={clientAddress}>
+                                  {clientAddress}
+                                </td>
+                                <td className="py-3 px-2 font-mono font-semibold text-gold-100/50">
+                                  {startDate
+                                    ? new Date(startDate).toLocaleDateString("en-GB", {
+                                      day: "2-digit",
+                                      month: "short",
+                                      year: "numeric",
+                                    })
+                                    : "Pending"}
+                                </td>
+                                <td className="py-3 px-2 font-mono font-semibold text-gold-100/50">
+                                  {!endDate || status === "ACTIVE"
+                                    ? "Ongoing"
+                                    : new Date(endDate).toLocaleDateString("en-GB", {
                                       day: "2-digit",
                                       month: "short",
                                       year: "numeric",
                                     })}
-                              </td>
-                              <td className="py-3 px-2 text-right">
-                                <span className={`inline-flex rounded px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider ${getStatusBadgeStyles(hist.status)}`}>
-                                  {hist.status}
-                                </span>
-                              </td>
-                            </tr>
-                          ))
+                                </td>
+                                <td className="py-3 px-2 text-right">
+                                  <span className={`inline-flex rounded px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider ${getStatusBadgeStyles(status)}`}>
+                                    {status}
+                                  </span>
+                                </td>
+                              </tr>
+                            );
+                          })
                         )}
                       </tbody>
                     </table>
@@ -786,19 +709,23 @@ function CarerDetailsContent() {
                     <MessageSquare className="h-4 w-4 text-gold/60" /> Internal Notes Timeline
                   </h3>
 
-                  {ext.notes.length === 0 ? (
+                  {!carerNotes || carerNotes.length === 0 ? (
                     <p className="text-xs text-gold-100/30 text-center py-4">No internal notes written yet.</p>
                   ) : (
                     <div className="space-y-4 relative pl-4 border-l border-gold-300/10 text-xs">
-                      {ext.notes.map((note, idx) => (
-                        <div key={`${note.title}-${idx}`} className="relative space-y-1">
+                      {carerNotes.map((note: any, idx: number) => (
+                        <div key={`${note.title || idx}-${idx}`} className="relative space-y-1">
                           <span className="absolute -left-[21px] top-1.5 h-2 w-2 rounded-full bg-gold border border-navy-950" />
                           <div className="flex items-center justify-between gap-4">
-                            <span className="font-bold text-gold-200">{note.title}</span>
-                            <span className="text-[10px] text-gold-100/40 font-semibold">{note.timestamp}</span>
+                            <span className="font-bold text-gold-200">{note.title || "Note"}</span>
+                            <span className="text-[10px] text-gold-100/40 font-semibold">
+                              {note.timestamp || (note.createdAt && new Date(note.createdAt).toLocaleDateString()) || ""}
+                            </span>
                           </div>
-                          <p className="text-gold-100/60 leading-relaxed">{note.content}</p>
-                          <span className="text-[10px] text-gold/50 block font-semibold">Author: {note.adminName}</span>
+                          <p className="text-gold-100/60 leading-relaxed">{note.content || note.text || ""}</p>
+                          {(note.adminName || note.author) && (
+                            <span className="text-[10px] text-gold/50 block font-semibold">Author: {note.adminName || note.author}</span>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -811,25 +738,28 @@ function CarerDetailsContent() {
                     <Heart className="h-4 w-4 text-gold/60" /> Feedback History
                   </h3>
 
-                  {ext.feedback.length === 0 ? (
+                  {!carerFeedback || carerFeedback.length === 0 ? (
                     <p className="text-xs text-gold-100/30 text-center py-4">No feedback logs recorded.</p>
                   ) : (
                     <div className="space-y-4 relative pl-4 border-l border-gold-300/10 text-xs">
-                      {ext.feedback.map((fb, idx) => {
+                      {carerFeedback.map((fb: any, idx: number) => {
+                        const type = fb.type || "Feedback";
                         let indicatorBg = "bg-gold";
-                        if (fb.type.includes("Concern")) {
+                        if (type.includes("Concern") || type.includes("Negative")) {
                           indicatorBg = "bg-rose-500";
-                        } else if (fb.type.includes("Actions")) {
+                        } else if (type.includes("Action") || type.includes("System")) {
                           indicatorBg = "bg-blue-500";
                         }
                         return (
-                          <div key={`${fb.type}-${idx}`} className="relative space-y-1">
+                          <div key={`${type}-${idx}`} className="relative space-y-1">
                             <span className={`absolute -left-[21px] top-1.5 h-2 w-2 rounded-full ${indicatorBg} border border-navy-950`} />
                             <div className="flex items-center justify-between gap-4">
-                              <span className="font-bold text-gold-200">{fb.type}</span>
-                              <span className="text-[10px] text-gold-100/40 font-semibold">{fb.timestamp}</span>
+                              <span className="font-bold text-gold-200">{type}</span>
+                              <span className="text-[10px] text-gold-100/40 font-semibold">
+                                {fb.timestamp || (fb.createdAt && new Date(fb.createdAt).toLocaleDateString()) || ""}
+                              </span>
                             </div>
-                            <p className="text-gold-100/60 leading-relaxed">"{fb.content}"</p>
+                            <p className="text-gold-100/60 leading-relaxed">"{fb.content || fb.text || ""}"</p>
                           </div>
                         );
                       })}
@@ -872,20 +802,20 @@ function CarerDetailsContent() {
                       rawDocs.map((uploaded: any, index: number) => {
                         const typeSource = uploaded.fileType || uploaded.type || uploaded.name;
                         const catSource = uploaded.fileCategory || uploaded.category;
-                        
+
                         let fileCategoryClean = catSource
                           ? catSource
-                              .split("_")
-                              .map(
-                                (w: string) =>
-                                  w.charAt(0).toUpperCase() +
-                                  w.slice(1).toLowerCase()
-                              )
-                              .join(" ")
+                            .split("_")
+                            .map(
+                              (w: string) =>
+                                w.charAt(0).toUpperCase() +
+                                w.slice(1).toLowerCase()
+                            )
+                            .join(" ")
                           : "Document";
 
                         let displayName = uploaded.fileName || "Unnamed Document";
-                        
+
                         if (typeSource === DocumentFileType.ADDITIONAL_REFERENCE) {
                           displayName = `Additional Reference ${index + 1}`;
                           fileCategoryClean = "Compliance";
@@ -898,7 +828,7 @@ function CarerDetailsContent() {
                           : "Unknown";
 
                         const finalExpiryDate = "N/A";
-                        
+
                         const statusLabel = uploaded.status === "VERIFIED"
                           ? "Verified"
                           : uploaded.status === "REJECTED"

@@ -97,6 +97,10 @@ export default function StepIdentityVerification({
       hasDL && hasOwnVehiclePref && !hasBusinessInsuranceDoc
         ? "Business Use Insurance is required since you selected 'I am happy to transport clients in my own vehicle'."
         : "",
+    drivingPreferences:
+      hasDL && safePreferences.length === 0
+        ? "Please select at least one driving preference."
+        : "",
   };
 
   const hasDocErrors = Object.values(docErrors).some(Boolean);
@@ -562,6 +566,11 @@ export default function StepIdentityVerification({
                   </div>
                 ))}
               </div>
+              {submitted && docErrors.drivingPreferences && (
+                <p className="text-xs text-red-500 font-semibold mt-3">
+                  {docErrors.drivingPreferences}
+                </p>
+              )}
 
               {hasOwnVehiclePref && (
                 <div className="mt-5 pt-5 border-t border-gold-300/10">

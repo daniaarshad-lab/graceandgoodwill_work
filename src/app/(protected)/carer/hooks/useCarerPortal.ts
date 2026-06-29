@@ -78,7 +78,23 @@ export function useCarerPortal({
       setExperience(profile.experienceYears?.toString() ?? profile.experience ?? "");
       setAddress(profile.address ?? "");
       setPostcode(profile.postcode ?? "");
-      setCanDrive(profile.canDrive === true ? "yes" : profile.canDrive === false ? "no" : "");
+      const canDriveVal = profile.canDrive as any;
+      setCanDrive(
+        canDriveVal === true || canDriveVal === "yes" || canDriveVal === "true" 
+          ? "yes" 
+          : canDriveVal === false || canDriveVal === "no" || canDriveVal === "false" 
+          ? "no" 
+          : ""
+      );
+      
+      const bizInsVal = profile.hasBusinessInsurance as any;
+      setHasBusinessInsurance(
+        bizInsVal === true || bizInsVal === "yes" || bizInsVal === "true" 
+          ? "yes" 
+          : bizInsVal === false || bizInsVal === "no" || bizInsVal === "false" 
+          ? "no" 
+          : ""
+      );
 
       if (profile.emergencyContactName) setEmergencyContactName(profile.emergencyContactName);
       if (profile.emergencyContactNumber) setEmergencyContactNumber(profile.emergencyContactNumber);
@@ -161,8 +177,8 @@ export function useCarerPortal({
       } else if (step === 3) {
         const payload = {
           drivingPreferences,
-          canDrive: canDrive === "yes" ? "true" : canDrive === "no" ? "false" : undefined,
-          hasBusinessInsurance: hasBusinessInsurance === "yes" ? "true" : hasBusinessInsurance === "no" ? "false" : undefined,
+          canDrive: canDrive || undefined,
+          hasBusinessInsurance: hasBusinessInsurance || undefined,
         };
         await dispatch(updateCarerStep2(payload)).unwrap();
       } else if (step === 4) {

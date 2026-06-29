@@ -310,13 +310,25 @@ export const carerService = {
       throw new Error("No token found");
     }
 
+    const formData = new FormData();
+    if (payload.canDrive !== undefined && payload.canDrive !== "") {
+      formData.append("canDrive", payload.canDrive);
+    }
+    if (payload.hasBusinessInsurance !== undefined && payload.hasBusinessInsurance !== "") {
+      formData.append("hasBusinessInsurance", payload.hasBusinessInsurance);
+    }
+    if (payload.drivingPreferences && Array.isArray(payload.drivingPreferences)) {
+      payload.drivingPreferences.forEach((pref: string) => {
+        formData.append("drivingPreferences", pref);
+      });
+    }
+
     return apiFetch("/carer/profile/step-2", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
       },
-      body: JSON.stringify(payload),
+      body: formData,
     });
   },
 

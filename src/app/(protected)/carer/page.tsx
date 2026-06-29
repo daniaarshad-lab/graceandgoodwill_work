@@ -30,6 +30,7 @@ import StepDeclaration from "./components/StepDeclaration";
 import OnboardingMembership from "./components/OnboardingMembership";
 import StepReviewSubmit from "./components/StepReviewSubmit";
 import PlacementOpportunities from "./components/PlacementOpportunities";
+import MembershipManagement from "./components/MembershipManagement";
 import Button from "@/components/Button";
 import {
   Shield,
@@ -58,7 +59,7 @@ function CarerDashboardContent() {
   useEffect(() => {
     if (
       tabParam &&
-      ["overview", "profile", "compliance", "availability", "opportunities"].includes(tabParam)
+      ["overview", "profile", "compliance", "availability", "opportunities", "membership"].includes(tabParam)
     ) {
       setActiveTab(tabParam);
     }
@@ -127,10 +128,13 @@ function CarerDashboardContent() {
     }
 
     if (profile && !initialStepSet) {
+      const urlStep = searchParams.get("step");
       const savedStep = localStorage.getItem(
         `carer_onboarding_step_${user.id}`,
       );
-      if (savedStep) {
+      if (urlStep) {
+        setOnboardingStep(parseInt(urlStep, 10));
+      } else if (savedStep) {
         setOnboardingStep(parseInt(savedStep, 10));
       } else {
         const isComplianceUploaded = documents && documents.length >= 10;
@@ -561,6 +565,10 @@ function CarerDashboardContent() {
 
           {activeTab === "opportunities" && (
             <PlacementOpportunities />
+          )}
+
+          {activeTab === "membership" && (
+            <MembershipManagement />
           )}
         </div>
       </div>

@@ -433,4 +433,70 @@ export const carerService = {
       },
     });
   },
+
+  async getSubscriptionInfo(): Promise<any> {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+    return apiFetch("/carer/subscription", {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  },
+
+  async createCheckoutSession(tier: string, successUrl: string, cancelUrl: string): Promise<any> {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+    return apiFetch("/carer/subscription/checkout", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ tier, successUrl, cancelUrl }),
+    });
+  },
+
+  async createPortalSession(returnUrl: string): Promise<any> {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+    return apiFetch("/carer/subscription/portal", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ returnUrl }),
+    });
+  },
+
+  async cancelSubscription(): Promise<any> {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+    return apiFetch("/carer/subscription/cancel", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  },
+
+  async getSubscriptionInvoices(): Promise<any[]> {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+    return apiFetch("/carer/subscription/invoices", {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  },
+
+  async saveStep9Plan(tier: string): Promise<any> {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+    return apiFetch("/carer/profile/step-9", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ tier }),
+    });
+  },
 };

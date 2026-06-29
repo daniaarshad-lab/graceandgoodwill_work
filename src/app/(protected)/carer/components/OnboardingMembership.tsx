@@ -2,6 +2,8 @@ import { useState } from "react";
 import SectionCard from "./shared/SectionCard";
 import Button from "@/components/Button";
 import { Check, Star, Shield, Award, ShieldCheck, X, Sparkles, Medal } from "lucide-react";
+import { carerService } from "@/services/carer/carer.service";
+import { showErrorToast } from "@/utils/toast";
 
 interface OnboardingMembershipProps {
   selectedPlan: string | null;
@@ -19,6 +21,35 @@ export default function OnboardingMembership({
   isSubmitting,
 }: OnboardingMembershipProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleContinue = async () => {
+    setLoading(true);
+    try {
+      if (selectedPlan === "Gold Elite Membership") {
+        // 1. Save step 9 selection to database
+        await carerService.saveStep9Plan("GOLD_ELITE");
+
+        // 2. Create Stripe Checkout session redirecting back to step 10 on success
+        const successUrl = `${window.location.origin}/carer?onboarding=true&step=10`;
+        const cancelUrl = `${window.location.origin}/carer?onboarding=true&step=9`;
+        
+        const session = await carerService.createCheckoutSession("GOLD_ELITE", successUrl, cancelUrl);
+        if (session && session.url) {
+          window.location.href = session.url;
+        } else {
+          throw new Error("Invalid checkout session returned");
+        }
+      } else {
+        // Free Membership
+        await carerService.saveStep9Plan("FREE");
+        onNext();
+      }
+    } catch (err: any) {
+      showErrorToast("Error", err.message || "Failed to process membership selection");
+      setLoading(false);
+    }
+  };
 
   const plans = [
     {
@@ -182,8 +213,13 @@ export default function OnboardingMembership({
             return (
               <div
                 key={plan.name}
-                onClick={() => setSelectedPlan(plan.name)}
-                className={`relative flex flex-col justify-between rounded-3xl p-6 sm:p-8 border transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group cursor-pointer ${getCardStyles()}`}
+                onClick={() => {
+                  if (plan.isPremium) return; // Do not allow selecting Verified Professional during onboarding
+                  setSelectedPlan(plan.name);
+                }}
+                className={`relative flex flex-col justify-between rounded-3xl p-6 sm:p-8 border transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group ${
+                  plan.isPremium ? "cursor-default" : "cursor-pointer"
+                } ${getCardStyles()}`}
                 style={{ background: getCardBg() }}
               >
                 {/* Radial Glow on Gold / Premium Cards */}
@@ -324,12 +360,11 @@ export default function OnboardingMembership({
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          setSelectedPlan(plan.name);
                           setIsModalOpen(true);
                         }}
                         className={`w-full py-3.5 px-3 rounded-xl font-bold tracking-wide transition-all duration-300 focus:outline-none text-[13px] ${getButtonStyles()}`}
                       >
-                        {isSelected ? "✓ Selected" : plan.buttonText}
+                        {plan.buttonText}
                       </button>
                     ) : (
                       <button
@@ -412,15 +447,15 @@ export default function OnboardingMembership({
           type="button"
           variant="ghost-gold"
           onClick={onBack}
-          disabled={isSubmitting}
+          disabled={isSubmitting || loading}
           text="Back"
         />
         <Button
           type="button"
           variant="primary"
-          text="Continue to Declaration"
-          onClick={onNext}
-          disabled={isSubmitting || !selectedPlan}
+          text={loading ? (selectedPlan === "Gold Elite Membership" ? "Redirecting to Stripe..." : "Saving Selection...") : "Continue to Declaration"}
+          onClick={handleContinue}
+          disabled={isSubmitting || loading || !selectedPlan}
         />
       </div>
 
@@ -527,15 +562,6 @@ export default function OnboardingMembership({
                 className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs font-bold text-gold-200 border border-gold-400/30 hover:border-gold-300 hover:text-gold-100 hover:bg-gold-400/5 transition-colors focus:outline-none"
               >
                 Close Details
-              </button>
-              <button
-                onClick={() => {
-                  setSelectedPlan("Grace & Goodwill Verified Professional™");
-                  setIsModalOpen(false);
-                }}
-                className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs font-bold bg-gold-200 text-navy-950 border border-gold-400/40 shadow-[0_4px_15px_rgba(245,212,160,0.25)] hover:bg-gold-100 hover:border-gold-300 hover:-translate-y-0.5 transition-all focus:outline-none"
-              >
-                Select Verified Professional & Close
               </button>
             </div>
           </div>

@@ -127,9 +127,13 @@ export const updateClientProfile = createAsyncThunk<
   }
 });
 
-export const updateAdminMatching = createAsyncThunk(
+export const updateAdminMatching = createAsyncThunk<
+  ClientProfile,
+  boolean,
+  { rejectValue: string }
+>(
   "client/updateAdminMatching",
-  async (adminMatching: boolean, { rejectWithValue }) => {
+  async (adminMatching, { rejectWithValue }) => {
     try {
       return await clientService.updateAdminMatching(adminMatching);
     } catch (error: any) {

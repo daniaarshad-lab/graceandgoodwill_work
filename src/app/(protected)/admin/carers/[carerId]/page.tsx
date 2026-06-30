@@ -548,7 +548,7 @@ function CarerDetailsContent() {
                 </div>
 
                 {/* Communication & Fee */}
-                <div className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md space-y-5 flex-1">
+                {/* <div className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md space-y-5 flex-1">
                   <h3 className="text-xs font-bold uppercase tracking-wider text-gold-200/50 border-b border-gold-300/5 pb-3 flex items-center gap-2">
                     <DollarSign className="h-4 w-4 text-gold/60" /> Communication & Fee
                   </h3>
@@ -575,7 +575,7 @@ function CarerDetailsContent() {
                       </p>
                     </div>
                   </div>
-                </div>
+                </div> */}
 
               </aside>
 

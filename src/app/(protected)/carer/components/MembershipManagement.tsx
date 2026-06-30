@@ -374,7 +374,7 @@ export default function MembershipManagement() {
                     <td className="p-4 text-gold-100/70">
                       {inv.paidAt ? new Date(inv.paidAt).toLocaleDateString() : "Pending"}
                     </td>
-                    <td className="p-4 text-gold-50 font-semibold">£{inv.amount.toFixed(2)}</td>
+                    <td className="p-4 text-gold-50 font-semibold">£{Number(inv.amount).toFixed(2)}</td>
                     <td className="p-4">
                       <span className="rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-emerald-400">
                         {inv.status}

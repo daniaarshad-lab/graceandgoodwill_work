@@ -25,7 +25,7 @@ export function useClientPortal({ user }: UseClientPortalProps) {
   );
   const [careEmail, setCareEmail] = useState(user?.email || "");
   const [carePhone, setCarePhone] = useState(user?.phone || "");
-  const [careType, setCareType] = useState("");
+  const [careType, setCareType] = useState<string[]>([]);
   const [careSupport, setCareSupport] = useState("");
   const [careStartDate, setCareStartDate] = useState("");
   const [careDuration, setCareDuration] = useState("");
@@ -69,7 +69,7 @@ export function useClientPortal({ user }: UseClientPortalProps) {
     const payload = {
       address: careAddress,
 
-      careCategory: careType,
+      careCategory: Array.isArray(careType) ? careType : careType ? [careType] : [],
 
       requirements: careSupport,
 
@@ -87,6 +87,8 @@ export function useClientPortal({ user }: UseClientPortalProps) {
       weeklyPayRange: weeklyPayRange ? `£${weeklyPayRange.min} - £${weeklyPayRange.max} per week` : undefined,
     };
 
+    console.log("Submitting Care Request Payload:", payload);
+
     setIsCareSubmitting(true);
     try {
       await dispatch(createCareRequest(payload)).unwrap();
@@ -102,6 +104,7 @@ export function useClientPortal({ user }: UseClientPortalProps) {
       setCareDuration("");
       setCareAddress("");
       setCareNotes("");
+      setCareType([]);
       setIsOngoing(false);
       setWeeklyPayRange(null);
     } catch (error: any) {

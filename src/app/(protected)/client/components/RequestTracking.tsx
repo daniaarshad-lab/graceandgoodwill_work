@@ -1,6 +1,10 @@
+import { useEffect, useState } from "react";
 import SectionCard from "./shared/SectionCard";
 import { ClientPlacement } from "@/types/client.types";
-import { User, Calendar, AlertTriangle, RefreshCw, PlusCircle, Shield, Award } from "lucide-react";
+import { User, Calendar, AlertTriangle, RefreshCw, PlusCircle, Shield, Award, CheckCircle2 } from "lucide-react";
+import FeedbackModal from "./FeedbackModal";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { fetchClientFeedbacks } from "@/store/slices/clientSlice";
 
 interface RequestTrackingProps {
   placements: ClientPlacement[];
@@ -17,6 +21,14 @@ export default function RequestTracking({
   onRetry,
   setActiveTab,
 }: RequestTrackingProps) {
+  const dispatch = useAppDispatch();
+  const { feedbacks } = useAppSelector((state) => state.client);
+  const [feedbackPlacement, setFeedbackPlacement] = useState<{ id: string; carerName: string } | null>(null);
+
+  useEffect(() => {
+    dispatch(fetchClientFeedbacks());
+  }, [dispatch]);
+
   const getStatusBadgeStyles = (status: string) => {
     const cleanStatus = status?.toUpperCase() || "PENDING";
     switch (cleanStatus) {
@@ -168,9 +180,44 @@ export default function RequestTracking({
                   </span>
                 </div>
               </div>
+
+              {place.status === "COMPLETED" && (
+                <div className="pt-4 border-t border-gold-300/10 flex justify-end">
+                  {feedbacks.some((f) => f.placementId === place.id) ? (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-bold uppercase tracking-wider cursor-not-allowed">
+                      <CheckCircle2 className="w-3.5 h-3.5" /> Feedback Submitted
+                    </span>
+                  ) : (
+                    <button
+                      onClick={() =>
+                        setFeedbackPlacement({
+                          id: place.id,
+                          carerName: place.carerProfile?.user
+                            ? `${place.carerProfile.user.firstName} ${place.carerProfile.user.lastName}`
+                            : "Your Carer",
+                        })
+                      }
+                      className="px-4 py-2 rounded-xl bg-gold/10 text-gold border border-gold/20 hover:bg-gold hover:text-navy-950 text-xs font-bold uppercase tracking-wider transition-all"
+                    >
+                      Leave Feedback
+                    </button>
+                  )}
+                </div>
+              )}
             </SectionCard>
           ))}
         </div>
+      )}
+
+      {feedbackPlacement && (
+        <FeedbackModal
+          placementId={feedbackPlacement.id}
+          carerName={feedbackPlacement.carerName}
+          onClose={() => setFeedbackPlacement(null)}
+          onSuccess={() => {
+            // we could fetch placements here, but we also manually set it in slice.
+          }}
+        />
       )}
     </div>
   );

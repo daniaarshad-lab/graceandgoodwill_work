@@ -246,20 +246,7 @@ const mapBackendPlacements = (backendPlacements: any[]): Placement[] => {
         ? intro.status === "APPROVED"
         : false;
 
-    let status:
-      | "Pending"
-      | "Reviewing"
-      | "Matched"
-      | "Active"
-      | "Completed"
-      | "Emergency" = "Matched";
-    if (p.status === "ACTIVE") {
-      status = contactDetailsReleased ? "Active" : "Matched";
-    } else if (p.status === "COMPLETED") {
-      status = "Completed";
-    } else if (p.status === "TERMINATED" || p.status === "CANCELLED") {
-      status = "Completed";
-    }
+    let status = p.status || "PLACEMENT_CONFIRMED";
 
     const timeline = [];
     timeline.push({

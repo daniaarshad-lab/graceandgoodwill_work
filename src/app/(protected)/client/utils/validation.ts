@@ -2,7 +2,7 @@ export function validateCareForm(data: {
   fullName: string;
   email: string;
   phone: string;
-  careType: string;
+  careType: string[];
   support: string;
   startDate: string;
   duration: string;
@@ -28,7 +28,7 @@ export function validateCareForm(data: {
     errors.phone = "Please enter a valid phone number (7-15 digits).";
   }
 
-  if (!data.careType || !data.careType.trim()) {
+  if (!data.careType || data.careType.length === 0) {
     errors.careType = "Care type is required.";
   }
 

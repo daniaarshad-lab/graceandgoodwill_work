@@ -7,6 +7,8 @@ import {
   CareRequestApplication,
   UpdateClientProfilePayload,
   ClientPlacement,
+  ClientFeedback,
+  FeedbackPayload,
 } from "@/types/client.types";
 
 export const clientService = {
@@ -139,6 +141,31 @@ export const clientService = {
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(payload),
+    });
+  },
+
+  async submitFeedback(placementId: string, payload: FeedbackPayload): Promise<ClientFeedback> {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+
+    return apiFetch(`/client/placements/${placementId}/feedback`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async getClientFeedbacks(): Promise<ClientFeedback[]> {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+
+    return apiFetch("/client/feedbacks", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
   },
 

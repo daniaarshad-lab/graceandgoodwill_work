@@ -8,6 +8,8 @@ import {
   CareRequestApplication,
   UpdateClientProfilePayload,
   ClientPlacement,
+  ClientFeedback,
+  FeedbackPayload,
 } from "@/types/client.types";
 import { CreateEnquiryPayload } from "@/types/client.types";
 import { Carer } from "@/app/(protected)/client/types/client-ui.types";
@@ -30,6 +32,10 @@ const initialState: ClientState = {
   applications: [],
   applicationsLoading: false,
   applicationsError: null,
+
+  feedbacks: [],
+  feedbacksLoading: false,
+  feedbacksError: null,
 
   loading: false,
   error: null,
@@ -221,6 +227,30 @@ export const fetchCarers = createAsyncThunk<
   } catch (error: any) {
     console.error("Failed to fetch carers from API:", error);
     return rejectWithValue(error?.message || "Failed to fetch carers");
+  }
+});
+
+export const submitFeedback = createAsyncThunk<
+  ClientFeedback,
+  { placementId: string; payload: FeedbackPayload },
+  { rejectValue: string }
+>("client/submitFeedback", async ({ placementId, payload }, { rejectWithValue }) => {
+  try {
+    return await clientService.submitFeedback(placementId, payload);
+  } catch (error: any) {
+    return rejectWithValue(error?.message || "Failed to submit feedback");
+  }
+});
+
+export const fetchClientFeedbacks = createAsyncThunk<
+  ClientFeedback[],
+  void,
+  { rejectValue: string }
+>("client/fetchFeedbacks", async (_, { rejectWithValue }) => {
+  try {
+    return await clientService.getClientFeedbacks();
+  } catch (error: any) {
+    return rejectWithValue(error?.message || "Failed to fetch feedbacks");
   }
 });
 
@@ -479,6 +509,31 @@ const clientSlice = createSlice({
     builder.addCase(fetchClientCareRequestApplications.rejected, (state, action) => {
       state.applicationsLoading = false;
       state.applicationsError = action.payload || "Failed to fetch applications";
+    });
+
+    // Feedback
+    builder.addCase(submitFeedback.fulfilled, (state, action) => {
+      const placementId = action.payload.placement?.id || action.meta.arg.placementId;
+      if (placementId) {
+        const placement = state.placements.find(p => p.id === placementId);
+        if (placement) {
+          placement.hasSubmittedFeedback = true;
+        }
+      }
+      state.feedbacks.unshift(action.payload);
+    });
+
+    builder.addCase(fetchClientFeedbacks.pending, (state) => {
+      state.feedbacksLoading = true;
+      state.feedbacksError = null;
+    });
+    builder.addCase(fetchClientFeedbacks.fulfilled, (state, action: PayloadAction<ClientFeedback[]>) => {
+      state.feedbacksLoading = false;
+      state.feedbacks = action.payload;
+    });
+    builder.addCase(fetchClientFeedbacks.rejected, (state, action) => {
+      state.feedbacksLoading = false;
+      state.feedbacksError = action.payload || "Failed to fetch feedbacks";
     });
   },
 });

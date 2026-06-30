@@ -301,7 +301,7 @@ function CarerDetailsContent() {
 
   // Notes and Feedback (Checking all possible nestings)
   const carerNotes = carer.notes || profile.notes || carer.user?.notes || [];
-  const carerFeedback = carer.feedback || profile.feedback || carer.user?.feedback || [];
+  const carerFeedback = carer.feedbacks || carer.feedback || profile.feedbacks || profile.feedback || carer.user?.feedbacks || carer.user?.feedback || [];
 
   // Payment Method
   const paymentMethod = profile.paymentMethod || carer.paymentMethod || carer.user?.paymentMethod || "[Backend Required: paymentMethod]";
@@ -755,27 +755,57 @@ function CarerDetailsContent() {
                   </h3>
 
                   {!carerFeedback || carerFeedback.length === 0 ? (
-                    <p className="text-xs text-gold-100/30 text-center py-4">No feedback logs recorded.</p>
+                    <p className="text-xs text-gold-100/30 text-center py-4">No feedback has been submitted for this carer yet.</p>
                   ) : (
                     <div className="space-y-4 relative pl-4 border-l border-gold-300/10 text-xs">
                       {carerFeedback.map((fb: any, idx: number) => {
-                        const type = fb.type || "Feedback";
-                        let indicatorBg = "bg-gold";
-                        if (type.includes("Concern") || type.includes("Negative")) {
-                          indicatorBg = "bg-rose-500";
-                        } else if (type.includes("Action") || type.includes("System")) {
-                          indicatorBg = "bg-blue-500";
-                        }
+                        const rating = fb.rating || 0;
+                        const clientName = fb.clientProfile?.user 
+                          ? `${fb.clientProfile.user.firstName} ${fb.clientProfile.user.lastName}` 
+                          : "Client";
+                        const startDate = fb.placement?.startDate ? new Date(fb.placement.startDate).toLocaleDateString() : "";
+                        const endDate = fb.placement?.endDate ? new Date(fb.placement.endDate).toLocaleDateString() : "Ongoing";
+                        const placementDates = startDate ? `${startDate} - ${endDate}` : "";
+                        const timestamp = fb.createdAt ? new Date(fb.createdAt).toLocaleDateString() : "";
+
                         return (
-                          <div key={`${type}-${idx}`} className="relative space-y-1">
-                            <span className={`absolute -left-[21px] top-1.5 h-2 w-2 rounded-full ${indicatorBg} border border-navy-950`} />
-                            <div className="flex items-center justify-between gap-4">
-                              <span className="font-bold text-gold-200">{type}</span>
-                              <span className="text-[10px] text-gold-100/40 font-semibold">
-                                {fb.timestamp || (fb.createdAt && new Date(fb.createdAt).toLocaleDateString()) || ""}
-                              </span>
+                          <div key={fb.id || idx} className="relative space-y-2 pb-2">
+                            <span className="absolute -left-[21px] top-1.5 h-2 w-2 rounded-full bg-gold border border-navy-950" />
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                              <div className="flex items-center gap-1">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                  <svg
+                                    key={star}
+                                    className={`w-3.5 h-3.5 ${star <= rating ? "text-gold fill-gold" : "text-gold-300/30"}`}
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                  >
+                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                  </svg>
+                                ))}
+                              </div>
+                              <span className="text-[10px] text-gold-100/40 font-semibold">{timestamp}</span>
                             </div>
-                            <p className="text-gold-100/60 leading-relaxed">"{fb.content || fb.text || ""}"</p>
+                            <p className="text-gold-100/80 leading-relaxed italic border-l border-gold/30 pl-3 py-0.5">
+                              "{fb.message || fb.content || fb.text || ""}"
+                            </p>
+                            <div className="flex flex-wrap items-center gap-x-4 text-[10px] text-gold-100/50 pt-1">
+                              {clientName && (
+                                <span className="flex items-center gap-1">
+                                  <User className="w-3 h-3 text-gold/40" /> {clientName}
+                                </span>
+                              )}
+                              {placementDates && (
+                                <span className="flex items-center gap-1">
+                                  <Calendar className="w-3 h-3 text-gold/40" /> {placementDates}
+                                </span>
+                              )}
+                            </div>
                           </div>
                         );
                       })}

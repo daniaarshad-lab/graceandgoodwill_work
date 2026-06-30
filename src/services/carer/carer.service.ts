@@ -169,6 +169,7 @@ export const carerService = {
       if (mappedKey === "professional_reference_1") mappedKey = "reference_1";
       if (mappedKey === "professional_reference_2") mappedKey = "reference_2";
 
+
       formData.append(mappedKey, file);
     });
 

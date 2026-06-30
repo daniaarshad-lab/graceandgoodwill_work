@@ -40,20 +40,20 @@ export enum DocumentFileType {
   PUBLIC_LIABILITY_INSURANCE = "PUBLIC_LIABILITY_INSURANCE",
   PROFESSIONAL_INDEMNITY_INSURANCE = "PROFESSIONAL_INDEMNITY_INSURANCE",
 
-  // Additional Training
-  NVQ_LEVEL_2 = "NVQ_LEVEL_2",
-  NVQ_LEVEL_3 = "NVQ_LEVEL_3",
-  NVQ_LEVEL_4 = "NVQ_LEVEL_4",
-  NURSING_QUALIFICATIONS = "NURSING_QUALIFICATIONS",
-  UNIVERSITY_QUALIFICATIONS = "UNIVERSITY_QUALIFICATIONS",
+  // Additional Training (Step 8)
+  NVQ_2 = "NVQ_2",
+  NVQ_3 = "NVQ_3",
+  NVQ_4 = "NVQ_4",
+  NURSING_QUALIFICATION = "NURSING_QUALIFICATION",
+  UNIVERSITY_QUALIFICATION = "UNIVERSITY_QUALIFICATION",
   DEMENTIA_TRAINING = "DEMENTIA_TRAINING",
-  END_OF_LIFE_CARE_TRAINING = "END_OF_LIFE_CARE_TRAINING",
-  CATHETER_CARE_TRAINING = "CATHETER_CARE_TRAINING",
-  PEG_FEEDING_TRAINING = "PEG_FEEDING_TRAINING",
-  STOMA_CARE_TRAINING = "STOMA_CARE_TRAINING",
-  COMPLEX_CARE_TRAINING = "COMPLEX_CARE_TRAINING",
-  MEDICATION_COMPETENCY_ASSESSMENT = "MEDICATION_COMPETENCY_ASSESSMENT",
-  OTHER_RELEVANT_CERTIFICATE = "OTHER_RELEVANT_CERTIFICATE",
+  END_OF_LIFE_CARE = "END_OF_LIFE_CARE",
+  CATHETER_CARE = "CATHETER_CARE",
+  PEG_FEEDING = "PEG_FEEDING",
+  STOMA_CARE = "STOMA_CARE",
+  COMPLEX_CARE = "COMPLEX_CARE",
+  MEDICATION_COMPETENCY = "MEDICATION_COMPETENCY",
+  OTHER_RELEVANT = "OTHER_RELEVANT",
 }
 
 export const DocumentFileTypeLabels: Record<string, string> = {
@@ -86,20 +86,20 @@ export const DocumentFileTypeLabels: Record<string, string> = {
   [DocumentFileType.PUBLIC_LIABILITY_INSURANCE]: "Public Liability Insurance",
   [DocumentFileType.PROFESSIONAL_INDEMNITY_INSURANCE]: "Professional Indemnity Insurance",
 
-  // Additional Training
-  [DocumentFileType.NVQ_LEVEL_2]: "NVQ Level 2",
-  [DocumentFileType.NVQ_LEVEL_3]: "NVQ Level 3",
-  [DocumentFileType.NVQ_LEVEL_4]: "NVQ Level 4",
-  [DocumentFileType.NURSING_QUALIFICATIONS]: "Nursing Qualifications",
-  [DocumentFileType.UNIVERSITY_QUALIFICATIONS]: "University Qualifications",
+  // Additional Training (Step 8)
+  [DocumentFileType.NVQ_2]: "NVQ Level 2",
+  [DocumentFileType.NVQ_3]: "NVQ Level 3",
+  [DocumentFileType.NVQ_4]: "NVQ Level 4",
+  [DocumentFileType.NURSING_QUALIFICATION]: "Nursing Qualifications",
+  [DocumentFileType.UNIVERSITY_QUALIFICATION]: "University Qualifications",
   [DocumentFileType.DEMENTIA_TRAINING]: "Dementia Training",
-  [DocumentFileType.END_OF_LIFE_CARE_TRAINING]: "End of Life Care Training",
-  [DocumentFileType.CATHETER_CARE_TRAINING]: "Catheter Care Training",
-  [DocumentFileType.PEG_FEEDING_TRAINING]: "PEG Feeding Training",
-  [DocumentFileType.STOMA_CARE_TRAINING]: "Stoma Care Training",
-  [DocumentFileType.COMPLEX_CARE_TRAINING]: "Complex Care Training",
-  [DocumentFileType.MEDICATION_COMPETENCY_ASSESSMENT]: "Medication Competency Assessment",
-  [DocumentFileType.OTHER_RELEVANT_CERTIFICATE]: "Other Relevant Certificate",
+  [DocumentFileType.END_OF_LIFE_CARE]: "End of Life Care Training",
+  [DocumentFileType.CATHETER_CARE]: "Catheter Care Training",
+  [DocumentFileType.PEG_FEEDING]: "PEG Feeding Training",
+  [DocumentFileType.STOMA_CARE]: "Stoma Care Training",
+  [DocumentFileType.COMPLEX_CARE]: "Complex Care Training",
+  [DocumentFileType.MEDICATION_COMPETENCY]: "Medication Competency Assessments",
+  [DocumentFileType.OTHER_RELEVANT]: "Any Other Relevant Certificates",
 };
 
 export const getDocumentFileLabel = (type: DocumentFileType | string): string => {

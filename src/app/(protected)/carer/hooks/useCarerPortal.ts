@@ -67,18 +67,23 @@ export function useCarerPortal({
   useEffect(() => {
     if (profile) {
       console.log("[Video Upload debug] loaded profile in useCarerPortal:", profile);
-      setBio(profile.summary ?? profile.bio ?? "");
+      const p = profile as any;
+      const actualProfile = p.carerProfile || p;
 
-      if (Array.isArray(profile.careSpecialties)) {
-        setSpecialties(profile.careSpecialties.join(", "));
+      setBio(actualProfile.summary ?? actualProfile.bio ?? p.summary ?? p.bio ?? "");
+
+      const spec = actualProfile.careSpecialties ?? p.careSpecialties;
+      if (Array.isArray(spec)) {
+        setSpecialties(spec.join(", "));
       } else {
-        setSpecialties(profile.careSpecialties ?? "");
+        setSpecialties(spec ?? "");
       }
 
-      setExperience(profile.experienceYears?.toString() ?? profile.experience ?? "");
-      setAddress(profile.address ?? "");
-      setPostcode(profile.postcode ?? "");
-      const canDriveVal = profile.canDrive as any;
+      setExperience(actualProfile.experienceYears?.toString() ?? actualProfile.experience ?? p.experienceYears?.toString() ?? p.experience ?? "");
+      setAddress(actualProfile.address ?? p.address ?? "");
+      setPostcode(actualProfile.postcode ?? p.postcode ?? "");
+      
+      const canDriveVal = actualProfile.canDrive ?? p.canDrive;
       setCanDrive(
         canDriveVal === true || canDriveVal === "yes" || canDriveVal === "true" 
           ? "yes" 
@@ -87,7 +92,7 @@ export function useCarerPortal({
           : ""
       );
       
-      const bizInsVal = profile.hasBusinessInsurance as any;
+      const bizInsVal = actualProfile.hasBusinessInsurance ?? p.hasBusinessInsurance;
       setHasBusinessInsurance(
         bizInsVal === true || bizInsVal === "yes" || bizInsVal === "true" 
           ? "yes" 
@@ -96,12 +101,30 @@ export function useCarerPortal({
           : ""
       );
 
-      if (profile.emergencyContactName) setEmergencyContactName(profile.emergencyContactName);
-      if (profile.emergencyContactNumber) setEmergencyContactNumber(profile.emergencyContactNumber);
-      if (profile.emergencyContactRelation) setEmergencyContactRelation(profile.emergencyContactRelation);
-      if (profile.drivingPreferences) setDrivingPreferences(profile.drivingPreferences);
-      if (profile.dbsUpdateServiceNumber) setDbsUpdateServiceNumber(profile.dbsUpdateServiceNumber);
-      if (profile.employmentHistory) setEmploymentHistory(profile.employmentHistory as string);
+      const emName = actualProfile.emergencyContactName ?? p.emergencyContactName;
+      const emNum = actualProfile.emergencyContactNumber ?? p.emergencyContactNumber;
+      const emRel = actualProfile.emergencyContactRelation ?? p.emergencyContactRelation;
+      if (emName) setEmergencyContactName(emName);
+      if (emNum) setEmergencyContactNumber(emNum);
+      if (emRel) setEmergencyContactRelation(emRel);
+
+      let dp = actualProfile.drivingPreferences ?? p.drivingPreferences;
+      if (typeof dp === "string") {
+        try {
+          dp = JSON.parse(dp);
+        } catch {
+          dp = dp.split(",").map((s: string) => s.trim());
+        }
+      }
+      if (Array.isArray(dp)) {
+        setDrivingPreferences(dp);
+      }
+
+      const dbs = actualProfile.dbsUpdateServiceNumber ?? p.dbsUpdateServiceNumber;
+      if (dbs) setDbsUpdateServiceNumber(dbs);
+
+      const empHistory = actualProfile.employmentHistory ?? p.employmentHistory;
+      if (empHistory) setEmploymentHistory(empHistory as string);
       if (profile.declarations) setDeclarations(profile.declarations as any);
       if (profile.user?.dateOfBirth) {
         setDateOfBirth(profile.user.dateOfBirth.split("T")[0]);

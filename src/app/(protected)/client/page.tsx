@@ -120,9 +120,9 @@ export default function ClientDashboard() {
       <div className="container-wrapper space-y-8">
         <PortalHeader user={user} />
 
-        <PortalTabs 
-          activeTab={activeTab} 
-          setActiveTab={setActiveTab} 
+        <PortalTabs
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
         />
 
         <div className="transition-all duration-300">
@@ -136,7 +136,7 @@ export default function ClientDashboard() {
           )}
 
           {/* TAB 2: PROFILE MANAGEMENT */}
-          {activeTab === "profile" && !isAdminMatching && <ClientProfileManagement />}
+          {activeTab === "profile" && <ClientProfileManagement />}
 
           {/* TAB 3: SUBMIT CARE REQUEST */}
           {activeTab === "request" && (

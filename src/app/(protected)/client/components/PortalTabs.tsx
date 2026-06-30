@@ -28,19 +28,11 @@ export default function PortalTabs({
   const isAdminMatching = profile?.adminMatching === true;
 
   const tabs = [
-    {
-      id: "request",
-      label: "Submit Care Request",
-      href: "/client?tab=request",
-    },
-    {
-      id: "overview",
-      label: "Dashboard Overview",
-      href: "/client?tab=overview",
-    },
+    { id: "request", label: "Submit Care Request", href: "/client?tab=request" },
+    { id: "overview", label: "Dashboard Overview", href: "/client?tab=overview" },
+    { id: "profile" as TabType, label: "Profile Management", href: "/client?tab=profile" },
     ...(!isAdminMatching
       ? [
-          { id: "profile" as TabType, label: "Profile Management", href: "/client?tab=profile" },
           { id: "carers" as TabType, label: "Carer Profiles", href: "/client?tab=carers" },
           { id: "interest-list" as TabType, label: "Interest List ❤️", href: "/client?tab=interest-list" },
         ]

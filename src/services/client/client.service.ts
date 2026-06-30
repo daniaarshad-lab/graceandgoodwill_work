@@ -47,6 +47,25 @@ export const clientService = {
     });
   },
 
+  async updateAdminMatching(adminMatching: boolean): Promise<ClientProfile> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch("/client/profile/admin-matching", {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ adminMatching }),
+    });
+  },
+
   async uploadProfilePhoto(file: File): Promise<ClientProfile> {
     const token =
       typeof window !== "undefined"

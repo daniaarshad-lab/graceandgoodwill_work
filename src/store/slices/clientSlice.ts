@@ -60,7 +60,7 @@ export const fetchInterestList = createAsyncThunk<
     const list = response.interestList;
     console.log("extracted list:", list);
     if (!Array.isArray(list)) return [];
-    
+
     // Check if the backend returned nested carer profiles or direct objects
     const interestListCarers = list
       .filter((item: any) => item !== null && item !== undefined)
@@ -80,7 +80,7 @@ export const fetchInterestList = createAsyncThunk<
 
         return mapped;
       });
-    
+
     return interestListCarers;
   } catch (error: any) {
     console.error("Failed to fetch interest list:", error);
@@ -126,6 +126,17 @@ export const updateClientProfile = createAsyncThunk<
     return rejectWithValue(error?.message || "Failed to update client profile");
   }
 });
+
+export const updateAdminMatching = createAsyncThunk(
+  "client/updateAdminMatching",
+  async (adminMatching: boolean, { rejectWithValue }) => {
+    try {
+      return await clientService.updateAdminMatching(adminMatching);
+    } catch (error: any) {
+      return rejectWithValue(error.message || "Failed to update admin matching");
+    }
+  }
+);
 
 export const uploadClientProfilePhoto = createAsyncThunk<
   ClientProfile,
@@ -275,6 +286,29 @@ const clientSlice = createSlice({
     builder.addCase(updateClientProfile.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload || "Failed to update client profile";
+    });
+
+    // Update Admin Matching
+    builder.addCase(updateAdminMatching.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+
+    builder.addCase(
+      updateAdminMatching.fulfilled,
+      (state, action: PayloadAction<ClientProfile>) => {
+        state.loading = false;
+        if (state.profile) {
+          state.profile = { ...state.profile, ...action.payload };
+        } else {
+          state.profile = action.payload;
+        }
+      }
+    );
+
+    builder.addCase(updateAdminMatching.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload || "Failed to update admin matching";
     });
 
     // Upload Profile Photo

@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchCarerDetails, updateAdminCarerStatus } from "@/store/slices/adminSlice";
@@ -52,6 +52,8 @@ export default function CarerDetailsPage() {
 function CarerDetailsContent() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const source = searchParams.get("source");
   const carerId = params.carerId as string;
   const dispatch = useAppDispatch();
 
@@ -343,12 +345,26 @@ function CarerDetailsContent() {
         {/* --- PORTAL HEADER --- */}
         <header className="rounded-2xl border border-gold-300/10 bg-gradient-to-r from-navy-900 via-navy-950 to-navy-900 p-6 shadow-soft backdrop-blur-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="space-y-1">
-            <Link
-              href="/admin?tab=carers"
-              className="inline-flex items-center gap-1 text-xs font-semibold text-gold/60 hover:text-gold transition duration-200 mb-2 cursor-pointer"
-            >
-              <ArrowLeft className="h-3.5 w-3.5" /> Back to Carer Applications
-            </Link>
+            {(() => {
+              const getBackNavigation = () => {
+                switch (source) {
+                  case "client-care-requests":
+                    return { href: "/admin?tab=requests", label: "Back to Client Care Requests" };
+                  case "carer-applications":
+                  default:
+                    return { href: "/admin?tab=carers", label: "Back to Carer Applications" };
+                }
+              };
+              const { href: backHref, label: backLabel } = getBackNavigation();
+              return (
+                <Link
+                  href={backHref}
+                  className="inline-flex items-center gap-1 text-xs font-semibold text-gold/60 hover:text-gold transition duration-200 mb-2 cursor-pointer"
+                >
+                  <ArrowLeft className="h-3.5 w-3.5" /> {backLabel}
+                </Link>
+              );
+            })()}
             <h1 className="text-xl tracking-tight text-gold-200 sm:text-2xl font-bold flex items-center gap-2">
               <ShieldCheck className="h-6 w-6 text-gold" /> Carer Details
             </h1>

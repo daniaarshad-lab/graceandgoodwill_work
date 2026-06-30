@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useAppSelector } from "@/store/hooks";
 
 export type TabType =
   | "request"
@@ -16,15 +17,15 @@ export type TabType =
 interface PortalTabsProps {
   activeTab: TabType;
   setActiveTab?: (tab: TabType) => void;
-  hasClientManagedRequests?: boolean;
 }
 
 export default function PortalTabs({
   activeTab,
   setActiveTab,
-  hasClientManagedRequests = false,
 }: PortalTabsProps) {
   const router = useRouter();
+  const profile = useAppSelector((state) => state.client.profile);
+  const isAdminMatching = profile?.adminMatching === true;
 
   const tabs = [
     {
@@ -37,11 +38,15 @@ export default function PortalTabs({
       label: "Dashboard Overview",
       href: "/client?tab=overview",
     },
-    { id: "profile", label: "Profile Management", href: "/client?tab=profile" },
-    { id: "carers", label: "Carer Profiles", href: "/client?tab=carers" },
-    { id: "interest-list", label: "Interest List ❤️", href: "/client?tab=interest-list" },
+    ...(!isAdminMatching
+      ? [
+          { id: "profile" as TabType, label: "Profile Management", href: "/client?tab=profile" },
+          { id: "carers" as TabType, label: "Carer Profiles", href: "/client?tab=carers" },
+          { id: "interest-list" as TabType, label: "Interest List ❤️", href: "/client?tab=interest-list" },
+        ]
+      : []),
     { id: "tracking", label: "Track Requests", href: "/client?tab=tracking" },
-    ...(hasClientManagedRequests
+    ...(!isAdminMatching
       ? [{ id: "applications" as TabType, label: "Applications", href: "/client?tab=applications" }]
       : []),
     {

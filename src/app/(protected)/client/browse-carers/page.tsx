@@ -37,7 +37,7 @@ export default function BrowseCarersPage() {
   const dispatch = useAppDispatch();
   const { user } = useAuth();
   
-  const { carers, careRequests, interestList, loading } = useAppSelector((state) => state.client);
+  const { carers, careRequests, interestList, loading, profile } = useAppSelector((state) => state.client);
   
   // Local UI States
   const [searchTerm, setSearchTerm] = useState("");
@@ -52,6 +52,13 @@ export default function BrowseCarersPage() {
     dispatch(fetchCareRequests());
     dispatch(fetchInterestList());
   }, [dispatch]);
+
+  // Protect route if adminMatching is true
+  useEffect(() => {
+    if (profile?.adminMatching === true) {
+      router.replace("/client?tab=overview");
+    }
+  }, [profile, router]);
 
   // Extract all unique specialties for filter chips
   const allSpecialties = useMemo(() => {

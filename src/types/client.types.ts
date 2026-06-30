@@ -25,6 +25,7 @@ export interface ClientProfile {
   status: string;
   createdAt: string;
   updatedAt: string;
+  adminMatching?: boolean;
 
   user?: ClientUser;
 }

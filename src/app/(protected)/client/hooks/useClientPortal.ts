@@ -17,7 +17,7 @@ export function useClientPortal({ user }: UseClientPortalProps) {
   const dispatch = useAppDispatch();
 
   // --- CORE DATA STATES ---
-  const { careRequests, carers, placements, placementsLoading, placementsError } = useAppSelector((state) => state.client);
+  const { profile, careRequests, carers, placements, placementsLoading, placementsError } = useAppSelector((state) => state.client);
 
   // --- FORM STATES: CARE REQUEST ---
   const [careFullName, setCareFullName] = useState(
@@ -125,6 +125,7 @@ export function useClientPortal({ user }: UseClientPortalProps) {
   };
 
   return {
+    profile,
     careRequests,
     carers,
     placements,

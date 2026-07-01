@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { adminService } from "@/services/admin/admin.service";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
+import InternalNotes from "../../components/shared/InternalNotes/InternalNotes";
 
 // Define strict types for client detail view
 interface ClientDetail {
@@ -616,6 +617,15 @@ function ClientDetailsContent() {
                 </table>
               </div>
             </div>
+          </section>
+
+          {/* INTERNAL NOTES MODULE */}
+          <section className="mt-8 rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md">
+            {client?.id ? (
+              <InternalNotes entityId={client.id} entityType="CLIENT" />
+            ) : (
+              <p className="text-sm text-gold-100/50">Client profile ID not found for notes.</p>
+            )}
           </section>
         </div>
       </div>

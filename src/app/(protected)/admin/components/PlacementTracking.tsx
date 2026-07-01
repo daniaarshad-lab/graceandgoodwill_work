@@ -7,6 +7,7 @@ import Button from "@/components/Button";
 import Link from "next/link";
 import { adminService } from "@/services/admin/admin.service";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
+import InternalNotes from "./shared/InternalNotes/InternalNotes";
 
 interface PlacementTrackingProps {
   placements: Placement[];
@@ -153,9 +154,10 @@ export default function PlacementTracking({
               </div>
 
               {isExpanded && (
-                <div className="grid gap-6 md:grid-cols-2 bg-navy-950/40 p-4 rounded-xl border border-gold-300/5 transition duration-300">
-                  {/* Contact details authorization gates */}
-                  <div className="space-y-4">
+                <div className="space-y-6 bg-navy-950/40 p-4 rounded-xl border border-gold-300/5 transition duration-300">
+                  <div className="grid gap-6 md:grid-cols-2">
+                    {/* Contact details authorization gates */}
+                    <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <h5 className="text-xs font-bold uppercase tracking-wider text-gold-200/60">
                         Contact Details Visibility Gate
@@ -248,6 +250,12 @@ export default function PlacementTracking({
                         ))}
                       </ul>
                     </div>
+                    </div>
+                  </div>
+
+                  {/* Internal Notes Section */}
+                  <div className="border-t border-gold-300/10 pt-6">
+                    <InternalNotes entityId={place.id} entityType="PLACEMENT" />
                   </div>
                 </div>
               )}

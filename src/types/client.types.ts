@@ -48,7 +48,7 @@ export interface CreateCareRequestPayload {
   city?: string;
   address: string;
 
-  careCategory: string;
+  careCategory: string[];
   requirements: string;
   scheduleNotes?: string;
 

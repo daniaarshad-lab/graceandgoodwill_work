@@ -183,7 +183,7 @@ export default function RequestTracking({
 
               {place.status === "COMPLETED" && (
                 <div className="pt-4 border-t border-gold-300/10 flex justify-end">
-                  {feedbacks.some((f) => f.placementId === place.id) ? (
+                  {feedbacks.some((f) => f.placement?.id === place.id) ? (
                     <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-bold uppercase tracking-wider cursor-not-allowed">
                       <CheckCircle2 className="w-3.5 h-3.5" /> Feedback Submitted
                     </span>

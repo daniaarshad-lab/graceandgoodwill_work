@@ -28,6 +28,7 @@ import {
   MessageCircle,
   CheckCircle2,
 } from "lucide-react";
+import InternalNotes from "../../components/shared/InternalNotes/InternalNotes";
 
 // Document categories are determined by the backend response
 
@@ -76,7 +77,7 @@ function CarerDetailsContent() {
 
   // Fetch real placements for this carer once carer details are loaded
   useEffect(() => {
-    const carerProfileId = carer?.carerProfile?.id;
+    const carerProfileId = carer?.id;
     if (!carerProfileId) return;
 
     const loadPlacements = async () => {
@@ -96,7 +97,7 @@ function CarerDetailsContent() {
     };
 
     loadPlacements();
-  }, [carer?.carerProfile?.id]);
+  }, [carer?.id]);
 
   // Duration calculation for "How long carer has been with Grace & Goodwill"
   const getDurationWithUs = (dateString: string) => {
@@ -464,371 +465,321 @@ function CarerDetailsContent() {
         {/* --- TABS CONTENT --- */}
         <div className="transition-all duration-300">
           {activeTab === "profile" && (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+            <div className="space-y-6">
+              {/* TWO COLUMN TOP SECTION */}
+              <div className="space-y-6">
+                
+                {/* ROW 1: Profile & Experience */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  {/* Profile Information (col 1) */}
+                  <div className="lg:col-span-1 rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md flex flex-col h-[340px]">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-gold-200/50 border-b border-gold-300/5 pb-3 flex items-center gap-2 shrink-0">
+                      <User className="h-4 w-4 text-gold/60" /> Profile Information
+                    </h3>
 
-              {/* LEFT SIDEBAR: PROFILE & AVAILABILITY */}
-              <aside className="lg:col-span-1 space-y-6 flex flex-col">
-
-                {/* Profile Information */}
-                <div className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md space-y-5 flex-1">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-gold-200/50 border-b border-gold-300/5 pb-3 flex items-center gap-2">
-                    <User className="h-4 w-4 text-gold/60" /> Profile Information
-                  </h3>
-
-                  <div className="space-y-4 text-xs">
-                    <div className="flex items-center gap-3 p-2 rounded-xl bg-navy-950/40 border border-gold-300/5">
-                      <Mail className="h-4 w-4 text-gold flex-shrink-0" />
-                      <div className="min-w-0">
-                        <span className="text-[9px] uppercase font-bold tracking-wider text-gold-100/40 block">Email Address</span>
-                        <span className="font-semibold text-gold-200 truncate block" title={carer.user?.email || carer.email}>
-                          {carer.user?.email || carer.email || "No email listed"}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-3 p-2 rounded-xl bg-navy-950/40 border border-gold-300/5">
-                      <Phone className="h-4 w-4 text-gold flex-shrink-0" />
-                      <div className="min-w-0">
-                        <span className="text-[9px] uppercase font-bold tracking-wider text-gold-100/40 block">Phone Number</span>
-                        <span className="font-semibold text-gold-200 block">
-                          {carer.user?.phoneNumber || carer.phoneNumber || "No phone listed"}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-3 p-2 rounded-xl bg-navy-950/40 border border-gold-300/5">
-                      <MapPin className="h-4 w-4 text-gold flex-shrink-0" />
-                      <div className="min-w-0">
-                        <span className="text-[9px] uppercase font-bold tracking-wider text-gold-100/40 block">City & Address</span>
-                        <span className="font-semibold text-gold-200 truncate block" title={locationText}>
-                          {locationText}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between border-t border-gold-300/5 pt-3">
-                      <span className="text-gold-100/40 font-semibold flex items-center gap-1">
-                        <Calendar className="h-3.5 w-3.5 text-gold/60" /> Registered:
-                      </span>
-                      <span className="text-gold-200 font-bold font-mono">
-                        {new Date(registrationDate).toLocaleDateString("en-GB", {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                        })}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <span className="text-gold-100/40 font-semibold flex items-center gap-1">
-                        <Clock className="h-3.5 w-3.5 text-gold/60" /> Duration:
-                      </span>
-                      <span className="text-gold-200 font-bold italic">{durationWithUs}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Availability */}
-                <div className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md space-y-5 flex-1">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-gold-200/50 border-b border-gold-300/5 pb-3 flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-gold/60" /> Availability
-                  </h3>
-
-                  <div className="space-y-4 text-xs">
-                    <div className="flex items-center justify-between">
-                      <span className="text-gold-100/40 font-semibold">Availability Status:</span>
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${getStatusBadgeStyles(availabilityStatus)}`}>
-                        {availabilityStatus}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <span className="text-gold-100/40 font-semibold">Consecutive Days:</span>
-                      <span className="text-gold-200 font-bold">{consecutiveDays}</span>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <span className="text-gold-100/40 font-semibold">Available Hours:</span>
-                      <span className="text-rose-400 font-bold font-mono text-[10px]">
-                        {availableHours}
-                      </span>
-                    </div>
-
-                    <div className="border-t border-gold-300/5 pt-3">
-                      <span className="text-[9px] uppercase font-bold tracking-wider text-gold-100/40 block mb-1">Standard Schedule</span>
-                      <p className="text-gold-200 font-semibold leading-relaxed">
-                        {availabilityStr}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Communication & Fee */}
-                {/* <div className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md space-y-5 flex-1">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-gold-200/50 border-b border-gold-300/5 pb-3 flex items-center gap-2">
-                    <DollarSign className="h-4 w-4 text-gold/60" /> Communication & Fee
-                  </h3>
-
-                  <div className="space-y-4 text-xs">
-                    <div>
-                      <span className="text-[9px] uppercase font-bold tracking-wider text-gold-100/40 block mb-1">Agreed Hourly Rate</span>
-                      <div className="text-2xl font-black text-gold">
-                        {hourlyRateSource ? `£${parseFloat(hourlyRateSource).toFixed(2)}/hr` : "Not set"}
-                      </div>
-                    </div>
-
-                    <div>
-                      <span className="text-[9px] uppercase font-bold tracking-wider text-gold-100/40 block mb-1">Payment Method</span>
-                      <div className={paymentMethod.includes("Backend") ? "text-rose-400 font-bold text-opacity-80 font-mono text-[10px]" : "text-gold-200 font-bold"}>
-                        {paymentMethod}
-                      </div>
-                    </div>
-
-                    <div className="border-t border-gold-300/5 pt-3">
-                      <span className="text-[9px] uppercase font-bold tracking-wider text-gold-100/40 block mb-1">Compliance Notes</span>
-                      <p className="text-[11px] text-gold-100/50 italic leading-relaxed">
-                        N/A
-                      </p>
-                    </div>
-                  </div>
-                </div> */}
-
-              </aside>
-
-              {/* RIGHT MAIN PANEL: EXPERIENCE, PLACEMENTS, NOTES, FEEDBACK */}
-              <section className="lg:col-span-2 space-y-6 flex flex-col justify-between">
-
-                {/* Experience & Specialties */}
-                <div className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md space-y-4">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-gold-200/50 border-b border-gold-300/5 pb-3 flex items-center gap-2">
-                    <Briefcase className="h-4 w-4 text-gold/60" /> Experience & Specialties
-                  </h3>
-
-                  <div className="space-y-4">
-                    <div className="text-xs flex items-center gap-2">
-                      <span className="text-gold-100/40 font-semibold">Years of Experience:</span>
-                      <span className="font-bold text-gold-200 bg-gold/10 px-2 py-0.5 rounded-md border border-gold/20">
-                        {displayExperience}
-                      </span>
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <span className="text-[9px] uppercase font-bold tracking-wider text-gold-100/40 block">Specialties & Care Categories</span>
-                      {specialtiesList.length === 0 ? (
-                        <span className="text-xs text-gold-100/30">No specialties listed.</span>
-                      ) : (
-                        <div className="flex flex-wrap gap-1.5">
-                          {specialtiesList.map((spec) => (
-                            <span
-                              key={spec}
-                              className="text-[9px] font-bold text-gold bg-navy-950 px-2.5 py-1 rounded-lg border border-gold-300/10"
-                            >
-                              {spec}
-                            </span>
-                          ))}
+                    <div className="space-y-4 text-xs flex-1 overflow-y-auto pr-2 mt-4 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gold-300/20 hover:[&::-webkit-scrollbar-thumb]:bg-gold-300/40 [&::-webkit-scrollbar-thumb]:rounded-full">
+                      <div className="flex items-center gap-3 p-2 rounded-xl bg-navy-950/40 border border-gold-300/5">
+                        <Mail className="h-4 w-4 text-gold flex-shrink-0" />
+                        <div className="min-w-0">
+                          <span className="text-[9px] uppercase font-bold tracking-wider text-gold-100/40 block">Email Address</span>
+                          <span className="font-semibold text-gold-200 truncate block" title={carer.user?.email || carer.email}>
+                            {carer.user?.email || carer.email || "No email listed"}
+                          </span>
                         </div>
-                      )}
-                    </div>
+                      </div>
 
-                    <div className="space-y-1 border-t border-gold-300/5 pt-3">
-                      <span className="text-[9px] uppercase font-bold tracking-wider text-gold-100/40 block">Biography</span>
-                      <p className="text-xs text-gold-100/70 leading-relaxed italic">
-                        "{bioSource}"
-                      </p>
+                      <div className="flex items-center gap-3 p-2 rounded-xl bg-navy-950/40 border border-gold-300/5">
+                        <Phone className="h-4 w-4 text-gold flex-shrink-0" />
+                        <div className="min-w-0">
+                          <span className="text-[9px] uppercase font-bold tracking-wider text-gold-100/40 block">Phone Number</span>
+                          <span className="font-semibold text-gold-200 block">
+                            {carer.user?.phoneNumber || carer.phoneNumber || "No phone listed"}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3 p-2 rounded-xl bg-navy-950/40 border border-gold-300/5">
+                        <MapPin className="h-4 w-4 text-gold flex-shrink-0" />
+                        <div className="min-w-0">
+                          <span className="text-[9px] uppercase font-bold tracking-wider text-gold-100/40 block">City & Address</span>
+                          <span className="font-semibold text-gold-200 truncate block" title={locationText}>
+                            {locationText}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between border-t border-gold-300/5 pt-3">
+                        <span className="text-gold-100/40 font-semibold flex items-center gap-1">
+                          <Calendar className="h-3.5 w-3.5 text-gold/60" /> Registered:
+                        </span>
+                        <span className="text-gold-200 font-bold font-mono">
+                          {new Date(registrationDate).toLocaleDateString("en-GB", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                          })}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <span className="text-gold-100/40 font-semibold flex items-center gap-1">
+                          <Clock className="h-3.5 w-3.5 text-gold/60" /> Duration:
+                        </span>
+                        <span className="text-gold-200 font-bold italic">{durationWithUs}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Placement History */}
-                <div className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md space-y-4 flex-1">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-gold-200/50 border-b border-gold-300/5 pb-3 flex items-center gap-2">
-                    <Award className="h-4 w-4 text-gold/60" /> Care Placement History
-                  </h3>
+                  {/* Experience & Specialties (col 2) */}
+                  <div className="lg:col-span-2 rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md flex flex-col h-[340px]">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-gold-200/50 border-b border-gold-300/5 pb-3 flex items-center gap-2 shrink-0">
+                      <Briefcase className="h-4 w-4 text-gold/60" /> Experience & Specialties
+                    </h3>
 
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left text-xs text-gold-100/70 border-collapse">
-                      <thead>
-                        <tr className="border-b border-gold-300/10 text-[10px] font-bold uppercase tracking-wider text-gold-100/40">
-                          <th className="py-2.5 px-2">Client Name</th>
-                          <th className="py-2.5 px-2">Physical Location</th>
-                          <th className="py-2.5 px-2">Start Date</th>
-                          <th className="py-2.5 px-2">End Date</th>
-                          <th className="py-2.5 px-2 text-right">Status</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gold-300/5">
-                        {placementsLoading ? (
-                          <tr>
-                            <td colSpan={5} className="py-8 text-center text-gold-100/30 font-semibold">
-                              <div className="flex items-center justify-center gap-2">
-                                <div className="h-4 w-4 border-2 border-gold/30 border-t-gold rounded-full animate-spin" />
-                                Loading placements...
-                              </div>
-                            </td>
-                          </tr>
-                        ) : carerPlacements.length === 0 ? (
-                          <tr>
-                            <td colSpan={5} className="py-8 text-center text-gold-100/30 font-semibold">
-                              No placement history available
-                            </td>
-                          </tr>
+                    <div className="space-y-4 flex-1 overflow-y-auto pr-2 mt-4 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gold-300/20 hover:[&::-webkit-scrollbar-thumb]:bg-gold-300/40 [&::-webkit-scrollbar-thumb]:rounded-full">
+                      <div className="text-xs flex items-center gap-2">
+                        <span className="text-gold-100/40 font-semibold">Years of Experience:</span>
+                        <span className="font-bold text-gold-200 bg-gold/10 px-2 py-0.5 rounded-md border border-gold/20">
+                          {displayExperience}
+                        </span>
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <span className="text-[9px] uppercase font-bold tracking-wider text-gold-100/40 block">Specialties & Care Categories</span>
+                        {specialtiesList.length === 0 ? (
+                          <span className="text-xs text-gold-100/30">No specialties listed.</span>
                         ) : (
-                          carerPlacements.map((placement: any, idx: number) => {
-                            const clientUser = placement.clientProfile?.user || {};
-                            const clientName = `${clientUser.firstName || ""} ${clientUser.lastName || ""}`.trim() || "Unknown Client";
-                            const clientAddress = placement.clientProfile?.address || placement.clientProfile?.city || "Address not available";
-                            const startDate = placement.startDate;
-                            const endDate = placement.endDate;
-                            const status = placement.status || "ACTIVE";
-
-                            return (
-                              <tr key={placement.id || idx} className="hover:bg-navy-900/20 transition duration-150">
-                                <td className="py-3 px-2 font-bold text-gold-200">{clientName}</td>
-                                <td className="py-3 px-2 font-semibold text-gold-100/75 truncate max-w-[150px]" title={clientAddress}>
-                                  {clientAddress}
-                                </td>
-                                <td className="py-3 px-2 font-mono font-semibold text-gold-100/50">
-                                  {startDate
-                                    ? new Date(startDate).toLocaleDateString("en-GB", {
-                                      day: "2-digit",
-                                      month: "short",
-                                      year: "numeric",
-                                    })
-                                    : "Pending"}
-                                </td>
-                                <td className="py-3 px-2 font-mono font-semibold text-gold-100/50">
-                                  {!endDate || status === "ACTIVE"
-                                    ? "Ongoing"
-                                    : new Date(endDate).toLocaleDateString("en-GB", {
-                                      day: "2-digit",
-                                      month: "short",
-                                      year: "numeric",
-                                    })}
-                                </td>
-                                <td className="py-3 px-2 text-right">
-                                  <span className={`inline-flex rounded px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider ${getStatusBadgeStyles(status)}`}>
-                                    {status}
-                                  </span>
-                                </td>
-                              </tr>
-                            );
-                          })
+                          <div className="flex flex-wrap gap-1.5">
+                            {specialtiesList.map((spec) => (
+                              <span
+                                key={spec}
+                                className="text-[9px] font-bold text-gold bg-navy-950 px-2.5 py-1 rounded-lg border border-gold-300/10"
+                              >
+                                {spec}
+                              </span>
+                            ))}
+                          </div>
                         )}
-                      </tbody>
-                    </table>
+                      </div>
+
+                      <div className="space-y-1 border-t border-gold-300/5 pt-3">
+                        <span className="text-[9px] uppercase font-bold tracking-wider text-gold-100/40 block">Biography</span>
+                        <p className="text-xs text-gold-100/70 leading-relaxed italic">
+                          "{bioSource}"
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                {/* Internal Notes Timeline */}
-                <div className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md space-y-4">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-gold-200/50 border-b border-gold-300/5 pb-3 flex items-center gap-2">
-                    <MessageSquare className="h-4 w-4 text-gold/60" /> Internal Notes Timeline
-                  </h3>
+                {/* ROW 2: Availability & Placements */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  {/* Availability (col 1) */}
+                  <div className="lg:col-span-1 rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md flex flex-col h-[340px]">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-gold-200/50 border-b border-gold-300/5 pb-3 flex items-center gap-2 shrink-0">
+                      <Calendar className="h-4 w-4 text-gold/60" /> Availability
+                    </h3>
 
-                  {!carerNotes || carerNotes.length === 0 ? (
-                    <p className="text-xs text-gold-100/30 text-center py-4">No internal notes written yet.</p>
-                  ) : (
-                    <div className="space-y-4 relative pl-4 border-l border-gold-300/10 text-xs">
-                      {carerNotes.map((note: any, idx: number) => (
-                        <div key={`${note.title || idx}-${idx}`} className="relative space-y-1">
-                          <span className="absolute -left-[21px] top-1.5 h-2 w-2 rounded-full bg-gold border border-navy-950" />
-                          <div className="flex items-center justify-between gap-4">
-                            <span className="font-bold text-gold-200">{note.title || "Note"}</span>
-                            <span className="text-[10px] text-gold-100/40 font-semibold">
-                              {note.timestamp || (note.createdAt && new Date(note.createdAt).toLocaleDateString()) || ""}
-                            </span>
-                          </div>
-                          <p className="text-gold-100/60 leading-relaxed">{note.content || note.text || ""}</p>
-                          {(note.adminName || note.author) && (
-                            <span className="text-[10px] text-gold/50 block font-semibold">Author: {note.adminName || note.author}</span>
+                    <div className="space-y-3 text-xs flex-1 overflow-y-auto pr-2 mt-4 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gold-300/20 hover:[&::-webkit-scrollbar-thumb]:bg-gold-300/40 [&::-webkit-scrollbar-thumb]:rounded-full">
+                      <div className="flex items-center justify-between">
+                        <span className="text-gold-100/40 font-semibold">Availability Status:</span>
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${getStatusBadgeStyles(availabilityStatus)}`}>
+                          {availabilityStatus}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <span className="text-gold-100/40 font-semibold">Consecutive Days:</span>
+                        <span className="text-gold-200 font-bold">{consecutiveDays}</span>
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <span className="text-gold-100/40 font-semibold">Available Hours:</span>
+                        <span className="text-rose-400 font-bold font-mono text-[10px]">
+                          {availableHours}
+                        </span>
+                      </div>
+
+                      <div className="border-t border-gold-300/5 pt-3">
+                        <span className="text-[9px] uppercase font-bold tracking-wider text-gold-100/40 block mb-1">Standard Schedule</span>
+                        <p className="text-gold-200 font-semibold leading-relaxed">
+                          {availabilityStr}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Placement History (col 2) */}
+                  <div className="lg:col-span-2 rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md flex flex-col h-[340px]">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-gold-200/50 border-b border-gold-300/5 pb-3 flex items-center gap-2 shrink-0">
+                      <Award className="h-4 w-4 text-gold/60" /> Care Placement History
+                    </h3>
+
+                    <div className="flex-1 overflow-y-auto pr-2 mt-4 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gold-300/20 hover:[&::-webkit-scrollbar-thumb]:bg-gold-300/40 [&::-webkit-scrollbar-thumb]:rounded-full">
+                      <table className="w-full text-left text-xs text-gold-100/70 border-collapse">
+                        <thead className="sticky top-0 bg-navy-900/90 backdrop-blur z-10 shadow-[0_1px_0_rgba(234,179,8,0.1)]">
+                          <tr className="text-[10px] font-bold uppercase tracking-wider text-gold-100/40">
+                            <th className="py-2.5 px-2">Client Name</th>
+                            <th className="py-2.5 px-2">Physical Location</th>
+                            <th className="py-2.5 px-2">Start Date</th>
+                            <th className="py-2.5 px-2">End Date</th>
+                            <th className="py-2.5 px-2 text-right">Status</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gold-300/5">
+                          {placementsLoading ? (
+                            <tr>
+                              <td colSpan={5} className="py-8 text-center text-gold-100/30 font-semibold">
+                                <div className="flex items-center justify-center gap-2">
+                                  <div className="h-4 w-4 border-2 border-gold/30 border-t-gold rounded-full animate-spin" />
+                                  Loading placements...
+                                </div>
+                              </td>
+                            </tr>
+                          ) : carerPlacements.length === 0 ? (
+                            <tr>
+                              <td colSpan={5} className="py-8 text-center text-gold-100/30 font-semibold">
+                                No placement history available
+                              </td>
+                            </tr>
+                          ) : (
+                            carerPlacements.map((placement: any, idx: number) => {
+                              const clientUser = placement.clientProfile?.user || {};
+                              const clientName = `${clientUser.firstName || ""} ${clientUser.lastName || ""}`.trim() || "Unknown Client";
+                              const clientAddress = placement.clientProfile?.address || placement.clientProfile?.city || "Address not available";
+                              const startDate = placement.startDate;
+                              const endDate = placement.endDate;
+                              const status = placement.status || "ACTIVE";
+
+                              return (
+                                <tr key={placement.id || idx} className="hover:bg-navy-900/20 transition duration-150">
+                                  <td className="py-3 px-2 font-bold text-gold-200">{clientName}</td>
+                                  <td className="py-3 px-2 font-semibold text-gold-100/75 truncate max-w-[150px]" title={clientAddress}>
+                                    {clientAddress}
+                                  </td>
+                                  <td className="py-3 px-2 font-mono font-semibold text-gold-100/50">
+                                    {startDate
+                                      ? new Date(startDate).toLocaleDateString("en-GB", {
+                                        day: "2-digit",
+                                        month: "short",
+                                        year: "numeric",
+                                      })
+                                      : "Pending"}
+                                  </td>
+                                  <td className="py-3 px-2 font-mono font-semibold text-gold-100/50">
+                                    {!endDate || status === "ACTIVE"
+                                      ? "Ongoing"
+                                      : new Date(endDate).toLocaleDateString("en-GB", {
+                                        day: "2-digit",
+                                        month: "short",
+                                        year: "numeric",
+                                      })}
+                                  </td>
+                                  <td className="py-3 px-2 text-right">
+                                    <span className={`inline-flex rounded px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider ${getStatusBadgeStyles(status)}`}>
+                                      {status}
+                                    </span>
+                                  </td>
+                                </tr>
+                              );
+                            })
                           )}
-                        </div>
-                      ))}
+                        </tbody>
+                      </table>
                     </div>
-                  )}
+                  </div>
                 </div>
+              </div>
 
-                {/* Feedback History */}
-                <div className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md space-y-4">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-gold-200/50 border-b border-gold-300/5 pb-3 flex items-center gap-2">
-                    <Heart className="h-4 w-4 text-gold/60" /> Feedback History
-                  </h3>
+            {/* FULL WIDTH BOTTOM SECTIONS: NOTES & FEEDBACK */}
+            <div className="space-y-6">
+              {/* Internal Notes Timeline */}
+              <div className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md">
+                {carer?.id && (
+                  <InternalNotes entityId={carer.id} entityType="CARER" />
+                )}
+              </div>
 
-                  {!carerFeedback || carerFeedback.length === 0 ? (
-                    <p className="text-xs text-gold-100/30 text-center py-4">No feedback has been submitted for this carer yet.</p>
-                  ) : (
-                    <div className="space-y-4 relative pl-4 border-l border-gold-300/10 text-xs">
-                      {carerFeedback.map((fb: any, idx: number) => {
-                        const rating = fb.rating || 0;
-                        const clientName = fb.clientProfile?.user 
-                          ? `${fb.clientProfile.user.firstName} ${fb.clientProfile.user.lastName}` 
-                          : "Client";
-                        const startDate = fb.placement?.startDate ? new Date(fb.placement.startDate).toLocaleDateString() : "";
-                        const endDate = fb.placement?.endDate ? new Date(fb.placement.endDate).toLocaleDateString() : "Ongoing";
-                        const placementDates = startDate ? `${startDate} - ${endDate}` : "";
-                        const timestamp = fb.createdAt ? new Date(fb.createdAt).toLocaleDateString() : "";
+              {/* Feedback History */}
+              <div className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md space-y-4">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-gold-200/50 border-b border-gold-300/5 pb-3 flex items-center gap-2">
+                  <Heart className="h-4 w-4 text-gold/60" /> Feedback History
+                </h3>
 
-                        return (
-                          <div key={fb.id || idx} className="relative space-y-2 pb-2">
-                            <span className="absolute -left-[21px] top-1.5 h-2 w-2 rounded-full bg-gold border border-navy-950" />
-                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                              <div className="flex items-center gap-1">
-                                {[1, 2, 3, 4, 5].map((star) => (
-                                  <svg
-                                    key={star}
-                                    className={`w-3.5 h-3.5 ${star <= rating ? "text-gold fill-gold" : "text-gold-300/30"}`}
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="2"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                  >
-                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                                  </svg>
-                                ))}
-                              </div>
-                              <span className="text-[10px] text-gold-100/40 font-semibold">{timestamp}</span>
+                {!carerFeedback || carerFeedback.length === 0 ? (
+                  <p className="text-xs text-gold-100/30 text-center py-4">No feedback has been submitted for this carer yet.</p>
+                ) : (
+                  <div className="space-y-4 relative pl-4 border-l border-gold-300/10 text-xs">
+                    {carerFeedback.map((fb: any, idx: number) => {
+                      const rating = fb.rating || 0;
+                      const clientName = fb.clientProfile?.user 
+                        ? `${fb.clientProfile.user.firstName} ${fb.clientProfile.user.lastName}` 
+                        : "Client";
+                      const startDate = fb.placement?.startDate ? new Date(fb.placement.startDate).toLocaleDateString() : "";
+                      const endDate = fb.placement?.endDate ? new Date(fb.placement.endDate).toLocaleDateString() : "Ongoing";
+                      const placementDates = startDate ? `${startDate} - ${endDate}` : "";
+                      const timestamp = fb.createdAt ? new Date(fb.createdAt).toLocaleDateString() : "";
+
+                      return (
+                        <div key={fb.id || idx} className="relative space-y-2 pb-2">
+                          <span className="absolute -left-[21px] top-1.5 h-2 w-2 rounded-full bg-gold border border-navy-950" />
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                            <div className="flex items-center gap-1">
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <svg
+                                  key={star}
+                                  className={`w-3.5 h-3.5 ${star <= rating ? "text-gold fill-gold" : "text-gold-300/30"}`}
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                >
+                                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                </svg>
+                              ))}
                             </div>
-                            <p className="text-gold-100/80 leading-relaxed italic border-l border-gold/30 pl-3 py-0.5">
-                              "{fb.message || fb.content || fb.text || ""}"
-                            </p>
-                            <div className="flex flex-wrap items-center gap-x-4 text-[10px] text-gold-100/50 pt-1">
-                              {clientName && (
-                                <span className="flex items-center gap-1">
-                                  <User className="w-3 h-3 text-gold/40" /> {clientName}
-                                </span>
-                              )}
-                              {placementDates && (
-                                <span className="flex items-center gap-1">
-                                  <Calendar className="w-3 h-3 text-gold/40" /> {placementDates}
-                                </span>
-                              )}
-                            </div>
+                            <span className="text-[10px] text-gold-100/40 font-semibold">{timestamp}</span>
                           </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
+                          <p className="text-gold-100/80 leading-relaxed italic border-l border-gold/30 pl-3 py-0.5">
+                            "{fb.message || fb.content || fb.text || ""}"
+                          </p>
+                          <div className="flex flex-wrap items-center gap-x-4 text-[10px] text-gold-100/50 pt-1">
+                            {clientName && (
+                              <span className="flex items-center gap-1">
+                                <User className="w-3 h-3 text-gold/40" /> {clientName}
+                              </span>
+                            )}
+                            {placementDates && (
+                              <span className="flex items-center gap-1">
+                                <Calendar className="w-3 h-3 text-gold/40" /> {placementDates}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
 
-              </section>
+              </div>
+
             </div>
           )}
 
           {activeTab === "documents" && (
-            <div className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md space-y-5">
-              <div>
-                <h3 className="text-xs font-bold uppercase tracking-wider text-gold-200/50 border-b border-gold-300/5 pb-3 flex items-center gap-2">
-                  <FileText className="h-4 w-4 text-gold/60" /> Compliance Documents Log
-                </h3>
-              </div>
+            <div className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md flex flex-col h-[600px]">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-gold-200/50 border-b border-gold-300/5 pb-3 flex items-center gap-2 shrink-0">
+                <FileText className="h-4 w-4 text-gold/60" /> Compliance Documents Log
+              </h3>
 
-              <div className="overflow-x-auto">
+              <div className="flex-1 overflow-y-auto pr-2 mt-4 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gold-300/20 hover:[&::-webkit-scrollbar-thumb]:bg-gold-300/40 [&::-webkit-scrollbar-thumb]:rounded-full">
                 <table className="w-full text-left text-xs text-gold-100/70 border-collapse">
-                  <thead>
-                    <tr className="border-b border-gold-300/10 text-[10px] font-bold uppercase tracking-wider text-gold-100/40">
+                  <thead className="sticky top-0 bg-navy-900/90 backdrop-blur z-10 shadow-[0_1px_0_rgba(234,179,8,0.1)]">
+                    <tr className="text-[10px] font-bold uppercase tracking-wider text-gold-100/40">
                       <th className="py-3 px-4">Document Name</th>
                       <th className="py-3 px-4">Type</th>
                       <th className="py-3 px-4">Upload Date</th>

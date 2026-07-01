@@ -48,6 +48,7 @@ export default function MembershipManagement() {
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
+  const [showGoldModal, setShowGoldModal] = useState(false);
 
   useEffect(() => {
     fetchBillingData();
@@ -187,7 +188,7 @@ export default function MembershipManagement() {
           <div className="flex flex-wrap gap-3 w-full md:w-auto">
             {currentTier === "FREE" ? (
               <Button
-                onClick={() => handleUpgrade("GOLD_ELITE")}
+                onClick={() => setShowGoldModal(true)}
                 disabled={processing}
                 variant="primary"
                 size="md"
@@ -456,6 +457,100 @@ export default function MembershipManagement() {
                 >
                   {processing ? "Cancelling..." : "Confirm Cancellation"}
                 </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Gold Elite Upgrade Modal */}
+      {showGoldModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/80 backdrop-blur-md animate-fade-in">
+          <div className="relative w-full max-w-lg rounded-2xl border border-gold-DEFAULT/30 bg-gradient-to-b from-navy-900 to-navy-950 p-6 text-gold-100 shadow-[0_15px_50px_rgba(212,175,55,0.15)] max-h-[90vh] overflow-y-auto animate-scale-up">
+            <button
+              onClick={() => setShowGoldModal(false)}
+              className="absolute top-4 right-4 text-gold-200/60 hover:text-gold-200 transition-colors p-1 rounded-full hover:bg-gold-400/10"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <div className="space-y-6">
+              {/* Header */}
+              <div className="flex items-center gap-3 border-b border-gold-300/10 pb-4">
+                <div className="p-2 bg-gold-DEFAULT/10 rounded-lg border border-gold-DEFAULT/25">
+                  <Star className="w-6 h-6 text-gold-DEFAULT fill-gold-DEFAULT/20" />
+                </div>
+                <div>
+                  <h4 className="text-lg font-serif text-gold-DEFAULT tracking-wide font-bold">
+                    Gold Elite Membership
+                  </h4>
+                  <p className="text-[10px] uppercase tracking-widest text-gold-200/50">Plan Upgrades & Benefits</p>
+                </div>
+              </div>
+
+              {/* Package details */}
+              <div className="space-y-4">
+                <div className="flex justify-between items-baseline p-4 bg-gold-DEFAULT/5 rounded-xl border border-gold-DEFAULT/10">
+                  <span className="text-sm font-semibold text-gold-100">Membership Fee</span>
+                  <div className="text-right">
+                    <span className="text-2xl font-serif text-gold-50 tracking-wide font-bold">£29.99</span>
+                    <span className="text-xs text-gold-200/60"> / month</span>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <p className="text-xs text-gold-100/90 leading-relaxed font-light">
+                    Enhance your profile visibility, get priority matching and access premium placement opportunities.
+                  </p>
+
+                  {/* Benefits checklist */}
+                  <div className="space-y-2.5 pt-2">
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-gold-300">Premium Benefits Included:</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                      {[
+                        "Priority placement alerts",
+                        "First access to premium placements",
+                        "Emergency placement priority",
+                        "Featured profile tag in searches",
+                        "Certificate verification badges",
+                        "Comprehensive placement insurance",
+                        "Platform verification support"
+                      ].map((benefit, idx) => (
+                        <div key={idx} className="flex items-start gap-2">
+                          <Check className="w-3.5 h-3.5 text-gold-DEFAULT mt-0.5 shrink-0" />
+                          <span className="text-xs text-gold-100/80 leading-normal">{benefit}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex justify-end gap-3 pt-4 border-t border-gold-300/10">
+                <Button
+                  onClick={() => setShowGoldModal(false)}
+                  disabled={processing}
+                  variant="outline"
+                  size="sm"
+                  text="Go Back"
+                  fullWidth={false}
+                />
+                <Button
+                  onClick={async () => {
+                    setShowGoldModal(false);
+                    await handleUpgrade("GOLD_ELITE");
+                  }}
+                  disabled={processing}
+                  variant="primary"
+                  size="sm"
+                  fullWidth={false}
+                >
+                  <span className="flex items-center gap-1.5 font-bold">
+                    {processing ? "Processing..." : "Proceed to Payment"}
+                    <ExternalLink className="w-3.5 h-3.5 shrink-0" />
+                  </span>
+                </Button>
               </div>
             </div>
           </div>

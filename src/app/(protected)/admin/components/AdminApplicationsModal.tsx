@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { adminService } from "@/services/admin/admin.service";
 import { User, Check, X, Loader2, AlertCircle } from "lucide-react";
 import Button from "@/components/Button";
+import { useRouter } from "next/navigation";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 
 export default function AdminApplicationsModal({
@@ -16,6 +17,7 @@ export default function AdminApplicationsModal({
   const [applications, setApplications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     loadApplications();
@@ -113,7 +115,7 @@ export default function AdminApplicationsModal({
                 </div>
                 
                 <div className="flex gap-2 w-full sm:w-auto">
-                  <Button variant="ghost-gold" size="sm" fullWidth={false} onClick={() => alert("View full profile not implemented in this scope")}>
+                  <Button variant="ghost-gold" size="sm" fullWidth={false} onClick={() => router.push(`/admin/carers/${app.carerProfile?.user?.id}?source=client-care-requests`)}>
                     View Carer
                   </Button>
                 </div>

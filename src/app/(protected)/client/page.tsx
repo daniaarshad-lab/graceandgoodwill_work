@@ -112,18 +112,17 @@ export default function ClientDashboard() {
     );
   }
 
-  // Check if client has any client-managed requests
-  const hasClientManagedRequests = portal.careRequests?.some((req: any) => !req.adminMatching) || false;
+  // Check if G&G manages everything
+  const isAdminMatching = portal.profile?.adminMatching === true;
 
   return (
     <main className="min-h-screen bg-navy-950 py-10 text-gold-100">
       <div className="container-wrapper space-y-8">
         <PortalHeader user={user} />
 
-        <PortalTabs 
-          activeTab={activeTab} 
-          setActiveTab={setActiveTab} 
-          hasClientManagedRequests={hasClientManagedRequests}
+        <PortalTabs
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
         />
 
         <div className="transition-all duration-300">
@@ -172,7 +171,7 @@ export default function ClientDashboard() {
           )}
 
           {/* TAB 3: CARER PROFILES */}
-          {activeTab === "carers" && (
+          {activeTab === "carers" && !isAdminMatching && (
             <CarerProfiles
               carers={portal.carers}
             />
@@ -193,10 +192,10 @@ export default function ClientDashboard() {
           {activeTab === "enquiry" && <SupportEnquiryPanel />}
 
           {/* TAB 6: INTEREST LIST */}
-          {activeTab === "interest-list" && <InterestListPanel />}
+          {activeTab === "interest-list" && !isAdminMatching && <InterestListPanel />}
 
           {/* TAB 7: APPLICATIONS */}
-          {activeTab === "applications" && <ClientApplicationsPanel />}
+          {activeTab === "applications" && !isAdminMatching && <ClientApplicationsPanel />}
         </div>
       </div>
 

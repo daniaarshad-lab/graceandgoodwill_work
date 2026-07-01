@@ -77,3 +77,64 @@ export interface AdminActivity {
   message: string;
   type: "info" | "success" | "warning" | "error";
 }
+
+export interface InternalNoteAttachment {
+  id: string;
+  fileName: string;
+  fileUrl: string;
+}
+
+export interface InternalNoteHistory {
+  id: string;
+  editorName: string;
+  previousTitle: string;
+  updatedTitle: string;
+  editedAt: string;
+}
+
+export interface InternalNote {
+  id: string;
+  title: string;
+  content: string;
+  status: string;
+  priority: string;
+  isPinned: boolean;
+  author: {
+    firstName: string;
+    lastName: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+  attachments?: InternalNoteAttachment[];
+  history?: InternalNoteHistory[];
+}
+
+export interface CreateInternalNotePayload {
+  title: string;
+  content: string;
+  status?: string;
+  priority?: string;
+  isPinned?: boolean;
+  carerProfileId?: string;
+  clientProfileId?: string;
+  placementId?: string;
+}
+
+export interface UpdateInternalNotePayload {
+  title?: string;
+  content?: string;
+  priority?: string;
+  isPinned?: boolean;
+}
+
+export interface GetInternalNotesParams {
+  search?: string;
+  status?: string;
+  priority?: string;
+  isPinned?: boolean;
+  carerProfileId?: string;
+  clientProfileId?: string;
+  placementId?: string;
+  page?: number;
+  limit?: number;
+}

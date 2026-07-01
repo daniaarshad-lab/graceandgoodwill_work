@@ -25,6 +25,7 @@ export interface ClientProfile {
   status: string;
   createdAt: string;
   updatedAt: string;
+  adminMatching?: boolean;
 
   user?: ClientUser;
 }
@@ -47,7 +48,7 @@ export interface CreateCareRequestPayload {
   city?: string;
   address: string;
 
-  careCategory: string;
+  careCategory: string[];
   requirements: string;
   scheduleNotes?: string;
 
@@ -89,6 +90,38 @@ export interface ClientPlacement {
     };
   };
   careRequest: CareRequest | null;
+  hasSubmittedFeedback?: boolean;
+}
+
+export interface FeedbackPayload {
+  rating: number;
+  message: string;
+}
+
+export interface ClientFeedback {
+  id: string;
+  rating: number;
+  message: string;
+  createdAt: string;
+  placement?: {
+    id: string;
+    startDate: string;
+    endDate: string | null;
+  };
+  carerProfile?: {
+    id: string;
+    user: {
+      firstName: string;
+      lastName: string;
+    };
+  };
+  clientProfile?: {
+    id: string;
+    user: {
+      firstName: string;
+      lastName: string;
+    };
+  };
 }
 
 export interface ClientState {
@@ -112,6 +145,10 @@ export interface ClientState {
 
   loading: boolean;
   error: string | null;
+
+  feedbacks: ClientFeedback[];
+  feedbacksLoading: boolean;
+  feedbacksError: string | null;
 }
 export interface CareRequest {
   id: string;

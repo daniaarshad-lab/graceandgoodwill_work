@@ -21,19 +21,19 @@ export default function StepAdditionalQuals({ portal, onNext, onBack }: Props) {
   };
 
   const optionalDocs = [
-    { type: DocumentFileType.NVQ_LEVEL_2, label: "NVQ Level 2" },
-    { type: DocumentFileType.NVQ_LEVEL_3, label: "NVQ Level 3" },
-    { type: DocumentFileType.NVQ_LEVEL_4, label: "NVQ Level 4" },
-    { type: DocumentFileType.NURSING_QUALIFICATIONS, label: "Nursing Qualifications" },
-    { type: DocumentFileType.UNIVERSITY_QUALIFICATIONS, label: "University Qualifications" },
+    { type: DocumentFileType.NVQ_2, label: "NVQ Level 2" },
+    { type: DocumentFileType.NVQ_3, label: "NVQ Level 3" },
+    { type: DocumentFileType.NVQ_4, label: "NVQ Level 4" },
+    { type: DocumentFileType.NURSING_QUALIFICATION, label: "Nursing Qualifications" },
+    { type: DocumentFileType.UNIVERSITY_QUALIFICATION, label: "University Qualifications" },
     { type: DocumentFileType.DEMENTIA_TRAINING, label: "Dementia Training" },
-    { type: DocumentFileType.END_OF_LIFE_CARE_TRAINING, label: "End of Life Care Training" },
-    { type: DocumentFileType.CATHETER_CARE_TRAINING, label: "Catheter Care Training" },
-    { type: DocumentFileType.PEG_FEEDING_TRAINING, label: "PEG Feeding Training" },
-    { type: DocumentFileType.STOMA_CARE_TRAINING, label: "Stoma Care Training" },
-    { type: DocumentFileType.COMPLEX_CARE_TRAINING, label: "Complex Care Training" },
-    { type: DocumentFileType.MEDICATION_COMPETENCY_ASSESSMENT, label: "Medication Competency Assessments" },
-    { type: DocumentFileType.OTHER_RELEVANT_CERTIFICATE, label: "Any Other Relevant Certificates" }
+    { type: DocumentFileType.END_OF_LIFE_CARE, label: "End of Life Care Training" },
+    { type: DocumentFileType.CATHETER_CARE, label: "Catheter Care Training" },
+    { type: DocumentFileType.PEG_FEEDING, label: "PEG Feeding Training" },
+    { type: DocumentFileType.STOMA_CARE, label: "Stoma Care Training" },
+    { type: DocumentFileType.COMPLEX_CARE, label: "Complex Care Training" },
+    { type: DocumentFileType.MEDICATION_COMPETENCY, label: "Medication Competency Assessments" },
+    { type: DocumentFileType.OTHER_RELEVANT, label: "Any Other Relevant Certificates" }
   ];
 
   return (

@@ -67,7 +67,7 @@ export const carerService = {
     });
   },
 
-  async uploadDocument(file: File, category: string) {
+  async uploadDocument(file: File, category: string, type: string) {
     const token =
       typeof window !== "undefined"
         ? localStorage.getItem("accessToken")
@@ -81,6 +81,7 @@ export const carerService = {
 
     formData.append("file", file);
     formData.append("category", category);
+    formData.append("type", type);
 
     return apiFetch("/carer/profile/document", {
       method: "POST",
@@ -167,6 +168,7 @@ export const carerService = {
       if (mappedKey === "cv_resume") mappedKey = "cv";
       if (mappedKey === "professional_reference_1") mappedKey = "reference_1";
       if (mappedKey === "professional_reference_2") mappedKey = "reference_2";
+
 
       formData.append(mappedKey, file);
     });
@@ -309,13 +311,25 @@ export const carerService = {
       throw new Error("No token found");
     }
 
+    const formData = new FormData();
+    if (payload.canDrive !== undefined && payload.canDrive !== "") {
+      formData.append("canDrive", payload.canDrive);
+    }
+    if (payload.hasBusinessInsurance !== undefined && payload.hasBusinessInsurance !== "") {
+      formData.append("hasBusinessInsurance", payload.hasBusinessInsurance);
+    }
+    if (payload.drivingPreferences && Array.isArray(payload.drivingPreferences)) {
+      payload.drivingPreferences.forEach((pref: string) => {
+        formData.append("drivingPreferences", pref);
+      });
+    }
+
     return apiFetch("/carer/profile/step-2", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
       },
-      body: JSON.stringify(payload),
+      body: formData,
     });
   },
 

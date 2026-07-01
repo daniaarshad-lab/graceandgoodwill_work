@@ -39,10 +39,8 @@ export default function ClientApplicationsPanel() {
     dispatch(fetchCareRequests());
   }, [dispatch]);
 
-  // Only show client-managed care requests (adminMatching = false)
-  const clientManagedRequests = careRequests.filter(
-    (req) => !req.adminMatching
-  );
+  // Show all care requests so clients can view applications proposed by G&G or themselves
+  const clientManagedRequests = careRequests;
 
   useEffect(() => {
     if (selectedRequestId) {

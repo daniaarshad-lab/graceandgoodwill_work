@@ -106,7 +106,8 @@ function CarerDashboardContent() {
     batchUploading,
     deletingDocumentId,
   } = useAppSelector((state) => state.carer);
-  const profileUser = profile?.user;
+  const actualProfile = (profile as any)?.carerProfile || profile;
+  const profileUser = actualProfile?.user || profile?.user;
 
   const portal = useCarerPortal({
     user,
@@ -498,7 +499,7 @@ function CarerDashboardContent() {
           lastName={profileUser?.lastName || portal.lastName}
           email={profileUser?.email || portal.email}
           phone={profileUser?.phoneNumber || portal.phone}
-          profilePhoto={profile?.profilePhotoUrl || null}
+          profilePhoto={actualProfile?.profilePhotoUrl || profile?.profilePhotoUrl || null}
         />
 
         <PortalTabs activeTab={activeTab} setActiveTab={setActiveTab} />
@@ -510,7 +511,7 @@ function CarerDashboardContent() {
               membershipActive={portal.membershipActive}
               membershipExpiry={portal.membershipExpiry}
               complianceDocs={portal.complianceDocs}
-              availability={profile?.availability ?? []}
+              availability={actualProfile?.availability ?? profile?.availability ?? []}
               setActiveTab={setActiveTab}
             />
           )}
@@ -537,6 +538,7 @@ function CarerDashboardContent() {
               setCanDrive={portal.setCanDrive}
               hasBusinessInsurance={portal.hasBusinessInsurance}
               setHasBusinessInsurance={portal.setHasBusinessInsurance}
+              complianceDocs={portal.complianceDocs}
               handleDocUpload={portal.handleDocUpload}
               uploadingDocType={portal.uploadingDocType}
               uploadProgress={portal.uploadProgress}

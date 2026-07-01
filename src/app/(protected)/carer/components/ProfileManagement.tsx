@@ -3,6 +3,8 @@ import SectionCard from "./shared/SectionCard";
 import Input from "@/components/Input";
 import PhoneInput from "@/components/PhoneInput";
 import Button from "@/components/Button";
+import { ComplianceDoc } from "../types/carer.types";
+import { DocumentFileType } from "@/types/document.types";
 
 interface ProfileManagementProps {
   firstName: string;
@@ -34,6 +36,7 @@ interface ProfileManagementProps {
   setActiveTab: (
     tab: "overview" | "profile" | "compliance" | "availability",
   ) => void;
+  complianceDocs?: ComplianceDoc[];
 }
 
 export default function ProfileManagement({
@@ -64,7 +67,12 @@ export default function ProfileManagement({
   isProfileSaving,
   onSubmit,
   setActiveTab,
+  complianceDocs = [],
 }: ProfileManagementProps) {
+  const hasBusinessInsuranceDoc = complianceDocs?.some(
+    (d: ComplianceDoc) => d.type === DocumentFileType.PUBLIC_LIABILITY_INSURANCE
+  );
+
   return (
     <SectionCard className="max-w-3xl mx-auto space-y-6">
       <h3 className="text-lg font-bold text-gold-200 border-b border-gold-300/10 pb-4">
@@ -210,9 +218,16 @@ export default function ProfileManagement({
 
               {hasBusinessInsurance === "yes" && (
                 <div className="mt-4 p-4 border border-gold-300/20 rounded-xl bg-navy-900/50">
-                  <label className="text-sm font-medium text-gold-200 block mb-2">
-                    Upload Business Insurance Certificate
-                  </label>
+                  <div className="flex items-center gap-2 mb-2">
+                    <label className="text-sm font-medium text-gold-200">
+                      Upload Business Insurance Certificate
+                    </label>
+                    {hasBusinessInsuranceDoc && (
+                      <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                        Uploaded
+                      </span>
+                    )}
+                  </div>
                   <div className="flex items-center gap-4">
                     <input
                       type="file"
@@ -228,6 +243,8 @@ export default function ProfileManagement({
                     >
                       {uploadingDocType === "Business Insurance"
                         ? "Uploading..."
+                        : hasBusinessInsuranceDoc
+                        ? "Update File"
                         : "Select File"}
                     </label>
                     {uploadingDocType === "Business Insurance" && (

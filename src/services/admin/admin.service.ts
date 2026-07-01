@@ -1,5 +1,13 @@
 import { apiFetch } from "@/lib/api";
 import { AdminDashboardStats } from "@/types/admin.types";
+import {
+  AdminActivity,
+  InternalNote,
+  CreateInternalNotePayload,
+  UpdateInternalNotePayload,
+  GetInternalNotesParams,
+  InternalNoteHistory,
+} from "@/app/(protected)/admin/types/admin.types";
 
 export const adminService = {
   async getDashboardStats(): Promise<AdminDashboardStats> {
@@ -17,6 +25,83 @@ export const adminService = {
       headers: {
         Authorization: `Bearer ${token}`,
       },
+    });
+  },
+
+  async getInternalNotes(params: GetInternalNotesParams): Promise<{ items: InternalNote[]; total: number; page: number; limit: number; totalPages: number }> {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+
+    const queryParams = new URLSearchParams();
+    if (params.search) queryParams.append("search", params.search);
+    if (params.status) queryParams.append("status", params.status);
+    if (params.priority) queryParams.append("priority", params.priority);
+    if (params.isPinned !== undefined) queryParams.append("isPinned", String(params.isPinned));
+    if (params.carerProfileId) queryParams.append("carerProfileId", params.carerProfileId);
+    if (params.clientProfileId) queryParams.append("clientProfileId", params.clientProfileId);
+    if (params.placementId) queryParams.append("placementId", params.placementId);
+    if (params.page) queryParams.append("page", String(params.page));
+    if (params.limit) queryParams.append("limit", String(params.limit));
+
+    return apiFetch(`/admin/internal-notes?${queryParams.toString()}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
+  async getInternalNote(id: string): Promise<InternalNote> {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+    return apiFetch(`/admin/internal-notes/${id}`, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  },
+
+  async addInternalNote(payload: CreateInternalNotePayload): Promise<InternalNote> {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+    return apiFetch(`/admin/internal-notes`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async updateInternalNote(id: string, payload: UpdateInternalNotePayload): Promise<InternalNote> {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+    return apiFetch(`/admin/internal-notes/${id}`, {
+      method: "PATCH",
+      headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async addInternalNoteAttachment(id: string, file: File): Promise<InternalNote> {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+    
+    const formData = new FormData();
+    formData.append("file", file);
+
+    return apiFetch(`/admin/internal-notes/${id}/attachments`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+  },
+
+  async getInternalNoteHistory(id: string): Promise<InternalNoteHistory[]> {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+    return apiFetch(`/admin/internal-notes/${id}/history`, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
     });
   },
 

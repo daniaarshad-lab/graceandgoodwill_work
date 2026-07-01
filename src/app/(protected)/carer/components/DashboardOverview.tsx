@@ -172,7 +172,7 @@ export default function DashboardOverview({
               onClick={() => setActiveTab("compliance")}
               className="text-xs font-semibold text-gold-DEFAULT hover:underline"
             >
-              Upload
+              Update
             </button>
           </div>
           <div className="flex justify-between items-center p-3 rounded-xl border border-gold-300/10 bg-navy-950/30">

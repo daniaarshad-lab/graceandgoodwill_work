@@ -67,25 +67,64 @@ export function useCarerPortal({
   useEffect(() => {
     if (profile) {
       console.log("[Video Upload debug] loaded profile in useCarerPortal:", profile);
-      setBio(profile.summary ?? profile.bio ?? "");
+      const p = profile as any;
+      const actualProfile = p.carerProfile || p;
 
-      if (Array.isArray(profile.careSpecialties)) {
-        setSpecialties(profile.careSpecialties.join(", "));
+      setBio(actualProfile.summary ?? actualProfile.bio ?? p.summary ?? p.bio ?? "");
+
+      const spec = actualProfile.careSpecialties ?? p.careSpecialties;
+      if (Array.isArray(spec)) {
+        setSpecialties(spec.join(", "));
       } else {
-        setSpecialties(profile.careSpecialties ?? "");
+        setSpecialties(spec ?? "");
       }
 
-      setExperience(profile.experienceYears?.toString() ?? profile.experience ?? "");
-      setAddress(profile.address ?? "");
-      setPostcode(profile.postcode ?? "");
-      setCanDrive(profile.canDrive === true ? "yes" : profile.canDrive === false ? "no" : "");
+      setExperience(actualProfile.experienceYears?.toString() ?? actualProfile.experience ?? p.experienceYears?.toString() ?? p.experience ?? "");
+      setAddress(actualProfile.address ?? p.address ?? "");
+      setPostcode(actualProfile.postcode ?? p.postcode ?? "");
+      
+      const canDriveVal = actualProfile.canDrive ?? p.canDrive;
+      setCanDrive(
+        canDriveVal === true || canDriveVal === "yes" || canDriveVal === "true" 
+          ? "yes" 
+          : canDriveVal === false || canDriveVal === "no" || canDriveVal === "false" 
+          ? "no" 
+          : ""
+      );
+      
+      const bizInsVal = actualProfile.hasBusinessInsurance ?? p.hasBusinessInsurance;
+      setHasBusinessInsurance(
+        bizInsVal === true || bizInsVal === "yes" || bizInsVal === "true" 
+          ? "yes" 
+          : bizInsVal === false || bizInsVal === "no" || bizInsVal === "false" 
+          ? "no" 
+          : ""
+      );
 
-      if (profile.emergencyContactName) setEmergencyContactName(profile.emergencyContactName);
-      if (profile.emergencyContactNumber) setEmergencyContactNumber(profile.emergencyContactNumber);
-      if (profile.emergencyContactRelation) setEmergencyContactRelation(profile.emergencyContactRelation);
-      if (profile.drivingPreferences) setDrivingPreferences(profile.drivingPreferences);
-      if (profile.dbsUpdateServiceNumber) setDbsUpdateServiceNumber(profile.dbsUpdateServiceNumber);
-      if (profile.employmentHistory) setEmploymentHistory(profile.employmentHistory as string);
+      const emName = actualProfile.emergencyContactName ?? p.emergencyContactName;
+      const emNum = actualProfile.emergencyContactNumber ?? p.emergencyContactNumber;
+      const emRel = actualProfile.emergencyContactRelation ?? p.emergencyContactRelation;
+      if (emName) setEmergencyContactName(emName);
+      if (emNum) setEmergencyContactNumber(emNum);
+      if (emRel) setEmergencyContactRelation(emRel);
+
+      let dp = actualProfile.drivingPreferences ?? p.drivingPreferences;
+      if (typeof dp === "string") {
+        try {
+          dp = JSON.parse(dp);
+        } catch {
+          dp = dp.split(",").map((s: string) => s.trim());
+        }
+      }
+      if (Array.isArray(dp)) {
+        setDrivingPreferences(dp);
+      }
+
+      const dbs = actualProfile.dbsUpdateServiceNumber ?? p.dbsUpdateServiceNumber;
+      if (dbs) setDbsUpdateServiceNumber(dbs);
+
+      const empHistory = actualProfile.employmentHistory ?? p.employmentHistory;
+      if (empHistory) setEmploymentHistory(empHistory as string);
       if (profile.declarations) setDeclarations(profile.declarations as any);
       if (profile.user?.dateOfBirth) {
         setDateOfBirth(profile.user.dateOfBirth.split("T")[0]);
@@ -161,8 +200,8 @@ export function useCarerPortal({
       } else if (step === 3) {
         const payload = {
           drivingPreferences,
-          canDrive: canDrive === "yes" ? "true" : canDrive === "no" ? "false" : undefined,
-          hasBusinessInsurance: hasBusinessInsurance === "yes" ? "true" : hasBusinessInsurance === "no" ? "false" : undefined,
+          canDrive: canDrive || undefined,
+          hasBusinessInsurance: hasBusinessInsurance || undefined,
         };
         await dispatch(updateCarerStep2(payload)).unwrap();
       } else if (step === 4) {
@@ -276,11 +315,21 @@ export function useCarerPortal({
     }
 
     const categoryMap: Record<string, string> = {
-      "Driver's License": "DRIVERS_LICENSE",
-      "Criminal Record Check": "CRIMINAL_RECORD_CHECK",
-      "Dementia Support Certificate": "DEMENTIA_SUPPORT",
-      "Mandatory Care Certificate": "CARE_CERTIFICATE",
-      "Business Insurance Certificate": "BUSINESS_INSURANCE",
+      "Driver's License": "IDENTITY",
+      "Criminal Record Check": "COMPLIANCE",
+      "Dementia Support Certificate": "ADDITIONAL_TRAINING",
+      "Mandatory Care Certificate": "MANDATORY_TRAINING",
+      "Business Insurance Certificate": "INSURANCE",
+      "Business Insurance": "INSURANCE",
+    };
+
+    const typeMap: Record<string, string> = {
+      "Driver's License": "DRIVING_LICENCE",
+      "Criminal Record Check": "ENHANCED_DBS_CERTIFICATE",
+      "Dementia Support Certificate": "DEMENTIA_TRAINING",
+      "Mandatory Care Certificate": "OTHER_RELEVANT_CERTIFICATE",
+      "Business Insurance Certificate": "PUBLIC_LIABILITY_INSURANCE",
+      "Business Insurance": "PUBLIC_LIABILITY_INSURANCE",
     };
 
     const categoryMapForBatch: Record<string, string> = {
@@ -311,9 +360,10 @@ export function useCarerPortal({
         });
       }, 100);
 
-      const category = categoryMap[type] || type;
+      const category = categoryMap[type] || "MISC";
+      const documentType = typeMap[type] || "OTHER_RELEVANT_CERTIFICATE";
 
-      await dispatch(uploadCarerDocument({ file, category })).unwrap();
+      await dispatch(uploadCarerDocument({ file, category, type: documentType })).unwrap();
 
       clearInterval(progressInterval);
       setUploadProgress(100);

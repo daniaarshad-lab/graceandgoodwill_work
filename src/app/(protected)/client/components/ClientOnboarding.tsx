@@ -3,6 +3,9 @@
 import { useState } from "react";
 import Button from "@/components/Button";
 import { Check, Compass, Search, HeartHandshake } from "lucide-react";
+import { useAppDispatch } from "@/store/hooks";
+import { updateAdminMatching, fetchClientProfile } from "@/store/slices/clientSlice";
+import { showSuccessToast, showErrorToast } from "@/utils/toast";
 
 interface ClientOnboardingProps {
   user: any;
@@ -12,13 +15,27 @@ interface ClientOnboardingProps {
 export default function ClientOnboarding({ user, onComplete }: ClientOnboardingProps) {
   const [step, setStep] = useState<1 | 2>(1);
   const [selectedOption, setSelectedOption] = useState<"match" | "browse" | null>(null);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const dispatch = useAppDispatch();
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (selectedOption) {
-      if (selectedOption === "browse") {
-        onComplete("browse");
-      } else {
-        setStep(2);
+      setIsUpdating(true);
+      try {
+        const isAdminMatching = selectedOption === "match";
+        await dispatch(updateAdminMatching(isAdminMatching)).unwrap();
+        // Fetch profile to ensure UI updates based on the new flag
+        await dispatch(fetchClientProfile()).unwrap();
+
+        if (selectedOption === "browse") {
+          onComplete("browse");
+        } else {
+          setStep(2);
+        }
+      } catch (err: any) {
+        showErrorToast("Update Failed", err || "Failed to update matching preference.");
+      } finally {
+        setIsUpdating(false);
       }
     }
   };
@@ -124,8 +141,8 @@ export default function ClientOnboarding({ user, onComplete }: ClientOnboardingP
               <Button
                 type="button"
                 onClick={handleContinue}
-                disabled={!selectedOption}
-                text="Continue"
+                disabled={!selectedOption || isUpdating}
+                text={isUpdating ? "Updating..." : "Continue"}
                 variant="primary"
                 className="w-full max-w-xs font-semibold"
               />

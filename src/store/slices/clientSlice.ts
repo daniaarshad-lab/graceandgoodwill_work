@@ -8,6 +8,8 @@ import {
   CareRequestApplication,
   UpdateClientProfilePayload,
   ClientPlacement,
+  ClientFeedback,
+  FeedbackPayload,
 } from "@/types/client.types";
 import { CreateEnquiryPayload } from "@/types/client.types";
 import { Carer } from "@/app/(protected)/client/types/client-ui.types";
@@ -30,6 +32,10 @@ const initialState: ClientState = {
   applications: [],
   applicationsLoading: false,
   applicationsError: null,
+
+  feedbacks: [],
+  feedbacksLoading: false,
+  feedbacksError: null,
 
   loading: false,
   error: null,
@@ -60,7 +66,7 @@ export const fetchInterestList = createAsyncThunk<
     const list = response.interestList;
     console.log("extracted list:", list);
     if (!Array.isArray(list)) return [];
-    
+
     // Check if the backend returned nested carer profiles or direct objects
     const interestListCarers = list
       .filter((item: any) => item !== null && item !== undefined)
@@ -80,7 +86,7 @@ export const fetchInterestList = createAsyncThunk<
 
         return mapped;
       });
-    
+
     return interestListCarers;
   } catch (error: any) {
     console.error("Failed to fetch interest list:", error);
@@ -126,6 +132,21 @@ export const updateClientProfile = createAsyncThunk<
     return rejectWithValue(error?.message || "Failed to update client profile");
   }
 });
+
+export const updateAdminMatching = createAsyncThunk<
+  ClientProfile,
+  boolean,
+  { rejectValue: string }
+>(
+  "client/updateAdminMatching",
+  async (adminMatching, { rejectWithValue }) => {
+    try {
+      return await clientService.updateAdminMatching(adminMatching);
+    } catch (error: any) {
+      return rejectWithValue(error.message || "Failed to update admin matching");
+    }
+  }
+);
 
 export const uploadClientProfilePhoto = createAsyncThunk<
   ClientProfile,
@@ -209,6 +230,30 @@ export const fetchCarers = createAsyncThunk<
   }
 });
 
+export const submitFeedback = createAsyncThunk<
+  ClientFeedback,
+  { placementId: string; payload: FeedbackPayload },
+  { rejectValue: string }
+>("client/submitFeedback", async ({ placementId, payload }, { rejectWithValue }) => {
+  try {
+    return await clientService.submitFeedback(placementId, payload);
+  } catch (error: any) {
+    return rejectWithValue(error?.message || "Failed to submit feedback");
+  }
+});
+
+export const fetchClientFeedbacks = createAsyncThunk<
+  ClientFeedback[],
+  void,
+  { rejectValue: string }
+>("client/fetchFeedbacks", async (_, { rejectWithValue }) => {
+  try {
+    return await clientService.getClientFeedbacks();
+  } catch (error: any) {
+    return rejectWithValue(error?.message || "Failed to fetch feedbacks");
+  }
+});
+
 const clientSlice = createSlice({
   name: "client",
   initialState,
@@ -275,6 +320,29 @@ const clientSlice = createSlice({
     builder.addCase(updateClientProfile.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload || "Failed to update client profile";
+    });
+
+    // Update Admin Matching
+    builder.addCase(updateAdminMatching.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+
+    builder.addCase(
+      updateAdminMatching.fulfilled,
+      (state, action: PayloadAction<ClientProfile>) => {
+        state.loading = false;
+        if (state.profile) {
+          state.profile = { ...state.profile, ...action.payload };
+        } else {
+          state.profile = action.payload;
+        }
+      }
+    );
+
+    builder.addCase(updateAdminMatching.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload || "Failed to update admin matching";
     });
 
     // Upload Profile Photo
@@ -441,6 +509,31 @@ const clientSlice = createSlice({
     builder.addCase(fetchClientCareRequestApplications.rejected, (state, action) => {
       state.applicationsLoading = false;
       state.applicationsError = action.payload || "Failed to fetch applications";
+    });
+
+    // Feedback
+    builder.addCase(submitFeedback.fulfilled, (state, action) => {
+      const placementId = action.payload.placement?.id || action.meta.arg.placementId;
+      if (placementId) {
+        const placement = state.placements.find(p => p.id === placementId);
+        if (placement) {
+          placement.hasSubmittedFeedback = true;
+        }
+      }
+      state.feedbacks.unshift(action.payload);
+    });
+
+    builder.addCase(fetchClientFeedbacks.pending, (state) => {
+      state.feedbacksLoading = true;
+      state.feedbacksError = null;
+    });
+    builder.addCase(fetchClientFeedbacks.fulfilled, (state, action: PayloadAction<ClientFeedback[]>) => {
+      state.feedbacksLoading = false;
+      state.feedbacks = action.payload;
+    });
+    builder.addCase(fetchClientFeedbacks.rejected, (state, action) => {
+      state.feedbacksLoading = false;
+      state.feedbacksError = action.payload || "Failed to fetch feedbacks";
     });
   },
 });

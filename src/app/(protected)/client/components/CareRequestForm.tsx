@@ -3,6 +3,7 @@ import { ChevronDown } from "lucide-react";
 import SectionCard from "./shared/SectionCard";
 import Input from "@/components/Input";
 import Select from "@/components/Select";
+import MultiSelect from "@/components/MultiSelect";
 import PhoneInput from "@/components/PhoneInput";
 import Button from "@/components/Button";
 import EmergencyButton from "@/components/EmergencyButton";
@@ -14,8 +15,8 @@ interface CareRequestFormProps {
   setEmail: (val: string) => void;
   phone: string;
   setPhone: (val: string) => void;
-  careType: string;
-  setCareType: (val: string) => void;
+  careType: string[];
+  setCareType: (val: string[]) => void;
   support: string;
   setSupport: (val: string) => void;
   startDate: string;
@@ -116,16 +117,12 @@ export default function CareRequestForm({
             error={errors.phone}
           />
 
-          <Select
+          <MultiSelect
             label="Care Type Required"
             value={careType}
-            onChange={(e) => setCareType(e.target.value)}
+            onChange={setCareType}
             error={errors.careType}
             options={[
-              {
-                value: "",
-                label: "Select care type...",
-              },
               {
                 value: "Companion Support",
                 label: "Companion Live-in Care",
@@ -149,6 +146,10 @@ export default function CareRequestForm({
               {
                 value: "Couple Care",
                 label: "Couple Live-in Care",
+              },
+              {
+                value: "Respite Care",
+                label: "Respite Live-in Care",
               },
             ]}
           />
@@ -228,7 +229,7 @@ export default function CareRequestForm({
         </div>
 
         <Input
-          label="Physical Care Address"
+          label="Care recipients home address"
           value={address}
           onChange={(e) => setAddress(e.target.value)}
           placeholder="Enter full physical address where care will take place"

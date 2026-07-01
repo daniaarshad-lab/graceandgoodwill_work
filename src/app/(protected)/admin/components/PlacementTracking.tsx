@@ -64,7 +64,7 @@ export default function PlacementTracking({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full min-w-0">
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gold-300/10 pb-4">
         <div>
           <h3 className="text-xl font-bold text-gold-200">

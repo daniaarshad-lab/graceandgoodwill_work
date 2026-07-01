@@ -71,6 +71,7 @@
 
   html {
     height: 100%;
+    overflow-x: hidden;
   }
 
   @media (max-width: 639px) {
@@ -87,6 +88,7 @@
     background-attachment: fixed;
     background-repeat: no-repeat;
     color: #e8ba7a;
+    overflow-x: hidden;
   }
 
   * {

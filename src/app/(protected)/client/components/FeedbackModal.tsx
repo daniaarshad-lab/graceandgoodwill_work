@@ -62,7 +62,7 @@ export default function FeedbackModal({ placementId, carerName, onClose, onSucce
       }`}
     >
       <div 
-        className={`bg-navy-900 border border-gold-300/20 rounded-2xl w-full max-w-[860px] shadow-elegant overflow-hidden relative transition-all duration-200 transform ${
+        className={`bg-navy-900 border border-gold-300/20 rounded-2xl w-full max-w-[860px] shadow-elegant overflow-y-auto custom-scrollbar max-h-[90vh] relative transition-all duration-200 transform flex flex-col ${
           isVisible && !isClosing ? "scale-100 translate-y-0" : "scale-95 translate-y-4"
         }`}
       >

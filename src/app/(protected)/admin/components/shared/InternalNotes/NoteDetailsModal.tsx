@@ -96,7 +96,7 @@ export default function NoteDetailsModal({ isOpen, onClose, note, onAttachmentUp
       <div className="absolute inset-0" onClick={!isUploading ? onClose : undefined} />
       
       {/* Modal Content */}
-      <div className="relative z-10 w-full max-w-2xl rounded-2xl border border-gold-300/10 bg-navy-900 shadow-soft flex flex-col overflow-hidden">
+      <div className="relative z-10 w-full max-w-2xl rounded-2xl border border-gold-300/10 bg-navy-900 shadow-soft flex flex-col max-h-[90vh] overflow-hidden">
         {/* Header */}
         <div className="flex flex-shrink-0 items-center justify-between border-b border-gold-300/10 px-6 py-4">
           <h2 className="text-lg font-bold text-gold-200">Note Details</h2>

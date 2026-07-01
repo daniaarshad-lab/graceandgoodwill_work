@@ -12,11 +12,11 @@ const BBCAudioCard = dynamic(() => import("@/components/BBCAudioCard"));
 
 export default function HomePage() {
   return (
-    <main className="overflow-x-hidden min-h-[calc(100vh-80px)] bg-navy-950 pt-12 pb-16 md:pt-20 md:pb-24 text-gold-100">
+    <main className="overflow-x-hidden min-h-[calc(100vh-80px)] bg-navy-950 pt-6 md:pt-10 lg:pt-20 pb-16 md:pb-24 text-gold-100">
       <section className="container-wrapper relative flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between pb-16">
-        
+
         {/* Featured on BBC Radio Badge (Top Right) */}
-        <div className="relative lg:absolute mb-6 lg:mb-0 lg:-top-16 lg:-right-24 xl:-right-32 z-30 inline-flex items-center gap-3 bg-navy-900 border border-gold-muted/30 px-4 py-2 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.3)] backdrop-blur-md hover:border-gold-400/50 hover:shadow-[0_0_15px_rgba(247,215,116,0.15)] transition-all cursor-default">
+        <div className="relative lg:absolute lg:-top-8 lg:right-0 2xl:-top-16 2xl:-right-16 z-30 inline-flex self-start lg:self-auto items-center gap-3 bg-navy-900 border border-gold-muted/30 px-4 py-2 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.3)] backdrop-blur-md hover:border-gold-400/50 hover:shadow-[0_0_15px_rgba(247,215,116,0.15)] transition-all cursor-default">
           <span className="text-[10px] sm:text-xs font-semibold text-gold-200 uppercase tracking-widest hidden sm:inline-block">
             Featured On
           </span>
@@ -33,9 +33,9 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="max-w-2xl space-y-6 mt-8 lg:mt-0">
-        
-          
+        <div className="max-w-2xl lg:flex-1 xl:flex-none space-y-6 -mt-4 lg:mt-0">
+
+
           <h1 className="text-4xl sm:text-5xl lg:text-[4rem] font-serif font-medium leading-[1.1] tracking-tight text-white drop-shadow-md">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#D4AF37] via-[#F7D774] to-[#E6C35C]">
               Live In Care Services
@@ -59,23 +59,23 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="flex flex-col xl:flex-row items-center gap-3 xl:gap-4 flex-wrap xl:flex-nowrap w-full max-w-[100%] overflow-visible">
+          <div className="flex flex-col xl:flex-row items-start xl:items-center gap-4 flex-wrap xl:flex-nowrap w-full max-w-[100%] overflow-visible">
             <Button
               asChild
               variant="goldDarker"
               fullWidth={false}
-              className="h-14 px-6 w-full sm:w-max shrink-0"
+              className="h-14 px-6 w-full xl:w-max shrink-0"
             >
               <Link href="/contact" prefetch={false}>
                 Request Care
               </Link>
             </Button>
-            <EmergencyButton />
+            <EmergencyButton className="w-full xl:w-max" />
             <Button
               asChild
               variant="whatsapp"
               fullWidth={false}
-              className="h-14 px-6 w-full sm:w-max shrink-0 gap-2 group"
+              className="h-14 px-6 w-full xl:w-max shrink-0 gap-2 group"
             >
               <a
                 href="https://wa.me/447700000000?text=Hello%2C%20I'd%20like%20to%20enquire%20about%20live%20in%20care%20services%20from%20Grace%20%26%20Goodwill."
@@ -89,13 +89,13 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="relative flex items-center justify-center w-full lg:max-w-xl h-[380px] sm:h-[450px] overflow-visible">
+        <div className="relative flex items-center justify-center mt-0 sm:mt-8 lg:mt-0 w-full lg:flex-1 xl:flex-none lg:max-w-xl h-[380px] sm:h-[450px] overflow-visible">
           {/* Glowing concentric radiating gold rings */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <div className="absolute w-[260px] sm:w-[280px] h-[260px] sm:h-[280px] rounded-full border-2 border-gold-400 animate-ring-pulse-1" />
-            <div className="absolute w-[300px] sm:w-[360px] h-[300px] sm:h-[360px] rounded-full border-2 border-gold-400 animate-ring-pulse-2" />
-            <div className="absolute w-[340px] sm:w-[440px] h-[340px] sm:h-[440px] rounded-full border-2 border-gold-400 animate-ring-pulse-3" />
-            <div className="absolute w-[380px] sm:w-[520px] h-[380px] sm:h-[520px] rounded-full border-2 border-gold-400 animate-ring-pulse-4" />
+            <div className="absolute w-[300px] sm:w-[360px] lg:w-[320px] xl:w-[360px] h-[300px] sm:h-[360px] lg:h-[320px] xl:h-[360px] rounded-full border-2 border-gold-400 animate-ring-pulse-2" />
+            <div className="absolute w-[340px] sm:w-[440px] lg:w-[380px] xl:w-[440px] h-[340px] sm:h-[440px] lg:h-[380px] xl:h-[440px] rounded-full border-2 border-gold-400 animate-ring-pulse-3" />
+            <div className="absolute w-[380px] sm:w-[520px] lg:w-[440px] xl:w-[520px] max-w-[95vw] lg:max-w-none h-[380px] sm:h-[520px] lg:h-[440px] xl:h-[520px] max-h-[95vw] lg:max-h-none rounded-full border-2 border-gold-400 animate-ring-pulse-4" />
           </div>
 
           {/* Focal Circular Portrait Container */}
@@ -111,7 +111,7 @@ export default function HomePage() {
           </div>
 
           {/* Testimonial Quote Bubble overlapping the circle */}
-          <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 sm:bottom-6 sm:-left-12 sm:translate-x-0 bg-navy-900/90 border border-gold-muted/30 shadow-elegant rounded-2xl p-3 sm:p-4 w-[260px] max-w-[90vw] sm:w-auto sm:max-w-[280px] backdrop-blur-md transition-all duration-300 hover:scale-[1.02] flex flex-col gap-1 z-10">
+          <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 xl:bottom-6 xl:-left-12 xl:translate-x-0 bg-navy-900/90 border border-gold-muted/30 shadow-elegant rounded-2xl p-3 sm:p-4 w-[260px] max-w-[90vw] sm:w-auto sm:max-w-[280px] backdrop-blur-md transition-all duration-300 hover:scale-[1.02] flex flex-col gap-1 z-10">
             <span className="text-2xl sm:text-3xl font-serif text-gold-300/70 leading-none h-3 sm:h-4">
               “
             </span>

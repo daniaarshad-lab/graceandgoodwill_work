@@ -224,7 +224,7 @@ export default function InternalNotes({ entityId, entityType }: InternalNotesPro
         </div>
       </div>
 
-      <div className="relative h-[280px] flex flex-col">
+      <div className="relative h-[60vh] lg:h-[280px] flex flex-col">
         {loading ? (
           <div className="flex-1 overflow-y-auto pr-2 space-y-3 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gold-300/20 [&::-webkit-scrollbar-thumb]:rounded-full">
             {[1, 2].map((i) => (

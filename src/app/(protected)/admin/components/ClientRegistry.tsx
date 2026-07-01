@@ -191,7 +191,7 @@ export default function ClientRegistry({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full min-w-0">
       {/* Header Actions */}
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gold-300/10 pb-4">
         <div>

@@ -14,7 +14,7 @@ export default function ApprovalModal({
 }: ApprovalModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-navy-950/80 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-md rounded-2xl border border-gold-300/10 bg-navy-900 p-6 shadow-soft space-y-6">
+      <div className="w-full max-w-md rounded-2xl border border-gold-300/10 bg-navy-900 p-6 shadow-soft space-y-6 max-h-[90vh] overflow-y-auto custom-scrollbar">
         <div className="flex items-start justify-between border-b border-gold-300/10 pb-4">
           <div>
             <h4 className="text-lg font-bold text-gold-200">

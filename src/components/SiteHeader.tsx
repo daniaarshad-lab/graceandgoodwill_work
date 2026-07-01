@@ -71,8 +71,9 @@ function SiteHeader() {
   }, [pathname]);
 
   return (
-    <header className="sticky top-0 z-50 w-full h-20 border-b border-navy-800 bg-navy-950/95 backdrop-blur flex items-center">
-      <div className="container-wrapper flex items-center justify-between py-4">
+    <>
+      <header className="sticky top-0 z-50 w-full h-20 border-b border-navy-800 bg-navy-950/95 backdrop-blur flex items-center">
+        <div className="container-wrapper flex items-center justify-between py-4">
         <Link
           href="/"
           className="flex items-center gap-2 sm:gap-3 text-white group flex-shrink-0"
@@ -181,16 +182,17 @@ function SiteHeader() {
           )}
         </nav>
       </div>
+    </header>
 
       {/* Mobile Navigation Overlay + Slide-over Drawer */}
       {isMobileMenuOpen && (
         <>
           <div
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100]"
             onClick={() => setIsMobileMenuOpen(false)}
             aria-hidden="true"
           />
-          <div className="fixed top-0 right-0 bottom-0 w-80 max-w-[85vw] bg-navy-950 border-l border-navy-800 shadow-2xl z-50 flex flex-col p-6 overflow-y-auto animate-slide-in">
+          <div className="fixed top-0 right-0 bottom-0 w-[min(85vw,360px)] md:w-[380px] lg:w-[420px] bg-navy-950 border-l border-navy-800 shadow-2xl z-[100] flex flex-col overflow-hidden animate-slide-in">
             <style>{`
               @keyframes slideIn {
                 from { transform: translateX(100%); }
@@ -201,20 +203,35 @@ function SiteHeader() {
               }
             `}</style>
             
-            <div className="flex items-center justify-between pb-6 border-b border-navy-800 mb-6">
-              <span className="text-xs font-semibold text-gold-300 uppercase tracking-widest">
-                Navigation
-              </span>
+            <div className="relative flex items-center justify-between h-[72px] shrink-0 px-4 sm:px-6 border-b border-navy-800 w-full">
+              {/* Left: Logo */}
+              <div className="flex-shrink-0 z-10 w-8">
+                <img
+                  src="/website_logo.png"
+                  alt="Grace & Goodwill logo"
+                  className="h-8 w-8 object-contain drop-shadow-elegant"
+                />
+              </div>
+
+              {/* Center: Title */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <span className="text-xs font-semibold text-gold-300 uppercase tracking-widest">
+                  Navigation
+                </span>
+              </div>
+
+              {/* Right: Close Button */}
               <button
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="text-gold-200 hover:text-gold-50 transition p-2 -mr-2"
+                className="text-gold-200 hover:text-gold-50 transition p-3 -mr-3 z-10 flex-shrink-0 min-h-[44px] min-w-[44px] flex items-center justify-center"
                 aria-label="Close menu"
               >
                 <X className="w-6 h-6" />
               </button>
             </div>
 
-            <nav className="flex flex-col gap-2">
+            <div className="flex-1 overflow-y-auto p-6">
+              <nav className="flex flex-col gap-2">
               <Link
                 href="/"
                 onClick={() => setIsMobileMenuOpen(false)}
@@ -274,10 +291,11 @@ function SiteHeader() {
                 )}
               </div>
             </nav>
+            </div>
           </div>
         </>
       )}
-    </header>
+    </>
   );
 }
 

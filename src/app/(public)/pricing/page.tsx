@@ -118,7 +118,7 @@ export default function PricingPage() {
         </div>
 
         {/* Added items-stretch so cards equalize height */}
-        <div className="grid gap-6 md:grid-cols-3 lg:gap-8 items-stretch pt-4">
+        <div className="grid gap-14 sm:gap-12 md:gap-6 md:grid-cols-3 lg:gap-8 items-stretch pt-4">
           {carerPlans.map((plan) => (
             <div
               key={plan.name}

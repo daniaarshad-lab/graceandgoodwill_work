@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useRef, useEffect } from "react";
 
 export type TabType =
   | "overview"
@@ -20,6 +21,56 @@ export default function PortalTabs({
   setActiveTab,
 }: PortalTabsProps) {
   const router = useRouter();
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    
+    const onWheel = (e: WheelEvent) => {
+      if (e.deltaY !== 0 && e.deltaX === 0) {
+        e.preventDefault();
+        el.scrollLeft += e.deltaY;
+      }
+    };
+    
+    let isDown = false;
+    let startX = 0;
+    let scrollLeftPos = 0;
+
+    const onMouseDown = (e: MouseEvent) => {
+      isDown = true;
+      startX = e.pageX - el.offsetLeft;
+      scrollLeftPos = el.scrollLeft;
+    };
+    const onMouseLeave = () => {
+      isDown = false;
+    };
+    const onMouseUp = () => {
+      isDown = false;
+    };
+    const onMouseMove = (e: MouseEvent) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - el.offsetLeft;
+      const walk = (x - startX) * 2;
+      el.scrollLeft = scrollLeftPos - walk;
+    };
+    
+    el.addEventListener('wheel', onWheel, { passive: false });
+    el.addEventListener('mousedown', onMouseDown);
+    el.addEventListener('mouseleave', onMouseLeave);
+    el.addEventListener('mouseup', onMouseUp);
+    el.addEventListener('mousemove', onMouseMove);
+    
+    return () => {
+      el.removeEventListener('wheel', onWheel);
+      el.removeEventListener('mousedown', onMouseDown);
+      el.removeEventListener('mouseleave', onMouseLeave);
+      el.removeEventListener('mouseup', onMouseUp);
+      el.removeEventListener('mousemove', onMouseMove);
+    };
+  }, []);
 
   const tabs = [
     { id: "overview", label: "Overview", href: "/carer?tab=overview" },
@@ -63,7 +114,8 @@ export default function PortalTabs({
   return (
     <div className="relative">
       <div
-        className="flex border-b border-gold-300/10 pb-1 overflow-x-auto gap-1 sm:gap-2"
+        ref={scrollRef}
+        className="flex border-b border-gold-300/10 pb-1 overflow-x-auto gap-1 sm:gap-2 portal-tabs"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         <style>{`.portal-tabs::-webkit-scrollbar { display: none; }`}</style>

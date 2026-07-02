@@ -136,7 +136,7 @@ export default function OnboardingMembership({
         </div>
 
         {/* 3-Column Membership Selection Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 xl:gap-8 pt-4 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-6 xl:gap-8 pt-4 items-stretch">
           {plans.map((plan) => {
             const IconComponent = plan.icon;
             const isSelected = selectedPlan === plan.name;

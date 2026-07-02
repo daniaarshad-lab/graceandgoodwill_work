@@ -147,10 +147,10 @@ export default function InternalNotes({ entityId, entityType }: InternalNotesPro
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between border-b border-gold-300/10 pb-3">
-        <div>
-          <h3 className="text-xl font-bold text-gold-200">Internal Notes</h3>
-          <p className="text-[11px] text-gold-100/50 mt-0.5">
+      <div className="flex items-start sm:items-center justify-between border-b border-gold-300/10 pb-3 gap-4">
+        <div className="min-w-0">
+          <h3 className="text-xl font-bold text-gold-200 truncate">Internal Notes</h3>
+          <p className="text-[11px] text-gold-100/50 mt-0.5 leading-relaxed">
             Private administrative notes. Not visible to clients or carers.
           </p>
         </div>
@@ -159,9 +159,9 @@ export default function InternalNotes({ entityId, entityType }: InternalNotesPro
           onClick={() => setIsAddModalOpen(true)}
           size="sm"
           fullWidth={false}
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 shrink-0 whitespace-nowrap mt-1 sm:mt-0"
         >
-          <PlusCircle className="h-4 w-4" /> Add Note
+          <PlusCircle className="h-4 w-4 shrink-0" /> Add Note
         </Button>
       </div>
 
@@ -283,15 +283,15 @@ export default function InternalNotes({ entityId, entityType }: InternalNotesPro
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex flex-col gap-2">
-                    <div className="flex items-center gap-2">
-                      <span className="inline-flex items-center px-2 py-1 rounded border border-gold-300/20 bg-navy-900 text-[10px] font-bold text-gold-200 uppercase tracking-wider">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="inline-flex items-center px-2 py-1 rounded border border-gold-300/20 bg-navy-900 text-[10px] font-bold text-gold-200 uppercase tracking-wider whitespace-nowrap">
                         [ {note.author?.firstName} {note.author?.lastName} ]
                       </span>
-                      <span className="text-[11px] text-gold-100/40 font-mono">
+                      <span className="text-[11px] text-gold-100/40 font-mono whitespace-nowrap">
                         {formatNoteDate(note.createdAt)}
                       </span>
                       {note.isPinned && (
-                        <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-gold/20 text-[10px] text-gold">
+                        <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-gold/20 text-[10px] text-gold whitespace-nowrap">
                           Pinned
                         </span>
                       )}

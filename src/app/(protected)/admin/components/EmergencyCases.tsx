@@ -35,16 +35,16 @@ export default function EmergencyCases({
   return (
     <div className="space-y-6">
       <div className="border-b border-gold-300/10 pb-4">
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-3 mb-1.5">
           <span className="flex h-3 w-3 relative">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-rose-400 opacity-75"></span>
             <span className="relative inline-flex h-3 w-3 rounded-full bg-rose-500"></span>
           </span>
-          <h3 className="text-xl font-bold text-rose-400">
+          <h3 className="text-lg md:text-xl font-bold text-rose-400">
             Emergency Triage Dashboard
           </h3>
         </div>
-        <p className="text-xs text-gold-100/50 mt-1">
+        <p className="text-xs text-gold-100/50 max-w-xl leading-relaxed">
           Resolve critical and high-priority care requests immediately with fast
           carer pairings
         </p>
@@ -88,7 +88,7 @@ export default function EmergencyCases({
                     Care Specifications
                   </p>
                   <p className="mt-1 text-xs text-gold-200 font-medium font-mono">
-                    {req.careType}
+                    {Array.isArray(req.careType) ? req.careType.join(", ") : req.careType}
                   </p>
 
                   <p className="mt-3 text-xs text-gold-100/70 italic bg-navy-950/40 p-2.5 rounded-lg border border-gold-300/5 line-clamp-3">
@@ -147,7 +147,7 @@ export default function EmergencyCases({
                         {reqObj.clientName}
                       </p>
                       <p className="text-xs text-gold-100/40">
-                        Requires: {reqObj.careType} in {reqObj.location}
+                        Requires: {Array.isArray(reqObj.careType) ? reqObj.careType.join(", ") : reqObj.careType} in {reqObj.location}
                       </p>
                     </div>
 

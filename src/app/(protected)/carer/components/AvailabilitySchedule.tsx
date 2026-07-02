@@ -103,20 +103,17 @@ export default function AvailabilitySchedule({
   }, []);
 
   const handleQuickAction = useCallback(
-    (action: "today" | "tomorrow" | "next7" | "next30" | "clear") => {
+    (action: "next3" | "next7" | "next30" | "clear") => {
       const today = new Date();
       const todayStr = toISODateString(today);
       setRangeStart(null); // Clear pending selection in all cases
 
       switch (action) {
-        case "today":
-          setSelectedDates(new Set([todayStr]));
-          break;
-
-        case "tomorrow": {
-          const tmr = new Date(today);
-          tmr.setDate(tmr.getDate() + 1);
-          setSelectedDates(new Set([toISODateString(tmr)]));
+        case "next3": {
+          const end = new Date(today);
+          end.setDate(end.getDate() + 2);
+          const dates = expandRange(todayStr, toISODateString(end));
+          setSelectedDates(new Set(dates));
           break;
         }
 
@@ -184,7 +181,7 @@ export default function AvailabilitySchedule({
     <SectionCard className="max-w-6xl mx-auto !p-0 overflow-hidden">
       <div className="flex flex-col lg:flex-row min-h-[560px]">
         {/* Left: Calendar */}
-        <div className="flex-1 p-6 lg:p-8 flex flex-col">
+        <div className="flex-1 p-4 sm:p-6 lg:p-8 flex flex-col">
           {/* Section Header */}
           <div className="mb-5">
             <h3 className="text-lg font-bold text-gold-200">
@@ -238,7 +235,7 @@ export default function AvailabilitySchedule({
         <div className="lg:hidden h-px bg-gradient-to-r from-transparent via-gold-300/10 to-transparent" />
 
         {/* Right: Summary Panel */}
-        <div className="w-full lg:w-[320px] xl:w-[360px] p-6 lg:p-8 bg-navy-950/30">
+        <div className="w-full lg:w-[320px] xl:w-[360px] p-4 sm:p-6 lg:p-8 bg-navy-950/30">
           {isProfileLoading || !isHydrated ? (
             <SummarySkeleton />
           ) : (

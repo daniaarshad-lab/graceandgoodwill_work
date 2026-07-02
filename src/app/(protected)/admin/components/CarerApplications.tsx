@@ -266,7 +266,7 @@ export default function CarerApplications({
       render: (carer) => (
         <Link
           href={`/admin/carers/${carer.id}?source=carer-applications`}
-          className="inline-flex items-center gap-1.5 rounded-xl bg-gold text-navy-950 font-bold px-3.5 py-1.5 text-[11px] hover:bg-gold-200 transition duration-200 cursor-pointer"
+          className="inline-flex items-center gap-1.5 rounded-xl bg-gold text-navy-950 font-bold px-3.5 py-1.5 text-[11px] hover:bg-gold-200 transition duration-200 cursor-pointer whitespace-nowrap"
         >
           View Details
         </Link>

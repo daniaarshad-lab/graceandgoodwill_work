@@ -195,11 +195,11 @@ export default function Table<T>({
                   <th
                     key={col.key}
                     onClick={() => handleSort(col.key, col.sortable)}
-                    className={`py-3.5 px-4 text-left text-[10px] font-bold uppercase tracking-wider text-gold-200/60 sticky top-0 bg-navy-950/95 border-b border-gold-300/10 select-none ${
+                    className={`py-3.5 px-4 text-left text-[10px] font-bold uppercase tracking-wider text-gold-200/60 sticky top-0 bg-navy-950/95 border-b border-gold-300/10 select-none whitespace-nowrap ${
                       col.sortable ? "cursor-pointer hover:text-gold" : ""
                     }`}
                   >
-                    <div className="flex items-center">
+                    <div className="flex items-center gap-1.5">
                       <span>{col.header}</span>
                       {renderSortIcon(col)}
                     </div>

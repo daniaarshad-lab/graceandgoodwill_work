@@ -52,7 +52,7 @@ export default function MatchAssignmentModal({
                 Service Type:
               </span>
               <span className="font-medium text-gold-200">
-                {request.careType}
+                {Array.isArray(request.careType) ? request.careType.join(", ") : request.careType}
               </span>
             </div>
             <div>

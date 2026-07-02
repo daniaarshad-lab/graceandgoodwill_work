@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useAppSelector } from "@/store/hooks";
+import { useRef, useEffect } from "react";
 
 export type TabType =
   | "request"
@@ -26,6 +27,56 @@ export default function PortalTabs({
   const router = useRouter();
   const profile = useAppSelector((state) => state.client.profile);
   const isAdminMatching = profile?.adminMatching === true;
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    
+    const onWheel = (e: WheelEvent) => {
+      if (e.deltaY !== 0 && e.deltaX === 0) {
+        e.preventDefault();
+        el.scrollLeft += e.deltaY;
+      }
+    };
+    
+    let isDown = false;
+    let startX = 0;
+    let scrollLeftPos = 0;
+
+    const onMouseDown = (e: MouseEvent) => {
+      isDown = true;
+      startX = e.pageX - el.offsetLeft;
+      scrollLeftPos = el.scrollLeft;
+    };
+    const onMouseLeave = () => {
+      isDown = false;
+    };
+    const onMouseUp = () => {
+      isDown = false;
+    };
+    const onMouseMove = (e: MouseEvent) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - el.offsetLeft;
+      const walk = (x - startX) * 2;
+      el.scrollLeft = scrollLeftPos - walk;
+    };
+    
+    el.addEventListener('wheel', onWheel, { passive: false });
+    el.addEventListener('mousedown', onMouseDown);
+    el.addEventListener('mouseleave', onMouseLeave);
+    el.addEventListener('mouseup', onMouseUp);
+    el.addEventListener('mousemove', onMouseMove);
+    
+    return () => {
+      el.removeEventListener('wheel', onWheel);
+      el.removeEventListener('mousedown', onMouseDown);
+      el.removeEventListener('mouseleave', onMouseLeave);
+      el.removeEventListener('mouseup', onMouseUp);
+      el.removeEventListener('mousemove', onMouseMove);
+    };
+  }, []);
 
   const tabs = [
     { id: "request", label: "Submit Care Request", href: "/client?tab=request" },
@@ -69,7 +120,8 @@ export default function PortalTabs({
 
   return (
     <div
-      className="flex flex-nowrap items-center border-b border-gold-300/10 pb-1 overflow-x-auto gap-1"
+      ref={scrollRef}
+      className="flex flex-nowrap items-center border-b border-gold-300/10 pb-1 overflow-x-auto gap-1 client-tabs-nav"
       style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
     >
       <style>{`.client-tabs-nav::-webkit-scrollbar { display: none; }`}</style>

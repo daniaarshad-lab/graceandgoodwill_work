@@ -118,11 +118,11 @@ export default function MatchingPanel({
 
   return (
     <div className="space-y-6">
-      <div>
-        <h3 className="text-xl font-bold text-gold-200">
+      <div className="mb-6">
+        <h3 className="text-lg md:text-xl font-bold text-gold-200 mb-1.5">
           Matching Assistant Panel
         </h3>
-        <p className="text-sm text-gold-100/50">
+        <p className="text-xs text-gold-100/50 max-w-xl leading-relaxed">
           Verify matching metrics, review scoring breakdown, and assign carers
           to client care requests.
         </p>
@@ -170,7 +170,7 @@ export default function MatchingPanel({
                             {req.clientName}
                           </h5>
                           <span className="text-[10px] text-gold-100/50 font-medium">
-                            {req.careType}
+                            {Array.isArray(req.careType) ? req.careType.join(", ") : req.careType}
                           </span>
                         </div>
                         <span
@@ -234,7 +234,7 @@ export default function MatchingPanel({
                   <span className="text-gold font-semibold">
                     {selectedRequest.clientName}
                   </span>{" "}
-                  ({selectedRequest.careType})
+                  ({Array.isArray(selectedRequest.careType) ? selectedRequest.careType.join(", ") : selectedRequest.careType})
                 </p>
               )}
             </div>

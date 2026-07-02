@@ -67,16 +67,20 @@ export default function PlacementTracking({
     <div className="space-y-6 w-full min-w-0">
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gold-300/10 pb-4">
         <div>
-          <h3 className="text-xl font-bold text-gold-200">
+          <h3 className="text-lg md:text-xl font-bold text-gold-200 mb-1.5">
             Care Placement Tracking Pipeline
           </h3>
-          <p className="text-xs text-gold-100/50">
+          <p className="text-xs text-gold-100/50 max-w-xl leading-relaxed">
             Monitor active matchups, authorize contact release, perform manual
             override swaps, and audit operational timelines
           </p>
         </div>
 
-        <div className="flex flex-wrap rounded-xl bg-navy-950 p-1 border border-gold-300/10 gap-1 max-w-full overflow-x-auto">
+        <div 
+          className="flex flex-nowrap items-center rounded-xl bg-navy-950 p-1 border border-gold-300/10 gap-1 max-w-full overflow-x-auto admin-placement-tabs"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
+          <style>{`.admin-placement-tabs::-webkit-scrollbar { display: none; }`}</style>
           {[
             { label: "All", value: "All" },
             { label: "Active", value: "PLACEMENT_STARTED" },
@@ -122,7 +126,8 @@ export default function PlacementTracking({
                     </h4>
                   </div>
                   <p className="text-xs text-gold-100/50 mt-1">
-                    {place.careType} • {place.location} • Commenced:{" "}
+                    {place.careType && (Array.isArray(place.careType) ? place.careType.join(", ") : place.careType) + " • "}
+                    {place.location} • Commenced:{" "}
                     {place.startDate}
                   </p>
                 </div>

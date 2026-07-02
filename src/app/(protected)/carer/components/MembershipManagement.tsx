@@ -466,15 +466,16 @@ export default function MembershipManagement() {
       {/* Gold Elite Upgrade Modal */}
       {showGoldModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/80 backdrop-blur-md animate-fade-in">
-          <div className="relative w-full max-w-lg rounded-2xl border border-gold-DEFAULT/30 bg-gradient-to-b from-navy-900 to-navy-950 p-6 text-gold-100 shadow-[0_15px_50px_rgba(212,175,55,0.15)] max-h-[90vh] overflow-y-auto animate-scale-up">
+          <div className="relative w-full max-w-2xl max-h-[75vh] flex flex-col rounded-2xl border border-gold-DEFAULT/30 bg-gradient-to-b from-navy-900 to-navy-950 text-gold-100 shadow-[0_15px_50px_rgba(212,175,55,0.15)] animate-scale-up overflow-hidden">
             <button
               onClick={() => setShowGoldModal(false)}
-              className="absolute top-4 right-4 text-gold-200/60 hover:text-gold-200 transition-colors p-1 rounded-full hover:bg-gold-400/10"
+              className="absolute top-4 right-4 text-gold-200/60 hover:text-gold-200 transition-colors p-1.5 rounded-full hover:bg-gold-400/10 z-30"
             >
-              <X className="w-4 h-4" />
+              <X className="w-5 h-5" />
             </button>
 
-            <div className="space-y-6">
+            {/* Scrollable content body */}
+            <div className="overflow-y-auto flex-1 p-6 md:p-8 scrollbar-thin space-y-6">
               {/* Header */}
               <div className="flex items-center gap-3 border-b border-gold-300/10 pb-4">
                 <div className="p-2 bg-gold-DEFAULT/10 rounded-lg border border-gold-DEFAULT/25">
@@ -500,58 +501,63 @@ export default function MembershipManagement() {
 
                 <div className="space-y-3">
                   <p className="text-xs text-gold-100/90 leading-relaxed font-light">
-                    Enhance your profile visibility, get priority matching and access premium placement opportunities.
+                    Premium tier for active professionals seeking first access to placements.
                   </p>
 
                   {/* Benefits checklist */}
-                  <div className="space-y-2.5 pt-2">
+                  <div className="space-y-3 pt-2 pb-2">
                     <p className="text-[11px] font-bold uppercase tracking-wider text-gold-300">Premium Benefits Included:</p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {[
                         "Priority placement alerts",
                         "First access to premium placements",
                         "Emergency placement priority",
-                        "Featured profile tag in searches",
-                        "Certificate verification badges",
-                        "Comprehensive placement insurance",
-                        "Platform verification support"
+                        "Featured profile",
+                        "Certificate storage",
+                        "Compliance expiry reminders",
+                        "Professional profile enhancement",
+                        "Priority compliance review",
+                        "Enhanced placement opportunities",
+                        "Advanced training discounts",
+                        "End of Life Care Pathway",
+                        "DBS support and guidance"
                       ].map((benefit, idx) => (
-                        <div key={idx} className="flex items-start gap-2">
-                          <Check className="w-3.5 h-3.5 text-gold-DEFAULT mt-0.5 shrink-0" />
-                          <span className="text-xs text-gold-100/80 leading-normal">{benefit}</span>
+                        <div key={idx} className="flex items-start gap-2.5">
+                          <Check className="w-3.5 h-3.5 text-gold-DEFAULT mt-0.5 shrink-0" strokeWidth={2.5} />
+                          <span className="text-xs text-gold-100/80 leading-relaxed font-light">{benefit}</span>
                         </div>
                       ))}
                     </div>
                   </div>
                 </div>
               </div>
+            </div>
 
-              {/* Actions */}
-              <div className="flex justify-end gap-3 pt-4 border-t border-gold-300/10">
-                <Button
-                  onClick={() => setShowGoldModal(false)}
-                  disabled={processing}
-                  variant="outline"
-                  size="sm"
-                  text="Go Back"
-                  fullWidth={false}
-                />
-                <Button
-                  onClick={async () => {
-                    setShowGoldModal(false);
-                    await handleUpgrade("GOLD_ELITE");
-                  }}
-                  disabled={processing}
-                  variant="primary"
-                  size="sm"
-                  fullWidth={false}
-                >
-                  <span className="flex items-center gap-1.5 font-bold">
-                    {processing ? "Processing..." : "Proceed to Payment"}
-                    <ExternalLink className="w-3.5 h-3.5 shrink-0" />
-                  </span>
-                </Button>
-              </div>
+            {/* Sticky Footer Actions */}
+            <div className="flex justify-end gap-3 p-4 border-t border-gold-300/20 bg-navy-950/90 backdrop-blur-md rounded-b-2xl sticky bottom-0 z-20">
+              <Button
+                onClick={() => setShowGoldModal(false)}
+                disabled={processing}
+                variant="outline"
+                size="sm"
+                text="Go Back"
+                fullWidth={false}
+              />
+              <Button
+                onClick={async () => {
+                  setShowGoldModal(false);
+                  await handleUpgrade("GOLD_ELITE");
+                }}
+                disabled={processing}
+                variant="primary"
+                size="sm"
+                fullWidth={false}
+              >
+                <span className="flex items-center gap-1.5 font-bold">
+                  {processing ? "Processing..." : "Proceed to Payment"}
+                  <ExternalLink className="w-3.5 h-3.5 shrink-0" />
+                </span>
+              </Button>
             </div>
           </div>
         </div>

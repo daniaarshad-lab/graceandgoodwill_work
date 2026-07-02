@@ -123,15 +123,15 @@ export default function OnboardingMembership({
         "Grace & Goodwill Verified Professional™ badge",
         "Contacted first for premium placements",
         "Priority phone calls for suitable placements",
-        "Priority email alerts",
+        "Priority email alerts for suitable placements",
         "Priority WhatsApp placement alerts where available",
         "Priority matching opportunities",
         "Appear before all other carers in search results",
         "Featured in client searches",
         "Featured in emergency placements",
         "Priority access to enhanced-rate emergency placements where available",
-        "Premium profile highlight with verified frame",
-        "Increased visibility across platform",
+        "Premium profile highlight with a bold verified frame",
+        "Increased visibility across the platform",
         "All Gold Elite Membership benefits included",
       ],
       buttonText: "View Requirements & Benefits",
@@ -280,17 +280,27 @@ export default function OnboardingMembership({
                     <div className="h-px w-full bg-gradient-to-r from-transparent via-gold-400/20 to-transparent" />
 
                     {/* Pricing Display */}
-                    <div className="flex flex-col items-center gap-1.5 py-1">
-                      <span className="text-4xl font-bold tracking-tight leading-none text-gold-50 font-serif">
-                        {plan.price}
-                      </span>
-                      <span className="text-xs font-medium text-gold-200/50 uppercase tracking-widest">
-                        /{plan.period}
-                      </span>
-                      {plan.isPremium && (
-                        <span className="text-[10px] font-bold text-gold-200/80 uppercase tracking-wider bg-gold-400/10 px-2.5 py-0.5 rounded-full border border-gold-400/15 mt-1.5">
-                          Total Value: {plan.totalPrice}/month (VAT Inc.)
-                        </span>
+                    <div className="flex flex-col items-center gap-1.5 py-1 min-h-[64px] justify-center">
+                      {plan.isPremium ? (
+                        <>
+                          <span className="text-3xl font-bold tracking-tight leading-none text-gold-50 font-serif">
+                            Earned Status
+                          </span>
+                          <span className="text-[10px] font-bold text-gold-200/80 uppercase tracking-wider bg-gold-400/10 px-2.5 py-0.5 rounded-full border border-gold-400/15 mt-1.5">
+                            +£10/m • Total Value {plan.totalPrice}/m
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="text-4xl font-bold tracking-tight leading-none text-gold-50 font-serif">
+                            {plan.price}
+                          </span>
+                          {plan.period && (
+                            <span className="text-xs font-medium text-gold-200/50 uppercase tracking-widest">
+                              /{plan.period}
+                            </span>
+                          )}
+                        </>
                       )}
                     </div>
 
@@ -329,10 +339,18 @@ export default function OnboardingMembership({
                             ))}
                           </>
                         ) : plan.isPremium ? (
-                          <div className="text-center py-4 space-y-3">
-                            <p className="text-[11px] text-gold-100/50 leading-relaxed font-light max-w-[220px] mx-auto">
-                              This status requires a consecutive active history, DBS check, and verification.
+                          <div className="space-y-2 pt-1">
+                            <p className="text-[10px] text-gold-100/50 leading-relaxed font-light text-center mb-3 px-2">
+                              Requires active history and verification.
                             </p>
+                            {plan.benefits?.map((feature) => (
+                              <li key={feature} className="flex items-start gap-3.5 text-xs text-gold-100/85 leading-relaxed font-light">
+                                <span className="mt-0.5 flex h-4.5 w-4.5 flex-shrink-0 items-center justify-center rounded-full bg-gold-DEFAULT/15">
+                                  <Check className="h-3 w-3 text-gold-DEFAULT" strokeWidth={2.5} />
+                                </span>
+                                <span>{feature}</span>
+                              </li>
+                            ))}
                           </div>
                         ) : (
                           plan.features?.map((feature) => (

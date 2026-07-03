@@ -171,7 +171,7 @@ export default function CareRequestForm({
               error={errors.duration}
               disabled={isOngoing}
             />
-            <label className="flex items-center gap-2 text-sm text-gold-200 mt-2 cursor-pointer">
+            {/* <label className="flex items-center gap-2 text-sm text-gold-200 mt-2 cursor-pointer">
               <input
                 type="checkbox"
                 checked={isOngoing}
@@ -184,10 +184,10 @@ export default function CareRequestForm({
                 className="w-4 h-4 rounded border-gold-300/20 bg-navy-950 text-gold-DEFAULT focus:ring-gold-DEFAULT focus:ring-offset-navy-950"
               />
               This is an ongoing / permanent request
-            </label>
+            </label> */}
           </div>
         </div>
-
+        {/* 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Input
             label="Weekly Pay Range - Minimum (£)"
@@ -209,7 +209,7 @@ export default function CareRequestForm({
             placeholder="e.g. 1200"
             type="number"
           />
-        </div>
+        </div> */}
 
         <div className="space-y-2">
           <label className="text-sm font-medium text-gold-200">

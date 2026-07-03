@@ -192,15 +192,26 @@ export default function ClientRequests({
                 </div>
               )}
               
-              <Link href={`/admin/clients/${req.clientProfileId || req.id}`} className="w-full">
+              {req.clientId ? (
+                <Link href={`/admin/clients/${req.clientId}`} className="w-full">
+                  <Button
+                    variant="ghost-gold"
+                    size="sm"
+                    fullWidth
+                  >
+                    View Details / Manage Client
+                  </Button>
+                </Link>
+              ) : (
                 <Button
                   variant="ghost-gold"
                   size="sm"
                   fullWidth
+                  disabled
                 >
-                  View Details / Manage Client
+                  Client Profile Unavailable
                 </Button>
-              </Link>
+              )}
             </div>
           </SectionCard>
         ))}

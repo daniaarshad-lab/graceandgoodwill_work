@@ -25,6 +25,7 @@ export interface CarerApplication {
 export interface ClientRequest {
   id: string;
   clientProfileId?: string;
+  clientId?: string;
   clientName: string;
   careType: string; // e.g., "Live-in Care", "Hourly Care"
   location: string;

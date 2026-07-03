@@ -285,10 +285,10 @@ function ClientDetailsContent() {
             {error || "The requested client could not be found."}
           </p>
           <button
-            onClick={() => router.push("/admin?tab=clients")}
+            onClick={() => router.push("/admin?tab=requests")}
             className="px-5 py-2.5 text-xs font-bold text-navy-950 bg-gold hover:bg-gold-200 rounded-xl transition duration-300 flex items-center gap-1.5 mx-auto"
           >
-            <ArrowLeft className="h-4 w-4" /> Back to Client Registry
+            <ArrowLeft className="h-4 w-4" /> Back to Client Requests
           </button>
         </div>
       </main>
@@ -304,10 +304,10 @@ function ClientDetailsContent() {
         <header className="rounded-2xl border border-gold-300/10 bg-gradient-to-r from-navy-900 via-navy-950 to-navy-900 p-6 shadow-soft backdrop-blur-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <Link
-              href="/admin?tab=clients"
+              href="/admin?tab=requests"
               className="inline-flex items-center gap-1 text-xs font-semibold text-gold/60 hover:text-gold transition duration-200 mb-2 cursor-pointer"
             >
-              <ArrowLeft className="h-3.5 w-3.5" /> Back to Client Registry
+              <ArrowLeft className="h-3.5 w-3.5" /> Back to Client Requests
             </Link>
             <h1 className="text-xl tracking-tight text-gold-200 sm:text-2xl font-bold flex items-center gap-2">
               <ShieldCheck className="h-6 w-6 text-gold" /> Client Details
@@ -619,15 +619,16 @@ function ClientDetailsContent() {
             </div>
           </section>
 
-          {/* INTERNAL NOTES MODULE */}
-          <section className="mt-8 rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md">
-            {client?.id ? (
-              <InternalNotes entityId={client.id} entityType="CLIENT" />
-            ) : (
-              <p className="text-sm text-gold-100/50">Client profile ID not found for notes.</p>
-            )}
-          </section>
         </div>
+        
+        {/* INTERNAL NOTES MODULE */}
+        <section className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md">
+          {client?.id ? (
+            <InternalNotes entityId={client.id} entityType="CLIENT" />
+          ) : (
+            <p className="text-sm text-gold-100/50">Client profile ID not found for notes.</p>
+          )}
+        </section>
       </div>
     </main>
   );

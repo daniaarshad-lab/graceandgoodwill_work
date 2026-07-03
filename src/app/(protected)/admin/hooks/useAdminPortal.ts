@@ -197,7 +197,8 @@ const mapBackendCareRequests = (careRequests: any[]): ClientRequest[] => {
 
     return {
       id: req.id,
-      clientProfileId: req.clientProfileId,
+      clientProfileId: req.clientProfileId || profile.id || req.clientId,
+      clientId: clientUser.id || profile.userId || req.clientId || req.userId,
       clientName:
         `${clientUser.firstName || ""} ${clientUser.lastName || ""}`.trim() ||
         "Unknown Client",

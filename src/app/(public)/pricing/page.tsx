@@ -12,6 +12,11 @@ const carerPlans = [
     price: "£0",
     period: "Forever",
     tagline: "Join the Grace & Goodwill network and apply for placements without any membership fee.",
+    highlights: [
+      "No bank details required",
+      "No membership fees",
+      "Apply for placements after approval",
+    ],
     features: [
       "Placement alerts by email",
       "Basic carer profile",
@@ -24,6 +29,7 @@ const carerPlans = [
     featured: false,
     premium: false,
     badge: "",
+    footerText: "No bank details are needed and you will never be charged for this membership.\nYour profile and compliance will be reviewed before approval.",
   },
   {
     name: "Gold Elite Membership",
@@ -58,13 +64,16 @@ const carerPlans = [
     features: [
       "Grace & Goodwill Verified Professional™ badge",
       "Contacted first for premium placements",
-      "Priority phone calls, email, and WhatsApp alerts",
+      "Priority phone calls for suitable placements",
+      "Priority email alerts for suitable placements",
+      "Priority WhatsApp placement alerts where available",
       "Priority matching opportunities",
       "Appear before all other carers in search results",
-      "Featured in client and emergency searches",
-      "Priority access to enhanced-rate emergency placements",
-      "Premium profile highlight with verified frame",
-      "Increased visibility across platform",
+      "Featured in client searches",
+      "Featured in emergency placements",
+      "Priority access to enhanced-rate emergency placements where available",
+      "Premium profile highlight with a bold verified frame",
+      "Increased visibility across the platform",
       "All Gold Elite Membership benefits included",
     ],
     cta: "Join Gold Elite + Verification",
@@ -204,32 +213,63 @@ export default function PricingPage() {
                   }}
                 />
 
-                <div className="mb-6 flex flex-col items-center gap-1">
-                  <span
-                    className={[
-                      "text-4xl font-bold tracking-tight leading-none transition-colors duration-500 font-serif",
-                      plan.featured || plan.premium
-                        ? "text-gold-50 group-hover:text-white"
-                        : "text-gold-200 group-hover:text-gold-100",
-                    ].join(" ")}
-                  >
-                    {plan.price}
-                  </span>
-                  {plan.period && (
-                    <span className="text-xs font-medium text-gold-200/50 uppercase tracking-widest mt-2">
-                      {plan.period}
-                    </span>
-                  )}
-                  {plan.premium && (
-                    <span className="text-[11px] font-bold text-gold-200/80 mt-1 uppercase tracking-wide">
-                      Total value: £39.99/month (VAT Included)
-                    </span>
+                <div className="mb-6 flex flex-col items-center gap-1 min-h-[76px] justify-center">
+                  {plan.premium ? (
+                    <>
+                      <span className="text-3xl font-bold tracking-tight leading-none transition-colors duration-500 font-serif text-gold-50 group-hover:text-white">
+                        Earned Status
+                      </span>
+                      <span className="text-[11px] font-bold text-gold-200/80 uppercase tracking-wider bg-gold-400/10 px-3 py-1 rounded-full border border-gold-400/15 mt-3">
+                        +£10/m • Total Value £39.99/m
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <span
+                        className={[
+                          "text-4xl font-bold tracking-tight leading-none transition-colors duration-500 font-serif",
+                          plan.featured
+                            ? "text-gold-50 group-hover:text-white"
+                            : "text-gold-200 group-hover:text-gold-100",
+                        ].join(" ")}
+                      >
+                        {plan.price}
+                      </span>
+                      {plan.period && (
+                        <span className="text-xs font-medium text-gold-200/50 uppercase tracking-widest mt-2">
+                          {plan.period}
+                        </span>
+                      )}
+                    </>
                   )}
                 </div>
 
                 {/* Feature list with clean whitespace spacing */}
                 <div className="mb-10 flex-1 flex flex-col justify-center min-h-[220px]">
                   <ul className="flex flex-col space-y-4">
+                    {(plan as any).highlights?.map((highlight: string) => (
+                      <li
+                        key={highlight}
+                        className="flex items-start gap-4 text-sm text-gold-100/85 leading-relaxed font-light"
+                      >
+                        <span
+                          className="mt-0.5 flex h-4.5 w-4.5 flex-shrink-0 items-center justify-center rounded-full"
+                          style={{ background: "rgba(160,128,84,0.10)" }}
+                        >
+                          <Check
+                            className="h-3 w-3"
+                            style={{ color: "#A08054" }}
+                            strokeWidth={2.5}
+                          />
+                        </span>
+                        <span className="font-semibold text-gold-200">{highlight}</span>
+                      </li>
+                    ))}
+                    
+                    {(plan as any).highlights && (
+                      <div className="h-px w-full bg-gold-400/10 my-4" />
+                    )}
+
                     {plan.features.map((feature) => (
                       <li
                         key={feature}
@@ -263,6 +303,11 @@ export default function PricingPage() {
 
                 {/* CTA button - guaranteed to align at the bottom because of flex-1 above */}
                 <div className="mt-auto">
+                  {(plan as any).footerText && (
+                    <div className="mb-4 text-[10px] text-gold-100/50 leading-relaxed font-light text-center whitespace-pre-line border-t border-gold-300/5 pt-3">
+                      {(plan as any).footerText}
+                    </div>
+                  )}
                   <Button
                     asChild
                     variant={

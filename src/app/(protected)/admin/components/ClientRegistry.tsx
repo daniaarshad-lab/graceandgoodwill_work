@@ -135,7 +135,7 @@ export default function ClientRegistry({
       render: (client) => (
         <Link
           href={`/admin/clients/${client.id}`}
-          className="inline-flex items-center gap-1.5 rounded-xl bg-gold text-navy-950 px-3.5 py-1.5 text-[11px] font-bold hover:bg-gold-200 transition duration-200 cursor-pointer"
+          className="inline-flex items-center gap-1.5 rounded-xl bg-gold text-navy-950 px-3.5 py-1.5 text-[11px] font-bold hover:bg-gold-200 transition duration-200 cursor-pointer whitespace-nowrap"
         >
           View Details <ArrowUpRight className="w-3 h-3" />
         </Link>
@@ -191,7 +191,7 @@ export default function ClientRegistry({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full min-w-0">
       {/* Header Actions */}
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gold-300/10 pb-4">
         <div>

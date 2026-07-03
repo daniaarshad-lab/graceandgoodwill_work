@@ -52,7 +52,7 @@ function DateCell({
   // ─── Inner cell classes 
   const cellClasses = [
     "relative flex items-center justify-center",
-    "w-9 h-9",
+    "w-7 h-7 sm:w-9 sm:h-9",
     "text-sm select-none",
     "transition-all duration-200 ease-out z-10",
   ];

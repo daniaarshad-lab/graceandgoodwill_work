@@ -53,15 +53,15 @@ export default function ClientRequests({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full min-w-0">
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gold-300/10 pb-4">
         <div>
-          <h3 className="text-xl font-bold text-gold-200">
+          <h3 className="text-lg md:text-xl font-bold text-gold-200 mb-1.5">
             Client Care Requests
           </h3>
-          <p className="text-xs text-gold-100/50">
-            Manage incoming family requests, support needs, and triage urgent
-            assignments
+          <p className="text-xs text-gold-100/50 max-w-xl leading-relaxed">
+            Review incoming requests from clients and match them with suitable
+            carers.
           </p>
         </div>
 
@@ -140,8 +140,8 @@ export default function ClientRequests({
                   <span className="text-gold-100/40 font-semibold uppercase">
                     Care Type:
                   </span>
-                  <span className="text-gold-200 font-medium">
-                    {req.careType}
+                  <span className="text-gold-200 font-medium text-right ml-4">
+                    {Array.isArray(req.careType) ? req.careType.join(", ") : req.careType}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-xs pt-1">

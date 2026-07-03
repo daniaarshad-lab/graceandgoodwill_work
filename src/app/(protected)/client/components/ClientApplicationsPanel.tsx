@@ -70,7 +70,7 @@ export default function ClientApplicationsPanel() {
   if (careRequestsLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 space-y-4">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-gold-DEFAULT"></div>
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-gold"></div>
         <p className="text-sm text-gold-100/60">Loading care requests...</p>
       </div>
     );
@@ -78,12 +78,12 @@ export default function ClientApplicationsPanel() {
 
   return (
     <SectionCard className="space-y-6">
-      <div className="flex items-start justify-between border-b border-gold-300/10 pb-4">
-        <div>
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 border-b border-gold-300/10 pb-4">
+        <div className="max-w-2xl">
           <h3 className="text-xl font-bold text-gold-200">
             Carer Applications
           </h3>
-          <p className="text-xs text-gold-100/50 mt-1">
+          <p className="text-xs text-gold-100/50 mt-1 leading-relaxed">
             View applications for your Client-Managed care requests. Grace & Goodwill
             managed requests will have their matches handled by our team.
           </p>
@@ -92,6 +92,7 @@ export default function ClientApplicationsPanel() {
           variant="ghost-gold"
           size="sm"
           fullWidth={false}
+          className="self-start shrink-0"
           onClick={() => {
             dispatch(fetchCareRequests());
             if (selectedRequestId) {
@@ -126,23 +127,23 @@ export default function ClientApplicationsPanel() {
             >
               {/* Request Header (Clickable) */}
               <div
-                className="p-5 flex items-center justify-between cursor-pointer"
+                className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer"
                 onClick={() => handleSelectRequest(req.id)}
               >
-                <div>
-                  <h4 className="text-base font-bold text-gold-200">
+                <div className="min-w-0 flex-1">
+                  <h4 className="text-base font-bold text-gold-200 break-words leading-tight">
                     {req.careCategory || "Care Request"}
                   </h4>
-                  <div className="flex items-center gap-4 mt-2 text-xs text-gold-100/60">
-                    <div className="flex items-center gap-1.5">
+                  <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-2.5 text-xs text-gold-100/60">
+                    <div className="flex items-center gap-1.5 shrink-0">
                       <Calendar className="w-3.5 h-3.5 text-gold-200/40" />
                       <span>{formatDate(req.startDate)}</span>
                     </div>
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1.5 shrink-0">
                       <Clock className="w-3.5 h-3.5 text-gold-200/40" />
                       <span>{req.duration || "Ongoing"}</span>
                     </div>
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1.5 shrink-0">
                       <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${
                         req.status === "ACTIVE" 
                           ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
@@ -156,10 +157,11 @@ export default function ClientApplicationsPanel() {
                   </div>
                 </div>
                 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 self-end sm:self-auto shrink-0">
                   <div className="flex items-center gap-1.5 text-xs font-semibold text-gold-200 bg-navy-950 px-3 py-1.5 rounded-lg border border-gold-300/10">
-                    <Users className="w-3.5 h-3.5 text-gold-DEFAULT" />
-                    View Applications
+                    <Users className="w-3.5 h-3.5 text-gold" />
+                    <span className="hidden sm:inline">View Applications</span>
+                    <span className="sm:hidden">Apps</span>
                   </div>
                   {selectedRequestId === req.id ? (
                     <ChevronDown className="w-5 h-5 text-gold-200/60" />

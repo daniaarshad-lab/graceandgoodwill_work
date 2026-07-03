@@ -1,3 +1,4 @@
+import Button from "@/components/Button";
 import SectionCard from "./shared/SectionCard";
 import StatusBadge from "./shared/StatusBadge";
 import { CareRequest } from "@/types/client.types";
@@ -124,12 +125,13 @@ export default function DashboardOverview({
           </div>
         </div>
 
-        <button
+        <Button
+          variant="primary"
           onClick={() => setActiveTab("enquiry")}
-          className="w-full rounded-xl bg-gold-DEFAULT py-3 text-xs font-semibold text-navy-950 hover:bg-gold-300 transition duration-300 shadow-elegant"
-        >
-          Create New Enquiry
-        </button>
+          text="Create New Enquiry"
+          fullWidth
+          className="py-3"
+        />
       </SectionCard>
 
       <SectionCard className="md:col-span-3 space-y-4">

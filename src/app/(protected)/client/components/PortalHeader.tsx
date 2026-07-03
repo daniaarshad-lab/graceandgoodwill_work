@@ -112,17 +112,17 @@ export default function PortalHeader({ user }: PortalHeaderProps) {
           />
         </label>
 
-        <div>
-          <p className="text-xs uppercase tracking-[0.3em] text-gold-300">
+        <div className="min-w-0 flex-1">
+          <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.3em] text-gold-300 truncate">
             Family & Client Portal
           </p>
 
-          <h1 className="text-2xl sm:text-3xl text-gold-50 mt-1">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gold-50 mt-1 leading-tight truncate">
             Welcome back, {displayUser?.firstName || "Family"}{" "}
             {displayUser?.lastName || ""}
           </h1>
 
-          <p className="body-small text-gold-100/60 mt-1">
+          <p className="text-xs sm:text-sm text-gold-100/60 mt-1 truncate">
             {displayUser?.email}
           </p>
         </div>

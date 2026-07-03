@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAdminPortal, AdminTabType } from "./hooks/useAdminPortal";
 
@@ -64,6 +64,57 @@ function AdminDashboardContent() {
   const { user } = useAuth();
   const portal = useAdminPortal();
 
+  const scrollRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    
+    const onWheel = (e: WheelEvent) => {
+      if (e.deltaY !== 0 && e.deltaX === 0) {
+        e.preventDefault();
+        el.scrollLeft += e.deltaY;
+      }
+    };
+    
+    let isDown = false;
+    let startX = 0;
+    let scrollLeftPos = 0;
+
+    const onMouseDown = (e: MouseEvent) => {
+      isDown = true;
+      startX = e.pageX - el.offsetLeft;
+      scrollLeftPos = el.scrollLeft;
+    };
+    const onMouseLeave = () => {
+      isDown = false;
+    };
+    const onMouseUp = () => {
+      isDown = false;
+    };
+    const onMouseMove = (e: MouseEvent) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - el.offsetLeft;
+      const walk = (x - startX) * 2;
+      el.scrollLeft = scrollLeftPos - walk;
+    };
+    
+    el.addEventListener('wheel', onWheel, { passive: false });
+    el.addEventListener('mousedown', onMouseDown);
+    el.addEventListener('mouseleave', onMouseLeave);
+    el.addEventListener('mouseup', onMouseUp);
+    el.addEventListener('mousemove', onMouseMove);
+    
+    return () => {
+      el.removeEventListener('wheel', onWheel);
+      el.removeEventListener('mousedown', onMouseDown);
+      el.removeEventListener('mouseleave', onMouseLeave);
+      el.removeEventListener('mouseup', onMouseUp);
+      el.removeEventListener('mousemove', onMouseMove);
+    };
+  }, []);
+
   // Local state to track matching confirmation flow
   const [matchingRequest, setMatchingRequest] = useState<any | null>(null);
   const [matchingCarer, setMatchingCarer] = useState<any | null>(null);
@@ -87,24 +138,26 @@ function AdminDashboardContent() {
         {/* --- PREMIUM PORTAL HEADER --- */}
         <header className="rounded-2xl border border-gold-300/10 bg-gradient-to-r from-navy-900 via-navy-950 to-navy-900 p-6 shadow-soft backdrop-blur-md">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="space-y-1">
-              <span className="rounded-full bg-gold/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-gold border border-gold/20">
+            <div className="space-y-3">
+              <span className="inline-block rounded-full bg-gold/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-gold border border-gold/20">
                 Administrative Control Panel
               </span>
-              <h1 className="text-2xl tracking-tight text-gold-200 sm:text-3xl">
+              <h1 className="text-2xl font-serif tracking-tight text-gold-200 sm:text-3xl">
                 Grace & Goodwill Admin Portal
               </h1>
-              <p className="text-sm text-gold-100/50">
-                Welcome, Admin {user?.firstName || "System Controller"} •
-                Authorization Level: Tier 1
-              </p>
+              <div className="text-xs sm:text-sm text-gold-100/50 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                <span>Welcome, Admin {user?.firstName || "System Controller"}</span>
+                <span className="hidden sm:inline">•</span>
+                <span className="text-gold-200/60 font-medium">Authorization Level: Tier 1</span>
+              </div>
             </div>
           </div>
         </header>
 
         {/* --- NAVIGATION TABS BAR --- */}
         <nav
-          className="flex flex-nowrap items-center gap-1 border-b border-gold-300/10 pb-1 overflow-x-auto overflow-y-hidden"
+          ref={scrollRef}
+          className="flex flex-nowrap items-center gap-1 border-b border-gold-300/10 pb-1 overflow-x-auto overflow-y-hidden admin-tabs-nav"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           <style>{`.admin-tabs-nav::-webkit-scrollbar { display: none; }`}</style>

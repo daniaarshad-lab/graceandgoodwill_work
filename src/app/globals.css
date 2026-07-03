@@ -71,6 +71,7 @@
 
   html {
     height: 100%;
+    overflow-x: hidden;
   }
 
   @media (max-width: 639px) {
@@ -87,6 +88,7 @@
     background-attachment: fixed;
     background-repeat: no-repeat;
     color: #e8ba7a;
+    overflow-x: hidden;
   }
 
   * {
@@ -497,7 +499,7 @@
     padding: 36px 28px;
     width: 100%;
     border-radius: 24px;
-    justify-content: center;
+    justify-content: flex-start;
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: rgba(160, 128, 84, 0.18) transparent;
@@ -538,7 +540,7 @@
   .asl-right {
     padding: 28px 20px 36px;
     border-radius: 20px;
-    justify-content: center;
+    justify-content: flex-start;
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: rgba(160, 128, 84, 0.18) transparent;

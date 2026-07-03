@@ -95,24 +95,24 @@ export default function ComplianceVault({
                   return (
                     <div
                       key={doc.id}
-                      className={`p-4 rounded-xl border border-gold-300/10 bg-navy-950/40 flex justify-between items-center gap-4 transition-opacity ${isDeleting ? "opacity-50 pointer-events-none" : ""
+                      className={`p-4 rounded-xl border border-gold-300/10 bg-navy-950/40 flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-4 transition-opacity ${isDeleting ? "opacity-50 pointer-events-none" : ""
                         }`}
                     >
-                      <div className="flex items-center gap-3 overflow-hidden">
+                      <div className="flex items-center gap-3 overflow-hidden w-full sm:w-auto">
                         <div className="shrink-0 h-10 w-10 rounded-lg bg-gold-DEFAULT/10 border border-gold-DEFAULT/20 flex items-center justify-center text-gold-DEFAULT">
                           <FileText className="w-5 h-5" />
                         </div>
-                        <div className="overflow-hidden">
+                        <div className="overflow-hidden min-w-0 flex-1">
                           <h4 className="text-xs font-semibold text-gold-50 truncate">
                             {doc.name}
                           </h4>
-                          <p className="text-[9px] text-gold-100/40 mt-0.5">
+                          <p className="text-[9px] text-gold-100/40 mt-0.5 truncate">
                             {doc.category ? doc.category.split("_").map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" ") : "Document"} • {doc.size}
                           </p>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2 shrink-0">
+                      <div className="flex flex-wrap items-center gap-2 shrink-0 w-full sm:w-auto mt-2 sm:mt-0 justify-end sm:justify-start">
                         {doc.status === "verified" ? (
                           <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[8px] font-bold uppercase tracking-wider text-emerald-400 border border-emerald-500/20">
                             Verified

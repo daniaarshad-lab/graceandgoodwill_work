@@ -31,7 +31,6 @@ export function useClientPortal({ user }: UseClientPortalProps) {
   const [careDuration, setCareDuration] = useState("");
   const [careAddress, setCareAddress] = useState("");
   const [careNotes, setCareNotes] = useState("");
-  const [adminMatching, setAdminMatching] = useState(true);
   const [isOngoing, setIsOngoing] = useState(false);
   const [weeklyPayRange, setWeeklyPayRange] = useState<{ min: number; max: number } | null>(null);
 
@@ -158,8 +157,7 @@ export function useClientPortal({ user }: UseClientPortalProps) {
     isCareSubmitting,
     handleCareSubmit,
 
-    adminMatching,
-    setAdminMatching,
+
     isOngoing,
     setIsOngoing,
     weeklyPayRange,

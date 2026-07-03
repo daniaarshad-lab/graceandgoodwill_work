@@ -320,9 +320,17 @@ export const carerService = {
     }
     if (payload.drivingPreferences && Array.isArray(payload.drivingPreferences)) {
       payload.drivingPreferences.forEach((pref: string) => {
-        formData.append("drivingPreferences", pref);
+        // Append with [] so backend parses it as an array even if it has only one element
+        formData.append("drivingPreferences[]", pref);
       });
     }
+
+    // Log the FormData entries before sending, as requested
+    console.log("--- FormData Entries for Step 2 ---");
+    for (const pair of formData.entries()) {
+      console.log(pair[0], pair[1]);
+    }
+    console.log("-----------------------------------");
 
     return apiFetch("/carer/profile/step-2", {
       method: "POST",

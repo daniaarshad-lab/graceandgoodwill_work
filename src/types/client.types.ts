@@ -27,6 +27,10 @@ export interface ClientProfile {
   updatedAt: string;
   adminMatching?: boolean;
 
+  isLifetimeFeePaid?: boolean;
+  lifetimeFeeInvoiceId?: string | null;
+  defaultWeeklyFee?: number | null;
+
   user?: ClientUser;
 }
 

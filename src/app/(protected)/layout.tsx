@@ -3,6 +3,7 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ReduxProvider from "@/store/ReduxProvider";
+import AgreementsGuard from "@/guards/AgreementsGuard";
 
 export default function ProtectedLayout({
   children,
@@ -12,9 +13,11 @@ export default function ProtectedLayout({
   return (
     <ReduxProvider>
       <AuthProvider>
-        <SiteHeader />
-        <div className="flex-grow">{children}</div>
-        <SiteFooter />
+        <AgreementsGuard>
+          <SiteHeader />
+          <div className="flex-grow">{children}</div>
+          <SiteFooter />
+        </AgreementsGuard>
       </AuthProvider>
     </ReduxProvider>
   );

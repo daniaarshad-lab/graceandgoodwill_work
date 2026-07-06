@@ -1,6 +1,4 @@
-"use client";
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Placement } from "../types/admin.types";
 
 interface Invoice {
@@ -24,46 +22,43 @@ import { showSuccessToast, showErrorToast } from "@/utils/toast";
 export default function BillingManagement({
   placements,
 }: BillingManagementProps) {
-  // Pre-seed some mock invoices
-  const [invoices, setInvoices] = useState<Invoice[]>([
-    {
-      id: "INV-2026-001",
-      clientName: "Eleanor Vance",
-      carerName: "Sarah Connor",
-      hours: 40,
-      rate: 15.0,
-      amount: 600.0,
-      status: "Paid",
-      dueDate: "2026-06-01",
-    },
-    {
-      id: "INV-2026-002",
-      clientName: "Arthur Dent",
-      carerName: "Ford Prefect",
-      hours: 35,
-      rate: 18.0,
-      amount: 630.0,
-      status: "Pending",
-      dueDate: "2026-06-15",
-    },
-    {
-      id: "INV-2026-003",
-      clientName: "Thomas Wayne",
-      carerName: "Alfred Pennyworth",
-      hours: 50,
-      rate: 25.0,
-      amount: 1250.0,
-      status: "Overdue",
-      dueDate: "2026-05-28",
-    },
-  ]);
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [transactions, setTransactions] = useState<any[]>([]);
+  const [loadingInvoices, setLoadingInvoices] = useState(true);
 
-  // Form states for generating a new invoice
-  const [selectedPlacementId, setSelectedPlacementId] = useState("");
-  const [hours, setHours] = useState("");
-  const [customRate, setCustomRate] = useState("");
-  const [dueDate, setDueDate] = useState("");
-  const [successMsg, setSuccessMsg] = useState("");
+  const loadInvoices = async () => {
+    try {
+      setLoadingInvoices(true);
+      const data = await adminService.getAdminInvoices();
+      const mapped = data.map((inv: any) => ({
+        id: inv.invoiceNumber || inv.id,
+        clientName: inv.clientProfile?.user 
+          ? `${inv.clientProfile.user.firstName} ${inv.clientProfile.user.lastName}` 
+          : "Client Registration",
+        carerName: inv.carerProfile?.user 
+          ? `${inv.carerProfile.user.firstName} ${inv.carerProfile.user.lastName}` 
+          : "Platform Fee",
+        hours: inv.hoursLogged || 0,
+        rate: Number(inv.dailyRate || 0),
+        amount: Number(inv.total || inv.amount || 0),
+        status: (inv.status === "PAID" ? "Paid" : (inv.status === "PENDING" ? "Pending" : "Overdue")) as "Paid" | "Pending" | "Overdue",
+        dueDate: inv.invoiceDate ? new Date(inv.invoiceDate).toLocaleDateString() : "",
+      }));
+      setInvoices(mapped);
+
+      const txData = await adminService.getAdminTransactions();
+      setTransactions(txData);
+    } catch (e) {
+      console.error("Failed to load admin invoices", e);
+    } finally {
+      setLoadingInvoices(false);
+    }
+  };
+
+  useEffect(() => {
+    loadInvoices();
+  }, []);
+
   const [triggeringBilling, setTriggeringBilling] = useState(false);
 
   // Statistics
@@ -77,46 +72,6 @@ export default function BillingManagement({
   const totalOverdue = invoices
     .filter((inv) => inv.status === "Overdue")
     .reduce((sum, inv) => sum + inv.amount, 0);
-
-  // Generate Invoice Handler
-  const handleGenerateInvoice = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedPlacementId || !hours || !dueDate) {
-      alert("Please fill in all required fields.");
-      return;
-    }
-
-    const placement = placements.find((p) => p.id === selectedPlacementId);
-    if (!placement) return;
-
-    const rateVal = parseFloat(customRate) || 15.0; // default rate
-    const hoursVal = parseFloat(hours);
-    const amountVal = hoursVal * rateVal;
-
-    const newInvoice: Invoice = {
-      id: `INV-2026-00${invoices.length + 1}`,
-      clientName: placement.clientName,
-      carerName: placement.carerName,
-      hours: hoursVal,
-      rate: rateVal,
-      amount: amountVal,
-      status: "Pending",
-      dueDate: dueDate,
-    };
-
-    setInvoices((prev) => [newInvoice, ...prev]);
-    setSuccessMsg(
-      `Successfully generated invoice ${newInvoice.id} for £${amountVal.toFixed(2)}`,
-    );
-
-    // Reset fields
-    setSelectedPlacementId("");
-    setHours("");
-    setCustomRate("");
-    setDueDate("");
-
-    setTimeout(() => setSuccessMsg(""), 5000);
-  };
 
   const handleMarkAsPaid = (id: string) => {
     setInvoices((prev) =>
@@ -149,6 +104,7 @@ export default function BillingManagement({
             try {
               const res = await adminService.triggerBillingRun();
               showSuccessToast("Billing Run Triggered", res.message || "Billing run completed successfully.");
+              await loadInvoices();
             } catch (err: any) {
               showErrorToast("Billing Run Failed", err.message || "An error occurred.");
             } finally {
@@ -391,95 +347,53 @@ export default function BillingManagement({
           </div>
         </div>
 
-        {/* GENERATE NEW INVOICE FORM */}
+        {/* TRANSACTION LOGS PANEL */}
         <div className="space-y-4">
           <div className="rounded-2xl border border-gold-300/10 bg-navy-900/40 p-6 shadow-soft backdrop-blur-md">
             <h3 className="text-lg font-bold text-gold-200 mb-4">
-              Generate Placement Invoice
+              Real-Time Transaction Audit
             </h3>
+            <p className="text-xs text-gold-100/50 mb-4 leading-relaxed">
+              Every card payment, platform registration fee, and carer subscription renewal processed via Stripe is recorded below for administrative auditing.
+            </p>
 
-            {successMsg && (
-              <div className="mb-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-xs text-emerald-400">
-                {successMsg}
-              </div>
-            )}
+            <div className="space-y-3 max-h-96 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-navy-800">
+              {transactions.length === 0 ? (
+                <p className="text-xs text-gold-100/30 text-center py-6">No transaction logs captured yet.</p>
+              ) : (
+                transactions.map((tx) => (
+                  <div key={tx.id} className="p-3.5 rounded-xl border border-gold-300/5 bg-navy-950/60 text-xs space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="font-semibold text-gold-100">
+                        {tx.user ? `${tx.user.firstName} ${tx.user.lastName}` : "User"}
+                      </span>
+                      <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase ${
+                        tx.status === "SUCCESS" 
+                          ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                          : "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                      }`}>
+                        {tx.status}
+                      </span>
+                    </div>
 
-            <form onSubmit={handleGenerateInvoice} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-gold-100/50 mb-1.5">
-                  Select Active Placement *
-                </label>
-                <select
-                  required
-                  value={selectedPlacementId}
-                  onChange={(e) => setSelectedPlacementId(e.target.value)}
-                  className="w-full rounded-xl border border-gold-300/10 bg-navy-950 px-3 py-2.5 text-xs text-gold-100 focus:border-gold focus:outline-none"
-                >
-                  <option value="">-- Choose Placement --</option>
-                  {placements
-                    .filter(
-                      (p) => p.status === "Active" || p.status === "Matched",
-                    )
-                    .map((p) => (
-                      <option key={p.id} value={p.id}>
-                        {p.clientName} (Carer: {p.carerName})
-                      </option>
-                    ))}
-                </select>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-gold-100/50 mb-1.5">
-                    Hours Worked *
-                  </label>
-                  <input
-                    type="number"
-                    required
-                    min="1"
-                    step="0.5"
-                    placeholder="e.g. 40"
-                    value={hours}
-                    onChange={(e) => setHours(e.target.value)}
-                    className="w-full rounded-xl border border-gold-300/10 bg-navy-950 px-3 py-2.5 text-xs text-gold-100 focus:border-gold focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-gold-100/50 mb-1.5">
-                    Hourly Rate (£)
-                  </label>
-                  <input
-                    type="number"
-                    min="5"
-                    step="0.5"
-                    placeholder="Default: 15.00"
-                    value={customRate}
-                    onChange={(e) => setCustomRate(e.target.value)}
-                    className="w-full rounded-xl border border-gold-300/10 bg-navy-950 px-3 py-2.5 text-xs text-gold-100 focus:border-gold focus:outline-none"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-gold-100/50 mb-1.5">
-                  Invoice Due Date *
-                </label>
-                <input
-                  type="date"
-                  required
-                  value={dueDate}
-                  onChange={(e) => setDueDate(e.target.value)}
-                  className="w-full rounded-xl border border-gold-300/10 bg-navy-950 px-3 py-2.5 text-xs text-gold-100 focus:border-gold focus:outline-none"
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="w-full rounded-xl bg-gold hover:bg-gold-600 px-4 py-3 text-xs font-bold tracking-wider uppercase text-navy-950 shadow-elegant transition-all mt-2"
-              >
-                Create Invoice
-              </button>
-            </form>
+                    <div className="space-y-1 text-[11px] text-gold-100/60">
+                      <div className="flex justify-between">
+                        <span>Type:</span>
+                        <span className="font-semibold text-white">{tx.type}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Amount:</span>
+                        <span className="font-bold text-gold">£{Number(tx.amount).toFixed(2)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Date:</span>
+                        <span>{new Date(tx.createdAt).toLocaleString()}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
         </div>
       </div>

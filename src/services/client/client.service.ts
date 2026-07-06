@@ -312,4 +312,42 @@ export const clientService = {
       headers: { Authorization: `Bearer ${token}` },
     });
   },
+
+  async getInvoices(): Promise<any[]> {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+
+    return apiFetch("/client/invoices", {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  },
+
+  async createLifetimeFeeCheckout(successUrl: string, cancelUrl: string): Promise<{ url: string }> {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+
+    return apiFetch("/client/billing/lifetime-fee/checkout", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ successUrl, cancelUrl }),
+    });
+  },
+
+  async subscribeToPlacement(placementId: string, successUrl: string, cancelUrl: string): Promise<{ url: string }> {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+
+    return apiFetch(`/client/placements/${placementId}/subscribe`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ successUrl, cancelUrl }),
+    });
+  },
 };

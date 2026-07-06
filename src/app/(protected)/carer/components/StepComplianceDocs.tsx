@@ -24,7 +24,6 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
 
   const requiredDocs = [
     { type: DocumentFileType.ENHANCED_DBS_CERTIFICATE, label: "Enhanced DBS Certificate *" },
-    { type: DocumentFileType.CV_RESUME, label: "CV / Resume *" },
     { type: DocumentFileType.PROFESSIONAL_REFERENCE_1, label: "Professional Reference 1 *" },
     { type: DocumentFileType.PROFESSIONAL_REFERENCE_2, label: "Professional Reference 2 *" },
   ];

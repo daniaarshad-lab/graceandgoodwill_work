@@ -10,6 +10,8 @@ import {
 import {
   fetchCarerReferralsThunk,
   submitCarerReferralThunk,
+  submitClientReferralThunk,
+  fetchClientReferralsThunk,
   resetReferralStatus,
 } from "@/store/slices/referralSlice";
 import { useCarerPortal } from "../hooks/useCarerPortal";
@@ -18,12 +20,14 @@ import { showSuccessToast, showErrorToast } from "@/utils/toast";
 import PortalHeader from "../components/PortalHeader";
 import PortalTabs from "../components/PortalTabs";
 import ReferralFormCarer from "@/components/referrals/ReferralFormCarer";
+import ReferralFormClient from "@/components/referrals/ReferralFormClient";
 import ReferralDashboard from "@/components/referrals/ReferralDashboard";
 
 function CarerReferralsContent() {
   const { user } = useAuth();
   const dispatch = useAppDispatch();
   const [statusFilter, setStatusFilter] = useState("ALL");
+  const [activeAccordion, setActiveAccordion] = useState<"CARER" | "CLIENT" | null>("CARER");
 
   // Load profiles, documents on mount
   useEffect(() => {
@@ -37,10 +41,11 @@ function CarerReferralsContent() {
   // Load referrals when statusFilter changes
   useEffect(() => {
     dispatch(fetchCarerReferralsThunk(statusFilter));
+    dispatch(fetchClientReferralsThunk(statusFilter));
   }, [dispatch, statusFilter]);
 
   const { profile, documents } = useAppSelector((state) => state.carer);
-  const { carerReferrals, loading, submitting } = useAppSelector(
+  const { carerReferrals, clientReferrals, loading, submitting } = useAppSelector(
     (state) => state.referral,
   );
 
@@ -64,6 +69,22 @@ function CarerReferralsContent() {
     }
   };
 
+  const handleClientReferralSubmit = async (data: {
+    firstName: string;
+    lastName: string;
+    email: string;
+  }): Promise<boolean> => {
+    try {
+      await dispatch(submitClientReferralThunk(data)).unwrap();
+      showSuccessToast("Client referred successfully.");
+      dispatch(fetchCarerReferralsThunk(statusFilter));
+      return true;
+    } catch (err: any) {
+      showErrorToast("Submission Failed", err || "Failed to submit referral");
+      return false;
+    }
+  };
+
   return (
     <main className="min-h-screen bg-navy-950 py-10 text-gold-100">
       <div className="container-wrapper space-y-8">
@@ -77,21 +98,98 @@ function CarerReferralsContent() {
 
         <PortalTabs activeTab="referrals" />
 
-        <div className="grid grid-cols-1 lg:grid-cols-10 gap-8 items-stretch lg:min-h-[750px]">
-          <div className="lg:col-span-4 h-full">
-            <ReferralFormCarer
-              onSubmit={handleReferralSubmit}
-              submitting={submitting}
-            />
+        <div className="flex flex-col gap-6">
+          {/* Accordion 1: Carer Referrals */}
+          <div className="flex flex-col">
+            <button
+              onClick={() => setActiveAccordion((prev) => (prev === "CARER" ? null : "CARER"))}
+              className={`w-full flex items-center justify-between rounded-2xl border border-gold-300/10 p-5 sm:p-6 transition-all duration-300 focus:outline-none group ${activeAccordion === "CARER" ? "bg-navy-900/60 shadow-elegant border-gold-300/30" : "bg-navy-900/40 hover:bg-navy-900/60"
+                }`}
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 shrink-0 rounded-xl bg-gradient-to-br from-gold-300/20 to-gold-200/5 border border-gold-300/20 flex items-center justify-center text-lg text-gold-DEFAULT group-hover:scale-105 transition-transform">
+                  👥
+                </div>
+                <div className="text-left">
+                  <h2 className="text-lg sm:text-xl font-bold text-gold-200 tracking-wide">
+                    Refer a Carer                  </h2>
+                </div>
+              </div>
+              <div className={`transform transition-transform duration-300 ${activeAccordion === "CARER" ? "rotate-180" : ""}`}>
+                <svg className="w-5 h-5 text-gold-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </button>
+
+            <div className={`grid transition-all duration-500 ease-in-out ${activeAccordion === "CARER" ? "grid-rows-[1fr] opacity-100 mt-6" : "grid-rows-[0fr] opacity-0"}`}>
+              <div className="overflow-hidden">
+                <div className="grid grid-cols-1 lg:grid-cols-10 gap-8 items-stretch pb-2">
+                  <div className="lg:col-span-4 h-full">
+                    <ReferralFormCarer
+                      onSubmit={handleReferralSubmit}
+                      submitting={submitting}
+                    />
+                  </div>
+                  <div className="lg:col-span-6 h-full rounded-3xl border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md">
+                    <ReferralDashboard
+                      referrals={carerReferrals}
+                      loading={loading}
+                      filterType="CARER"
+                      statusFilter={statusFilter}
+                      onStatusFilterChange={setStatusFilter}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="lg:col-span-6 h-full rounded-3xl border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md">
-            <ReferralDashboard
-              referrals={carerReferrals}
-              loading={loading}
-              filterType="CARER"
-              statusFilter={statusFilter}
-              onStatusFilterChange={setStatusFilter}
-            />
+
+          {/* Accordion 2: Client Referrals */}
+          <div className="flex flex-col">
+            <button
+              onClick={() => setActiveAccordion((prev) => (prev === "CLIENT" ? null : "CLIENT"))}
+              className={`w-full flex items-center justify-between rounded-2xl border border-gold-300/10 p-5 sm:p-6 transition-all duration-300 focus:outline-none group ${activeAccordion === "CLIENT" ? "bg-navy-900/60 shadow-elegant border-gold-300/30" : "bg-navy-900/40 hover:bg-navy-900/60"
+                }`}
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 shrink-0 rounded-xl bg-gradient-to-br from-gold-300/20 to-gold-200/5 border border-gold-300/20 flex items-center justify-center text-lg text-gold-DEFAULT group-hover:scale-105 transition-transform">
+                  ❤️
+                </div>
+                <div className="text-left">
+                  <h2 className="text-lg sm:text-xl font-bold text-gold-200 tracking-wide">
+                    Refer a Client
+                  </h2>
+                </div>
+              </div>
+              <div className={`transform transition-transform duration-300 ${activeAccordion === "CLIENT" ? "rotate-180" : ""}`}>
+                <svg className="w-5 h-5 text-gold-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </button>
+
+            <div className={`grid transition-all duration-500 ease-in-out ${activeAccordion === "CLIENT" ? "grid-rows-[1fr] opacity-100 mt-6" : "grid-rows-[0fr] opacity-0"}`}>
+              <div className="overflow-hidden">
+                <div className="grid grid-cols-1 lg:grid-cols-10 gap-8 items-stretch pb-2">
+                  <div className="lg:col-span-4 h-full">
+                    <ReferralFormClient
+                      onSubmit={handleClientReferralSubmit}
+                      submitting={submitting}
+                    />
+                  </div>
+                  <div className="lg:col-span-6 h-full rounded-3xl border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md">
+                    <ReferralDashboard
+                      referrals={clientReferrals}
+                      loading={loading}
+                      filterType="CLIENT"
+                      statusFilter={statusFilter}
+                      onStatusFilterChange={setStatusFilter}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

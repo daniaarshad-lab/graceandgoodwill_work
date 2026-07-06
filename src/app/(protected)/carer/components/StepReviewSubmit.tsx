@@ -72,7 +72,6 @@ export default function StepReviewSubmit({
   // Professional Compliance check
   const requiredCompliance = [
     DocumentFileType.ENHANCED_DBS_CERTIFICATE,
-    DocumentFileType.CV_RESUME,
     DocumentFileType.PROFESSIONAL_REFERENCE_1,
     DocumentFileType.PROFESSIONAL_REFERENCE_2,
   ];

@@ -130,7 +130,7 @@ export default function ReferralDashboard({
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-gold-300/5 pb-3">
           <div>
             <h3 className="text-xl font-bold text-gold-200 tracking-tight">
-              Referral History
+              {filterType === "CARER" ? "Carer Referral History" : filterType === "CLIENT" ? "Client Referral History" : "Referral History"}
             </h3>
             <p className="text-xs text-gold-100/50 mt-0.5">
               Review and track all your referred candidates.

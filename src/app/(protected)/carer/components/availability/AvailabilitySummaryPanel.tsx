@@ -12,7 +12,7 @@ interface AvailabilitySummaryPanelProps {
   onRemoveRange: (range: DateRange) => void;
   onSave: () => void;
   onQuickAction: (
-    action: "next3" | "next7" | "next30" | "clear",
+    action: "next2" | "next7" | "next30" | "clear",
   ) => void;
   isSaving: boolean;
   hasChanges: boolean;
@@ -56,7 +56,7 @@ export default function AvailabilitySummaryPanel({
       <div className="flex flex-wrap gap-1.5 mb-4">
         {(
           [
-            { key: "next3", label: "Next 3 Days" },
+            { key: "next2", label: "Next 2 Days" },
             { key: "next7", label: "Next 7 Days" },
             { key: "next30", label: "Next 30 Days" },
           ] as const

@@ -103,15 +103,15 @@ export default function AvailabilitySchedule({
   }, []);
 
   const handleQuickAction = useCallback(
-    (action: "next3" | "next7" | "next30" | "clear") => {
+    (action: "next2" | "next7" | "next30" | "clear") => {
       const today = new Date();
       const todayStr = toISODateString(today);
       setRangeStart(null); // Clear pending selection in all cases
 
       switch (action) {
-        case "next3": {
+        case "next2": {
           const end = new Date(today);
-          end.setDate(end.getDate() + 2);
+          end.setDate(end.getDate() + 1);
           const dates = expandRange(todayStr, toISODateString(end));
           setSelectedDates(new Set(dates));
           break;
@@ -172,7 +172,7 @@ export default function AvailabilitySchedule({
   const isValid = useMemo(() => {
     const ranges = groupDatesIntoRanges(selectedDatesArray);
     if (ranges.length === 0) return false;
-    return ranges.every((range) => rangeDayCount(range) >= 3);
+    return ranges.every((range) => rangeDayCount(range) >= 2);
   }, [selectedDatesArray]);
 
   // ─── Render ────────────────────────────────────────────────────────────────
@@ -200,7 +200,7 @@ export default function AvailabilitySchedule({
             </div>
             <div className="flex-1 space-y-1">
               <p className="text-xs font-semibold text-gold-200">
-                Please provide a minimum of 3 consecutive available days.
+                Please provide a minimum of 2 consecutive available days.
               </p>
               <p className="text-xs text-gold-100/60 leading-relaxed font-light">
                 We recommend adding as much future availability as possible, ideally several months in advance, so families can plan care well ahead of time and view your future availability.
@@ -223,7 +223,7 @@ export default function AvailabilitySchedule({
               />
               {!isValid && (
                 <p className="text-red-500 text-xs font-semibold mt-4">
-                  Please provide a minimum of 3 consecutive available days.
+                  Please provide a minimum of 2 consecutive available days.
                 </p>
               )}
             </div>

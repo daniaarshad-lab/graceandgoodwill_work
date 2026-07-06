@@ -178,7 +178,7 @@ export default function AvailabilitySchedule({
   // ─── Render ────────────────────────────────────────────────────────────────
 
   return (
-    <SectionCard className="max-w-6xl mx-auto !p-0 overflow-hidden">
+    <SectionCard className="w-full !p-0 overflow-hidden">
       <div className="flex flex-col lg:flex-row min-h-[560px]">
         {/* Left: Calendar */}
         <div className="flex-1 p-4 sm:p-6 lg:p-8 flex flex-col">

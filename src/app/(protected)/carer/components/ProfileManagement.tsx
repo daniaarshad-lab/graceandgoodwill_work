@@ -74,7 +74,7 @@ export default function ProfileManagement({
   );
 
   return (
-    <SectionCard className="max-w-3xl mx-auto space-y-6">
+    <SectionCard className="w-full space-y-6">
       <h3 className="text-lg font-bold text-gold-200 border-b border-gold-300/10 pb-4">
         Personal Profile Management
       </h3>
@@ -160,29 +160,8 @@ export default function ProfileManagement({
             <label className="text-sm font-medium text-gold-200">
               Do you drive?
             </label>
-            <div className="flex gap-4">
-              <label className="flex items-center gap-2 text-gold-100">
-                <input
-                  type="radio"
-                  name="canDrive"
-                  value="yes"
-                  checked={canDrive === "yes"}
-                  onChange={() => setCanDrive("yes")}
-                  className="text-gold-DEFAULT focus:ring-gold-DEFAULT bg-navy-950 border-gray-300/20"
-                />
-                Yes
-              </label>
-              <label className="flex items-center gap-2 text-gold-100">
-                <input
-                  type="radio"
-                  name="canDrive"
-                  value="no"
-                  checked={canDrive === "no"}
-                  onChange={() => setCanDrive("no")}
-                  className="text-gold-DEFAULT focus:ring-gold-DEFAULT bg-navy-950 border-gray-300/20"
-                />
-                No
-              </label>
+            <div className="text-gold-50 font-medium">
+              {canDrive === "yes" ? "Yes" : canDrive === "no" ? "No" : "Not Specified"}
             </div>
           </div>
 

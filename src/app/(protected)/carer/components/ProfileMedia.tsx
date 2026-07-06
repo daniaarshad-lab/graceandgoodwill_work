@@ -48,7 +48,7 @@ export default function ProfileMedia({
 
   return (
     <>
-      <SectionCard className="max-w-3xl mx-auto space-y-6 mt-6">
+      <SectionCard className="w-full space-y-6 mt-6">
         <div className="border-b border-gold-300/10 pb-4 flex justify-between items-end">
           <div>
             <h3 className="text-lg font-bold text-gold-200">Media</h3>

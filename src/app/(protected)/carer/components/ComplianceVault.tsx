@@ -64,7 +64,7 @@ export default function ComplianceVault({
       )}
 
       {/* Main Document Upload Grid */}
-      <div className="max-w-4xl mx-auto">
+      <div className="w-full">
         {/* Vault Documents List */}
         <SectionCard className="h-[600px] flex flex-col">
           <h3 className="text-lg font-bold text-gold-200 border-b border-gold-300/10 pb-4 mb-4">
@@ -123,7 +123,7 @@ export default function ComplianceVault({
                           </span>
                         ) : (
                           <span className="rounded-full bg-gold-DEFAULT/10 px-2 py-0.5 text-[8px] font-bold uppercase tracking-wider text-gold-DEFAULT border border-gold-DEFAULT/20">
-                            Pending
+                            Pending Admin review
                           </span>
                         )}
 

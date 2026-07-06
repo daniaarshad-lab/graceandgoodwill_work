@@ -113,7 +113,7 @@ export default function DashboardOverview({
           size="sm"
           fullWidth
         >
-          Renew / Review Plan
+          Renew & Review Plan
         </Button>
       </SectionCard>
 

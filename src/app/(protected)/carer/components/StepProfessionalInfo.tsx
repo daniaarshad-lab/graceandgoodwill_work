@@ -28,27 +28,77 @@ export default function StepProfessionalInfo({
   const [submitted, setSubmitted] = useState(false);
 
   const parsedExp = parseInt(experience, 10);
-  const selectedArray = ((specialties as string) || "")
+  const rawSpecialties = ((specialties as string) || "")
     .split(",")
     .map((s: string) => s.trim())
     .filter(Boolean);
 
+  const predefinedSelected = rawSpecialties.filter((s) =>
+    PREDEFINED_SPECIALISMS.includes(s)
+  );
+  let customSelected = rawSpecialties
+    .filter((s) => !PREDEFINED_SPECIALISMS.includes(s))
+    .join(", ");
+
+  const hasOther = customSelected.length > 0 || rawSpecialties.includes("Other");
+  if (customSelected === "Other") {
+    customSelected = "";
+  }
+
+  const dropdownStr = [...predefinedSelected, hasOther ? "Other" : ""]
+    .filter(Boolean)
+    .join(", ");
+
+  const handleDropdownChange = (valStr: string) => {
+    const selected = valStr.split(",").map((s) => s.trim()).filter(Boolean);
+    const newHasOther = selected.includes("Other");
+    
+    const newPredefined = selected.filter((s) => s !== "Other");
+    const newTotal = [...newPredefined];
+    
+    if (newHasOther) {
+      if (customSelected.trim()) {
+        newTotal.push(customSelected.trim());
+      } else {
+        newTotal.push("Other");
+      }
+    }
+    
+    setSpecialties(newTotal.join(", "));
+  };
+
+  const handleOtherChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    const newTotal = [...predefinedSelected];
+    if (val.trim()) {
+      newTotal.push(val.trim());
+    } else {
+      newTotal.push("Other");
+    }
+    setSpecialties(newTotal.join(", "));
+  };
+
   const errors = {
     bio:
       !bio || bio.trim().length < 50
-        ? "Professional Summary / About Me is required (minimum 50 characters)."
+        ? "Professional Profile is required (minimum 50 characters)."
         : "",
     experience:
       experience === undefined ||
         experience === null ||
         experience === "" ||
         isNaN(parsedExp) ||
-        parsedExp < 0
-        ? "Years of Care Experience must be a non-negative number."
+        parsedExp < 0 ||
+        parsedExp > 99
+        ? "Years of Care Experience must be a number between 0 and 99."
         : "",
-    specialties:
-      selectedArray.length === 0
+    specialtiesDropdown:
+      rawSpecialties.length === 0
         ? "Please select at least one Care Specialism."
+        : "",
+    specialtiesOther:
+      hasOther && !customSelected.trim()
+        ? "Please specify your other specialism."
         : "",
   };
 
@@ -79,7 +129,7 @@ export default function StepProfessionalInfo({
         <div className="space-y-4">
           <div className="space-y-3">
             <label className="text-base font-bold text-gold-200 flex items-center gap-2">
-              Professional Summary / About Me{" "}
+              Professional Profile{" "}
               <span className="text-red-400">*</span>
             </label>
 
@@ -113,19 +163,37 @@ export default function StepProfessionalInfo({
               label="Years of Care Experience *"
               type="number"
               value={experience}
-              onChange={(e) => setExperience(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (/^\d{0,2}$/.test(val)) {
+                  setExperience(val);
+                }
+              }}
+              min="0"
+              max="99"
               placeholder="e.g. 5"
               error={
                 submitted && errors.experience ? errors.experience : undefined
               }
             />
-            <MultiSelectDropdown
-              selectedStr={specialties}
-              onChange={setSpecialties}
-              error={
-                submitted && errors.specialties ? errors.specialties : undefined
-              }
-            />
+            <div className="flex flex-col gap-4">
+              <MultiSelectDropdown
+                selectedStr={dropdownStr}
+                onChange={handleDropdownChange}
+                error={
+                  submitted && errors.specialtiesDropdown ? errors.specialtiesDropdown : undefined
+                }
+              />
+              {hasOther && (
+                <Input
+                  label="Specify Other Specialism *"
+                  value={customSelected}
+                  onChange={handleOtherChange}
+                  placeholder="Enter specialism"
+                  error={submitted && errors.specialtiesOther ? errors.specialtiesOther : undefined}
+                />
+              )}
+            </div>
           </div>
         </div>
       </SectionCard>
@@ -142,7 +210,7 @@ export default function StepProfessionalInfo({
   );
 }
 
-const specialismOptions = [
+const PREDEFINED_SPECIALISMS = [
   "Personal Care",
   "Companion Care",
   "Dementia Care",
@@ -154,6 +222,7 @@ const specialismOptions = [
   "Respite Care",
   "Post-Hospital Care",
   "Disability Care",
+  "Spinal Injury Care",
   "Complex Care",
   "24-Hour Care",
   "Overnight Care",
@@ -162,6 +231,8 @@ const specialismOptions = [
   "Rehabilitation Care",
   "Elderly Care",
 ];
+
+const specialismOptions = [...PREDEFINED_SPECIALISMS, "Other"];
 
 function MultiSelectDropdown({
   selectedStr,

@@ -66,35 +66,58 @@ function DocUploadRow({ label, type, portal }: { label: string, type: string, po
   const doc = complianceDocs.find((d: ComplianceDoc) => d.type === type);
   const isStaged = !!selectedFiles[type.toLowerCase()];
   
+  const isOther = type === DocumentFileType.OTHER_RELEVANT;
+  const [certName, setCertName] = React.useState(doc?.name || "");
+
   return (
-    <div className="p-4 rounded-xl border border-gold-300/10 bg-navy-950/40 flex flex-col gap-2">
-      <div className="flex justify-between items-start">
+    <div className="p-4 rounded-xl border border-gold-300/10 bg-navy-950/40 flex flex-col gap-2 h-full">
+      <div className="flex justify-between items-start mb-1">
         <span className="text-sm font-medium text-gold-50">{label}</span>
         {doc ? (
-          <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+          <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20 whitespace-nowrap ml-2">
             Uploaded
           </span>
         ) : isStaged ? (
-          <span className="text-[10px] font-bold text-gold-400 bg-gold-500/10 px-2 py-0.5 rounded-full border border-gold-500/20">
+          <span className="text-[10px] font-bold text-gold-400 bg-gold-500/10 px-2 py-0.5 rounded-full border border-gold-500/20 whitespace-nowrap ml-2">
             Selected
           </span>
         ) : null}
       </div>
-      <label className="cursor-pointer text-xs font-semibold text-gold-DEFAULT hover:text-gold-200 inline-block mt-1">
-        {doc ? "Update File" : isStaged ? "Change Selected" : "Choose File"}
-        <input 
-          type="file" 
-          accept=".pdf,.png,.jpg,.jpeg" 
-          className="hidden" 
-          onChange={(e) => {
-            if (doc) {
-              handleUpdateDoc(doc.id, type, e);
-            } else {
-              stageDocUpload(type, e);
-            }
-          }} 
-        />
-      </label>
+
+      {isOther && (
+        <div className="mb-2">
+          <input
+            type="text"
+            value={certName}
+            onChange={(e) => {
+               setCertName(e.target.value);
+               if (portal.setOtherRelevantName) {
+                 portal.setOtherRelevantName(e.target.value);
+               }
+            }}
+            placeholder="Enter certificate name"
+            className="w-full rounded-lg border border-gray-300/20 bg-navy-900 px-3 py-2 text-gold-100 outline-none focus:ring-1 focus:ring-gold-DEFAULT transition duration-300 text-xs"
+          />
+        </div>
+      )}
+
+      <div className="mt-auto">
+        <label className="cursor-pointer text-xs font-semibold text-gold-DEFAULT hover:text-gold-200 inline-block">
+          {doc ? "Update File" : isStaged ? "Change Selected" : "Choose File"}
+          <input
+            type="file"
+            accept=".pdf,.png,.jpg,.jpeg"
+            className="hidden"
+            onChange={(e) => {
+              if (doc) {
+                handleUpdateDoc(doc.id, type, e);
+              } else {
+                stageDocUpload(type, e);
+              }
+            }}
+          />
+        </label>
+      </div>
     </div>
   );
 }

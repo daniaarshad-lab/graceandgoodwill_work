@@ -33,7 +33,7 @@ export default function OnboardingMembership({
         // 2. Create Stripe Checkout session redirecting back to step 10 on success
         const successUrl = `${window.location.origin}/carer?onboarding=true&step=10`;
         const cancelUrl = `${window.location.origin}/carer?onboarding=true&step=9`;
-        
+
         const session = await carerService.createCheckoutSession("GOLD_ELITE", successUrl, cancelUrl);
         if (session && session.url) {
           window.location.href = session.url;
@@ -57,7 +57,7 @@ export default function OnboardingMembership({
       price: "£0",
       period: "Forever",
       icon: Shield,
-      tagline: "Join the Grace & Goodwill network and apply for placements without any membership fee.",
+      tagline: "Join the Grace & Goodwill network and apply for placements without any charges.",
       features: [
         "Placement alerts by email",
         "Basic carer profile",
@@ -217,9 +217,8 @@ export default function OnboardingMembership({
                   if (plan.isPremium) return; // Do not allow selecting Verified Professional during onboarding
                   setSelectedPlan(plan.name);
                 }}
-                className={`relative flex flex-col justify-between rounded-3xl p-6 sm:p-8 border transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group ${
-                  plan.isPremium ? "cursor-default" : "cursor-pointer"
-                } ${getCardStyles()}`}
+                className={`relative flex flex-col justify-between rounded-3xl p-6 sm:p-8 border transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group ${plan.isPremium ? "cursor-default" : "cursor-pointer"
+                  } ${getCardStyles()}`}
                 style={{ background: getCardBg() }}
               >
                 {/* Radial Glow on Gold / Premium Cards */}
@@ -236,11 +235,10 @@ export default function OnboardingMembership({
                 {plan.badge && (
                   <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20 whitespace-nowrap">
                     <span
-                      className={`inline-flex items-center rounded-full px-5 py-1 text-[10px] font-bold uppercase tracking-widest shadow-md text-navy-950 border ${
-                        plan.isPremium
-                          ? "border-gold-300/40 shadow-[0_0_15px_rgba(212,175,55,0.25)] text-navy-950"
-                          : "border-gold-300/30"
-                      }`}
+                      className={`inline-flex items-center rounded-full px-5 py-1 text-[10px] font-bold uppercase tracking-widest shadow-md text-navy-950 border ${plan.isPremium
+                        ? "border-gold-300/40 shadow-[0_0_15px_rgba(212,175,55,0.25)] text-navy-950"
+                        : "border-gold-300/30"
+                        }`}
                       style={{
                         background: "linear-gradient(135deg, #e8ba7a 0%, #d4af37 100%)",
                       }}
@@ -287,7 +285,7 @@ export default function OnboardingMembership({
                             Earned Status
                           </span>
                           <span className="text-[10px] font-bold text-gold-200/80 uppercase tracking-wider bg-gold-400/10 px-2.5 py-0.5 rounded-full border border-gold-400/15 mt-1.5">
-                            +£10/m • Total Value {plan.totalPrice}/m
+                            +£10/Month • Total Value {plan.totalPrice}/Month
                           </span>
                         </>
                       ) : (
@@ -310,7 +308,7 @@ export default function OnboardingMembership({
                           Notice:
                         </span>
                         <span className="text-[11px] text-gold-100/80 font-light block leading-snug">
-                          Requires active Gold Elite membership.
+                          Available to eligible Gold Elite members after meeting Grace & Goodwill's verification requirements.
                         </span>
                       </div>
                     )}
@@ -426,9 +424,8 @@ export default function OnboardingMembership({
               {comparisonRows.map((row, idx) => (
                 <tr
                   key={row.name}
-                  className={`border-b border-gold-300/5 hover:bg-navy-900/20 transition-colors ${
-                    idx % 2 === 0 ? "bg-transparent" : "bg-navy-950/20"
-                  }`}
+                  className={`border-b border-gold-300/5 hover:bg-navy-900/20 transition-colors ${idx % 2 === 0 ? "bg-transparent" : "bg-navy-950/20"
+                    }`}
                 >
                   <td className="p-4 md:p-5 text-xs text-gold-100 font-medium">{row.name}</td>
                   <td className="p-4 md:p-5 text-center">

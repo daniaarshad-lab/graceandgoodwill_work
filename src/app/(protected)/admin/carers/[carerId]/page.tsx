@@ -27,6 +27,8 @@ import {
   MessageSquare,
   MessageCircle,
   CheckCircle2,
+  Camera,
+  Video,
 } from "lucide-react";
 import InternalNotes from "../../components/shared/InternalNotes/InternalNotes";
 
@@ -62,12 +64,30 @@ function CarerDetailsContent() {
     (state) => state.admin.selectedCarer
   );
 
-  const [activeTab, setActiveTab] = useState<"profile" | "documents">("profile");
+  const [activeTab, setActiveTab] = useState<"profile" | "documents" | "media">("profile");
   const [approvingCarer, setApprovingCarer] = useState(false);
 
   // Dynamic placement data from backend
   const [carerPlacements, setCarerPlacements] = useState<any[]>([]);
   const [placementsLoading, setPlacementsLoading] = useState(false);
+
+  const [mediaUpdateRequests, setMediaUpdateRequests] = useState([
+    {
+      id: "req-1",
+      mediaType: "Profile Picture",
+      reason: "I have taken a more professional headshot for my profile.",
+      requestedOn: new Date().toISOString(),
+      status: "Pending",
+    }
+  ]);
+
+  const handleApproveMedia = (id: string) => {
+    setMediaUpdateRequests((prev) => prev.filter((r) => r.id !== id));
+  };
+
+  const handleRejectMedia = (id: string) => {
+    setMediaUpdateRequests((prev) => prev.filter((r) => r.id !== id));
+  };
 
   useEffect(() => {
     if (carerId) {
@@ -459,6 +479,15 @@ function CarerDetailsContent() {
               }`}
           >
             Compliance Documents ({rawDocs.length})
+          </button>
+          <button
+            onClick={() => setActiveTab("media")}
+            className={`px-5 py-3 text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap cursor-pointer ${activeTab === "media"
+              ? "border-b-2 border-gold text-gold bg-gold/5"
+              : "text-gold-200/60 hover:text-gold-50"
+              }`}
+          >
+            Media
           </button>
         </nav>
 
@@ -872,6 +901,93 @@ function CarerDetailsContent() {
                     )}
                   </tbody>
                 </table>
+              </div>
+            </div>
+          )}
+
+          {activeTab === "media" && (
+            <div className="space-y-6">
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-navy-900/40 p-6 rounded-2xl border border-gold-300/10 flex flex-col items-center text-center shadow-soft">
+                  <h4 className="text-sm font-semibold text-gold-50 mb-6">Profile Picture</h4>
+                  <div className="relative w-32 h-32 mb-6">
+                    <div className="w-full h-full rounded-full bg-navy-950 flex flex-col items-center justify-center border-4 border-navy-950 shadow-xl z-10 relative">
+                      <Camera className="w-8 h-8 text-gold-DEFAULT/40" />
+                      <span className="text-[10px] text-gold-DEFAULT/40 mt-2 font-medium tracking-wider">MOCK PHOTO</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-center gap-1.5 text-emerald-400 font-medium text-xs mb-6 bg-emerald-400/10 px-3 py-1 rounded-full border border-emerald-400/20">
+                    <CheckCircle2 className="w-3.5 h-3.5" /> Approved
+                  </div>
+                </div>
+
+                <div className="bg-navy-900/40 p-6 rounded-2xl border border-gold-300/10 flex flex-col items-center text-center shadow-soft">
+                  <h4 className="text-sm font-semibold text-gold-50 mb-6">Introduction Video</h4>
+                  <div className="w-full max-w-[240px] h-32 mb-6 rounded-2xl border-2 border-dashed border-gold-DEFAULT/20 bg-navy-950/50 flex flex-col items-center justify-center relative overflow-hidden group-hover:border-gold-DEFAULT/40 transition-colors">
+                    <Video className="w-8 h-8 text-gold-DEFAULT/30 mb-2" />
+                    <span className="text-[10px] text-gold-DEFAULT/40 font-medium tracking-wider text-center px-4">
+                      MOCK VIDEO PREVIEW
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-center gap-1.5 text-emerald-400 font-medium text-xs mb-6 bg-emerald-400/10 px-3 py-1 rounded-full border border-emerald-400/20">
+                    <CheckCircle2 className="w-3.5 h-3.5" /> Approved
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-6">
+                <div className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md flex flex-col">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-gold-200/50 border-b border-gold-300/5 pb-3 flex items-center gap-2 shrink-0">
+                    <FileText className="h-4 w-4 text-gold/60" /> Media Update Request
+                  </h3>
+
+                  <div className="mt-4">
+                    {mediaUpdateRequests.length === 0 ? (
+                      <div className="text-center py-6 text-gold-100/40 text-xs italic">
+                        No media update requests.
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {mediaUpdateRequests.map((req) => (
+                          <div key={req.id} className="bg-navy-950/40 border border-gold-300/10 rounded-xl p-4 flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+                            <div className="space-y-3 flex-1 min-w-0">
+                              <div className="flex flex-wrap gap-2 items-center">
+                                <span className="text-xs font-bold text-gold-200">{req.mediaType}</span>
+                                <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-gold/10 text-gold border border-gold/20">
+                                  {req.status}
+                                </span>
+                                <span className="text-[10px] text-gold-100/40 font-semibold ml-auto md:ml-0">
+                                  Requested On: {new Date(req.requestedOn).toLocaleDateString("en-GB")}
+                                </span>
+                              </div>
+                              <div className="space-y-1">
+                                <span className="text-[9px] uppercase font-bold tracking-wider text-gold-100/40 block">Reason</span>
+                                <p className="text-xs text-gold-100/70 leading-relaxed italic border-l border-gold/30 pl-3 py-0.5">
+                                  "{req.reason}"
+                                </p>
+                              </div>
+                            </div>
+                            <div className="flex gap-2 w-full md:w-auto mt-2 md:mt-0 shrink-0">
+                              <button
+                                onClick={() => handleRejectMedia(req.id)}
+                                className="flex-1 md:flex-none px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-lg border border-rose-500/20 text-rose-400 hover:bg-rose-500/10 transition-colors"
+                              >
+                                Reject
+                              </button>
+                              <button
+                                onClick={() => handleApproveMedia(req.id)}
+                                className="flex-1 md:flex-none px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-900/30 transition-colors"
+                              >
+                                Approve
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           )}

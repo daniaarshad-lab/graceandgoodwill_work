@@ -13,6 +13,7 @@ import { showErrorToast } from "@/utils/toast";
 
 import DashboardOverview from "./components/DashboardOverview";
 import ProfileManagement from "./components/ProfileManagement";
+import ProfileMedia from "./components/ProfileMedia";
 import ComplianceVault from "./components/ComplianceVault";
 import AvailabilitySchedule from "./components/AvailabilitySchedule";
 import UploadDocumentModal from "./components/UploadDocumentModal";
@@ -517,35 +518,44 @@ function CarerDashboardContent() {
           )}
 
           {activeTab === "profile" && (
-            <ProfileManagement
-              firstName={portal.firstName}
-              setFirstName={portal.setFirstName}
-              lastName={portal.lastName}
-              setLastName={portal.setLastName}
-              email={portal.email}
-              setEmail={portal.setEmail}
-              phone={portal.phone}
-              setPhone={portal.setPhone}
-              bio={portal.bio}
-              setBio={portal.setBio}
-              specialties={portal.specialties}
-              setSpecialties={portal.setSpecialties}
-              experience={portal.experience}
-              setExperience={portal.setExperience}
-              address={portal.address}
-              setAddress={portal.setAddress}
-              canDrive={portal.canDrive}
-              setCanDrive={portal.setCanDrive}
-              hasBusinessInsurance={portal.hasBusinessInsurance}
-              setHasBusinessInsurance={portal.setHasBusinessInsurance}
-              complianceDocs={portal.complianceDocs}
-              handleDocUpload={portal.handleDocUpload}
-              uploadingDocType={portal.uploadingDocType}
-              uploadProgress={portal.uploadProgress}
-              errors={portal.profileErrors}
-              isProfileSaving={portal.isProfileSaving}
-              onSubmit={portal.handleSaveProfile}
-              setActiveTab={setActiveTab}
+            <div className="space-y-8">
+              <ProfileManagement
+                firstName={portal.firstName}
+                setFirstName={portal.setFirstName}
+                lastName={portal.lastName}
+                setLastName={portal.setLastName}
+                email={portal.email}
+                setEmail={portal.setEmail}
+                phone={portal.phone}
+                setPhone={portal.setPhone}
+                bio={portal.bio}
+                setBio={portal.setBio}
+                specialties={portal.specialties}
+                setSpecialties={portal.setSpecialties}
+                experience={portal.experience}
+                setExperience={portal.setExperience}
+                address={portal.address}
+                setAddress={portal.setAddress}
+                canDrive={portal.canDrive}
+                setCanDrive={portal.setCanDrive}
+                hasBusinessInsurance={portal.hasBusinessInsurance}
+                setHasBusinessInsurance={portal.setHasBusinessInsurance}
+                complianceDocs={portal.complianceDocs}
+                handleDocUpload={portal.handleDocUpload}
+                uploadingDocType={portal.uploadingDocType}
+                uploadProgress={portal.uploadProgress}
+                errors={portal.profileErrors}
+                isProfileSaving={portal.isProfileSaving}
+                onSubmit={portal.handleSaveProfile}
+                setActiveTab={setActiveTab}
+              />
+            </div>
+          )}
+
+          {activeTab === "media" && (
+            <ProfileMedia
+              profilePhotoUrl={actualProfile?.profilePhotoUrl || profile?.profilePhotoUrl}
+              introVideoUrl={actualProfile?.introVideoUrl || profile?.introVideoUrl}
             />
           )}
 

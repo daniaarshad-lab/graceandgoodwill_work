@@ -6,6 +6,7 @@ import { useRef, useEffect } from "react";
 export type TabType =
   | "overview"
   | "profile"
+  | "media"
   | "compliance"
   | "availability"
   | "opportunities"
@@ -76,6 +77,7 @@ export default function PortalTabs({
   const tabs = [
     { id: "overview", label: "Overview", href: "/carer?tab=overview" },
     { id: "profile", label: "My Profile", href: "/carer?tab=profile" },
+    { id: "media", label: "Media", href: "/carer?tab=media" },
     {
       id: "compliance",
       label: "Compliance Vault",

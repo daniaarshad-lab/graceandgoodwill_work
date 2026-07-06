@@ -37,7 +37,8 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
 
   const errors = {
     missingDocs: missingDocs.length > 0 ? `Please upload: ${missingDocs.map(d => d.label.replace(" *", "")).join(", ")}` : "",
-    employmentHistory: (!employmentHistory || employmentHistory.trim().length < 20) ? "Please provide your employment history details (minimum 20 characters)." : ""
+    employmentHistory: (!employmentHistory || employmentHistory.trim().length < 20) ? "Please provide your employment history details (minimum 20 characters)." : "",
+    dbsNumber: dbsUpdateServiceNumber && dbsUpdateServiceNumber.length > 0 && dbsUpdateServiceNumber.length < 12 ? "DBS Update Service Number must be exactly 12 digits." : ""
   };
 
   const hasErrors = Object.values(errors).some(Boolean);
@@ -119,12 +120,28 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
         </div>
 
         <div className="space-y-4 pt-4 border-t border-gold-300/10">
-          <Input
-            label="DBS Update Service Number (if subscribed)"
-            value={dbsUpdateServiceNumber}
-            onChange={(e) => setDbsUpdateServiceNumber(e.target.value)}
-            placeholder="Enter DBS Update Service Number"
-          />
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gold-200">
+              DBS Update Service Number (if subscribed)
+            </label>
+            <p className="text-xs text-gold-100/60 mb-2">
+              Ensure this number corresponds to your uploaded Enhanced DBS Certificate.
+            </p>
+            <input
+              type="text"
+              value={dbsUpdateServiceNumber}
+              onChange={(e) => {
+                const val = e.target.value.replace(/\D/g, "").slice(0, 12);
+                setDbsUpdateServiceNumber(val);
+              }}
+              placeholder="Enter DBS Update Service Number"
+              maxLength={12}
+              className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 text-sm ${submitted && errors.dbsNumber ? 'border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]' : 'border-gray-300/20'}`}
+            />
+            {submitted && errors.dbsNumber && (
+              <p className="text-xs text-red-500 font-semibold mt-1">{errors.dbsNumber}</p>
+            )}
+          </div>
 
           <div className="space-y-2">
             <label className="text-sm font-medium text-gold-200">

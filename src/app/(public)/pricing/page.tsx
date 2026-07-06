@@ -11,7 +11,7 @@ const carerPlans = [
     name: "Free Membership",
     price: "£0",
     period: "Forever",
-    tagline: "Join the Grace & Goodwill network and apply for placements without any membership fee.",
+    tagline: "Join the Grace & Goodwill network and apply for placements without any charges.",
     highlights: [
       "No bank details required",
       "No membership fees",
@@ -135,12 +135,12 @@ export default function PricingPage() {
                 "relative flex flex-col rounded-3xl p-6 sm:p-8 lg:p-10 border group transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] transform h-full",
                 plan.featured
                   ? "border-gold-400/40 shadow-[0_15px_40px_rgba(212,175,55,0.08)] ring-1 ring-gold-muted/20 scale-[1.02] z-10 md:-translate-y-2 " +
-                    "hover:scale-[1.03] hover:-translate-y-3 hover:shadow-[0_20px_50px_rgba(212,175,55,0.15)] hover:border-gold-400/60"
+                  "hover:scale-[1.03] hover:-translate-y-3 hover:shadow-[0_20px_50px_rgba(212,175,55,0.15)] hover:border-gold-400/60"
                   : plan.premium
                     ? "border-gold-300/20 shadow-xl shadow-navy-950/50 scale-100 opacity-95 md:-translate-y-0 " +
-                      "hover:scale-[1.01] hover:-translate-y-1 hover:opacity-100 hover:border-gold-400/40 hover:shadow-[0_12px_40px_rgba(212,175,55,0.08)]"
+                    "hover:scale-[1.01] hover:-translate-y-1 hover:opacity-100 hover:border-gold-400/40 hover:shadow-[0_12px_40px_rgba(212,175,55,0.08)]"
                     : "border-gold-muted/15 shadow-md scale-100 opacity-80 md:translate-y-0 " +
-                      "hover:scale-[1.01] hover:-translate-y-1 hover:opacity-100 hover:border-gold-muted/30 hover:shadow-[0_12px_40px_rgba(160,128,84,0.06)]",
+                    "hover:scale-[1.01] hover:-translate-y-1 hover:opacity-100 hover:border-gold-muted/30 hover:shadow-[0_12px_40px_rgba(160,128,84,0.06)]",
               ].join(" ")}
               style={{
                 background: plan.featured
@@ -220,7 +220,7 @@ export default function PricingPage() {
                         Earned Status
                       </span>
                       <span className="text-[11px] font-bold text-gold-200/80 uppercase tracking-wider bg-gold-400/10 px-3 py-1 rounded-full border border-gold-400/15 mt-3">
-                        +£10/m • Total Value £39.99/m
+                        +£10/Month • Total Value £39.99/Month
                       </span>
                     </>
                   ) : (
@@ -265,7 +265,7 @@ export default function PricingPage() {
                         <span className="font-semibold text-gold-200">{highlight}</span>
                       </li>
                     ))}
-                    
+
                     {(plan as any).highlights && (
                       <div className="h-px w-full bg-gold-400/10 my-4" />
                     )}

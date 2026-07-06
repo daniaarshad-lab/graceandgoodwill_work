@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import SectionCard from "./shared/SectionCard";
 import Input from "@/components/Input";
 import PhoneInput from "@/components/PhoneInput";
+import Select from "@/components/Select";
 import Button from "@/components/Button";
 import { showErrorToast } from "@/utils/toast";
 
@@ -10,6 +11,34 @@ interface Props {
   onNext: () => void;
   onBack?: () => void;
 }
+
+const PREDEFINED_RELATIONSHIPS = [
+  "Spouse",
+  "Parent",
+  "Mother",
+  "Father",
+  "Son",
+  "Daughter",
+  "Brother",
+  "Sister",
+  "Grandparent",
+  "Grandchild",
+  "Aunt",
+  "Uncle",
+  "Cousin",
+  "Partner",
+  "Legal Guardian",
+  "Next of Kin",
+  "Friend",
+  "Neighbour",
+  "Carer"
+];
+
+const RELATIONSHIP_OPTIONS = [
+  { value: "", label: "Select relationship" },
+  ...PREDEFINED_RELATIONSHIPS.map(r => ({ value: r, label: r })),
+  { value: "Other", label: "Other" }
+];
 
 export default function StepPersonalInfo({ portal, onNext, onBack }: Props) {
   const {
@@ -38,6 +67,12 @@ export default function StepPersonalInfo({ portal, onNext, onBack }: Props) {
   const [postcodeSuggestions, setPostcodeSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  
+  const [dropdownRel, setDropdownRel] = useState<string>(() => {
+    if (!emergencyContactRelation) return "";
+    if (PREDEFINED_RELATIONSHIPS.includes(emergencyContactRelation)) return emergencyContactRelation;
+    return "Other";
+  });
 
   const handlePostcodeChange = async (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -311,23 +346,50 @@ export default function StepPersonalInfo({ portal, onNext, onBack }: Props) {
               placeholder="Phone"
               error={errors.emergencyContactNumber}
             />
-            <Input
-              label="Relationship *"
-              value={emergencyContactRelation}
-              onChange={(e) => {
-                const val = e.target.value;
-                setEmergencyContactRelation(val);
-                if (val.trim()) {
-                  setErrors((prev) => {
-                    const copy = { ...prev };
-                    delete copy.emergencyContactRelation;
-                    return copy;
-                  });
-                }
-              }}
-              placeholder="e.g. Spouse, Parent"
-              error={errors.emergencyContactRelation}
-            />
+            <div className="flex flex-col gap-4">
+              <Select
+                label="Relationship *"
+                value={dropdownRel}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setDropdownRel(val);
+                  if (val === "Other") {
+                    setEmergencyContactRelation("");
+                  } else {
+                    setEmergencyContactRelation(val);
+                    if (val.trim()) {
+                      setErrors((prev) => {
+                        const copy = { ...prev };
+                        delete copy.emergencyContactRelation;
+                        return copy;
+                      });
+                    }
+                  }
+                }}
+                options={RELATIONSHIP_OPTIONS}
+                error={dropdownRel !== "Other" ? errors.emergencyContactRelation : undefined}
+              />
+
+              {dropdownRel === "Other" && (
+                <Input
+                  label="Specify Relationship *"
+                  value={emergencyContactRelation}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setEmergencyContactRelation(val);
+                    if (val.trim()) {
+                      setErrors((prev) => {
+                        const copy = { ...prev };
+                        delete copy.emergencyContactRelation;
+                        return copy;
+                      });
+                    }
+                  }}
+                  placeholder="Enter relationship"
+                  error={errors.emergencyContactRelation}
+                />
+              )}
+            </div>
           </div>
         </div>
       </SectionCard>

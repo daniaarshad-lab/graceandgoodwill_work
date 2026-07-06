@@ -2,6 +2,8 @@ import { useState } from "react";
 import SectionCard from "./shared/SectionCard";
 import Button from "@/components/Button";
 import { Check, Star, Shield, Award, ShieldCheck, X, Sparkles, Medal } from "lucide-react";
+import { carerService } from "@/services/carer/carer.service";
+import { showErrorToast } from "@/utils/toast";
 
 interface OnboardingMembershipProps {
   selectedPlan: string | null;
@@ -19,6 +21,35 @@ export default function OnboardingMembership({
   isSubmitting,
 }: OnboardingMembershipProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleContinue = async () => {
+    setLoading(true);
+    try {
+      if (selectedPlan === "Gold Elite Membership") {
+        // 1. Save step 9 selection to database
+        await carerService.saveStep9Plan("GOLD_ELITE");
+
+        // 2. Create Stripe Checkout session redirecting back to step 10 on success
+        const successUrl = `${window.location.origin}/carer?onboarding=true&step=10`;
+        const cancelUrl = `${window.location.origin}/carer?onboarding=true&step=9`;
+        
+        const session = await carerService.createCheckoutSession("GOLD_ELITE", successUrl, cancelUrl);
+        if (session && session.url) {
+          window.location.href = session.url;
+        } else {
+          throw new Error("Invalid checkout session returned");
+        }
+      } else {
+        // Free Membership
+        await carerService.saveStep9Plan("FREE");
+        onNext();
+      }
+    } catch (err: any) {
+      showErrorToast("Error", err.message || "Failed to process membership selection");
+      setLoading(false);
+    }
+  };
 
   const plans = [
     {
@@ -92,15 +123,15 @@ export default function OnboardingMembership({
         "Grace & Goodwill Verified Professional™ badge",
         "Contacted first for premium placements",
         "Priority phone calls for suitable placements",
-        "Priority email alerts",
+        "Priority email alerts for suitable placements",
         "Priority WhatsApp placement alerts where available",
         "Priority matching opportunities",
         "Appear before all other carers in search results",
         "Featured in client searches",
         "Featured in emergency placements",
         "Priority access to enhanced-rate emergency placements where available",
-        "Premium profile highlight with verified frame",
-        "Increased visibility across platform",
+        "Premium profile highlight with a bold verified frame",
+        "Increased visibility across the platform",
         "All Gold Elite Membership benefits included",
       ],
       buttonText: "View Requirements & Benefits",
@@ -182,8 +213,13 @@ export default function OnboardingMembership({
             return (
               <div
                 key={plan.name}
-                onClick={() => setSelectedPlan(plan.name)}
-                className={`relative flex flex-col justify-between rounded-3xl p-6 sm:p-8 border transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group cursor-pointer ${getCardStyles()}`}
+                onClick={() => {
+                  if (plan.isPremium) return; // Do not allow selecting Verified Professional during onboarding
+                  setSelectedPlan(plan.name);
+                }}
+                className={`relative flex flex-col justify-between rounded-3xl p-6 sm:p-8 border transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group ${
+                  plan.isPremium ? "cursor-default" : "cursor-pointer"
+                } ${getCardStyles()}`}
                 style={{ background: getCardBg() }}
               >
                 {/* Radial Glow on Gold / Premium Cards */}
@@ -244,17 +280,27 @@ export default function OnboardingMembership({
                     <div className="h-px w-full bg-gradient-to-r from-transparent via-gold-400/20 to-transparent" />
 
                     {/* Pricing Display */}
-                    <div className="flex flex-col items-center gap-1.5 py-1">
-                      <span className="text-4xl font-bold tracking-tight leading-none text-gold-50 font-serif">
-                        {plan.price}
-                      </span>
-                      <span className="text-xs font-medium text-gold-200/50 uppercase tracking-widest">
-                        /{plan.period}
-                      </span>
-                      {plan.isPremium && (
-                        <span className="text-[10px] font-bold text-gold-200/80 uppercase tracking-wider bg-gold-400/10 px-2.5 py-0.5 rounded-full border border-gold-400/15 mt-1.5">
-                          Total Value: {plan.totalPrice}/month (VAT Inc.)
-                        </span>
+                    <div className="flex flex-col items-center gap-1.5 py-1 min-h-[64px] justify-center">
+                      {plan.isPremium ? (
+                        <>
+                          <span className="text-3xl font-bold tracking-tight leading-none text-gold-50 font-serif">
+                            Earned Status
+                          </span>
+                          <span className="text-[10px] font-bold text-gold-200/80 uppercase tracking-wider bg-gold-400/10 px-2.5 py-0.5 rounded-full border border-gold-400/15 mt-1.5">
+                            +£10/m • Total Value {plan.totalPrice}/m
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="text-4xl font-bold tracking-tight leading-none text-gold-50 font-serif">
+                            {plan.price}
+                          </span>
+                          {plan.period && (
+                            <span className="text-xs font-medium text-gold-200/50 uppercase tracking-widest">
+                              /{plan.period}
+                            </span>
+                          )}
+                        </>
                       )}
                     </div>
 
@@ -293,10 +339,18 @@ export default function OnboardingMembership({
                             ))}
                           </>
                         ) : plan.isPremium ? (
-                          <div className="text-center py-4 space-y-3">
-                            <p className="text-[11px] text-gold-100/50 leading-relaxed font-light max-w-[220px] mx-auto">
-                              This status requires a consecutive active history, DBS check, and verification.
+                          <div className="space-y-2 pt-1">
+                            <p className="text-[10px] text-gold-100/50 leading-relaxed font-light text-center mb-3 px-2">
+                              Requires active history and verification.
                             </p>
+                            {plan.benefits?.map((feature) => (
+                              <li key={feature} className="flex items-start gap-3.5 text-xs text-gold-100/85 leading-relaxed font-light">
+                                <span className="mt-0.5 flex h-4.5 w-4.5 flex-shrink-0 items-center justify-center rounded-full bg-gold-DEFAULT/15">
+                                  <Check className="h-3 w-3 text-gold-DEFAULT" strokeWidth={2.5} />
+                                </span>
+                                <span>{feature}</span>
+                              </li>
+                            ))}
                           </div>
                         ) : (
                           plan.features?.map((feature) => (
@@ -324,12 +378,11 @@ export default function OnboardingMembership({
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          setSelectedPlan(plan.name);
                           setIsModalOpen(true);
                         }}
                         className={`w-full py-3.5 px-3 rounded-xl font-bold tracking-wide transition-all duration-300 focus:outline-none text-[13px] ${getButtonStyles()}`}
                       >
-                        {isSelected ? "✓ Selected" : plan.buttonText}
+                        {plan.buttonText}
                       </button>
                     ) : (
                       <button
@@ -412,15 +465,15 @@ export default function OnboardingMembership({
           type="button"
           variant="ghost-gold"
           onClick={onBack}
-          disabled={isSubmitting}
+          disabled={isSubmitting || loading}
           text="Back"
         />
         <Button
           type="button"
           variant="primary"
-          text="Continue to Declaration"
-          onClick={onNext}
-          disabled={isSubmitting || !selectedPlan}
+          text={loading ? (selectedPlan === "Gold Elite Membership" ? "Redirecting to Stripe..." : "Saving Selection...") : "Continue to Declaration"}
+          onClick={handleContinue}
+          disabled={isSubmitting || loading || !selectedPlan}
         />
       </div>
 
@@ -527,15 +580,6 @@ export default function OnboardingMembership({
                 className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs font-bold text-gold-200 border border-gold-400/30 hover:border-gold-300 hover:text-gold-100 hover:bg-gold-400/5 transition-colors focus:outline-none"
               >
                 Close Details
-              </button>
-              <button
-                onClick={() => {
-                  setSelectedPlan("Grace & Goodwill Verified Professional™");
-                  setIsModalOpen(false);
-                }}
-                className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs font-bold bg-gold-200 text-navy-950 border border-gold-400/40 shadow-[0_4px_15px_rgba(245,212,160,0.25)] hover:bg-gold-100 hover:border-gold-300 hover:-translate-y-0.5 transition-all focus:outline-none"
-              >
-                Select Verified Professional & Close
               </button>
             </div>
           </div>

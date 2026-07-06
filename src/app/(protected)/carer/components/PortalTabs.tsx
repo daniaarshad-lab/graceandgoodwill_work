@@ -9,7 +9,8 @@ export type TabType =
   | "compliance"
   | "availability"
   | "opportunities"
-  | "referrals";
+  | "referrals"
+  | "membership";
 
 interface PortalTabsProps {
   activeTab: TabType;
@@ -89,6 +90,11 @@ export default function PortalTabs({
       id: "opportunities",
       label: "Placement Opportunities",
       href: "/carer?tab=opportunities",
+    },
+    {
+      id: "membership",
+      label: "Membership & Billing",
+      href: "/carer?tab=membership",
     },
     { id: "referrals", label: "Referral Program", href: "/carer/referrals" },
   ] as const;

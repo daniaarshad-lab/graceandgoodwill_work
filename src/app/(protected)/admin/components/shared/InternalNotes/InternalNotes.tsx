@@ -6,6 +6,8 @@ import { InternalNote, CreateInternalNotePayload, UpdateInternalNotePayload, Get
 import AddNoteModal from "./AddNoteModal";
 import EditNoteModal from "./EditNoteModal";
 import NoteDetailsModal from "./NoteDetailsModal";
+import { useAuth } from "@/contexts/AuthContext";
+import { NOTE_CATEGORIES } from "./AddNoteModal";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 
 interface InternalNotesProps {
@@ -14,6 +16,9 @@ interface InternalNotesProps {
 }
 
 export default function InternalNotes({ entityId, entityType }: InternalNotesProps) {
+  const { user } = useAuth();
+  const isSuperAdmin = user?.role === "SUPER_ADMIN";
+
   const [notes, setNotes] = useState<InternalNote[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -28,12 +33,14 @@ export default function InternalNotes({ entityId, entityType }: InternalNotesPro
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [priorityFilter, setPriorityFilter] = useState("ALL");
+  const [categoryFilter, setCategoryFilter] = useState("ALL");
   const [pinnedFilter, setPinnedFilter] = useState("ALL");
 
   const handleResetFilters = () => {
     setSearchQuery("");
     setStatusFilter("ALL");
     setPriorityFilter("ALL");
+    setCategoryFilter("ALL");
     setPinnedFilter("ALL");
   };
 
@@ -57,6 +64,7 @@ export default function InternalNotes({ entityId, entityType }: InternalNotesPro
       if (debouncedSearch) params.search = debouncedSearch;
       if (statusFilter !== "ALL") params.status = statusFilter;
       if (priorityFilter !== "ALL") params.priority = priorityFilter;
+      if (categoryFilter !== "ALL") params.category = categoryFilter;
       if (pinnedFilter === "PINNED") params.isPinned = true;
       
       const response = await adminService.getInternalNotes(params);
@@ -81,7 +89,7 @@ export default function InternalNotes({ entityId, entityType }: InternalNotesPro
       fetchNotes();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [entityId, entityType, debouncedSearch, statusFilter, priorityFilter, pinnedFilter]);
+  }, [entityId, entityType, debouncedSearch, statusFilter, priorityFilter, categoryFilter, pinnedFilter]);
 
   const handleAddNote = async (payload: Omit<CreateInternalNotePayload, "carerProfileId" | "clientProfileId" | "placementId">) => {
     try {
@@ -201,6 +209,17 @@ export default function InternalNotes({ entityId, entityType }: InternalNotesPro
           </select>
 
           <select
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+            className="bg-navy-900 border border-gold-300/20 rounded-lg px-2.5 py-1.5 text-xs text-gold-100 focus:outline-none focus:border-gold-500/50 transition-colors min-w-[100px] flex-1 sm:flex-none max-w-[150px] truncate"
+          >
+            <option value="ALL">All Categories</option>
+            {NOTE_CATEGORIES.map(cat => (
+              <option key={cat} value={cat}>{cat}</option>
+            ))}
+          </select>
+
+          <select
             value={pinnedFilter}
             onChange={(e) => setPinnedFilter(e.target.value)}
             className="bg-navy-900 border border-gold-300/20 rounded-lg px-2.5 py-1.5 text-xs text-gold-100 focus:outline-none focus:border-gold-500/50 transition-colors min-w-[100px] flex-1 sm:flex-none"
@@ -211,9 +230,9 @@ export default function InternalNotes({ entityId, entityType }: InternalNotesPro
           
           <button
             onClick={handleResetFilters}
-            disabled={!(searchQuery || statusFilter !== "ALL" || priorityFilter !== "ALL" || pinnedFilter !== "ALL")}
+            disabled={!(searchQuery || statusFilter !== "ALL" || priorityFilter !== "ALL" || categoryFilter !== "ALL" || pinnedFilter !== "ALL")}
             className={`flex items-center gap-1 text-[11px] font-medium px-2 py-1.5 rounded-lg transition-all duration-200 ${
-              (searchQuery || statusFilter !== "ALL" || priorityFilter !== "ALL" || pinnedFilter !== "ALL")
+              (searchQuery || statusFilter !== "ALL" || priorityFilter !== "ALL" || categoryFilter !== "ALL" || pinnedFilter !== "ALL")
                 ? "text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 cursor-pointer"
                 : "opacity-0 pointer-events-none"
             }`}
@@ -251,23 +270,23 @@ export default function InternalNotes({ entityId, entityType }: InternalNotesPro
         ) : notes.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
             <div className="h-12 w-12 rounded-full bg-gold-300/5 flex items-center justify-center text-gold-200/50 mb-3">
-              {searchQuery || statusFilter !== "ALL" || priorityFilter !== "ALL" || pinnedFilter !== "ALL" ? (
+              {searchQuery || statusFilter !== "ALL" || priorityFilter !== "ALL" || categoryFilter !== "ALL" || pinnedFilter !== "ALL" ? (
                 <Search className="h-6 w-6" />
               ) : (
                 <FileText className="h-6 w-6" />
               )}
             </div>
             <p className="text-sm font-semibold text-gold-200">
-              {searchQuery || statusFilter !== "ALL" || priorityFilter !== "ALL" || pinnedFilter !== "ALL" 
+              {searchQuery || statusFilter !== "ALL" || priorityFilter !== "ALL" || categoryFilter !== "ALL" || pinnedFilter !== "ALL" 
                 ? "No matches found" 
                 : "No Internal Notes"}
             </p>
             <p className="text-xs text-gold-100/50 mt-1 max-w-sm">
-              {searchQuery || statusFilter !== "ALL" || priorityFilter !== "ALL" || pinnedFilter !== "ALL" 
+              {searchQuery || statusFilter !== "ALL" || priorityFilter !== "ALL" || categoryFilter !== "ALL" || pinnedFilter !== "ALL" 
                 ? "Try adjusting your search or filters to find what you're looking for." 
                 : `There are currently no internal notes for this ${entityType.toLowerCase()}. Click "Add Note" to create one.`}
             </p>
-            {(searchQuery || statusFilter !== "ALL" || priorityFilter !== "ALL" || pinnedFilter !== "ALL") && (
+            {(searchQuery || statusFilter !== "ALL" || priorityFilter !== "ALL" || categoryFilter !== "ALL" || pinnedFilter !== "ALL") && (
               <Button variant="outline" onClick={handleResetFilters} size="sm" fullWidth={false} className="mt-4">
                 Clear Filters
               </Button>
@@ -281,66 +300,83 @@ export default function InternalNotes({ entityId, entityType }: InternalNotesPro
                 onClick={() => openDetails(note)}
                 className={`group cursor-pointer rounded-xl border ${note.isPinned ? "border-gold/50 bg-gold/5" : "border-gold-300/10 bg-navy-950"} p-5 shadow-sm hover:border-gold-300/30 transition-all`}
               >
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex flex-col gap-2">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="inline-flex items-center px-2 py-1 rounded border border-gold-300/20 bg-navy-900 text-[10px] font-bold text-gold-200 uppercase tracking-wider whitespace-nowrap">
-                        [ {note.author?.firstName} {note.author?.lastName} ]
-                      </span>
-                      <span className="text-[11px] text-gold-100/40 font-mono whitespace-nowrap">
+                <div className="flex items-start justify-between mb-3 border-b border-gold-300/10 pb-3">
+                  <div className="flex flex-col gap-1">
+                    <span className="text-[11px] text-gold-200 font-medium tracking-wide opacity-80 uppercase">Added by:</span>
+                    <h4 className="text-base font-bold text-gold-100">{note.author?.firstName} {note.author?.lastName}</h4>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="text-[11px] text-gold-100/50">
                         {formatNoteDate(note.createdAt)}
                       </span>
                       {note.isPinned && (
-                        <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-gold/20 text-[10px] text-gold whitespace-nowrap">
+                        <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-gold/10 text-[10px] text-gold uppercase tracking-wider font-semibold whitespace-nowrap">
                           Pinned
                         </span>
                       )}
                     </div>
-                    <h4 className="text-base font-semibold text-gold-50">{note.title}</h4>
                   </div>
                   
-                  <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button 
-                      onClick={(e) => openEdit(note, e)}
-                      className="p-1.5 rounded bg-navy-900 border border-gold-300/20 text-gold-100/70 hover:text-gold-200 hover:border-gold-300/50 transition-colors"
-                      title="Edit Note"
-                    >
-                      <Edit2 className="h-3.5 w-3.5" />
-                    </button>
+                  <div className="flex flex-col items-end gap-2">
+                    <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      {isSuperAdmin && (
+                        <button 
+                          onClick={(e) => openEdit(note, e)}
+                          className="p-1.5 rounded bg-navy-900 border border-gold-300/20 text-gold-100/70 hover:text-gold-200 hover:border-gold-300/50 transition-colors"
+                          title="Edit Note"
+                        >
+                          <Edit2 className="h-3.5 w-3.5" />
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
+
+                <h5 className="font-semibold text-gold-50 mb-2">{note.title}</h5>
+
 
                 <div className="text-sm text-gold-100/80 leading-relaxed line-clamp-3">
                   {note.content}
                 </div>
 
-                <div className="mt-4 flex items-center gap-4 text-xs text-gold-100/50">
-                  <span className="flex items-center gap-1.5 rounded bg-navy-900/50 px-2 py-1">
-                    <span className={`w-1.5 h-1.5 rounded-full ${
-                      note.priority === 'HIGH' ? 'bg-rose-500' :
-                      note.priority === 'MEDIUM' ? 'bg-amber-500' :
-                      'bg-emerald-500'
-                    }`}></span>
-                    {note.priority}
-                  </span>
-                  
-                  <span className="flex items-center gap-1.5 rounded bg-navy-900/50 px-2 py-1">
-                    {note.status}
-                  </span>
+                <div className="mt-4 pt-3 border-t border-gold-300/10 flex items-center justify-between gap-4 text-xs text-gold-100/70 overflow-x-auto [&::-webkit-scrollbar]:hidden">
+                  <div className="flex items-center gap-3">
+                    {note.category && (
+                      <span className="flex items-center gap-1.5 font-medium text-gold-200 whitespace-nowrap border-r border-gold-300/20 pr-3">
+                        {note.category}
+                      </span>
+                    )}
+                    
+                    <span className="flex items-center gap-1.5 whitespace-nowrap">
+                      <span className={`w-1.5 h-1.5 rounded-full ${
+                        note.priority === 'HIGH' ? 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.6)]' :
+                        note.priority === 'MEDIUM' ? 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.6)]' :
+                        'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]'
+                      }`}></span>
+                      {note.priority}
+                    </span>
+                    
+                    <span className="flex items-center gap-1.5 whitespace-nowrap before:content-['•'] before:text-gold-300/30">
+                      {note.status}
+                    </span>
 
-                  {note.attachments && note.attachments.length > 0 && (
-                    <span className="flex items-center gap-1.5 rounded bg-navy-900/50 px-2 py-1">
-                      <Paperclip className="h-3 w-3" />
-                      {note.attachments.length} Attachment{note.attachments.length > 1 ? 's' : ''}
-                    </span>
-                  )}
+                    {note.attachments && note.attachments.length > 0 && (
+                      <span className="flex items-center gap-1.5 whitespace-nowrap before:content-['•'] before:text-gold-300/30">
+                        <Paperclip className="h-3 w-3" />
+                        {note.attachments.length} Attachment{note.attachments.length > 1 ? 's' : ''}
+                      </span>
+                    )}
+                  </div>
                   
-                  {note.history && note.history.length > 0 && (
-                    <span className="flex items-center gap-1.5 rounded bg-navy-900/50 px-2 py-1">
-                      <Clock className="h-3 w-3" />
-                      Edited
-                    </span>
-                  )}
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openDetails(note);
+                    }}
+                    className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded bg-navy-900 border border-gold-300/20 text-gold-200 hover:bg-gold-300/10 transition-colors font-medium whitespace-nowrap"
+                  >
+                    <Clock className="h-3.5 w-3.5" />
+                    View History
+                  </button>
                 </div>
               </div>
             ))}

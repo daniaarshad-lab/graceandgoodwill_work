@@ -91,6 +91,7 @@ export interface InternalNoteHistory {
   previousTitle: string;
   updatedTitle: string;
   editedAt: string;
+  reason?: string;
 }
 
 export interface InternalNote {
@@ -99,7 +100,10 @@ export interface InternalNote {
   content: string;
   status: string;
   priority: string;
+  category?: string;
   isPinned: boolean;
+  followUpDate?: string;
+  taggedAdmins?: string[];
   author: {
     firstName: string;
     lastName: string;
@@ -115,7 +119,10 @@ export interface CreateInternalNotePayload {
   content: string;
   status?: string;
   priority?: string;
+  category?: string;
   isPinned?: boolean;
+  followUpDate?: string;
+  taggedAdmins?: string[];
   carerProfileId?: string;
   clientProfileId?: string;
   placementId?: string;
@@ -125,13 +132,19 @@ export interface UpdateInternalNotePayload {
   title?: string;
   content?: string;
   priority?: string;
+  status?: string;
+  category?: string;
   isPinned?: boolean;
+  followUpDate?: string;
+  taggedAdmins?: string[];
+  editReason?: string;
 }
 
 export interface GetInternalNotesParams {
   search?: string;
   status?: string;
   priority?: string;
+  category?: string;
   isPinned?: boolean;
   carerProfileId?: string;
   clientProfileId?: string;

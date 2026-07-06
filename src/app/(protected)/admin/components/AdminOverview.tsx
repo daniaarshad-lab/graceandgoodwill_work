@@ -134,7 +134,7 @@ export default function AdminOverview({
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider text-rose-300">
-                Emergency Cases
+                Emergency Care requests
               </p>
               <h3 className="mt-2 text-3xl font-bold text-rose-400">
                 {stats.emergencyCases}

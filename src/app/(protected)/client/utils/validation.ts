@@ -7,6 +7,7 @@ export function validateCareForm(data: {
   startDate: string;
   duration: string;
   address: string;
+  isOngoing?: boolean;
 }) {
   const errors: Record<string, string> = {};
 
@@ -42,8 +43,23 @@ export function validateCareForm(data: {
     errors.startDate = "Preferred start date is required.";
   }
 
-  if (!data.duration.trim()) {
-    errors.duration = "Please specify the duration of care.";
+  if (!data.isOngoing) {
+    if (!data.duration.trim()) {
+      errors.duration = "Please specify the end date of care.";
+    } else if (data.startDate && data.duration) {
+      const start = new Date(data.startDate);
+      const end = new Date(data.duration);
+      
+      // Calculate difference in time (milliseconds)
+      const diffTime = end.getTime() - start.getTime();
+      
+      // Calculate difference in days
+      const diffDays = diffTime / (1000 * 3600 * 24);
+      
+      if (diffDays < 2) {
+        errors.duration = "Care duration must be at least 2 days.";
+      }
+    }
   }
 
   if (!data.address.trim()) {

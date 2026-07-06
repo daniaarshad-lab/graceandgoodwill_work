@@ -92,7 +92,7 @@ export default function ClientProfileManagement() {
   };
 
   return (
-    <SectionCard className="max-w-3xl mx-auto space-y-6">
+    <SectionCard className="space-y-6">
       <h3 className="text-lg font-bold text-gold-200 border-b border-gold-300/10 pb-4">
         Client Profile Management
       </h3>

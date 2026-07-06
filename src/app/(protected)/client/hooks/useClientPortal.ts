@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { validateCareForm, scrollToFirstError } from "../utils/validation";
 import { useAppDispatch } from "@/store/hooks";
 import {
@@ -36,15 +36,46 @@ export function useClientPortal({ user }: UseClientPortalProps) {
 
   const [careErrors, setCareErrors] = useState<Record<string, string>>({});
   const [isCareSubmitting, setIsCareSubmitting] = useState(false);
+  const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
 
   // --- HANDLERS: CLIENT PLACEMENTS ---
   const fetchPlacements = useCallback(() => {
     dispatch(getClientPlacements());
   }, [dispatch]);
 
+  // --- REAL-TIME VALIDATION ---
+  useEffect(() => {
+    if (hasAttemptedSubmit) {
+      const formData = {
+        fullName: careFullName,
+        email: careEmail,
+        phone: carePhone,
+        careType: careType,
+        support: careSupport,
+        startDate: careStartDate,
+        duration: careDuration,
+        address: careAddress,
+        isOngoing: isOngoing,
+      };
+      setCareErrors(validateCareForm(formData));
+    }
+  }, [
+    careFullName,
+    careEmail,
+    carePhone,
+    careType,
+    careSupport,
+    careStartDate,
+    careDuration,
+    careAddress,
+    isOngoing,
+    hasAttemptedSubmit,
+  ]);
+
   // --- HANDLERS: CARE REQUEST SUBMISSION ---
   const handleCareSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setHasAttemptedSubmit(true);
     setCareErrors({});
 
     const formData = {
@@ -56,6 +87,7 @@ export function useClientPortal({ user }: UseClientPortalProps) {
       startDate: careStartDate,
       duration: careDuration,
       address: careAddress,
+      isOngoing: isOngoing,
     };
 
     const errors = validateCareForm(formData);
@@ -106,6 +138,7 @@ export function useClientPortal({ user }: UseClientPortalProps) {
       setCareType([]);
       setIsOngoing(false);
       setWeeklyPayRange(null);
+      setHasAttemptedSubmit(false);
     } catch (error: any) {
       const errorMsg =
         typeof error === "string"

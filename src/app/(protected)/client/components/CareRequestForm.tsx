@@ -67,19 +67,8 @@ export default function CareRequestForm({
   onSubmit,
   setActiveTab,
 }: CareRequestFormProps) {
-  const [isEmergencyOpen, setIsEmergencyOpen] = useState(false);
-  // TODO: The client needs to provide the actual WhatsApp number for emergency care.
-  const WHATSAPP_NUMBER = "<TO_BE_PROVIDED_BY_CLIENT>";
-  const WHATSAPP_MESSAGE = encodeURIComponent(
-    "Hello, I need emergency care support within the next 24 hours."
-  );
-
-  const handleWhatsAppRedirect = () => {
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MESSAGE}`, "_blank");
-  };
-
   return (
-    <SectionCard className="max-w-3xl mx-auto space-y-6">
+    <SectionCard className="space-y-6">
       <div className="border-b border-gold-300/10 pb-4">
         <h3 className="text-lg font-bold text-gold-200">
           Submit Care Requirements
@@ -91,7 +80,7 @@ export default function CareRequestForm({
       </div>
 
       <form onSubmit={onSubmit} className="space-y-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Input
             label="Full Name of Requestor"
             value={fullName}
@@ -164,14 +153,20 @@ export default function CareRequestForm({
 
           <div className="flex flex-col space-y-2">
             <Input
-              label="Expected Duration of Care"
+              label="End Date"
+              type="date"
               value={duration}
               onChange={(e) => setDuration(e.target.value)}
-              placeholder="e.g. 3 Months"
+              placeholder="Select end date"
               error={errors.duration}
               disabled={isOngoing}
+              min={startDate ? (() => {
+                const start = new Date(startDate);
+                start.setDate(start.getDate() + 2);
+                return start.toISOString().split('T')[0];
+              })() : undefined}
             />
-            {/* <label className="flex items-center gap-2 text-sm text-gold-200 mt-2 cursor-pointer">
+            <label className="flex items-center gap-2 text-sm text-gold-200 mt-2 cursor-pointer">
               <input
                 type="checkbox"
                 checked={isOngoing}
@@ -183,8 +178,8 @@ export default function CareRequestForm({
                 }}
                 className="w-4 h-4 rounded border-gold-300/20 bg-navy-950 text-gold-DEFAULT focus:ring-gold-DEFAULT focus:ring-offset-navy-950"
               />
-              This is an ongoing / permanent request
-            </label> */}
+              Ongoing (No End Date)
+            </label>
           </div>
         </div>
         {/* 
@@ -271,49 +266,7 @@ export default function CareRequestForm({
         </div>
       </form>
 
-      {/* Emergency Care Section */}
-      <div className="mt-8 border-t border-gold-300/10 pt-6">
-        <div className="rounded-xl border border-gold-300/20 bg-navy-950 shadow-[0_0_15px_rgba(160,128,84,0.05)] hover:border-gold-300/30 hover:bg-navy-900/60 transition-all duration-300 overflow-hidden">
-          <div
-            className="p-5 flex justify-between items-center cursor-pointer group"
-            onClick={() => setIsEmergencyOpen(!isEmergencyOpen)}
-          >
-            <div>
-              <h3 className="text-base font-bold text-gold-100 flex items-center gap-2">
-                <span className="text-red-500">🚨</span> Emergency Care
-              </h3>
-              {!isEmergencyOpen && (
-                <p className="text-sm text-gold-100/60 mt-1 pr-4">
-                  Need urgent support within the next 24 hours? Our emergency team is here to help.
-                </p>
-              )}
-            </div>
-            <div className="text-gold-200/50 group-hover:text-gold-100 transition-colors shrink-0 ml-4">
-              <ChevronDown
-                className={`w-5 h-5 transition-transform duration-300 ${isEmergencyOpen ? "rotate-180" : ""
-                  }`}
-              />
-            </div>
-          </div>
 
-          <div
-            className={`transition-all duration-300 ease-in-out px-5 ${isEmergencyOpen ? "max-h-96 pb-5 opacity-100" : "max-h-0 opacity-0"
-              }`}
-          >
-            <div className="pt-4 border-t border-gold-300/10">
-              <div className="bg-navy-900/50 rounded-lg p-4 border border-gold-300/5 mb-5">
-                <p className="text-sm text-gold-100/80 leading-relaxed">
-                  If care is needed urgently within the next 24 hours, our emergency support team can help you arrange care as quickly as possible. Contact us immediately using the button below.
-                </p>
-              </div>
-              <EmergencyButton
-                onClick={handleWhatsAppRedirect}
-                className="w-full"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
     </SectionCard>
   );
 }

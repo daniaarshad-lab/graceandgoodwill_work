@@ -5,6 +5,23 @@ import Button from "@/components/Button";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 import { carerService } from "@/services/carer/carer.service";
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+
+const getFullMediaUrl = (path: string | null | undefined) => {
+  if (!path) return undefined;
+  if (path.startsWith("http://") || path.startsWith("https://") || path.startsWith("blob:")) return path;
+  
+  let baseUrl = API_BASE_URL;
+  try {
+    baseUrl = new URL(API_BASE_URL).origin;
+  } catch (e) {
+    baseUrl = API_BASE_URL.replace(/\/api\/?$/, "");
+  }
+  
+  const cleanPath = path.startsWith("/") ? path : `/${path}`;
+  return `${baseUrl}${cleanPath}`;
+};
+
 interface ProfileMediaProps {
   profilePhotoUrl?: string | null;
   introVideoUrl?: string | null;
@@ -24,6 +41,7 @@ export default function ProfileMedia({
 
   const photoInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
+  const [photoError, setPhotoError] = useState(false);
 
   useEffect(() => {
     fetchRequests();
@@ -124,11 +142,12 @@ export default function ProfileMedia({
 
             <div className="relative w-32 h-32 mb-6">
               <div className="absolute inset-0 bg-gold-DEFAULT/10 rounded-full animate-pulse-slow"></div>
-              {profilePhotoUrl ? (
+              {profilePhotoUrl && !photoError ? (
                 <img
-                  src={profilePhotoUrl}
+                  src={getFullMediaUrl(profilePhotoUrl)}
                   alt="Profile"
                   className="w-full h-full rounded-full object-cover border-4 border-navy-950 shadow-xl z-10 relative"
+                  onError={() => setPhotoError(true)}
                 />
               ) : (
                 <div className="w-full h-full rounded-full bg-navy-950 flex flex-col items-center justify-center border-4 border-navy-950 shadow-xl z-10 relative">
@@ -146,8 +165,9 @@ export default function ProfileMedia({
             <div className="w-full max-w-[240px] h-32 mb-6 rounded-2xl border-2 border-dashed border-gold-DEFAULT/20 bg-navy-950/50 flex flex-col items-center justify-center relative overflow-hidden group-hover:border-gold-DEFAULT/40 transition-colors">
               {introVideoUrl ? (
                 <video
-                  src={introVideoUrl}
+                  src={getFullMediaUrl(introVideoUrl)}
                   className="w-full h-full object-cover opacity-80"
+                  controls
                   controlsList="nodownload"
                 />
               ) : (
@@ -165,28 +185,66 @@ export default function ProfileMedia({
           <div className="pt-6 border-t border-gold-300/10 space-y-4">
             <h4 className="text-sm font-semibold text-gold-200">Request History</h4>
             <div className="grid grid-cols-1 gap-3">
-              {requests.map((req) => (
-                <div key={req.id} className="bg-navy-950/60 rounded-xl border border-gold-300/10 p-4 flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
-                  <div>
-                    <p className="text-sm text-gold-50 font-medium flex items-center gap-2">
-                      Media Update Request
-                      {req.hasPhoto && <ImageIcon className="w-3.5 h-3.5 text-gold-300/70" />}
-                      {req.hasVideo && <FileVideo className="w-3.5 h-3.5 text-gold-300/70" />}
-                    </p>
-                    <p className="text-[11px] text-gold-100/50 mt-1">
-                      Submitted on {new Date(req.createdAt).toLocaleDateString()}
-                    </p>
+              {requests.map((req) => {
+                const requestedPhoto = req.hasPhoto || req.isChangeProfilePic;
+                const requestedVideo = req.hasVideo || req.isChangeIntroVideo;
+
+                return (
+                  <div key={req.id} className="bg-navy-950/60 rounded-xl border border-gold-300/10 p-4 flex flex-col gap-4">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full gap-4">
+                      <div>
+                        <p className="text-sm text-gold-50 font-medium flex items-center gap-2">
+                          Media Update Request
+                        </p>
+                        <p className="text-[11px] text-gold-100/50 mt-1">
+                          Submitted on {new Date(req.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <div className={`flex items-center justify-center gap-1.5 font-medium text-[11px] px-3 py-1.5 rounded-full border ${getStatusColor(req.status)} shrink-0`}>
+                        {getStatusIcon(req.status)} {req.status}
+                      </div>
+                    </div>
+                    
+                    {/* Pending Media Previews */}
+                    <div className="flex gap-4">
+                      {requestedPhoto && req.pendingProfilePhotoUrl && (
+                        <div className="flex flex-col gap-1.5">
+                          <span className="text-[9px] font-semibold text-gold-200/50 flex items-center gap-1 uppercase tracking-wider">
+                            <ImageIcon className="w-2.5 h-2.5" /> Requested Photo
+                          </span>
+                          <a href={getFullMediaUrl(req.pendingProfilePhotoUrl)} target="_blank" rel="noreferrer" className="block w-14 h-14 rounded-lg overflow-hidden border border-navy-800 hover:opacity-80 transition relative">
+                            <img 
+                              src={getFullMediaUrl(req.pendingProfilePhotoUrl)} 
+                              alt="Pending profile" 
+                              className="w-full h-full object-cover" 
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none';
+                              }}
+                            />
+                          </a>
+                        </div>
+                      )}
+                      
+                      {requestedVideo && req.pendingIntroVideoUrl && (
+                        <div className="flex flex-col gap-1.5">
+                          <span className="text-[9px] font-semibold text-gold-200/50 flex items-center gap-1 uppercase tracking-wider">
+                            <FileVideo className="w-2.5 h-2.5" /> Requested Video
+                          </span>
+                          <div className="w-20 h-14 rounded-lg overflow-hidden border border-navy-800 bg-black flex items-center justify-center">
+                            <video src={getFullMediaUrl(req.pendingIntroVideoUrl)} className="w-full h-full object-cover" controls controlsList="nodownload" />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
                     {req.status === "REJECTED" && req.rejectionReason && (
-                      <div className="mt-2 text-[11px] bg-rose-500/10 border border-rose-500/20 text-rose-200/90 rounded p-2">
+                      <div className="text-[11px] bg-rose-500/10 border border-rose-500/20 text-rose-200/90 rounded p-2 mt-1">
                         <span className="font-semibold text-rose-300">Reason:</span> {req.rejectionReason}
                       </div>
                     )}
                   </div>
-                  <div className={`flex items-center justify-center gap-1.5 font-medium text-[11px] px-3 py-1.5 rounded-full border ${getStatusColor(req.status)} shrink-0`}>
-                    {getStatusIcon(req.status)} {req.status}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}

@@ -109,7 +109,7 @@ function DocUploadRow({ label, type, portal, error }: { label: string, type: str
         ) : null}
       </div>
 
-      {isOther && (
+      {isOther && (doc || isStaged) && (
         <div className="mb-2">
           <input
             type="text"

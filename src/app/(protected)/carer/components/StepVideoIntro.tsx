@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import SectionCard from "./shared/SectionCard";
+import Input from "@/components/Input";
 import Button from "@/components/Button";
 import { FileVideo, Video, Camera, Check, Info, Trash2, UploadCloud, AlertCircle } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
@@ -30,6 +31,7 @@ export default function StepVideoIntro({
 
   const [isSubmittingMedia, setIsSubmittingMedia] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [hasConsented, setHasConsented] = useState(false);
 
   const photoInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
@@ -150,9 +152,19 @@ export default function StepVideoIntro({
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
       <SectionCard className="p-8 md:p-10 space-y-10">
-        <div className="text-center space-y-3 max-w-2xl mx-auto border-b border-gold-300/10 pb-6">
-          <h3 className="text-xl font-bold text-gold-200 tracking-tight">
+        <div className="text-center space-y-3 max-w-2xl mx-auto border-b border-gold-300/10 pb-6 relative">
+          <h3 className="text-xl font-bold text-gold-200 tracking-tight flex items-center justify-center gap-2">
             Profile Media Upload
+            <div className="relative group flex items-center">
+              <Info className="w-4 h-4 text-gold-200/50 hover:text-gold-200 cursor-help transition-colors" />
+              <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-64 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10 pointer-events-none text-left">
+                <div className="bg-navy-950 text-gold-100 text-[11px] font-normal leading-relaxed p-3 rounded-lg border border-gold-300/10 shadow-xl relative whitespace-normal">
+                  Your profile picture and video will be reviewed by an administrator. Once accepted, if you wish to change them, please contact an administrator.
+                  <div className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-transparent border-t-gold-300/10"></div>
+                  <div className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-l-[5px] border-r-[5px] border-t-[5px] border-transparent border-t-navy-950 -mt-[1px]"></div>
+                </div>
+              </div>
+            </div>
           </h3>
           <p className="text-sm text-gold-100/60 leading-relaxed">
             Provide a professional photo and a short introductory video. Both are required before continuing.
@@ -179,12 +191,10 @@ export default function StepVideoIntro({
               }`}
             >
               {displayPhotoUrl ? (
-                <Image
+                <img
                   src={displayPhotoUrl}
                   alt="Avatar Preview"
-                  fill
-                  sizes="160px"
-                  className="object-cover"
+                  className="w-full h-full object-cover"
                 />
               ) : (
                 <>
@@ -361,6 +371,43 @@ export default function StepVideoIntro({
         </div>
       </SectionCard>
 
+      <div className="bg-navy-900/40 border border-gold-300/10 rounded-2xl p-6 shadow-inner">
+        <div 
+          className="flex items-start gap-4 cursor-pointer group"
+          onClick={() => setHasConsented(!hasConsented)}
+        >
+          <div className="relative flex items-center justify-center mt-0.5 shrink-0">
+            <div
+              className={`w-5 h-5 border-2 rounded transition-all ${
+                hasConsented
+                  ? "bg-gold border-gold"
+                  : submitted && !hasConsented
+                  ? "border-red-500 bg-red-950/20 shadow-[0_0_8px_rgba(239,68,68,0.15)]"
+                  : "border-gold-300/30"
+              }`}
+            />
+            <Check 
+              className={`absolute w-3.5 h-3.5 text-navy-950 transition-opacity ${
+                hasConsented ? "opacity-100" : "opacity-0"
+              }`} 
+            />
+          </div>
+          <div className="space-y-1">
+            <p className="text-sm font-semibold text-gold-50 group-hover:text-gold-200 transition-colors">
+              I understand and consent that my profile media will be visible to clients and administrators.
+            </p>
+            <p className="text-xs text-gold-100/60 leading-relaxed">
+              By checking this box, you agree that your photo and video introduction will be shared with families and care seekers on the platform to help them find the best match.
+            </p>
+            {submitted && !hasConsented && (
+              <p className="text-xs font-bold text-red-400 pt-1 flex items-center gap-1.5">
+                <AlertCircle className="w-3.5 h-3.5" /> Your consent is important. You must agree to proceed.
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+
       <div className="flex justify-between items-center pt-2 gap-4">
         <Button
           type="button"
@@ -376,7 +423,7 @@ export default function StepVideoIntro({
           variant="primary"
           onClick={async () => {
             setSubmitted(true);
-            if (photoSelectionError || videoSelectionError || !hasPhoto || !hasVideo) {
+            if (photoSelectionError || videoSelectionError || !hasPhoto || !hasVideo || !hasConsented) {
               return;
             }
             if (photoFile || videoFile) {

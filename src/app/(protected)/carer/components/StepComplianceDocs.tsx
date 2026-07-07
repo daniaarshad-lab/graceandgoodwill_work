@@ -75,21 +75,68 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
           </p>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {requiredDocs.map((docItem) => {
-            const doc = complianceDocs.find((d: ComplianceDoc) => d.type === docItem.type);
-            const isStaged = !!selectedFiles[docItem.type.toLowerCase()];
-            const isMissing = !doc && !isStaged;
-            return (
-              <DocUploadRow
-                key={docItem.type}
-                label={docItem.label}
-                type={docItem.type}
-                portal={portal}
-                isMissing={submitted && isMissing}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <DocUploadRow
+            label="Enhanced DBS Certificate *"
+            description="Please upload a clear, full-page scan or photo of your official certificate."
+            type={DocumentFileType.ENHANCED_DBS_CERTIFICATE}
+            portal={portal}
+            isMissing={submitted && (() => {
+              const doc = complianceDocs.find((d: ComplianceDoc) => d.type === DocumentFileType.ENHANCED_DBS_CERTIFICATE);
+              const isStaged = !!selectedFiles[DocumentFileType.ENHANCED_DBS_CERTIFICATE.toLowerCase()];
+              return !doc && !isStaged;
+            })()}
+          />
+          
+          <div className="p-4 rounded-xl border border-gold-300/10 bg-navy-950/40 flex flex-col justify-between transition-all">
+            <div>
+              <label className="text-sm font-medium text-gold-50 block mb-1">
+                DBS Update Service Number (if subscribed)
+              </label>
+              <p className="text-[11px] text-gold-100/50 mb-3 leading-snug">
+                Ensure this number corresponds to your uploaded Enhanced DBS Certificate.
+              </p>
+            </div>
+            <div>
+              <input
+                type="text"
+                value={dbsUpdateServiceNumber}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, "").slice(0, 12);
+                  setDbsUpdateServiceNumber(val);
+                }}
+                placeholder="Enter DBS Update Service Number"
+                maxLength={12}
+                className={`w-full rounded-lg border bg-navy-950 px-3 py-2 text-gold-100 outline-none focus:ring-1 focus:ring-gold-DEFAULT transition duration-300 text-sm ${submitted && errors.dbsNumber ? 'border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]' : 'border-gold-300/20'}`}
               />
-            );
-          })}
+              {submitted && errors.dbsNumber && (
+                <p className="text-[10px] text-red-500 font-semibold mt-1.5">{errors.dbsNumber}</p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <DocUploadRow
+            label="Professional Reference 1 *"
+            type={DocumentFileType.PROFESSIONAL_REFERENCE_1}
+            portal={portal}
+            isMissing={submitted && (() => {
+              const doc = complianceDocs.find((d: ComplianceDoc) => d.type === DocumentFileType.PROFESSIONAL_REFERENCE_1);
+              const isStaged = !!selectedFiles[DocumentFileType.PROFESSIONAL_REFERENCE_1.toLowerCase()];
+              return !doc && !isStaged;
+            })()}
+          />
+          <DocUploadRow
+            label="Professional Reference 2 *"
+            type={DocumentFileType.PROFESSIONAL_REFERENCE_2}
+            portal={portal}
+            isMissing={submitted && (() => {
+              const doc = complianceDocs.find((d: ComplianceDoc) => d.type === DocumentFileType.PROFESSIONAL_REFERENCE_2);
+              const isStaged = !!selectedFiles[DocumentFileType.PROFESSIONAL_REFERENCE_2.toLowerCase()];
+              return !doc && !isStaged;
+            })()}
+          />
         </div>
 
         <div className="pt-6 pb-2">
@@ -121,29 +168,6 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
         <div className="space-y-4 pt-4 border-t border-gold-300/10">
           <div className="space-y-2">
             <label className="text-sm font-medium text-gold-200">
-              DBS Update Service Number (if subscribed)
-            </label>
-            <p className="text-xs text-gold-100/60 mb-2">
-              Ensure this number corresponds to your uploaded Enhanced DBS Certificate.
-            </p>
-            <input
-              type="text"
-              value={dbsUpdateServiceNumber}
-              onChange={(e) => {
-                const val = e.target.value.replace(/\D/g, "").slice(0, 12);
-                setDbsUpdateServiceNumber(val);
-              }}
-              placeholder="Enter DBS Update Service Number"
-              maxLength={12}
-              className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 text-sm ${submitted && errors.dbsNumber ? 'border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]' : 'border-gray-300/20'}`}
-            />
-            {submitted && errors.dbsNumber && (
-              <p className="text-xs text-red-500 font-semibold mt-1">{errors.dbsNumber}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gold-200">
               Employment History (Last 5 Years) *
             </label>
             <p className="text-xs text-gold-100/60 mb-2">
@@ -171,7 +195,7 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
   );
 }
 
-function DocUploadRow({ label, type, portal, isMissing, stageKey, index }: { label: string, type: string, portal: any, isMissing?: boolean, stageKey?: string, index?: number }) {
+function DocUploadRow({ label, description, type, portal, isMissing, stageKey, index }: { label: string, description?: string, type: string, portal: any, isMissing?: boolean, stageKey?: string, index?: number }) {
   const { complianceDocs, stageDocUpload, handleUpdateDoc, selectedFiles } = portal;
   
   // For multiple documents of the same type (like ADDITIONAL_REFERENCE)
@@ -200,6 +224,7 @@ function DocUploadRow({ label, type, portal, isMissing, stageKey, index }: { lab
           </span>
         ) : null}
       </div>
+      {description && <p className="text-[11px] text-gold-100/50 leading-snug">{description}</p>}
       <label className="cursor-pointer text-xs font-semibold text-gold-DEFAULT hover:text-gold-200 inline-block mt-1">
         {doc ? "Update File" : isStaged ? "Change Selected" : "Choose File"}
         <input

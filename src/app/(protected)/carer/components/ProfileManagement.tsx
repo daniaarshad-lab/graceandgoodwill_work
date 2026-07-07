@@ -271,10 +271,10 @@ export default function ProfileManagement({
           )}
         </div>
 
-        {/* Payment Details Section */}
+        {/* Supplemental Details Section */}
         {setBankName && (
           <div className="space-y-4 border-t border-gold-300/10 pt-6">
-            <h4 className="text-md font-bold text-gold-200">Payment Details</h4>
+            <h4 className="text-md font-bold text-gold-200">Supplemental Details</h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Input
                 label="Bank Name"

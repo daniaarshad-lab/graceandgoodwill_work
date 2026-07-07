@@ -19,6 +19,8 @@ const PREDEFINED_RELATIONSHIPS = [
   "Father",
   "Son",
   "Daughter",
+  "Daughter In-law",
+  "Son In-law",
   "Brother",
   "Sister",
   "Grandparent",

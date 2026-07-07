@@ -174,12 +174,10 @@ export default function OnboardingProfileSetup({
           <label className="relative group cursor-pointer block">
             <div className="relative h-32 w-32 shrink-0 overflow-hidden rounded-full border-2 border-gold-DEFAULT bg-navy-950 flex items-center justify-center text-4xl font-bold text-gold-DEFAULT transition-transform duration-300 group-hover:scale-105 shadow-soft">
               {displayPhotoUrl ? (
-                <Image
+                <img
                   src={displayPhotoUrl}
                   alt="Avatar Preview"
-                  fill
-                  sizes="128px"
-                  className="object-cover"
+                  className="w-full h-full object-cover"
                 />
               ) : (
                 <Camera className="w-8 h-8 text-gold-DEFAULT/55" />

@@ -289,7 +289,7 @@ function CarerDashboardContent() {
       missing.push("Insurance Documents");
 
     if (!bankName || !accountName || !accountNumber || !sortCode || !nationalInsuranceNumber) {
-      missing.push("Payment Details");
+      missing.push("Supplemental Details");
     }
 
     if (!profile?.introVideoUrl) missing.push("Video Introduction");
@@ -351,7 +351,7 @@ function CarerDashboardContent() {
             )}
 
             {onboardingStep === 7 && (
-              <StepAdditionalQuals
+              <StepPaymentDetails
                 portal={portal}
                 onNext={() => setOnboardingStep(8)}
                 onBack={() => setOnboardingStep(6)}
@@ -359,7 +359,7 @@ function CarerDashboardContent() {
             )}
 
             {onboardingStep === 8 && (
-              <StepVideoIntro
+              <StepAdditionalQuals
                 portal={portal}
                 onNext={() => setOnboardingStep(9)}
                 onBack={() => setOnboardingStep(7)}
@@ -367,20 +367,20 @@ function CarerDashboardContent() {
             )}
 
             {onboardingStep === 9 && (
-              <OnboardingMembership
-                selectedPlan={selectedPlan}
-                setSelectedPlan={setSelectedPlan}
+              <StepVideoIntro
+                portal={portal}
                 onNext={() => setOnboardingStep(10)}
                 onBack={() => setOnboardingStep(8)}
-                isSubmitting={portal.isProfileSaving}
               />
             )}
 
             {onboardingStep === 10 && (
-              <StepPaymentDetails
-                portal={portal}
+              <OnboardingMembership
+                selectedPlan={selectedPlan}
+                setSelectedPlan={setSelectedPlan}
                 onNext={() => setOnboardingStep(11)}
                 onBack={() => setOnboardingStep(9)}
+                isSubmitting={portal.isProfileSaving}
               />
             )}
 

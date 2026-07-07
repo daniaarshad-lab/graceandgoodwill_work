@@ -69,13 +69,10 @@ export default function PortalHeader({ user }: PortalHeaderProps) {
         <label className="relative group cursor-pointer block">
           <div className="relative h-24 w-24 sm:h-28 sm:w-28 shrink-0 overflow-hidden rounded-full border-2 border-gold-DEFAULT bg-navy-950 flex items-center justify-center text-4xl font-bold text-gold-DEFAULT transition-transform duration-300 group-hover:scale-105 shadow-soft">
             {profilePhotoUrl && !imgError ? (
-              <Image
+              <img
                 src={getPhotoUrl(profilePhotoUrl)}
                 alt={`${displayUser?.firstName || "Client"} Profile`}
-                fill
-                sizes="(max-width: 640px) 96px, 112px"
-                quality={100}
-                className="object-cover"
+                className="w-full h-full object-cover"
                 onError={() => setImgError(true)}
               />
             ) : (

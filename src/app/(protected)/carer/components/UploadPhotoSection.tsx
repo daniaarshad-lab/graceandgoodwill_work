@@ -21,13 +21,10 @@ export default function UploadPhotoSection({
       <div className="relative group">
         <div className="h-24 w-24 overflow-hidden rounded-full border-2 border-gold-DEFAULT bg-navy-950 flex items-center justify-center text-4xl font-bold text-gold-DEFAULT shadow-soft">
           {profilePhoto ? (
-            <Image
+            <img
               src={profilePhoto}
               alt="Profile Avatar"
-              width={96}
-              height={96}
               className="h-full w-full object-cover"
-              unoptimized
             />
           ) : (
             "AM"

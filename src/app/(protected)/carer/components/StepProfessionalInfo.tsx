@@ -52,10 +52,10 @@ export default function StepProfessionalInfo({
   const handleDropdownChange = (valStr: string) => {
     const selected = valStr.split(",").map((s) => s.trim()).filter(Boolean);
     const newHasOther = selected.includes("Other");
-    
+
     const newPredefined = selected.filter((s) => s !== "Other");
     const newTotal = [...newPredefined];
-    
+
     if (newHasOther) {
       if (customSelected.trim()) {
         newTotal.push(customSelected.trim());
@@ -63,7 +63,7 @@ export default function StepProfessionalInfo({
         newTotal.push("Other");
       }
     }
-    
+
     setSpecialties(newTotal.join(", "));
   };
 
@@ -129,7 +129,7 @@ export default function StepProfessionalInfo({
         <div className="space-y-4">
           <div className="space-y-3">
             <label className="text-base font-bold text-gold-200 flex items-center gap-2">
-              Professional Profile{" "}
+              Carer Professional Profile{" "}
               <span className="text-red-400">*</span>
             </label>
 

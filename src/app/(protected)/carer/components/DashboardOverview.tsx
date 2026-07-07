@@ -3,6 +3,7 @@ import StatusBadge from "./shared/StatusBadge";
 import { ComplianceDoc } from "../types/carer.types";
 import Button from "@/components/Button";
 import { groupDatesIntoRanges, formatRangeDisplay } from "../utils/date.utils";
+import { useAppSelector } from "@/store/hooks";
 
 interface DashboardOverviewProps {
   applicationStatus: "pending" | "approved" | "rejected";
@@ -21,6 +22,12 @@ export default function DashboardOverview({
   availability,
   setActiveTab,
 }: DashboardOverviewProps) {
+  const profile = useAppSelector((state) => state.carer.profile);
+  const membershipTier = (profile as any)?.membershipTier || "FREE";
+  
+  const planName = membershipTier === "GOLD_ELITE" ? "Gold Elite Membership" : "Free Membership";
+  const billingNode = membershipTier === "GOLD_ELITE" ? "Annual Coverage" : "No Billing (Free)";
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {/* Application Review Status Badges Widget */}
@@ -74,8 +81,8 @@ export default function DashboardOverview({
               <p className="text-xs uppercase tracking-wider text-gold-300">
                 Grace & Goodwill
               </p>
-              <h4 className="text-lg font-bold text-gold-50 mt-1">
-                Carer Premium Node
+              <h4 className="font-bold text-white text-lg">
+                {planName}
               </h4>
             </div>
             {membershipActive ? (
@@ -93,13 +100,13 @@ export default function DashboardOverview({
             <div className="flex justify-between text-xs">
               <span className="text-gold-100/50">Expiry Date:</span>
               <span className="text-gold-200 font-semibold">
-                {membershipExpiry}
+                {membershipExpiry || "Lifetime"}
               </span>
             </div>
             <div className="flex justify-between text-xs">
               <span className="text-gold-100/50">Billing Node:</span>
               <span className="text-gold-200 font-semibold">
-                Annual Coverage
+                {billingNode}
               </span>
             </div>
           </div>

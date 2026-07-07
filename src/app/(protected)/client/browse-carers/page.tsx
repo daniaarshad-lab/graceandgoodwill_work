@@ -29,7 +29,7 @@ import {
 const SafeImage = ({ src, alt, fallback, className }: { src: string, alt: string, fallback: React.ReactNode, className?: string }) => {
   const [error, setError] = useState(false);
   if (error) return <>{fallback}</>;
-  return <Image src={src} alt={alt} fill className={className} onError={() => setError(true)} />;
+  return <img src={src} alt={alt} className={`w-full h-full object-cover ${className || ""}`} onError={() => setError(true)} />;
 };
 
 export default function BrowseCarersPage() {

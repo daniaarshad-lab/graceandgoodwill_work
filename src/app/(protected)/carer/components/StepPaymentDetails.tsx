@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import SectionCard from "./shared/SectionCard";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
+import { Info } from "lucide-react";
 
 interface Props {
   portal: any;
@@ -105,10 +106,10 @@ export default function StepPaymentDetails({ portal, onNext, onBack }: Props) {
     <div className="space-y-6 max-w-4xl mx-auto">
       <SectionCard className="space-y-6 p-6 md:p-8">
         <h3 className="text-xl font-bold text-gold-200 border-b border-gold-300/10 pb-4">
-          Payment Details
+          Supplemental Details
         </h3>
         <p className="text-sm text-gold-100/60 mb-4">
-          Please provide your bank details. These will be used for your future payments. Your National Insurance Number is required for identity and tax verification. All items marked with * are compulsory.
+          Please provide your bank details. These will be used for your future payments. All items marked with * are compulsory.
         </p>
 
         <div className="space-y-6">
@@ -153,15 +154,26 @@ export default function StepPaymentDetails({ portal, onNext, onBack }: Props) {
 
             <div className="md:col-span-2">
               <Input
-                label="National Insurance Number *"
+                label={
+                  <div className="flex items-center gap-1.5">
+                    <span>National Insurance Number *</span>
+                    <div className="relative group flex items-center">
+                      <Info className="w-3.5 h-3.5 text-gold-200/50 hover:text-gold-200 cursor-help transition-colors" />
+                      <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-64 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10 pointer-events-none">
+                        <div className="bg-navy-950 text-gold-100 text-[11px] font-normal leading-relaxed p-3 rounded-lg border border-gold-300/10 shadow-xl relative whitespace-normal">
+                          This would be reviewed by admin first, and after it's accepted, if you want to change it, please contact an administrator.
+                          <div className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-transparent border-t-gold-300/10"></div>
+                          <div className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-l-[5px] border-r-[5px] border-t-[5px] border-transparent border-t-navy-950 -mt-[1px]"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                }
                 value={nationalInsuranceNumber}
                 onChange={handleNiNumberChange}
                 placeholder="e.g. AB123456C"
                 error={errors.nationalInsuranceNumber}
               />
-              <p className="text-[11px] text-gold-200/50 mt-2">
-                National Insurance Number cannot be changed after registration.
-              </p>
             </div>
           </div>
 

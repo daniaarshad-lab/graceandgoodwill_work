@@ -19,10 +19,10 @@ const ONBOARDING_STEPS: StepItem[] = [
   { id: 4, label: "Training", description: "Certs" },
   { id: 5, label: "Compliance", description: "Docs" },
   { id: 6, label: "Insurance", description: "Docs" },
-  { id: 7, label: "Additional", description: "Quals" },
-  { id: 8, label: "Video", description: "Intro" },
-  { id: 9, label: "Selection", description: "Options" },
-  { id: 10, label: "Payment", description: "Details" },
+  { id: 7, label: "Supplemental", description: "Details" },
+  { id: 8, label: "Additional", description: "Quals" },
+  { id: 9, label: "Video", description: "Intro" },
+  { id: 10, label: "Selection", description: "Options" },
   { id: 11, label: "Declaration", description: "Consent" },
   { id: 12, label: "Review", description: "Submit" },
   { id: 13, label: "Complete", description: "Ready" },
@@ -85,34 +85,31 @@ const StepperStepItem = memo(({ step, index, totalSteps, currentStep, onStepClic
   return (
     <div
       onClick={() => isClickable && onStepClick(step)}
-      className={`group flex-1 flex flex-col items-center relative z-10 transition-all duration-300 ${
-        isClickable ? "cursor-pointer" : "cursor-default"
-      }`}
+      className={`group flex-1 flex flex-col items-center relative z-10 transition-all duration-300 ${isClickable ? "cursor-pointer" : "cursor-default"
+        }`}
     >
       {/* Thin Connector Line (Don't render on the last item) */}
       {index < totalSteps - 1 && (
         <div className="absolute top-[15px] left-[50%] w-full h-[2px] bg-gold-300/10 -z-10">
           <div
-            className={`h-full transition-all duration-700 ease-out ${
-              isCompleted
+            className={`h-full transition-all duration-700 ease-out ${isCompleted
                 ? "bg-gold-DEFAULT w-full shadow-[0_0_4px_rgba(184,145,94,0.4)]"
                 : isActive
-                ? "bg-gradient-to-r from-gold-DEFAULT to-transparent w-1/2"
-                : "bg-transparent w-0"
-            }`}
+                  ? "bg-gradient-to-r from-gold-DEFAULT to-transparent w-1/2"
+                  : "bg-transparent w-0"
+              }`}
           />
         </div>
       )}
 
       {/* Circle Indicator */}
       <div
-        className={`flex items-center justify-center w-8 h-8 rounded-full transition-all duration-500 relative z-10 ${
-          isCompleted
+        className={`flex items-center justify-center w-8 h-8 rounded-full transition-all duration-500 relative z-10 ${isCompleted
             ? "bg-gold-DEFAULT text-white shadow-[0_0_8px_rgba(184,145,94,0.4)]"
             : isActive
-            ? "bg-navy-950 border-[1.5px] border-gold-DEFAULT shadow-[0_0_8px_rgba(184,145,94,0.2)]"
-            : "bg-navy-950 border-[1.5px] border-gold-300/10 text-gold-100/30"
-        }`}
+              ? "bg-navy-950 border-[1.5px] border-gold-DEFAULT shadow-[0_0_8px_rgba(184,145,94,0.2)]"
+              : "bg-navy-950 border-[1.5px] border-gold-300/10 text-gold-100/30"
+          }`}
       >
         {isCompleted ? (
           <Check className="w-5 h-5 stroke-[3px]" />
@@ -126,20 +123,18 @@ const StepperStepItem = memo(({ step, index, totalSteps, currentStep, onStepClic
       {/* Text Content */}
       <div className="mt-3 flex flex-col items-center text-center w-full px-1">
         <span
-          className={`text-[12px] md:text-[13px] font-semibold transition-colors duration-300 ${
-            isActive
+          className={`text-[12px] md:text-[13px] font-semibold transition-colors duration-300 ${isActive
               ? "text-gold-50"
               : isCompleted
-              ? "text-gold-200"
-              : "text-gold-100/40"
-          }`}
+                ? "text-gold-200"
+                : "text-gold-100/40"
+            }`}
         >
           {step.label}
         </span>
         <span
-          className={`text-[11px] mt-0.5 leading-snug transition-colors duration-300 hidden sm:block ${
-            isActive ? "text-gold-100/60" : isCompleted ? "text-gold-200/50" : "text-gold-100/30"
-          }`}
+          className={`text-[11px] mt-0.5 leading-snug transition-colors duration-300 hidden sm:block ${isActive ? "text-gold-100/60" : isCompleted ? "text-gold-200/50" : "text-gold-100/30"
+            }`}
         >
           {step.description}
         </span>

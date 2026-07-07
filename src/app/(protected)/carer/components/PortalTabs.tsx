@@ -11,7 +11,8 @@ export type TabType =
   | "availability"
   | "opportunities"
   | "referrals"
-  | "membership";
+  | "membership"
+  | "agreements";
 
 interface PortalTabsProps {
   activeTab: TabType;
@@ -98,11 +99,12 @@ export default function PortalTabs({
       label: "Membership & Billing",
       href: "/carer?tab=membership",
     },
+    { id: "agreements" as TabType, label: "Legal Agreements", href: "/agreements" },
     { id: "referrals", label: "Referral Program", href: "/carer/referrals" },
   ] as const;
 
   const handleTabClick = (tabId: TabType, href: string) => {
-    if (tabId === "referrals") {
+    if (tabId === "referrals" || tabId === "agreements") {
       router.push(href);
     } else {
       if (setActiveTab) {

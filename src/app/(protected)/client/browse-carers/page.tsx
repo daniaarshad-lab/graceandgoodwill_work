@@ -37,7 +37,7 @@ export default function BrowseCarersPage() {
   const dispatch = useAppDispatch();
   const { user } = useAuth();
   
-  const { carers, careRequests, interestList, loading, profile } = useAppSelector((state) => state.client);
+  const { carers, careRequests, interestList, loading, profile, error } = useAppSelector((state) => state.client);
   
   // Local UI States
   const [searchTerm, setSearchTerm] = useState("");
@@ -197,7 +197,29 @@ export default function BrowseCarersPage() {
         </div>
 
         {/* Loading / Results display */}
-        {loading ? (
+        {error && (error.includes("Platform Fee") || error.includes("agreements")) ? (
+          <div className="bg-navy-900/60 border border-gold-DEFAULT/20 rounded-3xl p-12 text-center max-w-xl mx-auto shadow-elegant">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gold-DEFAULT/10 border border-gold-DEFAULT/20 text-gold-DEFAULT mb-6 animate-pulse">
+              <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m0-6h.01M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2">
+              {error.includes("agreements") ? "Agreements Signature Required" : "Lifetime Platform Fee Required"}
+            </h3>
+            <p className="text-slate-400 mb-6 text-sm">
+              {error.includes("agreements") 
+                ? "You must sign all required legal agreements before browsing carers. Please navigate to the agreements screen."
+                : "You must pay the Lifetime Platform Fee before browsing carers or requesting introductions. Please visit the Billing dashboard to proceed."}
+            </p>
+            <Button
+              onClick={() => router.push(error.includes("agreements") ? "/agreements" : "/client/billing")}
+              className="bg-[#d4af37] text-navy-950 font-bold px-6 py-3 rounded-xl shadow-elegant"
+            >
+              {error.includes("agreements") ? "Go to Agreements" : "Go to Billing & Payments"}
+            </Button>
+          </div>
+        ) : loading ? (
           <div className="flex flex-col items-center justify-center py-20 space-y-4">
             <div className="w-10 h-10 border-2 border-gold-DEFAULT border-t-transparent rounded-full animate-spin"></div>
             <p className="text-xs text-gold-100/50">Fetching available carer profiles...</p>

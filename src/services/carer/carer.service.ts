@@ -408,6 +408,26 @@ export const carerService = {
     });
   },
 
+  async updateStep11(payload: any): Promise<CarerProfile> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch("/carer/profile/step-11", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+  },
+
   async submitProfile(): Promise<any> {
     const token =
       typeof window !== "undefined"

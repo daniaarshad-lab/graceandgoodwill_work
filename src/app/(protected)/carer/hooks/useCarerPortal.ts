@@ -13,6 +13,7 @@ import {
   updateCarerStep2,
   updateCarerStep3,
   updateCarerStep10,
+  updateCarerStep11,
   deleteCarerDocument,
   uploadCarerDocument,
   updateCarerDocument,
@@ -234,14 +235,14 @@ export function useCarerPortal({
           sortCode,
           nationalInsuranceNumber,
         };
-        await dispatch(updateCarerProfile(payload)).unwrap();
+        await dispatch(updateCarerStep10(payload)).unwrap();
       } else if (step === 11 || step === 12) {
         const payload = {
           accuracy: declarations.accuracy ? "true" : "false",
           checks: declarations.checks ? "true" : "false",
           share: declarations.share ? "true" : "false",
         };
-        await dispatch(updateCarerStep10(payload)).unwrap();
+        await dispatch(updateCarerStep11(payload)).unwrap();
       } else {
         const personalPayload = {
           firstName,

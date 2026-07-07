@@ -50,16 +50,16 @@ export default function ProfileMedia({
       showErrorToast("Validation Error", "Please select at least a photo or video to update.");
       return;
     }
-    
+
     setIsSubmitting(true);
     try {
       await carerService.submitProfileUpdateRequest(photoFile || undefined, videoFile || undefined);
       showSuccessToast("Request Submitted", "Your media update request has been submitted successfully.");
-      
+
       setModalOpen(false);
       setPhotoFile(null);
       setVideoFile(null);
-      
+
       await fetchRequests();
     } catch (err: any) {
       showErrorToast("Update Failed", err.message || "Failed to submit profile update request.");
@@ -121,7 +121,7 @@ export default function ProfileMedia({
           {/* Profile Picture Card */}
           <div className="bg-navy-900/40 p-6 rounded-2xl border border-gold-300/10 flex flex-col items-center text-center shadow-soft">
             <h4 className="text-sm font-semibold text-gold-50 mb-6">Current Profile Picture</h4>
-            
+
             <div className="relative w-32 h-32 mb-6">
               <div className="absolute inset-0 bg-gold-DEFAULT/10 rounded-full animate-pulse-slow"></div>
               {profilePhotoUrl ? (
@@ -142,7 +142,7 @@ export default function ProfileMedia({
           {/* Introduction Video Card */}
           <div className="bg-navy-900/40 p-6 rounded-2xl border border-gold-300/10 flex flex-col items-center text-center shadow-soft">
             <h4 className="text-sm font-semibold text-gold-50 mb-6">Current Introduction Video</h4>
-            
+
             <div className="w-full max-w-[240px] h-32 mb-6 rounded-2xl border-2 border-dashed border-gold-DEFAULT/20 bg-navy-950/50 flex flex-col items-center justify-center relative overflow-hidden group-hover:border-gold-DEFAULT/40 transition-colors">
               {introVideoUrl ? (
                 <video
@@ -220,14 +220,14 @@ export default function ProfileMedia({
                   <label className="text-sm font-medium text-gold-200">
                     New Profile Picture <span className="text-gold-100/50 text-[10px] font-normal">(Optional)</span>
                   </label>
-                  <div 
+                  <div
                     onClick={() => photoInputRef.current?.click()}
                     className="w-full border-2 border-dashed border-gold-300/20 rounded-xl p-4 flex flex-col items-center justify-center gap-2 bg-navy-950/30 hover:bg-navy-950/60 cursor-pointer transition-colors"
                   >
-                    <input 
-                      type="file" 
-                      accept="image/*" 
-                      className="hidden" 
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
                       ref={photoInputRef}
                       onChange={(e) => setPhotoFile(e.target.files?.[0] || null)}
                     />
@@ -243,14 +243,14 @@ export default function ProfileMedia({
                   <label className="text-sm font-medium text-gold-200">
                     New Introduction Video <span className="text-gold-100/50 text-[10px] font-normal">(Optional)</span>
                   </label>
-                  <div 
+                  <div
                     onClick={() => videoInputRef.current?.click()}
                     className="w-full border-2 border-dashed border-gold-300/20 rounded-xl p-4 flex flex-col items-center justify-center gap-2 bg-navy-950/30 hover:bg-navy-950/60 cursor-pointer transition-colors"
                   >
-                    <input 
-                      type="file" 
-                      accept="video/*" 
-                      className="hidden" 
+                    <input
+                      type="file"
+                      accept="video/*"
+                      className="hidden"
                       ref={videoInputRef}
                       onChange={(e) => setVideoFile(e.target.files?.[0] || null)}
                     />

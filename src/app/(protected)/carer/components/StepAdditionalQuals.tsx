@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import SectionCard from "./shared/SectionCard";
 import Button from "@/components/Button";
 import { ComplianceDoc } from "../types/carer.types";
@@ -12,8 +12,27 @@ interface Props {
 
 export default function StepAdditionalQuals({ portal, onNext, onBack }: Props) {
   const { complianceDocs, handleUpdateDoc } = portal;
+  const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
+
+  // Validate OTHER_RELEVANT
+  const isOtherDocStaged = !!portal.selectedFiles?.[DocumentFileType.OTHER_RELEVANT.toLowerCase()];
+  const hasOtherDocUploaded = !!portal.complianceDocs.find((d: ComplianceDoc) => d.type === DocumentFileType.OTHER_RELEVANT);
+  
+  const hasFile = isOtherDocStaged || hasOtherDocUploaded;
+  const hasName = !!portal.otherRelevantName?.trim();
+
+  let error: string | null = null;
+  if (hasAttemptedSubmit) {
+    if (hasName && !hasFile) error = "Please upload the certificate file.";
+    else if (hasFile && !hasName) error = "Please enter the certificate name.";
+  }
 
   const handleNext = async () => {
+    setHasAttemptedSubmit(true);
+    
+    if (hasName && !hasFile) return;
+    if (hasFile && !hasName) return;
+
     const success = await portal.handleStepBatchUpload(8);
     if (success) {
       onNext();
@@ -48,7 +67,13 @@ export default function StepAdditionalQuals({ portal, onNext, onBack }: Props) {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {optionalDocs.map((docItem) => (
-            <DocUploadRow key={docItem.type} label={docItem.label} type={docItem.type} portal={portal} />
+            <DocUploadRow 
+              key={docItem.type} 
+              label={docItem.label} 
+              type={docItem.type} 
+              portal={portal} 
+              error={docItem.type === DocumentFileType.OTHER_RELEVANT ? error : undefined} 
+            />
           ))}
         </div>
       </SectionCard>
@@ -61,7 +86,7 @@ export default function StepAdditionalQuals({ portal, onNext, onBack }: Props) {
   );
 }
 
-function DocUploadRow({ label, type, portal }: { label: string, type: string, portal: any }) {
+function DocUploadRow({ label, type, portal, error }: { label: string, type: string, portal: any, error?: string | null }) {
   const { complianceDocs, stageDocUpload, handleUpdateDoc, selectedFiles } = portal;
   const doc = complianceDocs.find((d: ComplianceDoc) => d.type === type);
   const isStaged = !!selectedFiles[type.toLowerCase()];
@@ -70,7 +95,7 @@ function DocUploadRow({ label, type, portal }: { label: string, type: string, po
   const [certName, setCertName] = React.useState(doc?.name || "");
 
   return (
-    <div className="p-4 rounded-xl border border-gold-300/10 bg-navy-950/40 flex flex-col gap-2 h-full">
+    <div className={`p-4 rounded-xl border ${error && isOther ? "border-red-500/50 shadow-[0_0_8px_rgba(239,68,68,0.15)]" : "border-gold-300/10"} bg-navy-950/40 flex flex-col gap-2 h-full`}>
       <div className="flex justify-between items-start mb-1">
         <span className="text-sm font-medium text-gold-50">{label}</span>
         {doc ? (
@@ -96,7 +121,7 @@ function DocUploadRow({ label, type, portal }: { label: string, type: string, po
                }
             }}
             placeholder="Enter certificate name"
-            className="w-full rounded-lg border border-gray-300/20 bg-navy-900 px-3 py-2 text-gold-100 outline-none focus:ring-1 focus:ring-gold-DEFAULT transition duration-300 text-xs"
+            className={`w-full rounded-lg border ${error && !certName ? "border-red-500/50 focus:ring-red-500" : "border-gray-300/20 focus:ring-gold-DEFAULT"} bg-navy-900 px-3 py-2 text-gold-100 outline-none focus:ring-1 transition duration-300 text-xs`}
           />
         </div>
       )}
@@ -112,12 +137,16 @@ function DocUploadRow({ label, type, portal }: { label: string, type: string, po
               if (doc) {
                 handleUpdateDoc(doc.id, type, e);
               } else {
-                stageDocUpload(type, e);
+                portal.stageDocUpload(type, e);
               }
             }}
           />
         </label>
       </div>
+
+      {isOther && error && (
+        <p className="text-[11px] text-red-400 mt-2 font-medium">{error}</p>
+      )}
     </div>
   );
 }

@@ -402,7 +402,7 @@ export default function OnboardingMembership({
       </SectionCard>
 
       {/* Optional Premium Section: Comparison Table */}
-      <div className="max-w-6xl mx-auto space-y-6 mt-16 px-4">
+      {/* <div className="max-w-6xl mx-auto space-y-6 mt-16 px-4">
         <div className="text-center space-y-2 mb-8">
           <h4 className="text-xl font-serif text-gold-50 tracking-wide">
             Detailed Feature Comparison
@@ -454,7 +454,7 @@ export default function OnboardingMembership({
             </tbody>
           </table>
         </div>
-      </div>
+      </div> */}
 
       {/* Navigation flow buttons */}
       <div className="flex flex-col sm:flex-row justify-between items-center pt-6 gap-4 max-w-7xl mx-auto w-full px-4">

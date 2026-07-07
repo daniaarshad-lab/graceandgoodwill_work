@@ -70,7 +70,7 @@ export default function StepPaymentDetails({ portal, onNext, onBack }: Props) {
 
     if (!bankName?.trim()) newErrors.bankName = "Bank Name is required";
     if (!accountName?.trim()) newErrors.accountName = "Name on the Account is required";
-    
+
     if (!accountNumber?.trim()) {
       newErrors.accountNumber = "Account Number is required";
     } else if (!/^\d{8}$/.test(accountNumber)) {
@@ -94,11 +94,11 @@ export default function StepPaymentDetails({ portal, onNext, onBack }: Props) {
       return;
     }
 
-    // Temporarily bypass backend save until payload is ready
-    // const success = await handleSaveProfile(undefined, 10);
-    // if (success) {
+    // Submit payload via handleSaveProfile
+    const success = await portal.handleSaveProfile(undefined, 10);
+    if (success) {
       onNext();
-    // }
+    }
   };
 
   return (
@@ -111,59 +111,59 @@ export default function StepPaymentDetails({ portal, onNext, onBack }: Props) {
           Please provide your bank details. These will be used for your future payments. Your National Insurance Number is required for identity and tax verification. All items marked with * are compulsory.
         </p>
 
-      <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Input
-            label="Bank Name *"
-            value={bankName}
-            onChange={(e) => {
-              setBankName(e.target.value);
-              if (errors.bankName) setErrors((prev) => ({ ...prev, bankName: "" }));
-            }}
-            placeholder="e.g. Barclays, HSBC"
-            error={errors.bankName}
-          />
-
-          <Input
-            label="Name on the Account *"
-            value={accountName}
-            onChange={(e) => {
-              setAccountName(e.target.value);
-              if (errors.accountName) setErrors((prev) => ({ ...prev, accountName: "" }));
-            }}
-            placeholder="e.g. John Smith"
-            error={errors.accountName}
-          />
-
-          <Input
-            label="Account Number *"
-            value={accountNumber}
-            onChange={handleAccountNumberChange}
-            placeholder="8-digit Account Number"
-            error={errors.accountNumber}
-          />
-
-          <Input
-            label="Sort Code *"
-            value={sortCode}
-            onChange={handleSortCodeChange}
-            placeholder="XX-XX-XX"
-            error={errors.sortCode}
-          />
-
-          <div className="md:col-span-2">
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
-              label="National Insurance Number *"
-              value={nationalInsuranceNumber}
-              onChange={handleNiNumberChange}
-              placeholder="e.g. QQ123456C"
-              error={errors.nationalInsuranceNumber}
+              label="Bank Name *"
+              value={bankName}
+              onChange={(e) => {
+                setBankName(e.target.value);
+                if (errors.bankName) setErrors((prev) => ({ ...prev, bankName: "" }));
+              }}
+              placeholder="e.g. Barclays, HSBC"
+              error={errors.bankName}
             />
-            <p className="text-[11px] text-gold-200/50 mt-2">
-              National Insurance Number cannot be changed after registration.
-            </p>
+
+            <Input
+              label="Name on the Account *"
+              value={accountName}
+              onChange={(e) => {
+                setAccountName(e.target.value);
+                if (errors.accountName) setErrors((prev) => ({ ...prev, accountName: "" }));
+              }}
+              placeholder="e.g. John Smith"
+              error={errors.accountName}
+            />
+
+            <Input
+              label="Account Number *"
+              value={accountNumber}
+              onChange={handleAccountNumberChange}
+              placeholder="8-digit Account Number"
+              error={errors.accountNumber}
+            />
+
+            <Input
+              label="Sort Code *"
+              value={sortCode}
+              onChange={handleSortCodeChange}
+              placeholder="XX-XX-XX"
+              error={errors.sortCode}
+            />
+
+            <div className="md:col-span-2">
+              <Input
+                label="National Insurance Number *"
+                value={nationalInsuranceNumber}
+                onChange={handleNiNumberChange}
+                placeholder="e.g. AB123456C"
+                error={errors.nationalInsuranceNumber}
+              />
+              <p className="text-[11px] text-gold-200/50 mt-2">
+                National Insurance Number cannot be changed after registration.
+              </p>
+            </div>
           </div>
-        </div>
 
         </div>
       </SectionCard>

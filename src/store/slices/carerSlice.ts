@@ -108,6 +108,18 @@ export const updateCarerStep10 = createAsyncThunk<
   try {
     return await carerService.updateStep10(payload);
   } catch (error: any) {
+    return rejectWithValue(error?.response?.data?.message || error?.message || "Failed to update payment details");
+  }
+});
+
+export const updateCarerStep11 = createAsyncThunk<
+  CarerProfile,
+  any,
+  { rejectValue: string }
+>("carer/updateStep11", async (payload, { rejectWithValue }) => {
+  try {
+    return await carerService.updateStep11(payload);
+  } catch (error: any) {
     return rejectWithValue(error?.response?.data?.message || error?.message || "Failed to update declarations");
   }
 });

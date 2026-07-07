@@ -243,8 +243,8 @@ export default function ProfileManagement({
                       {uploadingDocType === "Business Insurance"
                         ? "Uploading..."
                         : hasBusinessInsuranceDoc
-                        ? "Update File"
-                        : "Select File"}
+                          ? "Update File"
+                          : "Select File"}
                     </label>
                     {uploadingDocType === "Business Insurance" && (
                       <div className="flex-1 max-w-xs">
@@ -317,9 +317,9 @@ export default function ProfileManagement({
                 <Input
                   label="National Insurance Number"
                   value={nationalInsuranceNumber || ""}
-                  onChange={() => {}} // Read-only
+                  onChange={() => { }} // Read-only
                   disabled
-                  placeholder="e.g. QQ123456C"
+                  placeholder="e.g. AB123456C"
                 />
                 <p className="text-[11px] text-gold-200/50 mt-2">
                   National Insurance Number cannot be changed after registration. Please contact the administrator if this information needs updating.

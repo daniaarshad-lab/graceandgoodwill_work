@@ -40,7 +40,7 @@ export default function StepDeclaration({ portal, onNext, onBack }: Props) {
     }
 
     const syntheticEvent = { preventDefault: () => { } } as React.FormEvent;
-    const success = await handleSaveProfile(syntheticEvent, 10);
+    const success = await handleSaveProfile(syntheticEvent, 11);
     if (success) {
       onNext();
     }

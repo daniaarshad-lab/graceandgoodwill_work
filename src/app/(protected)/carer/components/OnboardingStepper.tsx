@@ -22,9 +22,10 @@ const ONBOARDING_STEPS: StepItem[] = [
   { id: 7, label: "Additional", description: "Quals" },
   { id: 8, label: "Video", description: "Intro" },
   { id: 9, label: "Selection", description: "Options" },
-  { id: 10, label: "Declaration", description: "Consent" },
-  { id: 11, label: "Review", description: "Submit" },
-  { id: 12, label: "Complete", description: "Ready" },
+  { id: 10, label: "Payment", description: "Details" },
+  { id: 11, label: "Declaration", description: "Consent" },
+  { id: 12, label: "Review", description: "Submit" },
+  { id: 13, label: "Complete", description: "Ready" },
 ];
 
 /**
@@ -79,7 +80,7 @@ interface StepperStepItemProps {
 const StepperStepItem = memo(({ step, index, totalSteps, currentStep, onStepClick }: StepperStepItemProps) => {
   const isCompleted = step.id < currentStep;
   const isActive = step.id === currentStep;
-  const isClickable = step.id <= currentStep && step.id >= 2 && step.id <= 11;
+  const isClickable = step.id <= currentStep && step.id >= 2 && step.id <= 12;
 
   return (
     <div
@@ -157,7 +158,7 @@ export default function OnboardingStepper({ currentStep, setCurrentStep }: Onboa
   // Memoize click handler to prevent unnecessary re-renders of step items
   const handleStepClick = useCallback(
     (step: StepItem) => {
-      if (step.id <= currentStep && step.id >= 2 && step.id <= 11) {
+      if (step.id <= currentStep && step.id >= 2 && step.id <= 12) {
         setCurrentStep(step.id);
       }
     },
@@ -173,11 +174,12 @@ export default function OnboardingStepper({ currentStep, setCurrentStep }: Onboa
       case 5: return 42;
       case 6: return 50;
       case 7: return 58;
-      case 8: return 67;
-      case 9: return 75;
-      case 10: return 83;
-      case 11: return 92;
-      case 12: return 100;
+      case 8: return 61;
+      case 9: return 69;
+      case 10: return 77;
+      case 11: return 84;
+      case 12: return 92;
+      case 13: return 100;
       default: return 0;
     }
   };

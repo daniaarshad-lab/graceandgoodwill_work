@@ -23,6 +23,16 @@ interface ProfileManagementProps {
   setExperience: (val: string) => void;
   address: string;
   setAddress: (val: string) => void;
+  bankName?: string;
+  setBankName?: (val: string) => void;
+  accountName?: string;
+  setAccountName?: (val: string) => void;
+  accountNumber?: string;
+  setAccountNumber?: (val: string) => void;
+  sortCode?: string;
+  setSortCode?: (val: string) => void;
+  nationalInsuranceNumber?: string;
+  setNationalInsuranceNumber?: (val: string) => void;
   canDrive: "yes" | "no" | "";
   setCanDrive: (val: "yes" | "no" | "") => void;
   hasBusinessInsurance: "yes" | "no" | "";
@@ -56,6 +66,16 @@ export default function ProfileManagement({
   setExperience,
   address,
   setAddress,
+  bankName,
+  setBankName,
+  accountName,
+  setAccountName,
+  accountNumber,
+  setAccountNumber,
+  sortCode,
+  setSortCode,
+  nationalInsuranceNumber,
+  setNationalInsuranceNumber,
   canDrive,
   setCanDrive,
   hasBusinessInsurance,
@@ -251,7 +271,65 @@ export default function ProfileManagement({
           )}
         </div>
 
-        <div className="flex justify-end gap-3 pt-2">
+        {/* Payment Details Section */}
+        {setBankName && (
+          <div className="space-y-4 border-t border-gold-300/10 pt-6">
+            <h4 className="text-md font-bold text-gold-200">Payment Details</h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Input
+                label="Bank Name"
+                value={bankName || ""}
+                onChange={(e) => setBankName(e.target.value)}
+                placeholder="e.g. Barclays"
+                error={errors.bankName}
+              />
+              <Input
+                label="Name on the Account"
+                value={accountName || ""}
+                onChange={(e) => setAccountName(e.target.value)}
+                placeholder="e.g. John Smith"
+                error={errors.accountName}
+              />
+              <Input
+                label="Account Number"
+                value={accountNumber || ""}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, "").slice(0, 8);
+                  if (setAccountNumber) setAccountNumber(val);
+                }}
+                placeholder="8-digit Account Number"
+                error={errors.accountNumber}
+              />
+              <Input
+                label="Sort Code"
+                value={sortCode || ""}
+                onChange={(e) => {
+                  const digits = e.target.value.replace(/\D/g, "");
+                  let formatted = digits;
+                  if (digits.length > 2) formatted = `${digits.slice(0, 2)}-${digits.slice(2, 4)}`;
+                  if (digits.length > 4) formatted += `-${digits.slice(4, 6)}`;
+                  if (setSortCode) setSortCode(formatted);
+                }}
+                placeholder="XX-XX-XX"
+                error={errors.sortCode}
+              />
+              <div className="sm:col-span-2">
+                <Input
+                  label="National Insurance Number"
+                  value={nationalInsuranceNumber || ""}
+                  onChange={() => {}} // Read-only
+                  disabled
+                  placeholder="e.g. QQ123456C"
+                />
+                <p className="text-[11px] text-gold-200/50 mt-2">
+                  National Insurance Number cannot be changed after registration. Please contact the administrator if this information needs updating.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className="flex justify-end gap-3 pt-6 border-t border-gold-300/10 mt-6">
           <Button
             type="button"
             onClick={() => setActiveTab("overview")}

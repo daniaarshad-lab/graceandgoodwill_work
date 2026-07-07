@@ -44,6 +44,13 @@ export interface CarerProfile {
   emergencyContactName?: string | null;
   emergencyContactNumber?: string | null;
   emergencyContactRelation?: string | null;
+  
+  bankName?: string | null;
+  accountName?: string | null;
+  accountNumber?: string | null;
+  sortCode?: string | null;
+  nationalInsuranceNumber?: string | null;
+
   drivingPreferences?: string[];
   dbsUpdateServiceNumber?: string | null;
   employmentHistory?: any;
@@ -82,6 +89,13 @@ export interface UpdateCarerProfilePayload {
   emergencyContactName?: string;
   emergencyContactNumber?: string;
   emergencyContactRelation?: string;
+  
+  bankName?: string;
+  accountName?: string;
+  accountNumber?: string;
+  sortCode?: string;
+  nationalInsuranceNumber?: string;
+
   drivingPreferences?: string[];
   dbsUpdateServiceNumber?: string;
   employmentHistory?: any;

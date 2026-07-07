@@ -54,6 +54,13 @@ export function useCarerPortal({
   const [emergencyContactName, setEmergencyContactName] = useState("");
   const [emergencyContactNumber, setEmergencyContactNumber] = useState("");
   const [emergencyContactRelation, setEmergencyContactRelation] = useState("");
+  
+  const [bankName, setBankName] = useState("");
+  const [accountName, setAccountName] = useState("");
+  const [accountNumber, setAccountNumber] = useState("");
+  const [sortCode, setSortCode] = useState("");
+  const [nationalInsuranceNumber, setNationalInsuranceNumber] = useState("");
+
   const [drivingPreferences, setDrivingPreferences] = useState<string[]>([]);
   const [dbsUpdateServiceNumber, setDbsUpdateServiceNumber] = useState("");
   const [employmentHistory, setEmploymentHistory] = useState("");
@@ -107,6 +114,12 @@ export function useCarerPortal({
       if (emName) setEmergencyContactName(emName);
       if (emNum) setEmergencyContactNumber(emNum);
       if (emRel) setEmergencyContactRelation(emRel);
+
+      if (actualProfile.bankName ?? p.bankName) setBankName(actualProfile.bankName ?? p.bankName);
+      if (actualProfile.accountName ?? p.accountName) setAccountName(actualProfile.accountName ?? p.accountName);
+      if (actualProfile.accountNumber ?? p.accountNumber) setAccountNumber(actualProfile.accountNumber ?? p.accountNumber);
+      if (actualProfile.sortCode ?? p.sortCode) setSortCode(actualProfile.sortCode ?? p.sortCode);
+      if (actualProfile.nationalInsuranceNumber ?? p.nationalInsuranceNumber) setNationalInsuranceNumber(actualProfile.nationalInsuranceNumber ?? p.nationalInsuranceNumber);
 
       let dp = actualProfile.drivingPreferences ?? p.drivingPreferences;
       if (typeof dp === "string") {
@@ -211,7 +224,16 @@ export function useCarerPortal({
           careSpecialties: specialties.split(",").map((s) => s.trim()).filter(Boolean),
         };
         await dispatch(updateCarerStep3(payload)).unwrap();
-      } else if (step === 10 || step === 11) {
+      } else if (step === 10) {
+        const payload = {
+          bankName,
+          accountName,
+          accountNumber,
+          sortCode,
+          nationalInsuranceNumber,
+        };
+        await dispatch(updateCarerProfile(payload)).unwrap();
+      } else if (step === 11 || step === 12) {
         const payload = {
           accuracy: declarations.accuracy ? "true" : "false",
           checks: declarations.checks ? "true" : "false",
@@ -230,6 +252,12 @@ export function useCarerPortal({
           emergencyContactName,
           emergencyContactNumber,
           emergencyContactRelation,
+          // Temporarily removed until BE payload is updated
+          // bankName,
+          // accountName,
+          // accountNumber,
+          // sortCode,
+          // nationalInsuranceNumber,
         };
         await dispatch(updateCarerProfile(personalPayloadCheck(personalPayload))).unwrap();
 
@@ -628,6 +656,18 @@ export function useCarerPortal({
     setEmergencyContactNumber,
     emergencyContactRelation,
     setEmergencyContactRelation,
+    
+    bankName,
+    setBankName,
+    accountName,
+    setAccountName,
+    accountNumber,
+    setAccountNumber,
+    sortCode,
+    setSortCode,
+    nationalInsuranceNumber,
+    setNationalInsuranceNumber,
+
     drivingPreferences,
     setDrivingPreferences,
     dbsUpdateServiceNumber,

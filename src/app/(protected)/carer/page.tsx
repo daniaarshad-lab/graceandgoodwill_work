@@ -29,6 +29,7 @@ import StepAdditionalQuals from "./components/StepAdditionalQuals";
 import StepVideoIntro from "./components/StepVideoIntro";
 import StepDeclaration from "./components/StepDeclaration";
 import OnboardingMembership from "./components/OnboardingMembership";
+import StepPaymentDetails from "./components/StepPaymentDetails";
 import StepReviewSubmit from "./components/StepReviewSubmit";
 import PlacementOpportunities from "./components/PlacementOpportunities";
 import MembershipManagement from "./components/MembershipManagement";
@@ -197,6 +198,11 @@ function CarerDashboardContent() {
       experience,
       specialties,
       employmentHistory,
+      bankName,
+      accountName,
+      accountNumber,
+      sortCode,
+      nationalInsuranceNumber,
     } = portal;
 
     if (
@@ -281,6 +287,10 @@ function CarerDashboardContent() {
       )
     )
       missing.push("Insurance Documents");
+
+    if (!bankName || !accountName || !accountNumber || !sortCode || !nationalInsuranceNumber) {
+      missing.push("Payment Details");
+    }
 
     if (!profile?.introVideoUrl) missing.push("Video Introduction");
 
@@ -367,7 +377,7 @@ function CarerDashboardContent() {
             )}
 
             {onboardingStep === 10 && (
-              <StepDeclaration
+              <StepPaymentDetails
                 portal={portal}
                 onNext={() => setOnboardingStep(11)}
                 onBack={() => setOnboardingStep(9)}
@@ -375,10 +385,18 @@ function CarerDashboardContent() {
             )}
 
             {onboardingStep === 11 && (
+              <StepDeclaration
+                portal={portal}
+                onNext={() => setOnboardingStep(12)}
+                onBack={() => setOnboardingStep(10)}
+              />
+            )}
+
+            {onboardingStep === 12 && (
               <StepReviewSubmit
                 portal={portal}
                 selectedPlan={selectedPlan}
-                onBack={() => setOnboardingStep(10)}
+                onBack={() => setOnboardingStep(11)}
                 onSubmit={async () => {
                   if (
                     !portal.declarations?.accuracy ||
@@ -389,7 +407,7 @@ function CarerDashboardContent() {
                       "Incomplete",
                       "Please agree to all declarations before submitting your profile.",
                     );
-                    setOnboardingStep(10);
+                    setOnboardingStep(11);
                     return;
                   }
 
@@ -404,14 +422,14 @@ function CarerDashboardContent() {
 
                   const success = await portal.submitProfile();
                   if (success) {
-                    setOnboardingStep(12);
+                    setOnboardingStep(13);
                   }
                 }}
                 isSubmitting={portal.isProfileSaving}
               />
             )}
 
-            {onboardingStep === 12 && (
+            {onboardingStep === 13 && (
               <div className="flex flex-col items-center justify-center py-16 px-8 text-center bg-gradient-to-b from-navy-900/40 to-navy-950/60 border border-gold-300/10 rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] backdrop-blur-md max-w-2xl mx-auto mt-6">
                 <div className="w-20 h-20 bg-gradient-to-br from-gold-200/20 to-gold-200/5 rounded-full flex items-center justify-center border border-gold-200/30 mb-8 shadow-[0_0_20px_rgba(245,212,160,0.1)]">
                   <svg
@@ -535,6 +553,16 @@ function CarerDashboardContent() {
                 setExperience={portal.setExperience}
                 address={portal.address}
                 setAddress={portal.setAddress}
+                bankName={portal.bankName}
+                setBankName={portal.setBankName}
+                accountName={portal.accountName}
+                setAccountName={portal.setAccountName}
+                accountNumber={portal.accountNumber}
+                setAccountNumber={portal.setAccountNumber}
+                sortCode={portal.sortCode}
+                setSortCode={portal.setSortCode}
+                nationalInsuranceNumber={portal.nationalInsuranceNumber}
+                setNationalInsuranceNumber={portal.setNationalInsuranceNumber}
                 canDrive={portal.canDrive}
                 setCanDrive={portal.setCanDrive}
                 hasBusinessInsurance={portal.hasBusinessInsurance}

@@ -19,9 +19,7 @@ const ClientRequests = dynamic(() => import("./components/ClientRequests"), {
 const ClientRegistry = dynamic(() => import("./components/ClientRegistry"), {
   ssr: false,
 });
-const MatchingPanel = dynamic(() => import("./components/MatchingPanel"), {
-  ssr: false,
-});
+
 const PlacementTracking = dynamic(
   () => import("./components/PlacementTracking"),
   { ssr: false },
@@ -42,6 +40,10 @@ const BillingManagement = dynamic(
 );
 const SupportEnquiryManagement = dynamic(
   () => import("./components/SupportEnquiryManagement"),
+  { ssr: false },
+);
+const ProfileUpdateRequests = dynamic(
+  () => import("./components/ProfileUpdateRequests"),
   { ssr: false },
 );
 
@@ -125,11 +127,11 @@ function AdminDashboardContent() {
     carers: "Carer Applications",
     clients: "Client Registry",
     requests: "Client Requests",
-    matching: "Matching Assistant",
     placements: "Tracking & Overrides",
     emergency: "Emergency Triage",
     billing: "Billing & Invoices",
     enquiries: "Support & Enquiries",
+    "profile-updates": "Profile Updates",
   };
 
   return (
@@ -266,9 +268,6 @@ function AdminDashboardContent() {
               {portal.activeTab === "requests" && (
                 <ClientRequests
                   requests={portal.requests}
-                  setSelectedRequestForMatching={
-                    portal.setSelectedRequestForMatching
-                  }
                   setActiveTab={portal.setActiveTab}
                   page={portal.requestsPagination.page}
                   totalPages={portal.requestsPagination.totalPages}
@@ -277,29 +276,6 @@ function AdminDashboardContent() {
                   onPageChange={portal.setRequestsPage}
                   onStatusChange={portal.setRequestsStatus}
                   refreshRequests={portal.refreshRequests}
-                />
-              )}
-
-              {/* TAB 4: AUTOMATED MATCHING PANEL */}
-              {portal.activeTab === "matching" && (
-                <MatchingPanel
-                  requests={portal.requests}
-                  carers={portal.carers}
-                  selectedRequest={portal.selectedRequestForMatching}
-                  setSelectedRequest={portal.setSelectedRequestForMatching}
-                  onAssign={async (
-                    requestId,
-                    carerUserId,
-                    carerName,
-                    clientName,
-                  ) => {
-                    await portal.handleAssignCarerToCareRequest(
-                      requestId,
-                      carerUserId,
-                      carerName,
-                      clientName,
-                    );
-                  }}
                 />
               )}
 
@@ -338,6 +314,11 @@ function AdminDashboardContent() {
                   handleRespondToEnquiry={portal.handleRespondToEnquiry}
                   handleUpdateEnquiryStatus={portal.handleUpdateEnquiryStatus}
                 />
+              )}
+
+              {/* TAB 9: PROFILE UPDATE REQUESTS */}
+              {portal.activeTab === "profile-updates" && (
+                <ProfileUpdateRequests />
               )}
             </>
           )}

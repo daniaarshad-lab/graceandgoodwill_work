@@ -109,12 +109,12 @@ export function useClientPortal({ user }: UseClientPortalProps) {
       requestorPhone: carePhone,
 
       startDate: careStartDate,
-      duration: careDuration,
+      endDate: isOngoing ? null : careDuration || null,
+      durationCategory: isOngoing ? "PERMANENT" as const : "SHORT_DURATION" as const,
 
       additionalNotes: careNotes,
 
       shiftType: "MORNING",
-      isOngoing,
       weeklyPayRange: weeklyPayRange ? `£${weeklyPayRange.min} - £${weeklyPayRange.max} per week` : undefined,
     };
 

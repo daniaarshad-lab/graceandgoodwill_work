@@ -25,7 +25,6 @@ export interface ClientProfile {
   status: string;
   createdAt: string;
   updatedAt: string;
-  adminMatching?: boolean;
 
   isLifetimeFeePaid?: boolean;
   lifetimeFeeInvoiceId?: string | null;
@@ -61,13 +60,12 @@ export interface CreateCareRequestPayload {
   requestorPhone: string;
 
   startDate: string;
-  duration: string;
+  endDate?: string | null;
+  durationCategory: "PERMANENT" | "SHORT_DURATION";
 
   additionalNotes?: string;
   shiftType: string;
 
-  /** Whether this is an ongoing/permanent placement */
-  isOngoing?: boolean;
   /** Weekly pay range for the placement */
   weeklyPayRange?: string;
 }
@@ -182,7 +180,7 @@ export interface CareRequest {
 
   status: string;
   isEmergency: boolean;
-  adminMatching?: boolean;
+
 
   /** Whether this care request is for ongoing/permanent care */
   isOngoing?: boolean;
@@ -191,8 +189,6 @@ export interface CareRequest {
 
   createdAt: string;
   updatedAt: string;
-
-  introductions: any[];
 }
 
 export interface CreateEnquiryPayload {

@@ -121,7 +121,7 @@ export interface CarerCareRequest {
   postcode?: string | null;
   status: string;
   shiftType: string;
-  adminMatching?: boolean;
+
   isEmergency: boolean;
   createdAt: string;
   updatedAt: string;

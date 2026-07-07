@@ -133,17 +133,18 @@ export const updateClientProfile = createAsyncThunk<
   }
 });
 
-export const updateAdminMatching = createAsyncThunk<
-  ClientProfile,
-  boolean,
+/** Create a match: POST /client/matches */
+export const createClientMatch = createAsyncThunk<
+  any,
+  { careRequestId: string; carerProfileId: string },
   { rejectValue: string }
 >(
-  "client/updateAdminMatching",
-  async (adminMatching, { rejectWithValue }) => {
+  "client/createMatch",
+  async ({ careRequestId, carerProfileId }, { rejectWithValue }) => {
     try {
-      return await clientService.updateAdminMatching(adminMatching);
+      return await clientService.createMatch(careRequestId, carerProfileId);
     } catch (error: any) {
-      return rejectWithValue(error.message || "Failed to update admin matching");
+      return rejectWithValue(error.message || "Failed to create match");
     }
   }
 );
@@ -322,28 +323,6 @@ const clientSlice = createSlice({
       state.error = action.payload || "Failed to update client profile";
     });
 
-    // Update Admin Matching
-    builder.addCase(updateAdminMatching.pending, (state) => {
-      state.loading = true;
-      state.error = null;
-    });
-
-    builder.addCase(
-      updateAdminMatching.fulfilled,
-      (state, action: PayloadAction<ClientProfile>) => {
-        state.loading = false;
-        if (state.profile) {
-          state.profile = { ...state.profile, ...action.payload };
-        } else {
-          state.profile = action.payload;
-        }
-      }
-    );
-
-    builder.addCase(updateAdminMatching.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.payload || "Failed to update admin matching";
-    });
 
     // Upload Profile Photo
     builder.addCase(uploadClientProfilePhoto.pending, (state) => {

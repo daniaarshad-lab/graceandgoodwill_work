@@ -301,6 +301,33 @@ export const carerService = {
     });
   },
 
+  /** POST /carer/profile-updates — submit a profile picture / intro video update request */
+  async submitProfileUpdateRequest(photo?: File, video?: File): Promise<any> {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+
+    const formData = new FormData();
+    if (photo) formData.append("photo", photo);
+    if (video) formData.append("video", video);
+
+    return apiFetch("/carer/profile-updates", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData,
+    });
+  },
+
+  /** GET /carer/profile-updates — get all previous profile update requests */
+  async getProfileUpdateRequests(): Promise<any[]> {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+
+    return apiFetch("/carer/profile-updates", {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  },
+
   async updateStep2(payload: any): Promise<CarerProfile> {
     const token =
       typeof window !== "undefined"

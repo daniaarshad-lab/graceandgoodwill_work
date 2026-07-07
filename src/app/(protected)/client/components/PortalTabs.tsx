@@ -28,7 +28,6 @@ export default function PortalTabs({
 }: PortalTabsProps) {
   const router = useRouter();
   const profile = useAppSelector((state) => state.client.profile);
-  const isAdminMatching = profile?.adminMatching === true;
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

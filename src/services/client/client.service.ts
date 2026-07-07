@@ -49,7 +49,8 @@ export const clientService = {
     });
   },
 
-  async updateAdminMatching(adminMatching: boolean): Promise<ClientProfile> {
+  /** POST /client/matches — create a match between a care request and a carer */
+  async createMatch(careRequestId: string, carerProfileId: string): Promise<any> {
     const token =
       typeof window !== "undefined"
         ? localStorage.getItem("accessToken")
@@ -59,12 +60,12 @@ export const clientService = {
       throw new Error("No token found");
     }
 
-    return apiFetch("/client/profile/admin-matching", {
-      method: "PATCH",
+    return apiFetch("/client/matches", {
+      method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ adminMatching }),
+      body: JSON.stringify({ careRequestId, carerProfileId }),
     });
   },
 

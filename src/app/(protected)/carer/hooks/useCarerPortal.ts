@@ -70,6 +70,8 @@ export function useCarerPortal({
     share: false,
   });
 
+  const [otherRelevantName, setOtherRelevantName] = useState("");
+
 
   useEffect(() => {
     if (profile) {
@@ -469,6 +471,10 @@ export function useCarerPortal({
           dbsUpdateServiceNumber: dbsUpdateServiceNumber ?? "",
           employmentHistory: employmentHistory ?? "",
         };
+      } else if (step === 8 && selectedFiles["other_relevant"]) {
+        textFields = {
+          customDocumentType: otherRelevantName ?? "",
+        };
       }
 
       // @ts-ignore
@@ -696,6 +702,8 @@ export function useCarerPortal({
     stageDocUpload,
     handleBatchUpload,
     handleStepBatchUpload,
+    otherRelevantName,
+    setOtherRelevantName,
     selectedFiles,
     handleDeleteDoc,
     handleUpdateDoc,

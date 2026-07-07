@@ -279,14 +279,14 @@ export default function ProfileManagement({
               <Input
                 label="Bank Name"
                 value={bankName || ""}
-                onChange={(e) => setBankName(e.target.value)}
+                onChange={(e) => setBankName?.(e.target.value)}
                 placeholder="e.g. Barclays"
                 error={errors.bankName}
               />
               <Input
                 label="Name on the Account"
                 value={accountName || ""}
-                onChange={(e) => setAccountName(e.target.value)}
+                onChange={(e) => setAccountName?.(e.target.value)}
                 placeholder="e.g. John Smith"
                 error={errors.accountName}
               />
@@ -295,7 +295,7 @@ export default function ProfileManagement({
                 value={accountNumber || ""}
                 onChange={(e) => {
                   const val = e.target.value.replace(/\D/g, "").slice(0, 8);
-                  if (setAccountNumber) setAccountNumber(val);
+                  setAccountNumber?.(val);
                 }}
                 placeholder="8-digit Account Number"
                 error={errors.accountNumber}
@@ -308,7 +308,7 @@ export default function ProfileManagement({
                   let formatted = digits;
                   if (digits.length > 2) formatted = `${digits.slice(0, 2)}-${digits.slice(2, 4)}`;
                   if (digits.length > 4) formatted += `-${digits.slice(4, 6)}`;
-                  if (setSortCode) setSortCode(formatted);
+                  setSortCode?.(formatted);
                 }}
                 placeholder="XX-XX-XX"
                 error={errors.sortCode}

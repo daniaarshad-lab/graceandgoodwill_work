@@ -497,7 +497,7 @@ function CarerDetailsContent() {
             <div className="space-y-6">
               {/* TWO COLUMN TOP SECTION */}
               <div className="space-y-6">
-                
+
                 {/* ROW 1: Profile & Experience */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   {/* Profile Information (col 1) */}
@@ -622,12 +622,12 @@ function CarerDetailsContent() {
                         <span className="text-gold-200 font-bold">{consecutiveDays}</span>
                       </div>
 
-                      <div className="flex items-center justify-between">
+                      {/* <div className="flex items-center justify-between">
                         <span className="text-gold-100/40 font-semibold">Available Hours:</span>
                         <span className="text-rose-400 font-bold font-mono text-[10px]">
                           {availableHours}
                         </span>
-                      </div>
+                      </div> */}
 
                       <div className="border-t border-gold-300/5 pt-3">
                         <span className="text-[9px] uppercase font-bold tracking-wider text-gold-100/40 block mb-1">Standard Schedule</span>
@@ -720,79 +720,79 @@ function CarerDetailsContent() {
                 </div>
               </div>
 
-            {/* FULL WIDTH BOTTOM SECTIONS: NOTES & FEEDBACK */}
-            <div className="space-y-6">
-              {/* Internal Notes Timeline */}
-              <div className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md">
-                {carer?.id && (
-                  <InternalNotes entityId={carer.id} entityType="CARER" />
-                )}
-              </div>
+              {/* FULL WIDTH BOTTOM SECTIONS: NOTES & FEEDBACK */}
+              <div className="space-y-6">
+                {/* Internal Notes Timeline */}
+                <div className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md">
+                  {carer?.id && (
+                    <InternalNotes entityId={carer.id} entityType="CARER" />
+                  )}
+                </div>
 
-              {/* Feedback History */}
-              <div className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md space-y-4">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-gold-200/50 border-b border-gold-300/5 pb-3 flex items-center gap-2">
-                  <Heart className="h-4 w-4 text-gold/60" /> Feedback History
-                </h3>
+                {/* Feedback History */}
+                <div className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md space-y-4">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-gold-200/50 border-b border-gold-300/5 pb-3 flex items-center gap-2">
+                    <Heart className="h-4 w-4 text-gold/60" /> Feedback History
+                  </h3>
 
-                {!carerFeedback || carerFeedback.length === 0 ? (
-                  <p className="text-xs text-gold-100/30 text-center py-4">No feedback has been submitted for this carer yet.</p>
-                ) : (
-                  <div className="space-y-4 relative pl-4 border-l border-gold-300/10 text-xs">
-                    {carerFeedback.map((fb: any, idx: number) => {
-                      const rating = fb.rating || 0;
-                      const clientName = fb.clientProfile?.user 
-                        ? `${fb.clientProfile.user.firstName} ${fb.clientProfile.user.lastName}` 
-                        : "Client";
-                      const startDate = fb.placement?.startDate ? new Date(fb.placement.startDate).toLocaleDateString() : "";
-                      const endDate = fb.placement?.endDate ? new Date(fb.placement.endDate).toLocaleDateString() : "Ongoing";
-                      const placementDates = startDate ? `${startDate} - ${endDate}` : "";
-                      const timestamp = fb.createdAt ? new Date(fb.createdAt).toLocaleDateString() : "";
+                  {!carerFeedback || carerFeedback.length === 0 ? (
+                    <p className="text-xs text-gold-100/30 text-center py-4">No feedback has been submitted for this carer yet.</p>
+                  ) : (
+                    <div className="space-y-4 relative pl-4 border-l border-gold-300/10 text-xs">
+                      {carerFeedback.map((fb: any, idx: number) => {
+                        const rating = fb.rating || 0;
+                        const clientName = fb.clientProfile?.user
+                          ? `${fb.clientProfile.user.firstName} ${fb.clientProfile.user.lastName}`
+                          : "Client";
+                        const startDate = fb.placement?.startDate ? new Date(fb.placement.startDate).toLocaleDateString() : "";
+                        const endDate = fb.placement?.endDate ? new Date(fb.placement.endDate).toLocaleDateString() : "Ongoing";
+                        const placementDates = startDate ? `${startDate} - ${endDate}` : "";
+                        const timestamp = fb.createdAt ? new Date(fb.createdAt).toLocaleDateString() : "";
 
-                      return (
-                        <div key={fb.id || idx} className="relative space-y-2 pb-2">
-                          <span className="absolute -left-[21px] top-1.5 h-2 w-2 rounded-full bg-gold border border-navy-950" />
-                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                            <div className="flex items-center gap-1">
-                              {[1, 2, 3, 4, 5].map((star) => (
-                                <svg
-                                  key={star}
-                                  className={`w-3.5 h-3.5 ${star <= rating ? "text-gold fill-gold" : "text-gold-300/30"}`}
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  strokeWidth="2"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                >
-                                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                                </svg>
-                              ))}
+                        return (
+                          <div key={fb.id || idx} className="relative space-y-2 pb-2">
+                            <span className="absolute -left-[21px] top-1.5 h-2 w-2 rounded-full bg-gold border border-navy-950" />
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                              <div className="flex items-center gap-1">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                  <svg
+                                    key={star}
+                                    className={`w-3.5 h-3.5 ${star <= rating ? "text-gold fill-gold" : "text-gold-300/30"}`}
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                  >
+                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                  </svg>
+                                ))}
+                              </div>
+                              <span className="text-[10px] text-gold-100/40 font-semibold">{timestamp}</span>
                             </div>
-                            <span className="text-[10px] text-gold-100/40 font-semibold">{timestamp}</span>
+                            <p className="text-gold-100/80 leading-relaxed italic border-l border-gold/30 pl-3 py-0.5">
+                              "{fb.message || fb.content || fb.text || ""}"
+                            </p>
+                            <div className="flex flex-wrap items-center gap-x-4 text-[10px] text-gold-100/50 pt-1">
+                              {clientName && (
+                                <span className="flex items-center gap-1">
+                                  <User className="w-3 h-3 text-gold/40" /> {clientName}
+                                </span>
+                              )}
+                              {placementDates && (
+                                <span className="flex items-center gap-1">
+                                  <Calendar className="w-3 h-3 text-gold/40" /> {placementDates}
+                                </span>
+                              )}
+                            </div>
                           </div>
-                          <p className="text-gold-100/80 leading-relaxed italic border-l border-gold/30 pl-3 py-0.5">
-                            "{fb.message || fb.content || fb.text || ""}"
-                          </p>
-                          <div className="flex flex-wrap items-center gap-x-4 text-[10px] text-gold-100/50 pt-1">
-                            {clientName && (
-                              <span className="flex items-center gap-1">
-                                <User className="w-3 h-3 text-gold/40" /> {clientName}
-                              </span>
-                            )}
-                            {placementDates && (
-                              <span className="flex items-center gap-1">
-                                <Calendar className="w-3 h-3 text-gold/40" /> {placementDates}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
 
               </div>
 
@@ -907,7 +907,7 @@ function CarerDetailsContent() {
 
           {activeTab === "media" && (
             <div className="space-y-6">
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-navy-900/40 p-6 rounded-2xl border border-gold-300/10 flex flex-col items-center text-center shadow-soft">
                   <h4 className="text-sm font-semibold text-gold-50 mb-6">Profile Picture</h4>

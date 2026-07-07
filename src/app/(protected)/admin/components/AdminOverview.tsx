@@ -271,15 +271,15 @@ export default function AdminOverview({
 
             <div className="space-y-3">
               <button
-                onClick={() => setActiveTab("matching")}
+                onClick={() => setActiveTab("profile-updates")}
                 className="flex w-full items-center justify-between rounded-xl bg-navy-950 p-4 border border-gold-300/10 text-left transition hover:border-gold-300/30 hover:bg-navy-950/80"
               >
                 <div>
                   <h4 className="text-sm font-semibold text-gold-200">
-                    Match New Client
+                    Review Profile Updates
                   </h4>
                   <p className="text-xs text-gold-100/50">
-                    Pair unmatched requests to carers
+                    Review and approve carer media
                   </p>
                 </div>
                 <span className="text-gold">➔</span>

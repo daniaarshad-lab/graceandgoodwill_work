@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { PlusCircle, FileText, AlertTriangle, RefreshCw, Paperclip, Clock, Edit2, Search, XCircle } from "lucide-react";
+import { PlusCircle, FileText, AlertTriangle, RefreshCw, Paperclip, Clock, Edit2, Search, XCircle, Check } from "lucide-react";
 import Button from "@/components/Button";
 import { adminService } from "@/services/admin/admin.service";
 import { InternalNote, CreateInternalNotePayload, UpdateInternalNotePayload, GetInternalNotesParams } from "@/app/(protected)/admin/types/admin.types";
@@ -317,16 +317,22 @@ export default function InternalNotes({ entityId, entityType }: InternalNotesPro
                   </div>
                   
                   <div className="flex flex-col items-end gap-2">
-                    <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      {isSuperAdmin && (
-                        <button 
-                          onClick={(e) => openEdit(note, e)}
-                          className="p-1.5 rounded bg-navy-900 border border-gold-300/20 text-gold-100/70 hover:text-gold-200 hover:border-gold-300/50 transition-colors"
-                          title="Edit Note"
-                        >
-                          <Edit2 className="h-3.5 w-3.5" />
-                        </button>
-                      )}
+                    <div className="flex items-center gap-2">
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (isSuperAdmin) openEdit(note, e);
+                        }}
+                        disabled={!isSuperAdmin}
+                        className={`p-2 rounded transition-colors ${
+                          isSuperAdmin 
+                            ? "bg-amber-500/10 border border-amber-500/30 text-amber-500 hover:bg-amber-500/20 hover:text-amber-400 hover:border-amber-400 cursor-pointer" 
+                            : "bg-navy-900/50 border border-gray-600/30 text-gray-500 cursor-not-allowed opacity-60"
+                        }`}
+                        title={isSuperAdmin ? "Edit Note" : "Only Super Admin can edit notes"}
+                      >
+                        <Edit2 className="h-4 w-4" />
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -337,6 +343,23 @@ export default function InternalNotes({ entityId, entityType }: InternalNotesPro
                 <div className="text-sm text-gold-100/80 leading-relaxed line-clamp-3">
                   {note.content}
                 </div>
+
+                {/* Follow Up Date & Tagged Admins */}
+                {(note.followUpDate || (note.taggedAdmins && note.taggedAdmins.length > 0)) && (
+                  <div className="mt-3 flex flex-wrap gap-3 pt-2 border-t border-gold-300/5">
+                    {note.followUpDate && (
+                      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-rose-500/10 border border-rose-500/20 text-rose-300 text-[10px] font-semibold">
+                        <Clock className="w-3 h-3 shrink-0" />
+                        <span>Follow Up: {new Date(note.followUpDate).toLocaleDateString()}</span>
+                      </div>
+                    )}
+                    {note.taggedAdmins && note.taggedAdmins.length > 0 && (
+                      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-gold-300/10 border border-gold-300/20 text-gold-200 text-[10px] font-semibold">
+                        <span>@{note.taggedAdmins.join(", @")}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 <div className="mt-4 pt-3 border-t border-gold-300/10 flex items-center justify-between gap-4 text-xs text-gold-100/70 overflow-x-auto [&::-webkit-scrollbar]:hidden">
                   <div className="flex items-center gap-3">
@@ -355,9 +378,18 @@ export default function InternalNotes({ entityId, entityType }: InternalNotesPro
                       {note.priority}
                     </span>
                     
-                    <span className="flex items-center gap-1.5 whitespace-nowrap before:content-['•'] before:text-gold-300/30">
+                    <span className={`flex items-center gap-1.5 whitespace-nowrap before:content-['•'] before:text-gold-300/30 ${
+                      note.status === 'RESOLVED' ? 'text-emerald-400 font-semibold' : ''
+                    }`}>
+                      {note.status === 'RESOLVED' && <Check className="w-3.5 h-3.5" />}
                       {note.status}
                     </span>
+
+                    {note.status === 'ACTIVE' && note.priority === 'HIGH' && (
+                      <span className="flex items-center gap-1.5 whitespace-nowrap before:content-['•'] before:text-gold-300/30 text-rose-400 font-bold uppercase text-[10px] tracking-wider">
+                        <AlertTriangle className="w-3 h-3" /> Action Required
+                      </span>
+                    )}
 
                     {note.attachments && note.attachments.length > 0 && (
                       <span className="flex items-center gap-1.5 whitespace-nowrap before:content-['•'] before:text-gold-300/30">

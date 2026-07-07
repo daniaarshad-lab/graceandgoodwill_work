@@ -175,11 +175,7 @@ export default function PlacementOpportunities() {
                         Urgent
                       </span>
                     )}
-                    {req.adminMatching && (
-                      <span className="rounded-full px-2.5 py-0.5 text-[9px] font-bold bg-gold/10 text-gold-DEFAULT border border-gold/20 uppercase tracking-wider">
-                        G&G Managed
-                      </span>
-                    )}
+
                   </div>
                 </div>
 

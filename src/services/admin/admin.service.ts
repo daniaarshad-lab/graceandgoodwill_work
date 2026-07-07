@@ -36,6 +36,7 @@ export const adminService = {
     if (params.search) queryParams.append("search", params.search);
     if (params.status) queryParams.append("status", params.status);
     if (params.priority) queryParams.append("priority", params.priority);
+    if (params.category) queryParams.append("category", params.category);
     if (params.isPinned !== undefined) queryParams.append("isPinned", String(params.isPinned));
     if (params.carerProfileId) queryParams.append("carerProfileId", params.carerProfileId);
     if (params.clientProfileId) queryParams.append("clientProfileId", params.clientProfileId);
@@ -102,6 +103,38 @@ export const adminService = {
     return apiFetch(`/admin/internal-notes/${id}/history`, {
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
+    });
+  },
+
+  /** GET /admin/profile-updates — get all pending profile update requests */
+  async getProfileUpdateRequests(): Promise<any[]> {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+
+    return apiFetch("/admin/profile-updates", {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  },
+
+  /** PATCH /admin/profile-updates/:id/status — approve or reject a profile update request */
+  async updateProfileUpdateRequestStatus(
+    id: string,
+    status: "APPROVED" | "REJECTED",
+    rejectionReason?: string
+  ): Promise<any> {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+
+    const body: { status: string; rejectionReason?: string } = { status };
+    if (status === "REJECTED" && rejectionReason) {
+      body.rejectionReason = rejectionReason;
+    }
+
+    return apiFetch(`/admin/profile-updates/${id}/status`, {
+      method: "PATCH",
+      headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify(body),
     });
   },
 
@@ -354,28 +387,7 @@ export const adminService = {
     }
   },
 
-  async updateIntroductionStatus(
-    introId: string,
-    status: string,
-    adminNotes?: string,
-  ): Promise<any> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-
-    if (!token) {
-      throw new Error("No token found");
-    }
-
-    return apiFetch(`/admin/introductions/${introId}/status`, {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ status, adminNotes }),
-    });
-  },
+  // updateIntroductionStatus removed — endpoint descoped
 
   async createDirectMatch(dto: {
     careRequestId: string;
@@ -417,28 +429,7 @@ export const adminService = {
     });
   },
 
-  async assignCarerToCareRequest(
-    careRequestId: string,
-    carerUserId: string,
-  ): Promise<any> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-
-    if (!token) {
-      throw new Error("No token found");
-    }
-
-    return apiFetch("/admin/matches/care-request", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ careRequestId, carerUserId }),
-    });
-  },
+  // assignCarerToCareRequest removed — endpoint descoped
 
   async getEnquiries(): Promise<any[]> {
     const token =

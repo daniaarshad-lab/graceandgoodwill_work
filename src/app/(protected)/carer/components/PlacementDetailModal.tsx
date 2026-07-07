@@ -81,16 +81,7 @@ export default function PlacementDetailModal({
                   Urgent
                 </span>
               )}
-              {careRequest.adminMatching && (
-                <span className="rounded-full px-3 py-1 text-[10px] font-bold bg-gold/10 text-gold-DEFAULT border border-gold/20 uppercase tracking-wider">
-                  Grace & Goodwill Managed
-                </span>
-              )}
-              {!careRequest.adminMatching && (
-                <span className="rounded-full px-3 py-1 text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase tracking-wider">
-                  Client Managed
-                </span>
-              )}
+
             </div>
 
             {/* Care Category */}

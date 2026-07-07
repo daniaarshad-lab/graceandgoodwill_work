@@ -4,7 +4,7 @@ import { useState } from "react";
 import Button from "@/components/Button";
 import { Check, Compass, Search, HeartHandshake } from "lucide-react";
 import { useAppDispatch } from "@/store/hooks";
-import { updateAdminMatching, fetchClientProfile } from "@/store/slices/clientSlice";
+import { fetchClientProfile } from "@/store/slices/clientSlice";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 
 interface ClientOnboardingProps {
@@ -21,22 +21,10 @@ export default function ClientOnboarding({ user, onComplete }: ClientOnboardingP
 
   const handleContinue = async () => {
     if (selectedOption) {
-      setIsUpdating(true);
-      try {
-        const isAdminMatching = selectedOption === "match";
-        await dispatch(updateAdminMatching(isAdminMatching)).unwrap();
-        // Fetch profile to ensure UI updates based on the new flag
-        await dispatch(fetchClientProfile()).unwrap();
-
-        if (selectedOption === "browse") {
-          onComplete("browse");
-        } else {
-          setStep(2);
-        }
-      } catch (err: any) {
-        showErrorToast("Update Failed", err || "Failed to update matching preference.");
-      } finally {
-        setIsUpdating(false);
+      if (selectedOption === "browse") {
+        onComplete("browse");
+      } else {
+        setStep(2);
       }
     }
   };

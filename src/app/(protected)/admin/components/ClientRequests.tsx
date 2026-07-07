@@ -11,7 +11,6 @@ import { showSuccessToast, showErrorToast } from "@/utils/toast";
 
 interface ClientRequestsProps {
   requests: ClientRequest[];
-  setSelectedRequestForMatching: UseAdminPortalReturn["setSelectedRequestForMatching"];
   setActiveTab: UseAdminPortalReturn["setActiveTab"];
 
   page: number;
@@ -25,7 +24,6 @@ interface ClientRequestsProps {
 
 export default function ClientRequests({
   requests,
-  setSelectedRequestForMatching,
   setActiveTab,
   page,
   totalPages,
@@ -174,19 +172,7 @@ export default function ClientRequests({
                 View Applications
               </Button>
 
-              {(req.status as string) !== "CARER_SELECTED" && (req.status as string) !== "CANCELLED" ? (
-                <Button
-                  onClick={() => {
-                    setSelectedRequestForMatching(req);
-                    setActiveTab("matching");
-                  }}
-                  variant={req.urgency === "Emergency" ? "danger" : "primary"}
-                  size="sm"
-                  fullWidth
-                >
-                  Match Available Carer ➔
-                </Button>
-              ) : (
+              {(req.status as string) === "CARER_SELECTED" && (
                 <div className="flex items-center justify-center rounded-xl bg-emerald-500/10 p-3 text-center border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
                   ✓ Placement Assigned & Tracked
                 </div>

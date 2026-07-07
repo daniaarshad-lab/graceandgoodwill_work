@@ -103,8 +103,7 @@ export default function ClientDashboard() {
     }
   }, [activeTab, portal.fetchPlacements]);
 
-  // Check if G&G manages everything
-  const isAdminMatching = portal.profile?.adminMatching === true;
+
 
   return (
     <main className="min-h-screen bg-navy-950 py-10 text-gold-100">
@@ -190,17 +189,12 @@ export default function ClientDashboard() {
 
           {/* TAB 7: INTEREST LIST */}
           {activeTab === "interest-list" && (
-            <InterestListPanel
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-            />
+            <InterestListPanel />
           )}
 
           {/* TAB 8: APPLICATIONS (Offers received by client) */}
           {activeTab === "applications" && (
-            <ClientApplicationsPanel
-              user={user}
-            />
+            <ClientApplicationsPanel />
           )}
         </div>
       </div>

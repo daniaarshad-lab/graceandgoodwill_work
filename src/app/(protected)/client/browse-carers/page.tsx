@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useAuth } from "@/contexts/AuthContext";
-import { fetchCarers, fetchCareRequests, fetchInterestList, addToInterestList, removeFromInterestList } from "@/store/slices/clientSlice";
+import { fetchCarers, fetchCareRequests, fetchInterestList, addToInterestList, removeFromInterestList, createClientMatch } from "@/store/slices/clientSlice";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 import { Carer } from "../types/client-ui.types";
 
@@ -53,12 +53,7 @@ export default function BrowseCarersPage() {
     dispatch(fetchInterestList());
   }, [dispatch]);
 
-  // Protect route if adminMatching is true
-  useEffect(() => {
-    if (profile?.adminMatching === true) {
-      router.replace("/client?tab=overview");
-    }
-  }, [profile, router]);
+
 
   // Extract all unique specialties for filter chips
   const allSpecialties = useMemo(() => {
@@ -104,6 +99,19 @@ export default function BrowseCarersPage() {
       }
     } catch (error: any) {
       showErrorToast("Action failed", error);
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
+  const handleCreateMatch = async (carerId: string, careRequestId: string) => {
+    setProcessingId(carerId);
+    try {
+      await dispatch(createClientMatch({ careRequestId, carerProfileId: carerId })).unwrap();
+      showSuccessToast("Match Requested", "Your request to match with this carer has been sent successfully.");
+      setSelectedCarer(null);
+    } catch (error: any) {
+      showErrorToast("Match Failed", error);
     } finally {
       setProcessingId(null);
     }
@@ -566,6 +574,27 @@ export default function BrowseCarersPage() {
                 </div>
                 
                 <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                  <Button
+                    onClick={() => {
+                      if (!careRequests || careRequests.length === 0) {
+                        showErrorToast("No Care Requests", "You must create a care request before matching with a carer.");
+                        return;
+                      }
+                      if (careRequests.length === 1) {
+                        handleCreateMatch(selectedCarer.id, careRequests[0].id);
+                      } else {
+                        // For simplicity if multiple exist, just pick the first for now.
+                        // A future iteration could show a dropdown. We'll use the latest one.
+                        handleCreateMatch(selectedCarer.id, careRequests[0].id);
+                      }
+                    }}
+                    disabled={processingId === selectedCarer.id}
+                    variant="primary"
+                    size="sm"
+                    className="flex-1 sm:flex-none font-semibold flex items-center justify-center gap-2 bg-[#d4af37] text-navy-950"
+                  >
+                    {processingId === selectedCarer.id ? "Processing..." : "Request Match"}
+                  </Button>
                   <Button
                     onClick={() => handleWishlistToggle(selectedCarer)}
                     disabled={processingId === selectedCarer.id || (!interestList.some((w: Carer) => w.id === selectedCarer.id) && interestList.length >= 8)}

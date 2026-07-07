@@ -39,7 +39,7 @@ export default function EditNoteModal({ isOpen, onClose, note, onSave }: EditNot
       setPriority(note.priority || "MEDIUM");
       setStatus(note.status || "ACTIVE");
       setCategory(note.category || "");
-      setFollowUpDate(note.followUpDate || "");
+      setFollowUpDate(note.followUpDate ? note.followUpDate.split('T')[0] : "");
       setTaggedAdmins(note.taggedAdmins || []);
       setIsPinned(note.isPinned || false);
       setEditReason("");

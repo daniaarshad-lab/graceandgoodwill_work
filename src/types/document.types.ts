@@ -54,6 +54,7 @@ export enum DocumentFileType {
   COMPLEX_CARE = "COMPLEX_CARE",
   MEDICATION_COMPETENCY = "MEDICATION_COMPETENCY",
   OTHER_RELEVANT = "OTHER_RELEVANT",
+  OTHER = "OTHER",
 }
 
 export const DocumentFileTypeLabels: Record<string, string> = {
@@ -100,6 +101,7 @@ export const DocumentFileTypeLabels: Record<string, string> = {
   [DocumentFileType.COMPLEX_CARE]: "Complex Care Training",
   [DocumentFileType.MEDICATION_COMPETENCY]: "Medication Competency Assessments",
   [DocumentFileType.OTHER_RELEVANT]: "Any Other Relevant Certificates",
+  [DocumentFileType.OTHER]: "Other Certificate",
 };
 
 export const getDocumentFileLabel = (type: DocumentFileType | string): string => {

@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import SectionCard from "./shared/SectionCard";
 import StatusBadge from "./shared/StatusBadge";
 import { Placement, CarerApplication } from "../types/admin.types";
@@ -35,6 +35,228 @@ export default function PlacementTracking({
     null,
   );
   const [selectedNewCarerId, setSelectedNewCarerId] = useState<string>("");
+
+  // Placement Billing States
+  const [billingDetails, setBillingDetails] = useState<Record<string, any>>({});
+  const [loadingBilling, setLoadingBilling] = useState<Record<string, boolean>>({});
+  const [updatingWeeklyFee, setUpdatingWeeklyFee] = useState<Record<string, number>>({});
+  const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const fetchPlacementBilling = async (placementId: string) => {
+    setLoadingBilling((prev) => ({ ...prev, [placementId]: true }));
+    try {
+      const detail = await adminService.getPlacementBilling(placementId);
+      setBillingDetails((prev) => ({ ...prev, [placementId]: detail }));
+      if (detail && detail.weeklyFee) {
+        setUpdatingWeeklyFee((prev) => ({ ...prev, [placementId]: detail.weeklyFee }));
+      }
+    } catch (err: any) {
+      console.error("Failed to load placement billing details", err);
+    } finally {
+      setLoadingBilling((prev) => ({ ...prev, [placementId]: false }));
+    }
+  };
+
+  const handleToggleExpand = (placementId: string) => {
+    const nextVal = expandedPlacementId === placementId ? null : placementId;
+    setExpandedPlacementId(nextVal);
+    if (nextVal) {
+      fetchPlacementBilling(placementId);
+    }
+  };
+
+  const handleUpdateWeeklyFee = async (placementId: string) => {
+    const fee = updatingWeeklyFee[placementId];
+    if (fee === undefined || fee < 0) return;
+    setActionLoading(`weekly-fee-${placementId}`);
+    setErrorMessage(null);
+    setSuccessMessage(null);
+    try {
+      await adminService.updatePlacementWeeklyFee(placementId, fee);
+      setSuccessMessage("Weekly fee overridden successfully!");
+      showSuccessToast("Fee Saved", "Agreed weekly fee overridden successfully.");
+      await fetchPlacementBilling(placementId);
+    } catch (err: any) {
+      setErrorMessage(err.message || "Failed to update weekly fee.");
+      showErrorToast("Error", err.message || "Failed to update weekly fee.");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handlePauseBilling = async (placementId: string) => {
+    if (!confirm("Are you sure you want to pause Stripe billing collection for this placement?")) return;
+    setActionLoading(`pause-${placementId}`);
+    setErrorMessage(null);
+    setSuccessMessage(null);
+    try {
+      await adminService.pausePlacementBilling(placementId);
+      setSuccessMessage("Recurring weekly billing collection paused.");
+      showSuccessToast("Billing Paused", "Recurring weekly billing collection paused.");
+      await fetchPlacementBilling(placementId);
+    } catch (err: any) {
+      setErrorMessage(err.message || "Failed to pause billing.");
+      showErrorToast("Error", err.message || "Failed to pause billing.");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleResumeBilling = async (placementId: string) => {
+    setActionLoading(`resume-${placementId}`);
+    setErrorMessage(null);
+    setSuccessMessage(null);
+    try {
+      await adminService.resumePlacementBilling(placementId);
+      setSuccessMessage("Recurring weekly billing collection resumed.");
+      showSuccessToast("Billing Resumed", "Recurring weekly billing collection resumed.");
+      await fetchPlacementBilling(placementId);
+    } catch (err: any) {
+      setErrorMessage(err.message || "Failed to resume billing.");
+      showErrorToast("Error", err.message || "Failed to resume billing.");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleResendInvoice = async (invoiceId: string, placementId: string) => {
+    setActionLoading(`resend-${invoiceId}`);
+    try {
+      await adminService.resendInvoice(invoiceId);
+      showSuccessToast("Reminder Sent", "Payment reminder notification sent.");
+      await fetchPlacementBilling(placementId);
+    } catch (err: any) {
+      showErrorToast("Error", err.message || "Failed to send invoice reminder.");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleRefundPayment = async (paymentId: string, placementId: string) => {
+    if (!confirm("Are you sure you want to issue a refund for this transaction? This action is irreversible.")) return;
+    setActionLoading(`refund-${paymentId}`);
+    try {
+      await adminService.refundPayment(paymentId);
+      showSuccessToast("Refund Success", "Payment refunded successfully.");
+      await fetchPlacementBilling(placementId);
+    } catch (err: any) {
+      showErrorToast("Error", err.message || "Stripe refund trigger failed.");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handlePrintInvoice = (inv: any, clientName: string, clientEmail: string) => {
+    const printWindow = window.open("", "_blank", "width=800,height=900");
+    if (printWindow) {
+      const isReg = inv.invoiceNumber ? inv.invoiceNumber.startsWith("REG-") : inv.id.startsWith("REG-");
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>Invoice - ${inv.invoiceNumber || inv.id}</title>
+            <style>
+              body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #1e293b; padding: 40px; line-height: 1.5; }
+              .header { display: flex; justify-content: space-between; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 30px; }
+              .logo { font-size: 24px; font-weight: bold; color: #1e3a8a; }
+              .company-details { text-align: right; font-size: 12px; color: #64748b; }
+              .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 40px; }
+              .section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #64748b; margin-bottom: 8px; letter-spacing: 0.05em; }
+              .details { font-size: 14px; }
+              .table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
+              .table th { background: #f8fafc; border-bottom: 1px solid #e2e8f0; padding: 12px; text-align: left; font-size: 12px; font-weight: 600; color: #64748b; }
+              .table td { padding: 12px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
+              .totals-box { display: flex; flex-direction: column; align-items: flex-end; margin-top: 20px; }
+              .total-row { display: flex; justify-content: space-between; width: 250px; padding: 6px 0; font-size: 13px; }
+              .total-row.grand-total { border-top: 2px solid #e2e8f0; padding-top: 10px; font-size: 18px; font-weight: bold; color: #0f172a; }
+              .badge { display: inline-block; padding: 4px 12px; background: #dcfce7; color: #15803d; border-radius: 9999px; font-size: 12px; font-weight: bold; text-transform: uppercase; }
+              .footer { text-align: center; border-top: 1px solid #e2e8f0; padding-top: 20px; margin-top: 50px; font-size: 12px; color: #94a3b8; }
+              @media print { .no-print { display: none; } body { padding: 0; } }
+            </style>
+          </head>
+          <body>
+            <div class="no-print" style="margin-bottom: 20px; text-align: right;">
+              <button onclick="window.print()" style="padding: 10px 20px; background: #d4af37; border: none; color: #0f172a; font-weight: bold; border-radius: 6px; cursor: pointer;">
+                Print / Save PDF
+              </button>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 30px;">
+              <div>
+                <div class="logo">Grace & Goodwill</div>
+                <div style="font-size: 12px; color: #64748b; margin-top: 4px;">CARE DEFINED BY INTEGRITY</div>
+              </div>
+              <div class="company-details">
+                <strong>Grace & Goodwill Ltd</strong><br/>
+                123 Care Street, London, UK<br/>
+                VAT Registration No: GB 123 4567 89
+              </div>
+            </div>
+            <div class="meta-grid">
+              <div>
+                <div class="section-title">Invoice To</div>
+                <div class="details"><strong>${clientName}</strong><br/>${clientEmail}</div>
+              </div>
+              <div style="text-align: right;">
+                <div class="section-title">Invoice Details</div>
+                <div class="details">
+                  <strong>Invoice Number:</strong> ${inv.invoiceNumber || inv.id}<br/>
+                  <strong>Date of Issue:</strong> ${new Date(inv.invoiceDate || inv.createdAt).toLocaleDateString()}<br/>
+                  <strong>Status:</strong> <span class="badge">${inv.status}</span>
+                </div>
+              </div>
+            </div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Description</th>
+                  <th style="text-align: right;">Subtotal</th>
+                  <th style="text-align: right;">VAT (20%)</th>
+                  <th style="text-align: right;">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <strong>${isReg ? 'Lifetime Matching Platform Access' : 'Live-in Care Weekly Placement Service'}</strong><br/>
+                    <span style="font-size: 12px; color: #64748b;">
+                      ${isReg 
+                        ? 'One-off registration fee covering onboarding, profiling, and lifetime matched access.' 
+                        : `Weekly recurring placement cycle: ${new Date(inv.billingPeriodStart).toLocaleDateString()} to ${new Date(inv.billingPeriodEnd).toLocaleDateString()}`
+                      }
+                    </span>
+                  </td>
+                  <td style="text-align: right;">£${Number(inv.subtotal || (Number(inv.total || inv.amount) / 1.2)).toFixed(2)}</td>
+                  <td style="text-align: right;">£${Number(inv.vat || (Number(inv.total || inv.amount) - (Number(inv.total || inv.amount) / 1.2))).toFixed(2)}</td>
+                  <td style="text-align: right;">£${Number(inv.total || inv.amount).toFixed(2)}</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="totals-box">
+              <div class="total-row"><span>Subtotal</span><span>£${Number(inv.subtotal || (Number(inv.total || inv.amount) / 1.2)).toFixed(2)}</span></div>
+              <div class="total-row"><span>VAT (20%)</span><span>£${Number(inv.vat || (Number(inv.total || inv.amount) - (Number(inv.total || inv.amount) / 1.2))).toFixed(2)}</span></div>
+              <div class="total-row grand-total"><span>Total Paid</span><span>£${Number(inv.total || inv.amount).toFixed(2)}</span></div>
+            </div>
+          </body>
+        </html>
+      `);
+      printWindow.document.close();
+    }
+  };
+
+  const getStatusBadge = (status: string) => {
+    const statusMap: Record<string, string> = {
+      ACTIVE: "bg-emerald-950/60 border border-emerald-500/30 text-emerald-400",
+      PAUSED: "bg-amber-950/60 border border-amber-500/30 text-amber-400 animate-pulse",
+      CANCELLED: "bg-red-950/60 border border-red-500/30 text-red-400",
+      PAID: "bg-emerald-950/60 border border-emerald-500/30 text-emerald-400",
+      PENDING: "bg-amber-950/60 border border-amber-500/30 text-amber-400",
+      FAILED: "bg-red-950/60 border border-red-500/30 text-red-400 animate-pulse",
+      OVERDUE: "bg-rose-950/60 border border-rose-500/30 text-rose-400",
+      REFUNDED: "bg-slate-900 border border-slate-700 text-slate-400",
+    };
+    return statusMap[status.toUpperCase()] || "bg-navy-800 text-slate-400";
+  };
 
   const filteredPlacements = placements.filter((p) => {
     if (filter === "All") return true;
@@ -146,9 +368,7 @@ export default function PlacementTracking({
                     <option value="CANCELLED">Cancelled</option>
                   </select>
                   <Button
-                    onClick={() =>
-                      setExpandedPlacementId(isExpanded ? null : place.id)
-                    }
+                    onClick={() => handleToggleExpand(place.id)}
                     variant="ghost-gold"
                     size="sm"
                     fullWidth={false}
@@ -256,6 +476,193 @@ export default function PlacementTracking({
                       </ul>
                     </div>
                     </div>
+                  </div>
+
+                  {/* Dedicated Billing Section */}
+                  <div className="border-t border-gold-300/10 pt-6 mt-6">
+                    <h5 className="text-xs font-bold uppercase tracking-wider text-gold-200 mb-4">
+                      Placement Financial & Billing Overview
+                    </h5>
+                    {loadingBilling[place.id] ? (
+                      <p className="text-xs text-gold-100/50">Loading placement financial metrics...</p>
+                    ) : billingDetails[place.id] ? (
+                      (() => {
+                        const detail = billingDetails[place.id];
+                        const clientName = place.clientName;
+                        const clientEmail = detail.client?.user?.email || "";
+                        const invoicesList = detail.invoices || [];
+
+                        return (
+                          <div className="space-y-6">
+                            {successMessage && (
+                              <div className="p-3.5 rounded bg-emerald-950/40 border border-emerald-500/20 text-emerald-400 text-xs">
+                                {successMessage}
+                              </div>
+                            )}
+                            {errorMessage && (
+                              <div className="p-3.5 rounded bg-red-950/40 border border-red-500/20 text-red-400 text-xs">
+                                {errorMessage}
+                              </div>
+                            )}
+
+                            {/* Financial KPI Grid */}
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-navy-950 p-4 rounded-xl border border-gold-300/5 text-xs">
+                              <div>
+                                <span className="text-[10px] text-gold-100/40 uppercase tracking-wider block mb-0.5">Agreed Weekly Fee</span>
+                                <span className="font-mono text-gold-100 text-sm font-bold">£{Number(detail.weeklyFee).toFixed(2)}</span>
+                              </div>
+                              <div>
+                                <span className="text-[10px] text-gold-100/40 uppercase tracking-wider block mb-0.5">Daily Rate (Calc)</span>
+                                <span className="font-mono text-gold-100 text-sm">£{Number(detail.dailyRate).toFixed(2)}</span>
+                              </div>
+                              <div>
+                                <span className="text-[10px] text-gold-100/40 uppercase tracking-wider block mb-0.5">Billing Frequency</span>
+                                <span className="text-slate-300 text-sm font-medium">{detail.billingFrequency}</span>
+                              </div>
+                              <div>
+                                <span className="text-[10px] text-gold-100/40 uppercase tracking-wider block mb-0.5">Outstanding Balance</span>
+                                <span className="font-mono text-rose-400 text-sm font-bold">£{Number(detail.outstandingBalance).toFixed(2)}</span>
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-navy-950 p-4 rounded-xl border border-gold-300/5 text-xs">
+                              <div>
+                                <span className="text-[10px] text-gold-100/40 uppercase tracking-wider block mb-0.5">Platform Fee Status</span>
+                                <span className={`text-xs font-bold ${detail.isLifetimeFeePaid ? "text-emerald-400" : "text-amber-500"}`}>
+                                  {detail.isLifetimeFeePaid ? "Paid & Confirmed" : "Pending Payment"}
+                                </span>
+                              </div>
+                              <div>
+                                <span className="text-[10px] text-gold-100/40 uppercase tracking-wider block mb-0.5">Stripe Subscription Status</span>
+                                <span className="text-slate-350 text-xs font-medium">{detail.billingStatus || "Unsubscribed"}</span>
+                              </div>
+                              <div>
+                                <span className="text-[10px] text-gold-100/40 uppercase tracking-wider block mb-0.5">Next Billing Cycle</span>
+                                <span className="text-slate-350 font-mono text-xs">{detail.nextBillingDate ? new Date(detail.nextBillingDate).toLocaleDateString() : "N/A"}</span>
+                              </div>
+                              <div>
+                                <span className="text-[10px] text-gold-100/40 uppercase tracking-wider block mb-0.5">Subscription ID</span>
+                                <span className="text-slate-400 text-[10px] font-mono">{detail.stripeSubscriptionId ? detail.stripeSubscriptionId.slice(0, 15) + "..." : "None"}</span>
+                              </div>
+                            </div>
+
+                            {/* Billing Action Controls */}
+                            <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-xl bg-navy-950 border border-gold-300/5">
+                              <div className="flex items-center gap-3">
+                                <div>
+                                  <label className="block text-[10px] text-gold-100/40 uppercase tracking-wider mb-1">Agreed Weekly Fee (£)</label>
+                                  <input
+                                    type="number"
+                                    value={updatingWeeklyFee[place.id] !== undefined ? updatingWeeklyFee[place.id] : Number(detail.weeklyFee)}
+                                    onChange={(e) => setUpdatingWeeklyFee(prev => ({ ...prev, [place.id]: Number(e.target.value) }))}
+                                    className="w-28 bg-navy-900 border border-gold-300/10 rounded px-2.5 py-1 text-xs text-white outline-none focus:border-gold-DEFAULT"
+                                  />
+                                </div>
+                                <button
+                                  onClick={() => handleUpdateWeeklyFee(place.id)}
+                                  disabled={actionLoading === `weekly-fee-${place.id}`}
+                                  className="mt-4 bg-navy-800 border border-gold-DEFAULT/20 text-gold-DEFAULT hover:bg-navy-700 px-3 py-1 rounded text-xs font-bold transition"
+                                >
+                                  Save Fee
+                                </button>
+                              </div>
+
+                              <div className="flex gap-2">
+                                {detail.billingStatus === "ACTIVE" ? (
+                                  <button
+                                    onClick={() => handlePauseBilling(place.id)}
+                                    disabled={actionLoading !== null}
+                                    className="bg-red-950/40 hover:bg-red-900/40 text-red-400 border border-red-500/20 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition"
+                                  >
+                                    Pause Billing
+                                  </button>
+                                ) : detail.billingStatus === "PAUSED" ? (
+                                  <button
+                                    onClick={() => handleResumeBilling(place.id)}
+                                    disabled={actionLoading !== null}
+                                    className="bg-emerald-950/40 hover:bg-emerald-900/40 text-emerald-400 border border-emerald-500/20 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition"
+                                  >
+                                    Resume Billing
+                                  </button>
+                                ) : null}
+                              </div>
+                            </div>
+
+                            {/* Placement Invoice History Table */}
+                            <div className="space-y-2">
+                              <span className="text-[10px] text-gold-100/50 uppercase tracking-widest font-bold block mb-2">Generated Placement Invoices</span>
+                              {invoicesList.length === 0 ? (
+                                <p className="text-xs text-gold-100/30 py-3 bg-navy-950/30 rounded-xl text-center">No statements generated for this placement yet.</p>
+                              ) : (
+                                <div className="overflow-x-auto rounded-xl border border-gold-300/5 bg-navy-950/20">
+                                  <table className="w-full text-left border-collapse text-xs text-slate-350">
+                                    <thead>
+                                      <tr className="border-b border-gold-300/10 bg-navy-950/50 text-[10px] uppercase font-bold text-gold-200">
+                                        <th className="py-2.5 px-3">Invoice ID</th>
+                                        <th className="py-2.5 px-3">Period</th>
+                                        <th className="py-2.5 px-3">Subtotal</th>
+                                        <th className="py-2.5 px-3">VAT (20%)</th>
+                                        <th className="py-2.5 px-3">Total</th>
+                                        <th className="py-2.5 px-3 text-center">Status</th>
+                                        <th className="py-2.5 px-3 text-right">Actions</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      {invoicesList.map((inv: any) => {
+                                        const payment = inv.payments?.find((p: any) => p.status === "Paid");
+                                        const isPaid = inv.status === "PAID";
+                                        
+                                        return (
+                                          <tr key={inv.id} className="border-b border-gold-300/5 hover:bg-navy-900/20 transition-colors">
+                                            <td className="py-3 px-3 font-mono font-semibold text-white">{inv.invoiceNumber || inv.id}</td>
+                                            <td className="py-3 px-3 text-slate-400">
+                                              {inv.billingPeriodStart ? `${new Date(inv.billingPeriodStart).toLocaleDateString()} - ${new Date(inv.billingPeriodEnd).toLocaleDateString()}` : "Onboarding Access"}
+                                            </td>
+                                            <td className="py-3 px-3 font-mono">£{Number(inv.subtotal || (Number(inv.total || inv.amount) / 1.2)).toFixed(2)}</td>
+                                            <td className="py-3 px-3 font-mono">£{Number(inv.vat || (Number(inv.total || inv.amount) - (Number(inv.total || inv.amount) / 1.2))).toFixed(2)}</td>
+                                            <td className="py-3 px-3 font-mono font-semibold text-gold-DEFAULT">£{Number(inv.total || inv.amount).toFixed(2)}</td>
+                                            <td className="py-3 px-3 text-center">
+                                              <span className={`inline-flex px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${
+                                                inv.status === "PAID" 
+                                                  ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                                                  : inv.status === "PENDING"
+                                                    ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                                                    : "bg-rose-500/10 text-rose-400 border border-rose-500/20"
+                                              }`}>
+                                                {inv.status}
+                                              </span>
+                                            </td>
+                                            <td className="py-3 px-3 text-right">
+                                              <div className="flex justify-end items-center gap-3">
+                                                {inv.pdfUrl && (
+                                                  <a href={inv.pdfUrl} target="_blank" rel="noreferrer" className="text-gold-DEFAULT hover:underline font-bold text-[10px]">PDF</a>
+                                                )}
+                                                {inv.receiptUrl && (
+                                                  <a href={inv.receiptUrl} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-gold-DEFAULT hover:underline font-bold text-[10px]">Stripe</a>
+                                                )}
+                                                <button onClick={() => handlePrintInvoice(inv, clientName, clientEmail)} className="text-gold-DEFAULT hover:underline font-bold text-[10px]">Print</button>
+                                                {inv.status !== "PAID" && (
+                                                  <button onClick={() => handleResendInvoice(inv.id, place.id)} className="text-gold-200/60 hover:text-gold-DEFAULT hover:underline font-bold text-[10px]">Remind</button>
+                                                )}
+                                                {isPaid && payment && (
+                                                  <button onClick={() => handleRefundPayment(payment.id, place.id)} className="text-red-400 hover:underline font-bold text-[10px]">Refund</button>
+                                                )}
+                                              </div>
+                                            </td>
+                                          </tr>
+                                        );
+                                      })}
+                                    </tbody>
+                                  </table>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })()
+                    ) : (
+                      <p className="text-xs text-gold-100/30">No billing information found for this placement.</p>
+                    )}
                   </div>
 
                   {/* Internal Notes Section */}

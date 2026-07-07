@@ -74,8 +74,7 @@ export default function CareRequestForm({
           Submit Care Requirements
         </h3>
         <p className="text-xs text-gold-100/60 leading-relaxed mt-1">
-          Specify details about the care needed. Our matching system
-          automatically aligns compatible profiles.
+          Specify details about the care needed. Start browsing carer profiles, comparing qualifications, experience, specialist skills and availability before creating your own shortlist. Explore at your own pace while benefiting from verified profiles and the support of Grace & Goodwill whenever you need assistance.
         </p>
       </div>
 

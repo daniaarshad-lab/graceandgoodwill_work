@@ -139,6 +139,7 @@ export function useClientPortal({ user }: UseClientPortalProps) {
       setIsOngoing(false);
       setWeeklyPayRange(null);
       setHasAttemptedSubmit(false);
+      return true;
     } catch (error: any) {
       const errorMsg =
         typeof error === "string"
@@ -154,6 +155,7 @@ export function useClientPortal({ user }: UseClientPortalProps) {
       if (!isValidationError) {
         showErrorToast("Error", errorMsg);
       }
+      return false;
     } finally {
       setIsCareSubmitting(false);
     }

@@ -39,10 +39,11 @@ const ClientApplicationsPanel = dynamic(
   () => import("./components/ClientApplicationsPanel"),
   { ssr: false },
 );
-const ClientOnboarding = dynamic(
-  () => import("./components/ClientOnboarding"),
-  { ssr: false },
-);
+// ClientOnboarding has been archived/reserved for future premium matching
+// const ClientOnboarding = dynamic(
+//   () => import("./components/ClientOnboarding"),
+//   { ssr: false },
+// );
 
 export default function ClientDashboard() {
   const { user } = useAuth();
@@ -50,7 +51,6 @@ export default function ClientDashboard() {
   const router = useRouter();
   const tabParam = searchParams.get("tab") as TabType;
   const [activeTab, setActiveTab] = useState<TabType>("request");
-  const [isOnboarding, setIsOnboarding] = useState<boolean>(false);
 
   useEffect(() => {
     if (
@@ -70,28 +70,29 @@ export default function ClientDashboard() {
     }
   }, [tabParam]);
 
-  useEffect(() => {
-    if (!user) return;
-    const hasCompleted = localStorage.getItem(`client_onboarding_done_${user.id}`) === "true";
-    const wantsOnboarding = searchParams.get("onboarding") === "true";
-    if (wantsOnboarding && !hasCompleted) {
-      setIsOnboarding(true);
-    }
-  }, [user, searchParams]);
+  // Onboarding flow (reserved for future premium matching)
+  // useEffect(() => {
+  //   if (!user) return;
+  //   const hasCompleted = localStorage.getItem(`client_onboarding_done_${user.id}`) === "true";
+  //   const wantsOnboarding = searchParams.get("onboarding") === "true";
+  //   if (wantsOnboarding && !hasCompleted) {
+  //     setIsOnboarding(true);
+  //   }
+  // }, [user, searchParams]);
 
-  const handleOnboardingComplete = (journey: "match" | "browse") => {
-    if (user?.id) {
-      localStorage.setItem(`client_onboarding_done_${user.id}`, "true");
-    }
-    setIsOnboarding(false);
-    if (journey === "browse") {
-      router.push("/client/browse-carers");
-    } else {
-      const targetTab = "request";
-      setActiveTab(targetTab);
-      router.push(`/client?tab=${targetTab}`);
-    }
-  };
+  // const handleOnboardingComplete = (journey: "match" | "browse") => {
+  //   if (user?.id) {
+  //     localStorage.setItem(`client_onboarding_done_${user.id}`, "true");
+  //   }
+  //   setIsOnboarding(false);
+  //   if (journey === "browse") {
+  //     router.push("/client/browse-carers");
+  //   } else {
+  //     const targetTab = "request";
+  //     setActiveTab(targetTab);
+  //     router.push(`/client?tab=${targetTab}`);
+  //   }
+  // };
 
   // Custom hook containing state + handlers
   const portal = useClientPortal({ user });
@@ -101,16 +102,6 @@ export default function ClientDashboard() {
       portal.fetchPlacements();
     }
   }, [activeTab, portal.fetchPlacements]);
-
-  if (isOnboarding) {
-    return (
-      <main className="min-h-screen bg-navy-950 py-10 text-gold-100 flex items-center justify-center">
-        <div className="container-wrapper w-full max-w-3xl">
-          <ClientOnboarding user={user} onComplete={handleOnboardingComplete} />
-        </div>
-      </main>
-    );
-  }
 
   // Check if G&G manages everything
   const isAdminMatching = portal.profile?.adminMatching === true;
@@ -165,13 +156,19 @@ export default function ClientDashboard() {
               setWeeklyPayRange={portal.setWeeklyPayRange}
               errors={portal.careErrors}
               isSubmitting={portal.isCareSubmitting}
-              onSubmit={portal.handleCareSubmit}
+              onSubmit={async (e) => {
+                e.preventDefault();
+                const success = await portal.handleCareSubmit(e);
+                if (success) {
+                  setActiveTab("carers");
+                }
+              }}
               setActiveTab={setActiveTab}
             />
           )}
 
           {/* TAB 3: CARER PROFILES */}
-          {activeTab === "carers" && !isAdminMatching && (
+          {activeTab === "carers" && (
             <CarerProfiles
               carers={portal.carers}
             />
@@ -191,11 +188,20 @@ export default function ClientDashboard() {
           {/* TAB 5: SUPPORT & ENQUIRIES */}
           {activeTab === "enquiry" && <SupportEnquiryPanel />}
 
-          {/* TAB 6: INTEREST LIST */}
-          {activeTab === "interest-list" && !isAdminMatching && <InterestListPanel />}
+          {/* TAB 7: INTEREST LIST */}
+          {activeTab === "interest-list" && (
+            <InterestListPanel
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+            />
+          )}
 
-          {/* TAB 7: APPLICATIONS */}
-          {activeTab === "applications" && !isAdminMatching && <ClientApplicationsPanel />}
+          {/* TAB 8: APPLICATIONS (Offers received by client) */}
+          {activeTab === "applications" && (
+            <ClientApplicationsPanel
+              user={user}
+            />
+          )}
         </div>
       </div>
 

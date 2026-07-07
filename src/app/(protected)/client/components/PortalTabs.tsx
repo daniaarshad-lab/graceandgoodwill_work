@@ -82,16 +82,10 @@ export default function PortalTabs({
     { id: "request", label: "Submit Care Request", href: "/client?tab=request" },
     { id: "overview", label: "Dashboard Overview", href: "/client?tab=overview" },
     { id: "profile" as TabType, label: "Profile Management", href: "/client?tab=profile" },
-    ...(!isAdminMatching
-      ? [
-          { id: "carers" as TabType, label: "Carer Profiles", href: "/client?tab=carers" },
-          { id: "interest-list" as TabType, label: "Interest List ❤️", href: "/client?tab=interest-list" },
-        ]
-      : []),
+    { id: "carers" as TabType, label: "Carer Profiles", href: "/client?tab=carers" },
+    { id: "interest-list" as TabType, label: "Interest List ❤️", href: "/client?tab=interest-list" },
     { id: "tracking", label: "Track Requests", href: "/client?tab=tracking" },
-    ...(!isAdminMatching
-      ? [{ id: "applications" as TabType, label: "Applications", href: "/client?tab=applications" }]
-      : []),
+    { id: "applications" as TabType, label: "Applications", href: "/client?tab=applications" },
     {
       id: "enquiry",
       label: "Support & Enquiries",

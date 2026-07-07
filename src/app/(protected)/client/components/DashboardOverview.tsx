@@ -60,13 +60,13 @@ export default function DashboardOverview({
 
           <div className="rounded-2xl border border-gold-300/10 bg-navy-950/40 p-4 space-y-2">
             <p className="text-xs uppercase tracking-wider text-gold-100/50">
-              Matched Matches
+              Selected Carers
             </p>
             <p className="text-3xl font-bold text-emerald-400">
               {careRequests.filter((r) => r.status === "MATCHED").length}
             </p>
             <p className="text-[10px] text-gold-100/40">
-              Carer placement confirmed and operational.
+              Chosen carers confirmed and operational.
             </p>
           </div>
         </div>

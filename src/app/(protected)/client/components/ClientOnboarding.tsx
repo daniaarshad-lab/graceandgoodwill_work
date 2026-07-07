@@ -12,6 +12,7 @@ interface ClientOnboardingProps {
   onComplete: (journey: "match" | "browse") => void;
 }
 
+// Reserved for future premium matching service
 export default function ClientOnboarding({ user, onComplete }: ClientOnboardingProps) {
   const [step, setStep] = useState<1 | 2>(1);
   const [selectedOption, setSelectedOption] = useState<"match" | "browse" | null>(null);

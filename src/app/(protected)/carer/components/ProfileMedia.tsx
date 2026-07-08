@@ -185,35 +185,35 @@ export default function ProfileMedia({
         {requests.length > 0 && (
           <div className="pt-6 border-t border-gold-300/10 space-y-4">
             <h4 className="text-sm font-semibold text-gold-200">Request History</h4>
-            <div className="grid grid-cols-1 gap-3">
+            <div className="grid grid-cols-1 gap-3 max-h-[450px] overflow-y-auto pr-2 custom-scrollbar">
               {requests.map((req) => {
                 const requestedPhoto = req.hasPhoto || req.isChangeProfilePic;
                 const requestedVideo = req.hasVideo || req.isChangeIntroVideo;
 
                 return (
-                  <div key={req.id} className="bg-navy-950/60 rounded-xl border border-gold-300/10 p-4 flex flex-col gap-4">
+                  <div key={req.id} className="bg-navy-950/60 rounded-xl border border-gold-300/10 p-5 flex flex-col gap-5 hover:bg-navy-950/80 hover:border-gold-300/20 transition-all shadow-sm">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full gap-4">
                       <div>
-                        <p className="text-sm text-gold-50 font-medium flex items-center gap-2">
+                        <p className="text-[15px] text-gold-50 font-semibold flex items-center gap-2">
                           Media Update Request
                         </p>
-                        <p className="text-[11px] text-gold-100/50 mt-1">
+                        <p className="text-xs text-gold-100/50 mt-1.5">
                           Submitted on {new Date(req.createdAt).toLocaleDateString()}
                         </p>
                       </div>
-                      <div className={`flex items-center justify-center gap-1.5 font-medium text-[11px] px-3 py-1.5 rounded-full border ${getStatusColor(req.status)} shrink-0`}>
+                      <div className={`flex items-center justify-center gap-1.5 font-semibold text-xs px-3.5 py-1.5 rounded-full border ${getStatusColor(req.status)} shrink-0 shadow-sm`}>
                         {getStatusIcon(req.status)} {req.status}
                       </div>
                     </div>
                     
                     {/* Pending Media Previews */}
-                    <div className="flex gap-4">
+                    <div className="flex flex-wrap gap-6 mt-1">
                       {requestedPhoto && req.pendingProfilePhotoUrl && (
-                        <div className="flex flex-col gap-1.5">
-                          <span className="text-[9px] font-semibold text-gold-200/50 flex items-center gap-1 uppercase tracking-wider">
-                            <ImageIcon className="w-2.5 h-2.5" /> Requested Photo
+                        <div className="flex flex-col gap-2">
+                          <span className="text-[10px] font-semibold text-gold-200/70 flex items-center gap-1.5 uppercase tracking-wider">
+                            <ImageIcon className="w-3.5 h-3.5" /> Requested Photo
                           </span>
-                          <a href={getFullMediaUrl(req.pendingProfilePhotoUrl)} target="_blank" rel="noreferrer" className="block w-14 h-14 rounded-lg overflow-hidden border border-navy-800 hover:opacity-80 transition relative">
+                          <a href={getFullMediaUrl(req.pendingProfilePhotoUrl)} target="_blank" rel="noreferrer" className="block w-24 h-24 rounded-xl overflow-hidden border border-navy-800 shadow-md hover:opacity-80 transition relative">
                             <img 
                               src={getFullMediaUrl(req.pendingProfilePhotoUrl)} 
                               alt="Pending profile" 
@@ -227,11 +227,11 @@ export default function ProfileMedia({
                       )}
                       
                       {requestedVideo && req.pendingIntroVideoUrl && (
-                        <div className="flex flex-col gap-1.5">
-                          <span className="text-[9px] font-semibold text-gold-200/50 flex items-center gap-1 uppercase tracking-wider">
-                            <FileVideo className="w-2.5 h-2.5" /> Requested Video
+                        <div className="flex flex-col gap-2">
+                          <span className="text-[10px] font-semibold text-gold-200/70 flex items-center gap-1.5 uppercase tracking-wider">
+                            <FileVideo className="w-3.5 h-3.5" /> Requested Video
                           </span>
-                          <div className="w-20 h-14 rounded-lg overflow-hidden border border-navy-800 bg-black flex items-center justify-center">
+                          <div className="w-40 h-24 rounded-xl overflow-hidden border border-navy-800 bg-black shadow-md flex items-center justify-center">
                             <video src={getFullMediaUrl(req.pendingIntroVideoUrl)} className="w-full h-full object-cover" controls controlsList="nodownload" />
                           </div>
                         </div>

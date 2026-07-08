@@ -162,8 +162,9 @@ export default function ProfileUpdateRequests() {
                   </div>
                   
                   {isExpanded && (
-                    <div className="p-6 pt-2 border-t border-gold-300/10 bg-navy-900/40 flex flex-col gap-8">
-                      {group.requests.map((req: any, index: number) => {
+                    <div className="p-6 pt-4 border-t border-gold-300/10 bg-navy-900/40">
+                      <div className="flex flex-col gap-6 max-h-[700px] overflow-y-auto pr-2 custom-scrollbar">
+                        {group.requests.map((req: any, index: number) => {
                         const hasRequestedPhoto = req.isChangeProfilePic && req.pendingProfilePhotoUrl;
                         const hasRequestedVideo = req.isChangeIntroVideo && req.pendingIntroVideoUrl;
                         
@@ -259,14 +260,22 @@ export default function ProfileUpdateRequests() {
                             {/* Request Summary */}
                             <div>
                               <h4 className="text-xs font-bold uppercase tracking-wider text-gold-100/60 mb-3">Request Summary</h4>
-                              <div className="flex flex-col gap-2 text-sm text-gold-50">
-                                <div className="flex items-center gap-2">
-                                  <span>Photo Change Requested</span>
-                                  {hasRequestedPhoto ? <Check className="w-4 h-4 text-emerald-400" /> : <X className="w-4 h-4 text-gold-100/30" />}
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div className="flex items-center justify-between p-3.5 rounded-xl border border-gold-300/10 bg-navy-900/60 shadow-sm">
+                                  <span className="text-sm font-medium text-gold-100/90">Photo Change</span>
+                                  {hasRequestedPhoto ? (
+                                    <div className="w-7 h-7 rounded-lg bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30 shadow-sm"><Check className="w-4 h-4 text-emerald-400" /></div>
+                                  ) : (
+                                    <div className="w-7 h-7 rounded-lg bg-navy-800/80 flex items-center justify-center border border-gold-300/10"><X className="w-4 h-4 text-gold-100/30" /></div>
+                                  )}
                                 </div>
-                                <div className="flex items-center gap-2">
-                                  <span>Video Change Requested</span>
-                                  {hasRequestedVideo ? <Check className="w-4 h-4 text-emerald-400" /> : <X className="w-4 h-4 text-gold-100/30" />}
+                                <div className="flex items-center justify-between p-3.5 rounded-xl border border-gold-300/10 bg-navy-900/60 shadow-sm">
+                                  <span className="text-sm font-medium text-gold-100/90">Video Change</span>
+                                  {hasRequestedVideo ? (
+                                    <div className="w-7 h-7 rounded-lg bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30 shadow-sm"><Check className="w-4 h-4 text-emerald-400" /></div>
+                                  ) : (
+                                    <div className="w-7 h-7 rounded-lg bg-navy-800/80 flex items-center justify-center border border-gold-300/10"><X className="w-4 h-4 text-gold-100/30" /></div>
+                                  )}
                                 </div>
                               </div>
                               
@@ -311,6 +320,7 @@ export default function ProfileUpdateRequests() {
                           </div>
                         );
                       })}
+                      </div>
                     </div>
                   )}
                 </div>

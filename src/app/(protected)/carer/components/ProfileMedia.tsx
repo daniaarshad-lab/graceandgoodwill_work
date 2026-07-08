@@ -19,7 +19,8 @@ const getFullMediaUrl = (path: string | null | undefined) => {
   }
   
   const cleanPath = path.startsWith("/") ? path : `/${path}`;
-  return `${baseUrl}${cleanPath}`;
+  const finalUrl = `${baseUrl}${cleanPath}`;
+  return finalUrl;
 };
 
 interface ProfileMediaProps {

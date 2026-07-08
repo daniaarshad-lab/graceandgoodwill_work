@@ -54,7 +54,8 @@ export const fetchCarerProfile = createAsyncThunk<
   { rejectValue: string }
 >("carer/fetchProfile", async (_, { rejectWithValue }) => {
   try {
-    return await carerService.getProfile();
+    const response = await carerService.getProfile();
+    return response;
   } catch (error: any) {
     return rejectWithValue(
       error?.response?.data?.message ||

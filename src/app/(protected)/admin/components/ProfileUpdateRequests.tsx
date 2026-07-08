@@ -132,7 +132,8 @@ export default function ProfileUpdateRequests() {
               setExpandedCarers(prev => ({ ...prev, [carerId]: !prev[carerId] }));
             };
 
-            return Object.entries(groupedRequests).map(([carerId, group]) => {
+            return Object.entries(groupedRequests).map(([carerId, groupValue]) => {
+              const group = groupValue as { carerName: string; requests: any[] };
               // Default to expanded if there is any pending request, otherwise check state
               const hasPending = group.requests.some((r: any) => r.status === "PENDING");
               const isExpanded = expandedCarers[carerId] !== undefined ? expandedCarers[carerId] : hasPending;
@@ -163,8 +164,8 @@ export default function ProfileUpdateRequests() {
                   {isExpanded && (
                     <div className="p-6 pt-2 border-t border-gold-300/10 bg-navy-900/40 flex flex-col gap-8">
                       {group.requests.map((req: any, index: number) => {
-                        const hasRequestedPhoto = req.hasPhoto && req.pendingProfilePhotoUrl;
-                        const hasRequestedVideo = req.hasVideo && req.pendingIntroVideoUrl;
+                        const hasRequestedPhoto = req.isChangeProfilePic && req.pendingProfilePhotoUrl;
+                        const hasRequestedVideo = req.isChangeIntroVideo && req.pendingIntroVideoUrl;
                         
                         return (
                           <div key={req.id} className="relative rounded-xl border border-gold-300/10 bg-navy-950 p-6 flex flex-col gap-6">
@@ -188,9 +189,9 @@ export default function ProfileUpdateRequests() {
                                   <span className="text-[10px] font-semibold text-gold-200/50 flex items-center gap-1">
                                     <ImageIcon className="w-3 h-3" /> Profile Photo
                                   </span>
-                                  {req.profilePhotoUrl ? (
-                                    <a href={getFullMediaUrl(req.profilePhotoUrl)} target="_blank" rel="noreferrer" className="block w-20 h-20 rounded-xl overflow-hidden border border-navy-800 hover:opacity-80 transition">
-                                      <img src={getFullMediaUrl(req.profilePhotoUrl)} alt="Current profile" className="w-full h-full object-cover" />
+                                  {req.carerProfile?.profilePhotoUrl ? (
+                                    <a href={getFullMediaUrl(req.carerProfile.profilePhotoUrl)} target="_blank" rel="noreferrer" className="block w-20 h-20 rounded-xl overflow-hidden border border-navy-800 hover:opacity-80 transition">
+                                      <img src={getFullMediaUrl(req.carerProfile.profilePhotoUrl)} alt="Current profile" className="w-full h-full object-cover" />
                                     </a>
                                   ) : (
                                     <div className="w-20 h-20 rounded-xl overflow-hidden border border-navy-800 bg-navy-950 flex items-center justify-center">
@@ -203,9 +204,9 @@ export default function ProfileUpdateRequests() {
                                   <span className="text-[10px] font-semibold text-gold-200/50 flex items-center gap-1">
                                     <FileVideo className="w-3 h-3" /> Introduction Video
                                   </span>
-                                  {req.introVideoUrl ? (
+                                  {req.carerProfile?.introVideoUrl ? (
                                     <div className="w-32 h-20 rounded-xl overflow-hidden border border-navy-800 bg-black flex items-center justify-center">
-                                      <video src={getFullMediaUrl(req.introVideoUrl)} className="w-full h-full object-cover" controls controlsList="nodownload" />
+                                      <video src={getFullMediaUrl(req.carerProfile.introVideoUrl)} className="w-full h-full object-cover" controls controlsList="nodownload" />
                                     </div>
                                   ) : (
                                     <div className="w-32 h-20 rounded-xl overflow-hidden border border-navy-800 bg-navy-950 flex items-center justify-center">

@@ -368,7 +368,7 @@ function DocumentReviewContent() {
                   </div>
 
                   {/* DOCUMENT DETAILED INFORMATION */}
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 rounded-xl bg-navy-950/40 border border-gold-300/5 text-xs flex-shrink-0">
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-4 p-4 rounded-xl bg-navy-950/40 border border-gold-300/5 text-xs flex-shrink-0">
                     <div>
                       <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1">Document Type</span>
                       <span className="text-gold-200 font-bold">{getMockDocDetails(activeDoc.fileCategory || activeDoc.fileType).type}</span>
@@ -393,6 +393,14 @@ function DocumentReviewContent() {
                             : "text-gold-DEFAULT"
                       }`}>
                         {getStatusLabel(activeDoc.status)}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1">Approved By</span>
+                      <span className="text-gold-200 font-bold">
+                        {activeDoc.status?.toUpperCase() === "APPROVED" || activeDoc.status?.toUpperCase() === "VERIFIED" 
+                          ? (activeDoc.approvedBy || activeDoc.reviewedBy || activeDoc.adminName || "Admin")
+                          : "N/A"}
                       </span>
                     </div>
                   </div>

@@ -387,8 +387,8 @@ function ClientDetailsContent() {
                 {client.status !== "APPROVED" && (
                   <button
                     onClick={handleApproveClient}
-                    disabled={approvingClient}
-                    className="w-full mt-4 px-4 py-2.5 text-xs font-bold text-navy-950 bg-gold hover:bg-gold-200 disabled:opacity-40 rounded-xl transition duration-300 flex items-center justify-center gap-1.5 cursor-pointer"
+                    disabled={approvingClient || !client.agreedWeeklyFee || client.agreedWeeklyFee <= 0}
+                    className="w-full mt-4 px-4 py-2.5 text-xs font-bold text-navy-950 bg-gold hover:bg-gold-200 disabled:opacity-40 rounded-xl transition duration-300 flex items-center justify-center gap-1.5 cursor-pointer disabled:cursor-not-allowed"
                   >
                     {approvingClient ? (
                       <div className="w-3.5 h-3.5 border-2 border-navy-950 border-t-transparent rounded-full animate-spin" />

@@ -279,12 +279,14 @@ export default function ProfileUpdateRequests() {
                                 </div>
                               </div>
                               
-                              {req.reason && (
-                                <div className="mt-4 p-3 rounded-lg bg-navy-900/80 border border-gold-300/10">
-                                  <span className="text-[10px] font-bold uppercase tracking-wider text-gold-200/50 block mb-1">Reason provided by carer:</span>
-                                  <p className="text-sm text-gold-50 italic">"{req.reason}"</p>
-                                </div>
-                              )}
+                              <div className="mt-4 p-3 rounded-lg bg-navy-900/80 border border-gold-300/10">
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-gold-200/50 block mb-1">Update Reason:</span>
+                                {req.updateReason ? (
+                                  <p className="text-sm text-gold-50 italic">"{req.updateReason}"</p>
+                                ) : (
+                                  <p className="text-sm text-gold-100/50 italic">No reason provided.</p>
+                                )}
+                              </div>
 
                               {req.status === "REJECTED" && req.rejectionReason && (
                                 <div className="mt-4 p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-200/90 text-sm">

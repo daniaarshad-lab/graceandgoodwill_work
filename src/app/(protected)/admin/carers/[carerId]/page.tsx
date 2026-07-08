@@ -29,6 +29,7 @@ import {
   CheckCircle2,
   Camera,
   Video,
+  Info,
 } from "lucide-react";
 import InternalNotes from "../../components/shared/InternalNotes/InternalNotes";
 
@@ -901,6 +902,15 @@ function CarerDetailsContent() {
 
             return (
               <div className="space-y-6">
+                <div className="bg-blue-500/10 border border-blue-500/20 rounded-2xl p-4 flex items-start gap-3">
+                  <Info className="w-5 h-5 text-blue-400 mt-0.5 shrink-0" />
+                  <div>
+                    <h4 className="text-sm font-semibold text-blue-200">Read-Only View</h4>
+                    <p className="text-xs text-blue-100/70 mt-1">
+                      This is the currently approved media for this carer. Carers cannot modify these directly; they must submit a media update request. You can review and approve any pending media updates in the Profile Update Requests section.
+                    </p>
+                  </div>
+                </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-navy-900/40 p-6 rounded-2xl border border-gold-300/10 flex flex-col items-center text-center shadow-soft">

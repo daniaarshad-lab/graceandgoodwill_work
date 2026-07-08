@@ -43,6 +43,8 @@ export default function ProfileMedia({
   const photoInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
   const [photoError, setPhotoError] = useState(false);
+  const [updateReason, setUpdateReason] = useState("");
+  const [updateReasonError, setUpdateReasonError] = useState("");
 
   useEffect(() => {
     fetchRequests();
@@ -65,19 +67,27 @@ export default function ProfileMedia({
   const hasPendingRequest = requests.some((req) => req.status === "PENDING");
 
   const handleSendRequest = async () => {
+    const trimmedReason = updateReason.trim();
+    if (!trimmedReason) {
+      setUpdateReasonError("Update reason is required.");
+      return;
+    }
+
     if (!photoFile && !videoFile) {
       showErrorToast("Validation Error", "Please select at least a photo or video to update.");
       return;
     }
 
     setIsSubmitting(true);
+    setUpdateReasonError("");
     try {
-      await carerService.submitProfileUpdateRequest(photoFile || undefined, videoFile || undefined);
+      await carerService.submitProfileUpdateRequest(photoFile || undefined, videoFile || undefined, trimmedReason);
       showSuccessToast("Request Submitted", "Your media update request has been submitted successfully.");
 
       setModalOpen(false);
       setPhotoFile(null);
       setVideoFile(null);
+      setUpdateReason("");
 
       await fetchRequests();
     } catch (err: any) {
@@ -91,6 +101,8 @@ export default function ProfileMedia({
     setModalOpen(false);
     setPhotoFile(null);
     setVideoFile(null);
+    setUpdateReason("");
+    setUpdateReasonError("");
   };
 
   const getStatusColor = (status: string) => {
@@ -318,6 +330,28 @@ export default function ProfileMedia({
                       {videoFile ? <span className="text-gold-200 font-medium">{videoFile.name}</span> : "Click to select a video"}
                     </p>
                   </div>
+                </div>
+
+                {/* Update Reason */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gold-200">
+                    Update Reason <span className="text-red-500">*</span>
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={updateReason}
+                    onChange={(e) => {
+                      setUpdateReason(e.target.value);
+                      if (e.target.value.trim()) setUpdateReasonError("");
+                    }}
+                    placeholder="Please explain why you are requesting this profile media update..."
+                    className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 text-sm ${
+                      updateReasonError ? "border-red-500 focus:ring-red-500" : "border-gray-300/20"
+                    }`}
+                  ></textarea>
+                  {updateReasonError && (
+                    <p className="text-xs text-red-500 font-medium">{updateReasonError}</p>
+                  )}
                 </div>
               </div>
 

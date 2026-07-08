@@ -201,10 +201,6 @@ export function useCarerPortal({
     try {
       if (step === 2) {
         const payload = {
-          firstName,
-          lastName,
-          email,
-          phoneNumber: phone,
           address,
           postcode,
           dateOfBirth,
@@ -245,10 +241,6 @@ export function useCarerPortal({
         await dispatch(updateCarerStep11(payload)).unwrap();
       } else {
         const personalPayload = {
-          firstName,
-          lastName,
-          email,
-          phoneNumber: phone,
           address,
           postcode,
           dateOfBirth,

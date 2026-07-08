@@ -117,22 +117,32 @@ export default function ProfileManagement({
             error={errors.lastName}
           />
 
-          <Input
-            label="Email Address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter email"
-            type="email"
-            error={errors.email}
-          />
+          <div>
+            <Input
+              label="Email Address"
+              value={email}
+              onChange={() => {}} // Read-only
+              placeholder="Enter email"
+              type="email"
+              disabled
+            />
+            <p className="text-[11px] text-gold-200/50 mt-2">
+              Email Address cannot be changed after registration.
+            </p>
+          </div>
 
-          <PhoneInput
-            label="Phone Number"
-            value={phone}
-            onChange={setPhone}
-            placeholder="Enter phone number"
-            error={errors.phone}
-          />
+          <div>
+            <PhoneInput
+              label="Phone Number"
+              value={phone}
+              onChange={() => {}} // Read-only
+              placeholder="Enter phone number"
+              disabled
+            />
+            <p className="text-[11px] text-gold-200/50 mt-2">
+              Phone Number cannot be changed after registration.
+            </p>
+          </div>
 
           <Input
             label="Care Specialties"

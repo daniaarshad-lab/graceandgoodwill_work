@@ -41,7 +41,6 @@ function CarerReferralsContent() {
   // Load referrals when statusFilter changes
   useEffect(() => {
     dispatch(fetchCarerReferralsThunk(statusFilter));
-    dispatch(fetchClientReferralsThunk(statusFilter));
   }, [dispatch, statusFilter]);
 
   const { profile, documents } = useAppSelector((state) => state.carer);
@@ -180,7 +179,7 @@ function CarerReferralsContent() {
                   </div>
                   <div className="lg:col-span-6 h-full rounded-3xl border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md">
                     <ReferralDashboard
-                      referrals={clientReferrals}
+                      referrals={carerReferrals}
                       loading={loading}
                       filterType="CLIENT"
                       statusFilter={statusFilter}

@@ -177,7 +177,7 @@ export default function CareRequestForm({
                 }}
                 className="w-4 h-4 rounded border-gold-300/20 bg-navy-950 text-gold-DEFAULT focus:ring-gold-DEFAULT focus:ring-offset-navy-950"
               />
-              Ongoing (No End Date)
+              Ongoing (Endless)
             </label>
           </div>
         </div>

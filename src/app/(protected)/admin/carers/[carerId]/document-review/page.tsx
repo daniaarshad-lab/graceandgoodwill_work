@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchCarerDetails, verifyDocument, rejectDocument } from "@/store/slices/adminSlice";
+import { useAuth } from "@/contexts/AuthContext";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 import Link from "next/link";
 import { ArrowLeft, Check, X, FileText, Image as ImageIcon, Calendar, User, ExternalLink, Eye, CheckCircle2, AlertTriangle, ShieldCheck, Download } from "lucide-react";
@@ -65,14 +66,14 @@ const getMockDocDetails = (category: string) => {
 
 function DocumentReviewContent() {
   const params = useParams();
-  const searchParams = useSearchParams();
   const router = useRouter();
   const dispatch = useAppDispatch();
-
+  const { data: carer, loading, error } = useAppSelector((state) => state.admin.selectedCarer);
+  const { user } = useAuth();
+  const searchParams = useSearchParams();
   const carerId = params.carerId as string;
   const documentId = searchParams.get("documentId");
 
-  const { data: carer, loading, error } = useAppSelector((state) => state.admin.selectedCarer);
   const [activeDocId, setActiveDocId] = useState<string | null>(documentId);
   const [submittingAction, setSubmittingAction] = useState<"VERIFY" | "REJECT" | null>(null);
   const [notes, setNotes] = useState<Record<string, string>>({});
@@ -116,7 +117,8 @@ function DocumentReviewContent() {
     setValidationError(null);
   }, [activeDocId]);
 
-  const handleVerify = async () => {
+  const handleVerify = async (e: React.MouseEvent) => {
+    e.preventDefault();
     if (!activeDoc) return;
     setValidationError(null);
     setSubmittingAction("VERIFY");
@@ -124,8 +126,6 @@ function DocumentReviewContent() {
       const docNotes = notes[activeDoc.id] || "";
       await dispatch(verifyDocument({ docId: activeDoc.id, notes: docNotes })).unwrap();
       showSuccessToast("Document Approved", "The document has been approved successfully.");
-      // Re-fetch to ensure local state is fully in sync with server
-      dispatch(fetchCarerDetails(carerId));
     } catch (err: any) {
       showErrorToast("Error", err || "Failed to verify document");
     } finally {
@@ -133,7 +133,8 @@ function DocumentReviewContent() {
     }
   };
 
-  const handleReject = async () => {
+  const handleReject = async (e: React.MouseEvent) => {
+    e.preventDefault();
     if (!activeDoc) return;
     const docNotes = (notes[activeDoc.id] || "").trim();
     if (!docNotes) {
@@ -145,8 +146,6 @@ function DocumentReviewContent() {
     try {
       await dispatch(rejectDocument({ docId: activeDoc.id, rejectionReason: docNotes })).unwrap();
       showSuccessToast("Document Rejected", "The document has been rejected.");
-      // Re-fetch to ensure local state is fully in sync with server
-      dispatch(fetchCarerDetails(carerId));
     } catch (err: any) {
       showErrorToast("Error", err || "Failed to reject document");
     } finally {
@@ -225,10 +224,10 @@ function DocumentReviewContent() {
         <header className="rounded-2xl border border-gold-300/10 bg-gradient-to-r from-navy-900 via-navy-950 to-navy-900 p-6 shadow-soft backdrop-blur-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <Link
-              href="/admin?tab=carers"
+              href={`/admin/carers/${carerId}?tab=documents`}
               className="inline-flex items-center gap-1 text-xs font-semibold text-gold/60 hover:text-gold transition duration-200 mb-2"
             >
-              <ArrowLeft className="h-3.5 w-3.5" /> Back to Carer Registry
+              <ArrowLeft className="h-3.5 w-3.5" /> Back to Carer Details
             </Link>
             <h1 className="text-xl tracking-tight text-gold-200 sm:text-2xl font-bold flex items-center gap-2">
               <ShieldCheck className="h-6 w-6 text-gold" /> Onboarding compliance Audit
@@ -396,10 +395,18 @@ function DocumentReviewContent() {
                       </span>
                     </div>
                     <div>
-                      <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1">Approved By</span>
+                      <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1">
+                        {activeDoc.status?.toUpperCase() === "REJECTED" ? "Rejected By" : "Approved By"}
+                      </span>
                       <span className="text-gold-200 font-bold">
-                        {activeDoc.status?.toUpperCase() === "APPROVED" || activeDoc.status?.toUpperCase() === "VERIFIED" 
-                          ? (activeDoc.approvedBy || activeDoc.reviewedBy || activeDoc.adminName || "Admin")
+                        {activeDoc.status?.toUpperCase() === "APPROVED" || activeDoc.status?.toUpperCase() === "VERIFIED" || activeDoc.status?.toUpperCase() === "REJECTED"
+                          ? ((activeDoc.rejectedByName && activeDoc.rejectedByName !== "ADMIN" && activeDoc.rejectedByName) ||
+                             (activeDoc.rejectedBy && activeDoc.rejectedBy !== "ADMIN" && activeDoc.rejectedBy) ||
+                             (activeDoc.approvedByName && activeDoc.approvedByName !== "ADMIN" && activeDoc.approvedByName) || 
+                             (activeDoc.approvedBy && activeDoc.approvedBy !== "ADMIN" && activeDoc.approvedBy) || 
+                             (activeDoc.adminName && activeDoc.adminName !== "ADMIN" && activeDoc.adminName) || 
+                             (activeDoc.reviewedBy && activeDoc.reviewedBy !== "ADMIN" && activeDoc.reviewedBy) || 
+                             (user?.firstName ? `${user.firstName} ${user.lastName || ""}`.trim() : "System Admin"))
                           : "N/A"}
                       </span>
                     </div>
@@ -497,6 +504,7 @@ function DocumentReviewContent() {
                       ) : (
                         <div className="flex flex-row items-center gap-3">
                           <button
+                            type="button"
                             onClick={handleReject}
                             disabled={submittingAction !== null}
                             className="px-5 py-2 text-xs font-bold text-white bg-rose-600 hover:bg-rose-500 disabled:opacity-40 rounded-xl transition duration-200 flex items-center justify-center gap-1.5 cursor-pointer h-10 flex-shrink-0"
@@ -509,6 +517,7 @@ function DocumentReviewContent() {
                             Reject
                           </button>
                           <button
+                            type="button"
                             onClick={handleVerify}
                             disabled={submittingAction !== null}
                             className="px-5 py-2 text-xs font-bold text-navy-950 bg-gold hover:bg-gold-200 disabled:opacity-40 rounded-xl transition duration-200 flex items-center justify-center gap-1.5 cursor-pointer h-10 flex-shrink-0"

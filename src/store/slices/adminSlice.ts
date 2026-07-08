@@ -126,26 +126,26 @@ export const fetchCarerDetails = createAsyncThunk<
 });
 
 export const verifyDocument = createAsyncThunk<
-  { docId: string; status: string },
+  { docId: string; status: string; data?: any },
   { docId: string; notes?: string },
   { rejectValue: string }
 >("admin/verifyDocument", async ({ docId, notes }, { rejectWithValue }) => {
   try {
-    await adminService.updateDocumentStatus(docId, "VERIFIED", notes);
-    return { docId, status: "Verified" };
+    const response = await adminService.updateDocumentStatus(docId, "VERIFIED", notes);
+    return { docId, status: "VERIFIED", data: response };
   } catch (error: any) {
     return rejectWithValue(error?.message || "Failed to verify document");
   }
 });
 
 export const rejectDocument = createAsyncThunk<
-  { docId: string; status: string },
+  { docId: string; status: string; data?: any },
   { docId: string; rejectionReason: string },
   { rejectValue: string }
 >("admin/rejectDocument", async ({ docId, rejectionReason }, { rejectWithValue }) => {
   try {
-    await adminService.updateDocumentStatus(docId, "REJECTED", rejectionReason);
-    return { docId, status: "Rejected" };
+    const response = await adminService.updateDocumentStatus(docId, "REJECTED", rejectionReason);
+    return { docId, status: "REJECTED", data: response };
   } catch (error: any) {
     return rejectWithValue(error?.message || "Failed to reject document");
   }
@@ -318,77 +318,55 @@ const adminSlice = createSlice({
       state.selectedCarer.error = action.payload || "Failed to fetch carer details";
     });
 
-    // verifyDocument
-    builder.addCase(verifyDocument.fulfilled, (state, action) => {
-      const { docId } = action.payload;
+    const applyDocumentUpdate = (state: any, docId: string, updates: any) => {
+      // Helper to update a document within an array
+      const updateDocsArray = (docs: any[] | undefined) => {
+        if (!Array.isArray(docs)) return false;
+        const doc = docs.find((d: any) => d.id === docId);
+        if (doc) {
+          Object.assign(doc, updates);
+          return true;
+        }
+        return false;
+      };
 
-      // Optimistic update for selectedCarer
+      // 1. Update selectedCarer
       if (state.selectedCarer.data) {
-        const profile = state.selectedCarer.data.carerProfile;
-        if (profile && profile.documents) {
-          const doc = profile.documents.find((d: any) => d.id === docId);
-          if (doc) {
-            doc.status = "VERIFIED";
-          }
+        const data = state.selectedCarer.data;
+        updateDocsArray(data.documents);
+        updateDocsArray(data.complianceDocuments);
+        updateDocsArray(data.complianceDocs);
+        if (data.carerProfile) {
+          updateDocsArray(data.carerProfile.documents);
+          updateDocsArray(data.carerProfile.complianceDocuments);
+          updateDocsArray(data.carerProfile.complianceDocs);
         }
       }
 
-      // Optimistic update for carers list
-      state.carers.items = state.carers.items.map((user: any) => {
-        const profile = user.carerProfile;
-        if (profile && profile.documents) {
-          const hasDoc = profile.documents.some((d: any) => d.id === docId);
-          if (hasDoc) {
-            return {
-              ...user,
-              carerProfile: {
-                ...profile,
-                documents: profile.documents.map((d: any) =>
-                  d.id === docId ? { ...d, status: "VERIFIED" } : d
-                ),
-              },
-            };
+      // 2. Update carers list
+      if (Array.isArray(state.carers.items)) {
+        state.carers.items.forEach((user: any) => {
+          updateDocsArray(user.documents);
+          if (user.carerProfile) {
+            updateDocsArray(user.carerProfile.documents);
           }
-        }
-        return user;
-      });
+        });
+      }
+    };
+
+    // verifyDocument
+    builder.addCase(verifyDocument.fulfilled, (state, action) => {
+      const { docId, status, data } = action.payload;
+      applyDocumentUpdate(state, docId, { status, ...data });
     });
 
     // rejectDocument
     builder.addCase(rejectDocument.fulfilled, (state, action) => {
-      const { docId } = action.payload;
-
-      // Optimistic update for selectedCarer
-      if (state.selectedCarer.data) {
-        const profile = state.selectedCarer.data.carerProfile;
-        if (profile && profile.documents) {
-          const doc = profile.documents.find((d: any) => d.id === docId);
-          if (doc) {
-            doc.status = "REJECTED";
-          }
-        }
-      }
-
-      // Optimistic update for carers list
-      state.carers.items = state.carers.items.map((user: any) => {
-        const profile = user.carerProfile;
-        if (profile && profile.documents) {
-          const hasDoc = profile.documents.some((d: any) => d.id === docId);
-          if (hasDoc) {
-            return {
-              ...user,
-              carerProfile: {
-                ...profile,
-                documents: profile.documents.map((d: any) =>
-                  d.id === docId ? { ...d, status: "REJECTED" } : d
-                ),
-              },
-            };
-          }
-        }
-        return user;
-      });
+      const { docId, status, data } = action.payload;
+      applyDocumentUpdate(state, docId, { status, ...data });
     });
+
+
 
     // fetchAdminCareRequestApplications
     builder.addCase(fetchAdminCareRequestApplications.pending, (state) => {

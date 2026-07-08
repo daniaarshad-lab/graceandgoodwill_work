@@ -65,7 +65,8 @@ function CarerDetailsContent() {
     (state) => state.admin.selectedCarer
   );
 
-  const [activeTab, setActiveTab] = useState<"profile" | "documents" | "media">("profile");
+  const initialTab = (searchParams.get("tab") as "profile" | "documents" | "media") || "profile";
+  const [activeTab, setActiveTab] = useState<"profile" | "documents" | "media">(initialTab);
   const [approvingCarer, setApprovingCarer] = useState(false);
 
   // Dynamic placement data from backend

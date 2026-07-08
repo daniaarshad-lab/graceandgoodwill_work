@@ -14,6 +14,7 @@ import { showErrorToast } from "@/utils/toast";
 import DashboardOverview from "./components/DashboardOverview";
 import ProfileManagement from "./components/ProfileManagement";
 import ProfileMedia from "./components/ProfileMedia";
+import ProfileAgreements from "./components/ProfileAgreements";
 import ComplianceVault from "./components/ComplianceVault";
 import AvailabilitySchedule from "./components/AvailabilitySchedule";
 import UploadDocumentModal from "./components/UploadDocumentModal";
@@ -61,7 +62,7 @@ function CarerDashboardContent() {
   useEffect(() => {
     if (
       tabParam &&
-      ["overview", "profile", "compliance", "availability", "opportunities", "membership"].includes(tabParam)
+      ["overview", "profile", "compliance", "availability", "opportunities", "membership", "agreements"].includes(tabParam)
     ) {
       setActiveTab(tabParam);
     }
@@ -608,6 +609,10 @@ function CarerDashboardContent() {
 
           {activeTab === "membership" && (
             <MembershipManagement />
+          )}
+
+          {activeTab === "agreements" && (
+            <ProfileAgreements />
           )}
         </div>
       </div>

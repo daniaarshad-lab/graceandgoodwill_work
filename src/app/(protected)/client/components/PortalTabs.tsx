@@ -92,13 +92,13 @@ export default function PortalTabs({
       label: "Support & Enquiries",
       href: "/client?tab=enquiry",
     },
-    { id: "billing" as TabType, label: "Billing & Payments", href: "/client/billing" },
-    { id: "agreements" as TabType, label: "Legal Agreements", href: "/agreements" },
+    { id: "billing" as TabType, label: "Billing & Payments", href: "/client?tab=billing" },
+    { id: "agreements" as TabType, label: "Legal Agreements", href: "/client?tab=agreements" },
     { id: "referrals", label: "Refer a Client", href: "/client/referrals" },
   ];
 
   const handleTabClick = (tabId: TabType, href: string) => {
-    if (tabId === "referrals" || tabId === "billing" || tabId === "agreements") {
+    if (tabId === "referrals") {
       router.push(href);
     } else {
       if (setActiveTab) {

@@ -39,11 +39,16 @@ const ClientApplicationsPanel = dynamic(
   () => import("./components/ClientApplicationsPanel"),
   { ssr: false },
 );
-// ClientOnboarding has been archived/reserved for future premium matching
-// const ClientOnboarding = dynamic(
-//   () => import("./components/ClientOnboarding"),
-//   { ssr: false },
-// );
+
+const AgreementsPanel = dynamic(
+  () => import("@/components/AgreementsPanel"),
+  { ssr: false },
+);
+
+const BillingPanel = dynamic(
+  () => import("./components/BillingPanel"),
+  { ssr: false },
+);
 
 export default function ClientDashboard() {
   const { user } = useAuth();
@@ -64,6 +69,8 @@ export default function ClientDashboard() {
         "enquiry",
         "interest-list",
         "applications",
+        "agreements",
+        "billing",
       ].includes(tabParam)
     ) {
       setActiveTab(tabParam);
@@ -196,6 +203,12 @@ export default function ClientDashboard() {
           {activeTab === "applications" && (
             <ClientApplicationsPanel />
           )}
+
+          {/* TAB 9: AGREEMENTS */}
+          {activeTab === "agreements" && <AgreementsPanel />}
+
+          {/* TAB 10: BILLING */}
+          {activeTab === "billing" && <BillingPanel />}
         </div>
       </div>
 

@@ -63,7 +63,7 @@ export default function ProfileAgreements() {
         ? `<div class="signature-section">
              <h3>Electronic Signature Audit Trail</h3>
              <p><strong>Signed Electronically By:</strong> "${signedRecord.signatureName}"</p>
-             <p><strong>Accepted Timestamp:</strong> ${new Date(signedRecord.signedAt).toLocaleString()}</p>
+             <p><strong>Accepted Timestamp:</strong> ${new Date(signedRecord.acceptedAt).toLocaleString()}</p>
              <p><strong>Agreement Version:</strong> v${signedRecord.versionAccepted}</p>
              <p><strong>Audit IP Address:</strong> ${signedRecord.ipAddress}</p>
              <p><strong>Client Device Details:</strong> ${signedRecord.userAgent}</p>
@@ -433,7 +433,7 @@ export default function ProfileAgreements() {
                         <span className="bg-navy-950 text-gold-200/80 px-2 py-0.5 rounded text-[10px] border border-gold-300/10">v{record.versionAccepted}</span>
                       </td>
                       <td className="py-3 px-3 italic">"{record.signatureName}"</td>
-                      <td className="py-3 px-3 text-gold-100/60">{new Date(record.signedAt).toLocaleDateString()}</td>
+                      <td className="py-3 px-3 text-gold-100/60">{new Date(record.acceptedAt).toLocaleDateString()}</td>
                       <td className="py-3 px-3 font-mono text-[10px] text-gold-100/40 hidden md:table-cell">{record.ipAddress}</td>
                       <td className="py-3 px-3 text-right">
                         <button

@@ -14,7 +14,7 @@ export interface SignedAgreement {
   id: string;
   agreementId: string;
   versionAccepted: string;
-  signedAt: string;
+  acceptedAt: string;
   signatureName: string;
   ipAddress: string;
   userAgent: string;

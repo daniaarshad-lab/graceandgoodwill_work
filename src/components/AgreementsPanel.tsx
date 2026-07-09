@@ -62,7 +62,7 @@ export default function AgreementsPage() {
         ? `<div class="signature-section">
              <h3>Electronic Signature Audit Trail</h3>
              <p><strong>Signed Electronically By:</strong> "${signedRecord.signatureName}"</p>
-             <p><strong>Accepted Timestamp:</strong> ${new Date(signedRecord.signedAt).toLocaleString()}</p>
+             <p><strong>Accepted Timestamp:</strong> ${new Date(signedRecord.acceptedAt).toLocaleString()}</p>
              <p><strong>Agreement Version:</strong> v${signedRecord.versionAccepted}</p>
              <p><strong>Audit IP Address:</strong> ${signedRecord.ipAddress}</p>
              <p><strong>Client Device Details:</strong> ${signedRecord.userAgent}</p>
@@ -123,7 +123,7 @@ export default function AgreementsPage() {
     try {
       setPayingFee(true);
       setError(null);
-      const successUrl = `${window.location.origin}/client/billing?session=success`;
+      const successUrl = `${window.location.origin}/client?session=success`;
       const cancelUrl = `${window.location.origin}/agreements?session=cancelled`;
       
       const { url } = await clientService.createLifetimeFeeCheckout(successUrl, cancelUrl);
@@ -459,7 +459,9 @@ export default function AgreementsPage() {
                           <span className="bg-navy-800 text-gold-DEFAULT px-2 py-0.5 rounded text-xs">v{record.versionAccepted}</span>
                         </td>
                         <td className="py-4 px-4 font-medium italic text-gold-100">"{record.signatureName}"</td>
-                        <td className="py-4 px-4 text-slate-450">{new Date(record.signedAt).toLocaleString()}</td>
+                        <td className="py-4 px-4 text-slate-450">
+                          {new Date(record.acceptedAt).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' })}
+                        </td>
                         <td className="py-4 px-4 font-mono text-xs">{record.ipAddress}</td>
                         <td className="py-4 px-4 text-xs text-slate-500 max-w-xs truncate hidden md:table-cell" title={record.userAgent}>
                           {record.userAgent}

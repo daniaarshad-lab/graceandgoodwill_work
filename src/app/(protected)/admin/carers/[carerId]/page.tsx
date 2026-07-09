@@ -8,6 +8,7 @@ import { fetchCarerDetails, updateAdminCarerStatus } from "@/store/slices/adminS
 import { adminService } from "@/services/admin/admin.service";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 import { DocumentFileType, FileCategory, getDocumentFileLabel } from "@/types/document.types";
+import { formatDateArrayToRanges } from "@/utils/dateRangeFormatter";
 import {
   ArrowLeft,
   User,
@@ -239,7 +240,7 @@ function CarerDetailsContent() {
 
   if (availSource && Array.isArray(availSource)) {
     if (availSource.length > 0 && typeof availSource[0] === "string") {
-      availabilityStr = availSource.join(", ");
+      availabilityStr = formatDateArrayToRanges(availSource).join(", ");
 
       // Calculate consecutive available days from the date array
       const sortedDates = availSource

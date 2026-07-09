@@ -1,5 +1,6 @@
 import { CarerProfile } from "@/types/client.types";
 import { Carer } from "@/app/(protected)/client/types/client-ui.types";
+import { formatDateArrayToRanges } from "@/utils/dateRangeFormatter";
 
 export const mapCarerProfileToUICarer = (carer: any): Carer => {
   const city = carer.city || (carer as any).postcode ? carer.city : "";
@@ -13,6 +14,8 @@ export const mapCarerProfileToUICarer = (carer: any): Carer => {
     availabilityStatus = "Available";
   } else if (availabilityVal === "UNAVAILABLE" || availabilityVal === "Unavailable") {
     availabilityStatus = "Unavailable";
+  } else if (Array.isArray(availabilityVal) && availabilityVal.length > 0) {
+    availabilityStatus = "Available";
   }
 
   return {
@@ -36,9 +39,13 @@ export const mapCarerProfileToUICarer = (carer: any): Carer => {
     fullBiography: carer.bio || carer.summary || "Profile information pending",
     experienceDetails: carer.experience || carer.summary || "Profile information pending",
     availabilityDetails: Array.isArray(carer.availability)
-      ? carer.availability
+      ? formatDateArrayToRanges(carer.availability)
       : typeof carer.availability === "string"
         ? [carer.availability]
         : [],
+    email: carer.email || "",
+    phone: carer.phone || "",
+    address: [carer.address, carer.city, carer.postcode || carer.pincode].filter(Boolean).join(", ") || "",
+    feedbacks: Array.isArray(carer.feedbacks) ? carer.feedbacks : [],
   };
 };

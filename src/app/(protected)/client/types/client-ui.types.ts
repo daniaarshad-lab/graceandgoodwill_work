@@ -13,6 +13,10 @@ export interface Carer {
   fullBiography?: string;
   experienceDetails?: string;
   availabilityDetails?: string[];
+  email?: string;
+  phone?: string;
+  address?: string;
+  feedbacks?: any[];
 }
 
 export interface CareRequest {

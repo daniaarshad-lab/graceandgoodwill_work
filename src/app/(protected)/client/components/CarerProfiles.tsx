@@ -4,8 +4,9 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchCarers, addToInterestList, removeFromInterestList } from "@/store/slices/clientSlice";
 import SectionCard from "./shared/SectionCard";
 import { Carer } from "../types/client-ui.types";
+import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
-import { Video, Heart } from "lucide-react";
+import { Video, Heart, User } from "lucide-react";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 
 const SafeImage = ({ src, alt, fallback, className }: { src: string, alt: string, fallback: React.ReactNode, className?: string }) => {
@@ -22,6 +23,7 @@ export default function CarerProfiles({
   carers,
 }: CarerProfilesProps) {
   const dispatch = useAppDispatch();
+  const router = useRouter();
   const { interestList } = useAppSelector((state) => state.client);
   const [processingId, setProcessingId] = useState<string | null>(null);
 
@@ -124,33 +126,24 @@ export default function CarerProfiles({
                   </p>
                 </div>
 
-                <p className="text-xs text-gold-100/60 leading-relaxed pt-2 border-t border-gold-300/10">
+                <p className="text-xs text-gold-100/60 leading-relaxed pt-2 border-t border-gold-300/10 line-clamp-2">
                   {carer.bio}
                 </p>
 
-                {/* Embedded Video Player */}
-                {carer.introVideoUrl ? (
-                  <div className="aspect-video w-full rounded-xl overflow-hidden border border-gold-300/10 bg-black shadow-inner relative mt-4">
-                    <video
-                      src={carer.introVideoUrl}
-                      controls
-                      className="w-full h-full object-contain"
-                    />
-                  </div>
-                ) : (
-                  <div className="aspect-video w-full rounded-xl border border-dashed border-gold-300/20 bg-navy-950/40 flex flex-col items-center justify-center p-4 text-center space-y-2 mt-4">
-                    <Video className="w-6 h-6 text-gold-300/30 animate-pulse" />
-                    <div>
-                      <p className="text-[10px] font-semibold text-gold-200">Video Preview Pending</p>
-                      <p className="text-[8px] text-gold-100/40 max-w-[140px] mx-auto leading-relaxed mt-0.5">
-                        The carer is finalizing their video upload.
-                      </p>
-                    </div>
-                  </div>
-                )}
+
               </div>
 
               <div className="space-y-3 pt-2">
+                <Button
+                  onClick={() => router.push(`/client/carers/${carer.id}`)}
+                  variant="outline"
+                  size="sm"
+                  fullWidth
+                  className="!border-gold-300/30 !text-gold-200 hover:!bg-gold-300/10"
+                >
+                  <User className="w-3 h-3 mr-2" />
+                  View Carer Details
+                </Button>
                 <Button
                   onClick={() => handleWishlistToggle(carer)}
                   variant={isWishlisted ? "outline" : "primary"}

@@ -81,10 +81,10 @@ export default function ClientApplicationsPanel() {
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 border-b border-gold-300/10 pb-4">
         <div className="max-w-2xl">
           <h3 className="text-xl font-bold text-gold-200">
-            Carer Applications
+            Care Requests & Applications
           </h3>
           <p className="text-xs text-gold-100/50 mt-1 leading-relaxed">
-            View applications for your Client-Managed care requests. Grace & Goodwill
+            View the status of your care requests and manage carer applications. Grace & Goodwill
             managed requests will have their matches handled by our team.
           </p>
         </div>

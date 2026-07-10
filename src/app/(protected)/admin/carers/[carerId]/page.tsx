@@ -9,6 +9,7 @@ import { adminService } from "@/services/admin/admin.service";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 import { DocumentFileType, FileCategory, getDocumentFileLabel } from "@/types/document.types";
 import { formatDateArrayToRanges } from "@/utils/dateRangeFormatter";
+import ReadOnlyAvailabilityCalendar from "@/components/ReadOnlyAvailabilityCalendar";
 import {
   ArrowLeft,
   User,
@@ -33,7 +34,6 @@ import {
   Info,
 } from "lucide-react";
 import InternalNotes from "../../components/shared/InternalNotes/InternalNotes";
-import ReadOnlyAvailabilityCalendar from "@/components/ReadOnlyAvailabilityCalendar";
 
 // Document categories are determined by the backend response
 
@@ -598,12 +598,44 @@ function CarerDetailsContent() {
                 {/* ROW 2: Availability & Placements */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   {/* Availability (col 1) */}
-                  <div className="lg:col-span-1 h-full">
-                    <ReadOnlyAvailabilityCalendar availability={availSource} />
+                  <div className="lg:col-span-1 rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md flex flex-col h-[340px]">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-gold-200/50 border-b border-gold-300/5 pb-3 flex items-center gap-2 shrink-0">
+                      <Calendar className="h-4 w-4 text-gold/60" /> Availability
+                    </h3>
+
+                    <div className="space-y-3 text-xs flex-1 overflow-y-auto pr-2 mt-4 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gold-300/20 hover:[&::-webkit-scrollbar-thumb]:bg-gold-300/40 [&::-webkit-scrollbar-thumb]:rounded-full">
+                      <div className="flex items-center justify-between">
+                        <span className="text-gold-100/40 font-semibold">Availability Status:</span>
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${getStatusBadgeStyles(availabilityStatus)}`}>
+                          {availabilityStatus}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <span className="text-gold-100/40 font-semibold">Consecutive Days:</span>
+                        <span className="text-gold-200 font-bold">{consecutiveDays}</span>
+                      </div>
+
+                      {/* <div className="flex items-center justify-between">
+                        <span className="text-gold-100/40 font-semibold">Available Hours:</span>
+                        <span className="text-rose-400 font-bold font-mono text-[10px]">
+                          {availableHours}
+                        </span>
+                      </div> */}
+
+                      <div className="border-t border-gold-300/5 pt-3 mt-4">
+                        <span className="text-[9px] uppercase font-bold tracking-wider text-gold-100/40 block mb-2">Standard Schedule</span>
+                        <ReadOnlyAvailabilityCalendar 
+                          availability={availSource} 
+                          wrapperClassName="w-full flex flex-col -mx-2 px-2" 
+                          hideHeader={true} 
+                        />
+                      </div>
+                    </div>
                   </div>
 
                   {/* Placement History (col 2) */}
-                  <div className="lg:col-span-2 rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md flex flex-col h-full min-h-[340px]">
+                  <div className="lg:col-span-2 rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md flex flex-col h-[340px]">
                     <h3 className="text-xs font-bold uppercase tracking-wider text-gold-200/50 border-b border-gold-300/5 pb-3 flex items-center gap-2 shrink-0">
                       <Award className="h-4 w-4 text-gold/60" /> Care Placement History
                     </h3>
@@ -885,38 +917,38 @@ function CarerDetailsContent() {
                   </div>
                 </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-navy-900/40 p-6 rounded-2xl border border-gold-300/10 flex flex-col items-center text-center shadow-soft">
-                  <h4 className="text-sm font-semibold text-gold-50 mb-6">Current Profile Picture</h4>
-                  <div className="relative w-32 h-32 mb-6">
-                    {activeProfilePhotoUrl ? (
-                      <img src={getFullMediaUrl(activeProfilePhotoUrl)} alt="Profile" className="w-full h-full rounded-full object-cover border-4 border-navy-950 shadow-xl" />
-                    ) : (
-                      <div className="w-full h-full rounded-full bg-navy-950 flex flex-col items-center justify-center border-4 border-navy-950 shadow-xl">
-                        <Camera className="w-8 h-8 text-gold-DEFAULT/40" />
-                        <span className="text-[10px] text-gold-DEFAULT/40 mt-2 font-medium tracking-wider">NO PHOTO</span>
-                      </div>
-                    )}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="bg-navy-900/40 p-6 rounded-2xl border border-gold-300/10 flex flex-col items-center text-center shadow-soft">
+                    <h4 className="text-sm font-semibold text-gold-50 mb-6">Current Profile Picture</h4>
+                    <div className="relative w-32 h-32 mb-6">
+                      {activeProfilePhotoUrl ? (
+                        <img src={getFullMediaUrl(activeProfilePhotoUrl)} alt="Profile" className="w-full h-full rounded-full object-cover border-4 border-navy-950 shadow-xl" />
+                      ) : (
+                        <div className="w-full h-full rounded-full bg-navy-950 flex flex-col items-center justify-center border-4 border-navy-950 shadow-xl">
+                          <Camera className="w-8 h-8 text-gold-DEFAULT/40" />
+                          <span className="text-[10px] text-gold-DEFAULT/40 mt-2 font-medium tracking-wider">NO PHOTO</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
 
-                <div className="bg-navy-900/40 p-6 rounded-2xl border border-gold-300/10 flex flex-col items-center text-center shadow-soft">
-                  <h4 className="text-sm font-semibold text-gold-50 mb-6">Current Introduction Video</h4>
-                  <div className="w-full max-w-[240px] h-32 mb-6 rounded-2xl border-2 border-dashed border-gold-DEFAULT/20 bg-black flex flex-col items-center justify-center relative overflow-hidden group-hover:border-gold-DEFAULT/40 transition-colors">
-                    {activeIntroVideoUrl ? (
-                      <video src={getFullMediaUrl(activeIntroVideoUrl)} className="w-full h-full object-cover" controls controlsList="nodownload" />
-                    ) : (
-                      <>
-                        <Video className="w-8 h-8 text-gold-DEFAULT/30 mb-2" />
-                        <span className="text-[10px] text-gold-DEFAULT/40 font-medium tracking-wider text-center px-4">
-                          NO VIDEO
-                        </span>
-                      </>
-                    )}
+                  <div className="bg-navy-900/40 p-6 rounded-2xl border border-gold-300/10 flex flex-col items-center text-center shadow-soft">
+                    <h4 className="text-sm font-semibold text-gold-50 mb-6">Current Introduction Video</h4>
+                    <div className="w-full max-w-[240px] h-32 mb-6 rounded-2xl border-2 border-dashed border-gold-DEFAULT/20 bg-black flex flex-col items-center justify-center relative overflow-hidden group-hover:border-gold-DEFAULT/40 transition-colors">
+                      {activeIntroVideoUrl ? (
+                        <video src={getFullMediaUrl(activeIntroVideoUrl)} className="w-full h-full object-cover" controls controlsList="nodownload" />
+                      ) : (
+                        <>
+                          <Video className="w-8 h-8 text-gold-DEFAULT/30 mb-2" />
+                          <span className="text-[10px] text-gold-DEFAULT/40 font-medium tracking-wider text-center px-4">
+                            NO VIDEO
+                          </span>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
             );
           })()}
         </div>

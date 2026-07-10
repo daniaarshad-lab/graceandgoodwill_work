@@ -9,10 +9,14 @@ import { LocalRange } from "@/app/(protected)/carer/components/availability/type
 
 interface ReadOnlyAvailabilityCalendarProps {
   availability: string[] | undefined | null;
+  wrapperClassName?: string;
+  hideHeader?: boolean;
 }
 
 export default function ReadOnlyAvailabilityCalendar({
   availability,
+  wrapperClassName,
+  hideHeader,
 }: ReadOnlyAvailabilityCalendarProps) {
   const ranges = useMemo<LocalRange[]>(() => {
     const cleanDates = sanitizeDateArray(availability || []);
@@ -26,11 +30,13 @@ export default function ReadOnlyAvailabilityCalendar({
   }, [availability]);
 
   return (
-    <div className="bg-navy-900/60 backdrop-blur-md border border-gold-300/10 rounded-2xl p-4 shadow-lg flex flex-col">
-      <div className="flex items-center space-x-2 text-sm font-medium text-gold-50 mb-3">
-        <Calendar className="w-4 h-4 text-gold-300/70" />
-        <span>Available Time Slots</span>
-      </div>
+    <div className={wrapperClassName !== undefined ? wrapperClassName : "bg-navy-900/60 backdrop-blur-md border border-gold-300/10 rounded-2xl p-4 shadow-lg flex flex-col"}>
+      {!hideHeader && (
+        <div className="flex items-center space-x-2 text-sm font-medium text-gold-50 mb-3">
+          <Calendar className="w-4 h-4 text-gold-300/70" />
+          <span>Available Time Slots</span>
+        </div>
+      )}
 
       <div>
         {ranges.length > 0 ? (

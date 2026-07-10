@@ -200,45 +200,97 @@ export default function NoteDetailsModal({ isOpen, onClose, note, onAttachmentUp
                 ) : !history.length ? (
                   <p className="text-xs text-gray-500 italic">No edits have been made to this note.</p>
                 ) : (
-                  history.map((record, index) => (
-                    <div key={record.id} className="relative pl-5 border-l-2 border-gold-300/20 pb-4 last:pb-0">
-                      <div className="absolute -left-[5px] top-1.5 h-2 w-2 rounded-full bg-gold shadow-[0_0_8px_rgba(255,215,0,0.6)]"></div>
-                      <div className="bg-navy-950/60 rounded-lg border border-gold-300/10 p-3 shadow-sm">
-                        <div className="flex items-center justify-between gap-4 mb-2">
-                          <p className="text-[11px] text-gold-100/60 font-mono">
-                            {new Date(record.editedAt).toLocaleString('en-GB', {
-                              day: '2-digit',
-                              month: 'short',
-                              year: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            }).replace(',', ' •')}
-                          </p>
-                        </div>
-                        <p className="text-xs text-gold-50 mb-2">
-                          <span className="text-gold-200/70">{index === history.length - 1 && !record.reason ? 'Created by ' : 'Edited by '}</span>
-                          <span className="font-semibold">{record.editorName}</span>
-                        </p>
-                        
-                        {(record.previousTitle || record.updatedTitle) && record.previousTitle !== record.updatedTitle && (
-                          <div className="text-[11px] bg-navy-900/50 rounded px-2 py-1.5 border border-gold-300/5 text-gray-400 mb-2">
-                            <span className="line-through opacity-70">{record.previousTitle}</span>
-                            <span className="mx-2 text-gold-500">→</span>
-                            <span className="text-gold-100">{record.updatedTitle}</span>
-                          </div>
-                        )}
-                        
-                        {record.reason && (
-                          <div className="mt-2">
-                            <span className="text-[10px] text-gold-200/50 uppercase tracking-wider font-semibold block mb-1">Reason:</span>
-                            <p className="text-xs text-gold-100/90 leading-relaxed bg-navy-900 border border-gold-300/10 rounded px-2.5 py-2">
-                              {record.reason}
+                  history.map((record, index) => {
+                    const changes = [
+                      { label: "Title", oldVal: record.oldTitle, newVal: record.newTitle },
+                      { label: "Content", oldVal: record.oldContent, newVal: record.newContent },
+                      { label: "Priority", oldVal: record.oldPriority, newVal: record.newPriority },
+                      { label: "Status", oldVal: record.oldStatus, newVal: record.newStatus },
+                      { label: "Category", oldVal: record.oldCategory, newVal: record.newCategory },
+                      { label: "Follow-up Date", oldVal: record.oldFollowUpDate, newVal: record.newFollowUpDate },
+                      { label: "Pinned", oldVal: record.oldIsPinned, newVal: record.newIsPinned },
+                      { label: "Tagged Admin", oldVal: record.oldTaggedAdminName, newVal: record.newTaggedAdminName },
+                    ];
+
+                    const hasChanges = changes.some(c => c.oldVal !== undefined && c.newVal !== undefined && c.oldVal !== c.newVal);
+                    const editorName = record.editor ? `${record.editor.firstName} ${record.editor.lastName}` : 'Unknown Editor';
+
+                    return (
+                      <div key={record.id} className="relative pl-5 border-l-2 border-gold-300/20 pb-4 last:pb-0">
+                        <div className="absolute -left-[5px] top-1.5 h-2 w-2 rounded-full bg-gold shadow-[0_0_8px_rgba(255,215,0,0.6)]"></div>
+                        <div className="bg-navy-950/60 rounded-lg border border-gold-300/10 p-3 shadow-sm">
+                          <div className="flex items-center justify-between gap-4 mb-2">
+                            <p className="text-[11px] text-gold-100/60 font-mono">
+                              {(() => {
+                                const parsedDate = new Date(record.createdAt);
+                                return !isNaN(parsedDate.getTime()) 
+                                  ? parsedDate.toLocaleString('en-GB', {
+                                      day: '2-digit',
+                                      month: 'short',
+                                      year: 'numeric',
+                                      hour: '2-digit',
+                                      minute: '2-digit'
+                                    }).replace(',', ' •')
+                                  : "Unknown Date";
+                              })()}
                             </p>
                           </div>
-                        )}
+                          <p className="text-xs text-gold-50 mb-2">
+                            <span className="text-gold-200/70">{index === history.length - 1 && !hasChanges ? 'Created by ' : 'Edited by '}</span>
+                            <span className="font-semibold">{editorName}</span>
+                          </p>
+                          
+                          <div className="space-y-1">
+                            {changes.map(change => {
+                              if (change.oldVal === change.newVal && change.oldVal === undefined) return null;
+                              if (change.oldVal === change.newVal) return null;
+                              
+                              let oldDisplay = change.oldVal;
+                              let newDisplay = change.newVal;
+                              
+                              if (typeof oldDisplay === "boolean") oldDisplay = oldDisplay ? "Yes" : "No";
+                              if (typeof newDisplay === "boolean") newDisplay = newDisplay ? "Yes" : "No";
+                              
+                              if (Array.isArray(oldDisplay)) oldDisplay = oldDisplay.length > 0 ? oldDisplay.join(", ") : "None";
+                              if (Array.isArray(newDisplay)) newDisplay = newDisplay.length > 0 ? newDisplay.join(", ") : "None";
+                              
+                              if (change.label === "Follow-up Date") {
+                                if (oldDisplay && typeof oldDisplay === "string") {
+                                  const d = new Date(oldDisplay);
+                                  if (!isNaN(d.getTime())) oldDisplay = d.toLocaleDateString("en-GB", { day: '2-digit', month: 'short', year: 'numeric' });
+                                }
+                                if (newDisplay && typeof newDisplay === "string") {
+                                  const d = new Date(newDisplay);
+                                  if (!isNaN(d.getTime())) newDisplay = d.toLocaleDateString("en-GB", { day: '2-digit', month: 'short', year: 'numeric' });
+                                }
+                              }
+
+                              oldDisplay = oldDisplay || "None";
+                              newDisplay = newDisplay || "None";
+
+                              return (
+                                <div key={change.label} className="text-[11px] bg-navy-900/50 rounded px-2 py-1.5 border border-gold-300/5 text-gray-400">
+                                  <span className="text-[10px] uppercase font-semibold text-gold-200/50 mr-2">{change.label}:</span>
+                                  {change.label === "Content" ? (
+                                    <div className="mt-1 pl-2 border-l border-gold-300/20 text-xs">
+                                      <span className="line-through opacity-70 block mb-1 whitespace-pre-wrap">{oldDisplay}</span>
+                                      <span className="text-gold-100 block whitespace-pre-wrap">{newDisplay}</span>
+                                    </div>
+                                  ) : (
+                                    <>
+                                      <span className="line-through opacity-70">{oldDisplay}</span>
+                                      <span className="mx-2 text-gold-500">→</span>
+                                      <span className="text-gold-100">{newDisplay}</span>
+                                    </>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  ))
+                    );
+                  })
                 )}
               </div>
             </div>

@@ -687,7 +687,7 @@
   transform: translateY(-50%);
   height: 100%;
   left: 50%;
-  right: 0;
+  right: -1px;
   background-color: var(--range-bg, rgba(212, 175, 55, 0.22));
   z-index: 0;
   pointer-events: none;
@@ -699,7 +699,7 @@
   top: 50%;
   transform: translateY(-50%);
   height: 100%;
-  left: 0;
+  left: -1px;
   right: 50%;
   background-color: var(--range-bg, rgba(212, 175, 55, 0.22));
   z-index: 0;
@@ -712,8 +712,8 @@
   top: 50%;
   transform: translateY(-50%);
   height: 100%;
-  left: 0;
-  right: 0;
+  left: -1px;
+  right: -1px;
   background-color: var(--range-bg, rgba(212, 175, 55, 0.22));
   z-index: 0;
   pointer-events: none;

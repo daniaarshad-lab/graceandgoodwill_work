@@ -22,11 +22,10 @@ export default function EditNoteModal({ isOpen, onClose, note, onSave }: EditNot
   const [followUpDate, setFollowUpDate] = useState("");
   const [taggedAdmins, setTaggedAdmins] = useState<string[]>([]);
   const [isPinned, setIsPinned] = useState(false);
-  const [editReason, setEditReason] = useState("");
 
   const [isSaving, setIsSaving] = useState(false);
-  const [errors, setErrors] = useState<{ title?: string, content?: string, category?: string, editReason?: string, global?: string }>({});
-  const [touched, setTouched] = useState<{ title?: boolean, content?: boolean, category?: boolean, editReason?: boolean }>({});
+  const [errors, setErrors] = useState<{ title?: string, content?: string, category?: string, global?: string }>({});
+  const [touched, setTouched] = useState<{ title?: boolean, content?: boolean, category?: boolean }>({});
 
   useEffect(() => {
     setMounted(true);
@@ -42,7 +41,6 @@ export default function EditNoteModal({ isOpen, onClose, note, onSave }: EditNot
       setFollowUpDate(note.followUpDate ? note.followUpDate.split('T')[0] : "");
       setTaggedAdmins(note.taggedAdmins || []);
       setIsPinned(note.isPinned || false);
-      setEditReason("");
       setErrors({});
       setTouched({});
     }
@@ -70,7 +68,6 @@ export default function EditNoteModal({ isOpen, onClose, note, onSave }: EditNot
   const validateTitle = (val: string) => val.trim() ? undefined : "Title is required.";
   const validateCategory = (val: string) => val ? undefined : "Category is required.";
   const validateContent = (val: string) => val.trim() ? undefined : "Note content is required.";
-  const validateEditReason = (val: string) => val.trim() ? undefined : "Reason for edit is required.";
 
   const handleTitleChange = (val: string) => {
     setTitle(val);
@@ -86,13 +83,6 @@ export default function EditNoteModal({ isOpen, onClose, note, onSave }: EditNot
     }
   };
 
-  const handleEditReasonChange = (val: string) => {
-    setEditReason(val);
-    if (errors.editReason && val.trim()) {
-      setErrors(prev => ({ ...prev, editReason: undefined }));
-    }
-  };
-
   const handleContentChange = (val: string) => {
     setContent(val);
     if (errors.content && val.trim()) {
@@ -100,7 +90,7 @@ export default function EditNoteModal({ isOpen, onClose, note, onSave }: EditNot
     }
   };
 
-  const handleBlur = (field: 'title' | 'content' | 'category' | 'editReason') => {
+  const handleBlur = (field: 'title' | 'content' | 'category') => {
     setTouched(prev => ({ ...prev, [field]: true }));
     if (field === 'title') {
       const error = validateTitle(title);
@@ -113,10 +103,6 @@ export default function EditNoteModal({ isOpen, onClose, note, onSave }: EditNot
     if (field === 'content') {
       const error = validateContent(content);
       setErrors(prev => ({ ...prev, content: error }));
-    }
-    if (field === 'editReason') {
-      const error = validateEditReason(editReason);
-      setErrors(prev => ({ ...prev, editReason: error }));
     }
   };
 
@@ -132,12 +118,11 @@ export default function EditNoteModal({ isOpen, onClose, note, onSave }: EditNot
     const titleError = validateTitle(title);
     const categoryError = validateCategory(category);
     const contentError = validateContent(content);
-    const editReasonError = validateEditReason(editReason);
 
-    setTouched({ title: true, category: true, content: true, editReason: true });
+    setTouched({ title: true, category: true, content: true });
 
-    if (titleError || categoryError || contentError || editReasonError) {
-      setErrors({ title: titleError, category: categoryError, content: contentError, editReason: editReasonError });
+    if (titleError || categoryError || contentError) {
+      setErrors({ title: titleError, category: categoryError, content: contentError });
       return;
     }
 
@@ -153,7 +138,6 @@ export default function EditNoteModal({ isOpen, onClose, note, onSave }: EditNot
         followUpDate: followUpDate || undefined,
         taggedAdmins: taggedAdmins.length > 0 ? taggedAdmins : undefined,
         isPinned,
-        editReason: editReason.trim(),
       });
       onClose();
     } catch (err: any) {
@@ -327,27 +311,6 @@ export default function EditNoteModal({ isOpen, onClose, note, onSave }: EditNot
               <p className="text-sm text-rose-400 flex items-center gap-1.5 mt-1.5">
                 <AlertCircle className="h-4 w-4" />
                 {errors.content}
-              </p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-gold-100 flex items-center justify-between">
-              <span>Reason for Edit <span className="text-rose-400">*</span></span>
-            </label>
-            <textarea
-              value={editReason}
-              onChange={(e) => handleEditReasonChange(e.target.value)}
-              onBlur={() => handleBlur('editReason')}
-              disabled={isSaving}
-              rows={3}
-              placeholder="e.g. Updating medication details after GP call..."
-              className={`w-full rounded-xl border ${errors.editReason ? 'border-rose-500/50 focus:ring-rose-500/50' : 'border-gold-300/20 focus:ring-gold-DEFAULT'} bg-navy-950 px-4 py-3 text-sm text-gold-100 outline-none focus:ring-2 transition duration-300 shadow-inner resize-none`}
-            />
-            {errors.editReason && (
-              <p className="text-sm text-rose-400 flex items-center gap-1.5 mt-1.5">
-                <AlertCircle className="h-4 w-4" />
-                {errors.editReason}
               </p>
             )}
           </div>

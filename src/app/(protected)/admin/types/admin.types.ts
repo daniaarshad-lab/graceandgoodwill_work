@@ -87,11 +87,38 @@ export interface InternalNoteAttachment {
 
 export interface InternalNoteHistory {
   id: string;
-  editorName: string;
-  previousTitle: string;
-  updatedTitle: string;
-  editedAt: string;
-  reason?: string;
+  noteId: string;
+  editorId: string;
+  editor: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+  
+  oldTitle: string;
+  newTitle: string;
+  oldContent: string;
+  newContent: string;
+  
+  oldStatus?: string;
+  newStatus?: string;
+  oldPriority?: string;
+  newPriority?: string;
+  
+  oldIsPinned?: boolean;
+  newIsPinned?: boolean;
+  
+  oldCategory?: string;
+  newCategory?: string;
+  oldTaggedAdminId?: string;
+  newTaggedAdminId?: string;
+  oldTaggedAdminName?: string;
+  newTaggedAdminName?: string;
+  oldFollowUpDate?: string;
+  newFollowUpDate?: string;
+  
+  createdAt: string;
 }
 
 export interface InternalNote {
@@ -137,7 +164,6 @@ export interface UpdateInternalNotePayload {
   isPinned?: boolean;
   followUpDate?: string;
   taggedAdmins?: string[];
-  editReason?: string;
 }
 
 export interface GetInternalNotesParams {

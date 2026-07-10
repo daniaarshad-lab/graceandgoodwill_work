@@ -321,15 +321,10 @@ export default function InternalNotes({ entityId, entityType }: InternalNotesPro
                       <button 
                         onClick={(e) => {
                           e.stopPropagation();
-                          if (isSuperAdmin) openEdit(note, e);
+                          openEdit(note, e);
                         }}
-                        disabled={!isSuperAdmin}
-                        className={`p-2 rounded transition-colors ${
-                          isSuperAdmin 
-                            ? "bg-amber-500/10 border border-amber-500/30 text-amber-500 hover:bg-amber-500/20 hover:text-amber-400 hover:border-amber-400 cursor-pointer" 
-                            : "bg-navy-900/50 border border-gray-600/30 text-gray-500 cursor-not-allowed opacity-60"
-                        }`}
-                        title={isSuperAdmin ? "Edit Note" : "Only Super Admin can edit notes"}
+                        className="p-2 rounded transition-colors bg-amber-500/10 border border-amber-500/30 text-amber-500 hover:bg-amber-500/20 hover:text-amber-400 hover:border-amber-400 cursor-pointer"
+                        title="Edit Note"
                       >
                         <Edit2 className="h-4 w-4" />
                       </button>

@@ -25,8 +25,8 @@ export default function EditNoteModal({ isOpen, onClose, note, onSave }: EditNot
   const [editReason, setEditReason] = useState("");
 
   const [isSaving, setIsSaving] = useState(false);
-  const [errors, setErrors] = useState<{title?: string, content?: string, category?: string, editReason?: string, global?: string}>({});
-  const [touched, setTouched] = useState<{title?: boolean, content?: boolean, category?: boolean, editReason?: boolean}>({});
+  const [errors, setErrors] = useState<{ title?: string, content?: string, category?: string, editReason?: string, global?: string }>({});
+  const [touched, setTouched] = useState<{ title?: boolean, content?: boolean, category?: boolean, editReason?: boolean }>({});
 
   useEffect(() => {
     setMounted(true);
@@ -121,8 +121,8 @@ export default function EditNoteModal({ isOpen, onClose, note, onSave }: EditNot
   };
 
   const toggleTagAdmin = (adminName: string) => {
-    setTaggedAdmins(prev => 
-      prev.includes(adminName) 
+    setTaggedAdmins(prev =>
+      prev.includes(adminName)
         ? prev.filter(name => name !== adminName)
         : [...prev, adminName]
     );
@@ -133,9 +133,9 @@ export default function EditNoteModal({ isOpen, onClose, note, onSave }: EditNot
     const categoryError = validateCategory(category);
     const contentError = validateContent(content);
     const editReasonError = validateEditReason(editReason);
-    
+
     setTouched({ title: true, category: true, content: true, editReason: true });
-    
+
     if (titleError || categoryError || contentError || editReasonError) {
       setErrors({ title: titleError, category: categoryError, content: contentError, editReason: editReasonError });
       return;
@@ -167,7 +167,7 @@ export default function EditNoteModal({ isOpen, onClose, note, onSave }: EditNot
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-navy-950/80 p-4 sm:p-6 backdrop-blur-sm">
       {/* Clickable backdrop that closes modal */}
       <div className="absolute inset-0" onClick={!isSaving ? onClose : undefined} />
-      
+
       {/* Modal Content */}
       <div className="relative z-10 w-full max-w-2xl rounded-2xl border border-gold-300/10 bg-navy-900 shadow-soft flex flex-col max-h-[90vh] overflow-hidden">
         {/* Header */}
@@ -181,7 +181,7 @@ export default function EditNoteModal({ isOpen, onClose, note, onSave }: EditNot
             <X className="h-5 w-5" />
           </button>
         </div>
-        
+
         {/* Body */}
         <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-navy-900 max-h-[65vh]">
           {errors.global && (
@@ -189,7 +189,7 @@ export default function EditNoteModal({ isOpen, onClose, note, onSave }: EditNot
               {errors.global}
             </div>
           )}
-          
+
           <div className="space-y-2">
             <label className="text-sm font-semibold text-gold-100">Title <span className="text-rose-400">*</span></label>
             <input
@@ -273,7 +273,7 @@ export default function EditNoteModal({ isOpen, onClose, note, onSave }: EditNot
                 className="w-full rounded-xl border border-gold-300/20 bg-navy-950 px-4 py-3 text-sm text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 shadow-inner [color-scheme:dark]"
               />
             </div>
-            
+
             <div className="space-y-2">
               <label className="text-sm font-semibold text-gold-100">Notify Admin</label>
               <div className="relative">
@@ -289,13 +289,13 @@ export default function EditNoteModal({ isOpen, onClose, note, onSave }: EditNot
                       </button>
                     </span>
                   ))}
-                  
+
                   {/* Dropdown menu overlay (simplified for UI demonstration) */}
                   <div className="absolute top-full left-0 right-0 mt-1 rounded-xl border border-gold-300/20 bg-navy-900 shadow-xl overflow-hidden opacity-0 invisible focus-within:opacity-100 focus-within:visible z-20">
                     <div className="max-h-40 overflow-y-auto p-1 text-sm text-gold-100">
                       {ADMIN_USERS.map(admin => (
-                        <div 
-                          key={admin.id} 
+                        <div
+                          key={admin.id}
                           className="px-3 py-2 hover:bg-navy-800 cursor-pointer flex items-center justify-between rounded"
                           onClick={() => toggleTagAdmin(admin.name)}
                         >

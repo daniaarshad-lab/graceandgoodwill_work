@@ -224,8 +224,34 @@ export default function AgreementsPage() {
           </div>
         )}
 
+        {/* Global Tab Controls */}
+        <div className="flex justify-center mb-8">
+          <div className="inline-flex rounded-xl shadow-sm bg-navy-900/60 p-1.5 border border-navy-800">
+            <button
+              onClick={() => setActiveTab("pending")}
+              className={`px-8 py-2.5 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${
+                activeTab === "pending"
+                  ? "bg-gradient-to-r from-[#b59469] to-[#d4af37] text-navy-950 shadow-md"
+                  : "text-slate-400 hover:text-white hover:bg-navy-800/50"
+              }`}
+            >
+              Pending ({pending.length})
+            </button>
+            <button
+              onClick={() => setActiveTab("history")}
+              className={`px-8 py-2.5 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${
+                activeTab === "history"
+                  ? "bg-gradient-to-r from-[#b59469] to-[#d4af37] text-navy-950 shadow-md"
+                  : "text-slate-400 hover:text-white hover:bg-navy-800/50"
+              }`}
+            >
+              History ({history.length})
+            </button>
+          </div>
+        </div>
+
         {activeTab === "pending" && pending.length === 0 ? (
-          <div>
+          <div className="animate-fade-in">
             {user?.role?.toUpperCase() === "CLIENT" && !profile?.isLifetimeFeePaid ? (
               <div className="bg-gradient-to-b from-navy-900/80 to-navy-900/40 border border-navy-800 rounded-2xl p-8 sm:p-10 text-center max-w-xl mx-auto shadow-xl mt-6">
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-tr from-[#b59469]/20 to-[#d4af37]/10 border border-[#b59469]/30 text-[#b59469] mb-6 shadow-inner">
@@ -303,26 +329,12 @@ export default function AgreementsPage() {
             )}
           </div>
         ) : (
-          <div className="w-full border border-white/10 rounded-2xl p-6 sm:p-8 bg-navy-950/50">
+          <div className="w-full border border-white/10 rounded-2xl p-6 sm:p-8 bg-navy-950/50 animate-fade-in">
             {activeTab === "pending" && pending.length > 0 && (
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-6xl mx-auto">
                 {/* List of pending docs */}
                 <div className="lg:col-span-5 space-y-4">
-                  {/* Tab Controls */}
-                  <div className="w-full flex rounded-lg shadow-sm bg-navy-900/60 p-1 border border-navy-800 mb-2">
-                    <button
-                      onClick={() => setActiveTab("pending")}
-                      className="flex-1 px-4 py-2 rounded-md text-sm font-semibold transition-all whitespace-nowrap bg-[#b59469] text-navy-950 shadow-sm"
-                    >
-                      Pending ({pending.length})
-                    </button>
-                    <button
-                      onClick={() => setActiveTab("history")}
-                      className="flex-1 px-4 py-2 rounded-md text-sm font-semibold transition-all whitespace-nowrap text-slate-400 hover:text-white"
-                    >
-                      History ({history.length})
-                    </button>
-                  </div>
+
 
                   <h3 className="text-xs font-bold uppercase tracking-widest text-[#b59469] pt-2 mb-4">Required Documents</h3>
                   {pending.map((doc) => (
@@ -332,21 +344,33 @@ export default function AgreementsPage() {
                         setSelectedAgreement(doc);
                         setError(null);
                       }}
-                      className={`w-full text-left p-5 rounded-xl border transition-all duration-200 ${selectedAgreement?.id === doc.id
-                        ? "bg-navy-900/80 border-[#b59469]/50 text-white shadow-sm"
-                        : "bg-navy-900/30 border-navy-800 text-slate-300 hover:bg-navy-900/60 hover:border-navy-700"
+                      className={`w-full text-left p-4 rounded-xl border transition-all duration-300 relative group ${
+                        selectedAgreement?.id === doc.id
+                          ? "bg-emerald-500/20 border-emerald-500/30 shadow-md scale-[1.02]"
+                          : "bg-navy-900/30 border-navy-800 text-slate-300 hover:bg-navy-900/60 hover:border-navy-700"
                         }`}
                     >
-                      <div className="flex flex-col gap-2">
-                        <span className={`font-semibold text-lg leading-snug ${selectedAgreement?.id === doc.id ? 'text-white' : 'text-slate-200 group-hover:text-white'}`}>
-                          {doc.title}
-                        </span>
-                        <div className="flex items-center space-x-3">
-                          <span className="text-[10px] uppercase tracking-wider bg-navy-800 text-slate-300 px-2 py-1 rounded-md font-bold">
+                      <div className="flex flex-col gap-2 relative z-10">
+                        <div className="flex items-center gap-3">
+                          {selectedAgreement?.id === doc.id && (
+                            <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)] shrink-0 animate-pulse" />
+                          )}
+                          <span className={`font-semibold text-lg leading-snug transition-colors duration-300 ${
+                            selectedAgreement?.id === doc.id ? 'text-emerald-100' : 'text-slate-200 group-hover:text-white'
+                          }`}>
+                            {doc.title}
+                          </span>
+                        </div>
+                        <div className={`flex items-center space-x-3 ${selectedAgreement?.id === doc.id ? 'pl-[22px]' : ''}`}>
+                          <span className={`text-[10px] uppercase tracking-wider px-2 py-1 rounded-md font-bold transition-colors ${
+                            selectedAgreement?.id === doc.id ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30" : "bg-navy-800 text-slate-300 border border-transparent"
+                          }`}>
                             v{doc.version}
                           </span>
-                          <span className="text-xs text-slate-400 flex items-center font-medium">
-                            <svg className="w-3.5 h-3.5 mr-1.5 text-[#b59469]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                          <span className={`text-xs flex items-center font-medium transition-colors ${
+                            selectedAgreement?.id === doc.id ? "text-emerald-300/80" : "text-slate-400"
+                          }`}>
+                            <svg className={`w-3.5 h-3.5 mr-1.5 ${selectedAgreement?.id === doc.id ? 'text-emerald-400' : 'text-[#b59469]'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             Signature Required
                           </span>
                         </div>
@@ -444,25 +468,9 @@ export default function AgreementsPage() {
 
         {/* History Tab */}
         {activeTab === "history" && (
-          <div className="bg-navy-900/60 border border-navy-800 rounded-2xl p-6 shadow-soft">
+          <div className="bg-navy-900/60 border border-navy-800 rounded-2xl p-6 shadow-soft animate-fade-in">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
               <h2 className="text-xl font-bold text-white">Signature Audit Trail</h2>
-
-              {/* Tab Controls (History View) */}
-              <div className="inline-flex rounded-lg shadow-sm bg-navy-900/60 p-1 border border-navy-800 shrink-0">
-                <button
-                  onClick={() => setActiveTab("pending")}
-                  className="px-5 py-2 rounded-md text-sm font-semibold transition-all whitespace-nowrap text-slate-400 hover:text-white"
-                >
-                  Pending ({pending.length})
-                </button>
-                <button
-                  onClick={() => setActiveTab("history")}
-                  className="px-5 py-2 rounded-md text-sm font-semibold transition-all whitespace-nowrap bg-[#b59469] text-navy-950 shadow-sm"
-                >
-                  History ({history.length})
-                </button>
-              </div>
             </div>
             {history.length === 0 ? (
               <p className="text-slate-400 text-center py-8">No signed agreements found.</p>

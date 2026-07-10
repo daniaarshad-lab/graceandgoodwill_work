@@ -14,10 +14,15 @@ import {
 } from "../utils/date.utils";
 import { Info } from "lucide-react";
 
+import { LocalRange } from "./availability/types";
 import SectionCard from "./shared/SectionCard";
 import CalendarGrid from "./availability/CalendarGrid";
 import CalendarSkeleton from "./availability/CalendarSkeleton";
 import AvailabilitySummaryPanel from "./availability/AvailabilitySummaryPanel";
+
+function generateId() {
+  return Math.random().toString(36).substring(2, 9);
+}
 
 interface AvailabilityScheduleProps {
   isProfileLoading: boolean;
@@ -36,10 +41,12 @@ export default function AvailabilitySchedule({
   }, [profile?.availability]);
 
   // Local working copy
-  const [selectedDates, setSelectedDates] = useState<Set<string>>(new Set());
+  const [ranges, setRanges] = useState<LocalRange[]>([]);
+  const [activeEditRangeId, setActiveEditRangeId] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
   const [rangeStart, setRangeStart] = useState<string | null>(null);
+  const [hoverDate, setHoverDate] = useState<string | null>(null);
 
   // Reset hydration state when profile starts loading
   useEffect(() => {
@@ -51,90 +58,109 @@ export default function AvailabilitySchedule({
   // Hydrate from server
   useEffect(() => {
     if (profile && !isProfileLoading && !isHydrated) {
-      setSelectedDates(new Set(serverDates));
+      const parsedRanges = groupDatesIntoRanges(Array.from(serverDates));
+      setRanges(
+        parsedRanges.map((r, i) => ({
+          id: generateId(),
+          start: r.start,
+          end: r.end,
+          colorIndex: i,
+        }))
+      );
       setIsHydrated(true);
     }
   }, [serverDates, profile, isProfileLoading, isHydrated]);
 
+  const flatSelectedDates = useMemo(() => {
+    const dates = new Set<string>();
+    for (const r of ranges) {
+      for (const d of expandRange(r.start, r.end)) {
+        dates.add(d);
+      }
+    }
+    return dates;
+  }, [ranges]);
+
   // Detect unsaved changes
   const hasChanges = useMemo(() => {
     if (!isHydrated) return false;
-    if (selectedDates.size !== serverDates.size) return true;
-    for (const date of selectedDates) {
+    if (flatSelectedDates.size !== serverDates.size) return true;
+    for (const date of flatSelectedDates) {
       if (!serverDates.has(date)) return true;
     }
     return false;
-  }, [selectedDates, serverDates, isHydrated]);
+  }, [flatSelectedDates, serverDates, isHydrated]);
 
   // ─── Handlers ──────────────────────────────────────────────────────────────
 
   const handleAddRange = useCallback((start: string, end: string) => {
-    const dates = expandRange(start, end);
-    setSelectedDates((prev) => {
-      const next = new Set(prev);
-      for (const d of dates) {
-        next.add(d);
-      }
-      return next;
-    });
+    setRanges((prev) => [
+      ...prev,
+      { id: generateId(), start, end, colorIndex: prev.length },
+    ]);
+    setRangeStart(null);
+    setHoverDate(null);
   }, []);
 
-  const handleToggleDate = useCallback((dateStr: string) => {
-    setSelectedDates((prev) => {
-      const next = new Set(prev);
-      if (next.has(dateStr)) {
-        next.delete(dateStr);
-      } else {
-        next.add(dateStr);
-      }
-      return next;
-    });
+  const handleUpdateActiveRange = useCallback(
+    (start: string, end: string) => {
+      setRanges((prev) =>
+        prev.map((r) =>
+          r.id === activeEditRangeId ? { ...r, start, end } : r
+        )
+      );
+      setActiveEditRangeId(null);
+      setRangeStart(null);
+      setHoverDate(null);
+    },
+    [activeEditRangeId]
+  );
+
+  const handleEditRange = useCallback((id: string) => {
+    setActiveEditRangeId(id);
+    setRangeStart(null);
+    setHoverDate(null);
   }, []);
 
-  const handleRemoveRange = useCallback((range: DateRange) => {
-    const dates = expandRange(range.start, range.end);
-    setSelectedDates((prev) => {
-      const next = new Set(prev);
-      for (const d of dates) {
-        next.delete(d);
-      }
-      return next;
-    });
-  }, []);
+  const handleRemoveRange = useCallback((id: string) => {
+    setRanges((prev) => prev.filter((r) => r.id !== id));
+    if (activeEditRangeId === id) {
+      setActiveEditRangeId(null);
+    }
+  }, [activeEditRangeId]);
 
   const handleQuickAction = useCallback(
     (action: "next2" | "next7" | "next30" | "clear") => {
       const today = new Date();
       const todayStr = toISODateString(today);
       setRangeStart(null); // Clear pending selection in all cases
+      setHoverDate(null);
+      setActiveEditRangeId(null);
 
       switch (action) {
         case "next2": {
           const end = new Date(today);
           end.setDate(end.getDate() + 1);
-          const dates = expandRange(todayStr, toISODateString(end));
-          setSelectedDates(new Set(dates));
+          setRanges([{ id: generateId(), start: todayStr, end: toISODateString(end), colorIndex: 0 }]);
           break;
         }
 
         case "next7": {
           const end = new Date(today);
           end.setDate(end.getDate() + 6);
-          const dates = expandRange(todayStr, toISODateString(end));
-          setSelectedDates(new Set(dates));
+          setRanges([{ id: generateId(), start: todayStr, end: toISODateString(end), colorIndex: 0 }]);
           break;
         }
 
         case "next30": {
           const end = new Date(today);
           end.setDate(end.getDate() + 29);
-          const dates = expandRange(todayStr, toISODateString(end));
-          setSelectedDates(new Set(dates));
+          setRanges([{ id: generateId(), start: todayStr, end: toISODateString(end), colorIndex: 0 }]);
           break;
         }
 
         case "clear":
-          setSelectedDates(new Set());
+          setRanges([]);
           break;
       }
     },
@@ -142,7 +168,7 @@ export default function AvailabilitySchedule({
   );
 
   const handleSave = useCallback(async () => {
-    const payload = Array.from(selectedDates).sort();
+    const payload = Array.from(flatSelectedDates).sort();
 
     try {
       setIsSaving(true);
@@ -162,18 +188,12 @@ export default function AvailabilitySchedule({
     } finally {
       setIsSaving(false);
     }
-  }, [selectedDates, dispatch]);
-
-  const selectedDatesArray = useMemo(
-    () => Array.from(selectedDates),
-    [selectedDates],
-  );
+  }, [flatSelectedDates, dispatch]);
 
   const isValid = useMemo(() => {
-    const ranges = groupDatesIntoRanges(selectedDatesArray);
     if (ranges.length === 0) return false;
     return ranges.every((range) => rangeDayCount(range) >= 2);
-  }, [selectedDatesArray]);
+  }, [ranges]);
 
   // ─── Render ────────────────────────────────────────────────────────────────
 
@@ -215,11 +235,14 @@ export default function AvailabilitySchedule({
           ) : (
             <div className="flex-1 flex flex-col">
               <CalendarGrid
-                selectedDates={selectedDates}
+                ranges={ranges}
+                activeEditRangeId={activeEditRangeId}
                 onAddRange={handleAddRange}
-                onToggleDate={handleToggleDate}
+                onUpdateActiveRange={handleUpdateActiveRange}
                 rangeStart={rangeStart}
                 onSetRangeStart={setRangeStart}
+                hoverDate={hoverDate}
+                onSetHoverDate={setHoverDate}
               />
               {!isValid && (
                 <p className="text-red-500 text-xs font-semibold mt-4">
@@ -240,7 +263,9 @@ export default function AvailabilitySchedule({
             <SummarySkeleton />
           ) : (
             <AvailabilitySummaryPanel
-              selectedDates={selectedDatesArray}
+              ranges={ranges}
+              activeEditRangeId={activeEditRangeId}
+              onEditRange={handleEditRange}
               onRemoveRange={handleRemoveRange}
               onSave={handleSave}
               onQuickAction={handleQuickAction}

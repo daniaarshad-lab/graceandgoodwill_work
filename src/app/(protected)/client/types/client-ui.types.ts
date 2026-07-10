@@ -13,6 +13,7 @@ export interface Carer {
   fullBiography?: string;
   experienceDetails?: string;
   availabilityDetails?: string[];
+  rawAvailability?: string[];
   email?: string;
   phone?: string;
   address?: string;

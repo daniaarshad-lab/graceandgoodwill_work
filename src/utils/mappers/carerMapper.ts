@@ -43,6 +43,7 @@ export const mapCarerProfileToUICarer = (carer: any): Carer => {
       : typeof carer.availability === "string"
         ? [carer.availability]
         : [],
+    rawAvailability: Array.isArray(carer.availability) ? carer.availability : [],
     email: carer.email || "",
     phone: carer.phone || "",
     address: [carer.address, carer.city, carer.postcode || carer.pincode].filter(Boolean).join(", ") || "",

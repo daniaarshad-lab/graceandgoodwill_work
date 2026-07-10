@@ -4,6 +4,15 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 @layer base {
   :root {
     color-scheme: dark;
@@ -676,10 +685,10 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  height: 36px;
+  height: 100%;
   left: 50%;
   right: 0;
-  background-color: rgba(212, 175, 55, 0.22);
+  background-color: var(--range-bg, rgba(212, 175, 55, 0.22));
   z-index: 0;
   pointer-events: none;
 }
@@ -689,10 +698,10 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  height: 36px;
+  height: 100%;
   left: 0;
   right: 50%;
-  background-color: rgba(212, 175, 55, 0.22);
+  background-color: var(--range-bg, rgba(212, 175, 55, 0.22));
   z-index: 0;
   pointer-events: none;
 }
@@ -702,10 +711,10 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  height: 36px;
+  height: 100%;
   left: 0;
   right: 0;
-  background-color: rgba(212, 175, 55, 0.22);
+  background-color: var(--range-bg, rgba(212, 175, 55, 0.22));
   z-index: 0;
   pointer-events: none;
 }
@@ -715,7 +724,7 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  height: 36px;
+  height: 100%;
   left: 50%;
   right: 0;
   background-color: rgba(212, 175, 55, 0.12);
@@ -728,7 +737,7 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  height: 36px;
+  height: 100%;
   left: 0;
   right: 50%;
   background-color: rgba(212, 175, 55, 0.12);

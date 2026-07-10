@@ -9,6 +9,7 @@ import {
   ArrowLeft, MapPin, Calendar, Mail, Phone, Heart, 
   Award, ShieldCheck, Clock, Star, Info, User
 } from "lucide-react";
+import ReadOnlyAvailabilityCalendar from "@/components/ReadOnlyAvailabilityCalendar";
 
 export default function CarerDetailsPage() {
   const { carerId } = useParams();
@@ -260,31 +261,7 @@ export default function CarerDetailsPage() {
             </div>
 
             {/* Schedule Card */}
-            <div className="flex-1 bg-navy-900/60 backdrop-blur-md border border-gold-300/10 rounded-3xl p-6 shadow-lg">
-              <h3 className="text-xs uppercase tracking-widest font-bold text-gold-300/70 mb-6">Schedule</h3>
-              
-              <div className="space-y-4">
-                <div className="flex items-center space-x-3 text-sm font-medium text-gold-50">
-                  <Calendar className="w-4 h-4 text-gold-300/70" />
-                  <span>Available Time Slots</span>
-                </div>
-                
-                {carer.availabilityDetails && carer.availabilityDetails.length > 0 ? (
-                  <div className="grid gap-2">
-                    {carer.availabilityDetails.map((detail, idx) => (
-                      <div key={idx} className="flex items-center p-3 rounded-xl bg-navy-950/50 border border-gold-300/5 text-xs text-gold-100/80">
-                        <Clock className="w-3.5 h-3.5 text-gold-300/50 mr-2 shrink-0" />
-                        <span className="truncate">{detail}</span>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="p-4 rounded-xl bg-navy-950/50 border border-gold-300/5 text-xs text-gold-100/50 text-center">
-                    No specific time slots defined.
-                  </div>
-                )}
-              </div>
-            </div>
+            <ReadOnlyAvailabilityCalendar availability={carer.rawAvailability} />
             
           </div>
         </div>

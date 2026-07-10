@@ -1,6 +1,7 @@
 "use client";
 
 import { memo } from "react";
+import { RANGE_COLORS } from "./colors";
 
 export type RangePosition = "none" | "single" | "start" | "middle" | "end";
 
@@ -14,6 +15,9 @@ interface DateCellProps {
   rangePosition: RangePosition;
   isRangeStart?: boolean;
   isHoverDate?: boolean;
+  isEditing?: boolean;
+  colorIndex?: number;
+  variant?: "solid" | "hollow";
   onMouseDown: () => void;
   onMouseEnter: () => void;
 }
@@ -28,12 +32,17 @@ function DateCell({
   rangePosition,
   isRangeStart,
   isHoverDate,
+  isEditing,
+  colorIndex = 0,
+  variant = "solid",
   onMouseDown,
   onMouseEnter,
 }: DateCellProps) {
+  const rangeColor = RANGE_COLORS[colorIndex % RANGE_COLORS.length];
+
   // ─── Container classes (row-level range fill band wrapper) 
   const containerClasses = [
-    "relative flex items-center justify-center w-full aspect-square",
+    "relative flex items-center justify-center w-full",
   ];
 
   // Apply pseudo-element based horizontal ranges
@@ -52,9 +61,9 @@ function DateCell({
   // ─── Inner cell classes 
   const cellClasses = [
     "relative flex items-center justify-center",
-    "w-7 h-7 sm:w-9 sm:h-9",
-    "text-sm select-none",
-    "transition-all duration-200 ease-out z-10",
+    variant === "hollow" ? "w-5 h-5 sm:w-6 sm:h-6" : "w-7 h-7 sm:w-8 sm:h-8",
+    variant === "hollow" ? "text-[10px] sm:text-xs" : "text-xs sm:text-sm",
+    "select-none transition-all duration-200 ease-out z-10",
   ];
 
   // ─── State-based styling 
@@ -68,13 +77,21 @@ function DateCell({
     );
   } else if (isSelected) {
     if (rangePosition === "start" || rangePosition === "single" || rangePosition === "end") {
-      // Perfect filled circle with brand/accent color
-      cellClasses.push(
-        "bg-gold-DEFAULT text-white font-bold rounded-full cursor-pointer",
-        "shadow-[0_0_12px_rgba(212,175,55,0.3)]",
-        "hover:bg-gold-200 hover:scale-105",
-        "active:scale-95",
-      );
+      // Circle styling based on variant
+      if (variant === "hollow") {
+        cellClasses.push(
+          rangeColor.ringClass, "font-bold rounded-full cursor-pointer",
+          "hover:scale-105", "active:scale-95"
+        );
+      } else {
+        cellClasses.push(
+          rangeColor.bgClass, rangeColor.textClass, "font-bold rounded-full cursor-pointer",
+          rangeColor.shadowClass,
+          rangeColor.hoverBgClass, "hover:scale-105",
+          "active:scale-95",
+        );
+      }
+      if (isEditing) cellClasses.push("ring-2 ring-white/50 ring-offset-1 ring-offset-navy-950 animate-pulse");
     } else if (rangePosition === "middle") {
       // Middle dates: transparent button, sits inside the continuous capsule bar
       cellClasses.push(
@@ -86,9 +103,9 @@ function DateCell({
     if (isRangeStart || isHoverDate) {
       // Active endpoints (clicked start or hovered end) in preview: Perfect filled circle
       cellClasses.push(
-        "bg-gold-DEFAULT text-white font-bold rounded-full cursor-pointer",
-        "shadow-[0_0_12px_rgba(212,175,55,0.3)]",
-        "hover:bg-gold-200 hover:scale-105",
+        rangeColor.bgClass, rangeColor.textClass, "font-bold rounded-full cursor-pointer",
+        rangeColor.shadowClass,
+        rangeColor.hoverBgClass, "hover:scale-105",
         "active:scale-95",
       );
     } else {
@@ -107,8 +124,10 @@ function DateCell({
     );
   }
 
+  const rangeBgColor = isPreview ? rangeColor.hexColor + "20" : rangeColor.hexColor + "38";
+
   return (
-    <div className={containerClasses.join(" ")}>
+    <div className={containerClasses.join(" ")} style={{ "--range-bg": rangeBgColor } as any}>
       <button
         type="button"
         onMouseDown={(e) => {

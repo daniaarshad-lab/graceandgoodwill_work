@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useMemo } from "react";
+import { LocalRange } from "./types";
 import DateCell, { RangePosition } from "./DateCell";
 import {
   getDaysInMonth,
@@ -16,11 +17,15 @@ import {
 const WEEKDAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 interface CalendarGridProps {
-  selectedDates: Set<string>;
+  ranges: LocalRange[];
+  activeEditRangeId: string | null;
   onAddRange: (start: string, end: string) => void;
-  onToggleDate: (dateStr: string) => void;
+  onUpdateActiveRange: (start: string, end: string) => void;
   rangeStart: string | null;
   onSetRangeStart: (dateStr: string | null) => void;
+  hoverDate: string | null;
+  onSetHoverDate: (dateStr: string | null) => void;
+  variant?: "solid" | "hollow";
 }
 
 interface GridCell {
@@ -30,17 +35,19 @@ interface GridCell {
 }
 
 export default function CalendarGrid({
-  selectedDates,
+  ranges,
+  activeEditRangeId,
   onAddRange,
-  onToggleDate,
+  onUpdateActiveRange,
   rangeStart,
   onSetRangeStart,
+  hoverDate,
+  onSetHoverDate,
+  variant = "solid",
 }: CalendarGridProps) {
   const now = new Date();
   const [currentYear, setCurrentYear] = useState(now.getFullYear());
   const [currentMonth, setCurrentMonth] = useState(now.getMonth());
-  const [hoverDate, setHoverDate] = useState<string | null>(null);
-  const selectionMode = "range";
 
   const handlePrevMonth = useCallback(() => {
     setCurrentMonth((prev) => {
@@ -126,22 +133,29 @@ export default function CalendarGrid({
     return new Set(expandRange(lo, hi));
   }, [rangeStart, hoverDate]);
 
+  // Compute lookup map for dates to ranges
+  const dateToRangeMap = useMemo(() => {
+    const map = new Map<string, LocalRange>();
+    for (const r of ranges) {
+      const dates = expandRange(r.start, r.end);
+      for (const d of dates) {
+        map.set(d, r);
+      }
+    }
+    return map;
+  }, [ranges]);
+
   // Compute range position for each cell
   const getRangePosition = useCallback(
-    (dateStr: string, isSelected: boolean): RangePosition => {
-      if (!isSelected) return "none";
-
-      const prevDay = getPrevDay(dateStr);
-      const nextDay = getNextDayStr(dateStr);
-      const hasPrev = selectedDates.has(prevDay);
-      const hasNext = selectedDates.has(nextDay);
-
-      if (hasPrev && hasNext) return "middle";
-      if (hasPrev && !hasNext) return "end";
-      if (!hasPrev && hasNext) return "start";
-      return "single";
+    (dateStr: string, isSelected: boolean, range: LocalRange | undefined): RangePosition => {
+      if (!isSelected || !range) return "none";
+      if (dateStr === range.start && dateStr === range.end) return "single";
+      if (dateStr === range.start) return "start";
+      if (dateStr === range.end) return "end";
+      if (dateStr > range.start && dateStr < range.end) return "middle";
+      return "none";
     },
-    [selectedDates]
+    []
   );
 
   // Compute preview range position for each cell
@@ -159,54 +173,42 @@ export default function CalendarGrid({
     [rangeStart, hoverDate]
   );
 
-  const isAdjacentToSelected = useCallback((dateStr: string) => {
-    const prev = getPrevDay(dateStr);
-    const next = getNextDayStr(dateStr);
-    return selectedDates.has(prev) || selectedDates.has(next);
-  }, [selectedDates]);
-
   // Date click handler — implements range selection
   const handleDateMouseDown = useCallback(
     (dateStr: string) => {
       if (rangeStart === null) {
-        // First click: if date is already selected, just toggle it off
-        if (selectedDates.has(dateStr)) {
-          onToggleDate(dateStr);
-        } else if (isAdjacentToSelected(dateStr)) {
-          // If it is adjacent to existing selection, add it immediately to merge
-          onToggleDate(dateStr);
-        } else {
-          // Start a new range selection
-          onSetRangeStart(dateStr);
-        }
+        // First click: start range selection
+        onSetRangeStart(dateStr);
       } else {
         // Second click: complete the range
         const lo = rangeStart < dateStr ? rangeStart : dateStr;
         const hi = rangeStart < dateStr ? dateStr : rangeStart;
-        onAddRange(lo, hi);
-        onSetRangeStart(null);
-        setHoverDate(null);
+        if (activeEditRangeId) {
+          onUpdateActiveRange(lo, hi);
+        } else {
+          onAddRange(lo, hi);
+        }
       }
     },
-    [rangeStart, selectedDates, onToggleDate, onSetRangeStart, onAddRange, isAdjacentToSelected]
+    [rangeStart, activeEditRangeId, onSetRangeStart, onAddRange, onUpdateActiveRange]
   );
 
   const handleDateMouseEnter = useCallback(
     (dateStr: string) => {
       if (rangeStart) {
-        setHoverDate(dateStr);
+        onSetHoverDate(dateStr);
       }
     },
-    [rangeStart]
+    [rangeStart, onSetHoverDate]
   );
 
   return (
     <div
       className="flex flex-col h-full"
-      onMouseLeave={() => setHoverDate(null)}
+      onMouseLeave={() => onSetHoverDate(null)}
     >
       {/* Calendar Header */}
-      <div className="flex items-center justify-between mb-5">
+      <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-3">
           <h3 className="text-xl font-bold text-gold-50 tracking-tight">
             {getMonthName(currentMonth)} {currentYear}
@@ -262,7 +264,7 @@ export default function CalendarGrid({
             type="button"
             onClick={() => {
               onSetRangeStart(null);
-              setHoverDate(null);
+              onSetHoverDate(null);
             }}
             className="text-[10px] text-gold-DEFAULT hover:text-gold-200 hover:underline font-semibold cursor-pointer"
           >
@@ -272,7 +274,7 @@ export default function CalendarGrid({
       )}
 
       {/* Weekday headers */}
-      <div className="grid grid-cols-7 mb-1">
+      <div className="grid grid-cols-7 mb-0">
         {WEEKDAY_LABELS.map((label) => (
           <div
             key={label}
@@ -286,29 +288,38 @@ export default function CalendarGrid({
       {/* Date grid */}
       <div className="grid grid-cols-7 flex-1">
         {gridCells.map((cell) => {
-          const isSelected = selectedDates.has(cell.dateStr);
+          const range = dateToRangeMap.get(cell.dateStr);
+          const isSelected = !!range;
           const isPreview = previewSet.has(cell.dateStr);
           const rangePosition = isSelected
-            ? getRangePosition(cell.dateStr, true)
+            ? getRangePosition(cell.dateStr, isSelected, range)
             : isPreview
               ? getPreviewPosition(cell.dateStr)
               : "none";
+              
+          // Dim other ranges if we are editing a specific range
+          const isEditingOthers = activeEditRangeId !== null && range && range.id !== activeEditRangeId;
+          const isEditingThis = activeEditRangeId !== null && range && range.id === activeEditRangeId;
 
           return (
-            <DateCell
-              key={cell.dateStr}
-              dayNumber={cell.dayNumber}
-              isSelected={isSelected}
-              isToday={isToday(cell.dateStr)}
-              isDisabled={!cell.isOtherMonth && isPastDate(cell.dateStr)}
-              isOtherMonth={cell.isOtherMonth}
-              isPreview={isPreview}
-              rangePosition={rangePosition}
-              isRangeStart={cell.dateStr === rangeStart}
-              isHoverDate={cell.dateStr === hoverDate}
-              onMouseDown={() => handleDateMouseDown(cell.dateStr)}
-              onMouseEnter={() => handleDateMouseEnter(cell.dateStr)}
-            />
+            <div key={cell.dateStr} className={isEditingOthers ? "opacity-30 pointer-events-none" : ""}>
+              <DateCell
+                dayNumber={cell.dayNumber}
+                isSelected={isSelected}
+                isToday={isToday(cell.dateStr)}
+                isDisabled={!cell.isOtherMonth && isPastDate(cell.dateStr)}
+                isOtherMonth={cell.isOtherMonth}
+                isPreview={isPreview}
+                rangePosition={rangePosition}
+                isRangeStart={cell.dateStr === rangeStart}
+                isHoverDate={cell.dateStr === hoverDate}
+                colorIndex={range ? range.colorIndex : 0}
+                isEditing={isEditingThis}
+                variant={variant}
+                onMouseDown={() => handleDateMouseDown(cell.dateStr)}
+                onMouseEnter={() => handleDateMouseEnter(cell.dateStr)}
+              />
+            </div>
           );
         })}
       </div>

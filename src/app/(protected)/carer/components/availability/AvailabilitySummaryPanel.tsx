@@ -6,10 +6,15 @@ import {
   groupDatesIntoRanges,
   formatRangeDisplay,
 } from "../../utils/date.utils";
+import { LocalRange } from "./types";
+import { getRangeColor } from "./colors";
+import { Pencil } from "lucide-react";
 
 interface AvailabilitySummaryPanelProps {
-  selectedDates: string[];
-  onRemoveRange: (range: DateRange) => void;
+  ranges: LocalRange[];
+  activeEditRangeId: string | null;
+  onEditRange: (id: string) => void;
+  onRemoveRange: (id: string) => void;
   onSave: () => void;
   onQuickAction: (
     action: "next2" | "next7" | "next30" | "clear",
@@ -20,7 +25,9 @@ interface AvailabilitySummaryPanelProps {
 }
 
 export default function AvailabilitySummaryPanel({
-  selectedDates,
+  ranges,
+  activeEditRangeId,
+  onEditRange,
   onRemoveRange,
   onSave,
   onQuickAction,
@@ -28,10 +35,6 @@ export default function AvailabilitySummaryPanel({
   hasChanges,
   isValid,
 }: AvailabilitySummaryPanelProps) {
-  const ranges = useMemo(
-    () => groupDatesIntoRanges(selectedDates),
-    [selectedDates],
-  );
 
   const isEmpty = ranges.length === 0;
 
@@ -119,30 +122,46 @@ export default function AvailabilitySummaryPanel({
           </div>
         ) : (
           ranges.map((range, idx) => {
+            const rangeColor = getRangeColor(range.colorIndex);
+            const isEditing = activeEditRangeId === range.id;
             return (
               <div
-                key={`${range.start}-${range.end}`}
-                className="group flex items-center justify-between px-3 py-3
-                  rounded-xl border border-gold-300/8 bg-navy-950/30
-                  hover:border-gold-300/20 hover:bg-navy-950/50
-                  transition-all duration-200"
+                key={range.id}
+                className={`group flex items-center justify-between px-3 py-3
+                  rounded-xl border transition-all duration-200
+                  ${isEditing 
+                    ? "border-gold-300/40 bg-navy-900/60 shadow-[0_0_15px_rgba(212,175,55,0.15)] ring-1 ring-gold-500/20" 
+                    : "border-gold-300/8 bg-navy-950/30 hover:border-gold-300/20 hover:bg-navy-950/50"}`}
               >
                 <div className="flex items-center gap-2.5 min-w-0">
-                  <span className="flex-shrink-0 w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.5)]" />
-                  <span className="text-[13px] text-gold-100/90 font-medium truncate">
+                  <span className={`flex-shrink-0 w-2.5 h-2.5 rounded-full ${rangeColor.dotClass}`} />
+                  <span className={`text-[13px] font-medium truncate ${isEditing ? "text-gold-50" : "text-gold-100/90"}`}>
                     {formatRangeDisplay(range)}
                   </span>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => onRemoveRange(range)}
-                  className="flex-shrink-0 opacity-0 group-hover:opacity-100 p-1.5 rounded-lg
-                    text-gold-100/25 hover:text-red-400 hover:bg-red-400/10
-                    transition-all duration-200"
-                  aria-label={`Remove range ${idx + 1}`}
-                >
-                  <XIcon />
-                </button>
+                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <button
+                    type="button"
+                    onClick={() => onEditRange(range.id)}
+                    className={`flex-shrink-0 p-1.5 rounded-lg transition-all duration-200
+                      ${isEditing 
+                        ? "text-gold-300 bg-gold-400/10" 
+                        : "text-gold-100/40 hover:text-gold-200 hover:bg-gold-400/10"}`}
+                    aria-label={`Edit range ${idx + 1}`}
+                  >
+                    <Pencil className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onRemoveRange(range.id)}
+                    className="flex-shrink-0 p-1.5 rounded-lg
+                      text-gold-100/40 hover:text-red-400 hover:bg-red-400/10
+                      transition-all duration-200"
+                    aria-label={`Remove range ${idx + 1}`}
+                  >
+                    <XIcon />
+                  </button>
+                </div>
               </div>
             );
           })

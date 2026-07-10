@@ -33,6 +33,7 @@ import {
   Info,
 } from "lucide-react";
 import InternalNotes from "../../components/shared/InternalNotes/InternalNotes";
+import ReadOnlyAvailabilityCalendar from "@/components/ReadOnlyAvailabilityCalendar";
 
 // Document categories are determined by the backend response
 
@@ -597,42 +598,12 @@ function CarerDetailsContent() {
                 {/* ROW 2: Availability & Placements */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   {/* Availability (col 1) */}
-                  <div className="lg:col-span-1 rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md flex flex-col h-[340px]">
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-gold-200/50 border-b border-gold-300/5 pb-3 flex items-center gap-2 shrink-0">
-                      <Calendar className="h-4 w-4 text-gold/60" /> Availability
-                    </h3>
-
-                    <div className="space-y-3 text-xs flex-1 overflow-y-auto pr-2 mt-4 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gold-300/20 hover:[&::-webkit-scrollbar-thumb]:bg-gold-300/40 [&::-webkit-scrollbar-thumb]:rounded-full">
-                      <div className="flex items-center justify-between">
-                        <span className="text-gold-100/40 font-semibold">Availability Status:</span>
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${getStatusBadgeStyles(availabilityStatus)}`}>
-                          {availabilityStatus}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center justify-between">
-                        <span className="text-gold-100/40 font-semibold">Consecutive Days:</span>
-                        <span className="text-gold-200 font-bold">{consecutiveDays}</span>
-                      </div>
-
-                      {/* <div className="flex items-center justify-between">
-                        <span className="text-gold-100/40 font-semibold">Available Hours:</span>
-                        <span className="text-rose-400 font-bold font-mono text-[10px]">
-                          {availableHours}
-                        </span>
-                      </div> */}
-
-                      <div className="border-t border-gold-300/5 pt-3">
-                        <span className="text-[9px] uppercase font-bold tracking-wider text-gold-100/40 block mb-1">Standard Schedule</span>
-                        <p className="text-gold-200 font-semibold leading-relaxed">
-                          {availabilityStr}
-                        </p>
-                      </div>
-                    </div>
+                  <div className="lg:col-span-1 h-full">
+                    <ReadOnlyAvailabilityCalendar availability={availSource} />
                   </div>
 
                   {/* Placement History (col 2) */}
-                  <div className="lg:col-span-2 rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md flex flex-col h-[340px]">
+                  <div className="lg:col-span-2 rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md flex flex-col h-full min-h-[340px]">
                     <h3 className="text-xs font-bold uppercase tracking-wider text-gold-200/50 border-b border-gold-300/5 pb-3 flex items-center gap-2 shrink-0">
                       <Award className="h-4 w-4 text-gold/60" /> Care Placement History
                     </h3>

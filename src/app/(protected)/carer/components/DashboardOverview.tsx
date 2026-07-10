@@ -24,7 +24,7 @@ export default function DashboardOverview({
 }: DashboardOverviewProps) {
   const profile = useAppSelector((state) => state.carer.profile);
   const membershipTier = (profile as any)?.membershipTier || "FREE";
-  
+
   const planName = membershipTier === "GOLD_ELITE" ? "Gold Elite Membership" : "Free Membership";
   const billingNode = membershipTier === "GOLD_ELITE" ? "Annual Coverage" : "No Billing (Free)";
 
@@ -120,7 +120,7 @@ export default function DashboardOverview({
           size="sm"
           fullWidth
         >
-          Renew & Review Plan
+          Upgrade Plan
         </Button>
       </SectionCard>
 

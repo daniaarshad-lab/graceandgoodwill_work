@@ -241,34 +241,27 @@ export function useCarerPortal({
         await dispatch(updateCarerStep11(payload)).unwrap();
       } else {
         const personalPayload = {
+          firstName,
+          lastName,
           address,
           postcode,
+          pincode: postcode,
           dateOfBirth,
           emergencyContactName,
           emergencyContactNumber,
           emergencyContactRelation,
-          // Temporarily removed until BE payload is updated
-          // bankName,
-          // accountName,
-          // accountNumber,
-          // sortCode,
-          // nationalInsuranceNumber,
-        };
-        await dispatch(updateCarerProfile(personalPayloadCheck(personalPayload))).unwrap();
-
-        const professionalPayload = {
+          canDrive: canDrive === "yes" ? "true" : canDrive === "no" ? "false" : undefined,
+          hasBusinessInsurance: hasBusinessInsurance === "yes" ? "true" : hasBusinessInsurance === "no" ? "false" : undefined,
+          bankName,
+          accountName,
+          accountNumber,
+          sortCode,
           summary: bio,
           experienceYears: parseInt(experience, 10) || 0,
           careSpecialties: specialties.split(",").map((s) => s.trim()).filter(Boolean),
         };
-        await dispatch(updateCarerStep3(professionalPayload)).unwrap();
 
-        const step2Payload = {
-          drivingPreferences,
-          canDrive: canDrive === "yes" ? "true" : canDrive === "no" ? "false" : undefined,
-          hasBusinessInsurance: hasBusinessInsurance === "yes" ? "true" : hasBusinessInsurance === "no" ? "false" : undefined,
-        };
-        await dispatch(updateCarerStep2(step2Payload)).unwrap();
+        await dispatch(updateCarerProfile(personalPayloadCheck(personalPayload))).unwrap();
       }
 
       // showSuccessToast(

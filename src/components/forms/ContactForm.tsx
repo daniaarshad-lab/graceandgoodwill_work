@@ -39,6 +39,14 @@ export default function ContactForm() {
 
     if (!startDate) {
       tempErrors.startDate = "Preferred start date is required";
+    } else {
+      const selectedDate = new Date(startDate);
+      selectedDate.setHours(0, 0, 0, 0);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (selectedDate < today) {
+        tempErrors.startDate = "Start date cannot be in the past";
+      }
     }
 
     setErrors(tempErrors);
@@ -193,6 +201,7 @@ export default function ContactForm() {
             type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
+            min={new Date().toISOString().split("T")[0]}
             className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 text-sm ${errors.startDate ? "border-red-500" : "border-gold-muted/20"
               }`}
           />

@@ -147,6 +147,7 @@ export default function CareRequestForm({
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
             type="date"
+            min={new Date().toISOString().split("T")[0]}
             error={errors.startDate}
           />
 

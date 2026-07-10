@@ -41,6 +41,14 @@ export function validateCareForm(data: {
 
   if (!data.startDate) {
     errors.startDate = "Preferred start date is required.";
+  } else {
+    const selectedDate = new Date(data.startDate);
+    selectedDate.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (selectedDate < today) {
+      errors.startDate = "Start date cannot be in the past.";
+    }
   }
 
   if (!data.isOngoing) {

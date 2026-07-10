@@ -373,9 +373,13 @@ function DocumentReviewContent() {
                       <span className="text-gold-200 font-bold">{getMockDocDetails(activeDoc.fileCategory || activeDoc.fileType).type}</span>
                     </div>
                     <div>
-                      <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1">Upload Date</span>
+                      <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1">Approved At</span>
                       <span className="text-gold-200 font-bold">
-                        {activeDoc.createdAt ? new Date(activeDoc.createdAt).toISOString().split("T")[0] : getMockDocDetails(activeDoc.fileCategory || activeDoc.fileType).uploadDate}
+                        {activeDoc.approvedAt ? new Date(activeDoc.approvedAt).toLocaleDateString("en-GB", {
+                          day: "2-digit",
+                          month: "long",
+                          year: "numeric"
+                        }) : "N/A"}
                       </span>
                     </div>
                     <div>

@@ -18,8 +18,10 @@ interface DateCellProps {
   isEditing?: boolean;
   colorIndex?: number;
   variant?: "solid" | "hollow";
-  onMouseDown: () => void;
-  onMouseEnter: () => void;
+  dateStr: string;
+  onMouseDown: (dateStr: string) => void;
+  onMouseEnter: (dateStr: string) => void;
+  onMouseUp: (dateStr: string) => void;
 }
 
 function DateCell({
@@ -35,14 +37,20 @@ function DateCell({
   isEditing,
   colorIndex = 0,
   variant = "solid",
+  dateStr,
   onMouseDown,
   onMouseEnter,
+  onMouseUp,
 }: DateCellProps) {
   const rangeColor = RANGE_COLORS[colorIndex % RANGE_COLORS.length];
+  
+  // Use solid colors computed against the navy background to prevent double-opacity 
+  // lines when pseudo elements overlap to cover sub-pixel gaps.
+  const rangeBgColor = isPreview ? "#22221f" : "#363222";
 
   // ─── Container classes (row-level range fill band wrapper) 
   const containerClasses = [
-    "relative flex items-center justify-center w-full",
+    "relative flex items-center justify-center w-full transition-all duration-200 ease-out",
   ];
 
   // Apply pseudo-element based horizontal ranges
@@ -124,18 +132,19 @@ function DateCell({
     );
   }
 
-  const rangeBgColor = isPreview ? rangeColor.hexColor + "20" : rangeColor.hexColor + "38";
-
   return (
     <div className={containerClasses.join(" ")} style={{ "--range-bg": rangeBgColor } as any}>
       <button
         type="button"
         onMouseDown={(e) => {
           e.preventDefault();
-          if (!isDisabled && !isOtherMonth) onMouseDown();
+          if (!isDisabled && !isOtherMonth) onMouseDown(dateStr);
         }}
         onMouseEnter={() => {
-          if (!isDisabled && !isOtherMonth) onMouseEnter();
+          if (!isDisabled && !isOtherMonth) onMouseEnter(dateStr);
+        }}
+        onMouseUp={() => {
+          if (!isDisabled && !isOtherMonth) onMouseUp(dateStr);
         }}
         disabled={isDisabled || isOtherMonth}
         className={cellClasses.join(" ")}

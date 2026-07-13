@@ -726,8 +726,8 @@
   transform: translateY(-50%);
   height: 100%;
   left: 50%;
-  right: 0;
-  background-color: rgba(212, 175, 55, 0.12);
+  right: -1px;
+  background-color: var(--range-bg, rgba(212, 175, 55, 0.12));
   z-index: 0;
   pointer-events: none;
 }
@@ -738,9 +738,9 @@
   top: 50%;
   transform: translateY(-50%);
   height: 100%;
-  left: 0;
+  left: -1px;
   right: 50%;
-  background-color: rgba(212, 175, 55, 0.12);
+  background-color: var(--range-bg, rgba(212, 175, 55, 0.12));
   z-index: 0;
   pointer-events: none;
 }
@@ -750,10 +750,10 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  height: 36px;
-  left: 0;
-  right: 0;
-  background-color: rgba(212, 175, 55, 0.12);
+  height: 100%;
+  left: -1px;
+  right: -1px;
+  background-color: var(--range-bg, rgba(212, 175, 55, 0.12));
   z-index: 0;
   pointer-events: none;
 }

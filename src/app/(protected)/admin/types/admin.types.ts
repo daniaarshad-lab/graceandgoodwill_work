@@ -34,7 +34,6 @@ export interface ClientRequest {
   notes: string;
   status:
     | "NEW_ENQUIRY"
-    | "AWAITING_CONSULTATION"
     | "OPEN_FOR_APPLICATIONS"
     | "UNDER_REVIEW"
     | "CLIENT_INTERVIEW_STAGE"

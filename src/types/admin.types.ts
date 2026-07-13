@@ -47,7 +47,6 @@ export interface AdminCareRequestApplication {
 /** Supported care request statuses for admin workflow */
 export type CareRequestStatusValue =
   | "NEW_ENQUIRY"
-  | "AWAITING_CONSULTATION"
   | "OPEN_FOR_APPLICATIONS"
   | "UNDER_REVIEW"
   | "CLIENT_INTERVIEW_STAGE"
@@ -56,7 +55,6 @@ export type CareRequestStatusValue =
 
 export const CARE_REQUEST_STATUS_OPTIONS: { value: CareRequestStatusValue; label: string }[] = [
   { value: "NEW_ENQUIRY", label: "New Enquiry" },
-  { value: "AWAITING_CONSULTATION", label: "Awaiting Consultation" },
   { value: "OPEN_FOR_APPLICATIONS", label: "Open for Applications" },
   { value: "UNDER_REVIEW", label: "Under Review" },
   { value: "CLIENT_INTERVIEW_STAGE", label: "Client Interview Stage" },

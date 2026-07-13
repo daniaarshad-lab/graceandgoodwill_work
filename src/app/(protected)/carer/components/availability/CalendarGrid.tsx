@@ -158,7 +158,7 @@ export default function CalendarGrid({
     []
   );
 
-  // Compute preview range position for each cell
+          // Compute preview range position for each cell
   const getPreviewPosition = useCallback(
     (dateStr: string): RangePosition => {
       if (!rangeStart || !hoverDate) return "none";
@@ -172,6 +172,8 @@ export default function CalendarGrid({
     },
     [rangeStart, hoverDate]
   );
+
+  const todayStr = useMemo(() => toISODateString(new Date()), []);
 
   // Date click handler — implements range selection
   const handleDateMouseDown = useCallback(
@@ -191,6 +193,22 @@ export default function CalendarGrid({
       }
     },
     [rangeStart, activeEditRangeId, onSetRangeStart, onAddRange, onUpdateActiveRange]
+  );
+
+  const handleDateMouseUp = useCallback(
+    (dateStr: string) => {
+      // If we are currently selecting a range and we release on a different date, complete the selection
+      if (rangeStart !== null && rangeStart !== dateStr) {
+        const lo = rangeStart < dateStr ? rangeStart : dateStr;
+        const hi = rangeStart < dateStr ? dateStr : rangeStart;
+        if (activeEditRangeId) {
+          onUpdateActiveRange(lo, hi);
+        } else {
+          onAddRange(lo, hi);
+        }
+      }
+    },
+    [rangeStart, activeEditRangeId, onAddRange, onUpdateActiveRange]
   );
 
   const handleDateMouseEnter = useCallback(
@@ -286,17 +304,16 @@ export default function CalendarGrid({
       </div>
 
       {/* Date grid */}
-      <div className="grid grid-cols-7 flex-1">
+      <div className="grid grid-cols-7 gap-y-1">
         {gridCells.map((cell) => {
+          const isSelected = dateToRangeMap.has(cell.dateStr);
           const range = dateToRangeMap.get(cell.dateStr);
-          const isSelected = !!range;
           const isPreview = previewSet.has(cell.dateStr);
-          const rangePosition = isSelected
+          
+          const rangePosition = isSelected 
             ? getRangePosition(cell.dateStr, isSelected, range)
-            : isPreview
-              ? getPreviewPosition(cell.dateStr)
-              : "none";
-              
+            : (isPreview ? getPreviewPosition(cell.dateStr) : "none");
+
           // Dim other ranges if we are editing a specific range
           const isEditingOthers = activeEditRangeId !== null && range && range.id !== activeEditRangeId;
           const isEditingThis = activeEditRangeId !== null && range && range.id === activeEditRangeId;
@@ -304,10 +321,11 @@ export default function CalendarGrid({
           return (
             <div key={cell.dateStr} className={isEditingOthers ? "opacity-30 pointer-events-none" : ""}>
               <DateCell
+                dateStr={cell.dateStr}
                 dayNumber={cell.dayNumber}
                 isSelected={isSelected}
-                isToday={isToday(cell.dateStr)}
-                isDisabled={!cell.isOtherMonth && isPastDate(cell.dateStr)}
+                isToday={cell.dateStr === todayStr}
+                isDisabled={!cell.isOtherMonth && cell.dateStr < todayStr}
                 isOtherMonth={cell.isOtherMonth}
                 isPreview={isPreview}
                 rangePosition={rangePosition}
@@ -316,8 +334,9 @@ export default function CalendarGrid({
                 colorIndex={range ? range.colorIndex : 0}
                 isEditing={isEditingThis}
                 variant={variant}
-                onMouseDown={() => handleDateMouseDown(cell.dateStr)}
-                onMouseEnter={() => handleDateMouseEnter(cell.dateStr)}
+                onMouseDown={handleDateMouseDown}
+                onMouseEnter={handleDateMouseEnter}
+                onMouseUp={handleDateMouseUp}
               />
             </div>
           );

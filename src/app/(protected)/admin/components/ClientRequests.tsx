@@ -74,7 +74,6 @@ export default function ClientRequests({
           >
             <option value="ALL">All</option>
             <option value="NEW_ENQUIRY">New Enquiry</option>
-            <option value="AWAITING_CONSULTATION">Awaiting Consultation</option>
             <option value="OPEN_FOR_APPLICATIONS">Open for Applications</option>
             <option value="UNDER_REVIEW">Under Review</option>
             <option value="CLIENT_INTERVIEW_STAGE">Client Interview Stage</option>
@@ -112,7 +111,6 @@ export default function ClientRequests({
                     className="rounded-full border border-gold-300/20 bg-navy-950 px-3 py-1 text-[10px] font-bold text-gold-200 outline-none focus:border-gold-300/50 transition duration-300 cursor-pointer"
                   >
                     <option value="NEW_ENQUIRY">NEW_ENQUIRY</option>
-                    <option value="AWAITING_CONSULTATION">AWAITING_CONSULTATION</option>
                     <option value="OPEN_FOR_APPLICATIONS">OPEN_FOR_APPLICATIONS</option>
                     <option value="UNDER_REVIEW">UNDER_REVIEW</option>
                     <option value="CLIENT_INTERVIEW_STAGE">CLIENT_INTERVIEW_STAGE</option>

@@ -62,53 +62,41 @@ export default function MultiSelect({
 
       <div
         className={`w-full rounded-xl border outline-none flex items-center cursor-pointer transition-all focus-within:ring-2 focus-within:ring-gold ${
-          error ? "border-red-500" : "border-gray-300"
-        } h-[50px] bg-transparent`}
+          error ? "border-red-500/50" : "border-gold-300/20"
+        } h-[50px] bg-navy-950/50`}
         onClick={() => setIsOpen(!isOpen)}
         tabIndex={0}
       >
-        <div className="flex-1 flex flex-wrap items-center content-center gap-1.5 px-4 h-full overflow-y-auto py-1.5 custom-scrollbar">
-          {value.length === 0 && (
-            <span className="text-gray-400 select-none text-sm">{placeholder}</span>
-          )}
-          
-          {value.map((val) => (
-            <span
-              key={val}
-              className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-gold/10 text-gold-600 dark:text-gold-200 text-xs font-semibold border border-gold/20 whitespace-nowrap shrink-0"
-            >
-              {getOptionLabel(val)}
-              <button
-                type="button"
-                onClick={(e) => removeOption(e, val)}
-                className="hover:bg-gold/20 rounded-full p-0.5 transition-colors focus:outline-none"
-              >
-                <X className="w-3 h-3" />
-              </button>
+        <div className="flex-1 flex items-center px-4 h-full overflow-hidden">
+          {value.length === 0 ? (
+            <span className="text-gold-100/40 select-none text-sm">{placeholder}</span>
+          ) : (
+            <span className="text-gold-200 text-sm truncate">
+              {value.map(getOptionLabel).join(", ")}
             </span>
-          ))}
+          )}
         </div>
 
         <div className="pr-4 pl-2 flex items-center h-full">
-          <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+          <ChevronDown className={`w-5 h-5 text-gold-300/50 transition-transform ${isOpen ? "rotate-180" : ""}`} />
         </div>
       </div>
 
       {isOpen && (
-        <div className="absolute z-50 w-full mt-1 bg-white dark:bg-navy-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+        <div className="absolute z-50 w-full mt-1 bg-navy-950 border border-gold-300/20 rounded-xl shadow-2xl shadow-navy-950/50 max-h-60 overflow-y-auto custom-scrollbar">
           {options.map((option) => {
             const isSelected = value.includes(option.value);
             if (option.value === "") return null;
             return (
               <div
                 key={option.value}
-                className={`px-4 py-2.5 cursor-pointer hover:bg-gold/10 flex items-center gap-3 transition-colors ${
-                  isSelected ? "bg-gold/5" : ""
+                className={`px-4 py-2.5 cursor-pointer hover:bg-gold-300/10 flex items-center gap-3 transition-colors ${
+                  isSelected ? "bg-gold-300/5" : ""
                 }`}
                 onClick={() => toggleOption(option.value)}
               >
                 <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
-                  isSelected ? "bg-gold border-gold" : "border-gray-300 dark:border-gray-600"
+                  isSelected ? "bg-gold border-gold" : "border-gold-300/30 bg-navy-900"
                 }`}>
                   {isSelected && (
                     <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -116,7 +104,7 @@ export default function MultiSelect({
                     </svg>
                   )}
                 </div>
-                <span className={`text-sm ${isSelected ? "font-semibold text-gray-900 dark:text-gray-100" : "text-gray-700 dark:text-gray-300"}`}>
+                <span className={`text-sm ${isSelected ? "font-bold text-gold-200" : "text-gold-100/70"}`}>
                   {option.label}
                 </span>
               </div>

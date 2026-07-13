@@ -50,7 +50,7 @@ export default function InterestListPanel() {
             Interest List ❤️
           </h3>
           <p className="text-xs text-gold-100/60 leading-relaxed mt-1">
-            Your shortlisted carers. You need to select at least 3, up to a maximum of 8.
+            Your shortlisted carers. You need to select at least 2, up to a maximum of 8.
           </p>
         </div>
         
@@ -58,10 +58,10 @@ export default function InterestListPanel() {
           <div className="text-sm font-bold text-gold-50 bg-navy-900 px-4 py-2 rounded-lg border border-gold-DEFAULT/30">
             {interestList.length} / 8 Selected
           </div>
-          {interestList.length > 0 && interestList.length < 3 && (
+          {interestList.length > 0 && interestList.length < 2 && (
             <div className="flex items-center text-amber-400 text-xs mt-2 font-semibold">
               <AlertCircle className="w-3 h-3 mr-1" />
-              Minimum 3 required
+              Minimum 2 required
             </div>
           )}
         </div>

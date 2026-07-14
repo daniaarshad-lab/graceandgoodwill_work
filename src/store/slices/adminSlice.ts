@@ -165,6 +165,19 @@ export const fetchAdminCareRequestApplications = createAsyncThunk<
   }
 });
 
+/** Review interest list application (Approve/Reject) */
+export const reviewInterestList = createAsyncThunk<
+  any,
+  { carerProfileId: string; clientProfileId: string; careRequestId?: string; status: string },
+  { rejectValue: string }
+>("admin/reviewInterestList", async (payload, { rejectWithValue }) => {
+  try {
+    return await adminService.reviewInterestList(payload);
+  } catch (error: any) {
+    return rejectWithValue(error?.message || "Failed to review interest list application");
+  }
+});
+
 /** Update care request status */
 export const updateAdminCareRequestStatus = createAsyncThunk<
   { careRequestId: string; status: string },

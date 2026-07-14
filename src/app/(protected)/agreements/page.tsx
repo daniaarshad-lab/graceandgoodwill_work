@@ -262,7 +262,7 @@ export default function AgreementsPage() {
 
                 <h3 className="text-2xl font-bold text-white mb-3">Activate Your Client Account</h3>
                 <p className="text-slate-300 text-sm leading-relaxed max-w-sm mx-auto mb-8">
-                  Agreements signed successfully! To unlock carer matching, search profiles, and submit introduction requests, please pay the one-off Lifetime Platform Fee.
+                  Agreements signed successfully! To unlock carer matching, search profiles, and submit care requests, please pay the one-off Lifetime Platform Fee.
                 </p>
 
                 <div className="bg-navy-950/50 border border-navy-800/80 rounded-xl p-6 max-w-sm mx-auto text-left mb-8 shadow-inner">

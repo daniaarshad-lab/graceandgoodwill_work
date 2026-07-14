@@ -6,7 +6,10 @@ import {
   fetchCareRequests,
   fetchClientCareRequestApplications,
   clearApplications,
+  approveApplication,
+  rejectApplication,
 } from "@/store/slices/clientSlice";
+import { clientService } from "@/services/client/client.service";
 import { CareRequest, CareRequestApplication } from "@/types/client.types";
 import SectionCard from "./shared/SectionCard";
 import Button from "@/components/Button";
@@ -34,6 +37,45 @@ export default function ClientApplicationsPanel() {
   } = useAppSelector((state) => state.client);
 
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
+
+  const [rejectAppId, setRejectAppId] = useState<string | null>(null);
+  const [rejectReason, setRejectReason] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState<string | null>(null);
+
+  const handleApprove = async (appId: string) => {
+    setIsSubmitting(appId);
+    try {
+      const res = await dispatch(approveApplication(appId)).unwrap();
+      if (res && res.id) {
+        const successUrl = `${window.location.origin}/client/billing?session=success`;
+        const cancelUrl = `${window.location.origin}/client/billing?session=cancelled`;
+        const { url } = await clientService.subscribeToPlacement(res.id, successUrl, cancelUrl);
+        if (url) window.location.href = url;
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsSubmitting(null);
+    }
+  };
+
+  const handleReject = async () => {
+    if (!rejectAppId || !rejectReason.trim()) return;
+    setIsSubmitting("reject");
+    try {
+      await dispatch(rejectApplication({ applicationId: rejectAppId, reason: rejectReason })).unwrap();
+      setRejectAppId(null);
+      setRejectReason("");
+      // Refresh applications for the selected request
+      if (selectedRequestId) {
+        dispatch(fetchClientCareRequestApplications(selectedRequestId));
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsSubmitting(null);
+    }
+  };
 
   useEffect(() => {
     dispatch(fetchCareRequests());
@@ -77,6 +119,7 @@ export default function ClientApplicationsPanel() {
   }
 
   return (
+    <>
     <SectionCard className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 border-b border-gold-300/10 pb-4">
         <div className="max-w-2xl">
@@ -197,9 +240,9 @@ export default function ClientApplicationsPanel() {
                           className="flex items-start justify-between rounded-xl bg-navy-900 border border-gold-300/5 p-4 hover:border-gold-300/15 transition-colors"
                         >
                           <div className="flex items-start gap-4">
-                            {app.carerProfile?.profilePhotoUrl ? (
+                            {app.carer?.profilePhotoUrl || app.carerProfile?.profilePhotoUrl ? (
                               <img
-                                src={app.carerProfile.profilePhotoUrl}
+                                src={app.carer?.profilePhotoUrl || app.carerProfile?.profilePhotoUrl}
                                 alt="Profile"
                                 className="w-12 h-12 rounded-full object-cover border border-gold-300/20"
                               />
@@ -210,11 +253,16 @@ export default function ClientApplicationsPanel() {
                             )}
                             <div>
                               <h5 className="text-sm font-bold text-gold-100">
-                                {app.carerProfile?.user?.firstName || "Carer"}{" "}
-                                {app.carerProfile?.user?.lastName || ""}
+                                {app.carer?.firstName || app.carerProfile?.user?.firstName || "Carer"}{" "}
+                                {app.carer?.lastName || app.carerProfile?.user?.lastName || ""}
                               </h5>
-                              <p className="text-xs text-gold-100/50 mt-1 line-clamp-2">
-                                {app.carerProfile?.bio || "No bio provided."}
+                              {(app.carer?.experienceYears !== undefined || app.carerProfile?.experienceYears !== undefined) && (
+                                <p className="text-xs text-gold-100/70 mt-0.5">
+                                  {app.carer?.experienceYears ?? app.carerProfile?.experienceYears} Years Experience
+                                </p>
+                              )}
+                              <p className="text-xs text-gold-100/50 mt-1 line-clamp-2 italic">
+                                {app.carer?.bio || app.carerProfile?.bio ? `"${app.carer?.bio || app.carerProfile?.bio}"` : "No bio provided."}
                               </p>
                               
                               <div className="flex items-center gap-3 mt-2 text-[10px] text-gold-100/40">
@@ -246,6 +294,25 @@ export default function ClientApplicationsPanel() {
                             >
                               View Profile
                             </Button>
+                            
+                            {app.status === "PENDING" && (
+                              <div className="flex items-center gap-2 mt-2">
+                                <button
+                                  onClick={() => setRejectAppId(app.id)}
+                                  disabled={isSubmitting === app.id}
+                                  className="flex-1 px-4 py-1.5 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500 hover:text-white text-[10px] font-bold transition-all cursor-pointer"
+                                >
+                                  Reject
+                                </button>
+                                <button
+                                  onClick={() => handleApprove(app.id)}
+                                  disabled={isSubmitting === app.id}
+                                  className="flex-1 px-6 py-1.5 rounded-xl bg-gold text-navy-950 font-bold text-[10px] hover:bg-gold-200 transition-all shadow-elegant cursor-pointer flex items-center justify-center"
+                                >
+                                  {isSubmitting === app.id ? "..." : "Approve"}
+                                </button>
+                              </div>
+                            )}
                           </div>
                         </div>
                       ))}
@@ -258,5 +325,41 @@ export default function ClientApplicationsPanel() {
         </div>
       )}
     </SectionCard>
+
+      {rejectAppId && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-navy-950/80 backdrop-blur-sm" onClick={() => setRejectAppId(null)} />
+          <div className="relative bg-navy-900 border border-gold-300/20 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
+            <div className="p-6">
+              <h3 className="text-xl font-bold text-gold-200 mb-2">Reject Application</h3>
+              <p className="text-sm text-gold-100/60 mb-6">
+                Please provide a reason for rejecting this application. This helps us find better matches in the future.
+              </p>
+              <textarea
+                value={rejectReason}
+                onChange={(e) => setRejectReason(e.target.value)}
+                placeholder="Enter your reason here..."
+                className="w-full bg-navy-950 border border-gold-300/20 rounded-xl p-3 text-gold-100 focus:outline-none focus:border-gold/50 h-32 resize-none text-sm"
+              />
+            </div>
+            <div className="px-6 py-4 bg-navy-950/50 border-t border-gold-300/10 flex items-center justify-end gap-3">
+              <button
+                onClick={() => setRejectAppId(null)}
+                className="px-4 py-2 text-xs font-bold text-gold-100/60 hover:text-gold-100 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleReject}
+                disabled={isSubmitting === "reject" || !rejectReason.trim()}
+                className="px-6 py-2 rounded-xl bg-rose-500 text-white font-bold text-xs hover:bg-rose-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              >
+                {isSubmitting === "reject" ? "Rejecting..." : "Confirm Rejection"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

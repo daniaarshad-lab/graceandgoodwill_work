@@ -242,6 +242,7 @@ export default function ClientRequests({
       {selectedRequestIdForApps && (
         <AdminApplicationsModal
           careRequestId={selectedRequestIdForApps}
+          clientProfileId={requests.find(r => r.id === selectedRequestIdForApps)?.clientProfileId || ""}
           onClose={() => setSelectedRequestIdForApps(null)}
         />
       )}

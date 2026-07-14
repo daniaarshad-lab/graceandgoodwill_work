@@ -28,7 +28,7 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}) {
   }
 
   if (!response.ok) {
-    throw new Error(data.message || "Something went wrong");
+    throw new Error(data?.message || `HTTP Error ${response.status}: ${response.statusText}`);
   }
 
   return data;

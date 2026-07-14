@@ -218,7 +218,7 @@ export default function BrowseCarersPage() {
             <p className="text-slate-400 mb-6 text-sm">
               {error.includes("agreements") 
                 ? "You must sign all required legal agreements before browsing carers. Please navigate to the agreements screen."
-                : "You must pay the Lifetime Platform Fee before browsing carers or requesting introductions. Please visit the Billing dashboard to proceed."}
+                : "You must pay the Lifetime Platform Fee before browsing carers or creating care requests. Please visit the Billing dashboard to proceed."}
             </p>
             <Button
               onClick={() => router.push(error.includes("agreements") ? "/agreements" : "/client/billing")}

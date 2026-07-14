@@ -7,6 +7,7 @@ import {
   fetchCarerCareRequestById,
   applyToCarerCareRequest,
   clearSelectedCareRequest,
+  fetchCarerApplications,
 } from "@/store/slices/carerSlice";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 import Button from "@/components/Button";
@@ -30,13 +31,14 @@ export default function PlacementOpportunities() {
     selectedCareRequest,
     selectedCareRequestLoading,
     applyingToCareRequest,
+    applications,
   } = useAppSelector((state) => state.carer);
 
   const [viewingDetailId, setViewingDetailId] = useState<string | null>(null);
-  const [appliedIds, setAppliedIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     dispatch(fetchCarerCareRequests());
+    dispatch(fetchCarerApplications());
   }, [dispatch]);
 
   const handleViewDetails = (id: string) => {
@@ -56,7 +58,6 @@ export default function PlacementOpportunities() {
         "Application Submitted",
         "Your application has been submitted. You will be notified when there is an update."
       );
-      setAppliedIds((prev) => new Set(prev).add(careRequestId));
     } catch (err: any) {
       showErrorToast(
         "Application Failed",
@@ -145,7 +146,7 @@ export default function PlacementOpportunities() {
       ) : (
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
           {careRequests.map((req) => {
-            const hasApplied = appliedIds.has(req.id);
+            const hasApplied = applications?.some((app: any) => app.careRequestId === req.id) || false;
 
             return (
               <div
@@ -276,7 +277,7 @@ export default function PlacementOpportunities() {
           careRequest={selectedCareRequest}
           loading={selectedCareRequestLoading}
           applying={applyingToCareRequest}
-          hasApplied={appliedIds.has(viewingDetailId)}
+          hasApplied={applications.some(app => app.careRequestId === viewingDetailId)}
           onClose={handleCloseDetail}
           onApply={() => handleApply(viewingDetailId)}
         />

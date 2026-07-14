@@ -29,13 +29,11 @@ const initialState: ClientState = {
   enquiries: [],
   selectedEnquiry: null,
 
-  applications: [],
+  applications: {},
   applicationsLoading: false,
   applicationsError: null,
 
-  placementApplications: [],
-  placementApplicationsLoading: false,
-  placementApplicationsError: null,
+
 
   feedbacks: [],
   feedbacksLoading: false,
@@ -205,50 +203,39 @@ export const fetchCareRequests = createAsyncThunk<
 
 /** Fetch applications for a specific care request */
 export const fetchClientCareRequestApplications = createAsyncThunk<
-  CareRequestApplication[],
+  { careRequestId: string; data: CareRequestApplication[] },
   string,
   { rejectValue: string }
 >("client/fetchCareRequestApplications", async (careRequestId, { rejectWithValue }) => {
   try {
     const data = await clientService.getCareRequestApplications(careRequestId);
-    return Array.isArray(data) ? data : [];
+    return { careRequestId, data: Array.isArray(data) ? data : [] };
   } catch (error: any) {
+    console.error(`[fetchClientCareRequestApplications] Error fetching applications for ${careRequestId}:`, error);
     return rejectWithValue(error?.message || "Failed to fetch applications");
   }
 });
 
-export const fetchPlacementApplications = createAsyncThunk<
-  any[],
-  void,
-  { rejectValue: string }
->("client/fetchPlacementApplications", async (_, { rejectWithValue }) => {
-  try {
-    const data = await clientService.getPlacementApplications();
-    return Array.isArray(data) ? data : [];
-  } catch (error: any) {
-    return rejectWithValue(error?.message || "Failed to fetch placement applications");
-  }
-});
 
-export const approvePlacementApplication = createAsyncThunk<
+export const approveApplication = createAsyncThunk<
   any,
   string,
   { rejectValue: string }
->("client/approvePlacementApplication", async (applicationId, { rejectWithValue }) => {
+>("client/approveApplication", async (applicationId, { rejectWithValue }) => {
   try {
-    return await clientService.approvePlacementApplication(applicationId);
+    return await clientService.approveApplication(applicationId);
   } catch (error: any) {
     return rejectWithValue(error?.message || "Failed to approve application");
   }
 });
 
-export const rejectPlacementApplication = createAsyncThunk<
+export const rejectApplication = createAsyncThunk<
   any,
   { applicationId: string; reason: string },
   { rejectValue: string }
->("client/rejectPlacementApplication", async ({ applicationId, reason }, { rejectWithValue }) => {
+>("client/rejectApplication", async ({ applicationId, reason }, { rejectWithValue }) => {
   try {
-    return await clientService.rejectPlacementApplication(applicationId, reason);
+    return await clientService.rejectApplication(applicationId, reason);
   } catch (error: any) {
     return rejectWithValue(error?.message || "Failed to reject application");
   }
@@ -522,41 +509,34 @@ const clientSlice = createSlice({
       state.applicationsLoading = true;
       state.applicationsError = null;
     });
-    builder.addCase(fetchClientCareRequestApplications.fulfilled, (state, action: PayloadAction<CareRequestApplication[]>) => {
+    builder.addCase(fetchClientCareRequestApplications.fulfilled, (state, action) => {
       state.applicationsLoading = false;
-      state.applications = action.payload;
+      state.applications[action.payload.careRequestId] = action.payload.data;
     });
     builder.addCase(fetchClientCareRequestApplications.rejected, (state, action) => {
       state.applicationsLoading = false;
       state.applicationsError = action.payload || "Failed to fetch applications";
     });
 
-    // Placement Applications
-    builder.addCase(fetchPlacementApplications.pending, (state) => {
-      state.placementApplicationsLoading = true;
-      state.placementApplicationsError = null;
-    });
-    builder.addCase(fetchPlacementApplications.fulfilled, (state, action) => {
-      state.placementApplicationsLoading = false;
-      state.placementApplications = action.payload;
-    });
-    builder.addCase(fetchPlacementApplications.rejected, (state, action) => {
-      state.placementApplicationsLoading = false;
-      state.placementApplicationsError = action.payload || "Failed to fetch placement applications";
+    builder.addCase(approveApplication.fulfilled, (state, action) => {
+      // Find the application and update its status
+      for (const careRequestId in state.applications) {
+        const idx = state.applications[careRequestId].findIndex(app => app.id === action.meta.arg);
+        if (idx !== -1) {
+          state.applications[careRequestId][idx].status = 'APPROVED';
+          break;
+        }
+      }
     });
 
-    builder.addCase(approvePlacementApplication.fulfilled, (state, action) => {
-      // Remove approved application from pending list
-      state.placementApplications = state.placementApplications.filter(
-        app => app.id !== action.meta.arg
-      );
-    });
-
-    builder.addCase(rejectPlacementApplication.fulfilled, (state, action) => {
-      // Remove rejected application from pending list
-      state.placementApplications = state.placementApplications.filter(
-        app => app.id !== action.meta.arg.applicationId
-      );
+    builder.addCase(rejectApplication.fulfilled, (state, action) => {
+      for (const careRequestId in state.applications) {
+        const idx = state.applications[careRequestId].findIndex(app => app.id === action.meta.arg.applicationId);
+        if (idx !== -1) {
+          state.applications[careRequestId][idx].status = 'REJECTED';
+          break;
+        }
+      }
     });
 
     // Feedback

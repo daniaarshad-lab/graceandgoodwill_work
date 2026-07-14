@@ -140,15 +140,12 @@ export interface ClientState {
   enquiries: any[];
   selectedEnquiry: any | null;
 
-  /** Applications for a selected care request */
-  applications: CareRequestApplication[];
+  /** Applications for care requests mapped by careRequestId */
+  applications: Record<string, CareRequestApplication[]>;
   applicationsLoading: boolean;
   applicationsError: string | null;
 
-  /** Pending placement applications for the client */
-  placementApplications: any[];
-  placementApplicationsLoading: boolean;
-  placementApplicationsError: string | null;
+
 
   loading: boolean;
   error: string | null;

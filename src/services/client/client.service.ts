@@ -352,24 +352,11 @@ export const clientService = {
     });
   },
 
-  async getPlacementApplications(): Promise<any[]> {
+  async approveApplication(applicationId: string): Promise<any> {
     const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
     if (!token) throw new Error("No token found");
 
-    return apiFetch("/client/placements/applications", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
-  },
-
-  async approvePlacementApplication(applicationId: string): Promise<any> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
-    if (!token) throw new Error("No token found");
-
-    return apiFetch(`/client/placements/${applicationId}/approve`, {
+    return apiFetch(`/client/applications/${applicationId}/approve`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -378,11 +365,11 @@ export const clientService = {
     });
   },
 
-  async rejectPlacementApplication(applicationId: string, reason: string): Promise<any> {
+  async rejectApplication(applicationId: string, reason: string): Promise<any> {
     const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
     if (!token) throw new Error("No token found");
 
-    return apiFetch(`/client/placements/${applicationId}/reject`, {
+    return apiFetch(`/client/applications/${applicationId}/reject`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${token}`,

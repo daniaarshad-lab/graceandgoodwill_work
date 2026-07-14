@@ -14,9 +14,6 @@ export interface Carer {
   experienceDetails?: string;
   availabilityDetails?: string[];
   rawAvailability?: string[];
-  email?: string;
-  phone?: string;
-  address?: string;
   feedbacks?: any[];
 }
 

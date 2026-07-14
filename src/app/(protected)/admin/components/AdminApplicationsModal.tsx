@@ -7,17 +7,24 @@ import Button from "@/components/Button";
 import { useRouter } from "next/navigation";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 
+import { useAppDispatch } from "@/store/hooks";
+import { reviewInterestList } from "@/store/slices/adminSlice";
+
 export default function AdminApplicationsModal({
   careRequestId,
+  clientProfileId,
   onClose,
 }: {
   careRequestId: string;
+  clientProfileId: string;
   onClose: () => void;
 }) {
   const [applications, setApplications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const dispatch = useAppDispatch();
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
 
   useEffect(() => {
     loadApplications();
@@ -35,14 +42,24 @@ export default function AdminApplicationsModal({
     }
   };
 
-  const handleUpdateStatus = async (applicationId: string, status: string) => {
-    // Note: Assuming there's an update application status API in adminService. 
-    // If not, we might just be viewing them for now or we might need to add it.
-    // We can also create direct match from here using createDirectMatch.
-    
-    // For now, let's just log or attempt direct match if they want to 'approve'
-    // Actually the backend endpoint for application status might be different, let's stick to what we know or just view only.
-    alert("Application status update to be implemented based on exact backend spec.");
+  const handleUpdateStatus = async (carerProfileId: string, status: string) => {
+    setUpdatingId(carerProfileId);
+    try {
+      await dispatch(
+        reviewInterestList({
+          carerProfileId,
+          clientProfileId,
+          careRequestId,
+          status,
+        })
+      ).unwrap();
+      showSuccessToast("Status Updated", `Application has been ${status.toLowerCase()}.`);
+      loadApplications();
+    } catch (err: any) {
+      showErrorToast("Update Failed", err.message || "Failed to update status.");
+    } finally {
+      setUpdatingId(null);
+    }
   };
 
   return (
@@ -115,6 +132,29 @@ export default function AdminApplicationsModal({
                 </div>
                 
                 <div className="flex gap-2 w-full sm:w-auto">
+                  {app.status === "PENDING" && (
+                    <>
+                      <Button 
+                        variant="ghost-rose" 
+                        size="sm" 
+                        fullWidth={false} 
+                        disabled={updatingId === app.carerProfileId}
+                        onClick={() => handleUpdateStatus(app.carerProfileId, "REJECTED")}
+                      >
+                        Reject
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        fullWidth={false}
+                        disabled={updatingId === app.carerProfileId}
+                        onClick={() => handleUpdateStatus(app.carerProfileId, "APPROVED")}
+                        className="!border-emerald-500/30 !text-emerald-400 hover:!bg-emerald-500/10"
+                      >
+                        Approve
+                      </Button>
+                    </>
+                  )}
                   <Button variant="ghost-gold" size="sm" fullWidth={false} onClick={() => router.push(`/admin/carers/${app.carerProfile?.user?.id}?source=client-care-requests`)}>
                     View Carer
                   </Button>

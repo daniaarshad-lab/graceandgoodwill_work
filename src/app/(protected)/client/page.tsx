@@ -180,16 +180,6 @@ export default function ClientDashboard() {
             />
           )}
 
-          {/* TAB 4: REQUEST TRACKING */}
-          {activeTab === "tracking" && (
-            <RequestTracking
-              placements={portal.placements}
-              loading={portal.placementsLoading}
-              error={portal.placementsError}
-              onRetry={portal.fetchPlacements}
-              setActiveTab={setActiveTab}
-            />
-          )}
 
           {/* TAB 5: SUPPORT & ENQUIRIES */}
           {activeTab === "enquiry" && <SupportEnquiryPanel />}

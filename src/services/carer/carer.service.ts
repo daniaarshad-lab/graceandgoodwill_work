@@ -483,6 +483,24 @@ export const carerService = {
     });
   },
 
+  async getCarerApplications(): Promise<any[]> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch("/carer/applications", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
   async getSubscriptionInfo(): Promise<any> {
     const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
     if (!token) throw new Error("No token found");

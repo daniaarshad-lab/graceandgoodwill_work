@@ -12,9 +12,9 @@ import {
 
 const coreServices = [
   {
-    title: "Live in support introductions",
+    title: "Live-in Care Services",
     description:
-      "Personalized introductions to highly vetted, professional live-in carers who reside in your home, providing 24/7 care, reassurance, and dedicated support.",
+      "Personalized matching with highly vetted, professional live-in carers who reside in your home, providing 24/7 care, reassurance, and dedicated support.",
     icon: (
       <Home
         className="h-8 w-8 text-gold-300 transition-transform duration-300 group-hover:scale-110"

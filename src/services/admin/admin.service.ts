@@ -212,6 +212,27 @@ export const adminService = {
     });
   },
 
+  async getCareRequestApplications(careRequestId: string): Promise<any[]> {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+
+    return apiFetch(`/admin/care-requests/${careRequestId}/applications`, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  },
+
+  async reviewInterestList(payload: { carerProfileId: string; clientProfileId: string; careRequestId?: string; status: string }): Promise<any> {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+
+    return apiFetch("/admin/interest-list/review", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify(payload),
+    });
+  },
+
   async updateCarerStatus(carerId: string, status: string): Promise<any> {
     const token =
       typeof window !== "undefined"
@@ -386,8 +407,6 @@ export const adminService = {
       throw err;
     }
   },
-
-  // updateIntroductionStatus removed — endpoint descoped
 
   async createDirectMatch(dto: {
     careRequestId: string;

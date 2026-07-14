@@ -28,6 +28,10 @@ interface CarerState {
   selectedCareRequest: CarerCareRequestDetail | null;
   selectedCareRequestLoading: boolean;
   applyingToCareRequest: boolean;
+
+  /** Applications made by the carer */
+  applications: any[];
+  applicationsLoading: boolean;
 }
 
 const initialState: CarerState = {
@@ -46,6 +50,8 @@ const initialState: CarerState = {
   selectedCareRequest: null,
   selectedCareRequestLoading: false,
   applyingToCareRequest: false,
+  applications: [],
+  applicationsLoading: false,
 };
 
 export const fetchCarerProfile = createAsyncThunk<
@@ -293,6 +299,19 @@ export const applyToCarerCareRequest = createAsyncThunk<
     return await carerService.applyToCareRequest(careRequestId);
   } catch (error: any) {
     return rejectWithValue(error?.message || "Failed to apply to placement");
+  }
+});
+
+export const fetchCarerApplications = createAsyncThunk<
+  any[],
+  void,
+  { rejectValue: string }
+>("carer/fetchApplications", async (_, { rejectWithValue }) => {
+  try {
+    const data = await carerService.getCarerApplications();
+    return Array.isArray(data) ? data : [];
+  } catch (error: any) {
+    return rejectWithValue(error?.message || "Failed to fetch applications");
   }
 });
 
@@ -551,11 +570,28 @@ const carerSlice = createSlice({
       .addCase(applyToCarerCareRequest.pending, (state) => {
         state.applyingToCareRequest = true;
       })
-      .addCase(applyToCarerCareRequest.fulfilled, (state) => {
+      .addCase(applyToCarerCareRequest.fulfilled, (state, action) => {
         state.applyingToCareRequest = false;
+        // Optionally add the new application to the list if the backend returns it
+        if (action.payload && state.applications) {
+          state.applications.push(action.payload);
+        }
       })
       .addCase(applyToCarerCareRequest.rejected, (state) => {
         state.applyingToCareRequest = false;
+      })
+      
+      .addCase(fetchCarerApplications.pending, (state) => {
+        state.applicationsLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchCarerApplications.fulfilled, (state, action: PayloadAction<any[]>) => {
+        state.applicationsLoading = false;
+        state.applications = action.payload;
+      })
+      .addCase(fetchCarerApplications.rejected, (state, action) => {
+        state.applicationsLoading = false;
+        state.error = action.payload || "Failed to fetch applications";
       });
   },
 });

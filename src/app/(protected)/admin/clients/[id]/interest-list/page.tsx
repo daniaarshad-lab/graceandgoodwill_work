@@ -3,8 +3,12 @@
 import { Suspense, useEffect, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Heart, User } from "lucide-react";
+import { ArrowLeft, Heart, User, UserCheck } from "lucide-react";
 import { adminService } from "@/services/admin/admin.service";
+import { showSuccessToast, showErrorToast } from "@/utils/toast";
+
+/** The care request status that enables the Assign workflow */
+const ASSIGN_ELIGIBLE_STATUS = "INFORM_CLIENT_TO_AVAILABLE_CARER";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 interface InterestListCarer {
@@ -60,10 +64,16 @@ function CarerCard({
   carer,
   index,
   clientId,
+  canAssign,
+  assigningId,
+  onAssign,
 }: {
   carer: InterestListCarer;
   index: number;
   clientId: string;
+  canAssign: boolean;
+  assigningId: string | null;
+  onAssign: (carerId: string) => void;
 }) {
   const router = useRouter();
   const avatarBg = carer.avatarBg ?? getAvatarBg(index);
@@ -143,14 +153,28 @@ function CarerCard({
         </p>
       </div>
 
-      {/* Action */}
-      <button
-        onClick={() => router.push(`/admin/carers/${routingId}?source=interest-list&clientId=${clientId}`)}
-        className="w-full flex items-center justify-center gap-2 rounded-xl border border-gold-300/30 px-4 py-2.5 text-xs font-semibold text-gold-200 hover:bg-gold-300/10 transition-colors"
-      >
-        <User className="w-3 h-3" />
-        View Carer Details
-      </button>
+      {/* Actions */}
+      <div className="space-y-2.5">
+        {/* Assign Button — only visible when a care request has status INFORM_CLIENT_TO_AVAILABLE_CARER */}
+        {canAssign && (
+          <button
+            onClick={() => onAssign(carer.carerProfileId ?? carer.id)}
+            disabled={assigningId === (carer.carerProfileId ?? carer.id)}
+            className="w-full flex items-center justify-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-2.5 text-xs font-semibold text-emerald-400 hover:bg-emerald-500/20 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <UserCheck className="w-3.5 h-3.5" />
+            {assigningId === (carer.carerProfileId ?? carer.id) ? "Assigning..." : "Assign to Care Request"}
+          </button>
+        )}
+
+        <button
+          onClick={() => router.push(`/admin/carers/${routingId}?source=interest-list&clientId=${clientId}`)}
+          className="w-full flex items-center justify-center gap-2 rounded-xl border border-gold-300/30 px-4 py-2.5 text-xs font-semibold text-gold-200 hover:bg-gold-300/10 transition-colors"
+        >
+          <User className="w-3 h-3" />
+          View Carer Details
+        </button>
+      </div>
     </div>
   );
 }
@@ -183,15 +207,45 @@ function AdminClientInterestListContent() {
   const [carers, setCarers] = useState<InterestListCarer[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [canAssign, setCanAssign] = useState(false);
+  const [assigningId, setAssigningId] = useState<string | null>(null);
 
   useEffect(() => {
     async function load() {
       setLoading(true);
       setError(null);
       try {
-        const data = await adminService.getClientInterestList(clientId);
+        // Fetch interest list, care requests, and client details in parallel
+        const [interestData, careRequestsData, clientDetails] = await Promise.all([
+          adminService.getClientInterestList(clientId),
+          adminService.getCareRequests(1, 100, "ALL").catch(() => ({ data: [] })),
+          adminService.getClientDetails(clientId).catch(() => null),
+        ]);
+
+        const actualClientProfileId = clientDetails?.id;
+        const actualUserId = clientDetails?.userId;
+
+        // Check if any care request for this client has the assign-eligible status
+        const allRequests = Array.isArray(careRequestsData)
+          ? careRequestsData
+          : careRequestsData?.data ?? careRequestsData?.careRequests ?? [];
+          
+        const clientRequests = allRequests.filter(
+          (req: any) => 
+            req.clientProfileId === clientId || 
+            req.clientProfile?.id === clientId ||
+            req.clientProfile?.userId === clientId ||
+            req.clientId === clientId ||
+            (actualClientProfileId && req.clientProfileId === actualClientProfileId) ||
+            (actualClientProfileId && req.clientProfile?.id === actualClientProfileId) ||
+            (actualUserId && req.clientProfile?.userId === actualUserId)
+        );
+        setCanAssign(
+          clientRequests.some((req: any) => req.status === ASSIGN_ELIGIBLE_STATUS),
+        );
+
         // Normalise the API response — handle both flat and nested shapes
-        const normalised: InterestListCarer[] = (Array.isArray(data) ? data : []).map(
+        const normalised: InterestListCarer[] = (Array.isArray(interestData) ? interestData : []).map(
           (item: any, idx: number) => {
             const profile = item.carerProfile ?? item;
             
@@ -229,6 +283,23 @@ function AdminClientInterestListContent() {
     }
     load();
   }, [clientId]);
+
+  /**
+   * Placeholder handler for assigning a carer to a care request.
+   * Ready for backend API integration in the next phase.
+   */
+  const handleAssign = async (carerId: string) => {
+    setAssigningId(carerId);
+    try {
+      // TODO: Connect to backend API
+      // await adminService.assignCarerToCareRequest(carerId, careRequestId);
+      showSuccessToast("Assigned", "Carer has been assigned to the care request.");
+    } catch (err: any) {
+      showErrorToast("Assignment Failed", err?.message || "Failed to assign carer.");
+    } finally {
+      setAssigningId(null);
+    }
+  };
 
   return (
     <main className="min-h-screen bg-navy-950 py-10 text-gold-100">
@@ -297,7 +368,7 @@ function AdminClientInterestListContent() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {carers.map((carer, idx) => (
-              <CarerCard key={carer.id} carer={carer} index={idx} clientId={clientId} />
+              <CarerCard key={carer.id} carer={carer} index={idx} clientId={clientId} canAssign={canAssign} assigningId={assigningId} onAssign={handleAssign} />
             ))}
           </div>
         )}

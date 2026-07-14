@@ -222,27 +222,16 @@ export const adminService = {
     });
   },
 
-  async assignCarerToCareRequest(careRequestId: string, carerUserId: string): Promise<any> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
-    if (!token) throw new Error("No token found");
-
-    return apiFetch("/admin/matches/care-request", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ careRequestId, carerUserId }),
-    });
-  },
-
-  async reviewInterestList(payload: { carerProfileId: string; clientProfileId: string; careRequestId?: string; status: string }): Promise<any> {
+  async reviewInterestList(payload: { careRequestId: string; clientId: string; carerId: string; status: "APPROVED" | "REJECTED"; adminNotes?: string }): Promise<any> {
     const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
     if (!token) throw new Error("No token found");
 
     return apiFetch("/admin/interest-list/review", {
       method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { 
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(payload),
     });
   },

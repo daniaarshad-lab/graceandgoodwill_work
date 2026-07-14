@@ -155,15 +155,15 @@ function CarerCard({
 
       {/* Actions */}
       <div className="space-y-2.5">
-        {/* Assign Button — only visible when a care request has status INFORM_CLIENT_TO_AVAILABLE_CARER */}
+        {/* Assign Button */}
         {canAssign && (
           <button
-            onClick={() => onAssign(carer.userId ?? carer.id)}
-            disabled={assigningId === (carer.userId ?? carer.id)}
+            onClick={() => onAssign(carer.carerProfileId ?? carer.id)}
+            disabled={assigningId === (carer.carerProfileId ?? carer.id)}
             className="w-full flex items-center justify-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-2.5 text-xs font-semibold text-emerald-400 hover:bg-emerald-500/20 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <UserCheck className="w-3.5 h-3.5" />
-            {assigningId === (carer.userId ?? carer.id) ? "Assigning..." : "Assign to Care Request"}
+            {assigningId === (carer.carerProfileId ?? carer.id) ? "Assigning..." : "Assign to Care Request"}
           </button>
         )}
 
@@ -248,6 +248,7 @@ function AdminClientInterestListContent() {
         console.log("[InterestList] Filtered Client Requests:", clientRequests);
         
         const eligibleRequest = clientRequests.find((req: any) => req.status === ASSIGN_ELIGIBLE_STATUS);
+
         console.log("[InterestList] Eligible Request Found:", eligibleRequest);
 
         if (eligibleRequest) {
@@ -265,10 +266,11 @@ function AdminClientInterestListContent() {
             
             const firstName = profile.firstName || profile.user?.firstName;
             const lastName = profile.lastName || profile.user?.lastName || "";
+            const carerProfileId = profile.id ?? item.carerProfileId;
             
             return {
               id: profile.id ?? item.id,
-              carerProfileId: profile.id ?? item.carerProfileId,
+              carerProfileId: carerProfileId,
               userId: profile.userId ?? item.userId,
               name:
                 profile.fullName ??
@@ -309,11 +311,13 @@ function AdminClientInterestListContent() {
 
     setAssigningId(carerId);
     try {
-      await adminService.assignCarerToCareRequest(careRequestId, carerId);
+      await adminService.reviewInterestList({
+        careRequestId,
+        clientId,
+        carerId,
+        status: "APPROVED"
+      });
       showSuccessToast("Assigned", "Carer has been assigned to the care request.");
-      
-      // Refresh the page to reflect the new state (status change will hide the buttons)
-      window.location.reload();
     } catch (err: any) {
       showErrorToast("Assignment Failed", err?.message || "Failed to assign carer.");
     } finally {

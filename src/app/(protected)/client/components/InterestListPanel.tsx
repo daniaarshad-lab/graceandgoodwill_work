@@ -8,7 +8,7 @@ import SectionCard from "./shared/SectionCard";
 import { Carer } from "../types/client-ui.types";
 import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
-import { Video, Trash2, AlertCircle, User } from "lucide-react";
+import { Video, Trash2, AlertCircle, User, Headset } from "lucide-react";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 
 const SafeImage = ({ src, alt, fallback, className }: { src: string, alt: string, fallback: React.ReactNode, className?: string }) => {
@@ -44,8 +44,8 @@ export default function InterestListPanel() {
 
   return (
     <div className="space-y-6">
-      <div className="border-b border-gold-300/10 pb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
+      <div className="border-b border-gold-300/10 pb-4 flex flex-col xl:flex-row xl:items-center justify-between gap-6">
+        <div className="flex-1">
           <h3 className="text-lg font-bold text-gold-200">
             Interest List ❤️
           </h3>
@@ -54,16 +54,42 @@ export default function InterestListPanel() {
           </p>
         </div>
         
-        <div className="flex flex-col items-end">
-          <div className="text-sm font-bold text-gold-50 bg-navy-900 px-4 py-2 rounded-lg border border-gold-DEFAULT/30">
-            {interestList.length} / 8 Selected
-          </div>
-          {interestList.length > 0 && interestList.length < 2 && (
-            <div className="flex items-center text-amber-400 text-xs mt-2 font-semibold">
-              <AlertCircle className="w-3 h-3 mr-1" />
-              Minimum 2 required
+        <div className="flex flex-col sm:flex-row items-end sm:items-center gap-4">
+          {/* Premium Callout Banner - Redesigned for better UI */}
+          <div className="flex items-center gap-3 bg-navy-900/40 border border-gold-300/20 rounded-xl px-4 py-2.5 hover:bg-navy-900/60 transition-colors">
+            <div className="h-9 w-9 shrink-0 rounded-full bg-gold-DEFAULT/10 border border-gold-DEFAULT/20 flex items-center justify-center">
+              <Headset className="h-4 w-4 text-gold-300" />
             </div>
-          )}
+            <div className="flex flex-col">
+              <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-2">
+                <p className="text-xs font-bold text-gold-200">Need help choosing?</p>
+                <p className="text-[10px] text-gold-100/60">
+                  Our Admin team can help you shortlist the most suitable carers.
+                </p>
+              </div>
+              <div className="flex items-center gap-3 mt-1">
+                <a href="tel:+448001234567" className="text-[11px] font-bold text-emerald-400 hover:text-emerald-300 transition-colors">
+                  📞 Call: +44 800 123 4567
+                </a>
+                <span className="text-[9px] text-gold-100/40 font-semibold tracking-wider uppercase">
+                  Mon – Fri, 9–5
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Counter Section */}
+          <div className="flex flex-col items-end shrink-0">
+            <div className="text-sm font-bold text-gold-50 bg-navy-900 px-4 py-2.5 rounded-xl border border-gold-DEFAULT/30">
+              {interestList.length} / 8 Selected
+            </div>
+            {interestList.length > 0 && interestList.length < 2 && (
+              <div className="flex items-center text-amber-400 text-[10px] mt-1.5 font-semibold">
+                <AlertCircle className="w-3 h-3 mr-1" />
+                Minimum 2 required
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

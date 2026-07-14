@@ -561,6 +561,21 @@ export const adminService = {
     });
   },
 
+  async getClientInterestList(clientId: string): Promise<any[]> {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+
+    try {
+      const result = await apiFetch(`/admin/clients/${clientId}/interest-list`, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return Array.isArray(result) ? result : (result?.interestList || result?.data || []);
+    } catch (err: any) {
+      throw err;
+    }
+  },
+
   /** GET /admin/care-requests/:id/applications — list applications for a care request */
   async getCareRequestApplications(careRequestId: string): Promise<any[]> {
     const token =

@@ -36,11 +36,13 @@ export default function HomePage() {
         <div className="max-w-2xl lg:flex-1 xl:flex-none space-y-6 -mt-4 lg:mt-0">
 
 
-          <h1 className="text-4xl sm:text-5xl lg:text-[4rem] font-serif font-medium leading-[1.1] tracking-tight text-white drop-shadow-md">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#D4AF37] via-[#F7D774] to-[#E6C35C]">
+          <h1 className="font-serif font-medium leading-[1.2] tracking-tight drop-shadow-md">
+            <span className="text-3xl sm:text-4xl lg:text-[2.5rem] text-white">
               Live In Care Services
             </span><br />
-            Across The UK
+            <span className="font-sans text-base sm:text-lg font-semibold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-[#D4AF37] via-[#F7D774] to-[#E6C35C] inline-block mt-2">
+              Across The UK
+            </span>
           </h1>
 
           <div className="max-w-xl text-gold-100/80 space-y-4 text-lg sm:text-xl leading-relaxed font-light">

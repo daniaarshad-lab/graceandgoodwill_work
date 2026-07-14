@@ -145,6 +145,11 @@ export interface ClientState {
   applicationsLoading: boolean;
   applicationsError: string | null;
 
+  /** Pending placement applications for the client */
+  placementApplications: any[];
+  placementApplicationsLoading: boolean;
+  placementApplicationsError: string | null;
+
   loading: boolean;
   error: string | null;
 

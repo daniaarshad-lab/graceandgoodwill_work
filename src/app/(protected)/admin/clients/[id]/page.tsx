@@ -16,6 +16,7 @@ import {
   AlertTriangle,
   DollarSign,
   CheckCircle,
+  Heart,
 } from "lucide-react";
 import { adminService } from "@/services/admin/admin.service";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
@@ -561,7 +562,26 @@ function ClientDetailsContent() {
               </div>
             </div>
 
-            {/* PLACEMENT HISTORY TABLE/LIST */}
+            {/* INTEREST LIST QUICK ACTION */}
+            <Link
+              href={`/admin/clients/${id}/interest-list?clientName=${encodeURIComponent(client.name)}`}
+              className="flex items-center justify-between gap-4 rounded-2xl border border-rose-500/20 bg-rose-950/10 hover:bg-rose-950/20 hover:border-rose-500/35 p-5 transition-all duration-200 group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-rose-500/10 border border-rose-500/20 flex items-center justify-center flex-shrink-0">
+                  <Heart className="w-5 h-5 text-rose-400 fill-rose-400" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-rose-300">
+                    View Interest List
+                  </p>
+                  <p className="text-[11px] text-gold-100/50 mt-0.5">
+                    See carers shortlisted by this client
+                  </p>
+                </div>
+              </div>
+              <ArrowLeft className="w-4 h-4 text-rose-400/60 rotate-180 group-hover:translate-x-1 transition-transform" />
+            </Link>
             <div className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md space-y-4 flex-1 flex flex-col">
               <div>
                 <h3 className="text-xs font-bold uppercase tracking-wider text-gold-200/50 border-b border-gold-300/5 pb-3">

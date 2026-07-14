@@ -363,6 +363,12 @@ function CarerDetailsContent() {
             {(() => {
               const getBackNavigation = () => {
                 switch (source) {
+                  case "interest-list":
+                    const listClientId = searchParams.get("clientId");
+                    if (listClientId) {
+                      return { href: `/admin/clients/${listClientId}/interest-list`, label: "Back to Client Interest List" };
+                    }
+                    return { href: "/admin?tab=carers", label: "Back to Carer Applications" };
                   case "client-care-requests":
                     return { href: "/admin?tab=requests", label: "Back to Client Care Requests" };
                   case "carer-applications":

@@ -106,9 +106,8 @@ export default function EmergencyCareForm() {
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
             placeholder="Enter your full name"
-            className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-amber-500/40 transition duration-300 text-sm ${
-              errors.fullName ? "border-red-500" : "border-gold-muted/20"
-            }`}
+            className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-amber-500/40 transition duration-300 text-sm ${errors.fullName ? "border-red-500" : "border-gold-muted/20"
+              }`}
           />
           {errors.fullName && (
             <p className="text-[10px] text-red-500 font-medium">
@@ -126,9 +125,8 @@ export default function EmergencyCareForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="name@example.com"
-            className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-amber-500/40 transition duration-300 text-sm ${
-              errors.email ? "border-red-500" : "border-gold-muted/20"
-            }`}
+            className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-amber-500/40 transition duration-300 text-sm ${errors.email ? "border-red-500" : "border-gold-muted/20"
+              }`}
           />
           {errors.email && (
             <p className="text-[10px] text-red-500 font-medium">
@@ -138,18 +136,17 @@ export default function EmergencyCareForm() {
         </div>
       </div>
 
-      <div className="space-y-1.5">
-        <PhoneInput
-          label="Phone Number"
-          placeholder="Enter contact number"
-          value={phone}
-          onChange={setPhone}
-          error={errors.phone}
-        />
-      </div>
-
-      {/* Who Needs Support & Is Immediate Support Required? */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-1.5">
+          <PhoneInput
+            label="Phone Number"
+            placeholder="Enter contact number"
+            value={phone}
+            onChange={setPhone}
+            error={errors.phone}
+          />
+        </div>
+
         <div className="space-y-1.5">
           <label className="text-[11px] font-semibold uppercase tracking-wider text-amber-200/90">
             Who Needs Support?
@@ -166,21 +163,6 @@ export default function EmergencyCareForm() {
             <option value="other">Other Relative</option>
           </select>
         </div>
-
-        <div className="space-y-1.5">
-          <label className="text-[11px] font-semibold uppercase tracking-wider text-amber-200/90">
-            Is Immediate Support Required?
-          </label>
-          <select
-            value={immediateSupport}
-            onChange={(e) => setImmediateSupport(e.target.value)}
-            className="w-full rounded-xl border border-gold-muted/20 bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-amber-500/40 transition duration-300 text-sm"
-          >
-            <option value="yes">Yes - within 24-48 hours</option>
-            <option value="soon">Soon - within next 7 days</option>
-            <option value="no">Not urgent</option>
-          </select>
-        </div>
       </div>
 
       {/* Location & Preferred Contact Method */}
@@ -194,9 +176,8 @@ export default function EmergencyCareForm() {
             value={location}
             onChange={(e) => setLocation(e.target.value)}
             placeholder="e.g. City or Postcode"
-            className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-amber-500/40 transition duration-300 text-sm ${
-              errors.location ? "border-red-500" : "border-gold-muted/20"
-            }`}
+            className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-amber-500/40 transition duration-300 text-sm ${errors.location ? "border-red-500" : "border-gold-muted/20"
+              }`}
           />
           {errors.location && (
             <p className="text-[10px] text-red-500 font-medium">
@@ -249,7 +230,7 @@ export default function EmergencyCareForm() {
           ) : (
             <div className="flex items-center justify-center gap-2">
               <AlertCircle className="w-5 h-5 fill-current" />
-              <span>Request Immediate Support</span>
+              <span>Submit emergency care  Support</span>
             </div>
           )}
         </Button>

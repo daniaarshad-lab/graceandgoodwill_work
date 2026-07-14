@@ -80,7 +80,7 @@ export default function EmergencyCarePage() {
               <div className="flex flex-col sm:flex-row gap-3">
                 <a
                   href="tel:+15551234567"
-                  className="flex-1 flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-amber-500 text-navy-950 text-xs font-bold hover:bg-amber-400 transition-all duration-300 transform hover:-translate-y-0.5 shadow-[0_4px_20px_rgba(245,158,11,0.2)]"
+                  className="flex-1 flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-[#b59469] text-navy-950 text-xs font-bold hover:text-white hover:-translate-y-[1px] hover:shadow-[0_8px_30px_rgba(160,128,84,0.24)] transition-all duration-300 transform active:translate-y-0 active:shadow-none"
                 >
                   <Phone className="w-4 h-4 fill-current" />
                   Priority Line: 0800 Urgent
@@ -104,7 +104,7 @@ export default function EmergencyCarePage() {
             <div className="rounded-[2rem] border border-amber-500/20 bg-navy-900/50 p-6 sm:p-8 lg:p-10 shadow-[0_20px_50px_rgba(245,158,11,0.05)] backdrop-blur-xl space-y-6">
               <div className="border-b border-gold-300/10 pb-4">
                 <h2 className="text-xl font-bold text-amber-200">
-                  Priority Placement Request
+                  Emergency Placement Request
                 </h2>
                 <p className="text-xs text-gold-100/60 mt-1 leading-relaxed">
                   This form routes directly to our critical placement queue. A

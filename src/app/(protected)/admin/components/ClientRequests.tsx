@@ -8,6 +8,7 @@ import Link from "next/link";
 import AdminApplicationsModal from "./AdminApplicationsModal";
 import { adminService } from "@/services/admin/admin.service";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
+import { CARE_REQUEST_STATUS_OPTIONS } from "@/types/admin.types";
 
 interface ClientRequestsProps {
   requests: ClientRequest[];
@@ -36,7 +37,9 @@ export default function ClientRequests({
   const [selectedRequestIdForApps, setSelectedRequestIdForApps] = useState<string | null>(null);
   const [updatingStatusFor, setUpdatingStatusFor] = useState<string | null>(null);
 
-  const handleStatusChange = async (reqId: string, newStatus: string) => {
+  const handleStatusChange = async (reqId: string, newStatus: string, currentStatus: string) => {
+    if (newStatus === currentStatus) return; // Prevent duplicate API calls
+    
     setUpdatingStatusFor(reqId);
     try {
       await adminService.updateCareRequestStatus(reqId, newStatus);
@@ -73,12 +76,11 @@ export default function ClientRequests({
             className="rounded-xl border border-gold-300/10 bg-navy-950 px-4 py-2 text-xs font-bold text-gold-200 outline-none focus:border-gold-300/30 transition duration-300 cursor-pointer"
           >
             <option value="ALL">All</option>
-            <option value="NEW_ENQUIRY">New Enquiry</option>
-            <option value="OPEN_FOR_APPLICATIONS">Open for Applications</option>
-            <option value="UNDER_REVIEW">Under Review</option>
-            <option value="CLIENT_INTERVIEW_STAGE">Client Interview Stage</option>
-            <option value="CARER_SELECTED">Carer Selected</option>
-            <option value="CANCELLED">Cancelled</option>
+            {CARE_REQUEST_STATUS_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
           </select>
         </div>
       </div>
@@ -87,11 +89,10 @@ export default function ClientRequests({
         {requests.map((req) => (
           <SectionCard
             key={req.id}
-            className={`flex flex-col justify-between space-y-4 ${
-              req.urgency === "Emergency"
+            className={`flex flex-col justify-between space-y-4 ${req.urgency === "Emergency"
                 ? "border-rose-500/30 bg-rose-950/5 hover:border-rose-500/40"
                 : ""
-            }`}
+              }`}
           >
             <div>
               <div className="flex items-start justify-between">
@@ -107,24 +108,35 @@ export default function ClientRequests({
                   <select
                     value={req.status}
                     disabled={updatingStatusFor === req.id}
-                    onChange={(e) => handleStatusChange(req.id, e.target.value)}
+                    onChange={(e) => handleStatusChange(req.id, e.target.value, req.status)}
                     className="rounded-full border border-gold-300/20 bg-navy-950 px-3 py-1 text-[10px] font-bold text-gold-200 outline-none focus:border-gold-300/50 transition duration-300 cursor-pointer"
                   >
-                    <option value="NEW_ENQUIRY">NEW_ENQUIRY</option>
-                    <option value="OPEN_FOR_APPLICATIONS">OPEN_FOR_APPLICATIONS</option>
-                    <option value="UNDER_REVIEW">UNDER_REVIEW</option>
-                    <option value="CLIENT_INTERVIEW_STAGE">CLIENT_INTERVIEW_STAGE</option>
-                    <option value="CARER_SELECTED">CARER_SELECTED</option>
-                    <option value="CANCELLED">CANCELLED</option>
+                    {CARE_REQUEST_STATUS_OPTIONS.map((opt, index) => {
+                      const currentIndex = CARE_REQUEST_STATUS_OPTIONS.findIndex(
+                        (o) => o.value === req.status
+                      );
+                      // Disable the current status and all previous statuses in the workflow
+                      const isDisabled = currentIndex !== -1 && index <= currentIndex;
+
+                      return (
+                        <option
+                          key={opt.value}
+                          value={opt.value}
+                          disabled={isDisabled}
+                          className={isDisabled ? "opacity-50 cursor-not-allowed text-gold-100/30" : ""}
+                        >
+                          {opt.label}
+                        </option>
+                      );
+                    })}
                   </select>
                   <span
-                    className={`rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider ${
-                      req.urgency === "Emergency"
+                    className={`rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider ${req.urgency === "Emergency"
                         ? "bg-rose-500/10 text-rose-400 border border-rose-500/20 animate-pulse"
                         : req.urgency === "High"
                           ? "bg-gold/10 text-gold border border-gold/20"
                           : "bg-navy-950 text-gold-100/40 border border-gold-300/5"
-                    }`}
+                      }`}
                   >
                     {req.urgency} Urgency
                   </span>
@@ -175,7 +187,7 @@ export default function ClientRequests({
                   ✓ Placement Assigned & Tracked
                 </div>
               )}
-              
+
               {req.clientId ? (
                 <Link href={`/admin/clients/${req.clientId}`} className="w-full">
                   <Button
@@ -195,6 +207,19 @@ export default function ClientRequests({
                 >
                   Client Profile Unavailable
                 </Button>
+              )}
+
+              {req.clientId && (req.interestListCount ?? 0) > 0 && (
+                <Link href={`/admin/clients/${req.clientId}/interest-list?clientName=${encodeURIComponent(req.clientName)}`} className="w-full">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    fullWidth
+                    className="!border-emerald-500/30 !text-emerald-400 hover:!bg-emerald-500/10"
+                  >
+                    ❤️ View Interest List ({req.interestListCount})
+                  </Button>
+                </Link>
               )}
             </div>
           </SectionCard>

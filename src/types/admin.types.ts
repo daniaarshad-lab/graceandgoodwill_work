@@ -49,17 +49,15 @@ export type CareRequestStatusValue =
   | "NEW_ENQUIRY"
   | "OPEN_FOR_APPLICATIONS"
   | "UNDER_REVIEW"
-  | "CLIENT_INTERVIEW_STAGE"
-  | "CARER_SELECTED"
-  | "CANCELLED";
+  | "INFORM_CLIENT_TO_AVAILABLE_CARER"
+  | "CARER_SELECTED";
 
 export const CARE_REQUEST_STATUS_OPTIONS: { value: CareRequestStatusValue; label: string }[] = [
   { value: "NEW_ENQUIRY", label: "New Enquiry" },
   { value: "OPEN_FOR_APPLICATIONS", label: "Open for Applications" },
   { value: "UNDER_REVIEW", label: "Under Review" },
-  { value: "CLIENT_INTERVIEW_STAGE", label: "Client Interview Stage" },
+  { value: "INFORM_CLIENT_TO_AVAILABLE_CARER", label: "Inform Client to Available Carer" },
   { value: "CARER_SELECTED", label: "Carer Selected" },
-  { value: "CANCELLED", label: "Cancelled" },
 ];
 
 export interface AdminState {

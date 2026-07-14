@@ -33,6 +33,10 @@ const initialState: ClientState = {
   applicationsLoading: false,
   applicationsError: null,
 
+  placementApplications: [],
+  placementApplicationsLoading: false,
+  placementApplicationsError: null,
+
   feedbacks: [],
   feedbacksLoading: false,
   feedbacksError: null,
@@ -210,6 +214,43 @@ export const fetchClientCareRequestApplications = createAsyncThunk<
     return Array.isArray(data) ? data : [];
   } catch (error: any) {
     return rejectWithValue(error?.message || "Failed to fetch applications");
+  }
+});
+
+export const fetchPlacementApplications = createAsyncThunk<
+  any[],
+  void,
+  { rejectValue: string }
+>("client/fetchPlacementApplications", async (_, { rejectWithValue }) => {
+  try {
+    const data = await clientService.getPlacementApplications();
+    return Array.isArray(data) ? data : [];
+  } catch (error: any) {
+    return rejectWithValue(error?.message || "Failed to fetch placement applications");
+  }
+});
+
+export const approvePlacementApplication = createAsyncThunk<
+  any,
+  string,
+  { rejectValue: string }
+>("client/approvePlacementApplication", async (applicationId, { rejectWithValue }) => {
+  try {
+    return await clientService.approvePlacementApplication(applicationId);
+  } catch (error: any) {
+    return rejectWithValue(error?.message || "Failed to approve application");
+  }
+});
+
+export const rejectPlacementApplication = createAsyncThunk<
+  any,
+  { applicationId: string; reason: string },
+  { rejectValue: string }
+>("client/rejectPlacementApplication", async ({ applicationId, reason }, { rejectWithValue }) => {
+  try {
+    return await clientService.rejectPlacementApplication(applicationId, reason);
+  } catch (error: any) {
+    return rejectWithValue(error?.message || "Failed to reject application");
   }
 });
 
@@ -488,6 +529,34 @@ const clientSlice = createSlice({
     builder.addCase(fetchClientCareRequestApplications.rejected, (state, action) => {
       state.applicationsLoading = false;
       state.applicationsError = action.payload || "Failed to fetch applications";
+    });
+
+    // Placement Applications
+    builder.addCase(fetchPlacementApplications.pending, (state) => {
+      state.placementApplicationsLoading = true;
+      state.placementApplicationsError = null;
+    });
+    builder.addCase(fetchPlacementApplications.fulfilled, (state, action) => {
+      state.placementApplicationsLoading = false;
+      state.placementApplications = action.payload;
+    });
+    builder.addCase(fetchPlacementApplications.rejected, (state, action) => {
+      state.placementApplicationsLoading = false;
+      state.placementApplicationsError = action.payload || "Failed to fetch placement applications";
+    });
+
+    builder.addCase(approvePlacementApplication.fulfilled, (state, action) => {
+      // Remove approved application from pending list
+      state.placementApplications = state.placementApplications.filter(
+        app => app.id !== action.meta.arg
+      );
+    });
+
+    builder.addCase(rejectPlacementApplication.fulfilled, (state, action) => {
+      // Remove rejected application from pending list
+      state.placementApplications = state.placementApplications.filter(
+        app => app.id !== action.meta.arg.applicationId
+      );
     });
 
     // Feedback

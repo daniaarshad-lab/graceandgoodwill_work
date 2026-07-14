@@ -33,15 +33,15 @@ export interface ClientRequest {
   startDate: string;
   notes: string;
   status:
-    | "NEW_ENQUIRY"
-    | "OPEN_FOR_APPLICATIONS"
-    | "UNDER_REVIEW"
-    | "CLIENT_INTERVIEW_STAGE"
-    | "CARER_SELECTED"
-    | "CANCELLED"
-    | string;
+  | "NEW_ENQUIRY"
+  | "OPEN_FOR_APPLICATIONS"
+  | "UNDER_REVIEW"
+  | "INFORM_CLIENT_TO_AVAILABLE_CARER"
+  | "CARER_SELECTED"
+  | string;
   email: string;
   phone: string;
+  interestListCount?: number;
 }
 
 export interface PlacementTimelineEvent {
@@ -60,12 +60,12 @@ export interface Placement {
   location: string;
   urgency: "Standard" | "High" | "Emergency";
   status:
-    | "PLACEMENT_CONFIRMED"
-    | "PLACEMENT_STARTED"
-    | "ONGOING"
-    | "COMPLETED"
-    | "CANCELLED"
-    | string;
+  | "PLACEMENT_CONFIRMED"
+  | "PLACEMENT_STARTED"
+  | "ONGOING"
+  | "COMPLETED"
+  | "CANCELLED"
+  | string;
   contactDetailsReleased: boolean;
   startDate: string;
   timeline: PlacementTimelineEvent[];
@@ -94,20 +94,20 @@ export interface InternalNoteHistory {
     lastName: string;
     email: string;
   };
-  
+
   oldTitle: string;
   newTitle: string;
   oldContent: string;
   newContent: string;
-  
+
   oldStatus?: string;
   newStatus?: string;
   oldPriority?: string;
   newPriority?: string;
-  
+
   oldIsPinned?: boolean;
   newIsPinned?: boolean;
-  
+
   oldCategory?: string;
   newCategory?: string;
   oldTaggedAdminId?: string;
@@ -116,7 +116,7 @@ export interface InternalNoteHistory {
   newTaggedAdminName?: string;
   oldFollowUpDate?: string;
   newFollowUpDate?: string;
-  
+
   createdAt: string;
 }
 

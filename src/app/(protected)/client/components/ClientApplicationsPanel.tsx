@@ -217,32 +217,34 @@ export default function ClientApplicationsPanel() {
               {/* Applications List */}
               {selectedRequestId === req.id && (
                 <div className="border-t border-gold-300/10 bg-navy-950/30 p-5">
-                  {applicationsLoading ? (
-                    <div className="flex items-center justify-center py-8">
-                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gold-DEFAULT mr-3"></div>
-                      <p className="text-sm text-gold-100/60">Loading applications...</p>
-                    </div>
-                  ) : applicationsError ? (
-                    <div className="flex items-center justify-center py-8 text-red-400">
-                      <AlertCircle className="w-5 h-5 mr-2" />
-                      <p className="text-sm">{applicationsError}</p>
-                    </div>
-                  ) : applications.length === 0 ? (
-                    <div className="text-center py-8">
-                      <UserCircle className="w-10 h-10 mx-auto mb-3 text-gold-100/20" />
-                      <p className="text-sm text-gold-100/50">No applications received yet.</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      {applications.map((app) => (
-                        <div
-                          key={app.id}
-                          className="flex items-start justify-between rounded-xl bg-navy-900 border border-gold-300/5 p-4 hover:border-gold-300/15 transition-colors"
+                  {(() => {
+                    const appsForRequest = applications[req.id] || [];
+                    return applicationsLoading ? (
+                      <div className="flex items-center justify-center py-8">
+                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gold-DEFAULT mr-3"></div>
+                        <p className="text-sm text-gold-100/60">Loading applications...</p>
+                      </div>
+                    ) : applicationsError ? (
+                      <div className="flex items-center justify-center py-8 text-red-400">
+                        <AlertCircle className="w-5 h-5 mr-2" />
+                        <p className="text-sm">{applicationsError}</p>
+                      </div>
+                    ) : appsForRequest.length === 0 ? (
+                      <div className="text-center py-8">
+                        <UserCircle className="w-10 h-10 mx-auto mb-3 text-gold-100/20" />
+                        <p className="text-sm text-gold-100/50">No applications received yet.</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        {appsForRequest.map((app) => (
+                          <div
+                            key={app.id}
+                            className="flex items-start justify-between rounded-xl bg-navy-900 border border-gold-300/5 p-4 hover:border-gold-300/15 transition-colors"
                         >
                           <div className="flex items-start gap-4">
-                            {app.carer?.profilePhotoUrl || app.carerProfile?.profilePhotoUrl ? (
+                            {(app as any).carer?.profilePhotoUrl || (app as any).carerProfile?.profilePhotoUrl ? (
                               <img
-                                src={app.carer?.profilePhotoUrl || app.carerProfile?.profilePhotoUrl}
+                                src={(app as any).carer?.profilePhotoUrl || (app as any).carerProfile?.profilePhotoUrl}
                                 alt="Profile"
                                 className="w-12 h-12 rounded-full object-cover border border-gold-300/20"
                               />
@@ -253,16 +255,16 @@ export default function ClientApplicationsPanel() {
                             )}
                             <div>
                               <h5 className="text-sm font-bold text-gold-100">
-                                {app.carer?.firstName || app.carerProfile?.user?.firstName || "Carer"}{" "}
-                                {app.carer?.lastName || app.carerProfile?.user?.lastName || ""}
+                                {(app as any).carer?.firstName || (app as any).carerProfile?.user?.firstName || "Carer"}{" "}
+                                {(app as any).carer?.lastName || (app as any).carerProfile?.user?.lastName || ""}
                               </h5>
-                              {(app.carer?.experienceYears !== undefined || app.carerProfile?.experienceYears !== undefined) && (
+                              {((app as any).carer?.experienceYears !== undefined || (app as any).carerProfile?.experienceYears !== undefined) && (
                                 <p className="text-xs text-gold-100/70 mt-0.5">
-                                  {app.carer?.experienceYears ?? app.carerProfile?.experienceYears} Years Experience
+                                  {(app as any).carer?.experienceYears ?? (app as any).carerProfile?.experienceYears} Years Experience
                                 </p>
                               )}
                               <p className="text-xs text-gold-100/50 mt-1 line-clamp-2 italic">
-                                {app.carer?.bio || app.carerProfile?.bio ? `"${app.carer?.bio || app.carerProfile?.bio}"` : "No bio provided."}
+                                {(app as any).carer?.bio || (app as any).carerProfile?.bio ? `"${(app as any).carer?.bio || (app as any).carerProfile?.bio}"` : "No bio provided."}
                               </p>
                               
                               <div className="flex items-center gap-3 mt-2 text-[10px] text-gold-100/40">
@@ -314,10 +316,11 @@ export default function ClientApplicationsPanel() {
                               </div>
                             )}
                           </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })()}
                 </div>
               )}
             </div>

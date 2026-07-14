@@ -135,11 +135,12 @@ export default function AdminApplicationsModal({
                   {app.status === "PENDING" && (
                     <>
                       <Button 
-                        variant="ghost-rose" 
+                        variant="outline" 
                         size="sm" 
                         fullWidth={false} 
                         disabled={updatingId === app.carerProfileId}
                         onClick={() => handleUpdateStatus(app.carerProfileId, "REJECTED")}
+                        className="!border-rose-500/30 !text-rose-400 hover:!bg-rose-500/10"
                       >
                         Reject
                       </Button>

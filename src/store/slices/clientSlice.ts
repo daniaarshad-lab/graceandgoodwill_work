@@ -297,14 +297,14 @@ const clientSlice = createSlice({
       state.enquiries = [];
       state.selectedEnquiry = null;
 
-      state.applications = [];
+      state.applications = {};
       state.applicationsLoading = false;
       state.applicationsError = null;
 
       state.error = null;
     },
     clearApplications(state) {
-      state.applications = [];
+      state.applications = {};
       state.applicationsError = null;
     },
   },

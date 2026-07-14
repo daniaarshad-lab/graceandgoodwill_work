@@ -15,6 +15,9 @@ export interface Carer {
   availabilityDetails?: string[];
   rawAvailability?: string[];
   feedbacks?: any[];
+  email?: string;
+  phone?: string;
+  address?: string;
 }
 
 export interface CareRequest {

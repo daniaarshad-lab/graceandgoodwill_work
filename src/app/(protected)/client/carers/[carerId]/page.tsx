@@ -225,9 +225,9 @@ export default function CarerDetailsPage() {
                     <MapPin className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="text-xs font-semibold text-gold-100/50 uppercase tracking-wider mb-1">Address</p>
+                    <p className="text-xs font-semibold text-gold-100/50 uppercase tracking-wider mb-1">Location</p>
                     <p className="text-sm text-gold-50 font-medium leading-tight">
-                      {carer.address || "Location hidden"}
+                      {carer.location || "Location hidden"}
                     </p>
                   </div>
                 </div>
@@ -241,7 +241,7 @@ export default function CarerDetailsPage() {
                   <div className="overflow-hidden">
                     <p className="text-xs font-semibold text-gold-100/50 uppercase tracking-wider mb-1">Email</p>
                     <p className="text-sm text-gold-50 font-medium truncate">
-                      {carer.email || "Email hidden"}
+                      {(carer as any).email || "Email hidden"}
                     </p>
                   </div>
                 </div>
@@ -252,8 +252,8 @@ export default function CarerDetailsPage() {
                   </div>
                   <div>
                     <p className="text-xs font-semibold text-gold-100/50 uppercase tracking-wider mb-1">Phone</p>
-                    <p className="text-sm text-gold-50 font-medium">
-                      {carer.phone || "Phone hidden"}
+                    <p className="text-sm text-gold-50 font-medium leading-tight">
+                      {(carer as any).phone || "Phone hidden"}
                     </p>
                   </div>
                 </div>

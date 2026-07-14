@@ -158,12 +158,12 @@ function CarerCard({
         {/* Assign Button — only visible when a care request has status INFORM_CLIENT_TO_AVAILABLE_CARER */}
         {canAssign && (
           <button
-            onClick={() => onAssign(carer.carerProfileId ?? carer.id)}
-            disabled={assigningId === (carer.carerProfileId ?? carer.id)}
+            onClick={() => onAssign(carer.userId ?? carer.id)}
+            disabled={assigningId === (carer.userId ?? carer.id)}
             className="w-full flex items-center justify-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-2.5 text-xs font-semibold text-emerald-400 hover:bg-emerald-500/20 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <UserCheck className="w-3.5 h-3.5" />
-            {assigningId === (carer.carerProfileId ?? carer.id) ? "Assigning..." : "Assign to Care Request"}
+            {assigningId === (carer.userId ?? carer.id) ? "Assigning..." : "Assign to Care Request"}
           </button>
         )}
 
@@ -209,6 +209,7 @@ function AdminClientInterestListContent() {
   const [error, setError] = useState<string | null>(null);
   const [canAssign, setCanAssign] = useState(false);
   const [assigningId, setAssigningId] = useState<string | null>(null);
+  const [careRequestId, setCareRequestId] = useState<string | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -228,8 +229,11 @@ function AdminClientInterestListContent() {
         // Check if any care request for this client has the assign-eligible status
         const allRequests = Array.isArray(careRequestsData)
           ? careRequestsData
-          : careRequestsData?.data ?? careRequestsData?.careRequests ?? [];
+          : careRequestsData?.items ?? careRequestsData?.data ?? careRequestsData?.careRequests ?? [];
           
+        console.log("[InterestList] All Requests:", allRequests);
+        console.log("[InterestList] Checking against clientId:", clientId, "actualClientProfileId:", actualClientProfileId, "actualUserId:", actualUserId);
+
         const clientRequests = allRequests.filter(
           (req: any) => 
             req.clientProfileId === clientId || 
@@ -240,9 +244,19 @@ function AdminClientInterestListContent() {
             (actualClientProfileId && req.clientProfile?.id === actualClientProfileId) ||
             (actualUserId && req.clientProfile?.userId === actualUserId)
         );
-        setCanAssign(
-          clientRequests.some((req: any) => req.status === ASSIGN_ELIGIBLE_STATUS),
-        );
+        
+        console.log("[InterestList] Filtered Client Requests:", clientRequests);
+        
+        const eligibleRequest = clientRequests.find((req: any) => req.status === ASSIGN_ELIGIBLE_STATUS);
+        console.log("[InterestList] Eligible Request Found:", eligibleRequest);
+
+        if (eligibleRequest) {
+          setCanAssign(true);
+          setCareRequestId(eligibleRequest.id);
+        } else {
+          setCanAssign(false);
+          setCareRequestId(null);
+        }
 
         // Normalise the API response — handle both flat and nested shapes
         const normalised: InterestListCarer[] = (Array.isArray(interestData) ? interestData : []).map(
@@ -285,15 +299,21 @@ function AdminClientInterestListContent() {
   }, [clientId]);
 
   /**
-   * Placeholder handler for assigning a carer to a care request.
-   * Ready for backend API integration in the next phase.
+   * Handler for assigning a carer to a care request.
    */
   const handleAssign = async (carerId: string) => {
+    if (!careRequestId) {
+      showErrorToast("Assignment Failed", "Could not identify the target Care Request.");
+      return;
+    }
+
     setAssigningId(carerId);
     try {
-      // TODO: Connect to backend API
-      // await adminService.assignCarerToCareRequest(carerId, careRequestId);
+      await adminService.assignCarerToCareRequest(careRequestId, carerId);
       showSuccessToast("Assigned", "Carer has been assigned to the care request.");
+      
+      // Refresh the page to reflect the new state (status change will hide the buttons)
+      window.location.reload();
     } catch (err: any) {
       showErrorToast("Assignment Failed", err?.message || "Failed to assign carer.");
     } finally {

@@ -117,11 +117,10 @@ export default function AdminApplicationsModal({
                       {app.carerProfile?.user?.firstName} {app.carerProfile?.user?.lastName}
                     </h5>
                     <div className="flex gap-2 items-center mt-1">
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
-                        app.status === "PENDING" ? "bg-amber-500/10 text-amber-400 border border-amber-500/20" :
-                        app.status === "ACCEPTED" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" :
-                        "bg-rose-500/10 text-rose-400 border border-rose-500/20"
-                      }`}>
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${app.status === "PENDING" ? "bg-amber-500/10 text-amber-400 border border-amber-500/20" :
+                          app.status === "ACCEPTED" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" :
+                            "bg-rose-500/10 text-rose-400 border border-rose-500/20"
+                        }`}>
                         {app.status}
                       </span>
                       <span className="text-xs text-gold-100/50">
@@ -130,23 +129,23 @@ export default function AdminApplicationsModal({
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="flex gap-2 w-full sm:w-auto">
                   {app.status === "PENDING" && (
                     <>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        fullWidth={false} 
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        fullWidth={false}
                         disabled={updatingId === app.carerProfileId}
                         onClick={() => handleUpdateStatus(app.carerProfileId, "REJECTED")}
                         className="!border-rose-500/30 !text-rose-400 hover:!bg-rose-500/10"
                       >
                         Reject
                       </Button>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
+                      <Button
+                        variant="outline"
+                        size="sm"
                         fullWidth={false}
                         disabled={updatingId === app.carerProfileId}
                         onClick={() => handleUpdateStatus(app.carerProfileId, "APPROVED")}

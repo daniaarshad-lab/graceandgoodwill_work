@@ -85,7 +85,7 @@ export default function ClientRequests({
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {requests.map((req) => (
           <SectionCard
             key={req.id}
@@ -94,9 +94,10 @@ export default function ClientRequests({
                 : ""
               }`}
           >
-            <div>
-              <div className="flex items-start justify-between">
-                <div>
+            <div className="flex flex-col h-full">
+              <div className="flex flex-col flex-1">
+                <div className="flex items-start justify-between">
+                  <div>
                   <h4 className="text-lg font-bold text-gold-200">
                     {req.clientName}
                   </h4>
@@ -144,11 +145,11 @@ export default function ClientRequests({
               </div>
 
               <div className="mt-4 space-y-2 rounded-xl bg-navy-950/60 p-3.5 border border-gold-300/5">
-                <div className="flex items-center justify-between text-xs border-b border-gold-300/5 pb-2">
-                  <span className="text-gold-100/40 font-semibold uppercase">
+                <div className="flex items-start justify-between text-xs border-b border-gold-300/5 pb-2">
+                  <span className="text-gold-100/40 font-semibold uppercase shrink-0 mt-0.5">
                     Care Type:
                   </span>
-                  <span className="text-gold-200 font-medium text-right ml-4">
+                  <span className="text-gold-200 font-medium text-right ml-4 line-clamp-2">
                     {Array.isArray(req.careType) ? req.careType.join(", ") : req.careType}
                   </span>
                 </div>
@@ -162,17 +163,22 @@ export default function ClientRequests({
                 </div>
               </div>
 
-              <div className="mt-4">
+              <div className="mt-4 flex flex-col flex-1">
                 <p className="text-xs font-semibold uppercase tracking-wider text-gold-200/50 mb-1">
                   Family Notes & Custom Needs
                 </p>
-                <p className="text-xs text-gold-100/70 italic bg-navy-950/30 p-2.5 rounded-lg border border-gold-300/5 leading-relaxed">
-                  &ldquo;{req.notes}&rdquo;
-                </p>
+                <div 
+                  className="bg-navy-950/30 rounded-lg border border-gold-300/5 overflow-y-auto h-24 p-2.5"
+                  style={{ scrollbarWidth: "thin", scrollbarColor: "rgba(181, 148, 105, 0.3) transparent" }}
+                >
+                  <p className="text-xs text-gold-100/70 italic leading-relaxed">
+                    &ldquo;{req.notes}&rdquo;
+                  </p>
+                </div>
               </div>
             </div>
 
-            <div className="flex flex-col gap-2 mt-4">
+            <div className="flex flex-col gap-2 mt-auto pt-4 shrink-0">
               <Button
                 onClick={() => setSelectedRequestIdForApps(req.id)}
                 variant="outline"
@@ -222,7 +228,8 @@ export default function ClientRequests({
                 </Link>
               )}
             </div>
-          </SectionCard>
+          </div>
+        </SectionCard>
         ))}
       </div>
 

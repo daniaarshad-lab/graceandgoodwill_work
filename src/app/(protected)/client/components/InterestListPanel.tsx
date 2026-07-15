@@ -62,9 +62,9 @@ export default function InterestListPanel() {
             </div>
             <div className="flex flex-col">
               <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-2">
-                <p className="text-xs font-bold text-gold-200">Need help choosing?</p>
+                <p className="text-xs font-bold text-gold-200">We&apos;re Here to Help You</p>
                 <p className="text-[10px] text-gold-100/60">
-                  Our Admin team can help you shortlist the most suitable carers.
+                  Give us a call and we&apos;ll help you find the perfect carer.
                 </p>
               </div>
               <div className="flex items-center gap-3 mt-1">

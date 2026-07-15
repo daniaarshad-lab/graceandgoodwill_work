@@ -1,5 +1,5 @@
 import Image from "next/image";
-import ceoImage from "@/assets/auth/ceo-image.png";
+import ceoImage from "@/assets/auth/ceo-image.jpeg";
 
 // ─── Value card data ──────────────────────────────────────────────────────────
 
@@ -53,7 +53,8 @@ export default function AboutPage() {
                   alt="Aurea Neto, Founder of Grace &amp; Goodwill"
                   width={400}
                   height={500}
-                  className="w-full aspect-[4/5] object-cover object-top filter contrast-[1.02] transition-transform duration-1000 group-hover:scale-105"
+                  className="w-full aspect-[4/5] object-cover filter contrast-[1.02] transition-transform duration-1000 group-hover:scale-105"
+                  style={{ objectPosition: "60% 35%" }}
                 />
                 <div className="absolute inset-0 ring-1 ring-inset ring-gold-400/10 rounded-t-[3.5rem] rounded-b-lg pointer-events-none" />
               </div>

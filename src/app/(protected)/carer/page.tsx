@@ -131,43 +131,157 @@ function CarerDashboardContent() {
       setOnboardingDone(localStorageDone);
     }
 
-    if (profile && !initialStepSet) {
+    if (profile && !loading && !documentsLoading && !initialStepSet) {
       const urlStep = searchParams.get("step");
       const savedStep = localStorage.getItem(
         `carer_onboarding_step_${user.id}`,
       );
       if (urlStep) {
         setOnboardingStep(parseInt(urlStep, 10));
-      } else if (savedStep) {
-        setOnboardingStep(parseInt(savedStep, 10));
       } else {
-        const isComplianceUploaded = documents && documents.length >= 10;
-        const isProfileSetup = !!(
-          profile.bio &&
-          profile.experience &&
-          profile.address
-        );
+        // Evaluate the backend persisted data to determine the current incomplete step
+        const determineInitialStep = () => {
+          const p = profileUser || {};
+          const ap = actualProfile || {};
+          const docs = documents || [];
 
-        console.log(
-          "[Onboarding Flow] isComplianceUploaded:",
-          isComplianceUploaded,
-          "isProfileSetup:",
-          isProfileSetup,
-        );
+          // Step 2: Personal Info
+          if (
+            !p.firstName ||
+            !p.lastName ||
+            !ap.dateOfBirth ||
+            !ap.address ||
+            !ap.emergencyContactName ||
+            !ap.emergencyContactNumber ||
+            !ap.emergencyContactRelation
+          ) {
+            return 2;
+          }
 
-        if (!profileUser?.dateOfBirth) {
-          setOnboardingStep(2);
-        } else if (!isProfileSetup) {
-          setOnboardingStep(3);
-        } else if (!isComplianceUploaded) {
-          setOnboardingStep(5);
-        } else {
-          setOnboardingStep(9);
-        }
+          // Step 3: Professional Info
+          if (!ap.summary || !ap.experienceYears || !ap.careSpecialties?.length) {
+            return 3;
+          }
+
+          // Step 4: Training
+          const requiredTraining = [
+            DocumentFileType.SAFEGUARDING_ADULTS,
+            DocumentFileType.MOVING_AND_HANDLING,
+            DocumentFileType.MEDICATION_ADMINISTRATION,
+            DocumentFileType.BASIC_LIFE_SUPPORT_FIRST_AID,
+            DocumentFileType.INFECTION_PREVENTION_AND_CONTROL,
+            DocumentFileType.HEALTH_AND_SAFETY,
+            DocumentFileType.FIRE_SAFETY,
+            DocumentFileType.FOOD_HYGIENE,
+            DocumentFileType.GDPR_DATA_PROTECTION,
+          ];
+          const hasAllTraining = requiredTraining.every((type) =>
+            docs.some((d: any) => d.fileType === type),
+          );
+          if (!hasAllTraining) return 4;
+
+          // Step 5: Compliance
+          const hasPassportOrDL = docs.some(
+            (d: any) =>
+              d.fileType === DocumentFileType.PASSPORT ||
+              d.fileType === DocumentFileType.DRIVING_LICENCE,
+          );
+          const hasDL = docs.some(
+            (d: any) => d.fileType === DocumentFileType.DRIVING_LICENCE,
+          );
+          const hasProofOfAddress = docs.some(
+            (d: any) => d.fileType === DocumentFileType.PROOF_OF_ADDRESS,
+          );
+          const hasRightToWork = docs.some(
+            (d: any) => d.fileType === DocumentFileType.RIGHT_TO_WORK,
+          );
+          const hasNiProof = docs.some(
+            (d: any) => d.fileType === DocumentFileType.NATIONAL_INSURANCE_PROOF,
+          );
+
+          let identityValid =
+            hasPassportOrDL && hasProofOfAddress && hasRightToWork && hasNiProof;
+          
+          if (hasDL) {
+            let dp = ap.drivingPreferences || [];
+            if (typeof dp === "string") {
+              try {
+                dp = JSON.parse(dp);
+              } catch {
+                dp = dp.split(",").map((s: string) => s.trim());
+              }
+            }
+            const hasOwnVehiclePref = dp.includes(
+              "I am happy to transport clients in my own vehicle",
+            );
+            if (
+              hasOwnVehiclePref &&
+              !docs.some(
+                (d: any) => d.fileType === DocumentFileType.BUSINESS_INSURANCE,
+              )
+            ) {
+              identityValid = false;
+            }
+          }
+
+          const requiredCompliance = [
+            DocumentFileType.ENHANCED_DBS_CERTIFICATE,
+            DocumentFileType.PROFESSIONAL_REFERENCE_1,
+            DocumentFileType.PROFESSIONAL_REFERENCE_2,
+          ];
+          const hasAllCompliance = requiredCompliance.every((type) =>
+            docs.some((d: any) => d.fileType === type),
+          );
+
+          if (!identityValid || !hasAllCompliance || !ap.employmentHistory) {
+            return 5;
+          }
+
+          // Step 6: Insurance
+          const requiredInsurance = [
+            DocumentFileType.PUBLIC_LIABILITY_INSURANCE,
+            DocumentFileType.PROFESSIONAL_INDEMNITY_INSURANCE,
+          ];
+          const hasInsurance = requiredInsurance.every((type) =>
+            docs.some((d: any) => d.fileType === type),
+          );
+          if (!hasInsurance) return 6;
+
+          // Step 7: Payment Details / Supplemental
+          if (
+            !ap.bankName ||
+            !ap.accountName ||
+            !ap.accountNumber ||
+            !ap.sortCode ||
+            !ap.nationalInsuranceNumber
+          ) {
+            return 7;
+          }
+
+          // Step 8: Additional Quals
+          // We assume step 8 is required to pass through if they haven't uploaded an intro video yet
+          if (!ap.introVideoUrl) {
+            return 8;
+          }
+
+          // Step 11: Declarations (10 is membership selection)
+          if (
+            !ap.declarations?.accuracy ||
+            !ap.declarations?.checks ||
+            !ap.declarations?.share
+          ) {
+            return 11;
+          }
+
+          return 12; // Final Review
+        };
+
+        const initialStep = determineInitialStep();
+        setOnboardingStep(initialStep);
       }
       setInitialStepSet(true);
     }
-  }, [profile, documents, isOnboardingParam, initialStepSet, user?.id]);
+  }, [profile, documents, loading, documentsLoading, isOnboardingParam, initialStepSet, user?.id]);
 
   useEffect(() => {
     if (initialStepSet && user?.id) {
@@ -240,7 +354,7 @@ function CarerDashboardContent() {
       );
       if (
         hasOwnVehiclePref &&
-        !complianceDocs.some((d: any) => d.type === DocumentFileType.PUBLIC_LIABILITY_INSURANCE)
+        !complianceDocs.some((d: any) => d.type === DocumentFileType.BUSINESS_INSURANCE)
       ) {
         identityValid = false;
       }

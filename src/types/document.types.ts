@@ -39,6 +39,7 @@ export enum DocumentFileType {
   // Insurance
   PUBLIC_LIABILITY_INSURANCE = "PUBLIC_LIABILITY_INSURANCE",
   PROFESSIONAL_INDEMNITY_INSURANCE = "PROFESSIONAL_INDEMNITY_INSURANCE",
+  BUSINESS_INSURANCE = "BUSINESS_INSURANCE",
 
   // Additional Training (Step 8)
   NVQ_2 = "NVQ_2",
@@ -86,6 +87,7 @@ export const DocumentFileTypeLabels: Record<string, string> = {
   // Insurance
   [DocumentFileType.PUBLIC_LIABILITY_INSURANCE]: "Public Liability Insurance",
   [DocumentFileType.PROFESSIONAL_INDEMNITY_INSURANCE]: "Professional Indemnity Insurance",
+  [DocumentFileType.BUSINESS_INSURANCE]: "Business Use Insurance Cover",
 
   // Additional Training (Step 8)
   [DocumentFileType.NVQ_2]: "NVQ Level 2",

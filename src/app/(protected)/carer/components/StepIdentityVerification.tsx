@@ -118,8 +118,8 @@ export default function StepIdentityVerification({
     !!selectedFiles[DocumentFileType.NATIONAL_INSURANCE_PROOF.toLowerCase()];
   const hasBusinessInsuranceDoc =
     complianceDocs.some(
-      (d: ComplianceDoc) => d.type === DocumentFileType.PUBLIC_LIABILITY_INSURANCE,
-    ) || !!selectedFiles[DocumentFileType.PUBLIC_LIABILITY_INSURANCE.toLowerCase()];
+      (d: ComplianceDoc) => d.type === DocumentFileType.BUSINESS_INSURANCE,
+    ) || !!selectedFiles[DocumentFileType.BUSINESS_INSURANCE.toLowerCase()];
 
   const docErrors = {
     passportOrDL: !hasPassportOrDL
@@ -178,16 +178,16 @@ export default function StepIdentityVerification({
     }
   };
 
-  const getLocalYesterdayDateString = () => {
+  const getMinAgeDate = () => {
     const d = new Date();
-    d.setDate(d.getDate() - 1);
+    d.setFullYear(d.getFullYear() - 18);
     const year = d.getFullYear();
     const month = String(d.getMonth() + 1).padStart(2, "0");
     const day = String(d.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
 
-  const maxDate = getLocalYesterdayDateString();
+  const maxDate = getMinAgeDate();
 
   const handleNext = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -300,7 +300,7 @@ export default function StepIdentityVerification({
               if (val && val > maxDate) {
                 showErrorToast(
                   "Validation Error",
-                  "Date of Birth cannot be today or a future date.",
+                  "You must be at least 18 years old.",
                 );
                 return;
               }
@@ -646,7 +646,7 @@ export default function StepIdentityVerification({
                   >
                     <DocUploadRow
                       label="Upload Certificate"
-                      type={DocumentFileType.PUBLIC_LIABILITY_INSURANCE}
+                      type={DocumentFileType.BUSINESS_INSURANCE}
                       portal={portal}
                     />
                     {submitted && docErrors.businessInsurance && (

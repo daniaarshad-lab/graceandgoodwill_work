@@ -160,16 +160,16 @@ export default function StepPersonalInfo({ portal, onNext, onBack }: Props) {
     }
   };
 
-  const getLocalYesterdayDateString = () => {
+  const getMinAgeDate = () => {
     const d = new Date();
-    d.setDate(d.getDate() - 1);
+    d.setFullYear(d.getFullYear() - 18);
     const year = d.getFullYear();
     const month = String(d.getMonth() + 1).padStart(2, "0");
     const day = String(d.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
 
-  const maxDate = getLocalYesterdayDateString();
+  const maxDate = getMinAgeDate();
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
@@ -210,7 +210,7 @@ export default function StepPersonalInfo({ portal, onNext, onBack }: Props) {
               if (val && val > maxDate) {
                 showErrorToast(
                   "Validation Error",
-                  "Date of Birth cannot be today or a future date.",
+                  "You must be at least 18 years old.",
                 );
                 return;
               }

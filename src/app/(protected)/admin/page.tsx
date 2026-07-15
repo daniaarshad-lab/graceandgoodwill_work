@@ -163,7 +163,7 @@ function AdminDashboardContent() {
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           <style>{`.admin-tabs-nav::-webkit-scrollbar { display: none; }`}</style>
-          {(Object.keys(tabLabels) as AdminTabType[]).filter(tab => tab !== "placements").map((tab) => {
+          {(Object.keys(tabLabels) as AdminTabType[]).filter(tab => tab !== "placements" && tab !== "emergency").map((tab) => {
             const isActive = portal.activeTab === tab;
             return (
               <button
@@ -176,11 +176,11 @@ function AdminDashboardContent() {
                 }`}
               >
                 {tabLabels[tab]}
-                {tab === "emergency" && portal.stats.emergencyCases > 0 && (
+                {/* tab === "emergency" && portal.stats.emergencyCases > 0 && (
                   <span className="ml-1.5 inline-flex items-center justify-center rounded-full bg-rose-500 px-1.5 py-0.5 text-[9px] font-black text-white animate-pulse">
                     {portal.stats.emergencyCases}
                   </span>
-                )}
+                ) */}
                 {tab === "carers" && portal.stats.pendingCarers > 0 && (
                   <span className="ml-1.5 inline-flex items-center justify-center rounded-full bg-gold-600 px-1.5 py-0.5 text-[9px] font-black text-navy-950">
                     {portal.stats.pendingCarers}

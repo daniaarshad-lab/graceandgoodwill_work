@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   fetchCareRequests,
@@ -27,6 +28,7 @@ import {
 } from "lucide-react";
 
 export default function ClientApplicationsPanel() {
+  const router = useRouter();
   const dispatch = useAppDispatch();
   const {
     careRequests,
@@ -290,8 +292,7 @@ export default function ClientApplicationsPanel() {
                               size="sm"
                               fullWidth={false}
                               onClick={() => {
-                                // In a real implementation, this might open a modal with the carer's full profile
-                                alert("View Full Profile functionality to be implemented");
+                                router.push(`/client/carers/${app.carerProfileId}`);
                               }}
                             >
                               View Profile

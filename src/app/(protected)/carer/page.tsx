@@ -33,6 +33,8 @@ import OnboardingMembership from "./components/OnboardingMembership";
 import StepPaymentDetails from "./components/StepPaymentDetails";
 import StepReviewSubmit from "./components/StepReviewSubmit";
 import PlacementOpportunities from "./components/PlacementOpportunities";
+import MyApplications from "./components/MyApplications";
+import ApplicationHistory from "./components/ApplicationHistory";
 import MembershipManagement from "./components/MembershipManagement";
 import Button from "@/components/Button";
 import {
@@ -719,6 +721,14 @@ function CarerDashboardContent() {
 
           {activeTab === "opportunities" && (
             <PlacementOpportunities />
+          )}
+
+          {activeTab === "applications" && (
+            <MyApplications />
+          )}
+
+          {activeTab === "history" && (
+            <ApplicationHistory />
           )}
 
           {activeTab === "membership" && (

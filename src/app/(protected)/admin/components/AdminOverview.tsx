@@ -26,12 +26,12 @@ export default function AdminOverview({
 }: AdminOverviewProps) {
   return (
     <div className="space-y-8">
-      {/* 6-Card responsive grid (3 columns on desktop, 2 on tablet, 1 on mobile) */}
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {/* 5-Card responsive grid (symmetrical layout) */}
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-6">
         {/* Card 1: Total Clients */}
         <div
           onClick={() => setActiveTab("clients")}
-          className="cursor-pointer rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-gold-300/30 flex flex-col justify-between"
+          className="cursor-pointer rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-gold-300/30 flex flex-col justify-between lg:col-span-2"
         >
           <div className="flex items-center justify-between">
             <div>
@@ -54,7 +54,7 @@ export default function AdminOverview({
         {/* Card 2: Total Carers */}
         <div
           onClick={() => setActiveTab("carers")}
-          className="cursor-pointer rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-gold-300/30 flex flex-col justify-between"
+          className="cursor-pointer rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-gold-300/30 flex flex-col justify-between lg:col-span-2"
         >
           <div className="flex items-center justify-between">
             <div>
@@ -77,7 +77,7 @@ export default function AdminOverview({
         {/* Card 3: Pending Approvals */}
         <div
           onClick={() => setActiveTab("carers")}
-          className="cursor-pointer rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-gold-300/30 flex flex-col justify-between"
+          className="cursor-pointer rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-gold-300/30 flex flex-col justify-between sm:col-span-2 lg:col-span-2"
         >
           <div className="flex items-center justify-between">
             <div>
@@ -100,7 +100,7 @@ export default function AdminOverview({
         {/* Card 4: Active Placements */}
         <div
           onClick={() => setActiveTab("placements")}
-          className="cursor-pointer rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-gold-300/30 flex flex-col justify-between"
+          className="cursor-pointer rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-gold-300/30 flex flex-col justify-between lg:col-span-3"
         >
           <div className="flex items-center justify-between">
             <div>
@@ -121,6 +121,7 @@ export default function AdminOverview({
         </div>
 
         {/* Card 5: Emergency Cases */}
+        {/*
         <div
           onClick={() => setActiveTab("emergency")}
           className="relative cursor-pointer overflow-hidden rounded-2xl border border-rose-500/20 bg-navy-900/60 p-6 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-rose-500/40 flex flex-col justify-between"
@@ -148,11 +149,12 @@ export default function AdminOverview({
             High priority care cases awaiting action
           </p>
         </div>
+        */}
 
         {/* Card 6: Open Support Enquiries */}
         <div
           onClick={() => setActiveTab("enquiries")}
-          className="cursor-pointer rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-gold-300/30 flex flex-col justify-between"
+          className="cursor-pointer rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-gold-300/30 flex flex-col justify-between sm:col-span-2 lg:col-span-3"
         >
           <div className="flex items-center justify-between">
             <div>
@@ -300,7 +302,7 @@ export default function AdminOverview({
                 <span className="text-gold">➔</span>
               </button>
 
-              <button
+              {/* <button
                 onClick={() => setActiveTab("placements")}
                 className="flex w-full items-center justify-between rounded-xl bg-navy-950 p-4 border border-gold-300/10 text-left transition hover:border-gold-300/30 hover:bg-navy-950/80"
               >
@@ -313,7 +315,7 @@ export default function AdminOverview({
                   </p>
                 </div>
                 <span className="text-gold">➔</span>
-              </button>
+              </button> */}
             </div>
 
             {/* Quick platform status widget */}

@@ -32,6 +32,10 @@ interface CarerState {
   /** Applications made by the carer */
   applications: any[];
   applicationsLoading: boolean;
+
+  /** Application history */
+  applicationHistory: any[];
+  applicationHistoryLoading: boolean;
 }
 
 const initialState: CarerState = {
@@ -52,6 +56,8 @@ const initialState: CarerState = {
   applyingToCareRequest: false,
   applications: [],
   applicationsLoading: false,
+  applicationHistory: [],
+  applicationHistoryLoading: false,
 };
 
 export const fetchCarerProfile = createAsyncThunk<
@@ -312,6 +318,19 @@ export const fetchCarerApplications = createAsyncThunk<
     return Array.isArray(data) ? data : [];
   } catch (error: any) {
     return rejectWithValue(error?.message || "Failed to fetch applications");
+  }
+});
+
+export const fetchCarerApplicationHistory = createAsyncThunk<
+  any[],
+  void,
+  { rejectValue: string }
+>("carer/fetchApplicationHistory", async (_, { rejectWithValue }) => {
+  try {
+    const data = await carerService.getCarerApplicationHistory();
+    return Array.isArray(data) ? data : [];
+  } catch (error: any) {
+    return rejectWithValue(error?.message || "Failed to fetch application history");
   }
 });
 
@@ -592,6 +611,19 @@ const carerSlice = createSlice({
       .addCase(fetchCarerApplications.rejected, (state, action) => {
         state.applicationsLoading = false;
         state.error = action.payload || "Failed to fetch applications";
+      })
+      
+      .addCase(fetchCarerApplicationHistory.pending, (state) => {
+        state.applicationHistoryLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchCarerApplicationHistory.fulfilled, (state, action: PayloadAction<any[]>) => {
+        state.applicationHistoryLoading = false;
+        state.applicationHistory = action.payload;
+      })
+      .addCase(fetchCarerApplicationHistory.rejected, (state, action) => {
+        state.applicationHistoryLoading = false;
+        state.error = action.payload || "Failed to fetch application history";
       });
   },
 });

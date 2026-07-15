@@ -109,6 +109,18 @@ export const addToInterestList = createAsyncThunk<
   }
 });
 
+export const reorderInterestListAction = createAsyncThunk<
+  void,
+  { carerProfileIds: string[], originalOrder: Carer[] },
+  { rejectValue: string }
+>("client/reorderInterestList", async ({ carerProfileIds }, { rejectWithValue }) => {
+  try {
+    await clientService.reorderInterestList(carerProfileIds);
+  } catch (error: any) {
+    return rejectWithValue(error?.message || "Failed to reorder interest list");
+  }
+});
+
 export const removeFromInterestList = createAsyncThunk<
   string,
   string,
@@ -502,6 +514,29 @@ const clientSlice = createSlice({
     builder.addCase(fetchInterestList.rejected, (state, action) => {
       state.interestListLoading = false;
       state.error = action.payload || "Failed to fetch interest list";
+    });
+
+    // Optimistic update for reordering
+    builder.addCase(reorderInterestListAction.pending, (state, action) => {
+      // The component will have already reordered the state locally, but we can also
+      // do it here using the meta.arg to be safe and maintain single source of truth.
+      // However, we need originalOrder for rollback if it fails.
+      const { carerProfileIds } = action.meta.arg;
+      const newOrder: Carer[] = [];
+      carerProfileIds.forEach(id => {
+        const found = state.interestList.find(c => c.id === id);
+        if (found) newOrder.push(found);
+      });
+      if (newOrder.length === state.interestList.length) {
+         state.interestList = newOrder;
+      }
+    });
+
+    builder.addCase(reorderInterestListAction.rejected, (state, action) => {
+      // Rollback on failure
+      const { originalOrder } = action.meta.arg;
+      state.interestList = originalOrder;
+      state.error = action.payload || "Failed to reorder interest list";
     });
 
     // Care Request Applications

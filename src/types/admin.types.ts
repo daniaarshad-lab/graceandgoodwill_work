@@ -54,7 +54,7 @@ export type CareRequestStatusValue =
 
 export const CARE_REQUEST_STATUS_OPTIONS: { value: CareRequestStatusValue; label: string }[] = [
   { value: "NEW_ENQUIRY", label: "New Enquiry" },
-  { value: "OPEN_FOR_APPLICATIONS", label: "Open for Applications" },
+  { value: "OPEN_FOR_APPLICATIONS", label: "Open for Carer Applicants" },
   { value: "UNDER_REVIEW", label: "Under Review" },
   { value: "INFORM_CLIENT_TO_AVAILABLE_CARER", label: "Inform Client to Available Carer" },
   { value: "CARER_SELECTED", label: "Carer Selected" },

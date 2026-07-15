@@ -304,6 +304,17 @@ export const clientService = {
     });
   },
 
+  async reorderInterestList(carerProfileIds: string[]) {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+
+    return apiFetch("/client/interest-list/reorder", {
+      method: "PUT",
+      headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ carerProfileIds }),
+    });
+  },
+
   async removeFromInterestList(carerProfileId: string) {
     const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
     if (!token) throw new Error("No token found");

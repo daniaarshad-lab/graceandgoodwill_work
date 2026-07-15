@@ -10,6 +10,8 @@ export type TabType =
   | "compliance"
   | "availability"
   | "opportunities"
+  | "applications"
+  | "history"
   | "referrals"
   | "membership"
   | "agreements";
@@ -93,6 +95,16 @@ export default function PortalTabs({
       id: "opportunities",
       label: "Placement Opportunities",
       href: "/carer?tab=opportunities",
+    },
+    {
+      id: "applications",
+      label: "My Applications",
+      href: "/carer?tab=applications",
+    },
+    {
+      id: "history",
+      label: "Application History",
+      href: "/carer?tab=history",
     },
     {
       id: "membership",

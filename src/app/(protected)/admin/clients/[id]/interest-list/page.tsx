@@ -318,6 +318,9 @@ function AdminClientInterestListContent() {
         status: "APPROVED"
       });
       showSuccessToast("Assigned", "Carer has been assigned to the care request.");
+      
+      // Refresh the page to reflect the new state
+      window.location.reload();
     } catch (err: any) {
       showErrorToast("Assignment Failed", err?.message || "Failed to assign carer.");
     } finally {

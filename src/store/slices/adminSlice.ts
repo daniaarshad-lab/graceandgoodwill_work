@@ -168,7 +168,7 @@ export const fetchAdminCareRequestApplications = createAsyncThunk<
 /** Review interest list application (Approve/Reject) */
 export const reviewInterestList = createAsyncThunk<
   any,
-  { carerProfileId: string; clientProfileId: string; careRequestId?: string; status: string },
+  { careRequestId: string; clientId: string; carerId: string; status: "APPROVED" | "REJECTED"; adminNotes?: string },
   { rejectValue: string }
 >("admin/reviewInterestList", async (payload, { rejectWithValue }) => {
   try {

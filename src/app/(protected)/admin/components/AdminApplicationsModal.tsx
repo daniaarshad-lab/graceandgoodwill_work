@@ -47,10 +47,10 @@ export default function AdminApplicationsModal({
     try {
       await dispatch(
         reviewInterestList({
-          carerProfileId,
-          clientProfileId,
+          carerId: carerProfileId,
+          clientId: clientProfileId,
           careRequestId,
-          status,
+          status: status as "APPROVED" | "REJECTED",
         })
       ).unwrap();
       showSuccessToast("Status Updated", `Application has been ${status.toLowerCase()}.`);

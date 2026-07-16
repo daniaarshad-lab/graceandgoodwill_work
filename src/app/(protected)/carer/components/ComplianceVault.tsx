@@ -35,6 +35,12 @@ export default function ComplianceVault({
 }: ComplianceVaultProps) {
   const allVerified = complianceDocs.length > 0 && complianceDocs.every(doc => doc.status === "verified");
 
+  const sortedDocs = [...complianceDocs].sort((a, b) => {
+    if (a.status === "failed" && b.status !== "failed") return -1;
+    if (a.status !== "failed" && b.status === "failed") return 1;
+    return 0;
+  });
+
   return (
     <div className="space-y-6">
       {/* Navigation Row */}
@@ -90,7 +96,7 @@ export default function ComplianceVault({
               </div>
             ) : (
               <div className="space-y-4">
-                {complianceDocs.map((doc) => {
+                {sortedDocs.map((doc) => {
                   const isDeleting = deletingDocumentId === doc.id;
                   return (
                     <div
@@ -109,6 +115,11 @@ export default function ComplianceVault({
                           <p className="text-[9px] text-gold-100/40 mt-0.5 truncate">
                             {doc.category ? doc.category.split("_").map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" ") : "Document"} • {doc.size}
                           </p>
+                          {doc.status === "failed" && doc.rejectionReason && (
+                            <p className="text-[10px] text-red-400 mt-1 font-medium break-words">
+                              Reason : {doc.rejectionReason}
+                            </p>
+                          )}
                         </div>
                       </div>
 
@@ -119,7 +130,7 @@ export default function ComplianceVault({
                           </span>
                         ) : doc.status === "failed" ? (
                           <span className="rounded-full bg-red-500/10 px-2 py-0.5 text-[8px] font-bold uppercase tracking-wider text-red-400 border border-red-500/20">
-                            Failed
+                            Rejected
                           </span>
                         ) : (
                           <span className="rounded-full bg-gold-DEFAULT/10 px-2 py-0.5 text-[8px] font-bold uppercase tracking-wider text-gold-DEFAULT border border-gold-DEFAULT/20">

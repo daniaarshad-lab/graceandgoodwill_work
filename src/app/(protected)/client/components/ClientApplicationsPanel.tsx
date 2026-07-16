@@ -298,7 +298,7 @@ export default function ClientApplicationsPanel() {
                               View Profile
                             </Button>
                             
-                            {app.status === "PENDING" && (
+                            {app.status === "PENDING" && req.status !== "CARER_SELECTED" && (
                               <div className="flex items-center gap-2 mt-2">
                                 <button
                                   onClick={() => setRejectAppId(app.id)}

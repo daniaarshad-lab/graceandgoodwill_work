@@ -174,11 +174,12 @@ export function useCarerPortal({
     status:
       doc.status === "VERIFIED"
         ? "verified"
-        : doc.status === "FAILED"
+        : doc.status === "FAILED" || doc.status === "REJECTED"
           ? "failed"
           : "pending",
     size: `${(doc.fileSize / (1024 * 1024)).toFixed(1)} MB`,
     previewUrl: doc.fileUrl,
+    rejectionReason: doc.rejectionReason,
   }));
 
   const [uploadingDocType, setUploadingDocType] = useState<string | null>(null);

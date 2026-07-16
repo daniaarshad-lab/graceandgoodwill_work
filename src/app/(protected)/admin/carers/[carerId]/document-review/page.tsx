@@ -236,18 +236,6 @@ function DocumentReviewContent() {
               Verify practitioner licenses, background clearance certificates, and training profiles
             </p>
           </div>
-          
-          <div className="flex items-center gap-4 bg-navy-900/40 px-4 py-3 rounded-xl border border-gold-300/5">
-            <div className="h-10 w-10 rounded-full bg-gold/10 flex items-center justify-center text-gold border border-gold/20">
-              <User className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-sm font-bold text-gold-200">{carer.firstName} {carer.lastName}</p>
-              <p className="text-[10px] text-gold-100/40 uppercase tracking-wider font-semibold">
-                Status: <span className="text-gold font-bold">{carer.status}</span>
-              </p>
-            </div>
-          </div>
         </header>
 
         {/* --- REVIEW WORKSPACE --- */}

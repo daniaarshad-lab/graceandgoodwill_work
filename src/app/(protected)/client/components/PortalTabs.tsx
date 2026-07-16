@@ -85,6 +85,7 @@ export default function PortalTabs({
     { id: "profile" as TabType, label: "Profile Management", href: "/client?tab=profile" },
     { id: "carers" as TabType, label: "Carer Profiles", href: "/client?tab=carers" },
     { id: "interest-list" as TabType, label: "Interest List ❤️", href: "/client?tab=interest-list" },
+    { id: "tracking" as TabType, label: "Placements", href: "/client?tab=tracking" },
     { id: "applications" as TabType, label: "Care Requests", href: "/client?tab=applications" },
     {
       id: "enquiry",

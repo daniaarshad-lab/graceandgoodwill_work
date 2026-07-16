@@ -177,3 +177,38 @@ export interface GetInternalNotesParams {
   page?: number;
   limit?: number;
 }
+
+export interface AdminPlacementDetail {
+  id: string;
+  carerProfileId: string;
+  clientProfileId: string;
+  careRequestId: string | null;
+  status: string;
+  startDate: string;
+  endDate: string | null;
+  createdAt: string;
+  updatedAt: string;
+  carerProfile: {
+    user: {
+      id: string;
+      firstName: string;
+      lastName: string;
+      email: string;
+      phoneNumber: string;
+      status: string;
+    };
+    documents: any[];
+  };
+  clientProfile: {
+    user: {
+      id: string;
+      firstName: string;
+      lastName: string;
+      email: string;
+      phoneNumber: string;
+    };
+  };
+  careRequest: any | null;
+  invoices: any[];
+  internalNotes: InternalNote[];
+}

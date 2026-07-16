@@ -7,6 +7,7 @@ import {
   UpdateInternalNotePayload,
   GetInternalNotesParams,
   InternalNoteHistory,
+  AdminPlacementDetail,
 } from "@/app/(protected)/admin/types/admin.types";
 
 export const adminService = {
@@ -741,6 +742,16 @@ export const adminService = {
     if (!token) throw new Error("No token found");
 
     return apiFetch("/admin/transactions", {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  },
+
+  async getPlacementDetail(placementId: string): Promise<AdminPlacementDetail> {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+
+    return apiFetch(`/admin/placements/${placementId}`, {
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
     });

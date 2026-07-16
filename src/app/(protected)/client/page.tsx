@@ -194,6 +194,17 @@ export default function ClientDashboard() {
             <ClientApplicationsPanel />
           )}
 
+          {/* TAB 8.5: PLACEMENTS (TRACKING) */}
+          {activeTab === "tracking" && (
+            <RequestTracking
+              placements={portal.placements}
+              loading={portal.placementsLoading}
+              error={portal.placementsError}
+              onRetry={portal.fetchPlacements}
+              setActiveTab={setActiveTab}
+            />
+          )}
+
           {/* TAB 9: AGREEMENTS */}
           {activeTab === "agreements" && <AgreementsPanel />}
 

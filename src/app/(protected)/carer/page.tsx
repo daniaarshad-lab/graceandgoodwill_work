@@ -35,6 +35,7 @@ import StepReviewSubmit from "./components/StepReviewSubmit";
 import PlacementOpportunities from "./components/PlacementOpportunities";
 import MyApplications from "./components/MyApplications";
 import ApplicationHistory from "./components/ApplicationHistory";
+import CarerPlacements from "./components/CarerPlacements";
 import MembershipManagement from "./components/MembershipManagement";
 import Button from "@/components/Button";
 import {
@@ -64,7 +65,7 @@ function CarerDashboardContent() {
   useEffect(() => {
     if (
       tabParam &&
-      ["overview", "profile", "compliance", "availability", "opportunities", "membership", "agreements"].includes(tabParam)
+      ["overview", "profile", "compliance", "availability", "opportunities", "placements", "membership", "agreements"].includes(tabParam)
     ) {
       setActiveTab(tabParam);
     }
@@ -720,15 +721,15 @@ function CarerDashboardContent() {
           )}
 
           {activeTab === "opportunities" && (
-            <PlacementOpportunities />
+            <div className="space-y-6">
+              <MyApplications />
+              <PlacementOpportunities />
+              <ApplicationHistory />
+            </div>
           )}
 
-          {activeTab === "applications" && (
-            <MyApplications />
-          )}
-
-          {activeTab === "history" && (
-            <ApplicationHistory />
+          {activeTab === "placements" && (
+            <CarerPlacements />
           )}
 
           {activeTab === "membership" && (

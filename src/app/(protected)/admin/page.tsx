@@ -163,7 +163,7 @@ function AdminDashboardContent() {
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           <style>{`.admin-tabs-nav::-webkit-scrollbar { display: none; }`}</style>
-          {(Object.keys(tabLabels) as AdminTabType[]).filter(tab => tab !== "placements" && tab !== "emergency").map((tab) => {
+          {(Object.keys(tabLabels) as AdminTabType[]).filter(tab => tab !== "emergency").map((tab) => {
             const isActive = portal.activeTab === tab;
             return (
               <button

@@ -5,6 +5,7 @@ import { User, Calendar, AlertTriangle, RefreshCw, PlusCircle, Shield, Award, Ch
 import FeedbackModal from "./FeedbackModal";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchClientFeedbacks, fetchClientCareRequestApplications } from "@/store/slices/clientSlice";
+import PlacementDetailModal from "./PlacementDetailModal";
 interface RequestTrackingProps {
   placements: ClientPlacement[];
   loading: boolean;
@@ -23,6 +24,7 @@ export default function RequestTracking({
   const dispatch = useAppDispatch();
   const { feedbacks, careRequests, applications, applicationsLoading } = useAppSelector((state) => state.client);
   const [feedbackPlacement, setFeedbackPlacement] = useState<{ id: string; carerName: string } | null>(null);
+  const [detailPlacementId, setDetailPlacementId] = useState<string | null>(null);
   
   useEffect(() => {
     dispatch(fetchClientFeedbacks());
@@ -128,10 +130,7 @@ export default function RequestTracking({
               {/* Card Header */}
               <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b border-gold-300/5 pb-4">
                 <div>
-                  <span className="text-[10px] uppercase tracking-wider text-gold-300/50 font-bold font-mono">
-                    Ref ID: {place.id}
-                  </span>
-                  <h4 className="text-lg font-bold text-gold-200 mt-0.5">
+                  <h4 className="text-lg font-bold text-gold-200">
                     {place.careRequest?.careCategory || (place.carerProfile as any)?.careTypes?.[0] || "General Care"}
                   </h4>
                 </div>
@@ -210,6 +209,15 @@ export default function RequestTracking({
                   )}
                 </div>
               )}
+              
+              <div className="pt-4 border-t border-gold-300/10 flex justify-end gap-3">
+                <button
+                  onClick={() => setDetailPlacementId(place.id)}
+                  className="px-4 py-2 rounded-xl bg-navy-900/60 text-gold-200 border border-gold-300/20 hover:bg-gold-300/10 text-xs font-bold uppercase tracking-wider transition-all"
+                >
+                  View Details & Invoices
+                </button>
+              </div>
             </SectionCard>
           ))}
         </div>
@@ -223,6 +231,13 @@ export default function RequestTracking({
           onSuccess={() => {
             // we could fetch placements here, but we also manually set it in slice.
           }}
+        />
+      )}
+
+      {detailPlacementId && (
+        <PlacementDetailModal
+          placementId={detailPlacementId}
+          onClose={() => setDetailPlacementId(null)}
         />
       )}
     </div>

@@ -584,4 +584,22 @@ export const carerService = {
       body: JSON.stringify({ tier }),
     });
   },
+
+  async getPlacements(): Promise<any[]> {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+    return apiFetch("/carer/placements", {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  },
+
+  async getPlacementDetail(placementId: string): Promise<any> {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+    return apiFetch(`/carer/placements/${placementId}`, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  },
 };

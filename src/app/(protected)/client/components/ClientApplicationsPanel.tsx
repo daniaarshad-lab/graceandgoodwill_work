@@ -203,6 +203,19 @@ export default function ClientApplicationsPanel() {
                 </div>
                 
                 <div className="flex items-center gap-3 self-end sm:self-auto shrink-0">
+                  {req.status === "CARER_SELECTED" && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push("/client?tab=tracking");
+                      }}
+                      className="flex items-center gap-1.5 text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/20 hover:bg-emerald-500/20 transition-colors"
+                    >
+                      <Users className="w-3.5 h-3.5" />
+                      <span className="hidden sm:inline">View Placement</span>
+                      <span className="sm:hidden">View</span>
+                    </button>
+                  )}
                   <div className="flex items-center gap-1.5 text-xs font-semibold text-gold-200 bg-navy-950 px-3 py-1.5 rounded-lg border border-gold-300/10">
                     <Users className="w-3.5 h-3.5 text-gold" />
                     <span className="hidden sm:inline">View Applications</span>
@@ -276,7 +289,7 @@ export default function ClientApplicationsPanel() {
                                     ? "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20"
                                     : app.status === "SHORTLISTED"
                                     ? "bg-blue-500/10 text-blue-400 border border-blue-500/20"
-                                    : app.status === "ACCEPTED"
+                                    : app.status === "ACCEPTED" || app.status === "APPROVED"
                                     ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
                                     : "bg-red-500/10 text-red-400 border border-red-500/20"
                                 }`}>

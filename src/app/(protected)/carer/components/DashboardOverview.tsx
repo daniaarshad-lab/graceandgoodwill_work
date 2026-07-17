@@ -7,8 +7,6 @@ import { useAppSelector } from "@/store/hooks";
 
 interface DashboardOverviewProps {
   applicationStatus: "pending" | "approved" | "rejected";
-  membershipActive: boolean;
-  membershipExpiry: string;
   complianceDocs: ComplianceDoc[];
   availability: string[];
   setActiveTab: (tab: any) => void;
@@ -16,17 +14,11 @@ interface DashboardOverviewProps {
 
 export default function DashboardOverview({
   applicationStatus,
-  membershipActive,
-  membershipExpiry,
   complianceDocs,
   availability,
   setActiveTab,
 }: DashboardOverviewProps) {
   const profile = useAppSelector((state) => state.carer.profile);
-  const membershipTier = (profile as any)?.membershipTier || "FREE";
-
-  const planName = membershipTier === "GOLD_ELITE" ? "Gold Elite Membership" : "Free Membership";
-  const billingNode = membershipTier === "GOLD_ELITE" ? "Annual Coverage" : "No Billing (Free)";
 
   const rejectedDocs = complianceDocs.filter(
     (doc) => doc.status === "failed" && doc.rejectionReason,
@@ -62,71 +54,9 @@ export default function DashboardOverview({
           </div>
         </div>
 
-        {/* Progress bar visual indicator */}
-        <div className="space-y-2">
-          <div className="flex justify-between text-xs text-gold-100/50">
-            <span>Credentials Verification</span>
-            <span>75% Verified</span>
-          </div>
-          <div className="h-2 w-full bg-navy-950 rounded-full overflow-hidden border border-gold-300/10">
-            <div
-              className="h-full bg-gold-DEFAULT rounded-full"
-              style={{ width: "75%" }}
-            ></div>
-          </div>
-        </div>
+
       </SectionCard>
 
-      {/* Membership Status elegant card UI */}
-      <SectionCard className="border-gold-300/20 bg-gradient-to-br from-navy-900/60 to-navy-950/80 shadow-elegant flex flex-col justify-between space-y-6">
-        <div className="space-y-4">
-          <div className="flex justify-between items-start">
-            <div>
-              <p className="text-xs uppercase tracking-wider text-gold-300">
-                Grace & Goodwill
-              </p>
-              <h4 className="font-bold text-white text-lg">
-                {planName}
-              </h4>
-            </div>
-            {membershipActive ? (
-              <span className="rounded-full bg-gold-DEFAULT/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-gold-DEFAULT border border-gold-DEFAULT/30">
-                Active
-              </span>
-            ) : (
-              <span className="rounded-full bg-red-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-red-500 border border-red-500/30">
-                Expired
-              </span>
-            )}
-          </div>
-
-          <div className="space-y-2 pt-4">
-            <div className="flex justify-between text-xs">
-              <span className="text-gold-100/50">Expiry Date:</span>
-              <span className="text-gold-200 font-semibold">
-                {membershipExpiry || "Lifetime"}
-              </span>
-            </div>
-            <div className="flex justify-between text-xs">
-              <span className="text-gold-100/50">Billing Node:</span>
-              <span className="text-gold-200 font-semibold">
-                {billingNode}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <Button
-          onClick={() =>
-            alert("Billing portal connection is in mockup simulation state.")
-          }
-          variant="primary"
-          size="sm"
-          fullWidth
-        >
-          Upgrade Plan
-        </Button>
-      </SectionCard>
 
       {/* Profile completeness Quick Stats widget */}
       <SectionCard className="space-y-4">

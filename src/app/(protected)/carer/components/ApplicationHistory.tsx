@@ -12,6 +12,7 @@ import {
   RefreshCw,
   AlertCircle,
   Archive,
+  CheckCircle2,
 } from "lucide-react";
 
 export default function ApplicationHistory() {
@@ -35,6 +36,14 @@ export default function ApplicationHistory() {
 
   const getStatusBadge = (status: string) => {
     const s = status.toUpperCase();
+    if (s === "SELECTED") {
+      return (
+        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-400/10 px-2 py-1 text-xs font-semibold text-emerald-400 border border-emerald-400/20">
+          <CheckCircle2 className="w-3.5 h-3.5" />
+          Selected
+        </span>
+      );
+    }
     if (s === "PENDING") {
       return (
         <span className="inline-flex items-center rounded-full bg-blue-500/10 px-2 py-1 text-xs font-semibold text-blue-400 border border-blue-500/20">
@@ -42,13 +51,7 @@ export default function ApplicationHistory() {
         </span>
       );
     }
-    if (s === "APPROVED") {
-      return (
-        <span className="inline-flex items-center rounded-full bg-green-500/10 px-2 py-1 text-xs font-semibold text-green-400 border border-green-500/20">
-          Approved
-        </span>
-      );
-    }
+
     if (s === "REJECTED") {
       return (
         <span className="inline-flex items-center rounded-full bg-red-500/10 px-2 py-1 text-xs font-semibold text-red-400 border border-red-500/20">
@@ -102,7 +105,7 @@ export default function ApplicationHistory() {
         <div>
           <h3 className="text-xl font-bold text-gold-200">Application History</h3>
           <p className="text-xs text-gold-100/50 mt-1">
-            View your past care request applications (Approved, Rejected, or Withdrawn).
+            View your past care request applications (Selected, Rejected, or Withdrawn).
           </p>
         </div>
         <Button

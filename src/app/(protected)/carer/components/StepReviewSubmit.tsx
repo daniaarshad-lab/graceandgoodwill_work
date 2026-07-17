@@ -6,7 +6,6 @@ import { Check, AlertCircle, FileText, User, Briefcase, Shield, Video, Heart } f
 
 interface Props {
   portal: any;
-  selectedPlan: string | null;
   onBack: () => void;
   onSubmit: () => void;
   isSubmitting?: boolean;
@@ -14,7 +13,6 @@ interface Props {
 
 export default function StepReviewSubmit({
   portal,
-  selectedPlan,
   onBack,
   onSubmit,
   isSubmitting,
@@ -127,9 +125,7 @@ export default function StepReviewSubmit({
   if (!videoUploaded) {
     missingItems.push("Introductory Video Upload");
   }
-  if (!selectedPlan) {
-    missingItems.push("Membership Selection");
-  }
+
   if (!declarationsComplete) {
     missingItems.push("Declaration Agreements");
   }
@@ -374,37 +370,6 @@ export default function StepReviewSubmit({
         </SectionCard>
       </div>
 
-      {/* Section: Plan Selection Summary */}
-      <SectionCard className="p-6 border border-gold-300/10 bg-navy-900/30 max-w-5xl mx-auto space-y-4">
-        <div className="flex items-center gap-3 border-b border-gold-300/10 pb-3">
-          <Heart className="w-5 h-5 text-gold-300" />
-          <h4 className="text-md font-bold text-gold-100 uppercase tracking-wide">
-            Selected Membership Option
-          </h4>
-        </div>
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-navy-950/30 p-4 rounded-xl border border-gold-300/5">
-          <div className="space-y-1">
-            <h5 className="text-sm font-bold text-gold-200 uppercase tracking-wide">
-              {selectedPlan || "No Membership Selected"}
-            </h5>
-            <p className="text-xs text-gold-100/60 leading-relaxed font-light">
-              {selectedPlan === "Free Membership" && "Join the network, list a profile, and apply for carer placements."}
-              {selectedPlan === "Gold Elite Membership" && "Priority placement processing, Emergency placements list, Certificate storage & expiries."}
-              {selectedPlan === "Grace & Goodwill Verified Professional™" && "Premium verified mark of trust, topmost placement sorting, emergency priorities."}
-            </p>
-          </div>
-          <div className="shrink-0 text-right">
-            <span className="text-lg font-bold text-gold-50 block leading-tight">
-              {selectedPlan === "Free Membership" && "£0 Forever"}
-              {selectedPlan === "Gold Elite Membership" && "£29.99 / month"}
-              {selectedPlan === "Grace & Goodwill Verified Professional™" && "£39.99 / month"}
-            </span>
-            <span className="text-[9px] uppercase tracking-wider text-gold-100/40 font-semibold">
-              {selectedPlan !== "Free Membership" && "VAT Included"}
-            </span>
-          </div>
-        </div>
-      </SectionCard>
 
       {/* Navigation & Submit controls */}
       <div className="flex justify-between items-center pt-4 gap-4 max-w-5xl mx-auto w-full">

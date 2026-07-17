@@ -315,7 +315,7 @@ function AdminClientInterestListContent() {
         careRequestId,
         clientId,
         carerId,
-        status: "APPROVED"
+        status: "SELECTED"
       });
       showSuccessToast("Assigned", "Carer has been assigned to the care request.");
       

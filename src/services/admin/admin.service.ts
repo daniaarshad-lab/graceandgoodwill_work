@@ -566,6 +566,26 @@ export const adminService = {
     });
   },
 
+  async updateCarerWeeklyPay(id: string, carerWeeklyPay: number): Promise<any> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch(`/admin/clients/${id}/carer-weekly-pay`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ carerWeeklyPay }),
+    });
+  },
+
   async approveClient(id: string): Promise<any> {
     const token =
       typeof window !== "undefined"

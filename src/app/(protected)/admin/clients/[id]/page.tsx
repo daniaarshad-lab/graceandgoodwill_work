@@ -33,6 +33,7 @@ interface ClientDetail {
   status: string; // PENDING, UNDER_REVIEW, VERIFIED, REJECTED, APPROVED
   agreedWeeklyFee: number;
   totalPaidSoFar: number;
+  carerWeeklyPay?: number;
   placementHistory: {
     startDate: string;
     carerName: string;
@@ -70,7 +71,9 @@ function ClientDetailsContent() {
 
   // Fee input and action states
   const [weeklyFeeInput, setWeeklyFeeInput] = useState<string>("");
+  const [carerWeeklyPayInput, setCarerWeeklyPayInput] = useState<string>("");
   const [savingFee, setSavingFee] = useState(false);
+  const [savingCarerPay, setSavingCarerPay] = useState(false);
   const [approvingClient, setApprovingClient] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
 
@@ -114,6 +117,14 @@ function ClientDetailsContent() {
           }
         }
 
+        let carerWeeklyPay = 0.0;
+        if (res.carerWeeklyPay !== undefined && res.carerWeeklyPay !== null) {
+          const parsed = parseFloat(res.carerWeeklyPay);
+          if (!isNaN(parsed)) {
+            carerWeeklyPay = parsed;
+          }
+        }
+
         setClient({
           id: res.id || id,
           name: `${firstName} ${lastName}`.trim() || "Registered Client",
@@ -125,11 +136,13 @@ function ClientDetailsContent() {
           status: res.status || "PENDING",
           agreedWeeklyFee: agreedWeeklyFee,
           totalPaidSoFar: totalPaidSoFar,
+          carerWeeklyPay: carerWeeklyPay,
           placementHistory: history,
         });
 
-        // Set initial weekly fee input value
+        // Set initial weekly fee input values
         setWeeklyFeeInput(agreedWeeklyFee > 0 ? String(agreedWeeklyFee) : "");
+        setCarerWeeklyPayInput(carerWeeklyPay > 0 ? String(carerWeeklyPay) : "");
       } else {
         setError("Requested client profile could not be found.");
       }
@@ -172,6 +185,30 @@ function ClientDetailsContent() {
       setValidationError(err.message || "Failed to save weekly fee.");
     } finally {
       setSavingFee(false);
+    }
+  };
+
+  const handleSaveCarerWeeklyPay = async () => {
+    setValidationError(null);
+    if (!carerWeeklyPayInput || carerWeeklyPayInput.trim() === "") {
+      setValidationError("Carer weekly pay is required.");
+      return;
+    }
+    const payVal = parseFloat(carerWeeklyPayInput);
+    if (isNaN(payVal) || payVal <= 0) {
+      setValidationError("Carer weekly pay must be greater than 0.");
+      return;
+    }
+    setSavingCarerPay(true);
+    try {
+      await adminService.updateCarerWeeklyPay(id, payVal);
+      showSuccessToast("Carer Weekly Pay Saved", "The carer weekly pay has been successfully updated.");
+      await loadClientData();
+    } catch (err: any) {
+      console.error(err);
+      setValidationError(err.message || "Failed to save carer weekly pay.");
+    } finally {
+      setSavingCarerPay(false);
     }
   };
 
@@ -433,6 +470,25 @@ function ClientDetailsContent() {
 
                 <div>
                   <span className="text-[10px] font-bold uppercase tracking-wider text-gold-100/40 block mb-1">
+                    Agreed Carer Weekly Pay
+                  </span>
+                  <div className="text-3xl font-black text-emerald-400 flex items-center gap-1">
+                    {client.carerWeeklyPay && client.carerWeeklyPay > 0 ? (
+                      <>
+                        £
+                        {client.carerWeeklyPay.toLocaleString("en-GB", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
+                      </>
+                    ) : (
+                      "Not Assigned"
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-gold-100/40 block mb-1">
                     Total Amount Paid So Far
                   </span>
                   <div className="text-3xl font-black text-gold-200 flex items-center gap-1">
@@ -486,6 +542,45 @@ function ClientDetailsContent() {
                       {validationError}
                     </p>
                   )}
+                </div>
+
+                {/* Carer Weekly Pay admin management input controls */}
+                <div className="space-y-3 pt-4 border-t border-gold-300/5">
+                  <label className="text-[9px] font-black uppercase tracking-wider text-gold-200/50 block">
+                    Carer Weekly Pay Management
+                  </label>
+                  <div className="flex gap-2">
+                    <div className="relative flex-1">
+                      <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gold-100/40 font-mono text-xs pointer-events-none">
+                        £
+                      </span>
+                      <input
+                        type="number"
+                        value={carerWeeklyPayInput}
+                        onChange={(e) => {
+                          setCarerWeeklyPayInput(e.target.value);
+                          setValidationError(null);
+                        }}
+                        placeholder="Enter pay..."
+                        className={`w-full bg-navy-950 border rounded-xl pl-7 pr-3 py-2 text-xs text-gold-100 placeholder-gold-100/20 outline-none transition duration-200 ${
+                          validationError
+                            ? "border-rose-500/80 focus:border-rose-500"
+                            : "border-gold-300/10 focus:border-gold-300/30"
+                        }`}
+                      />
+                    </div>
+                    <button
+                      onClick={handleSaveCarerWeeklyPay}
+                      disabled={savingCarerPay}
+                      className="px-4 py-2 text-xs font-bold text-navy-950 bg-gold hover:bg-gold-200 disabled:opacity-40 rounded-xl transition duration-300 flex items-center justify-center whitespace-nowrap cursor-pointer"
+                    >
+                      {savingCarerPay ? (
+                        <div className="w-3.5 h-3.5 border-2 border-navy-950 border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        "Save"
+                      )}
+                    </button>
+                  </div>
                 </div>
 
                 <div className="rounded-xl bg-navy-950/50 p-3 border border-gold-300/5">

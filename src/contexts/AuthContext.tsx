@@ -58,7 +58,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       try {
-        await dispatch(getProfile()).unwrap();
+        await dispatch(getProfile({ skipGlobalToast: true })).unwrap();
       } catch (e) {
         console.error("GET PROFILE FAILED", e);
       } finally {
@@ -112,7 +112,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   const refreshUser = useCallback(async () => {
-    await dispatch(getProfile());
+    await dispatch(getProfile({ skipGlobalToast: true }));
   }, [dispatch]);
 
   const contextValue = useMemo(

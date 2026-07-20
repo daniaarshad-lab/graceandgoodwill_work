@@ -43,7 +43,11 @@ export const register = createAsyncThunk<
   }
 });
 
-export const getProfile = createAsyncThunk<User, void, { rejectValue: string }>(
+export const getProfile = createAsyncThunk<
+  User,
+  { skipGlobalToast?: boolean } | void,
+  { rejectValue: string }
+>(
   "auth/getProfile",
   async (_, { rejectWithValue }) => {
     try {

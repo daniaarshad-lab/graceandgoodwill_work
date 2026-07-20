@@ -15,10 +15,10 @@ export default function HomePage() {
     <main className="overflow-x-hidden min-h-[calc(100vh-80px)] bg-navy-950 pt-6 md:pt-10 lg:pt-20 pb-16 md:pb-24 text-gold-100">
       <section className="container-wrapper relative flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between pb-16">
 
-        {/* Featured on BBC Radio Badge (Top Right) */}
+        {/* As Seen In Media Badge (Top Right) */}
         <div className="relative lg:absolute lg:-top-8 lg:right-0 2xl:-top-16 2xl:-right-16 z-30 inline-flex self-start lg:self-auto items-center gap-3 bg-navy-900 border border-gold-muted/30 px-4 py-2 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.3)] backdrop-blur-md hover:border-gold-400/50 hover:shadow-[0_0_15px_rgba(247,215,116,0.15)] transition-all cursor-default">
           <span className="text-[10px] sm:text-xs font-semibold text-gold-200 uppercase tracking-widest hidden sm:inline-block">
-            Featured On
+            As Seen On
           </span>
           <div className="flex items-center gap-1.5">
             {/* BBC Logo Blocks */}
@@ -132,21 +132,15 @@ export default function HomePage() {
       {/* Premium Trust & Media Section */}
       <section className="container-wrapper border-t border-gold-300/10 mt-24 pt-20">
         <div className="text-center max-w-3xl mx-auto space-y-3 mb-16">
-          {/* <p className="text-xs uppercase tracking-[0.4em] text-gold-400 font-semibold">
-            Trust & Credibility
-          </p> */}
-          {/* <h2 className="text-3xl font-semibold  text-gold-100 sm:text-4xl">
-            As Featured On BBC Radio Newcastle
-          </h2> */}
           <div className="text-center mb-10 space-y-5">
             <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide">
-              As Featured On BBC Radio Newcastle
+              In the Media
             </h2>
             <div className="h-px w-24 bg-gradient-to-r from-transparent via-gold-400/50 to-transparent mx-auto" />
           </div>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-gold-200/80 sm:text-base">
             Our mission to bring integrity, continuity, and human-first
-            compassion into the live-in care sector has been recognized by major
+            compassion into the live-in care sector has been recognised by
             regional broadcasters and media outlets.
           </p>
         </div>

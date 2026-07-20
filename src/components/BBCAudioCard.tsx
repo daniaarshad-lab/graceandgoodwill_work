@@ -5,8 +5,8 @@ import Image from "next/image";
 import { Play, Pause, ListMusic } from "lucide-react";
 
 const INTERVIEWS = [
-  { id: 1, title: "BBC Interview part-1", src: "/audio/bbc-audio-1.mp3" },
-  { id: 2, title: "BBC Interview part-2", src: "/audio/bbc-audio-2.mp4" },
+  { id: 1, title: "Interview Part 1", src: "/audio/bbc-audio-1.mp3" },
+  { id: 2, title: "Interview Part 2", src: "/audio/bbc-audio-2.mp4" },
 ];
 
 const formatTime = (time: number): string => {
@@ -103,7 +103,7 @@ export default function BBCAudioCard() {
 
         <div className="relative z-20 flex flex-col space-y-4 sm:space-y-5 mt-auto mb-0">
           <h3 className="text-lg font-bold text-gold-50 drop-shadow-lg leading-tight">
-            Exclusive BBC Radio Interview
+            BBC Radio Newcastle Interview
           </h3>
 
           <div className="flex gap-2">

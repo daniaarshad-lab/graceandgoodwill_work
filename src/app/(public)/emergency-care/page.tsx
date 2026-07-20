@@ -79,11 +79,11 @@ export default function EmergencyCarePage() {
 
               <div className="flex flex-col sm:flex-row gap-3">
                 <a
-                  href="tel:+15551234567"
+                  href="tel:+442045781269"
                   className="flex-1 flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-[#b59469] text-navy-950 text-xs font-bold hover:text-white hover:-translate-y-[1px] hover:shadow-[0_8px_30px_rgba(160,128,84,0.24)] transition-all duration-300 transform active:translate-y-0 active:shadow-none"
                 >
                   <Phone className="w-4 h-4 fill-current" />
-                  Priority Line: 0800 Urgent
+                  Priority Line: 020 4578 1269
                 </a>
 
                 <a

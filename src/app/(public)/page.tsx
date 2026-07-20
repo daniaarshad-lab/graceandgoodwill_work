@@ -40,7 +40,7 @@ export default function HomePage() {
             <span className="text-3xl sm:text-4xl lg:text-[2.5rem] text-white">
               Live In Care Services
             </span><br />
-            <span className="font-sans text-base sm:text-lg font-semibold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-[#D4AF37] via-[#F7D774] to-[#E6C35C] inline-block mt-2">
+            <span className="font-sans text-lg sm:text-xl lg:text-2xl font-semibold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-[#D4AF37] via-[#F7D774] to-[#E6C35C] inline-block mt-2">
               Across The UK
             </span>
           </h1>

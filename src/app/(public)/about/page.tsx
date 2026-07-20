@@ -54,7 +54,7 @@ export default function AboutPage() {
                   width={400}
                   height={500}
                   className="w-full aspect-[4/5] object-cover filter contrast-[1.02] transition-transform duration-1000 group-hover:scale-105"
-                  style={{ objectPosition: "60% 35%" }}
+                  style={{ color: "transparent", objectPosition: "19% 35%", objectFit: "cover" }}
                 />
                 <div className="absolute inset-0 ring-1 ring-inset ring-gold-400/10 rounded-t-[3.5rem] rounded-b-lg pointer-events-none" />
               </div>

@@ -22,10 +22,9 @@ const ONBOARDING_STEPS: StepItem[] = [
   { id: 7, label: "Supplemental", description: "Details" },
   { id: 8, label: "Additional", description: "Quals" },
   { id: 9, label: "Video", description: "Intro" },
-  { id: 10, label: "Selection", description: "Options" },
-  { id: 11, label: "Declaration", description: "Consent" },
-  { id: 12, label: "Review", description: "Submit" },
-  { id: 13, label: "Complete", description: "Ready" },
+  { id: 10, label: "Declaration", description: "Consent" },
+  { id: 11, label: "Review", description: "Submit" },
+  { id: 12, label: "Complete", description: "Ready" },
 ];
 
 /**
@@ -80,7 +79,7 @@ interface StepperStepItemProps {
 const StepperStepItem = memo(({ step, index, totalSteps, currentStep, onStepClick }: StepperStepItemProps) => {
   const isCompleted = step.id < currentStep;
   const isActive = step.id === currentStep;
-  const isClickable = step.id <= currentStep && step.id >= 2 && step.id <= 12;
+  const isClickable = step.id <= currentStep && step.id >= 2 && step.id <= 11;
 
   return (
     <div
@@ -153,7 +152,7 @@ export default function OnboardingStepper({ currentStep, setCurrentStep }: Onboa
   // Memoize click handler to prevent unnecessary re-renders of step items
   const handleStepClick = useCallback(
     (step: StepItem) => {
-      if (step.id <= currentStep && step.id >= 2 && step.id <= 12) {
+      if (step.id <= currentStep && step.id >= 2 && step.id <= 11) {
         setCurrentStep(step.id);
       }
     },
@@ -163,18 +162,17 @@ export default function OnboardingStepper({ currentStep, setCurrentStep }: Onboa
   const calculateProgress = () => {
     switch (currentStep) {
       case 1: return 8;
-      case 2: return 17;
+      case 2: return 16;
       case 3: return 25;
       case 4: return 33;
-      case 5: return 42;
+      case 5: return 41;
       case 6: return 50;
       case 7: return 58;
-      case 8: return 61;
-      case 9: return 69;
-      case 10: return 77;
-      case 11: return 84;
-      case 12: return 92;
-      case 13: return 100;
+      case 8: return 66;
+      case 9: return 75;
+      case 10: return 83;
+      case 11: return 91;
+      case 12: return 100;
       default: return 0;
     }
   };

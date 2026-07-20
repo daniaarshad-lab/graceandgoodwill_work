@@ -143,7 +143,41 @@ export interface CarerCareRequestDetail extends CarerCareRequest {
   [key: string]: any; // allow additional backend fields
 }
 
-/** Payload for POST /carer/care-requests/:id/apply (body may be empty) */
 export interface CarerApplicationPayload {
   coverNote?: string;
+}
+
+export interface CarerPlacement {
+  id: string;
+  carerProfileId: string;
+  clientProfileId: string;
+  careRequestId: string | null;
+  status: "ACTIVE" | "COMPLETED" | "TERMINATED" | "CANCELLED" | "PENDING" | "MATCHING" | "APPROVED" | "ONGOING";
+  startDate: string;
+  endDate: string | null;
+  createdAt: string;
+  updatedAt: string;
+  clientProfile: {
+    id: string;
+    user: {
+      id: string;
+      firstName: string;
+      lastName: string;
+      email?: string;
+      phoneNumber?: string;
+    };
+  };
+  careRequest: {
+    id: string;
+    careCategory: string;
+    requirements: string;
+    city?: string | null;
+    address?: string | null;
+    postcode?: string | null;
+    startDate: string;
+    endDate?: string | null;
+    isOngoing?: boolean;
+    isEmergency?: boolean;
+    additionalNotes?: string | null;
+  } | null;
 }

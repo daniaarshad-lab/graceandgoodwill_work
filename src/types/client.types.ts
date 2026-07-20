@@ -93,6 +93,22 @@ export interface ClientPlacement {
   };
   careRequest: CareRequest | null;
   hasSubmittedFeedback?: boolean;
+  invoices?: Invoice[];
+}
+
+export interface Invoice {
+  id: string;
+  invoiceNumber: string;
+  invoiceDate: string;
+  billingPeriodStart: string;
+  billingPeriodEnd: string;
+  subtotal: number;
+  vat: number;
+  total: number;
+  status: string;
+  dueDate: string;
+  pdfUrl: string | null;
+  receiptUrl: string | null;
 }
 
 export interface FeedbackPayload {

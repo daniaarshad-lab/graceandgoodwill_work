@@ -50,7 +50,7 @@ export default function AdminApplicationsModal({
           carerId: carerProfileId,
           clientId: clientProfileId,
           careRequestId,
-          status: status as "APPROVED" | "REJECTED",
+          status: status as "SELECTED" | "REJECTED",
         })
       ).unwrap();
       showSuccessToast("Status Updated", `Application has been ${status.toLowerCase()}.`);
@@ -118,7 +118,7 @@ export default function AdminApplicationsModal({
                     </h5>
                     <div className="flex gap-2 items-center mt-1">
                       <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${app.status === "PENDING" ? "bg-amber-500/10 text-amber-400 border border-amber-500/20" :
-                          app.status === "ACCEPTED" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" :
+                          app.status === "SELECTED" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" :
                             "bg-rose-500/10 text-rose-400 border border-rose-500/20"
                         }`}>
                         {app.status}
@@ -148,10 +148,10 @@ export default function AdminApplicationsModal({
                         size="sm"
                         fullWidth={false}
                         disabled={updatingId === app.carerProfileId}
-                        onClick={() => handleUpdateStatus(app.carerProfileId, "APPROVED")}
+                        onClick={() => handleUpdateStatus(app.carerProfileId, "SELECTED")}
                         className="!border-emerald-500/30 !text-emerald-400 hover:!bg-emerald-500/10"
                       >
-                        Approve
+                        Select
                       </Button>
                     </>
                   )}

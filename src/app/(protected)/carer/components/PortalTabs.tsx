@@ -12,8 +12,8 @@ export type TabType =
   | "opportunities"
   | "applications"
   | "history"
+  | "placements"
   | "referrals"
-  | "membership"
   | "agreements";
 
 interface PortalTabsProps {
@@ -107,9 +107,9 @@ export default function PortalTabs({
       href: "/carer?tab=history",
     },
     {
-      id: "membership",
-      label: "Membership & Billing",
-      href: "/carer?tab=membership",
+      id: "placements",
+      label: "Placements",
+      href: "/carer?tab=placements",
     },
     { id: "agreements" as TabType, label: "Legal Agreements", href: "/carer?tab=agreements" },
     { id: "referrals", label: "Referral Program", href: "/carer/referrals" },

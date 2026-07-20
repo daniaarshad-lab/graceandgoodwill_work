@@ -8,6 +8,7 @@ import Link from "next/link";
 import { adminService } from "@/services/admin/admin.service";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 import InternalNotes from "./shared/InternalNotes/InternalNotes";
+import AdminPlacementDetailModal from "./AdminPlacementDetailModal";
 
 interface PlacementTrackingProps {
   placements: Placement[];
@@ -35,6 +36,7 @@ export default function PlacementTracking({
     null,
   );
   const [selectedNewCarerId, setSelectedNewCarerId] = useState<string>("");
+  const [detailModalPlacementId, setDetailModalPlacementId] = useState<string | null>(null);
 
   // Placement Billing States
   const [billingDetails, setBillingDetails] = useState<Record<string, any>>({});
@@ -375,68 +377,21 @@ export default function PlacementTracking({
                   >
                     {isExpanded ? "Hide Details ▲" : "Expand Details ▼"}
                   </Button>
+                  <Button
+                    onClick={() => setDetailModalPlacementId(place.id)}
+                    variant="primary"
+                    size="sm"
+                    fullWidth={false}
+                  >
+                    Full Details
+                  </Button>
                 </div>
               </div>
 
               {isExpanded && (
                 <div className="space-y-6 bg-navy-950/40 p-4 rounded-xl border border-gold-300/5 transition duration-300">
                   <div className="grid gap-6 md:grid-cols-2">
-                    {/* Contact details authorization gates */}
-                    <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <h5 className="text-xs font-bold uppercase tracking-wider text-gold-200/60">
-                        Contact Details Visibility Gate
-                      </h5>
-                      <span
-                        className={`rounded-full px-2 py-0.5 text-[9px] font-bold ${
-                          place.contactDetailsReleased
-                            ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                            : "bg-gold/10 text-gold-DEFAULT border border-gold/20"
-                        }`}
-                      >
-                        {place.contactDetailsReleased
-                          ? "Released"
-                          : "Restricted"}
-                      </span>
-                    </div>
-
-                    <div className="space-y-2 rounded-xl bg-navy-950 p-3 border border-gold-300/5 text-xs">
-                      <div className="flex items-center justify-between border-b border-gold-300/5 pb-2">
-                        <span className="text-gold-100/40 font-semibold">
-                          Client Phone / Email:
-                        </span>
-                        <span className="text-gold-200 font-medium font-mono">
-                          {place.contactDetailsReleased
-                            ? "+44 7700 910777"
-                            : "****** Restricted ******"}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between pt-1">
-                        <span className="text-gold-100/40 font-semibold">
-                          Carer Phone / Email:
-                        </span>
-                        <span className="text-gold-200 font-medium font-mono">
-                          {place.contactDetailsReleased
-                            ? "+44 7700 900882"
-                            : "****** Restricted ******"}
-                        </span>
-                      </div>
-                    </div>
-
-                    <Button
-                      onClick={() => onToggleContactRelease(place.id)}
-                      variant={
-                        place.contactDetailsReleased ? "danger" : "primary"
-                      }
-                      size="sm"
-                      fullWidth
-                    >
-                      {place.contactDetailsReleased
-                        ? "Revoke Details Visibility Gate"
-                        : "Approve Contact Release"}
-                    </Button>
-                  </div>
-
+                    {/* Contact details removed as requested */}
                   <div className="space-y-4">
                     <h5 className="text-xs font-bold uppercase tracking-wider text-gold-200/60">
                       Chronological Milestone Audit
@@ -547,27 +502,8 @@ export default function PlacementTracking({
                             </div>
 
                             {/* Billing Action Controls */}
-                            <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-xl bg-navy-950 border border-gold-300/5">
-                              <div className="flex items-center gap-3">
-                                <div>
-                                  <label className="block text-[10px] text-gold-100/40 uppercase tracking-wider mb-1">Agreed Weekly Fee (£)</label>
-                                  <input
-                                    type="number"
-                                    value={updatingWeeklyFee[place.id] !== undefined ? updatingWeeklyFee[place.id] : Number(detail.weeklyFee)}
-                                    onChange={(e) => setUpdatingWeeklyFee(prev => ({ ...prev, [place.id]: Number(e.target.value) }))}
-                                    className="w-28 bg-navy-900 border border-gold-300/10 rounded px-2.5 py-1 text-xs text-white outline-none focus:border-gold-DEFAULT"
-                                  />
-                                </div>
-                                <button
-                                  onClick={() => handleUpdateWeeklyFee(place.id)}
-                                  disabled={actionLoading === `weekly-fee-${place.id}`}
-                                  className="mt-4 bg-navy-800 border border-gold-DEFAULT/20 text-gold-DEFAULT hover:bg-navy-700 px-3 py-1 rounded text-xs font-bold transition"
-                                >
-                                  Save Fee
-                                </button>
-                              </div>
-
-                              <div className="flex gap-2">
+                            <div className="flex flex-wrap items-center justify-end gap-4 p-4 rounded-xl bg-navy-950 border border-gold-300/5">
+                              <div className="flex gap-2 ml-auto">
                                 {detail.billingStatus === "ACTIVE" ? (
                                   <button
                                     onClick={() => handlePauseBilling(place.id)}
@@ -734,11 +670,7 @@ export default function PlacementTracking({
                       Manual Override (Reassign Carer)
                     </Button>
                   )
-                ) : (
-                  <span className="text-xs text-rose-400 font-semibold italic bg-rose-500/10 px-3 py-1.5 rounded-lg border border-rose-500/20">
-                    Reassignment disabled: Placement is {place.status.toLowerCase()} (contract inactive)
-                  </span>
-                )}
+                ) : null}
               </div>
             </SectionCard>
           );
@@ -750,6 +682,13 @@ export default function PlacementTracking({
           </div>
         )}
       </div>
+
+      {detailModalPlacementId && (
+        <AdminPlacementDetailModal
+          placementId={detailModalPlacementId}
+          onClose={() => setDetailModalPlacementId(null)}
+        />
+      )}
     </div>
   );
 }

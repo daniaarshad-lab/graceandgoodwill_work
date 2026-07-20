@@ -7,6 +7,7 @@ import {
   UpdateInternalNotePayload,
   GetInternalNotesParams,
   InternalNoteHistory,
+  AdminPlacementDetail,
 } from "@/app/(protected)/admin/types/admin.types";
 
 export const adminService = {
@@ -222,7 +223,7 @@ export const adminService = {
     });
   },
 
-  async reviewInterestList(payload: { careRequestId: string; clientId: string; carerId: string; status: "APPROVED" | "REJECTED"; adminNotes?: string }): Promise<any> {
+  async reviewInterestList(payload: { careRequestId: string; clientId: string; carerId: string; status: "SELECTED" | "REJECTED"; adminNotes?: string }): Promise<any> {
     const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
     if (!token) throw new Error("No token found");
 
@@ -565,6 +566,26 @@ export const adminService = {
     });
   },
 
+  async updateCarerWeeklyPay(id: string, carerWeeklyPay: number): Promise<any> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch(`/admin/clients/${id}/carer-weekly-pay`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ carerWeeklyPay }),
+    });
+  },
+
   async approveClient(id: string): Promise<any> {
     const token =
       typeof window !== "undefined"
@@ -741,6 +762,16 @@ export const adminService = {
     if (!token) throw new Error("No token found");
 
     return apiFetch("/admin/transactions", {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  },
+
+  async getPlacementDetail(placementId: string): Promise<AdminPlacementDetail> {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+
+    return apiFetch(`/admin/placements/${placementId}`, {
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
     });

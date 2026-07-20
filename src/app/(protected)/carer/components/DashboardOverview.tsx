@@ -7,8 +7,6 @@ import { useAppSelector } from "@/store/hooks";
 
 interface DashboardOverviewProps {
   applicationStatus: "pending" | "approved" | "rejected";
-  membershipActive: boolean;
-  membershipExpiry: string;
   complianceDocs: ComplianceDoc[];
   availability: string[];
   setActiveTab: (tab: any) => void;
@@ -16,17 +14,15 @@ interface DashboardOverviewProps {
 
 export default function DashboardOverview({
   applicationStatus,
-  membershipActive,
-  membershipExpiry,
   complianceDocs,
   availability,
   setActiveTab,
 }: DashboardOverviewProps) {
   const profile = useAppSelector((state) => state.carer.profile);
-  const membershipTier = (profile as any)?.membershipTier || "FREE";
 
-  const planName = membershipTier === "GOLD_ELITE" ? "Gold Elite Membership" : "Free Membership";
-  const billingNode = membershipTier === "GOLD_ELITE" ? "Annual Coverage" : "No Billing (Free)";
+  const rejectedDocs = complianceDocs.filter(
+    (doc) => doc.status === "failed" && doc.rejectionReason,
+  );
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -58,71 +54,9 @@ export default function DashboardOverview({
           </div>
         </div>
 
-        {/* Progress bar visual indicator */}
-        <div className="space-y-2">
-          <div className="flex justify-between text-xs text-gold-100/50">
-            <span>Credentials Verification</span>
-            <span>75% Verified</span>
-          </div>
-          <div className="h-2 w-full bg-navy-950 rounded-full overflow-hidden border border-gold-300/10">
-            <div
-              className="h-full bg-gold-DEFAULT rounded-full"
-              style={{ width: "75%" }}
-            ></div>
-          </div>
-        </div>
+
       </SectionCard>
 
-      {/* Membership Status elegant card UI */}
-      <SectionCard className="border-gold-300/20 bg-gradient-to-br from-navy-900/60 to-navy-950/80 shadow-elegant flex flex-col justify-between space-y-6">
-        <div className="space-y-4">
-          <div className="flex justify-between items-start">
-            <div>
-              <p className="text-xs uppercase tracking-wider text-gold-300">
-                Grace & Goodwill
-              </p>
-              <h4 className="font-bold text-white text-lg">
-                {planName}
-              </h4>
-            </div>
-            {membershipActive ? (
-              <span className="rounded-full bg-gold-DEFAULT/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-gold-DEFAULT border border-gold-DEFAULT/30">
-                Active
-              </span>
-            ) : (
-              <span className="rounded-full bg-red-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-red-500 border border-red-500/30">
-                Expired
-              </span>
-            )}
-          </div>
-
-          <div className="space-y-2 pt-4">
-            <div className="flex justify-between text-xs">
-              <span className="text-gold-100/50">Expiry Date:</span>
-              <span className="text-gold-200 font-semibold">
-                {membershipExpiry || "Lifetime"}
-              </span>
-            </div>
-            <div className="flex justify-between text-xs">
-              <span className="text-gold-100/50">Billing Node:</span>
-              <span className="text-gold-200 font-semibold">
-                {billingNode}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <Button
-          onClick={() =>
-            alert("Billing portal connection is in mockup simulation state.")
-          }
-          variant="primary"
-          size="sm"
-          fullWidth
-        >
-          Upgrade Plan
-        </Button>
-      </SectionCard>
 
       {/* Profile completeness Quick Stats widget */}
       <SectionCard className="space-y-4">
@@ -167,32 +101,40 @@ export default function DashboardOverview({
       <SectionCard className="md:col-span-2 space-y-4">
         <h4 className="font-bold text-gold-200 text-sm">Action Required</h4>
         <div className="space-y-3">
-          <div className="flex justify-between items-center p-3 rounded-xl border border-gold-300/10 bg-navy-950/30">
-            <div className="flex items-center gap-3">
-              <span className="h-2.5 w-2.5 rounded-full bg-gold-DEFAULT"></span>
-              <span className="text-xs text-gold-100/80">
-                Submit your final CRB Criminal Record Check document for
-                verification.
-              </span>
+          {rejectedDocs.length > 0 ? (
+            rejectedDocs.map((doc) => (
+              <div
+                key={doc.id}
+                className="flex justify-between items-center p-3.5 rounded-xl border border-rose-500/20 bg-rose-950/10"
+              >
+                <div className="flex items-start gap-3">
+                  <span className="h-2.5 w-2.5 rounded-full bg-rose-500 mt-1.5 shrink-0 animate-pulse" />
+                  <div className="space-y-1">
+                    <p className="text-xs font-bold text-rose-300">
+                      Rejected: {doc.name}
+                    </p>
+                    <p className="text-xs text-gold-100/70">
+                      Reason : {doc.rejectionReason || "Please upload a new version for verification."}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setActiveTab("compliance")}
+                  className="text-xs font-bold text-gold-DEFAULT hover:text-gold-200 hover:underline px-3.5 py-1.5 rounded-xl border border-gold-300/10 hover:border-gold-300/30 bg-navy-950/40 transition shrink-0 ml-4 animate-none"
+                >
+                  Update
+                </button>
+              </div>
+            ))
+          ) : (
+            <div className="flex flex-col items-center justify-center p-8 rounded-xl border border-gold-300/10 bg-navy-950/20 text-center">
+              <span className="h-2 w-2 rounded-full bg-emerald-400 mb-2" />
+              <p className="text-xs font-bold text-gold-200">No Action Required</p>
+              <p className="text-[11px] text-gold-100/50 mt-1">
+                All compliance documents are current and in order.
+              </p>
             </div>
-            <button
-              onClick={() => setActiveTab("compliance")}
-              className="text-xs font-semibold text-gold-DEFAULT hover:underline"
-            >
-              Update
-            </button>
-          </div>
-          <div className="flex justify-between items-center p-3 rounded-xl border border-gold-300/10 bg-navy-950/30">
-            <div className="flex items-center gap-3">
-              <span className="h-2.5 w-2.5 rounded-full bg-emerald-400"></span>
-              <span className="text-xs text-gold-100/80">
-                Specialty training certification verified by support team!
-              </span>
-            </div>
-            <span className="text-[10px] text-gold-100/40 font-semibold">
-              Verified
-            </span>
-          </div>
+          )}
         </div>
       </SectionCard>
     </div>

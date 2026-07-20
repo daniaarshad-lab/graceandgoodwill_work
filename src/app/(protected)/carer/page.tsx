@@ -35,6 +35,7 @@ import StepReviewSubmit from "./components/StepReviewSubmit";
 import PlacementOpportunities from "./components/PlacementOpportunities";
 import MyApplications from "./components/MyApplications";
 import ApplicationHistory from "./components/ApplicationHistory";
+import CarerPlacements from "./components/CarerPlacements";
 import MembershipManagement from "./components/MembershipManagement";
 import Button from "@/components/Button";
 import {
@@ -64,7 +65,7 @@ function CarerDashboardContent() {
   useEffect(() => {
     if (
       tabParam &&
-      ["overview", "profile", "compliance", "availability", "opportunities", "membership", "agreements"].includes(tabParam)
+      ["overview", "profile", "compliance", "availability", "opportunities", "placements", "membership", "agreements"].includes(tabParam)
     ) {
       setActiveTab(tabParam);
     }
@@ -266,16 +267,16 @@ function CarerDashboardContent() {
             return 8;
           }
 
-          // Step 11: Declarations (10 is membership selection)
+          // Step 10: Declarations
           if (
             !ap.declarations?.accuracy ||
             !ap.declarations?.checks ||
             !ap.declarations?.share
           ) {
-            return 11;
+            return 10;
           }
 
-          return 12; // Final Review
+          return 11; // Final Review
         };
 
         const initialStep = determineInitialStep();
@@ -492,28 +493,17 @@ function CarerDashboardContent() {
             )}
 
             {onboardingStep === 10 && (
-              <OnboardingMembership
-                selectedPlan={selectedPlan}
-                setSelectedPlan={setSelectedPlan}
+              <StepDeclaration
+                portal={portal}
                 onNext={() => setOnboardingStep(11)}
                 onBack={() => setOnboardingStep(9)}
-                isSubmitting={portal.isProfileSaving}
               />
             )}
 
             {onboardingStep === 11 && (
-              <StepDeclaration
-                portal={portal}
-                onNext={() => setOnboardingStep(12)}
-                onBack={() => setOnboardingStep(10)}
-              />
-            )}
-
-            {onboardingStep === 12 && (
               <StepReviewSubmit
                 portal={portal}
-                selectedPlan={selectedPlan}
-                onBack={() => setOnboardingStep(11)}
+                onBack={() => setOnboardingStep(10)}
                 onSubmit={async () => {
                   if (
                     !portal.declarations?.accuracy ||
@@ -539,14 +529,14 @@ function CarerDashboardContent() {
 
                   const success = await portal.submitProfile();
                   if (success) {
-                    setOnboardingStep(13);
+                    setOnboardingStep(12);
                   }
                 }}
                 isSubmitting={portal.isProfileSaving}
               />
             )}
 
-            {onboardingStep === 13 && (
+            {onboardingStep === 12 && (
               <div className="flex flex-col items-center justify-center py-16 px-8 text-center bg-gradient-to-b from-navy-900/40 to-navy-950/60 border border-gold-300/10 rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] backdrop-blur-md max-w-2xl mx-auto mt-6">
                 <div className="w-20 h-20 bg-gradient-to-br from-gold-200/20 to-gold-200/5 rounded-full flex items-center justify-center border border-gold-200/30 mb-8 shadow-[0_0_20px_rgba(245,212,160,0.1)]">
                   <svg
@@ -643,8 +633,6 @@ function CarerDashboardContent() {
           {activeTab === "overview" && (
             <DashboardOverview
               applicationStatus={portal.applicationStatus}
-              membershipActive={portal.membershipActive}
-              membershipExpiry={portal.membershipExpiry}
               complianceDocs={portal.complianceDocs}
               availability={actualProfile?.availability ?? profile?.availability ?? []}
               setActiveTab={setActiveTab}
@@ -731,8 +719,8 @@ function CarerDashboardContent() {
             <ApplicationHistory />
           )}
 
-          {activeTab === "membership" && (
-            <MembershipManagement />
+          {activeTab === "placements" && (
+            <CarerPlacements />
           )}
 
           {activeTab === "agreements" && (

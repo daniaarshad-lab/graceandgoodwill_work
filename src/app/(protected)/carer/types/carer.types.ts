@@ -8,6 +8,7 @@ export interface ComplianceDoc {
   status: "verified" | "pending" | "failed";
   size: string;
   previewUrl?: string;
+  rejectionReason?: string | null;
 }
 
 export type DocumentCategory =
@@ -55,7 +56,8 @@ export interface CarerDocument {
   fileSize: number;
   fileCategory: string;
   fileType: string;
-  status: "PENDING" | "VERIFIED" | "FAILED";
+  status: "PENDING" | "VERIFIED" | "FAILED" | "REJECTED";
+  rejectionReason?: string | null;
   createdAt: string;
   updatedAt: string;
 }

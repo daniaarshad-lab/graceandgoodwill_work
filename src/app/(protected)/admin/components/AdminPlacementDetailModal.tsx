@@ -228,7 +228,7 @@ export default function AdminPlacementDetailModal({ placementId, onClose }: Admi
             {/* Invoices List */}
             <div className="relative overflow-hidden p-6 rounded-2xl border border-gold-300/10 bg-navy-950/40 flex flex-col">
               <h3 className="text-base font-semibold text-gold-200 flex items-center gap-2 mb-5">
-                <DollarSign className="h-4 w-4 text-gold-200" /> Associated Invoices
+                <DollarSign className="h-4 w-4 text-gold-200" /> Client Invoices
               </h3>
             
             {placement.invoices && placement.invoices.length > 0 ? (

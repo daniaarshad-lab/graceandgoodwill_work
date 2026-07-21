@@ -176,8 +176,10 @@ export default function ClientApplicationsPanel() {
                 onClick={() => handleSelectRequest(req.id)}
               >
                 <div className="min-w-0 flex-1">
-                  <h4 className="text-base font-bold text-gold-200 break-words leading-tight">
-                    {req.careCategory || "Care Request"}
+                  <h4 className="text-sm font-light text-gold-200 break-words leading-tight">
+                    {Array.isArray(req.careCategory) 
+                      ? req.careCategory.join(" • ") 
+                      : req.careCategory || "Care Request"}
                   </h4>
                   <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-2.5 text-xs text-gold-100/60">
                     <div className="flex items-center gap-1.5 shrink-0">

@@ -122,45 +122,67 @@ export default function RequestTracking({
           </button>
         </div>
       ) : (
-        <div className="space-y-6">
-
-          {placements.length > 0 && <h4 className="text-lg font-bold text-gold-200">Active Placements</h4>}
-          {placements.map((place) => (
-            <SectionCard key={place.id} className="space-y-5">
+        <div className="space-y-4">
+          {placements.length > 0 && <h4 className="text-base font-bold text-gold-200">Active Placements</h4>}
+          <div className="space-y-3 max-h-[50vh] overflow-y-auto pr-2 custom-placement-scroll">
+            <style>{`
+              .custom-placement-scroll::-webkit-scrollbar {
+                width: 6px;
+              }
+              .custom-placement-scroll::-webkit-scrollbar-track {
+                background: rgba(15, 23, 42, 0.4);
+                border-radius: 4px;
+              }
+              .custom-placement-scroll::-webkit-scrollbar-thumb {
+                background: rgba(212, 175, 55, 0.2);
+                border-radius: 4px;
+              }
+              .custom-placement-scroll::-webkit-scrollbar-thumb:hover {
+                background: rgba(212, 175, 55, 0.4);
+              }
+            `}</style>
+            {placements.map((place) => (
+              <div key={place.id} className="rounded-xl border border-gold-300/10 bg-navy-900/60 p-4 shadow-sm backdrop-blur-md transition-all duration-300 hover:border-gold-300/20 space-y-3">
               {/* Card Header */}
-              <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b border-gold-300/5 pb-4">
-                <div>
-                  <h4 className="text-lg font-bold text-gold-200">
+              <div className="flex flex-col sm:flex-row justify-between sm:items-start gap-3">
+                <div className="flex-1 min-w-0 pr-4">
+                  <h4 className="text-sm font-bold text-gold-200 truncate" title={place.careRequest?.careCategory || (place.carerProfile as any)?.careTypes?.[0] || "General Care"}>
                     {place.careRequest?.careCategory || (place.carerProfile as any)?.careTypes?.[0] || "General Care"}
                   </h4>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <span className="text-xs text-gold-100/50">
+                  <span className="text-[10px] text-gold-100/50 mt-1 block">
                     Commenced: {new Date(place.startDate).toLocaleDateString("en-GB", {
                       day: "2-digit",
                       month: "short",
                       year: "numeric"
                     })}
                   </span>
-                  <span className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider ${getStatusBadgeStyles(place.status)}`}>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0 mt-2 sm:mt-0">
+                  <span className={`rounded px-2 py-1 text-[9px] font-bold uppercase tracking-wider ${getStatusBadgeStyles(place.status)}`}>
                     {place.status}
                   </span>
+                  <button
+                    onClick={() => setDetailPlacementId(place.id)}
+                    className="px-3 py-1 rounded bg-navy-950/60 text-gold-200 border border-gold-300/20 hover:bg-gold-300/10 text-[9px] font-bold uppercase tracking-wider transition-all"
+                  >
+                    View Details & Invoices
+                  </button>
                 </div>
               </div>
 
               {/* Card Body */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 rounded-xl bg-navy-950/40 border border-gold-300/5 text-xs">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 p-3 rounded-lg bg-navy-950/40 border border-gold-300/5 text-[10px]">
                 <div>
-                  <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1">Client Name</span>
-                  <span className="text-gold-200 font-bold">
+                  <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-0.5 text-[8px]">Client Name</span>
+                  <span className="text-gold-200 font-bold truncate block" title={place.careRequest?.requestorName || "You"}>
                     {place.careRequest?.requestorName || "You"}
                   </span>
                 </div>
                 <div>
-                  <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1">Assigned Carer</span>
+                  <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-0.5 text-[8px]">Assigned Carer</span>
                   <span className="text-gold-200 font-bold flex items-center gap-1 truncate" title={place.carerProfile?.user ? `${place.carerProfile.user.firstName} ${place.carerProfile.user.lastName}` : "Not Assigned"}>
-                    <User className="h-3.5 w-3.5 text-gold/60 shrink-0" />
+                    <User className="h-3 w-3 text-gold/60 shrink-0" />
                     <span className="truncate">
                       {place.carerProfile?.user
                         ? `${place.carerProfile.user.firstName} ${place.carerProfile.user.lastName}`
@@ -169,16 +191,16 @@ export default function RequestTracking({
                   </span>
                 </div>
                 <div>
-                  <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1">Duration</span>
-                  <span className="text-gold-200 font-bold">
+                  <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-0.5 text-[8px]">Duration</span>
+                  <span className="text-gold-200 font-bold truncate block" title={place.careRequest?.duration || "Flexible"}>
                     {place.careRequest?.duration || "Flexible"}
                   </span>
                 </div>
                 <div>
-                  <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1">Created Date</span>
+                  <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-0.5 text-[8px]">Created Date</span>
                   <span className="text-gold-200 font-bold">
                     {new Date(place.createdAt).toLocaleDateString("en-GB", {
-                      day: "numeric",
+                      day: "2-digit",
                       month: "short",
                       year: "numeric"
                     })}
@@ -187,10 +209,10 @@ export default function RequestTracking({
               </div>
 
               {place.status === "COMPLETED" && (
-                <div className="pt-4 border-t border-gold-300/10 flex justify-end">
+                <div className="pt-2 border-t border-gold-300/5 flex justify-end">
                   {feedbacks.some((f) => f.placement?.id === place.id) ? (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-bold uppercase tracking-wider cursor-not-allowed">
-                      <CheckCircle2 className="w-3.5 h-3.5" /> Feedback Submitted
+                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[9px] font-bold uppercase tracking-wider cursor-not-allowed">
+                      <CheckCircle2 className="w-3 h-3" /> Feedback Submitted
                     </span>
                   ) : (
                     <button
@@ -202,24 +224,16 @@ export default function RequestTracking({
                             : "Your Carer",
                         })
                       }
-                      className="px-4 py-2 rounded-xl bg-gold/10 text-gold border border-gold/20 hover:bg-gold hover:text-navy-950 text-xs font-bold uppercase tracking-wider transition-all"
+                      className="px-3 py-1 rounded bg-gold/10 text-gold border border-gold/20 hover:bg-gold hover:text-navy-950 text-[9px] font-bold uppercase tracking-wider transition-all"
                     >
                       Leave Feedback
                     </button>
                   )}
                 </div>
               )}
-              
-              <div className="pt-4 border-t border-gold-300/10 flex justify-end gap-3">
-                <button
-                  onClick={() => setDetailPlacementId(place.id)}
-                  className="px-4 py-2 rounded-xl bg-navy-900/60 text-gold-200 border border-gold-300/20 hover:bg-gold-300/10 text-xs font-bold uppercase tracking-wider transition-all"
-                >
-                  View Details & Invoices
-                </button>
-              </div>
-            </SectionCard>
+            </div>
           ))}
+          </div>
         </div>
       )}
 

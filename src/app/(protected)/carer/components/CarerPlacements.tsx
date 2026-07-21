@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { carerService } from "@/services/carer/carer.service";
 import { CarerPlacement } from "@/types/carer.types";
 import SectionCard from "./shared/SectionCard";
-import { User, Calendar, MapPin, FileText, AlertTriangle, RefreshCw, X } from "lucide-react";
+import { User, Calendar, MapPin, FileText, AlertTriangle, RefreshCw, X, Download } from "lucide-react";
 import Button from "@/components/Button";
 
 function PlacementDetailModal({ placementId, onClose }: { placementId: string, onClose: () => void }) {
@@ -10,16 +10,26 @@ function PlacementDetailModal({ placementId, onClose }: { placementId: string, o
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [payments, setPayments] = useState<any[]>([]);
+  const [paymentsLoading, setPaymentsLoading] = useState(false);
+  const [paymentsError, setPaymentsError] = useState<string | null>(null);
+
   useEffect(() => {
     async function loadPlacement() {
       try {
         setLoading(true);
-        const data = await carerService.getPlacementDetail(placementId);
+        setPaymentsLoading(true);
+        const [data, paymentsData] = await Promise.all([
+          carerService.getPlacementDetail(placementId),
+          carerService.getPlacementPayments(placementId).catch(() => []), // fall back to empty array if fails
+        ]);
         setPlacement(data);
+        setPayments(paymentsData);
       } catch (err: any) {
         setError(err.message || "Failed to load placement details");
       } finally {
         setLoading(false);
+        setPaymentsLoading(false);
       }
     }
     loadPlacement();
@@ -117,6 +127,70 @@ function PlacementDetailModal({ placementId, onClose }: { placementId: string, o
               </div>
             </div>
           </div>
+
+          {/* Payment History */}
+          <div className="space-y-4 pt-4 border-t border-gold-300/10">
+            <h3 className="text-lg font-bold text-gold-200 flex items-center gap-2">
+              Payment History
+            </h3>
+            {paymentsLoading ? (
+              <div className="flex justify-center p-4">
+                <div className="w-6 h-6 border-2 border-gold border-t-transparent rounded-full animate-spin" />
+              </div>
+            ) : paymentsError ? (
+              <div className="text-center py-4 border border-rose-500/20 rounded-xl bg-rose-950/10">
+                <p className="text-sm text-rose-400">{paymentsError}</p>
+              </div>
+            ) : payments.length === 0 ? (
+              <div className="text-center py-6 border border-gold-300/5 rounded-xl bg-navy-950/20">
+                <p className="text-sm text-gold-100/60">No payment history available.</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto rounded-xl border border-gold-300/5 bg-navy-950/20">
+                <table className="w-full text-left border-collapse text-xs text-slate-350">
+                  <thead>
+                    <tr className="border-b border-gold-300/10 bg-navy-950/50 text-[10px] uppercase font-bold text-gold-200">
+                      <th className="py-2.5 px-3">Period</th>
+                      <th className="py-2.5 px-3">Amount</th>
+                      <th className="py-2.5 px-3 text-center">Status</th>
+                      <th className="py-2.5 px-3 text-right">Receipt</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {payments.map((payment) => (
+                      <tr key={payment.id} className="border-b border-gold-300/5 hover:bg-navy-900/20 transition-colors">
+                        <td className="py-3 px-3 text-slate-400">
+                          {payment.periodStartDate ? `${new Date(payment.periodStartDate).toLocaleDateString()} - ${new Date(payment.periodEndDate).toLocaleDateString()}` : "N/A"}
+                        </td>
+                        <td className="py-3 px-3 font-mono font-semibold text-gold-DEFAULT">£{Number(payment.amount).toFixed(2)}</td>
+                        <td className="py-3 px-3 text-center">
+                          <span className={`inline-flex px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${
+                            payment.status === "PAID" 
+                              ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                              : payment.status === "UNPAID"
+                                ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                                : "bg-rose-500/10 text-rose-400 border border-rose-500/20"
+                          }`}>
+                            {payment.status}
+                          </span>
+                        </td>
+                        <td className="py-3 px-3 text-right">
+                          {payment.transactionProofUrl ? (
+                            <a href={`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}${payment.transactionProofUrl}`} target="_blank" rel="noreferrer" className="text-gold-DEFAULT hover:underline font-bold text-[10px] inline-flex items-center gap-1">
+                              <Download className="h-3 w-3"/>
+                            </a>
+                          ) : (
+                            <span className="text-slate-500">-</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+
         </div>
       </div>
     </div>

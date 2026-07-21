@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { ArrowRight } from "lucide-react";
 import SectionCard from "./shared/SectionCard";
 import StatusBadge from "./shared/StatusBadge";
 import { Placement, CarerApplication } from "../types/admin.types";
@@ -328,40 +329,69 @@ export default function PlacementTracking({
         </div>
       </div>
 
-      <div className="space-y-6">
+      <div 
+        className="space-y-3 max-h-[60vh] overflow-y-auto pr-2 admin-placement-list-scroll"
+      >
+        <style>{`
+          .admin-placement-list-scroll::-webkit-scrollbar {
+            width: 6px;
+          }
+          .admin-placement-list-scroll::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.4);
+            border-radius: 4px;
+          }
+          .admin-placement-list-scroll::-webkit-scrollbar-thumb {
+            background: rgba(212, 175, 55, 0.2);
+            border-radius: 4px;
+          }
+          .admin-placement-list-scroll::-webkit-scrollbar-thumb:hover {
+            background: rgba(212, 175, 55, 0.4);
+          }
+        `}</style>
         {filteredPlacements.map((place) => {
           const isExpanded = expandedPlacementId === place.id;
           const isReassigning = reassignPlacementId === place.id;
 
           return (
-            <SectionCard key={place.id} className="space-y-5">
-              <div className="flex flex-wrap items-start justify-between gap-4 border-b border-gold-300/5 pb-4">
-                <div>
-                  <div className="flex items-center space-x-3">
-                    <Link
-                      href={`/admin/clients/${place.clientId}`}
-                      className="text-lg font-bold text-gold-200 hover:text-gold hover:underline transition duration-200 cursor-pointer"
-                    >
-                      {place.clientName}
-                    </Link>
-                    <span className="text-gold-100/40">➔</span>
-                    <h4 className="text-lg font-bold text-gold">
-                      {place.carerName}
-                    </h4>
+            <div key={place.id} className="rounded-xl border border-gold-300/10 bg-navy-900/60 p-4 shadow-sm backdrop-blur-md transition-all duration-200 hover:border-gold-300/20 space-y-3">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                <div className="flex-1 min-w-0 pr-4">
+                  <div className="flex items-center gap-4">
+                    <div className="flex flex-col min-w-[120px] max-w-[200px]">
+                      <span className="text-[9px] uppercase tracking-widest text-gold-100/40 font-bold mb-0.5">Client</span>
+                      <Link
+                        href={`/admin/clients/${place.clientId}`}
+                        className="text-[15px] font-medium text-white hover:text-gold hover:underline transition duration-200 cursor-pointer truncate"
+                        title={place.clientName}
+                      >
+                        {place.clientName}
+                      </Link>
+                    </div>
+                    
+                    <div className="flex items-center justify-center shrink-0 w-6 h-6 rounded-full bg-navy-950 border border-gold-300/10 mt-3">
+                      <ArrowRight className="w-3 h-3 text-gold/40" />
+                    </div>
+
+                    <div className="flex flex-col min-w-[120px] max-w-[200px]">
+                      <span className="text-[9px] uppercase tracking-widest text-gold-100/40 font-bold mb-0.5">Assigned Carer</span>
+                      <h4 className="text-[15px] font-medium text-gold-200 truncate" title={place.carerName}>
+                        {place.carerName}
+                      </h4>
+                    </div>
                   </div>
-                  <p className="text-xs text-gold-100/50 mt-1">
+                  <p className="text-sm text-gold-100/50 mt-1 truncate">
                     {place.careType && (Array.isArray(place.careType) ? place.careType.join(", ") : place.careType) + " • "}
                     {place.location} • Commenced:{" "}
                     {place.startDate}
                   </p>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex flex-nowrap items-center gap-2 shrink-0 mt-2 md:mt-0">
                   <select
                     value={place.status}
                     disabled={updatingStatusFor === place.id}
                     onChange={(e) => handleUpdateStatus(place.id, e.target.value)}
-                    className="rounded-full border border-gold-300/20 bg-navy-950 px-3 py-1 text-[10px] font-bold text-gold-200 outline-none focus:border-gold-300/50 transition duration-300 cursor-pointer"
+                    className="rounded-md border border-gold-300/20 bg-navy-950 px-2 py-1.5 text-xs font-bold text-gold-200 outline-none focus:border-gold-300/50 transition duration-300 cursor-pointer"
                   >
                     <option value="PLACEMENT_CONFIRMED">Matched</option>
                     <option value="PLACEMENT_STARTED">Active</option>
@@ -374,6 +404,7 @@ export default function PlacementTracking({
                     variant="ghost-gold"
                     size="sm"
                     fullWidth={false}
+                    className="px-3 py-1.5 text-xs"
                   >
                     {isExpanded ? "Hide Details ▲" : "Expand Details ▼"}
                   </Button>
@@ -382,6 +413,7 @@ export default function PlacementTracking({
                     variant="primary"
                     size="sm"
                     fullWidth={false}
+                    className="px-4 py-1.5 text-xs"
                   >
                     Full Details
                   </Button>
@@ -389,38 +421,37 @@ export default function PlacementTracking({
               </div>
 
               {isExpanded && (
-                <div className="space-y-6 bg-navy-950/40 p-4 rounded-xl border border-gold-300/5 transition duration-300">
-                  <div className="grid gap-6 md:grid-cols-2">
-                    {/* Contact details removed as requested */}
-                  <div className="space-y-4">
-                    <h5 className="text-xs font-bold uppercase tracking-wider text-gold-200/60">
+                <div className="space-y-5 bg-navy-950/40 p-4 rounded-xl border border-gold-300/5 transition duration-300 mt-2">
+                  <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-3">
+                    <h5 className="text-[10px] font-bold uppercase tracking-wider text-gold-200/60">
                       Chronological Milestone Audit
                     </h5>
                     <div className="flow-root">
                       <ul className="-mb-8">
                         {place.timeline.map((event, eventIdx) => (
                           <li key={event.title}>
-                            <div className="relative pb-8">
+                            <div className="relative pb-6">
                               {eventIdx !== place.timeline.length - 1 ? (
                                 <span
-                                  className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gold-300/10"
+                                  className="absolute top-3 left-3 -ml-px h-full w-[1px] bg-gold-300/10"
                                   aria-hidden="true"
                                 />
                               ) : null}
-                              <div className="relative flex space-x-3">
+                              <div className="relative flex space-x-2">
                                 <div>
-                                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-navy-950 text-gold-DEFAULT border border-gold-300/10">
+                                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-navy-950 text-gold-DEFAULT border border-gold-300/10 text-[10px]">
                                     ✓
                                   </span>
                                 </div>
-                                <div className="flex-1 min-w-0 pt-1.5">
-                                  <p className="text-xs font-bold text-gold-200">
+                                <div className="flex-1 min-w-0 pt-1">
+                                  <p className="text-[11px] font-bold text-gold-200 leading-tight">
                                     {event.title}
                                   </p>
-                                  <p className="text-[10px] text-gold-100/40">
+                                  <p className="text-[9px] text-gold-100/40 mt-0.5">
                                     {event.timestamp}
                                   </p>
-                                  <p className="text-[11px] text-gold-100/60 italic mt-1">
+                                  <p className="text-[10px] text-gold-100/60 italic mt-0.5">
                                     &ldquo;{event.description}&rdquo;
                                   </p>
                                 </div>
@@ -434,8 +465,8 @@ export default function PlacementTracking({
                   </div>
 
                   {/* Dedicated Billing Section */}
-                  <div className="border-t border-gold-300/10 pt-6 mt-6">
-                    <h5 className="text-xs font-bold uppercase tracking-wider text-gold-200 mb-4">
+                  <div className="border-t border-gold-300/10 pt-5">
+                    <h5 className="text-[10px] font-bold uppercase tracking-wider text-gold-200 mb-3">
                       Placement Financial & Billing Overview
                     </h5>
                     {loadingBilling[place.id] ? (
@@ -448,67 +479,67 @@ export default function PlacementTracking({
                         const invoicesList = detail.invoices || [];
 
                         return (
-                          <div className="space-y-6">
+                          <div className="space-y-4">
                             {successMessage && (
-                              <div className="p-3.5 rounded bg-emerald-950/40 border border-emerald-500/20 text-emerald-400 text-xs">
+                              <div className="p-2.5 rounded bg-emerald-950/40 border border-emerald-500/20 text-emerald-400 text-xs">
                                 {successMessage}
                               </div>
                             )}
                             {errorMessage && (
-                              <div className="p-3.5 rounded bg-red-950/40 border border-red-500/20 text-red-400 text-xs">
+                              <div className="p-2.5 rounded bg-red-950/40 border border-red-500/20 text-red-400 text-xs">
                                 {errorMessage}
                               </div>
                             )}
 
                             {/* Financial KPI Grid */}
-                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-navy-950 p-4 rounded-xl border border-gold-300/5 text-xs">
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-navy-950 p-3 rounded-lg border border-gold-300/5 text-xs">
                               <div>
-                                <span className="text-[10px] text-gold-100/40 uppercase tracking-wider block mb-0.5">Agreed Weekly Fee</span>
+                                <span className="text-[9px] text-gold-100/40 uppercase tracking-wider block mb-0.5">Agreed Weekly Fee</span>
                                 <span className="font-mono text-gold-100 text-sm font-bold">£{Number(detail.weeklyFee).toFixed(2)}</span>
                               </div>
                               <div>
-                                <span className="text-[10px] text-gold-100/40 uppercase tracking-wider block mb-0.5">Daily Rate (Calc)</span>
+                                <span className="text-[9px] text-gold-100/40 uppercase tracking-wider block mb-0.5">Daily Rate (Calc)</span>
                                 <span className="font-mono text-gold-100 text-sm">£{Number(detail.dailyRate).toFixed(2)}</span>
                               </div>
                               <div>
-                                <span className="text-[10px] text-gold-100/40 uppercase tracking-wider block mb-0.5">Billing Frequency</span>
+                                <span className="text-[9px] text-gold-100/40 uppercase tracking-wider block mb-0.5">Billing Frequency</span>
                                 <span className="text-slate-300 text-sm font-medium">{detail.billingFrequency}</span>
                               </div>
                               <div>
-                                <span className="text-[10px] text-gold-100/40 uppercase tracking-wider block mb-0.5">Outstanding Balance</span>
+                                <span className="text-[9px] text-gold-100/40 uppercase tracking-wider block mb-0.5">Outstanding Balance</span>
                                 <span className="font-mono text-rose-400 text-sm font-bold">£{Number(detail.outstandingBalance).toFixed(2)}</span>
                               </div>
                             </div>
 
-                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-navy-950 p-4 rounded-xl border border-gold-300/5 text-xs">
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-navy-950 p-3 rounded-lg border border-gold-300/5 text-xs">
                               <div>
-                                <span className="text-[10px] text-gold-100/40 uppercase tracking-wider block mb-0.5">Platform Fee Status</span>
-                                <span className={`text-xs font-bold ${detail.isLifetimeFeePaid ? "text-emerald-400" : "text-amber-500"}`}>
+                                <span className="text-[9px] text-gold-100/40 uppercase tracking-wider block mb-0.5">Platform Fee Status</span>
+                                <span className={`text-[10px] font-bold ${detail.isLifetimeFeePaid ? "text-emerald-400" : "text-amber-500"}`}>
                                   {detail.isLifetimeFeePaid ? "Paid & Confirmed" : "Pending Payment"}
                                 </span>
                               </div>
                               <div>
-                                <span className="text-[10px] text-gold-100/40 uppercase tracking-wider block mb-0.5">Stripe Subscription Status</span>
-                                <span className="text-slate-350 text-xs font-medium">{detail.billingStatus || "Unsubscribed"}</span>
+                                <span className="text-[9px] text-gold-100/40 uppercase tracking-wider block mb-0.5">Stripe Subscription Status</span>
+                                <span className="text-slate-350 text-[10px] font-medium">{detail.billingStatus || "Unsubscribed"}</span>
                               </div>
                               <div>
-                                <span className="text-[10px] text-gold-100/40 uppercase tracking-wider block mb-0.5">Next Billing Cycle</span>
-                                <span className="text-slate-350 font-mono text-xs">{detail.nextBillingDate ? new Date(detail.nextBillingDate).toLocaleDateString() : "N/A"}</span>
+                                <span className="text-[9px] text-gold-100/40 uppercase tracking-wider block mb-0.5">Next Billing Cycle</span>
+                                <span className="text-slate-350 font-mono text-[10px]">{detail.nextBillingDate ? new Date(detail.nextBillingDate).toLocaleDateString() : "N/A"}</span>
                               </div>
                               <div>
-                                <span className="text-[10px] text-gold-100/40 uppercase tracking-wider block mb-0.5">Subscription ID</span>
-                                <span className="text-slate-400 text-[10px] font-mono">{detail.stripeSubscriptionId ? detail.stripeSubscriptionId.slice(0, 15) + "..." : "None"}</span>
+                                <span className="text-[9px] text-gold-100/40 uppercase tracking-wider block mb-0.5">Subscription ID</span>
+                                <span className="text-slate-400 text-[9px] font-mono">{detail.stripeSubscriptionId ? detail.stripeSubscriptionId.slice(0, 15) + "..." : "None"}</span>
                               </div>
                             </div>
 
                             {/* Billing Action Controls */}
-                            <div className="flex flex-wrap items-center justify-end gap-4 p-4 rounded-xl bg-navy-950 border border-gold-300/5">
+                            <div className="flex flex-wrap items-center justify-end gap-3 p-3 rounded-lg bg-navy-950 border border-gold-300/5">
                               <div className="flex gap-2 ml-auto">
                                 {detail.billingStatus === "ACTIVE" ? (
                                   <button
                                     onClick={() => handlePauseBilling(place.id)}
                                     disabled={actionLoading !== null}
-                                    className="bg-red-950/40 hover:bg-red-900/40 text-red-400 border border-red-500/20 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition"
+                                    className="bg-red-950/40 hover:bg-red-900/40 text-red-400 border border-red-500/20 px-3 py-1 rounded text-[10px] font-semibold transition"
                                   >
                                     Pause Billing
                                   </button>
@@ -516,7 +547,7 @@ export default function PlacementTracking({
                                   <button
                                     onClick={() => handleResumeBilling(place.id)}
                                     disabled={actionLoading !== null}
-                                    className="bg-emerald-950/40 hover:bg-emerald-900/40 text-emerald-400 border border-emerald-500/20 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition"
+                                    className="bg-emerald-950/40 hover:bg-emerald-900/40 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded text-[10px] font-semibold transition"
                                   >
                                     Resume Billing
                                   </button>
@@ -525,22 +556,22 @@ export default function PlacementTracking({
                             </div>
 
                             {/* Placement Invoice History Table */}
-                            <div className="space-y-2">
-                              <span className="text-[10px] text-gold-100/50 uppercase tracking-widest font-bold block mb-2">Generated Placement Invoices</span>
+                            <div className="space-y-2 mt-4">
+                              <span className="text-[9px] text-gold-100/50 uppercase tracking-widest font-bold block mb-1">Generated Placement Invoices</span>
                               {invoicesList.length === 0 ? (
-                                <p className="text-xs text-gold-100/30 py-3 bg-navy-950/30 rounded-xl text-center">No statements generated for this placement yet.</p>
+                                <p className="text-[10px] text-gold-100/30 py-2 bg-navy-950/30 rounded-lg text-center">No statements generated for this placement yet.</p>
                               ) : (
-                                <div className="overflow-x-auto rounded-xl border border-gold-300/5 bg-navy-950/20">
-                                  <table className="w-full text-left border-collapse text-xs text-slate-350">
+                                <div className="overflow-x-auto rounded-lg border border-gold-300/5 bg-navy-950/20">
+                                  <table className="w-full text-left border-collapse text-[10px] text-slate-350">
                                     <thead>
-                                      <tr className="border-b border-gold-300/10 bg-navy-950/50 text-[10px] uppercase font-bold text-gold-200">
-                                        <th className="py-2.5 px-3">Invoice ID</th>
-                                        <th className="py-2.5 px-3">Period</th>
-                                        <th className="py-2.5 px-3">Subtotal</th>
-                                        <th className="py-2.5 px-3">VAT (20%)</th>
-                                        <th className="py-2.5 px-3">Total</th>
-                                        <th className="py-2.5 px-3 text-center">Status</th>
-                                        <th className="py-2.5 px-3 text-right">Actions</th>
+                                      <tr className="border-b border-gold-300/10 bg-navy-950/50 text-[9px] uppercase font-bold text-gold-200">
+                                        <th className="py-2 px-2">Invoice ID</th>
+                                        <th className="py-2 px-2">Period</th>
+                                        <th className="py-2 px-2">Subtotal</th>
+                                        <th className="py-2 px-2">VAT (20%)</th>
+                                        <th className="py-2 px-2">Total</th>
+                                        <th className="py-2 px-2 text-center">Status</th>
+                                        <th className="py-2 px-2 text-right">Actions</th>
                                       </tr>
                                     </thead>
                                     <tbody>
@@ -550,15 +581,15 @@ export default function PlacementTracking({
                                         
                                         return (
                                           <tr key={inv.id} className="border-b border-gold-300/5 hover:bg-navy-900/20 transition-colors">
-                                            <td className="py-3 px-3 font-mono font-semibold text-white">{inv.invoiceNumber || inv.id}</td>
-                                            <td className="py-3 px-3 text-slate-400">
+                                            <td className="py-2 px-2 font-mono font-semibold text-white">{inv.invoiceNumber || inv.id}</td>
+                                            <td className="py-2 px-2 text-slate-400">
                                               {inv.billingPeriodStart ? `${new Date(inv.billingPeriodStart).toLocaleDateString()} - ${new Date(inv.billingPeriodEnd).toLocaleDateString()}` : "Onboarding Access"}
                                             </td>
-                                            <td className="py-3 px-3 font-mono">£{Number(inv.subtotal || (Number(inv.total || inv.amount) / 1.2)).toFixed(2)}</td>
-                                            <td className="py-3 px-3 font-mono">£{Number(inv.vat || (Number(inv.total || inv.amount) - (Number(inv.total || inv.amount) / 1.2))).toFixed(2)}</td>
-                                            <td className="py-3 px-3 font-mono font-semibold text-gold-DEFAULT">£{Number(inv.total || inv.amount).toFixed(2)}</td>
-                                            <td className="py-3 px-3 text-center">
-                                              <span className={`inline-flex px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${
+                                            <td className="py-2 px-2 font-mono">£{Number(inv.subtotal || (Number(inv.total || inv.amount) / 1.2)).toFixed(2)}</td>
+                                            <td className="py-2 px-2 font-mono">£{Number(inv.vat || (Number(inv.total || inv.amount) - (Number(inv.total || inv.amount) / 1.2))).toFixed(2)}</td>
+                                            <td className="py-2 px-2 font-mono font-semibold text-gold-DEFAULT">£{Number(inv.total || inv.amount).toFixed(2)}</td>
+                                            <td className="py-2 px-2 text-center">
+                                              <span className={`inline-flex px-1.5 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-wider ${
                                                 inv.status === "PAID" 
                                                   ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
                                                   : inv.status === "PENDING"
@@ -568,20 +599,20 @@ export default function PlacementTracking({
                                                 {inv.status}
                                               </span>
                                             </td>
-                                            <td className="py-3 px-3 text-right">
-                                              <div className="flex justify-end items-center gap-3">
+                                            <td className="py-2 px-2 text-right">
+                                              <div className="flex justify-end items-center gap-2">
                                                 {inv.pdfUrl && (
-                                                  <a href={inv.pdfUrl} target="_blank" rel="noreferrer" className="text-gold-DEFAULT hover:underline font-bold text-[10px]">PDF</a>
+                                                  <a href={inv.pdfUrl} target="_blank" rel="noreferrer" className="text-gold-DEFAULT hover:underline font-bold text-[9px]">PDF</a>
                                                 )}
                                                 {inv.receiptUrl && (
-                                                  <a href={inv.receiptUrl} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-gold-DEFAULT hover:underline font-bold text-[10px]">Stripe</a>
+                                                  <a href={inv.receiptUrl} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-gold-DEFAULT hover:underline font-bold text-[9px]">Stripe</a>
                                                 )}
-                                                <button onClick={() => handlePrintInvoice(inv, clientName, clientEmail)} className="text-gold-DEFAULT hover:underline font-bold text-[10px]">Print</button>
+                                                <button onClick={() => handlePrintInvoice(inv, clientName, clientEmail)} className="text-gold-DEFAULT hover:underline font-bold text-[9px]">Print</button>
                                                 {inv.status !== "PAID" && (
-                                                  <button onClick={() => handleResendInvoice(inv.id, place.id)} className="text-gold-200/60 hover:text-gold-DEFAULT hover:underline font-bold text-[10px]">Remind</button>
+                                                  <button onClick={() => handleResendInvoice(inv.id, place.id)} className="text-gold-200/60 hover:text-gold-DEFAULT hover:underline font-bold text-[9px]">Remind</button>
                                                 )}
                                                 {isPaid && payment && (
-                                                  <button onClick={() => handleRefundPayment(payment.id, place.id)} className="text-red-400 hover:underline font-bold text-[10px]">Refund</button>
+                                                  <button onClick={() => handleRefundPayment(payment.id, place.id)} className="text-red-400 hover:underline font-bold text-[9px]">Refund</button>
                                                 )}
                                               </div>
                                             </td>
@@ -602,82 +633,86 @@ export default function PlacementTracking({
                   </div>
 
                   {/* Internal Notes Section */}
-                  <div className="border-t border-gold-300/10 pt-6">
+                  <div className="border-t border-gold-300/10 pt-5 mt-2">
                     <InternalNotes entityId={place.id} entityType="PLACEMENT" />
+                  </div>
+
+                  {/* Override / Reassignment Actions bar */}
+                  <div className="flex flex-wrap items-center justify-between gap-3 border-t border-gold-300/10 pt-4 mt-2">
+                    <p className="text-[9px] uppercase tracking-wider font-semibold text-gold-100/30">
+                      Critical Placement Tools
+                    </p>
+
+                    {place.status?.toUpperCase() === "PLACEMENT_STARTED" || place.status?.toUpperCase() === "ONGOING" ? (
+                      isReassigning ? (
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0">
+                          <select
+                            value={selectedNewCarerId}
+                            onChange={(e) => setSelectedNewCarerId(e.target.value)}
+                            className="w-full sm:w-auto rounded bg-navy-950 border border-gold-300/10 px-2 py-1.5 text-[10px] text-gold-200 focus:outline-none"
+                          >
+                            <option value="">Select Replacement Carer...</option>
+                            {approvedCarers
+                              .filter((c) => c.id !== place.carerId)
+                              .map((c) => (
+                                <option key={c.id} value={c.id}>
+                                  {c.name} ({c.city} - {c.experience})
+                                </option>
+                              ))}
+                          </select>
+
+                          <div className="flex items-center gap-2">
+                            <Button
+                              onClick={() => {
+                                if (selectedNewCarerId) {
+                                  onReassignCarer(place.id, selectedNewCarerId);
+                                  setReassignPlacementId(null);
+                                  setSelectedNewCarerId("");
+                                }
+                              }}
+                              disabled={!selectedNewCarerId}
+                              variant="primary"
+                              size="sm"
+                              fullWidth={false}
+                              className="px-2 py-1 text-[10px]"
+                            >
+                              Reassign
+                            </Button>
+                            <Button
+                              onClick={() => {
+                                setReassignPlacementId(null);
+                                setSelectedNewCarerId("");
+                              }}
+                              variant="ghost-gold"
+                              size="sm"
+                              fullWidth={false}
+                              className="px-2 py-1 text-[10px]"
+                            >
+                              Cancel
+                            </Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <Button
+                          onClick={() => setReassignPlacementId(place.id)}
+                          variant="ghost-gold"
+                          size="sm"
+                          fullWidth={false}
+                          className="font-bold bg-navy-950/40 border border-gold-300/15 px-2 py-1 text-[10px]"
+                        >
+                          Manual Override (Reassign Carer)
+                        </Button>
+                      )
+                    ) : null}
                   </div>
                 </div>
               )}
-
-              {/* Override / Reassignment Actions bar */}
-              <div className="flex flex-wrap items-center justify-between gap-4 border-t border-gold-300/5 pt-4">
-                <p className="text-[10px] uppercase tracking-wider font-semibold text-gold-100/30">
-                  Critical Placement Tools
-                </p>
-
-                {place.status?.toUpperCase() === "PLACEMENT_STARTED" || place.status?.toUpperCase() === "ONGOING" ? (
-                  isReassigning ? (
-                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
-                      <select
-                        value={selectedNewCarerId}
-                        onChange={(e) => setSelectedNewCarerId(e.target.value)}
-                        className="w-full sm:w-auto rounded-lg bg-navy-950 border border-gold-300/10 px-3 py-2 text-xs text-gold-200 focus:outline-none"
-                      >
-                        <option value="">Select Replacement Carer...</option>
-                        {approvedCarers
-                          .filter((c) => c.id !== place.carerId)
-                          .map((c) => (
-                            <option key={c.id} value={c.id}>
-                              {c.name} ({c.city} - {c.experience})
-                            </option>
-                          ))}
-                      </select>
-
-                      <Button
-                        onClick={() => {
-                          if (selectedNewCarerId) {
-                            onReassignCarer(place.id, selectedNewCarerId);
-                            setReassignPlacementId(null);
-                            setSelectedNewCarerId("");
-                          }
-                        }}
-                        disabled={!selectedNewCarerId}
-                        variant="primary"
-                        size="sm"
-                        fullWidth={false}
-                      >
-                        Reassign
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          setReassignPlacementId(null);
-                          setSelectedNewCarerId("");
-                        }}
-                        variant="ghost-gold"
-                        size="sm"
-                        fullWidth={false}
-                      >
-                        Cancel
-                      </Button>
-                    </div>
-                  ) : (
-                    <Button
-                      onClick={() => setReassignPlacementId(place.id)}
-                      variant="ghost-gold"
-                      size="sm"
-                      fullWidth={false}
-                      className="font-bold bg-navy-950/40 border border-gold-300/15"
-                    >
-                      Manual Override (Reassign Carer)
-                    </Button>
-                  )
-                ) : null}
-              </div>
-            </SectionCard>
+            </div>
           );
         })}
 
         {filteredPlacements.length === 0 && (
-          <div className="rounded-2xl border border-gold-300/10 p-12 text-center text-gold-100/50">
+          <div className="rounded-xl border border-gold-300/10 p-10 text-center text-gold-100/50 text-sm bg-navy-900/40">
             No placements found matching the &apos;{filter}&apos; filter.
           </div>
         )}

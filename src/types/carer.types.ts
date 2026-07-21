@@ -181,3 +181,15 @@ export interface CarerPlacement {
     additionalNotes?: string | null;
   } | null;
 }
+
+export interface CarerPayment {
+  id: string;
+  placementId: string;
+  carerProfileId: string;
+  periodStartDate: string;
+  periodEndDate: string;
+  amount: string | number;
+  status: "UNPAID" | "PAID" | "OVERDUE";
+  paidAt: string | null;
+  transactionProofUrl: string | null;
+}

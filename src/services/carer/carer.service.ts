@@ -602,4 +602,13 @@ export const carerService = {
       headers: { Authorization: `Bearer ${token}` },
     });
   },
+
+  async getPlacementPayments(placementId: string): Promise<any[]> {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+    return apiFetch(`/carer/placements/${placementId}/payments`, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  },
 };

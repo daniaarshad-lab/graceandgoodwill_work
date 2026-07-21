@@ -210,5 +210,18 @@ export interface AdminPlacementDetail {
   };
   careRequest: any | null;
   invoices: any[];
+  carerPayments?: CarerPayment[];
   internalNotes: InternalNote[];
+}
+
+export interface CarerPayment {
+  id: string;
+  placementId: string;
+  carerProfileId: string;
+  periodStartDate: string;
+  periodEndDate: string;
+  amount: string | number; // Decimal string
+  status: "UNPAID" | "PAID" | "OVERDUE";
+  paidAt: string | null;
+  transactionProofUrl: string | null;
 }

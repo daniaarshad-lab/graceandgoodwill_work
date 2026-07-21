@@ -312,6 +312,25 @@ export const adminService = {
     });
   },
 
+  async updateCarerPaymentStatus(paymentId: string, formData: FormData): Promise<any> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch(`/admin/carer-payments/${paymentId}/pay`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+  },
+
   async getPlacements(): Promise<any[]> {
     const token =
       typeof window !== "undefined"

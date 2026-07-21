@@ -141,7 +141,7 @@ export default function PlacementDetailModal({ placementId, onClose }: Placement
                         <td className="py-3 text-gold-100">
                           {new Date(inv.billingPeriodStart).toLocaleDateString("en-GB", { day: '2-digit', month: 'short' })} - {new Date(inv.billingPeriodEnd).toLocaleDateString("en-GB", { day: '2-digit', month: 'short' })}
                         </td>
-                        <td className="py-3 text-gold-200 font-semibold">£{inv.total.toFixed(2)}</td>
+                        <td className="py-3 text-gold-200 font-semibold">£{Number(inv.total).toFixed(2)}</td>
                         <td className="py-3">
                           <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${
                             inv.status === 'PAID' ? 'bg-emerald-500/10 text-emerald-400' : 

@@ -280,14 +280,13 @@ function SiteHeader() {
                     Logout
                   </Button>
                 ) : (
-                  <Button asChild variant="primary" size="md" fullWidth>
-                    <Link
-                      href="/login"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      Login
-                    </Link>
-                  </Button>
+                  <Link
+                    href="/login"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center justify-center w-full rounded-xl bg-[#b59469] px-5 py-3 text-sm font-semibold text-navy-950 transition-all duration-300 hover:bg-[#a08054] hover:text-white hover:-translate-y-[1px] hover:shadow-[0_8px_30px_rgba(160,128,84,0.24)]"
+                  >
+                    Login
+                  </Link>
                 )}
               </div>
             </nav>

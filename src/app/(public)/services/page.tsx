@@ -139,16 +139,13 @@ export default function ServicesPage() {
                       Guaranteed Coverage
                     </span>
                     <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide">
-                      Continuity support and replacement coordination
+                      Rapid Replacement Introductions
                     </h2>
                   </div>
                 </div>
                 <p className="text-sm leading-relaxed text-gold-200/75 sm:text-base">
                   We understand that care requirements can adapt, and
-                  consistency is crucial. Our operations team manages carer
-                  handovers, covers sickness, and handles coordinate
-                  transitions, guaranteeing replacement coordination with zero
-                  gap in your support coverage.
+                  consistency is crucial. If your live-in carer is no longer available, we can quickly introduce suitable replacement carers from our nationwide network. Clients remain responsible for choosing and engaging their preferred self-employed carer..
                 </p>
               </div>
 
@@ -157,8 +154,8 @@ export default function ServicesPage() {
                   <p className="text-xs uppercase tracking-[0.2em] text-gold-300 font-medium">
                     Care Standard
                   </p>
-                  <p className="text-2xl font-semibold text-gold-50 mt-1">
-                    100% Continuity
+                  <p className="text-xl font-semibold text-gold-50 mt-1">
+                    Rapid Replacement Service
                   </p>
                 </div>
               </div>

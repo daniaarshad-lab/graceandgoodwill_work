@@ -78,8 +78,7 @@ export default function StepReviewSubmit({
 
   // Insurance check
   const hasPublicLiability = hasDocType(DocumentFileType.PUBLIC_LIABILITY_INSURANCE);
-  const hasProfessionalIndemnity = hasDocType(DocumentFileType.PROFESSIONAL_INDEMNITY_INSURANCE);
-  const insuranceComplete = hasPublicLiability && hasProfessionalIndemnity;
+  const insuranceComplete = hasPublicLiability;
 
   // Video check
   const videoUploaded = !!portal.profile?.introVideoUrl || !!portal.introVideoUrl;
@@ -120,7 +119,7 @@ export default function StepReviewSubmit({
     missingItems.push("Compliance & References (Enhanced DBS, CV, 2 References, Employment History)");
   }
   if (!insuranceComplete) {
-    missingItems.push("Insurance Documents (Public Liability & Professional Indemnity)");
+    missingItems.push("Insurance Documents (Public Liability)");
   }
   if (!videoUploaded) {
     missingItems.push("Introductory Video Upload");
@@ -304,7 +303,7 @@ export default function StepReviewSubmit({
             </div>
 
             <div className="flex justify-between items-center bg-navy-950/20 p-2.5 rounded-lg border border-gold-300/5">
-              <span className="text-gold-100/80 font-medium">Carer Insurance (Public & Professional)</span>
+              <span className="text-gold-100/80 font-medium">Carer Insurance (Public Liability)</span>
               {insuranceComplete ? (
                 <span className="text-green-400 font-bold flex items-center gap-1"><Check className="w-3.5 h-3.5" /> Complete</span>
               ) : (

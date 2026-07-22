@@ -17,17 +17,10 @@ export default function StepInsuranceDocs({ portal, onNext, onBack }: Props) {
   const hasPublicLiability =
     complianceDocs.some((d: ComplianceDoc) => d.type === DocumentFileType.PUBLIC_LIABILITY_INSURANCE) ||
     !!selectedFiles[DocumentFileType.PUBLIC_LIABILITY_INSURANCE.toLowerCase()];
-  const hasProfessionalIndemnity =
-    complianceDocs.some(
-      (d: ComplianceDoc) => d.type === DocumentFileType.PROFESSIONAL_INDEMNITY_INSURANCE,
-    ) || !!selectedFiles[DocumentFileType.PROFESSIONAL_INDEMNITY_INSURANCE.toLowerCase()];
 
   const errors = {
     publicLiability: !hasPublicLiability
       ? "Public Liability Insurance is required."
-      : "",
-    professionalIndemnity: !hasProfessionalIndemnity
-      ? "Professional Indemnity Insurance is required."
       : "",
   };
 
@@ -83,23 +76,13 @@ export default function StepInsuranceDocs({ portal, onNext, onBack }: Props) {
           </div>
 
           <div className="space-y-2">
-            <div
-              className={`transition-all rounded-xl border ${submitted && errors.professionalIndemnity
-                  ? "border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]"
-                  : "border-transparent"
-                }`}
-            >
+            <div className="transition-all rounded-xl border border-transparent">
               <DocUploadRow
-                label="Professional Indemnity Insurance *"
+                label="Professional Indemnity Insurance"
                 type={DocumentFileType.PROFESSIONAL_INDEMNITY_INSURANCE}
                 portal={portal}
               />
             </div>
-            {submitted && errors.professionalIndemnity && (
-              <p className="text-xs text-red-500 font-semibold px-1">
-                {errors.professionalIndemnity}
-              </p>
-            )}
           </div>
         </div>
       </SectionCard>

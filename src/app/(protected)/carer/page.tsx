@@ -243,7 +243,6 @@ function CarerDashboardContent() {
           // Step 6: Insurance
           const requiredInsurance = [
             DocumentFileType.PUBLIC_LIABILITY_INSURANCE,
-            DocumentFileType.PROFESSIONAL_INDEMNITY_INSURANCE,
           ];
           const hasInsurance = requiredInsurance.every((type) =>
             docs.some((d: any) => d.fileType === type),
@@ -398,7 +397,7 @@ function CarerDashboardContent() {
     )
       missing.push("Required Compliance Documents");
 
-    const requiredInsurance = [DocumentFileType.PUBLIC_LIABILITY_INSURANCE, DocumentFileType.PROFESSIONAL_INDEMNITY_INSURANCE];
+    const requiredInsurance = [DocumentFileType.PUBLIC_LIABILITY_INSURANCE];
     if (
       !requiredInsurance.every((type: string) =>
         complianceDocs.some((d: any) => d.type === type),

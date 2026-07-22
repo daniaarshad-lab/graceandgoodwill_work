@@ -27,7 +27,7 @@ export default function AboutPage() {
               understand families are not simply searching for availability they
               are searching for somebody they can trust and a process that feels
               calm, personal, and dependable. Our role is to connect people with
-              carefully selected support while maintaining continuity,
+              carefully selected support while maintaining clear
               communication, and meaningful human connection.
             </p>
           </div>
@@ -91,7 +91,7 @@ export default function AboutPage() {
     my purpose was not simply to work within a system, but to create something
     that could make a lasting difference in people&apos;s lives. Grace &amp;
     Goodwill was founded on the belief that families deserve honesty, carers
-    deserve respect, and those receiving support deserve continuity, trust, and
+    deserve respect, and those receiving support deserve a trusted match, and
     meaningful human connection.
   </p>
 

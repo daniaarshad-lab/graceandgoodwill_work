@@ -62,6 +62,6 @@ export const faqs: FAQItem[] = [
   {
     question: "What happens if my carer becomes unwell?",
     answer:
-      "Grace & Goodwill will support continuity planning and help arrange suitable replacement cover where required to minimise disruption to the care arrangement.",
+      "If your chosen carer becomes unwell, Grace & Goodwill can provide rapid replacement introductions, sourcing a suitable alternative carer from our network to ensure your support continues smoothly.",
   },
 ];

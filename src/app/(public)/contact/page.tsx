@@ -31,7 +31,7 @@ export default function ContactPage() {
                 We help families find compassionate, dependable live in care
                 with a personal and supportive approach. Welcoming a carer into
                 your home is a major family milestone, and our dedicated team is
-                here to guide you every step of the way with warmth, continuity,
+                here to guide you every step of the way with warmth, careful matching,
                 and reassurance.
               </p>
             </div>

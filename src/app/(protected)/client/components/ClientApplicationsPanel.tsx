@@ -128,9 +128,9 @@ export default function ClientApplicationsPanel() {
           <h3 className="text-xl font-bold text-gold-200">
             Care Requests & Applications
           </h3>
-          <p className="text-xs text-gold-100/50 mt-1 leading-relaxed">
-            View the status of your care requests and manage carer applications. Grace & Goodwill
-            managed requests will have their matches handled by our team.
+          <p className="text-gold-200/70 text-sm mt-1 max-w-2xl">
+            View the status of your care requests and review carer applications. Grace & Goodwill
+            will notify you when new applications are ready for review.
           </p>
         </div>
         <Button
@@ -150,13 +150,13 @@ export default function ClientApplicationsPanel() {
       </div>
 
       {clientManagedRequests.length === 0 ? (
-        <div className="rounded-2xl border border-gold-300/10 p-12 text-center text-gold-100/50">
+        <div className="flex flex-col items-center justify-center p-12 text-center border border-gold-300/10 rounded-2xl bg-navy-950/40">
           <Briefcase className="w-12 h-12 mx-auto mb-4 opacity-40" />
-          <p className="text-sm font-medium">
-            You do not have any active client-managed care requests.
+          <p className="text-gold-200/60 font-medium">
+            You do not have any active care requests.
           </p>
           <p className="text-xs mt-1 opacity-60">
-            Create a new care request and set "Grace & Goodwill Managed" to false to manage applications directly.
+            Create a new care request to begin receiving carer applications.
           </p>
         </div>
       ) : (

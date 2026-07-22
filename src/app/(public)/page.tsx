@@ -134,7 +134,7 @@ export default function HomePage() {
         <div className="text-center max-w-3xl mx-auto space-y-3 mb-16">
           <div className="text-center mb-10 space-y-5">
             <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide">
-              In the Media
+              In Media
             </h2>
             <div className="h-px w-24 bg-gradient-to-r from-transparent via-gold-400/50 to-transparent mx-auto" />
           </div>

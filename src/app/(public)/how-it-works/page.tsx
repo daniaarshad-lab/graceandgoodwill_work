@@ -5,8 +5,8 @@ import { MapPin, Search, BadgeCheck, HeartHandshake } from "lucide-react";
 const steps = [
   {
     number: "01",
-    title: "Tell us about you",
-    description: "Tell us about you and what matters most.",
+    title: "Make an enquiry",
+    description: "Contact us by phone, WhatsApp or email and tell us about the type of live-in support you’re looking for.",
     icon: (
       <MapPin
         className="h-8 w-8 text-gold-300 transition-transform duration-300 group-hover:scale-110"
@@ -16,8 +16,8 @@ const steps = [
   },
   {
     number: "02",
-    title: "Explore options",
-    description: "Explore carefully selected support options.",
+    title: "Learn how the platform works",
+    description: "We’ll explain how our introduction service works and show you how to browse and compare self-employed live-in carers.",
     icon: (
       <Search
         className="h-8 w-8 text-gold-300 transition-transform duration-300 group-hover:scale-110"
@@ -27,8 +27,8 @@ const steps = [
   },
   {
     number: "03",
-    title: "Choose support",
-    description: "Choose the support that feels right.",
+    title: "Choose your preferred carer",
+    description: "View carer profiles, including their photo, introduction video, experience, hobbies, qualifications and availability, then choose the self-employed carer you wish to engage.",
     icon: (
       <BadgeCheck
         className="h-8 w-8 text-gold-300 transition-transform duration-300 group-hover:scale-110"
@@ -38,8 +38,8 @@ const steps = [
   },
   {
     number: "04",
-    title: "Receive continuity",
-    description: "Receive continuity and ongoing support.",
+    title: "Begin your live-in arrangement",
+    description: "Once you’ve chosen your preferred self-employed carer and you both agree to proceed, your live-in arrangement can begin.",
     icon: (
       <HeartHandshake
         className="h-8 w-8 text-gold-300 transition-transform duration-300 group-hover:scale-110"
@@ -76,9 +76,7 @@ export default function HowItWorksPage() {
             <div className="h-px w-10 bg-gradient-to-l from-transparent text-gold-100" />
           </div>
           <p className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-gold-200/80 sm:text-base">
-            At Grace & Goodwill, we bring harmony and clarity to live-in care
-            coordination. We make it simple to get started, ensuring your
-            choices are respected and supported continuously.
+            Make finding the right self-employed live-in carer simple. Our introduction platform gives you the freedom to choose the carer that best suits your needs, personality and preferences, at your own pace.
           </p>
         </section>
 

@@ -98,7 +98,7 @@ export default function ServicesPage() {
 
           <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-gold-200/80">
             Every family is unique, and so is our support. Explore our core
-            services structured around dignity, continuity, and warm human
+            services structured around dignity, careful matching, and warm human
             connection.
           </p>
         </section>

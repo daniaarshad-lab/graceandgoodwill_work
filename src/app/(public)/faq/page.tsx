@@ -32,8 +32,8 @@ export default function FAQPage() {
             Frequently Asked Questions
           </h1> */}
           <p className="mx-auto mt-6 max-w-xl text-sm leading-relaxed text-gold-200/80 sm:text-base">
-            Find answers to common questions about matching, continuity, and how
-            we coordinate trustworthy live-in support.
+            Find answers to common questions about matching and how
+            we introduce trustworthy self-employed live-in support.
           </p>
         </section>
 

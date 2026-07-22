@@ -5,16 +5,16 @@ import { carerService } from "@/services/carer/carer.service";
 import SectionCard from "./shared/SectionCard";
 import Button from "@/components/Button";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
-import { 
-  Check, 
-  Star, 
-  Shield, 
-  Award, 
-  AlertCircle, 
-  ExternalLink, 
-  Download, 
-  Calendar, 
-  Clock, 
+import {
+  Check,
+  Star,
+  Shield,
+  Award,
+  AlertCircle,
+  ExternalLink,
+  Download,
+  Calendar,
+  Clock,
   CreditCard,
   X,
   FileText
@@ -71,7 +71,7 @@ export default function MembershipManagement() {
       } else {
         setSubscription(subInfo);
       }
-      
+
       const invoiceList = await carerService.getSubscriptionInvoices();
       setInvoices(invoiceList || []);
     } catch (err: any) {
@@ -86,7 +86,7 @@ export default function MembershipManagement() {
     try {
       const successUrl = `${window.location.origin}/carer?tab=membership&upgrade=success`;
       const cancelUrl = `${window.location.origin}/carer?tab=membership&upgrade=cancel`;
-      
+
       const session = await carerService.createCheckoutSession(tier, successUrl, cancelUrl);
       if (session && session.url) {
         window.location.href = session.url;
@@ -184,7 +184,7 @@ export default function MembershipManagement() {
               {getTierBadge()}
             </div>
           </div>
-          
+
           <div className="flex flex-wrap gap-3 w-full md:w-auto">
             {currentTier === "FREE" ? (
               <Button
@@ -261,7 +261,7 @@ export default function MembershipManagement() {
             <div>
               <h5 className="text-xs font-bold text-amber-400 uppercase tracking-wide">Cancellation Scheduled</h5>
               <p className="text-[11px] text-gold-100/70 leading-normal mt-0.5">
-                Your subscription will cancel automatically at the end of the billing period on <strong>{renewDate}</strong>. 
+                Your subscription will cancel automatically at the end of the billing period on <strong>{renewDate}</strong>.
                 You will continue to receive all premium benefits until then, after which your account will revert to the <strong>Free Membership</strong> and no further charges will apply.
               </p>
             </div>
@@ -298,9 +298,8 @@ export default function MembershipManagement() {
             </span>
             <ul className="space-y-2.5 text-xs text-gold-100/80">
               <li className="flex items-start gap-2.5">
-                <div className={`mt-0.5 flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full ${
-                  isGoldActive ? "bg-emerald-500/10 border border-emerald-500/20" : "bg-gold-DEFAULT/5 border border-gold-300/10"
-                }`}>
+                <div className={`mt-0.5 flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full ${isGoldActive ? "bg-emerald-500/10 border border-emerald-500/20" : "bg-gold-DEFAULT/5 border border-gold-300/10"
+                  }`}>
                   <Check className={`h-3 w-3 ${isGoldActive ? "text-emerald-400" : "text-gold-200/20"}`} strokeWidth={3} />
                 </div>
                 <div>
@@ -308,7 +307,7 @@ export default function MembershipManagement() {
                   <p className="text-[11px] text-gold-100/50 mt-0.5">Maintain active Gold status for minimum 3 consecutive months.</p>
                 </div>
               </li>
-              
+
               <li className="flex items-start gap-2.5">
                 <div className="mt-0.5 flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full bg-gold-DEFAULT/5 border border-gold-300/10">
                   <Check className="h-3 w-3 text-gold-200/20" strokeWidth={3} />
@@ -436,7 +435,7 @@ export default function MembershipManagement() {
                 </p>
                 <div className="p-3.5 bg-amber-500/5 border border-amber-500/20 rounded-xl">
                   <p className="text-[11px] text-amber-300 leading-normal">
-                    <strong>Notice:</strong> If you cancel, your premium benefits will remain active until the end of your billing cycle on <strong>{renewDate}</strong>. 
+                    <strong>Notice:</strong> If you cancel, your premium benefits will remain active until the end of your billing cycle on <strong>{renewDate}</strong>.
                     Your account will then automatically revert to the <strong>Free Membership</strong>. You will not be charged again.
                   </p>
                 </div>

@@ -8,29 +8,27 @@ const NewsletterForm = dynamic(() => import("@/components/NewsletterForm"));
 
 const carerPlans = [
   {
-    name: "Free Membership",
-    price: "£0",
-    period: "Forever",
-    tagline: "Join the Grace & Goodwill network and apply for placements without any charges.",
-    highlights: [
-      "No bank details required",
-      "No membership fees",
-      "Apply for placements after approval",
-    ],
+    name: "Submit Profile for Review",
+    price: "",
+    period: "",
+    tagline: "Join the Grace & Goodwill network and connect with clients.",
+    highlights: [],
     features: [
+      "Apply for placements after approval",
       "Placement alerts by email",
       "Basic carer profile",
       "Ability to apply for placements",
       "Access to discounted face-to-face training rates",
       "Access to discounted e-learning rates",
     ],
-    cta: "Create Free Profile",
+    cta: "Submit Profile for Review",
     href: "/register",
     featured: false,
     premium: false,
     badge: "",
-    footerText: "No bank details are needed and you will never be charged for this membership.\nYour profile and compliance will be reviewed before approval.",
+    footerText: "Your profile and compliance will be reviewed before approval.",
   },
+  /*
   {
     name: "Gold Elite Membership",
     price: "£29.99",
@@ -82,6 +80,7 @@ const carerPlans = [
     premium: true,
     badge: "Verified Professional™",
   },
+  */
 ];
 
 export default function PricingPage() {
@@ -126,10 +125,11 @@ export default function PricingPage() {
           <div className="h-px w-24 bg-gradient-to-r from-transparent via-gold-400/50 to-transparent mx-auto" />
         </div>
 
-        {/* Added items-stretch so cards equalize height */}
-        <div className="grid gap-14 sm:gap-12 md:gap-6 md:grid-cols-3 lg:gap-8 items-stretch pt-4">
-          {carerPlans.map((plan) => (
-            <div
+        {/* Centered layout for a single card */}
+        <div className="flex justify-center pt-4">
+          <div className="w-full max-w-[420px]">
+            {carerPlans.map((plan) => (
+              <div
               key={plan.name}
               className={[
                 "relative flex flex-col rounded-3xl p-6 sm:p-8 lg:p-10 border group transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] transform h-full",
@@ -202,47 +202,51 @@ export default function PricingPage() {
                   </p>
                 </div>
 
-                <div
-                  className="mb-6 h-px w-full"
-                  style={{
-                    background: plan.featured
-                      ? "linear-gradient(to right, transparent, rgba(212,175,55,0.4), transparent)"
-                      : plan.premium
-                        ? "linear-gradient(to right, transparent, rgba(212,175,55,0.25), transparent)"
-                        : "linear-gradient(to right, transparent, rgba(160,128,84,0.15), transparent)",
-                  }}
-                />
+                {plan.price !== "" && (
+                  <>
+                    <div
+                      className="mb-6 h-px w-full"
+                      style={{
+                        background: plan.featured
+                          ? "linear-gradient(to right, transparent, rgba(212,175,55,0.4), transparent)"
+                          : plan.premium
+                            ? "linear-gradient(to right, transparent, rgba(212,175,55,0.25), transparent)"
+                            : "linear-gradient(to right, transparent, rgba(160,128,84,0.15), transparent)",
+                      }}
+                    />
 
-                <div className="mb-6 flex flex-col items-center gap-1 min-h-[76px] justify-center">
-                  {plan.premium ? (
-                    <>
-                      <span className="text-3xl font-bold tracking-tight leading-none transition-colors duration-500 font-serif text-gold-50 group-hover:text-white">
-                        Earned Status
-                      </span>
-                      <span className="text-[11px] font-bold text-gold-200/80 uppercase tracking-wider bg-gold-400/10 px-3 py-1 rounded-full border border-gold-400/15 mt-3">
-                        +£10/Month • Total Value £39.99/Month
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <span
-                        className={[
-                          "text-4xl font-bold tracking-tight leading-none transition-colors duration-500 font-serif",
-                          plan.featured
-                            ? "text-gold-50 group-hover:text-white"
-                            : "text-gold-200 group-hover:text-gold-100",
-                        ].join(" ")}
-                      >
-                        {plan.price}
-                      </span>
-                      {plan.period && (
-                        <span className="text-xs font-medium text-gold-200/50 uppercase tracking-widest mt-2">
-                          {plan.period}
-                        </span>
+                    <div className="mb-6 flex flex-col items-center gap-1 min-h-[76px] justify-center">
+                      {plan.premium ? (
+                        <>
+                          <span className="text-3xl font-bold tracking-tight leading-none transition-colors duration-500 font-serif text-gold-50 group-hover:text-white">
+                            Earned Status
+                          </span>
+                          <span className="text-[11px] font-bold text-gold-200/80 uppercase tracking-wider bg-gold-400/10 px-3 py-1 rounded-full border border-gold-400/15 mt-3">
+                            +£10/Month • Total Value £39.99/Month
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <span
+                            className={[
+                              "text-4xl font-bold tracking-tight leading-none transition-colors duration-500 font-serif",
+                              plan.featured
+                                ? "text-gold-50 group-hover:text-white"
+                                : "text-gold-200 group-hover:text-gold-100",
+                            ].join(" ")}
+                          >
+                            {plan.price}
+                          </span>
+                          {plan.period && (
+                            <span className="text-xs font-medium text-gold-200/50 uppercase tracking-widest mt-2">
+                              {plan.period}
+                            </span>
+                          )}
+                        </>
                       )}
-                    </>
-                  )}
-                </div>
+                    </div>
+                  </>
+                )}
 
                 {/* Feature list with clean whitespace spacing */}
                 <div className="mb-10 flex-1 flex flex-col justify-center min-h-[220px]">
@@ -326,7 +330,8 @@ export default function PricingPage() {
                 </div>
               </div>
             </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 

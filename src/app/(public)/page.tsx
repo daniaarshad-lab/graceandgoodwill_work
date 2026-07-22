@@ -17,8 +17,8 @@ export default function HomePage() {
 
         {/* As Seen In Media Badge (Top Right) */}
         <div className="relative lg:absolute lg:-top-8 lg:right-0 2xl:-top-16 2xl:-right-16 z-30 inline-flex self-start lg:self-auto items-center gap-3 bg-navy-900 border border-gold-muted/30 px-4 py-2 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.3)] backdrop-blur-md hover:border-gold-400/50 hover:shadow-[0_0_15px_rgba(247,215,116,0.15)] transition-all cursor-default">
-          <span className="text-[10px] sm:text-xs font-semibold text-gold-200 uppercase tracking-widest hidden sm:inline-block">
-            As Seen On
+          <span className="text-[10px] sm:text-xs font-semibold text-gold-200 uppercase tracking-widest inline-block">
+            As Featured on
           </span>
           <div className="flex items-center gap-1.5">
             {/* BBC Logo Blocks */}
@@ -85,7 +85,7 @@ export default function HomePage() {
                 rel="noopener noreferrer"
               >
                 <MessageCircle className="w-5 h-5 fill-current text-emerald-400 group-hover:text-emerald-300 transition-colors" />
-                Speak To Our Team
+                Chat to Our Team
               </a>
             </Button>
           </div>

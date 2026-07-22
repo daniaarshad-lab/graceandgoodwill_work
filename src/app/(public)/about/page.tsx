@@ -1,5 +1,8 @@
 import Image from "next/image";
 import ceoImage from "@/assets/auth/ceo-image.jpeg";
+import aboutUsFirstImg from "@/assets/open/AboutUs-first-img.jpeg";
+import aboutUsSecondImg from "@/assets/open/AboutUs-second-img.jpeg";
+import aboutUsThirdImg from "@/assets/open/AboutUs-third-img.jpeg";
 
 // ─── Value card data ──────────────────────────────────────────────────────────
 
@@ -95,6 +98,19 @@ export default function AboutPage() {
     meaningful human connection.
   </p>
 
+  <div className="relative mx-auto w-full max-w-2xl my-8 sm:my-12">
+    <div className="relative rounded-2xl overflow-hidden border border-gold-400/20 shadow-2xl bg-navy-950 p-2 sm:p-3 group">
+      <div className="relative rounded-xl overflow-hidden">
+        <Image 
+          src={aboutUsFirstImg} 
+          alt="Aurea and Erica"
+          className="w-full h-auto object-cover filter contrast-[1.02] transition-transform duration-1000 group-hover:scale-[1.03]"
+        />
+        <div className="absolute inset-0 ring-1 ring-inset ring-gold-400/10 rounded-xl pointer-events-none" />
+      </div>
+    </div>
+  </div>
+
   <p>
     My sister Erica has been one of my greatest teachers in life. Supporting
     and caring for her over the years gave me first-hand insight into how
@@ -104,11 +120,37 @@ export default function AboutPage() {
     the people who love them.
   </p>
 
+  <div className="relative mx-auto w-full max-w-2xl my-8 sm:my-12">
+    <div className="relative rounded-2xl overflow-hidden border border-gold-400/20 shadow-2xl bg-navy-950 p-2 sm:p-3 group">
+      <div className="relative rounded-xl overflow-hidden">
+        <Image 
+          src={aboutUsSecondImg} 
+          alt="Aurea and Erica holding hands"
+          className="w-full h-auto object-cover filter contrast-[1.02] transition-transform duration-1000 group-hover:scale-[1.03]"
+        />
+        <div className="absolute inset-0 ring-1 ring-inset ring-gold-400/10 rounded-xl pointer-events-none" />
+      </div>
+    </div>
+  </div>
+
   <p>
     This experience, together with my professional background supporting
     vulnerable people, continues to shape every decision we make at Grace &amp;
     Goodwill.
   </p>
+
+  <div className="relative mx-auto w-full max-w-2xl my-8 sm:my-12">
+    <div className="relative rounded-2xl overflow-hidden border border-gold-400/20 shadow-2xl bg-navy-950 p-2 sm:p-3 group">
+      <div className="relative rounded-xl overflow-hidden">
+        <Image 
+          src={aboutUsThirdImg} 
+          alt="Holding hands close up"
+          className="w-full h-auto object-cover filter contrast-[1.02] transition-transform duration-1000 group-hover:scale-[1.03]"
+        />
+        <div className="absolute inset-0 ring-1 ring-inset ring-gold-400/10 rounded-xl pointer-events-none" />
+      </div>
+    </div>
+  </div>
 
   <div className="mt-12 pt-10 border-t border-gold-400/15">
     <p className="italic text-lg sm:text-xl text-gold-300/90 font-serif leading-relaxed text-center">

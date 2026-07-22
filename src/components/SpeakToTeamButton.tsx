@@ -26,7 +26,7 @@ export default function SpeakToTeamButton({
         
         <div className="flex flex-col justify-center">
           <span className="text-[#d1fae5] font-semibold text-[15px] leading-snug tracking-wide drop-shadow-sm whitespace-nowrap">
-            Speak To Our Team
+            Chat to Our Team
           </span>
           <span className="text-[#a7f3d0]/70 font-medium text-[11px] leading-snug whitespace-nowrap">
             Chat with our care team

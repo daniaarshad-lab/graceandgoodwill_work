@@ -1,0 +1,526 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
+import { agreementsService, LegalAgreement, SignedAgreement } from "@/services/agreements/agreements.service";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { fetchClientProfile } from "@/store/slices/clientSlice";
+import { clientService } from "@/services/client/client.service";
+import Button from "@/components/Button";
+
+export default function AgreementsPage() {
+  const { user, refreshUser } = useAuth();
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+  const { profile } = useAppSelector((state) => state.client);
+  const [pending, setPending] = useState<LegalAgreement[]>([]);
+  const [history, setHistory] = useState<SignedAgreement[]>([]);
+  const [activeTab, setActiveTab] = useState<"pending" | "history">("pending");
+
+  const [selectedAgreement, setSelectedAgreement] = useState<LegalAgreement | null>(null);
+  const [signatureName, setSignatureName] = useState("");
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [payingFee, setPayingFee] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const fetchAgreements = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      if (user?.role?.toUpperCase() === "CLIENT") {
+        dispatch(fetchClientProfile());
+      }
+      const pendingData = await agreementsService.getPendingAgreements();
+      const historyData = await agreementsService.getSignedHistory();
+      setPending(pendingData);
+      setHistory(historyData);
+
+      if (pendingData.length > 0) {
+        setSelectedAgreement(pendingData[0]);
+      } else {
+        setSelectedAgreement(null);
+      }
+    } catch (err: any) {
+      console.error(err);
+      setError("Failed to fetch agreements. Please refresh the page.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAgreements();
+  }, []);
+
+  const handlePrintAgreement = (agreement: LegalAgreement | null, signedRecord?: SignedAgreement) => {
+    if (!agreement) return;
+    const printWindow = window.open("", "_blank");
+    if (printWindow) {
+      const signatureBlock = signedRecord
+        ? `<div class="signature-section">
+             <h3>Electronic Signature Audit Trail</h3>
+             <p><strong>Signed Electronically By:</strong> "${signedRecord.signatureName}"</p>
+             <p><strong>Accepted Timestamp:</strong> ${new Date(signedRecord.acceptedAt).toLocaleString()}</p>
+             <p><strong>Agreement Version:</strong> v${signedRecord.versionAccepted}</p>
+             <p><strong>Audit IP Address:</strong> ${signedRecord.ipAddress}</p>
+             <p><strong>Client Device Details:</strong> ${signedRecord.userAgent}</p>
+             <div class="stamp">Grace & Goodwill Digital Agreement Certified Seal</div>
+           </div>`
+        : "";
+
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>${agreement.title} - Grace & Goodwill</title>
+            <style>
+              body { font-family: 'Times New Roman', Times, serif; line-height: 1.6; padding: 50px; color: #111; max-width: 800px; margin: auto; }
+              h1 { font-size: 26px; border-bottom: 2px solid #222; padding-bottom: 12px; font-weight: bold; text-align: center; }
+              .meta { font-size: 13px; color: #444; margin-bottom: 40px; text-align: center; font-style: italic; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+              p { margin-bottom: 18px; text-align: justify; font-size: 15px; }
+              .signature-section { margin-top: 50px; border-top: 3px double #333; padding-top: 20px; font-family: sans-serif; font-size: 13px; }
+              .signature-section h3 { font-size: 15px; margin-bottom: 15px; color: #222; border-bottom: 1px solid #ddd; padding-bottom: 5px; }
+              .signature-section p { margin-bottom: 6px; font-size: 13px; }
+              .stamp { margin-top: 25px; border: 2px solid #c99232; color: #c99232; display: inline-block; padding: 6px 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; border-radius: 4px; font-size: 11px; }
+              @media print {
+                body { padding: 20px; }
+                .no-print { display: none; }
+              }
+            </style>
+          </head>
+          <body>
+            <h1>${agreement.title}</h1>
+            <div class="meta">Document Version: ${agreement.version} | Target Role: ${agreement.targetRole} | Grace & Goodwill Care Management</div>
+            <div>${agreement.content.split("\n\n").map(para => `<p>${para.replace(/\n/g, "<br/>")}</p>`).join("")}</div>
+            ${signatureBlock}
+            <script>
+              setTimeout(function() {
+                window.print();
+              }, 250);
+            </script>
+          </body>
+        </html>
+      `);
+      printWindow.document.close();
+    }
+  };
+
+  const handleDashboardRedirect = () => {
+    const role = user?.role?.toUpperCase();
+    if (role === "CLIENT") {
+      router.push("/client");
+    } else if (role === "CARER") {
+      router.push("/carer");
+    } else if (role === "ADMIN") {
+      router.push("/admin");
+    } else {
+      router.push("/");
+    }
+  };
+
+  const handlePayLifetimeFee = async () => {
+    try {
+      setPayingFee(true);
+      setError(null);
+      const successUrl = `${window.location.origin}/client?session=success`;
+      const cancelUrl = `${window.location.origin}/agreements?session=cancelled`;
+
+      const { url } = await clientService.createLifetimeFeeCheckout(successUrl, cancelUrl);
+      if (url) {
+        window.location.href = url;
+      } else {
+        throw new Error("Failed to generate checkout URL");
+      }
+    } catch (err: any) {
+      setError(err?.message || "Failed to initiate Stripe Checkout.");
+    } finally {
+      setPayingFee(false);
+    }
+  };
+
+  const handleSign = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedAgreement) return;
+    if (!agreedToTerms) {
+      setError("You must check the agreement box before signing.");
+      return;
+    }
+    if (!signatureName.trim()) {
+      setError("Please type your name as your electronic signature.");
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      setError(null);
+      await agreementsService.signAgreement(selectedAgreement.id, signatureName);
+
+      // Reset signing state
+      setSignatureName("");
+      setAgreedToTerms(false);
+
+      // Refresh context profile
+      await refreshUser();
+
+      // Reload lists manually to verify count before redirect
+      const pendingData = await agreementsService.getPendingAgreements();
+      const historyData = await agreementsService.getSignedHistory();
+      setPending(pendingData);
+      setHistory(historyData);
+
+      if (pendingData.length === 0) {
+        const role = user?.role?.toUpperCase();
+        if (role === "CLIENT") {
+          dispatch(fetchClientProfile());
+          if (profile?.isLifetimeFeePaid) {
+            router.replace("/client");
+          }
+        } else if (role === "CARER") {
+          router.replace("/carer");
+        } else if (role === "ADMIN") {
+          router.replace("/admin");
+        } else {
+          router.replace("/");
+        }
+      } else {
+        setSelectedAgreement(pendingData[0]);
+      }
+    } catch (err: any) {
+      setError(err?.message || "Failed to sign agreement. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-navy-950 text-gold-100">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold-DEFAULT"></div>
+          <p className="text-sm tracking-wider text-gold-200">Loading agreements...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-navy-950 text-slate-100 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto">
+        {/* Page Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gold-100">
+            Legal Agreements
+          </h1>
+          <p className="mt-1.5 text-base text-gold-200/70">
+            Review and electronically sign your terms and policies.
+          </p>
+        </div>
+
+        {error && (
+          <div className="mb-6 p-4 rounded-lg bg-red-950/40 border border-red-500/30 text-red-200 text-sm text-center">
+            {error}
+          </div>
+        )}
+
+        {/* Global Tab Controls */}
+        <div className="flex justify-center mb-8">
+          <div className="inline-flex rounded-xl shadow-sm bg-navy-900/60 p-1.5 border border-navy-800">
+            <button
+              onClick={() => setActiveTab("pending")}
+              className={`px-8 py-2.5 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${
+                activeTab === "pending"
+                  ? "bg-gradient-to-r from-[#b59469] to-[#d4af37] text-navy-950 shadow-md"
+                  : "text-slate-400 hover:text-white hover:bg-navy-800/50"
+              }`}
+            >
+              Pending ({pending.length})
+            </button>
+            <button
+              onClick={() => setActiveTab("history")}
+              className={`px-8 py-2.5 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${
+                activeTab === "history"
+                  ? "bg-gradient-to-r from-[#b59469] to-[#d4af37] text-navy-950 shadow-md"
+                  : "text-slate-400 hover:text-white hover:bg-navy-800/50"
+              }`}
+            >
+              History ({history.length})
+            </button>
+          </div>
+        </div>
+
+        {activeTab === "pending" && pending.length === 0 ? (
+          <div className="animate-fade-in">
+            {user?.role?.toUpperCase() === "CLIENT" && !profile?.isLifetimeFeePaid ? (
+              <div className="bg-gradient-to-b from-navy-900/80 to-navy-900/40 border border-navy-800 rounded-2xl p-8 sm:p-10 text-center max-w-xl mx-auto shadow-xl mt-6">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-tr from-[#b59469]/20 to-[#d4af37]/10 border border-[#b59469]/30 text-[#b59469] mb-6 shadow-inner">
+                  <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                </div>
+
+                <h3 className="text-2xl font-bold text-white mb-3">Activate Your Client Account</h3>
+                <p className="text-slate-300 text-sm leading-relaxed max-w-sm mx-auto mb-8">
+                  Agreements signed successfully! To unlock carer matching, search profiles, and submit care requests, please pay the one-off Lifetime Platform Fee.
+                </p>
+
+                <div className="bg-navy-950/50 border border-navy-800/80 rounded-xl p-6 max-w-sm mx-auto text-left mb-8 shadow-inner">
+                  <div className="flex justify-between items-center text-xs font-bold text-slate-500 uppercase tracking-wider mb-5">
+                    <span>Item</span>
+                    <span>Price</span>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center text-sm font-medium text-slate-200">
+                      <span>Lifetime Registration Fee</span>
+                      <span>£299.00</span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm text-slate-400">
+                      <span>VAT (20%)</span>
+                      <span>£59.80</span>
+                    </div>
+                  </div>
+
+                  <div className="border-t border-navy-800 mt-5 pt-5 flex justify-between items-center">
+                    <span className="text-base font-semibold text-slate-300">Total Due</span>
+                    <span className="text-2xl font-bold text-[#b59469]">£358.80</span>
+                  </div>
+                </div>
+
+                <Button
+                  onClick={handlePayLifetimeFee}
+                  disabled={payingFee}
+                  variant="primary"
+                  size="lg"
+                  className="mx-auto min-w-[280px] shadow-[0_0_20px_rgba(181,148,105,0.3)] hover:shadow-[0_0_25px_rgba(181,148,105,0.5)]"
+                >
+                  {payingFee ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-navy-950" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      Redirecting to Stripe...
+                    </>
+                  ) : (
+                    "Pay Fee & Activate Matching"
+                  )}
+                </Button>
+              </div>
+            ) : (
+              <div className="bg-navy-900/60 border border-navy-800 rounded-2xl p-12 text-center max-w-xl mx-auto shadow-soft mt-8">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-950/50 border border-emerald-500/30 text-emerald-400 mb-6">
+                  <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-white mb-2">All Caught Up!</h3>
+                <p className="text-slate-400 mb-6">
+                  You have signed all required agreements. You can now access full features of the Grace & Goodwill care platform.
+                </p>
+                <Button
+                  onClick={handleDashboardRedirect}
+                  variant="primary"
+                >
+                  Go to Dashboard
+                </Button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="w-full border border-white/10 rounded-2xl p-6 sm:p-8 bg-navy-950/50 animate-fade-in">
+            {activeTab === "pending" && pending.length > 0 && (
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-6xl mx-auto">
+                {/* List of pending docs */}
+                <div className="lg:col-span-5 space-y-4">
+
+
+                  <h3 className="text-xs font-bold uppercase tracking-widest text-[#b59469] pt-2 mb-4">Required Documents</h3>
+                  {pending.map((doc) => (
+                    <button
+                      key={doc.id}
+                      onClick={() => {
+                        setSelectedAgreement(doc);
+                        setError(null);
+                      }}
+                      className={`w-full text-left p-4 rounded-xl border transition-all duration-300 relative group ${
+                        selectedAgreement?.id === doc.id
+                          ? "bg-emerald-500/20 border-emerald-500/30 shadow-md scale-[1.02]"
+                          : "bg-navy-900/30 border-navy-800 text-slate-300 hover:bg-navy-900/60 hover:border-navy-700"
+                        }`}
+                    >
+                      <div className="flex flex-col gap-2 relative z-10">
+                        <div className="flex items-center gap-3">
+                          {selectedAgreement?.id === doc.id && (
+                            <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)] shrink-0 animate-pulse" />
+                          )}
+                          <span className={`font-semibold text-lg leading-snug transition-colors duration-300 ${
+                            selectedAgreement?.id === doc.id ? 'text-emerald-100' : 'text-slate-200 group-hover:text-white'
+                          }`}>
+                            {doc.title}
+                          </span>
+                        </div>
+                        <div className={`flex items-center space-x-3 ${selectedAgreement?.id === doc.id ? 'pl-[22px]' : ''}`}>
+                          <span className={`text-[10px] uppercase tracking-wider px-2 py-1 rounded-md font-bold transition-colors ${
+                            selectedAgreement?.id === doc.id ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30" : "bg-navy-800 text-slate-300 border border-transparent"
+                          }`}>
+                            v{doc.version}
+                          </span>
+                          <span className={`text-xs flex items-center font-medium transition-colors ${
+                            selectedAgreement?.id === doc.id ? "text-emerald-300/80" : "text-slate-400"
+                          }`}>
+                            <svg className={`w-3.5 h-3.5 mr-1.5 ${selectedAgreement?.id === doc.id ? 'text-emerald-400' : 'text-[#b59469]'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Signature Required
+                          </span>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Doc Reader and Sign panel */}
+                <div className="lg:col-span-7">
+                  {selectedAgreement && (
+                    <div className="bg-navy-900/40 border border-navy-800 rounded-2xl p-6 shadow-sm">
+                      <div className="border-b border-navy-800 pb-5 mb-5 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4">
+                        <h2 className="text-2xl font-bold text-white leading-tight">{selectedAgreement.title}</h2>
+                        <div className="flex items-center space-x-2 shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => handlePrintAgreement(selectedAgreement)}
+                            className="text-xs bg-navy-950 hover:bg-navy-800 text-slate-200 border border-navy-700 px-3 py-1.5 rounded-lg transition-colors font-medium flex items-center space-x-1.5"
+                          >
+                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                            <span>Save PDF</span>
+                          </button>
+                          <span className="text-xs bg-navy-950 text-slate-300 border border-navy-700 px-2.5 py-1.5 rounded-lg font-medium">
+                            v{selectedAgreement.version}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Content Reader */}
+                      <div className="bg-navy-950 border border-navy-800 rounded-xl p-5 min-h-[160px] max-h-[250px] overflow-y-auto mb-6 text-sm text-slate-300 leading-relaxed font-sans scrollbar-thin scrollbar-thumb-navy-700 shadow-inner">
+                        {selectedAgreement.content.split("\n\n").map((para, idx) => (
+                          <p key={idx} className="mb-4">{para}</p>
+                        ))}
+                      </div>
+
+                      {/* Signature Form */}
+                      <form onSubmit={handleSign} className="space-y-5">
+                        <div className="flex items-start bg-navy-900/30 p-4 rounded-xl border border-navy-800/60">
+                          <input
+                            id="accept-terms"
+                            type="checkbox"
+                            checked={agreedToTerms}
+                            onChange={(e) => setAgreedToTerms(e.target.checked)}
+                            className="mt-0.5 h-4 w-4 rounded border-navy-700 bg-navy-950 text-[#b59469] focus:ring-[#b59469] focus:ring-offset-navy-900 cursor-pointer"
+                          />
+                          <label htmlFor="accept-terms" className="ml-3.5 text-sm text-slate-300 select-none cursor-pointer leading-tight">
+                            I confirm that I have read, understood, and accept the terms of the{" "}
+                            <span className="text-white font-bold">{selectedAgreement.title}</span>.
+                          </label>
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row gap-4 items-end">
+                          <div className="flex-grow w-full">
+                            <label htmlFor="sig-name" className="block text-xs font-semibold text-slate-400 mb-2">
+                              Full Name (Typed Signature)
+                            </label>
+                            <input
+                              id="sig-name"
+                              type="text"
+                              value={signatureName}
+                              onChange={(e) => setSignatureName(e.target.value)}
+                              placeholder="Type your official name to sign"
+                              className="w-full bg-navy-950 border border-navy-800 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-[#b59469] focus:ring-1 focus:ring-[#b59469] transition shadow-inner"
+                            />
+                          </div>
+
+                          <Button
+                            type="submit"
+                            disabled={isSubmitting || !agreedToTerms || !signatureName.trim()}
+                            variant="primary"
+                            className="w-full sm:w-auto whitespace-nowrap"
+                          >
+                            {isSubmitting ? (
+                              <>
+                                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-navy-950" fill="none" viewBox="0 0 24 24">
+                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Sealing Agreement...
+                              </>
+                            ) : (
+                              "Electronically Sign"
+                            )}
+                          </Button>
+                        </div>
+                      </form>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* History Tab */}
+        {activeTab === "history" && (
+          <div className="bg-navy-900/60 border border-navy-800 rounded-2xl p-6 shadow-soft animate-fade-in">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+              <h2 className="text-xl font-bold text-white">Signature Audit Trail</h2>
+            </div>
+            {history.length === 0 ? (
+              <p className="text-slate-400 text-center py-8">No signed agreements found.</p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-sm text-slate-300">
+                  <thead>
+                    <tr className="border-b border-navy-800 text-slate-400 font-semibold">
+                      <th className="py-3.5 px-4">Document Title</th>
+                      <th className="py-3.5 px-4 text-center">Version</th>
+                      <th className="py-3.5 px-4">Signatory Name</th>
+                      <th className="py-3.5 px-4">Signed Date</th>
+                      <th className="py-3.5 px-4">IP Address</th>
+                      <th className="py-3.5 px-4 hidden md:table-cell">User Agent</th>
+                      <th className="py-3.5 px-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {history.map((record) => (
+                      <tr key={record.id} className="border-b border-navy-800/40 hover:bg-navy-850/30 transition-colors">
+                        <td className="py-4 px-4 font-semibold text-white">{record.agreement?.title || "Legal Agreement"}</td>
+                        <td className="py-4 px-4 text-center">
+                          <span className="bg-navy-800 text-gold-DEFAULT px-2 py-0.5 rounded text-xs">v{record.versionAccepted}</span>
+                        </td>
+                        <td className="py-4 px-4 font-medium italic text-gold-100">"{record.signatureName}"</td>
+                        <td className="py-4 px-4 text-slate-450">
+                          {new Date(record.acceptedAt).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' })}
+                        </td>
+                        <td className="py-4 px-4 font-mono text-xs">{record.ipAddress}</td>
+                        <td className="py-4 px-4 text-xs text-slate-500 max-w-xs truncate hidden md:table-cell" title={record.userAgent}>
+                          {record.userAgent}
+                        </td>
+                        <td className="py-4 px-4 text-right">
+                          <button
+                            type="button"
+                            onClick={() => handlePrintAgreement(record.agreement, record)}
+                            className="text-xs text-gold-DEFAULT hover:underline font-semibold"
+                          >
+                            Print & Save PDF
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

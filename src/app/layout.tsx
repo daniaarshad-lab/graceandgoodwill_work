@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
+import ToastProvider from "@/components/Providers/ToastProvider";
 import "./globals.css";
-import SiteHeader from "@/components/SiteHeader";
-import SiteFooter from "@/components/SiteFooter";
 
 export const metadata: Metadata = {
   title: "Grace & Goodwill",
@@ -15,11 +14,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="bg-navy-950 text-gold-100 flex flex-col min-h-screen">
-        <SiteHeader />
-        <div className="flex-grow">{children}</div>
-        <SiteFooter />
+    <html lang="en" suppressHydrationWarning>
+      <head suppressHydrationWarning>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body suppressHydrationWarning className="bg-navy-950 text-gold-100 flex flex-col min-h-screen">
+        {children}
+        <ToastProvider />
       </body>
     </html>
   );

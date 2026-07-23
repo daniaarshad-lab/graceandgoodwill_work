@@ -1,36 +1,20 @@
 import { apiFetch } from "@/lib/api";
-
-export interface RegisterPayload {
-  email: string;
-  firstName: string;
-  lastName: string;
-  phone: string;
-  password?: string;
-}
-
-export interface LoginPayload {
-  email: string;
-  password?: string;
-}
-
-export interface AuthResponse {
-  accessToken: string;
-  refreshToken: string;
-  user: {
-    id: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-    phone: string;
-    role?: string;
-  };
-}
+import {
+  RegisterPayload,
+  LoginPayload,
+  AuthResponse,
+} from "@/types/auth.types";
 
 export const authService = {
   async register(payload: RegisterPayload): Promise<AuthResponse> {
+    const sanitizedPayload = {
+      ...payload,
+      email: payload.email.trim(),
+    };
+    const body = JSON.stringify(sanitizedPayload);
     const data = await apiFetch("/auth/register", {
       method: "POST",
-      body: JSON.stringify(payload),
+      body,
     });
     if (data.accessToken) {
       localStorage.setItem("accessToken", data.accessToken);
@@ -40,9 +24,14 @@ export const authService = {
   },
 
   async login(payload: LoginPayload): Promise<AuthResponse> {
+    const sanitizedPayload = {
+      ...payload,
+      email: payload.email.trim(),
+    };
+    const body = JSON.stringify(sanitizedPayload);
     const data = await apiFetch("/auth/login", {
       method: "POST",
-      body: JSON.stringify(payload),
+      body,
     });
     if (data.accessToken) {
       localStorage.setItem("accessToken", data.accessToken);
@@ -54,10 +43,15 @@ export const authService = {
   async logout(): Promise<void> {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
+    localStorage.removeItem("carer_onboarding_step");
+    localStorage.removeItem("carer_onboarding_done");
   },
 
   async getMe() {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) {
       return null;
     }
@@ -71,6 +65,8 @@ export const authService = {
       if (typeof window !== "undefined") {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
+        localStorage.removeItem("carer_onboarding_step");
+        localStorage.removeItem("carer_onboarding_done");
       }
       throw error;
     }

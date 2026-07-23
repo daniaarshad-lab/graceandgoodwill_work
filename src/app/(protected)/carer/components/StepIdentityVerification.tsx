@@ -84,6 +84,7 @@ export default function StepIdentityVerification({
   const [postcodeSuggestions, setPostcodeSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [activeTab, setActiveTab] = useState<'personal' | 'documents'>('personal');
 
   const [dropdownRel, setDropdownRel] = useState<string>(() => {
     if (!emergencyContactRelation) return "";
@@ -227,6 +228,11 @@ export default function StepIdentityVerification({
 
     if (Object.keys(newErrors).length > 0 || hasDocErrors) {
       setErrors(newErrors);
+      if (Object.keys(newErrors).length > 0) {
+        setActiveTab("personal");
+      } else {
+        setActiveTab("documents");
+      }
       return;
     }
 
@@ -262,6 +268,33 @@ export default function StepIdentityVerification({
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
+      {/* Internal Tabs */}
+      <div className="flex bg-navy-900/50 p-1 rounded-xl border border-gold-300/10 mb-6">
+        <button
+          type="button"
+          onClick={() => setActiveTab("personal")}
+          className={`flex-1 py-3 px-4 text-sm font-semibold rounded-lg transition-all ${
+            activeTab === "personal"
+              ? "bg-navy-950 text-gold-200 shadow-sm border border-gold-300/20"
+              : "text-gold-200/60 hover:text-gold-200"
+          }`}
+        >
+          Personal Information
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("documents")}
+          className={`flex-1 py-3 px-4 text-sm font-semibold rounded-lg transition-all ${
+            activeTab === "documents"
+              ? "bg-navy-950 text-gold-200 shadow-sm border border-gold-300/20"
+              : "text-gold-200/60 hover:text-gold-200"
+          }`}
+        >
+          Identity Documents
+        </button>
+      </div>
+
+      <div className={activeTab === "personal" ? "block" : "hidden"}>
       {/* Part 1: Personal Information Card */}
       <SectionCard className="space-y-6 p-6 md:p-8">
         <h3 className="text-xl font-bold text-gold-200 border-b border-gold-300/10 pb-4">
@@ -485,7 +518,9 @@ export default function StepIdentityVerification({
           </div>
         </div>
       </SectionCard>
+      </div>
 
+      <div className={activeTab === "documents" ? "block" : "hidden"}>
       {/* Part 2: Identity Documents Card */}
       <SectionCard className="space-y-6 p-6 md:p-8">
         <h3 className="text-xl font-bold text-gold-200 border-b border-gold-300/10 pb-4">
@@ -666,6 +701,7 @@ export default function StepIdentityVerification({
           )}
         </div>
       </SectionCard>
+      </div>
 
       <div className="flex justify-between items-center pt-4 gap-4">
         <Button type="button" variant="ghost-gold" onClick={onBack}>

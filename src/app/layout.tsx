@@ -1,6 +1,14 @@
 import type { Metadata } from "next";
+import { Poppins } from "next/font/google";
 import ToastProvider from "@/components/Providers/ToastProvider";
 import "./globals.css";
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-family-poppins",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Grace & Goodwill",
@@ -15,19 +23,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head suppressHydrationWarning>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-      <body suppressHydrationWarning className="bg-navy-950 text-gold-100 flex flex-col min-h-screen">
+      <head suppressHydrationWarning />
+      <body suppressHydrationWarning className={`bg-navy-950 text-gold-100 flex flex-col min-h-screen font-sans ${poppins.variable}`}>
         {children}
         <ToastProvider />
       </body>

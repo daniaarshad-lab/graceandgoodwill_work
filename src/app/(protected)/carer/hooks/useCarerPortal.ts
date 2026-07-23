@@ -145,6 +145,19 @@ export function useCarerPortal({
       if (profile.user?.dateOfBirth) {
         setDateOfBirth(profile.user.dateOfBirth.split("T")[0]);
       }
+      
+      if (profile.user?.phoneNumber) {
+        setPhone(profile.user.phoneNumber);
+      }
+      if (profile.user?.firstName) {
+        setFirstName(profile.user.firstName);
+      }
+      if (profile.user?.lastName) {
+        setLastName(profile.user.lastName);
+      }
+      if (profile.user?.email) {
+        setEmail(profile.user.email);
+      }
 
     }
   }, [profile]);

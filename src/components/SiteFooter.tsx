@@ -60,7 +60,10 @@ function SiteFooter() {
           ))}
         </div>
         
-        <div className="mt-6 pt-4 border-t border-navy-800/50 flex flex-col items-center justify-center">
+        <div className="mt-6 pt-4 border-t border-navy-800/50 flex flex-col items-center justify-center gap-3">
+          <a href="tel:+442045781269" className="flex items-center gap-2 text-sm text-gold-200 hover:text-gold-50 transition-colors">
+            <span>📞</span> <span className="font-semibold tracking-wide">020 4578 1269</span>
+          </a>
           <p className="text-[11px] sm:text-xs text-gold-100/50 font-light tracking-wider">
             &copy; Grace & Goodwill 2026. All rights reserved.
           </p>

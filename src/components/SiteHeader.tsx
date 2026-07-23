@@ -148,38 +148,45 @@ function SiteHeader() {
             );
           })}
 
-          {mounted && portalLink && !pathname.startsWith(portalLink.href) && (
-            <Link
-              href={portalLink.href}
-              prefetch={false}
-              className="text-[13px] lg:text-sm font-semibold text-gold-DEFAULT transition hover:text-gold-200"
-            >
-              {portalLink.label}
-            </Link>
-          )}
+          {/* Phone Number & Actions */}
+          <div className="flex items-center gap-4 lg:gap-6 border-l border-navy-800 pl-4 lg:pl-6 ml-2">
+            <a href="tel:+442045781269" className="text-[13px] lg:text-sm font-semibold text-emerald-400 hover:text-emerald-300 transition-colors whitespace-nowrap flex items-center gap-1.5">
+              <span>📞</span> 020 4578 1269
+            </a>
 
-          {mounted && isAuthenticated ? (
-            <Button
-              onClick={handleLogout}
-              variant="ghost-gold"
-              size="sm"
-              fullWidth={false}
-            >
-              Logout
-            </Button>
-          ) : (
-            <div className="flex items-center gap-3">
+            {mounted && portalLink && !pathname.startsWith(portalLink.href) && (
               <Link
-                href="/login"
+                href={portalLink.href}
                 prefetch={false}
-                className={`text-[13px] lg:text-sm font-semibold hover:text-gold-50 ${
-                  pathname === "/login" ? "text-gold-50" : "text-gold-200"
-                }`}
+                className="text-[13px] lg:text-sm font-semibold text-gold-DEFAULT transition hover:text-gold-200 whitespace-nowrap"
               >
-                Login
+                {portalLink.label}
               </Link>
-            </div>
-          )}
+            )}
+
+            {mounted && isAuthenticated ? (
+              <Button
+                onClick={handleLogout}
+                variant="ghost-gold"
+                size="sm"
+                fullWidth={false}
+              >
+                Logout
+              </Button>
+            ) : (
+              <div className="flex items-center gap-3">
+                <Link
+                  href="/login"
+                  prefetch={false}
+                  className={`text-[13px] lg:text-sm font-semibold hover:text-gold-50 whitespace-nowrap ${
+                    pathname === "/login" ? "text-gold-50" : "text-gold-200"
+                  }`}
+                >
+                  Login
+                </Link>
+              </div>
+            )}
+          </div>
         </nav>
       </div>
     </header>

@@ -6,9 +6,9 @@ on:
       - main
 
 env:
-    AWS_REGION: eu-west-2
+    AWS_REGION: ${{ secrets.AWS_REGION }}
     ECR_REPOSITORY: care_management_fe
-    ECR_REGISTRY: 870766663237.dkr.ecr.eu-west-2.amazonaws.com
+    ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
     ECS_CLUSTER: care_management_cluster
     ECS_SERVICE: care_management_fe-service-72xi5c3f
 

@@ -43,9 +43,12 @@ export const fetchClientReferralsThunk = createAsyncThunk(
 
 export const fetchCarerReferralsThunk = createAsyncThunk(
   "referral/fetchCarerReferrals",
-  async (status: string, { rejectWithValue }) => {
+  async (
+    { status, type }: { status: string; type?: string },
+    { rejectWithValue },
+  ) => {
     try {
-      return await referralService.getCarerReferrals(status);
+      return await referralService.getCarerReferrals(status, type);
     } catch (err: any) {
       return rejectWithValue(err.message || "Failed to load carer referrals");
     }

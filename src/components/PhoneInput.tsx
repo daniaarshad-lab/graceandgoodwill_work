@@ -47,7 +47,7 @@ export default function PhoneInput({
       height: 46px !important;
       background-color: rgba(255, 255, 255, 0.035) !important;
       color: rgba(220, 200, 170, 0.92) !important;
-      border: ${error ? "1px solid rgba(239, 68, 68, 0.55)" : "1px solid rgba(160, 128, 84, 0.22)"} !important;
+      border: 1px solid rgba(160, 128, 84, 0.22) !important;
       border-radius: 12px !important;
       font-size: 0.875rem !important;
       font-family: 'Poppins', 'Segoe UI', Inter, sans-serif !important;
@@ -56,15 +56,20 @@ export default function PhoneInput({
       transition: all 0.25s ease !important;
     }
 
+    .phone-input-container.has-error .phone-input-field {
+      border: 1px solid rgba(239, 68, 68, 0.55) !important;
+    }
+
     /* Same focus ring and border states as standard input focus */
     .phone-input-container .phone-input-field:focus {
-      border-color: ${error ? "rgba(239, 68, 68, 0.55)" : "rgba(160, 128, 84, 0.60)"} !important;
+      border-color: rgba(160, 128, 84, 0.60) !important;
       background-color: rgba(255, 255, 255, 0.06) !important;
-      box-shadow: ${
-        error
-          ? "0 0 0 3px rgba(239, 68, 68, 0.10) !important"
-          : "0 0 0 3px rgba(160, 128, 84, 0.10), 0 1px 8px rgba(0, 0, 0, 0.28) !important"
-      };
+      box-shadow: 0 0 0 3px rgba(160, 128, 84, 0.10), 0 1px 8px rgba(0, 0, 0, 0.28) !important;
+    }
+
+    .phone-input-container.has-error .phone-input-field:focus {
+      border-color: rgba(239, 68, 68, 0.55) !important;
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.10) !important;
     }
 
     /* Sits seamlessly inside the input box */
@@ -110,8 +115,12 @@ export default function PhoneInput({
     }
     
     .phone-input-container .phone-input-field:hover {
-      border-color: ${error ? "rgba(239, 68, 68, 0.55)" : "rgba(160, 128, 84, 0.38)"} !important;
+      border-color: rgba(160, 128, 84, 0.38) !important;
       background-color: rgba(255, 255, 255, 0.055) !important;
+    }
+
+    .phone-input-container.has-error .phone-input-field:hover {
+      border-color: rgba(239, 68, 68, 0.55) !important;
     }
     
     /* =========================================================================
@@ -255,7 +264,7 @@ export default function PhoneInput({
           enableSearch={true}
           disableSearchIcon={true}
           autocompleteSearch={true}
-          containerClass="phone-input-container"
+          containerClass={`phone-input-container ${error ? 'has-error' : ''}`}
           inputClass="phone-input-field"
           buttonClass="phone-input-flag-button"
           dropdownClass="phone-input-dropdown"

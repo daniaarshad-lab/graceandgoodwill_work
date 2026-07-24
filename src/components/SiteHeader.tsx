@@ -148,12 +148,8 @@ function SiteHeader() {
             );
           })}
 
-          {/* Phone Number & Actions */}
+          {/* Actions */}
           <div className="flex items-center gap-4 lg:gap-6 border-l border-navy-800 pl-4 lg:pl-6 ml-2">
-            <a href="tel:+442045781269" className="text-[13px] lg:text-sm font-semibold text-emerald-400 hover:text-emerald-300 transition-colors whitespace-nowrap flex items-center gap-1.5">
-              <span>📞</span> 020 4578 1269
-            </a>
-
             {mounted && portalLink && !pathname.startsWith(portalLink.href) && (
               <Link
                 href={portalLink.href}

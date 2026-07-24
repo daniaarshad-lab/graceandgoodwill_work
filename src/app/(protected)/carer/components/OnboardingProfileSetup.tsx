@@ -32,13 +32,28 @@ export default function OnboardingProfileSetup({
   const existingPhotoUrl = profile?.profilePhotoUrl;
   const existingVideoUrl = profile?.introVideoUrl;
 
-  const displayPhotoUrl = photoPreview || (existingPhotoUrl ? getFullPhotoUrl(existingPhotoUrl) : null);
+  const displayPhotoUrl = photoPreview || (existingPhotoUrl ? getFullPhotoUrl(existingPhotoUrl, profile?.updatedAt) : null);
 
-  function getFullPhotoUrl(url: string | null | undefined) {
+  function getFullPhotoUrl(url: string | null | undefined, updatedAt?: string) {
     if (!url) return "";
-    if (url.startsWith("http")) return url;
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-    return `${apiUrl}${url}`;
+    let finalUrl = url;
+    if (!url.startsWith("http")) {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+      let baseUrl = apiUrl;
+      try {
+        baseUrl = new URL(apiUrl).origin;
+      } catch (e) {
+        baseUrl = apiUrl.replace(/\/api\/?$/, "");
+      }
+      const cleanPath = url.startsWith("/") ? url : `/${url}`;
+      finalUrl = `${baseUrl}${cleanPath}`;
+    }
+    
+    if (updatedAt && !finalUrl.startsWith("blob:")) {
+      const separator = finalUrl.includes("?") ? "&" : "?";
+      finalUrl += `${separator}t=${new Date(updatedAt).getTime()}`;
+    }
+    return finalUrl;
   }
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {

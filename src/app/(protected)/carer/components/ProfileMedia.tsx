@@ -7,30 +7,38 @@ import { carerService } from "@/services/carer/carer.service";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
-const getFullMediaUrl = (path: string | null | undefined) => {
+const getFullMediaUrl = (path: string | null | undefined, updatedAt?: string) => {
   if (!path) return undefined;
-  if (path.startsWith("http://") || path.startsWith("https://") || path.startsWith("blob:")) return path;
-  
-  let baseUrl = API_BASE_URL;
-  try {
-    baseUrl = new URL(API_BASE_URL).origin;
-  } catch (e) {
-    baseUrl = API_BASE_URL.replace(/\/api\/?$/, "");
+  let finalUrl = path;
+  if (!path.startsWith("http://") && !path.startsWith("https://") && !path.startsWith("blob:")) {
+    let baseUrl = API_BASE_URL;
+    try {
+      baseUrl = new URL(API_BASE_URL).origin;
+    } catch (e) {
+      baseUrl = API_BASE_URL.replace(/\/api\/?$/, "");
+    }
+    const cleanPath = path.startsWith("/") ? path : `/${path}`;
+    finalUrl = `${baseUrl}${cleanPath}`;
   }
   
-  const cleanPath = path.startsWith("/") ? path : `/${path}`;
-  const finalUrl = `${baseUrl}${cleanPath}`;
+  if (updatedAt && !finalUrl.startsWith("blob:")) {
+    const timestamp = new Date(updatedAt).getTime();
+    const separator = finalUrl.includes("?") ? "&" : "?";
+    finalUrl += `${separator}t=${timestamp}`;
+  }
   return finalUrl;
 };
 
 interface ProfileMediaProps {
   profilePhotoUrl?: string | null;
   introVideoUrl?: string | null;
+  updatedAt?: string;
 }
 
 export default function ProfileMedia({
   profilePhotoUrl,
   introVideoUrl,
+  updatedAt,
 }: ProfileMediaProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
@@ -157,7 +165,7 @@ export default function ProfileMedia({
               <div className="absolute inset-0 bg-gold-DEFAULT/10 rounded-full animate-pulse-slow"></div>
               {profilePhotoUrl && !photoError ? (
                 <img
-                  src={getFullMediaUrl(profilePhotoUrl)}
+                  src={getFullMediaUrl(profilePhotoUrl, updatedAt)}
                   alt="Profile"
                   className="w-full h-full rounded-full object-cover border-4 border-navy-950 shadow-xl z-10 relative"
                   onError={() => setPhotoError(true)}

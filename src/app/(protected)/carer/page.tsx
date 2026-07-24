@@ -21,6 +21,7 @@ import UploadDocumentModal from "./components/UploadDocumentModal";
 import PortalHeader from "./components/PortalHeader";
 import PortalTabs, { TabType } from "./components/PortalTabs";
 import OnboardingStepper from "./components/OnboardingStepper";
+import StepLegalAgreements from "./components/StepLegalAgreements";
 import StepIdentityVerification from "./components/StepIdentityVerification";
 import StepProfessionalInfo from "./components/StepProfessionalInfo";
 import StepTrainingCertificates from "./components/StepTrainingCertificates";
@@ -51,6 +52,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { DocumentFileType } from "@/types/document.types";
+import { agreementsService } from "@/services/agreements/agreements.service";
 
 function CarerDashboardContent() {
   const { user } = useAuth();
@@ -143,145 +145,157 @@ function CarerDashboardContent() {
         setOnboardingStep(parseInt(urlStep, 10));
       } else {
         // Evaluate the backend persisted data to determine the current incomplete step
-        const determineInitialStep = () => {
-          const p = profileUser || {};
-          const ap = actualProfile || {};
-          const docs = documents || [];
+        const initialize = async () => {
+          const determineInitialStep = async () => {
+            const p = profileUser || {};
+            const ap = actualProfile || {};
+            const docs = documents || [];
 
-          // Step 2: Personal Info
-          if (
-            !p.firstName ||
-            !p.lastName ||
-            !ap.dateOfBirth ||
-            !ap.address ||
-            !ap.emergencyContactName ||
-            !ap.emergencyContactNumber ||
-            !ap.emergencyContactRelation
-          ) {
-            return 2;
-          }
+            // Step 2: Legal Agreements
+            try {
+              const pendingData = await agreementsService.getPendingAgreements();
+              if (pendingData.length > 0) return 2;
+            } catch (e) {
+              console.error("Failed to check pending agreements", e);
+            }
 
-          // Step 3: Professional Info
-          if (!ap.summary || !ap.experienceYears || !ap.careSpecialties?.length) {
-            return 3;
-          }
+            // Step 3: Personal Info
+            if (
+              !p.firstName ||
+              !p.lastName ||
+              !ap.dateOfBirth ||
+              !ap.address ||
+              !ap.emergencyContactName ||
+              !ap.emergencyContactNumber ||
+              !ap.emergencyContactRelation
+            ) {
+              return 3;
+            }
 
-          // Step 4: Training
-          const requiredTraining = [
-            DocumentFileType.SAFEGUARDING_ADULTS,
-            DocumentFileType.MOVING_AND_HANDLING,
-            DocumentFileType.MEDICATION_ADMINISTRATION,
-            DocumentFileType.BASIC_LIFE_SUPPORT_FIRST_AID,
-            DocumentFileType.INFECTION_PREVENTION_AND_CONTROL,
-            DocumentFileType.HEALTH_AND_SAFETY,
-            DocumentFileType.FIRE_SAFETY,
-            DocumentFileType.FOOD_HYGIENE,
-            DocumentFileType.GDPR_DATA_PROTECTION,
-          ];
-          const hasAllTraining = requiredTraining.every((type) =>
-            docs.some((d: any) => d.fileType === type),
-          );
-          if (!hasAllTraining) return 4;
+            // Step 4: Professional Info
+            if (!ap.summary || !ap.experienceYears || !ap.careSpecialties?.length) {
+              return 4;
+            }
 
-          // Step 5: Compliance
-          const hasPassportOrDL = docs.some(
-            (d: any) =>
-              d.fileType === DocumentFileType.PASSPORT ||
-              d.fileType === DocumentFileType.DRIVING_LICENCE,
-          );
-          const hasDL = docs.some(
-            (d: any) => d.fileType === DocumentFileType.DRIVING_LICENCE,
-          );
-          const hasProofOfAddress = docs.some(
-            (d: any) => d.fileType === DocumentFileType.PROOF_OF_ADDRESS,
-          );
-          const hasRightToWork = docs.some(
-            (d: any) => d.fileType === DocumentFileType.RIGHT_TO_WORK,
-          );
-          const hasNiProof = docs.some(
-            (d: any) => d.fileType === DocumentFileType.NATIONAL_INSURANCE_PROOF,
-          );
+            // Step 5: Training
+            const requiredTraining = [
+              DocumentFileType.SAFEGUARDING_ADULTS,
+              DocumentFileType.MOVING_AND_HANDLING,
+              DocumentFileType.MEDICATION_ADMINISTRATION,
+              DocumentFileType.BASIC_LIFE_SUPPORT_FIRST_AID,
+              DocumentFileType.INFECTION_PREVENTION_AND_CONTROL,
+              DocumentFileType.HEALTH_AND_SAFETY,
+              DocumentFileType.FIRE_SAFETY,
+              DocumentFileType.FOOD_HYGIENE,
+              DocumentFileType.GDPR_DATA_PROTECTION,
+            ];
+            const hasAllTraining = requiredTraining.every((type) =>
+              docs.some((d: any) => d.fileType === type),
+            );
+            if (!hasAllTraining) return 5;
 
-          let identityValid =
-            hasPassportOrDL && hasProofOfAddress && hasRightToWork && hasNiProof;
-          
-          if (hasDL) {
-            let dp = ap.drivingPreferences || [];
-            if (typeof dp === "string") {
-              try {
-                dp = JSON.parse(dp);
-              } catch {
-                dp = dp.split(",").map((s: string) => s.trim());
+            // Step 6: Compliance
+            const hasPassportOrDL = docs.some(
+              (d: any) =>
+                d.fileType === DocumentFileType.PASSPORT ||
+                d.fileType === DocumentFileType.DRIVING_LICENCE,
+            );
+            const hasDL = docs.some(
+              (d: any) => d.fileType === DocumentFileType.DRIVING_LICENCE,
+            );
+            const hasProofOfAddress = docs.some(
+              (d: any) => d.fileType === DocumentFileType.PROOF_OF_ADDRESS,
+            );
+            const hasRightToWork = docs.some(
+              (d: any) => d.fileType === DocumentFileType.RIGHT_TO_WORK,
+            );
+            const hasNiProof = docs.some(
+              (d: any) => d.fileType === DocumentFileType.NATIONAL_INSURANCE_PROOF,
+            );
+
+            let identityValid =
+              hasPassportOrDL && hasProofOfAddress && hasRightToWork && hasNiProof;
+
+            if (hasDL) {
+              let dp = ap.drivingPreferences || [];
+              if (typeof dp === "string") {
+                try {
+                  dp = JSON.parse(dp);
+                } catch {
+                  dp = dp.split(",").map((s: string) => s.trim());
+                }
+              }
+              const hasOwnVehiclePref = dp.includes(
+                "I am happy to transport clients in my own vehicle",
+              );
+              if (
+                hasOwnVehiclePref &&
+                !docs.some(
+                  (d: any) => d.fileType === DocumentFileType.BUSINESS_INSURANCE,
+                )
+              ) {
+                identityValid = false;
               }
             }
-            const hasOwnVehiclePref = dp.includes(
-              "I am happy to transport clients in my own vehicle",
+
+            const requiredCompliance = [
+              DocumentFileType.ENHANCED_DBS_CERTIFICATE,
+              DocumentFileType.PROFESSIONAL_REFERENCE_1,
+              DocumentFileType.PROFESSIONAL_REFERENCE_2,
+            ];
+            const hasAllCompliance = requiredCompliance.every((type) =>
+              docs.some((d: any) => d.fileType === type),
             );
-            if (
-              hasOwnVehiclePref &&
-              !docs.some(
-                (d: any) => d.fileType === DocumentFileType.BUSINESS_INSURANCE,
-              )
-            ) {
-              identityValid = false;
+
+            if (!identityValid || !hasAllCompliance || !ap.employmentHistory) {
+              return 6;
             }
-          }
 
-          const requiredCompliance = [
-            DocumentFileType.ENHANCED_DBS_CERTIFICATE,
-            DocumentFileType.PROFESSIONAL_REFERENCE_1,
-            DocumentFileType.PROFESSIONAL_REFERENCE_2,
-          ];
-          const hasAllCompliance = requiredCompliance.every((type) =>
-            docs.some((d: any) => d.fileType === type),
-          );
+            // Step 7: Insurance
+            const requiredInsurance = [
+              DocumentFileType.PUBLIC_LIABILITY_INSURANCE,
+            ];
+            const hasInsurance = requiredInsurance.every((type) =>
+              docs.some((d: any) => d.fileType === type),
+            );
+            if (!hasInsurance) return 7;
 
-          if (!identityValid || !hasAllCompliance || !ap.employmentHistory) {
-            return 5;
-          }
+            // Step 8: Payment Details / Supplemental
+            if (
+              !ap.bankName ||
+              !ap.accountName ||
+              !ap.accountNumber ||
+              !ap.sortCode ||
+              !ap.nationalInsuranceNumber
+            ) {
+              return 8;
+            }
 
-          // Step 6: Insurance
-          const requiredInsurance = [
-            DocumentFileType.PUBLIC_LIABILITY_INSURANCE,
-          ];
-          const hasInsurance = requiredInsurance.every((type) =>
-            docs.some((d: any) => d.fileType === type),
-          );
-          if (!hasInsurance) return 6;
+            // Step 9: Additional Quals
+            // We assume step 9 is required to pass through if they haven't uploaded an intro video yet
+            if (!ap.introVideoUrl) {
+              return 9;
+            }
 
-          // Step 7: Payment Details / Supplemental
-          if (
-            !ap.bankName ||
-            !ap.accountName ||
-            !ap.accountNumber ||
-            !ap.sortCode ||
-            !ap.nationalInsuranceNumber
-          ) {
-            return 7;
-          }
+            // Step 11: Declarations
+            if (
+              !ap.declarations?.accuracy ||
+              !ap.declarations?.checks ||
+              !ap.declarations?.share
+            ) {
+              return 11;
+            }
 
-          // Step 8: Additional Quals
-          // We assume step 8 is required to pass through if they haven't uploaded an intro video yet
-          if (!ap.introVideoUrl) {
-            return 8;
-          }
+            return 12; // Final Review
+          };
 
-          // Step 10: Declarations
-          if (
-            !ap.declarations?.accuracy ||
-            !ap.declarations?.checks ||
-            !ap.declarations?.share
-          ) {
-            return 10;
-          }
-
-          return 11; // Final Review
+          const initialStep = await determineInitialStep();
+          setOnboardingStep(initialStep);
+          setInitialStepSet(true);
         };
 
-        const initialStep = determineInitialStep();
-        setOnboardingStep(initialStep);
+        initialize();
       }
-      setInitialStepSet(true);
     }
   }, [profile, documents, loading, documentsLoading, isOnboardingParam, initialStepSet, user?.id]);
 
@@ -428,15 +442,14 @@ function CarerDashboardContent() {
 
           <div className="transition-all duration-500">
             {onboardingStep === 2 && (
-              <StepIdentityVerification
-                portal={portal}
+              <StepLegalAgreements
                 onNext={() => setOnboardingStep(3)}
                 onBack={() => router.push("/register")}
               />
             )}
 
             {onboardingStep === 3 && (
-              <StepProfessionalInfo
+              <StepIdentityVerification
                 portal={portal}
                 onNext={() => setOnboardingStep(4)}
                 onBack={() => setOnboardingStep(2)}
@@ -444,7 +457,7 @@ function CarerDashboardContent() {
             )}
 
             {onboardingStep === 4 && (
-              <StepTrainingCertificates
+              <StepProfessionalInfo
                 portal={portal}
                 onNext={() => setOnboardingStep(5)}
                 onBack={() => setOnboardingStep(3)}
@@ -452,7 +465,7 @@ function CarerDashboardContent() {
             )}
 
             {onboardingStep === 5 && (
-              <StepComplianceDocs
+              <StepTrainingCertificates
                 portal={portal}
                 onNext={() => setOnboardingStep(6)}
                 onBack={() => setOnboardingStep(4)}
@@ -460,7 +473,7 @@ function CarerDashboardContent() {
             )}
 
             {onboardingStep === 6 && (
-              <StepInsuranceDocs
+              <StepComplianceDocs
                 portal={portal}
                 onNext={() => setOnboardingStep(7)}
                 onBack={() => setOnboardingStep(5)}
@@ -468,7 +481,7 @@ function CarerDashboardContent() {
             )}
 
             {onboardingStep === 7 && (
-              <StepPaymentDetails
+              <StepInsuranceDocs
                 portal={portal}
                 onNext={() => setOnboardingStep(8)}
                 onBack={() => setOnboardingStep(6)}
@@ -476,7 +489,7 @@ function CarerDashboardContent() {
             )}
 
             {onboardingStep === 8 && (
-              <StepAdditionalQuals
+              <StepPaymentDetails
                 portal={portal}
                 onNext={() => setOnboardingStep(9)}
                 onBack={() => setOnboardingStep(7)}
@@ -484,7 +497,7 @@ function CarerDashboardContent() {
             )}
 
             {onboardingStep === 9 && (
-              <StepVideoIntro
+              <StepAdditionalQuals
                 portal={portal}
                 onNext={() => setOnboardingStep(10)}
                 onBack={() => setOnboardingStep(8)}
@@ -492,7 +505,7 @@ function CarerDashboardContent() {
             )}
 
             {onboardingStep === 10 && (
-              <StepDeclaration
+              <StepVideoIntro
                 portal={portal}
                 onNext={() => setOnboardingStep(11)}
                 onBack={() => setOnboardingStep(9)}
@@ -500,10 +513,32 @@ function CarerDashboardContent() {
             )}
 
             {onboardingStep === 11 && (
+              <StepDeclaration
+                portal={portal}
+                onNext={() => setOnboardingStep(12)}
+                onBack={() => setOnboardingStep(10)}
+              />
+            )}
+
+            {onboardingStep === 12 && (
               <StepReviewSubmit
                 portal={portal}
-                onBack={() => setOnboardingStep(10)}
+                onBack={() => setOnboardingStep(11)}
                 onSubmit={async () => {
+                  try {
+                    const pendingData = await agreementsService.getPendingAgreements();
+                    if (pendingData.length > 0) {
+                      showErrorToast(
+                        "Incomplete",
+                        "Please sign all required legal agreements in Step 2 before submitting.",
+                      );
+                      setOnboardingStep(2);
+                      return;
+                    }
+                  } catch (e) {
+                    console.error("Error checking agreements on submit", e);
+                  }
+
                   if (
                     !portal.declarations?.accuracy ||
                     !portal.declarations?.checks ||
@@ -513,7 +548,7 @@ function CarerDashboardContent() {
                       "Incomplete",
                       "Please agree to all declarations before submitting your profile.",
                     );
-                    setOnboardingStep(11);
+                    setOnboardingStep(12);
                     return;
                   }
 
@@ -528,14 +563,14 @@ function CarerDashboardContent() {
 
                   const success = await portal.submitProfile();
                   if (success) {
-                    setOnboardingStep(12);
+                    setOnboardingStep(13);
                   }
                 }}
                 isSubmitting={portal.isProfileSaving}
               />
             )}
 
-            {onboardingStep === 12 && (
+            {onboardingStep === 13 && (
               <div className="flex flex-col items-center justify-center py-16 px-8 text-center bg-gradient-to-b from-navy-900/40 to-navy-950/60 border border-gold-300/10 rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] backdrop-blur-md max-w-2xl mx-auto mt-6">
                 <div className="w-20 h-20 bg-gradient-to-br from-gold-200/20 to-gold-200/5 rounded-full flex items-center justify-center border border-gold-200/30 mb-8 shadow-[0_0_20px_rgba(245,212,160,0.1)]">
                   <svg
@@ -586,7 +621,7 @@ function CarerDashboardContent() {
                   </button>
 
                   <button
-                    onClick={() => setOnboardingStep(9)}
+                    onClick={() => setOnboardingStep(10)}
                     className="flex items-center gap-1.5 text-[12.5px] font-medium text-gold-100/50 hover:text-gold-200 transition-colors tracking-wide focus:outline-none"
                   >
                     <ArrowLeft className="w-3.5 h-3.5" />
@@ -623,7 +658,7 @@ function CarerDashboardContent() {
           lastName={profileUser?.lastName || portal.lastName}
           email={profileUser?.email || portal.email}
           phone={profileUser?.phoneNumber || portal.phone}
-          profilePhoto={actualProfile?.profilePhotoUrl || profile?.profilePhotoUrl || null}
+          profilePhoto={profile?.profilePhotoUrl || actualProfile?.profilePhotoUrl || null}
         />
 
         <PortalTabs activeTab={activeTab} setActiveTab={setActiveTab} />
@@ -685,8 +720,9 @@ function CarerDashboardContent() {
 
           {activeTab === "media" && (
             <ProfileMedia
-              profilePhotoUrl={actualProfile?.profilePhotoUrl || profile?.profilePhotoUrl}
-              introVideoUrl={actualProfile?.introVideoUrl || profile?.introVideoUrl}
+              profilePhotoUrl={profile?.profilePhotoUrl || actualProfile?.profilePhotoUrl}
+              introVideoUrl={profile?.introVideoUrl || actualProfile?.introVideoUrl}
+              updatedAt={profile?.updatedAt || actualProfile?.updatedAt}
             />
           )}
 

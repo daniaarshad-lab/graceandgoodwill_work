@@ -23,11 +23,26 @@ export default function PortalHeader({
 
   const currentPhoto = profile?.profilePhotoUrl || profilePhoto;
 
-  const getPhotoUrl = (url: string | null | undefined) => {
+  const getPhotoUrl = (url: string | null | undefined, updatedAt?: string) => {
     if (!url) return "";
-    if (url.startsWith("http")) return url;
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-    return `${apiUrl}${url}`;
+    let finalUrl = url;
+    if (!url.startsWith("http")) {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+      let baseUrl = apiUrl;
+      try {
+        baseUrl = new URL(apiUrl).origin;
+      } catch (e) {
+        baseUrl = apiUrl.replace(/\/api\/?$/, "");
+      }
+      const cleanPath = url.startsWith("/") ? url : `/${url}`;
+      finalUrl = `${baseUrl}${cleanPath}`;
+    }
+    
+    if (updatedAt && !finalUrl.startsWith("blob:")) {
+      const separator = finalUrl.includes("?") ? "&" : "?";
+      finalUrl += `${separator}t=${new Date(updatedAt).getTime()}`;
+    }
+    return finalUrl;
   };
   return (
     <section className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 rounded-3xl border border-gold-300/10 bg-navy-900/40 p-4 sm:p-6 md:p-8 shadow-elegant backdrop-blur-md">
@@ -36,7 +51,7 @@ export default function PortalHeader({
           <div className="relative h-24 w-24 sm:h-28 sm:w-28 shrink-0 overflow-hidden rounded-full border-2 border-gold-DEFAULT bg-navy-950 flex items-center justify-center text-4xl font-bold text-gold-DEFAULT shadow-soft">
             {currentPhoto ? (
               <img
-                src={getPhotoUrl(currentPhoto)}
+                src={getPhotoUrl(currentPhoto, profile?.updatedAt)}
                 alt="Avatar Preview"
                 className="w-full h-full object-cover"
               />

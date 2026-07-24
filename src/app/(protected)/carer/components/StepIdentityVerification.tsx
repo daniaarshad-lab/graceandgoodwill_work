@@ -84,6 +84,7 @@ export default function StepIdentityVerification({
   const [postcodeSuggestions, setPostcodeSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [activeTab, setActiveTab] = useState<'personal' | 'documents'>('personal');
 
   const [dropdownRel, setDropdownRel] = useState<string>(() => {
     if (!emergencyContactRelation) return "";
@@ -145,7 +146,8 @@ export default function StepIdentityVerification({
   const handlePostcodeChange = async (
     e: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    const val = e.target.value;
+    let val = e.target.value.toUpperCase().replace(/[^A-Z0-9 ]/g, '').replace(/\s+/g, ' ').trimStart();
+    if (val.length > 8) val = val.slice(0, 8);
     setPostcode(val);
 
     if (val.trim()) {
@@ -205,8 +207,17 @@ export default function StepIdentityVerification({
     if (!address?.trim()) {
       newErrors.address = "Address is required";
     }
-    if (!postcode?.trim()) {
-      newErrors.postcode = "Postcode is required";
+    const rawPostcode = postcode || "";
+    const postcodeTrimmed = rawPostcode.trim();
+
+    if (!postcodeTrimmed) {
+      newErrors.postcode = "Postcode is required.";
+    } else if (rawPostcode.length > 8) {
+      newErrors.postcode = "UK postcodes cannot be longer than 8 characters.";
+    } else if (/[^A-Z0-9 ]/i.test(rawPostcode)) {
+      newErrors.postcode = "Postcode can only contain letters, numbers, and a single space.";
+    } else if (!/^[A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}$/i.test(postcodeTrimmed)) {
+      newErrors.postcode = "Enter a valid UK postcode (e.g. SW1A 1AA).";
     }
     if (!email?.trim()) {
       newErrors.email = "Email Address is required";
@@ -227,6 +238,11 @@ export default function StepIdentityVerification({
 
     if (Object.keys(newErrors).length > 0 || hasDocErrors) {
       setErrors(newErrors);
+      if (Object.keys(newErrors).length > 0) {
+        setActiveTab("personal");
+      } else {
+        setActiveTab("documents");
+      }
       return;
     }
 
@@ -262,6 +278,35 @@ export default function StepIdentityVerification({
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
+      {/* Internal Tabs */}
+      <div className="flex justify-center mb-8 px-4">
+        <div className="flex w-full max-w-lg rounded-xl shadow-sm bg-navy-900/60 p-1.5 border border-navy-800">
+          <button
+            type="button"
+            onClick={() => setActiveTab("personal")}
+            className={`flex-1 py-3 px-4 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${
+              activeTab === "personal"
+                ? "bg-[#b59469] text-navy-950 shadow-[0_8px_30px_rgba(160,128,84,0.24)]"
+                : "text-slate-400 hover:text-white hover:bg-navy-800/50"
+            }`}
+          >
+            Personal Information
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("documents")}
+            className={`flex-1 py-3 px-4 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${
+              activeTab === "documents"
+                ? "bg-[#b59469] text-navy-950 shadow-[0_8px_30px_rgba(160,128,84,0.24)]"
+                : "text-slate-400 hover:text-white hover:bg-navy-800/50"
+            }`}
+          >
+            Identity Documents
+          </button>
+        </div>
+      </div>
+
+      <div className={activeTab === "personal" ? "block" : "hidden"}>
       {/* Part 1: Personal Information Card */}
       <SectionCard className="space-y-6 p-6 md:p-8">
         <h3 className="text-xl font-bold text-gold-200 border-b border-gold-300/10 pb-4">
@@ -341,6 +386,7 @@ export default function StepIdentityVerification({
               onChange={handlePostcodeChange}
               placeholder="Postcode"
               error={errors.postcode}
+              maxLength={8}
             />
             {showSuggestions && postcodeSuggestions.length > 0 && (
               <ul className="absolute z-50 w-full mt-1 bg-navy-900 border border-gold-300/20 rounded-md shadow-[0_8px_30px_rgba(0,0,0,0.5)] max-h-48 overflow-y-auto">
@@ -485,7 +531,9 @@ export default function StepIdentityVerification({
           </div>
         </div>
       </SectionCard>
+      </div>
 
+      <div className={activeTab === "documents" ? "block" : "hidden"}>
       {/* Part 2: Identity Documents Card */}
       <SectionCard className="space-y-6 p-6 md:p-8">
         <h3 className="text-xl font-bold text-gold-200 border-b border-gold-300/10 pb-4">
@@ -666,6 +714,7 @@ export default function StepIdentityVerification({
           )}
         </div>
       </SectionCard>
+      </div>
 
       <div className="flex justify-between items-center pt-4 gap-4">
         <Button type="button" variant="ghost-gold" onClick={onBack}>

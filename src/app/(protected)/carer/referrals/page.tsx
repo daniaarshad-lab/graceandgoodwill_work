@@ -27,7 +27,9 @@ function CarerReferralsContent() {
   const { user } = useAuth();
   const dispatch = useAppDispatch();
   const [statusFilter, setStatusFilter] = useState("ALL");
-  const [activeAccordion, setActiveAccordion] = useState<"CARER" | "CLIENT" | null>("CARER");
+  const [activeAccordion, setActiveAccordion] = useState<
+    "CARER" | "CLIENT" | null
+  >("CARER");
 
   // Load profiles, documents on mount
   useEffect(() => {
@@ -38,15 +40,19 @@ function CarerReferralsContent() {
     };
   }, [dispatch]);
 
-  // Load referrals when statusFilter changes
+  // Load referrals when statusFilter or activeAccordion changes
   useEffect(() => {
-    dispatch(fetchCarerReferralsThunk(statusFilter));
-  }, [dispatch, statusFilter]);
+    dispatch(
+      fetchCarerReferralsThunk({
+        status: statusFilter,
+        type: activeAccordion || undefined,
+      }),
+    );
+  }, [dispatch, statusFilter, activeAccordion]);
 
   const { profile, documents } = useAppSelector((state) => state.carer);
-  const { carerReferrals, clientReferrals, loading, submitting } = useAppSelector(
-    (state) => state.referral,
-  );
+  const { carerReferrals, clientReferrals, loading, submitting } =
+    useAppSelector((state) => state.referral);
 
   const profileUser = profile?.user;
 
@@ -58,9 +64,12 @@ function CarerReferralsContent() {
 
   const handleReferralSubmit = async (formData: FormData): Promise<boolean> => {
     try {
+      formData.append("role", "CARER");
       await dispatch(submitCarerReferralThunk(formData)).unwrap();
       showSuccessToast("Referral submitted successfully.");
-      dispatch(fetchCarerReferralsThunk(statusFilter));
+      dispatch(
+        fetchCarerReferralsThunk({ status: statusFilter, type: "CARER" }),
+      );
       return true;
     } catch (err: any) {
       showErrorToast("Submission Failed", err || "Failed to submit referral");
@@ -72,11 +81,21 @@ function CarerReferralsContent() {
     firstName: string;
     lastName: string;
     email: string;
+    phone?: string;
   }): Promise<boolean> => {
     try {
-      await dispatch(submitClientReferralThunk(data)).unwrap();
+      const formData = new FormData();
+      formData.append("firstName", data.firstName);
+      formData.append("lastName", data.lastName);
+      formData.append("email", data.email);
+      formData.append("phoneNumber", data.phone || "");
+      formData.append("role", "CLIENT");
+
+      await dispatch(submitCarerReferralThunk(formData)).unwrap();
       showSuccessToast("Client referred successfully.");
-      dispatch(fetchCarerReferralsThunk(statusFilter));
+      dispatch(
+        fetchCarerReferralsThunk({ status: statusFilter, type: "CLIENT" }),
+      );
       return true;
     } catch (err: any) {
       showErrorToast("Submission Failed", err || "Failed to submit referral");
@@ -101,9 +120,16 @@ function CarerReferralsContent() {
           {/* Accordion 1: Carer Referrals */}
           <div className="flex flex-col">
             <button
-              onClick={() => setActiveAccordion((prev) => (prev === "CARER" ? null : "CARER"))}
-              className={`w-full flex items-center justify-between rounded-2xl border border-gold-300/10 p-5 sm:p-6 transition-all duration-300 focus:outline-none group ${activeAccordion === "CARER" ? "bg-navy-900/60 shadow-elegant border-gold-300/30" : "bg-navy-900/40 hover:bg-navy-900/60"
-                }`}
+              onClick={() =>
+                setActiveAccordion((prev) =>
+                  prev === "CARER" ? null : "CARER",
+                )
+              }
+              className={`w-full flex items-center justify-between rounded-2xl border border-gold-300/10 p-5 sm:p-6 transition-all duration-300 focus:outline-none group ${
+                activeAccordion === "CARER"
+                  ? "bg-navy-900/60 shadow-elegant border-gold-300/30"
+                  : "bg-navy-900/40 hover:bg-navy-900/60"
+              }`}
             >
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 shrink-0 rounded-xl bg-gradient-to-br from-gold-300/20 to-gold-200/5 border border-gold-300/20 flex items-center justify-center text-lg text-gold-DEFAULT group-hover:scale-105 transition-transform">
@@ -111,17 +137,32 @@ function CarerReferralsContent() {
                 </div>
                 <div className="text-left">
                   <h2 className="text-lg sm:text-xl font-bold text-gold-200 tracking-wide">
-                    Refer a Carer                  </h2>
+                    Refer a Carer{" "}
+                  </h2>
                 </div>
               </div>
-              <div className={`transform transition-transform duration-300 ${activeAccordion === "CARER" ? "rotate-180" : ""}`}>
-                <svg className="w-5 h-5 text-gold-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+              <div
+                className={`transform transition-transform duration-300 ${activeAccordion === "CARER" ? "rotate-180" : ""}`}
+              >
+                <svg
+                  className="w-5 h-5 text-gold-200"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2.5}
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </div>
             </button>
 
-            <div className={`grid transition-all duration-500 ease-in-out ${activeAccordion === "CARER" ? "grid-rows-[1fr] opacity-100 mt-6" : "grid-rows-[0fr] opacity-0"}`}>
+            <div
+              className={`grid transition-all duration-500 ease-in-out ${activeAccordion === "CARER" ? "grid-rows-[1fr] opacity-100 mt-6" : "grid-rows-[0fr] opacity-0"}`}
+            >
               <div className="overflow-hidden">
                 <div className="grid grid-cols-1 lg:grid-cols-10 gap-8 items-stretch pb-2">
                   <div className="lg:col-span-4 h-full">
@@ -147,9 +188,16 @@ function CarerReferralsContent() {
           {/* Accordion 2: Client Referrals */}
           <div className="flex flex-col">
             <button
-              onClick={() => setActiveAccordion((prev) => (prev === "CLIENT" ? null : "CLIENT"))}
-              className={`w-full flex items-center justify-between rounded-2xl border border-gold-300/10 p-5 sm:p-6 transition-all duration-300 focus:outline-none group ${activeAccordion === "CLIENT" ? "bg-navy-900/60 shadow-elegant border-gold-300/30" : "bg-navy-900/40 hover:bg-navy-900/60"
-                }`}
+              onClick={() =>
+                setActiveAccordion((prev) =>
+                  prev === "CLIENT" ? null : "CLIENT",
+                )
+              }
+              className={`w-full flex items-center justify-between rounded-2xl border border-gold-300/10 p-5 sm:p-6 transition-all duration-300 focus:outline-none group ${
+                activeAccordion === "CLIENT"
+                  ? "bg-navy-900/60 shadow-elegant border-gold-300/30"
+                  : "bg-navy-900/40 hover:bg-navy-900/60"
+              }`}
             >
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 shrink-0 rounded-xl bg-gradient-to-br from-gold-300/20 to-gold-200/5 border border-gold-300/20 flex items-center justify-center text-lg text-gold-DEFAULT group-hover:scale-105 transition-transform">
@@ -161,14 +209,28 @@ function CarerReferralsContent() {
                   </h2>
                 </div>
               </div>
-              <div className={`transform transition-transform duration-300 ${activeAccordion === "CLIENT" ? "rotate-180" : ""}`}>
-                <svg className="w-5 h-5 text-gold-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+              <div
+                className={`transform transition-transform duration-300 ${activeAccordion === "CLIENT" ? "rotate-180" : ""}`}
+              >
+                <svg
+                  className="w-5 h-5 text-gold-200"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2.5}
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </div>
             </button>
 
-            <div className={`grid transition-all duration-500 ease-in-out ${activeAccordion === "CLIENT" ? "grid-rows-[1fr] opacity-100 mt-6" : "grid-rows-[0fr] opacity-0"}`}>
+            <div
+              className={`grid transition-all duration-500 ease-in-out ${activeAccordion === "CLIENT" ? "grid-rows-[1fr] opacity-100 mt-6" : "grid-rows-[0fr] opacity-0"}`}
+            >
               <div className="overflow-hidden">
                 <div className="grid grid-cols-1 lg:grid-cols-10 gap-8 items-stretch pb-2">
                   <div className="lg:col-span-4 h-full">

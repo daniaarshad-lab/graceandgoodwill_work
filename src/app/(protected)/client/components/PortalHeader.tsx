@@ -24,11 +24,26 @@ export default function PortalHeader({ user }: PortalHeaderProps) {
     user?.clientProfile?.profilePhotoUrl ||
     "";
 
-  const getPhotoUrl = (url: string | null | undefined) => {
+  const getPhotoUrl = (url: string | null | undefined, updatedAt?: string) => {
     if (!url) return "";
-    if (url.startsWith("http")) return url;
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-    return `${apiUrl}${url}`;
+    let finalUrl = url;
+    if (!url.startsWith("http")) {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+      let baseUrl = apiUrl;
+      try {
+        baseUrl = new URL(apiUrl).origin;
+      } catch (e) {
+        baseUrl = apiUrl.replace(/\/api\/?$/, "");
+      }
+      const cleanPath = url.startsWith("/") ? url : `/${url}`;
+      finalUrl = `${baseUrl}${cleanPath}`;
+    }
+    
+    if (updatedAt && !finalUrl.startsWith("blob:")) {
+      const separator = finalUrl.includes("?") ? "&" : "?";
+      finalUrl += `${separator}t=${new Date(updatedAt).getTime()}`;
+    }
+    return finalUrl;
   };
 
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,13 +79,13 @@ export default function PortalHeader({ user }: PortalHeaderProps) {
   const initials = `${displayUser?.firstName?.charAt(0) || "C"}${displayUser?.lastName?.charAt(0) || "P"}`;
 
   return (
-    <section className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 rounded-3xl border border-gold-300/10 bg-navy-900/40 p-4 sm:p-6 md:p-8 shadow-elegant backdrop-blur-md">
+    <section className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 flex-wrap rounded-3xl border border-gold-300/10 bg-navy-900/40 p-4 sm:p-6 md:p-8 shadow-elegant backdrop-blur-md">
       <div className="flex items-center gap-5">
         <label className="relative group cursor-pointer block">
           <div className="relative h-24 w-24 sm:h-28 sm:w-28 shrink-0 overflow-hidden rounded-full border-2 border-gold-DEFAULT bg-navy-950 flex items-center justify-center text-4xl font-bold text-gold-DEFAULT transition-transform duration-300 group-hover:scale-105 shadow-soft">
             {profilePhotoUrl && !imgError ? (
               <img
-                src={getPhotoUrl(profilePhotoUrl)}
+                src={getPhotoUrl(profilePhotoUrl, profile?.updatedAt)}
                 alt={`${displayUser?.firstName || "Client"} Profile`}
                 className="w-full h-full object-cover"
                 onError={() => setImgError(true)}
@@ -135,7 +150,7 @@ export default function PortalHeader({ user }: PortalHeaderProps) {
         </div>
       </div>
 
-      <div className="mt-4 sm:mt-0">
+      <div className="mt-4 w-full md:w-auto md:mt-0">
         <EmergencyButton onClick={handleWhatsAppRedirect} />
       </div>
     </section>

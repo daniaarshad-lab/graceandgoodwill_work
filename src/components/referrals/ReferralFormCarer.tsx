@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import Input from "@/components/Input";
 import PhoneInput from "@/components/PhoneInput";
 import Button from "@/components/Button";
@@ -18,6 +18,7 @@ export default function ReferralFormCarer({
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [notes, setNotes] = useState("");
+
   // Validation state
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -103,7 +104,6 @@ export default function ReferralFormCarer({
     }
   };
 
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) {
@@ -139,7 +139,8 @@ export default function ReferralFormCarer({
       <div className="space-y-6 flex flex-col">
         <div>
           <h3 className="text-xl font-bold text-gold-200 tracking-tight">
-            Refer a Carer          </h3>
+            Refer a Carer{" "}
+          </h3>
           <p className="text-xs text-gold-100/50 mt-1">
             Introduce qualified carer candidates to Grace & Goodwill and track
             their onboard progress.
@@ -184,7 +185,6 @@ export default function ReferralFormCarer({
             disabled={submitting}
           />
         </div>
-
 
         {/* Additional Notes */}
         <div className="space-y-1.5">

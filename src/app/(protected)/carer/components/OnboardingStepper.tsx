@@ -14,17 +14,18 @@ export interface OnboardingStepperProps {
 
 const ONBOARDING_STEPS: StepItem[] = [
   { id: 1, label: "Register", description: "Created" },
-  { id: 2, label: "Identity", description: "Docs" },
-  { id: 3, label: "Professional", description: "Info" },
-  { id: 4, label: "Training", description: "Certs" },
-  { id: 5, label: "Compliance", description: "Docs" },
-  { id: 6, label: "Insurance", description: "Docs" },
-  { id: 7, label: "Supplemental", description: "Details" },
-  { id: 8, label: "Additional", description: "Quals" },
-  { id: 9, label: "Video", description: "Intro" },
-  { id: 10, label: "Declaration", description: "Consent" },
-  { id: 11, label: "Review", description: "Submit" },
-  { id: 12, label: "Complete", description: "Ready" },
+  { id: 2, label: "Agreements", description: "Terms" },
+  { id: 3, label: "Identity", description: "Docs" },
+  { id: 4, label: "Professional", description: "Info" },
+  { id: 5, label: "Training", description: "Certs" },
+  { id: 6, label: "Compliance", description: "Docs" },
+  { id: 7, label: "Insurance", description: "Docs" },
+  { id: 8, label: "Supplemental", description: "Details" },
+  { id: 9, label: "Additional", description: "Quals" },
+  { id: 10, label: "Video", description: "Intro" },
+  { id: 11, label: "Declaration", description: "Consent" },
+  { id: 12, label: "Review", description: "Submit" },
+  { id: 13, label: "Complete", description: "Ready" },
 ];
 
 /**
@@ -79,7 +80,7 @@ interface StepperStepItemProps {
 const StepperStepItem = memo(({ step, index, totalSteps, currentStep, onStepClick }: StepperStepItemProps) => {
   const isCompleted = step.id < currentStep;
   const isActive = step.id === currentStep;
-  const isClickable = step.id <= currentStep && step.id >= 2 && step.id <= 11;
+  const isClickable = step.id <= currentStep && step.id >= 2 && step.id <= 12;
 
   return (
     <div
@@ -152,7 +153,7 @@ export default function OnboardingStepper({ currentStep, setCurrentStep }: Onboa
   // Memoize click handler to prevent unnecessary re-renders of step items
   const handleStepClick = useCallback(
     (step: StepItem) => {
-      if (step.id <= currentStep && step.id >= 2 && step.id <= 11) {
+      if (step.id <= currentStep && step.id >= 2 && step.id <= 12) {
         setCurrentStep(step.id);
       }
     },
@@ -161,18 +162,19 @@ export default function OnboardingStepper({ currentStep, setCurrentStep }: Onboa
 
   const calculateProgress = () => {
     switch (currentStep) {
-      case 1: return 8;
-      case 2: return 16;
-      case 3: return 25;
-      case 4: return 33;
-      case 5: return 41;
-      case 6: return 50;
-      case 7: return 58;
-      case 8: return 66;
-      case 9: return 75;
-      case 10: return 83;
-      case 11: return 91;
-      case 12: return 100;
+      case 1: return 7;
+      case 2: return 15;
+      case 3: return 23;
+      case 4: return 30;
+      case 5: return 38;
+      case 6: return 46;
+      case 7: return 53;
+      case 8: return 61;
+      case 9: return 69;
+      case 10: return 76;
+      case 11: return 84;
+      case 12: return 92;
+      case 13: return 100;
       default: return 0;
     }
   };

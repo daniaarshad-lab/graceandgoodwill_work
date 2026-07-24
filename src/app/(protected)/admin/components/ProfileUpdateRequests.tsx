@@ -9,8 +9,16 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 const getFullMediaUrl = (path: string | null | undefined) => {
   if (!path) return undefined;
   if (path.startsWith("http://") || path.startsWith("https://") || path.startsWith("blob:")) return path;
-  if (path.startsWith("/")) return `${API_BASE_URL}${path}`;
-  return `${API_BASE_URL}/${path}`;
+  
+  let baseUrl = API_BASE_URL;
+  try {
+    baseUrl = new URL(API_BASE_URL).origin;
+  } catch (e) {
+    baseUrl = API_BASE_URL.replace(/\/api\/?$/, "");
+  }
+  
+  const cleanPath = path.startsWith("/") ? path : `/${path}`;
+  return `${baseUrl}${cleanPath}`;
 };
 
 export default function ProfileUpdateRequests() {

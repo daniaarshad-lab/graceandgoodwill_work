@@ -25,13 +25,18 @@ export default function DocumentReviewPage() {
 
 const getFullFileUrl = (url: string | undefined | null) => {
   if (!url) return "";
-  if (url.startsWith("http://") || url.startsWith("https://")) {
+  if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("blob:")) {
     return url;
   }
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-  const normalizedBase = baseUrl.endsWith("/") ? baseUrl.slice(0, -1) : baseUrl;
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+  let baseUrl = apiUrl;
+  try {
+    baseUrl = new URL(apiUrl).origin;
+  } catch (e) {
+    baseUrl = apiUrl.replace(/\/api\/?$/, "");
+  }
   const normalizedPath = url.startsWith("/") ? url : `/${url}`;
-  return `${normalizedBase}${normalizedPath}`;
+  return `${baseUrl}${normalizedPath}`;
 };
 
 const getMockDocDetails = (category: string) => {

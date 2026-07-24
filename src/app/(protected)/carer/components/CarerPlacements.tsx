@@ -176,7 +176,16 @@ function PlacementDetailModal({ placementId, onClose }: { placementId: string, o
                         </td>
                         <td className="py-3 px-3 text-right">
                           {payment.transactionProofUrl ? (
-                            <a href={`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}${payment.transactionProofUrl}`} target="_blank" rel="noreferrer" className="text-gold-DEFAULT hover:underline font-bold text-[10px] inline-flex items-center gap-1">
+                            <a href={
+                              (() => {
+                                const url = payment.transactionProofUrl;
+                                if (url.startsWith("http")) return url;
+                                const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+                                let baseUrl = apiUrl;
+                                try { baseUrl = new URL(apiUrl).origin; } catch (e) { baseUrl = apiUrl.replace(/\/api\/?$/, ""); }
+                                return `${baseUrl}${url.startsWith("/") ? url : `/${url}`}`;
+                              })()
+                            } target="_blank" rel="noreferrer" className="text-gold-DEFAULT hover:underline font-bold text-[10px] inline-flex items-center gap-1">
                               <Download className="h-3 w-3"/>
                             </a>
                           ) : (

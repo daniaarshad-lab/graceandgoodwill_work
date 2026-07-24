@@ -18,9 +18,19 @@ export default function UploadDocumentModal({
 }: UploadDocumentModalProps) {
   function getFullUrl(url: string | null | undefined) {
     if (!url) return "";
-    if (url.startsWith("http")) return url;
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-    return `${apiUrl}${url}`;
+    let finalUrl = url;
+    if (!url.startsWith("http")) {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+      let baseUrl = apiUrl;
+      try {
+        baseUrl = new URL(apiUrl).origin;
+      } catch (e) {
+        baseUrl = apiUrl.replace(/\/api\/?$/, "");
+      }
+      const cleanPath = url.startsWith("/") ? url : `/${url}`;
+      finalUrl = `${baseUrl}${cleanPath}`;
+    }
+    return finalUrl;
   }
 
   const fullPreviewUrl = previewDoc ? getFullUrl(previewDoc.previewUrl) : "";

@@ -6,11 +6,13 @@ import { Eye, EyeOff } from "lucide-react";
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label: React.ReactNode;
   error?: string;
+  helperText?: React.ReactNode;
 }
 
 export default function Input({
   label,
   error,
+  helperText,
   type,
   className = "",
   ...props
@@ -56,7 +58,11 @@ export default function Input({
         )}
       </div>
 
-      {error && <p className="form-help text-red-500">{error}</p>}
+      {error ? (
+        <p className="form-help text-red-500">{error}</p>
+      ) : helperText ? (
+        <p className="form-help text-gold-200/50 text-[12px] pl-1">{helperText}</p>
+      ) : null}
     </div>
   );
 }

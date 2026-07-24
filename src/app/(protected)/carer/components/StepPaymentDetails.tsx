@@ -3,6 +3,7 @@ import SectionCard from "./shared/SectionCard";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import { Info } from "lucide-react";
+import { isValidNINumber } from "../utils/validation";
 
 interface Props {
   portal: any;
@@ -57,10 +58,56 @@ export default function StepPaymentDetails({ portal, onNext, onBack }: Props) {
     }
   };
 
+  const validateNiNumber = (val: string) => {
+    if (!val?.trim()) {
+      return "National Insurance Number is required";
+    }
+    if (!isValidNINumber(val)) {
+      return "Enter a valid NI Number: 2 letters, 6 numbers, and 1 letter (e.g. AB123456C)";
+    }
+    return "";
+  };
+
   const handleNiNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNationalInsuranceNumber(e.target.value.toUpperCase());
+    const raw = e.target.value.toUpperCase();
+    
+    // Filter input character by character based on expected positions
+    let filtered = "";
+    for (const char of raw) {
+      if (filtered.length < 2) {
+        if (/[A-Z]/.test(char)) filtered += char;
+      } else if (filtered.length < 8) {
+        if (/[0-9]/.test(char)) filtered += char;
+      } else if (filtered.length === 8) {
+        if (/[A-Z]/.test(char)) filtered += char;
+      }
+    }
+    
+    setNationalInsuranceNumber(filtered);
+    
     if (errors.nationalInsuranceNumber) {
-      setErrors((prev) => ({ ...prev, nationalInsuranceNumber: "" }));
+      // Clear error immediately if it becomes valid
+      const errorMsg = validateNiNumber(filtered);
+      if (!errorMsg) {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors.nationalInsuranceNumber;
+          return newErrors;
+        });
+      }
+    }
+  };
+
+  const handleNiNumberBlur = () => {
+    const errorMsg = validateNiNumber(nationalInsuranceNumber);
+    if (errorMsg) {
+      setErrors((prev) => ({ ...prev, nationalInsuranceNumber: errorMsg }));
+    } else if (errors.nationalInsuranceNumber) {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors.nationalInsuranceNumber;
+        return newErrors;
+      });
     }
   };
 
@@ -84,10 +131,9 @@ export default function StepPaymentDetails({ portal, onNext, onBack }: Props) {
       newErrors.sortCode = "Sort Code must be in XX-XX-XX format";
     }
 
-    if (!nationalInsuranceNumber?.trim()) {
-      newErrors.nationalInsuranceNumber = "National Insurance Number is required";
-    } else if (!/^[A-CEGHJ-PR-TW-Z]{1}[A-CEGHJ-NPR-TW-Z]{1}[0-9]{6}[A-D\s]$/i.test(nationalInsuranceNumber.replace(/\s/g, ""))) {
-      newErrors.nationalInsuranceNumber = "Please enter a valid UK National Insurance Number";
+    const niError = validateNiNumber(nationalInsuranceNumber);
+    if (niError) {
+      newErrors.nationalInsuranceNumber = niError;
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -171,8 +217,11 @@ export default function StepPaymentDetails({ portal, onNext, onBack }: Props) {
                 }
                 value={nationalInsuranceNumber}
                 onChange={handleNiNumberChange}
+                onBlur={handleNiNumberBlur}
                 placeholder="e.g. AB123456C"
                 error={errors.nationalInsuranceNumber}
+                helperText="Format: 2 letters, 6 numbers, and 1 letter (e.g. AB123456C)"
+                maxLength={9}
               />
             </div>
           </div>

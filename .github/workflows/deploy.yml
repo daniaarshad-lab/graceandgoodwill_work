@@ -72,6 +72,7 @@ jobs:
           EOF
 
       - name: Build & Push Frontend Docker Image
+        id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ env.ECR_REPOSITORY }}
@@ -83,7 +84,8 @@ jobs:
             
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
-
+          
+          # Sets output for steps.build-image.outputs.image_uri
           echo "image_uri=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
       - name: Download Current Task Definition
@@ -98,8 +100,8 @@ jobs:
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: task-definition.json
-          container-name: care_management_fe  # Must match the EXACT container name inside your task definition JSON
-          image: ${{ steps.build-image.outputs.image_uri }} # Updated to match output name above
+          container-name: care_management_fe  # Matches "name": "care_management_fe" in your JSON screenshot perfectly
+          image: ${{ steps.build-image.outputs.image_uri }}
 
       - name: Deploy Updated Task Definition to ECS Service
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2

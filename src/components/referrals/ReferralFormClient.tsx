@@ -13,6 +13,7 @@ interface ReferralFormClientProps {
     firstName: string;
     lastName: string;
     email: string;
+    phone: string;
   }) => Promise<boolean>;
   submitting: boolean;
 }
@@ -46,9 +47,11 @@ export default function ReferralFormClient({
       tempErrors.email = emailError;
     }
 
-    if (phone.trim()) {
+    if (!phone.trim()) {
+      tempErrors.phone = "Phone number is required";
+    } else {
       const phoneError = validatePhone(phone);
-      if (phoneError && phoneError !== "Phone number is required") {
+      if (phoneError) {
         tempErrors.phone = phoneError;
       }
     }
@@ -103,29 +106,12 @@ export default function ReferralFormClient({
 
   const handlePhoneChange = (val: string) => {
     setPhone(val);
-    const trimmed = val.trim();
-    if (!trimmed) {
+    if (errors.phone && val.trim()) {
       setErrors((prev) => {
         const copy = { ...prev };
         delete copy.phone;
         return copy;
       });
-    } else {
-      const phoneError = validatePhone(trimmed);
-      if (!phoneError || phoneError === "Phone number is required") {
-        setErrors((prev) => {
-          const copy = { ...prev };
-          delete copy.phone;
-          return copy;
-        });
-      } else {
-        if (errors.phone) {
-          setErrors((prev) => ({
-            ...prev,
-            phone: phoneError,
-          }));
-        }
-      }
     }
   };
 
@@ -137,6 +123,7 @@ export default function ReferralFormClient({
       firstName: firstName.trim(),
       lastName: lastName.trim(),
       email: email.trim(),
+      phone: phone.trim() ? phone.trim() : undefined,
     };
 
     const success = await onSubmit(payload);
@@ -206,7 +193,7 @@ export default function ReferralFormClient({
             />
 
             <PhoneInput
-              label="Phone Number (Optional)"
+              label="Phone Number *"
               placeholder="e.g. +44 7700 900555"
               value={phone}
               onChange={handlePhoneChange}

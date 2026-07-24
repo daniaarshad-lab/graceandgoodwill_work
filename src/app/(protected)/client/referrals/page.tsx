@@ -38,9 +38,17 @@ function ClientReferralsContent() {
     firstName: string;
     lastName: string;
     email: string;
+    phone: string;
   }): Promise<boolean> => {
     try {
-      await dispatch(submitClientReferralThunk(data)).unwrap();
+      await dispatch(
+        submitClientReferralThunk({
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          phoneNumber: data.phone,
+        }),
+      ).unwrap();
       showSuccessToast("Client referred successfully");
       dispatch(fetchClientReferralsThunk(statusFilter));
       return true;

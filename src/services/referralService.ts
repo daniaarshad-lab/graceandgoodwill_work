@@ -77,7 +77,10 @@ export const referralService = {
     return response as ClientReferralResponse[];
   },
 
-  async getCarerReferrals(status: string): Promise<CarerReferralResponse[]> {
+  async getCarerReferrals(
+    status: string,
+    type?: string,
+  ): Promise<CarerReferralResponse[]> {
     const token =
       typeof window !== "undefined"
         ? localStorage.getItem("accessToken")
@@ -87,7 +90,12 @@ export const referralService = {
       throw new Error("No token found");
     }
 
-    const response = await apiFetch(`/carer/referrals?status=${status}`, {
+    let url = `/carer/referrals?status=${status}`;
+    if (type) {
+      url += `&type=${type}`;
+    }
+
+    const response = await apiFetch(url, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,

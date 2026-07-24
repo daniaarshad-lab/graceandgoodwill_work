@@ -39,7 +39,7 @@ jobs:
         id: version
         run: |
           ECR_REGISTRY="${{ steps.login-ecr.outputs.registry }}"
-          REPO="${{ env.ECR_REPOSITORY_FRONTEND }}"
+          REPO="${{ env.ECR_REPOSITORY }}"
 
           echo "Checking ECR for latest tags in $REPO..."
           TAGS=$(aws ecr describe-images --repository-name $REPO --query 'imageDetails[*].imageTags[*]' --output text 2>/dev/null | tr '\t' '\n' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' || true)
@@ -84,6 +84,25 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
-      - name: Force ECS Frontend Redeployment
+      - name: Download Current Task Definition
         run: |
-          aws ecs update-service --cluster ${{ env.ECS_CLUSTER }} --service ${{ env.ECS_SERVICE }} --force-new-deployment
+          aws ecs describe-task-definition \
+            --task-definition ${{ env.ECR_REPOSITORY }} \
+            --query taskDefinition \
+            > task-definition.json
+
+      - name: Update Image Tag in Task Definition
+        id: render-task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ env.ECR_REPOSITORY }}  # Must match the Container Name in ECS Task Def
+          image: ${{ steps.build-image.outputs.image }}
+
+      - name: Deploy Updated Task Definition to ECS Service
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.render-task-def.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true

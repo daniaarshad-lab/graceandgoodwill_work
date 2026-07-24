@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { clientService } from "@/services/client/client.service";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { fetchClientProfile } from "@/store/slices/clientSlice";
-import { Download, ExternalLink, Printer } from "lucide-react";
+import { fetchClientProfile, getClientPlacements } from "@/store/slices/clientSlice";
+import { Download, Printer } from "lucide-react";
 
 interface Invoice {
   id: string;
@@ -18,6 +18,7 @@ interface Invoice {
   status: string;
   pdfUrl?: string;
   receiptUrl?: string;
+  gocardlessPaymentId?: string | null;
   billingPeriodStart: string;
   billingPeriodEnd: string;
   placement?: {
@@ -30,7 +31,7 @@ interface Invoice {
 export default function ClientBillingPage() {
   const { user, refreshUser } = useAuth();
   const dispatch = useAppDispatch();
-  const { profile } = useAppSelector((state) => state.client);
+  const { profile, placements } = useAppSelector((state) => state.client);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
@@ -41,6 +42,7 @@ export default function ClientBillingPage() {
       setLoading(true);
       setError(null);
       dispatch(fetchClientProfile());
+      dispatch(getClientPlacements());
       const invoicesData = await clientService.getInvoices();
       const list = Array.isArray(invoicesData) 
         ? invoicesData 
@@ -56,14 +58,47 @@ export default function ClientBillingPage() {
 
   useEffect(() => {
     loadBillingData();
-  }, []);
+
+    // Check if redirected back from a checkout success
+    const params = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
+    if (params.get("session") === "success" || params.get("billing_request_id")) {
+      refreshUser();
+
+      // Start polling backend updates as GoCardless webhook processing is asynchronous
+      let pollCount = 0;
+      const interval = setInterval(async () => {
+        pollCount++;
+        
+        await refreshUser();
+        dispatch(fetchClientProfile());
+        dispatch(getClientPlacements());
+        
+        try {
+          const invoicesData = await clientService.getInvoices();
+          const list = Array.isArray(invoicesData) 
+            ? invoicesData 
+            : (invoicesData && Array.isArray((invoicesData as any).items) ? (invoicesData as any).items : []);
+          setInvoices(list);
+        } catch (e) {
+          console.error("Polling invoices failed", e);
+        }
+
+        // Stop polling after 6 attempts (12 seconds)
+        if (pollCount >= 6) {
+          clearInterval(interval);
+        }
+      }, 2000);
+
+      return () => clearInterval(interval);
+    }
+  }, [dispatch, refreshUser]);
 
   const handlePayLifetimeFee = async () => {
     try {
       setActionLoading("lifetime");
       setError(null);
-      const successUrl = `${window.location.origin}/client/billing?session=success`;
-      const cancelUrl = `${window.location.origin}/client/billing?session=cancelled`;
+      const successUrl = `${window.location.origin}/client?tab=billing&session=success`;
+      const cancelUrl = `${window.location.origin}/client?tab=billing&session=cancelled`;
       
       const { url } = await clientService.createLifetimeFeeCheckout(successUrl, cancelUrl);
       if (url) {
@@ -72,7 +107,7 @@ export default function ClientBillingPage() {
         throw new Error("Failed to generate checkout URL");
       }
     } catch (err: any) {
-      setError(err?.message || "Failed to initiate Stripe Checkout.");
+      setError(err?.message || "Failed to initiate GoCardless Checkout.");
     } finally {
       setActionLoading(null);
     }
@@ -82,8 +117,8 @@ export default function ClientBillingPage() {
     try {
       setActionLoading(placementId);
       setError(null);
-      const successUrl = `${window.location.origin}/client/billing?session=success`;
-      const cancelUrl = `${window.location.origin}/client/billing?session=cancelled`;
+      const successUrl = `${window.location.origin}/client?tab=billing&session=success`;
+      const cancelUrl = `${window.location.origin}/client?tab=billing&session=cancelled`;
       
       const { url } = await clientService.subscribeToPlacement(placementId, successUrl, cancelUrl);
       if (url) {
@@ -92,7 +127,7 @@ export default function ClientBillingPage() {
         throw new Error("Failed to generate subscription checkout URL");
       }
     } catch (err: any) {
-      setError(err?.message || "Failed to initiate subscription checkout.");
+      setError(err?.message || "Failed to initiate GoCardless subscription setup.");
     } finally {
       setActionLoading(null);
     }
@@ -163,7 +198,8 @@ export default function ClientBillingPage() {
                 <div class="details">
                   <strong>Invoice Number:</strong> ${inv.invoiceNumber}<br/>
                   <strong>Date of Issue:</strong> ${new Date(inv.invoiceDate).toLocaleDateString()}<br/>
-                  <strong>Status:</strong> <span class="badge">${inv.status}</span>
+                  <strong>Status:</strong> <span class="badge">${inv.status}</span><br/>
+                  ${inv.gocardlessPaymentId ? `<strong>GoCardless Payment ID:</strong> ${inv.gocardlessPaymentId}` : ""}
                 </div>
               </div>
             </div>
@@ -229,8 +265,6 @@ export default function ClientBillingPage() {
     }
   };
 
-  // Find any placements that need subscription setup
-  // We can infer placements from invoices or profile relations
   const isLifetimePaid = profile?.isLifetimeFeePaid;
 
   const getStatusBadge = (status: string) => {
@@ -258,184 +292,212 @@ export default function ClientBillingPage() {
           </p>
         </div>
 
-          {error && (
-            <div className="p-4 rounded-xl bg-red-950/30 border border-red-500/30 text-red-200 text-sm">
-              {error}
-            </div>
-          )}
+        {error && (
+          <div className="p-4 rounded-xl bg-red-950/30 border border-red-500/30 text-red-200 text-sm">
+            {error}
+          </div>
+        )}
 
-          {/* Core Cards: Lifetime Fee & Active Placements */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            
-            {/* Lifetime Platform Fee Card */}
-            <div className="bg-navy-900/60 border border-navy-800 rounded-2xl p-6 shadow-soft flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-bold text-white uppercase tracking-wider">Lifetime Platform Fee</h2>
-                  {isLifetimePaid ? (
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-950/60 border border-emerald-500/30 text-emerald-400">
-                      Active & Paid
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-red-950/60 border border-red-500/30 text-red-400 animate-pulse">
-                      Payment Required
-                    </span>
-                  )}
-                </div>
-                <p className="text-slate-300 text-sm leading-relaxed mb-6">
-                  Grace & Goodwill charges a one-off lifetime registration fee of <span className="font-semibold text-white">£299 + VAT</span> which covers your initial consultation, comprehensive client onboarding, and lifetime access to our carer matching platform.
-                </p>
-              </div>
-
-              <div>
+        {/* Core Cards: Lifetime Fee & Active Placements */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          
+          {/* Lifetime Platform Fee Card */}
+          <div className="bg-navy-900/60 border border-navy-800 rounded-2xl p-6 shadow-soft flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-bold text-white uppercase tracking-wider">Lifetime Platform Fee</h2>
                 {isLifetimePaid ? (
-                  <div className="bg-navy-950 border border-navy-850 rounded-xl p-4 flex items-center space-x-3 text-slate-400">
-                    <svg className="h-6 w-6 text-emerald-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span className="text-sm">Verified on security log. Matching active.</span>
-                  </div>
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-950/60 border border-emerald-500/30 text-emerald-400">
+                    Active & Paid
+                  </span>
                 ) : (
-                  <button
-                    onClick={handlePayLifetimeFee}
-                    disabled={actionLoading !== null}
-                    className="w-full bg-[#d4af37] hover:bg-gold-400 text-navy-950 font-bold py-3.5 px-4 rounded-xl transition shadow-elegant flex items-center justify-center disabled:opacity-50"
-                  >
-                    {actionLoading === "lifetime" ? (
-                      <>
-                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-navy-950" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                        </svg>
-                        Redirecting to Stripe...
-                      </>
-                    ) : (
-                      "Pay Registration Fee (£358.80 Inc. VAT)"
-                    )}
-                  </button>
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-red-950/60 border border-red-500/30 text-red-400 animate-pulse">
+                    Payment Required
+                  </span>
                 )}
               </div>
+              <p className="text-slate-300 text-sm leading-relaxed mb-6">
+                Grace & Goodwill charges a one-off lifetime registration fee of <span className="font-semibold text-white">£299 + VAT</span> which covers your initial consultation, comprehensive client onboarding, and lifetime access to our carer matching platform.
+              </p>
             </div>
 
-            {/* Active Placements Subscription Card */}
-            <div className="bg-navy-900/60 border border-navy-800 rounded-2xl p-6 shadow-soft flex flex-col justify-between">
-              <div>
-                <h2 className="text-lg font-bold text-white uppercase tracking-wider mb-4">Placement Weekly Subscription</h2>
-                <p className="text-slate-300 text-sm leading-relaxed mb-6">
-                  Once we match you with a carer and confirm the placement, you must set up your weekly recurring subscription. Weekly fees are collected in advance every 7 days via Stripe.
-                </p>
-              </div>
-
-              <div>
-                {/* List unique placements that don't have stripeSubscriptionId set */}
-                {invoices.length > 0 && invoices.some(inv => inv.placement && !inv.placement.weeklyFee) ? (
-                  <p className="text-slate-400 text-sm mb-4">No active placements requiring configuration.</p>
-                ) : null}
-
-                {/* Provide a quick checkout helper for any placement linked in invoice history */}
-                {invoices.map((inv) => {
-                  if (inv.placement && !inv.placement.weeklyFee) { // Wait, placeholder checkout
-                    return (
-                      <button
-                        key={inv.id}
-                        onClick={() => handleSubscribePlacement(inv.placement!.id)}
-                        disabled={actionLoading !== null}
-                        className="w-full bg-navy-800 hover:bg-navy-700 border border-gold-DEFAULT/20 text-gold-DEFAULT font-bold py-3.5 px-4 rounded-xl transition flex items-center justify-center disabled:opacity-50"
-                      >
-                        Activate Subscription for Placement #{inv.placement!.id.slice(0, 8)}
-                      </button>
-                    );
-                  }
-                  return null;
-                })}
-                
+            <div>
+              {isLifetimePaid ? (
                 <div className="bg-navy-950 border border-navy-850 rounded-xl p-4 flex items-center space-x-3 text-slate-400">
-                  <svg className="h-5 w-5 text-gold-DEFAULT flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <svg className="h-6 w-6 text-emerald-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
                   </svg>
-                  <span className="text-sm">Subscriptions anchor to the placement start date.</span>
+                  <span className="text-sm">Verified on security log. Matching active.</span>
                 </div>
-              </div>
+              ) : (
+                <button
+                  onClick={handlePayLifetimeFee}
+                  disabled={actionLoading !== null}
+                  className="w-full bg-[#d4af37] hover:bg-gold-400 text-navy-950 font-bold py-3.5 px-4 rounded-xl transition shadow-elegant flex items-center justify-center disabled:opacity-50"
+                >
+                  {actionLoading === "lifetime" ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-navy-950" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      Redirecting to Checkout...
+                    </>
+                  ) : (
+                    "Pay Registration Fee (£358.80 Inc. VAT)"
+                  )}
+                </button>
+              )}
             </div>
-
           </div>
 
-          {/* Invoice History */}
-          <div className="bg-navy-900/60 border border-navy-800 rounded-2xl p-6 shadow-soft">
-            <h2 className="text-xl font-bold text-white mb-6">Payment History</h2>
-            
-            {loading ? (
-              <div className="py-12 flex justify-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gold-DEFAULT"></div>
-              </div>
-            ) : invoices.length === 0 ? (
-              <p className="text-slate-400 text-center py-12">No invoices generated yet.</p>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse text-sm text-slate-300">
-                  <thead>
-                    <tr className="border-b border-navy-800 text-slate-400 font-semibold">
-                      <th className="py-3.5 px-4">Invoice ID</th>
-                      <th className="py-3.5 px-4">Billing Period</th>
-                      <th className="py-3.5 px-4">Issue Date</th>
-                      <th className="py-3.5 px-4 text-right">Amount</th>
-                      <th className="py-3.5 px-4 text-center">Status</th>
-                      <th className="py-3.5 px-4 text-right">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {invoices.map((inv) => (
-                      <tr key={inv.id} className="border-b border-navy-850 hover:bg-navy-850/20 transition-colors">
-                        <td className="py-4 px-4 font-semibold text-white">{inv.invoiceNumber}</td>
-                        <td className="py-4 px-4 text-slate-400">
-                          {new Date(inv.billingPeriodStart).toLocaleDateString()} - {new Date(inv.billingPeriodEnd).toLocaleDateString()}
-                        </td>
-                        <td className="py-4 px-4">{new Date(inv.invoiceDate).toLocaleDateString()}</td>
-                        <td className="py-4 px-4 text-right font-semibold text-white">
-                          £{Number(inv.total).toFixed(2)}
-                        </td>
-                        <td className="py-4 px-4 text-center">
-                          <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${getStatusBadge(inv.status)}`}>
-                            {inv.status}
-                          </span>
-                        </td>
-                        <td className="py-4 px-4 text-right">
-                          <div className="flex justify-end items-center gap-4">
-                            {inv.pdfUrl && (
-                              <a
-                                href={inv.pdfUrl}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="inline-flex items-center gap-1 font-bold text-gold-DEFAULT hover:underline text-xs"
-                              >
-                                <Download className="w-3.5 h-3.5" /> PDF
-                              </a>
-                            )}
-                            {inv.receiptUrl && (
-                              <a
-                                href={inv.receiptUrl}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="inline-flex items-center gap-1 font-bold text-slate-400 hover:text-gold-DEFAULT hover:underline text-xs"
-                              >
-                                <ExternalLink className="w-3.5 h-3.5" /> Stripe
-                              </a>
-                            )}
+          {/* Active Placements Subscription Card */}
+          <div className="bg-navy-900/60 border border-navy-800 rounded-2xl p-6 shadow-soft flex flex-col justify-between">
+            <div>
+              <h2 className="text-lg font-bold text-white uppercase tracking-wider mb-4">Placement Weekly Subscription</h2>
+              <p className="text-slate-300 text-sm leading-relaxed mb-6">
+                Once we match you with a carer and confirm the placement, you must set up your weekly recurring subscription. Weekly fees are collected in advance every 7 days via Direct Debit (GoCardless).
+              </p>
+            </div>
+
+            <div>
+              {!placements || placements.length === 0 ? (
+                <p className="text-slate-400 text-sm py-4 text-center">No care placements found requiring configuration.</p>
+              ) : (
+                <div className="space-y-4 mb-6">
+                  {placements.map((placement) => {
+                    const carerName = placement.carerProfile?.user 
+                      ? `${placement.carerProfile.user.firstName} ${placement.carerProfile.user.lastName}` 
+                      : "Carer Specialist";
+                    const startDateStr = new Date(placement.startDate).toLocaleDateString();
+                    const endDateStr = placement.endDate ? new Date(placement.endDate).toLocaleDateString() : "Ongoing";
+                    const isSubscribed = !!placement.gocardlessMandateId || !!profile?.gocardlessMandateId;
+                    
+                    return (
+                      <div key={placement.id} className="bg-navy-950 border border-navy-850 rounded-xl p-4 flex flex-col justify-between gap-4">
+                        <div className="space-y-1">
+                          <h3 className="font-bold text-white text-sm">{carerName}</h3>
+                          <div className="flex flex-col gap-1 text-xs text-slate-400">
+                            <span>
+                              <strong className="text-slate-300">Period:</strong> {startDateStr} — {endDateStr}
+                            </span>
+                            <span>
+                              <strong className="text-slate-300">Weekly Fee:</strong> £{Number(placement.weeklyFee || 0).toFixed(2)} / week
+                            </span>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center w-full">
+                          {isSubscribed ? (
+                            <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-950/60 border border-emerald-500/30 text-emerald-400 w-full justify-center">
+                              <svg className="w-3.5 h-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
+                              </svg>
+                              Direct Debit Active
+                            </span>
+                          ) : (
                             <button
-                              onClick={() => handlePrintInvoice(inv)}
+                              onClick={() => handleSubscribePlacement(placement.id)}
+                              disabled={actionLoading !== null}
+                              className="w-full bg-[#d4af37] hover:bg-gold-400 text-navy-950 font-bold py-2.5 px-4 rounded-xl text-xs transition flex items-center justify-center disabled:opacity-50"
+                            >
+                              {actionLoading === placement.id ? (
+                                <>
+                                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-navy-950" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                  </svg>
+                                  Redirecting...
+                                </>
+                              ) : (
+                                "Authorize Direct Debit"
+                              )}
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              
+              <div className="bg-navy-950 border border-navy-850 rounded-xl p-4 flex items-center space-x-3 text-slate-400">
+                <svg className="h-5 w-5 text-gold-DEFAULT flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span className="text-sm">Subscriptions anchor to the placement start date.</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Invoice History */}
+        <div className="bg-navy-900/60 border border-navy-800 rounded-2xl p-6 shadow-soft">
+          <h2 className="text-xl font-bold text-white mb-6">Payment History</h2>
+          
+          {loading ? (
+            <div className="py-12 flex justify-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gold-DEFAULT"></div>
+            </div>
+          ) : invoices.length === 0 ? (
+            <p className="text-slate-400 text-center py-12">No invoices generated yet.</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse text-sm text-slate-300">
+                <thead>
+                  <tr className="border-b border-navy-800 text-slate-400 font-semibold">
+                    <th className="py-3.5 px-4">Invoice ID</th>
+                    <th className="py-3.5 px-4">Billing Period</th>
+                    <th className="py-3.5 px-4">Issue Date</th>
+                    <th className="py-3.5 px-4 text-right">Amount</th>
+                    <th className="py-3.5 px-4 text-center">Status</th>
+                    <th className="py-3.5 px-4 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {invoices.map((inv) => (
+                    <tr key={inv.id} className="border-b border-navy-850 hover:bg-navy-850/20 transition-colors">
+                      <td className="py-4 px-4 font-semibold text-white">{inv.invoiceNumber}</td>
+                      <td className="py-4 px-4 text-slate-400">
+                        {new Date(inv.billingPeriodStart).toLocaleDateString()} - {new Date(inv.billingPeriodEnd).toLocaleDateString()}
+                      </td>
+                      <td className="py-4 px-4">{new Date(inv.invoiceDate).toLocaleDateString()}</td>
+                      <td className="py-4 px-4 text-right font-semibold text-white">
+                        £{Number(inv.total).toFixed(2)}
+                      </td>
+                      <td className="py-4 px-4 text-center">
+                        <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${getStatusBadge(inv.status)}`}>
+                          {inv.status}
+                        </span>
+                      </td>
+                      <td className="py-4 px-4 text-right">
+                        <div className="flex justify-end items-center gap-4">
+                          {inv.pdfUrl && (
+                            <a
+                              href={inv.pdfUrl}
+                              target="_blank"
+                              rel="noreferrer"
                               className="inline-flex items-center gap-1 font-bold text-gold-DEFAULT hover:underline text-xs"
                             >
-                              <Printer className="w-3.5 h-3.5" /> Print
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
+                              <Download className="w-3.5 h-3.5" /> PDF
+                            </a>
+                          )}
+                          <button
+                            onClick={() => handlePrintInvoice(inv)}
+                            className="inline-flex items-center gap-1 font-bold text-gold-DEFAULT hover:underline text-xs"
+                          >
+                            <Printer className="w-3.5 h-3.5" /> Print
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
 
       </div>
     </div>

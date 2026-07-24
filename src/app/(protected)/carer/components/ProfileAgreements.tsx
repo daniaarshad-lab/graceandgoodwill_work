@@ -134,7 +134,7 @@ export default function ProfileAgreements() {
         throw new Error("Failed to generate checkout URL");
       }
     } catch (err: any) {
-      setError(err?.message || "Failed to initiate Stripe Checkout.");
+      setError(err?.message || "Failed to initiate checkout.");
     } finally {
       setPayingFee(false);
     }
@@ -274,7 +274,7 @@ export default function ProfileAgreements() {
                   disabled={payingFee}
                   className="px-6 py-3 bg-gold-DEFAULT text-navy-950 rounded-xl font-bold hover:bg-gold-400 transition-all shadow-sm flex items-center justify-center mx-auto min-w-[240px] disabled:opacity-50 text-sm"
                 >
-                  {payingFee ? "Redirecting to Stripe..." : "Pay Fee & Activate Matching"}
+                  {payingFee ? "Redirecting to Checkout..." : "Pay Fee & Activate Matching"}
                 </button>
               </div>
             ) : (

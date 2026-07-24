@@ -84,6 +84,8 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
+          echo "image_uri=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
       - name: Download Current Task Definition
         run: |
           aws ecs describe-task-definition \
@@ -96,8 +98,8 @@ jobs:
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: task-definition.json
-          container-name: ${{ env.ECR_REPOSITORY }}  # Must match the Container Name in ECS Task Def
-          image: ${{ steps.build-image.outputs.image }}
+          container-name: care_management_fe  # Must match the EXACT container name inside your task definition JSON
+          image: ${{ steps.build-image.outputs.image_uri }} # Updated to match output name above
 
       - name: Deploy Updated Task Definition to ECS Service
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2

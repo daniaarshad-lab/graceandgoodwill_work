@@ -43,7 +43,6 @@ export interface ClientReferralRequest {
   firstName: string;
   lastName: string;
   email: string;
-  phoneNumber: string;
 }
 
 export interface ClientReferralResponse {

@@ -13,14 +13,16 @@ interface ReferralFormClientProps {
     firstName: string;
     lastName: string;
     email: string;
-    phone: string;
+    phone?: string;
   }) => Promise<boolean>;
   submitting: boolean;
+  hidePhone?: boolean;
 }
 
 export default function ReferralFormClient({
   onSubmit,
   submitting,
+  hidePhone = false,
 }: ReferralFormClientProps) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -47,12 +49,14 @@ export default function ReferralFormClient({
       tempErrors.email = emailError;
     }
 
-    if (!phone.trim()) {
-      tempErrors.phone = "Phone number is required";
-    } else {
-      const phoneError = validatePhone(phone);
-      if (phoneError) {
-        tempErrors.phone = phoneError;
+    if (!hidePhone) {
+      if (!phone.trim()) {
+        tempErrors.phone = "Phone number is required";
+      } else {
+        const phoneError = validatePhone(phone);
+        if (phoneError) {
+          tempErrors.phone = phoneError;
+        }
       }
     }
 
@@ -123,7 +127,7 @@ export default function ReferralFormClient({
       firstName: firstName.trim(),
       lastName: lastName.trim(),
       email: email.trim(),
-      phone: phone.trim() ? phone.trim() : undefined,
+      ...(hidePhone ? {} : { phone: phone.trim() }),
     };
 
     const success = await onSubmit(payload);
@@ -138,10 +142,10 @@ export default function ReferralFormClient({
   };
 
   return (
-    <div className="h-full flex flex-col justify-between rounded-3xl border border-gold-300/10 bg-navy-900/40 p-4 sm:p-6 lg:p-8 shadow-[0_0_30px_rgba(212,175,122,0.03)] backdrop-blur-md">
+    <div className="h-full flex flex-col rounded-3xl border border-gold-300/10 bg-navy-900/40 p-4 sm:p-6 lg:p-8 shadow-[0_0_30px_rgba(212,175,122,0.03)] backdrop-blur-md">
       <form
         onSubmit={handleSubmit}
-        className="space-y-6 flex-grow flex flex-col justify-between"
+        className="space-y-6 flex flex-col"
       >
         <div className="space-y-6">
           {/* Top Intro Section */}
@@ -192,14 +196,16 @@ export default function ReferralFormClient({
               error={errors.email}
             />
 
-            <PhoneInput
-              label="Phone Number *"
-              placeholder="e.g. +44 7700 900555"
-              value={phone}
-              onChange={handlePhoneChange}
-              error={errors.phone}
-              disabled={submitting}
-            />
+            {!hidePhone && (
+              <PhoneInput
+                label="Phone Number *"
+                placeholder="e.g. +44 7700 900555"
+                value={phone}
+                onChange={handlePhoneChange}
+                error={errors.phone}
+                disabled={submitting}
+              />
+            )}
           </div>
         </div>
 

@@ -38,7 +38,6 @@ function ClientReferralsContent() {
     firstName: string;
     lastName: string;
     email: string;
-    phone: string;
   }): Promise<boolean> => {
     try {
       await dispatch(
@@ -46,7 +45,6 @@ function ClientReferralsContent() {
           firstName: data.firstName,
           lastName: data.lastName,
           email: data.email,
-          phoneNumber: data.phone,
         }),
       ).unwrap();
       showSuccessToast("Client referred successfully");
@@ -70,6 +68,7 @@ function ClientReferralsContent() {
             <ReferralFormClient
               onSubmit={handleReferralSubmit}
               submitting={submitting}
+              hidePhone={true}
             />
           </div>
           <div className="lg:col-span-6 h-full rounded-3xl border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-[0_0_30px_rgba(212,175,122,0.03)] backdrop-blur-md">

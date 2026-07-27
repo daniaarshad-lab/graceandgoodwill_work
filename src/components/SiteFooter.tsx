@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import Image from "next/image";
 import { HeartHandshake } from "lucide-react";
@@ -119,6 +121,20 @@ function SiteFooter() {
               United Kingdom
             </address>
           </div>
+        </div>
+
+        {/* Cookie Preferences */}
+        <div className="mt-7 sm:mt-8 flex justify-center">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              window.dispatchEvent(new Event("gg:open-cookie-preferences"));
+            }}
+            className="text-[10px] sm:text-[11px] text-gold-100/30 hover:text-gold-100/70 transition-colors duration-300 font-light cursor-pointer hover:underline underline-offset-4 decoration-gold-100/20"
+          >
+            Cookie Preferences
+          </button>
         </div>
       </div>
 

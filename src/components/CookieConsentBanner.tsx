@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
+import { usePathname } from "next/navigation";
 import { Shield, X, Settings } from "lucide-react";
 import Toggle from "@/components/Toggle";
 
@@ -10,8 +11,7 @@ interface CookiePreferences {
   analytics: boolean;
   marketing: boolean;
 }
-
-const STORAGE_KEY = "gg_cookie_consent";
+const STORAGE_KEY = "gg_cookie_consent_v2";
 
 const DEFAULT_PREFERENCES: CookiePreferences = {
   strictlyNecessary: true,
@@ -45,18 +45,36 @@ function saveConsent(prefs: CookiePreferences) {
 }
 
 
-
 export default function CookieConsentBanner() {
+  const pathname = usePathname();
   const [visible, setVisible] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [prefs, setPrefs] = useState<CookiePreferences>(DEFAULT_PREFERENCES);
 
-  /* On mount, check if user has already made a choice */
+  /* On mount and route change, check if user has already made a choice */
   useEffect(() => {
     const existing = loadConsent();
     if (!existing) {
       setVisible(true);
+    } else {
+      setVisible(false);
     }
+  }, [pathname]);
+
+  /* Listen for open modal event from footer */
+  useEffect(() => {
+    const handleOpenPreferences = () => {
+      const existing = loadConsent();
+      if (existing) {
+        setPrefs(existing);
+      } else {
+        setPrefs(DEFAULT_PREFERENCES);
+      }
+      setShowModal(true);
+    };
+
+    window.addEventListener("gg:open-cookie-preferences", handleOpenPreferences);
+    return () => window.removeEventListener("gg:open-cookie-preferences", handleOpenPreferences);
   }, []);
 
 
@@ -87,8 +105,7 @@ export default function CookieConsentBanner() {
   }, []);
 
   const closeBanner = useCallback(() => {
-    /* Closing the banner without choosing = reject non-essential (safe default) */
-    saveConsent(DEFAULT_PREFERENCES);
+    /* Closing the banner only hides it temporarily for this page */
     setVisible(false);
   }, []);
 
@@ -104,13 +121,10 @@ export default function CookieConsentBanner() {
     };
   }, [showModal]);
 
-  /* ── Nothing to render if consent already given ──────────────────────── */
-  if (!visible) return null;
-
   return (
     <>
       {/* ── Floating Consent Card ─────────────────────────────────────── */}
-      {!showModal && (
+      {visible && !showModal && (
         <div
           role="dialog"
           aria-label="Cookie consent"

@@ -124,6 +124,32 @@ export default function PlacementTracking({
     }
   };
 
+  const handleCancelPlacement = async (placementId: string) => {
+    if (
+      !confirm(
+        "Are you sure you want to cancel this care placement and weekly subscription? A final prorated invoice will be generated automatically for the active days since the last invoice."
+      )
+    )
+      return;
+    setActionLoading(`cancel-placement-${placementId}`);
+    setErrorMessage(null);
+    setSuccessMessage(null);
+    try {
+      await adminService.updatePlacementStatus(placementId, "CANCELLED", new Date().toISOString());
+      setSuccessMessage(`Care placement and subscription cancelled successfully.`);
+      showSuccessToast("Placement Cancelled", "Care placement and subscription cancelled successfully.");
+      await fetchPlacementBilling(placementId);
+      if (refreshPlacements) {
+        refreshPlacements();
+      }
+    } catch (err: any) {
+      setErrorMessage(err.message || "Failed to cancel placement.");
+      showErrorToast("Error", err.message || "Failed to cancel placement.");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
   const handleResendInvoice = async (invoiceId: string, placementId: string) => {
     setActionLoading(`resend-${invoiceId}`);
     try {
@@ -536,7 +562,7 @@ export default function PlacementTracking({
                             {/* Billing Action Controls */}
                             <div className="flex flex-wrap items-center justify-end gap-3 p-3 rounded-lg bg-navy-950 border border-gold-300/5">
                               <div className="flex gap-2 ml-auto">
-                                {detail.billingStatus === "ACTIVE" ? (
+                                {detail.billingStatus === "ACTIVE" && (
                                   <button
                                     onClick={() => handlePauseBilling(place.id)}
                                     disabled={actionLoading !== null}
@@ -544,7 +570,8 @@ export default function PlacementTracking({
                                   >
                                     Pause Billing
                                   </button>
-                                ) : detail.billingStatus === "PAUSED" ? (
+                                )}
+                                {detail.billingStatus === "PAUSED" && (
                                   <button
                                     onClick={() => handleResumeBilling(place.id)}
                                     disabled={actionLoading !== null}
@@ -552,7 +579,16 @@ export default function PlacementTracking({
                                   >
                                     Resume Billing
                                   </button>
-                                ) : null}
+                                )}
+                                {(place.status === "PLACEMENT_STARTED" || place.status === "ONGOING") && (
+                                  <button
+                                    onClick={() => handleCancelPlacement(place.id)}
+                                    disabled={actionLoading !== null}
+                                    className="bg-rose-950/40 hover:bg-rose-900/40 text-rose-400 border border-rose-500/20 px-3 py-1 rounded text-[10px] font-semibold transition"
+                                  >
+                                    Cancel Placement & Subscription
+                                  </button>
+                                )}
                               </div>
                             </div>
 

@@ -96,8 +96,7 @@ export default function ClientBillingPage() {
   const handlePayLifetimeFee = async () => {
     try {
       setActionLoading("lifetime");
-      setError(null);
-      const successUrl = `${window.location.origin}/client?tab=billing&session=success`;
+      const successUrl = `${window.location.origin}/client`;
       const cancelUrl = `${window.location.origin}/client?tab=billing&session=cancelled`;
       
       const { url } = await clientService.createLifetimeFeeCheckout(successUrl, cancelUrl);

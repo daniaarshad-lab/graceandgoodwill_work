@@ -122,8 +122,7 @@ export default function AgreementsPage() {
   const handlePayLifetimeFee = async () => {
     try {
       setPayingFee(true);
-      setError(null);
-      const successUrl = `${window.location.origin}/client?session=success`;
+      const successUrl = `${window.location.origin}/client`;
       const cancelUrl = `${window.location.origin}/agreements?session=cancelled`;
       
       const { url } = await clientService.createLifetimeFeeCheckout(successUrl, cancelUrl);

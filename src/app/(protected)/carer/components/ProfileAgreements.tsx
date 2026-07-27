@@ -123,8 +123,7 @@ export default function ProfileAgreements() {
   const handlePayLifetimeFee = async () => {
     try {
       setPayingFee(true);
-      setError(null);
-      const successUrl = `${window.location.origin}/client/billing?session=success`;
+      const successUrl = `${window.location.origin}/client`;
       const cancelUrl = `${window.location.origin}/carer?tab=agreements&session=cancelled`;
       
       const { url } = await clientService.createLifetimeFeeCheckout(successUrl, cancelUrl);

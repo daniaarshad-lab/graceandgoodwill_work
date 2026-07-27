@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import ToastProvider from "@/components/Providers/ToastProvider";
+import CookieConsentBanner from "@/components/CookieConsentBanner";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -26,6 +27,7 @@ export default function RootLayout({
       <head suppressHydrationWarning />
       <body suppressHydrationWarning className={`bg-navy-950 text-gold-100 flex flex-col min-h-screen font-sans ${poppins.variable}`}>
         {children}
+        <CookieConsentBanner />
         <ToastProvider />
       </body>
     </html>

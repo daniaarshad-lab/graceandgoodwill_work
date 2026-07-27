@@ -57,6 +57,13 @@ export default function ClientDashboard() {
   const tabParam = searchParams.get("tab") as TabType;
   const [activeTab, setActiveTab] = useState<TabType>("request");
 
+  const handleTabChange = (tab: TabType) => {
+    setActiveTab(tab);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("tab", tab);
+    router.push(`/client?${params.toString()}`);
+  };
+
   useEffect(() => {
     if (
       tabParam &&
@@ -119,7 +126,7 @@ export default function ClientDashboard() {
 
         <PortalTabs
           activeTab={activeTab}
-          setActiveTab={setActiveTab}
+          setActiveTab={handleTabChange}
         />
 
         <div className="transition-all duration-300">
@@ -128,7 +135,7 @@ export default function ClientDashboard() {
             <DashboardOverview
               user={user}
               careRequests={portal.careRequests}
-              setActiveTab={setActiveTab}
+              setActiveTab={handleTabChange}
             />
           )}
 
@@ -166,10 +173,10 @@ export default function ClientDashboard() {
                 e.preventDefault();
                 const success = await portal.handleCareSubmit(e);
                 if (success) {
-                  setActiveTab("carers");
+                  handleTabChange("carers");
                 }
               }}
-              setActiveTab={setActiveTab}
+              setActiveTab={handleTabChange}
             />
           )}
 
@@ -201,7 +208,7 @@ export default function ClientDashboard() {
               loading={portal.placementsLoading}
               error={portal.placementsError}
               onRetry={portal.fetchPlacements}
-              setActiveTab={setActiveTab}
+              setActiveTab={handleTabChange}
             />
           )}
 

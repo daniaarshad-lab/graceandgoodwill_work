@@ -61,7 +61,15 @@ export default function ClientBillingPage() {
 
     // Check if redirected back from a checkout success
     const params = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
-    if (params.get("session") === "success" || params.get("billing_request_id")) {
+    const session = params.get("session");
+    const billingRequestId = params.get("billing_request_id");
+    const paymentStatus = params.get("payment");
+
+    if (paymentStatus === "failed" || session === "cancelled") {
+      setError("GoCardless payment mandate setup failed or was cancelled. Please try again.");
+    }
+
+    if (session === "success" || billingRequestId || paymentStatus === "success") {
       refreshUser();
 
       // Start polling backend updates as GoCardless webhook processing is asynchronous
@@ -96,8 +104,8 @@ export default function ClientBillingPage() {
   const handlePayLifetimeFee = async () => {
     try {
       setActionLoading("lifetime");
-      const successUrl = `${window.location.origin}/client`;
-      const cancelUrl = `${window.location.origin}/client?tab=billing&session=cancelled`;
+      const successUrl = `${window.location.origin}/client?payment=success`;
+      const cancelUrl = `${window.location.origin}/client?payment=failed`;
       
       const { url } = await clientService.createLifetimeFeeCheckout(successUrl, cancelUrl);
       if (url) {

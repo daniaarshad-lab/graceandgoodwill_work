@@ -130,8 +130,8 @@ export default function LegalAgreementsFeature({ isOnboardingMode, onAllSigned, 
   const handlePayLifetimeFee = async () => {
     try {
       setPayingFee(true);
-      const successUrl = `${window.location.origin}/client`;
-      const cancelUrl = `${window.location.origin}/agreements?session=cancelled`;
+      const successUrl = `${window.location.origin}/client?payment=success`;
+      const cancelUrl = `${window.location.origin}/client?payment=failed`;
 
       const { url } = await clientService.createLifetimeFeeCheckout(successUrl, cancelUrl);
       if (url) {

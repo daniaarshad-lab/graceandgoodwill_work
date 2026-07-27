@@ -228,11 +228,9 @@
 }
 
 .asl-root {
-  position: fixed;
-  top: 80px;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  position: relative;
+  width: 100%;
+  min-height: calc(100vh - 80px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -241,7 +239,7 @@
 }
 
 .asl-bg {
-  position: fixed;
+  position: absolute;
   inset: 0;
   z-index: 0;
 }

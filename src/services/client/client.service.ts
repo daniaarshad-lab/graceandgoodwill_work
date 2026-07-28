@@ -361,6 +361,20 @@ export const clientService = {
     });
   },
 
+  async verifyLifetimeFee(billingRequestId: string): Promise<any> {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+
+    return apiFetch("/client/billing/lifetime-fee/verify", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ billingRequestId }),
+    });
+  },
+
   async subscribeToPlacement(placementId: string, successUrl: string, cancelUrl: string): Promise<{ url: string }> {
     const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
     if (!token) throw new Error("No token found");

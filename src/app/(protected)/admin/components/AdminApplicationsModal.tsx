@@ -14,10 +14,12 @@ export default function AdminApplicationsModal({
   careRequestId,
   clientProfileId,
   onClose,
+  onStatusUpdated,
 }: {
   careRequestId: string;
   clientProfileId: string;
   onClose: () => void;
+  onStatusUpdated?: () => void;
 }) {
   const [applications, setApplications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -55,6 +57,9 @@ export default function AdminApplicationsModal({
       ).unwrap();
       showSuccessToast("Status Updated", `Application has been ${status.toLowerCase()}.`);
       loadApplications();
+      if (onStatusUpdated) {
+        onStatusUpdated();
+      }
     } catch (err: any) {
       showErrorToast("Update Failed", err.message || "Failed to update status.");
     } finally {

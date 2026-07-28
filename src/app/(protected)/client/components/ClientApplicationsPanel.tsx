@@ -13,6 +13,7 @@ import {
 } from "@/store/slices/clientSlice";
 import { clientService } from "@/services/client/client.service";
 import { CareRequest, CareRequestApplication } from "@/types/client.types";
+import { showSuccessToast, showErrorToast } from "@/utils/toast";
 import SectionCard from "./shared/SectionCard";
 import Button from "@/components/Button";
 import {
@@ -49,15 +50,15 @@ export default function ClientApplicationsPanel() {
   const handleApprove = async (appId: string) => {
     setIsSubmitting(appId);
     try {
-      const res = await dispatch(approveApplication(appId)).unwrap();
-      if (res && res.id) {
-        const successUrl = `${window.location.origin}/client/billing?session=success`;
-        const cancelUrl = `${window.location.origin}/client/billing?session=cancelled`;
-        const { url } = await clientService.subscribeToPlacement(res.id, successUrl, cancelUrl);
-        if (url) window.location.href = url;
+      await dispatch(approveApplication(appId)).unwrap();
+      showSuccessToast("Application Approved", "The placement has been created successfully.");
+      dispatch(fetchCareRequests());
+      if (selectedRequestId) {
+        dispatch(fetchClientCareRequestApplications(selectedRequestId));
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      showErrorToast("Approval Failed", err?.message || "Failed to approve application.");
     } finally {
       setIsSubmitting(null);
     }

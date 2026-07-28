@@ -72,6 +72,18 @@ export default function ClientBillingPage() {
     if (session === "success" || billingRequestId || paymentStatus === "success") {
       refreshUser();
 
+      if (billingRequestId) {
+        clientService.verifyLifetimeFee(billingRequestId)
+          .then((res) => {
+            console.log("Lifetime fee verified:", res);
+            refreshUser();
+            dispatch(fetchClientProfile());
+          })
+          .catch((err) => {
+            console.error("Verification failed:", err);
+          });
+      }
+
       // Start polling backend updates as GoCardless webhook processing is asynchronous
       let pollCount = 0;
       const interval = setInterval(async () => {
@@ -378,7 +390,7 @@ export default function ClientBillingPage() {
                       : "Carer Specialist";
                     const startDateStr = new Date(placement.startDate).toLocaleDateString();
                     const endDateStr = placement.endDate ? new Date(placement.endDate).toLocaleDateString() : "Ongoing";
-                    const isSubscribed = !!placement.gocardlessMandateId || !!profile?.gocardlessMandateId;
+                    const isSubscribed = !!placement.gocardlessMandateId;
                     
                     return (
                       <div key={placement.id} className="bg-navy-950 border border-navy-850 rounded-xl p-4 flex flex-col justify-between gap-4">

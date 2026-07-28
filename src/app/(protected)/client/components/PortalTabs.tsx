@@ -98,21 +98,7 @@ export default function PortalTabs({
   ];
 
   const handleTabClick = (tabId: TabType, href: string) => {
-    if (tabId === "referrals") {
-      router.push(href);
-    } else {
-      if (setActiveTab) {
-        setActiveTab(tabId);
-        if (
-          typeof window !== "undefined" &&
-          window.location.pathname.includes("/referrals")
-        ) {
-          router.push(href);
-        }
-      } else {
-        router.push(href);
-      }
-    }
+    router.push(href);
   };
 
   return (

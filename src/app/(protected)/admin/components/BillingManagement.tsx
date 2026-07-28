@@ -169,7 +169,7 @@ export default function BillingManagement({
   };
 
   const handlePauseBilling = async (placementId: string) => {
-    if (!confirm("Are you sure you want to pause Stripe billing collection for this placement?")) return;
+    if (!confirm("Are you sure you want to pause subscription billing collection for this placement?")) return;
     try {
       setActionLoading(`pause-${placementId}`);
       setErrorMessage(null);
@@ -525,7 +525,7 @@ export default function BillingManagement({
               Real-Time Transaction Audit
             </h3>
             <p className="text-xs text-gold-100/50 mb-4 leading-relaxed">
-              Every card payment, platform registration fee, and carer subscription renewal processed via Stripe is recorded below for administrative auditing.
+              Every card payment, platform registration fee, and carer subscription renewal processed via GoCardless/Direct Debit is recorded below for administrative auditing.
             </p>
 
             <div className="space-y-3 max-h-96 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-navy-800">
@@ -668,7 +668,7 @@ export default function BillingManagement({
                   <th className="py-3.5 px-4">Client</th>
                   <th className="py-3.5 px-4">Carer</th>
                   <th className="py-3.5 px-4 text-right">Weekly Fee</th>
-                  <th className="py-3.5 px-4 text-center">Stripe Subscription</th>
+                  <th className="py-3.5 px-4 text-center">Subscription ID</th>
                   <th className="py-3.5 px-4 text-center">Billing Status</th>
                   <th className="py-3.5 px-4 text-right">Outstanding Bal.</th>
                   <th className="py-3.5 px-4 text-right">Actions</th>
@@ -750,7 +750,7 @@ export default function BillingManagement({
                   onChange={(e) => setNewWeeklyFee(Number(e.target.value))}
                   className="w-full bg-navy-950 border border-gold-300/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-gold-DEFAULT"
                 />
-                <p className="text-xs text-slate-500 mt-1">Modifies future invoice cycles only. Stripe subscription updates automatically.</p>
+                <p className="text-xs text-slate-500 mt-1">Modifies future invoice cycles only. Subscription updates automatically.</p>
               </div>
               <div className="flex space-x-3 justify-end pt-2">
                 <button

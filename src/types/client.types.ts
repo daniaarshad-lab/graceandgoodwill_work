@@ -29,6 +29,8 @@ export interface ClientProfile {
   isLifetimeFeePaid?: boolean;
   lifetimeFeeInvoiceId?: string | null;
   defaultWeeklyFee?: number | null;
+  gocardlessCustomerId?: string | null;
+  gocardlessMandateId?: string | null;
 
   user?: ClientUser;
 }
@@ -81,6 +83,9 @@ export interface ClientPlacement {
   endDate: string | null;
   createdAt: string;
   updatedAt: string;
+  weeklyFee?: number | string | null;
+  billingStatus?: string;
+  gocardlessMandateId?: string | null;
   carerProfile: {
     id: string;
     user: {

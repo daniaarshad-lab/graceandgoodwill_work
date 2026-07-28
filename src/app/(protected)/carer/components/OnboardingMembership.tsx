@@ -468,7 +468,7 @@ export default function OnboardingMembership({
         <Button
           type="button"
           variant="primary"
-          text={loading ? (selectedPlan === "Gold Elite Membership" ? "Redirecting to Stripe..." : "Saving Selection...") : "Continue to Declaration"}
+          text={loading ? (selectedPlan === "Gold Elite Membership" ? "Redirecting to Checkout..." : "Saving Selection...") : "Continue to Declaration"}
           onClick={handleContinue}
           disabled={isSubmitting || loading || !selectedPlan}
         />

@@ -1,4 +1,12 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+let API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+
+// Normalize API_URL so it does not contain the /api prefix, as we add it to the endpoint.
+if (API_URL.endsWith("/api")) {
+  API_URL = API_URL.slice(0, -4);
+}
+if (API_URL.endsWith("/")) {
+  API_URL = API_URL.slice(0, -1);
+}
 
 export async function apiFetch(endpoint: string, options: RequestInit = {}) {
   const { headers: callerHeaders, ...restOptions } = options;
@@ -7,7 +15,10 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}) {
   // multipart boundary), so we only inject the JSON header for all other calls.
   const isFormData = restOptions.body instanceof FormData;
 
-  const response = await fetch(`${API_URL}${endpoint}`, {
+  // Ensure the endpoint starts with /api
+  const apiPath = endpoint.startsWith("/api") ? endpoint : `/api${endpoint.startsWith("/") ? "" : "/"}${endpoint}`;
+
+  const response = await fetch(`${API_URL}${apiPath}`, {
     headers: {
       ...(isFormData ? {} : { "Content-Type": "application/json" }),
       ...(callerHeaders || {}),

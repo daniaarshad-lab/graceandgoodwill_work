@@ -116,6 +116,11 @@ export default function AdminApplicationsModal({
                     <h5 className="font-bold text-gold-100">
                       {app.carerProfile?.user?.firstName} {app.carerProfile?.user?.lastName}
                     </h5>
+                    {app.isAssignedByAdmin && (
+                      <div className="mt-1 text-[9px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded w-fit uppercase tracking-wider">
+                        Selected by admin from interest list
+                      </div>
+                    )}
                     <div className="flex gap-2 items-center mt-1">
                       <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${app.status === "PENDING" ? "bg-amber-500/10 text-amber-400 border border-amber-500/20" :
                           app.status === "SELECTED" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" :
@@ -151,7 +156,7 @@ export default function AdminApplicationsModal({
                         onClick={() => handleUpdateStatus(app.carerProfileId, "SELECTED")}
                         className="!border-emerald-500/30 !text-emerald-400 hover:!bg-emerald-500/10"
                       >
-                        Select
+                        Approve
                       </Button>
                     </>
                   )}

@@ -227,6 +227,7 @@ export interface CareRequestApplication {
   careRequestId: string;
   carerProfileId: string;
   status: string;
+  isAssignedByAdmin?: boolean;
   createdAt: string;
   updatedAt: string;
   carerProfile?: {

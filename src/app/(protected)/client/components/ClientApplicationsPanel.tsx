@@ -9,6 +9,7 @@ import {
   clearApplications,
   approveApplication,
   rejectApplication,
+  fetchInterestList,
 } from "@/store/slices/clientSlice";
 import { clientService } from "@/services/client/client.service";
 import { CareRequest, CareRequestApplication } from "@/types/client.types";
@@ -36,6 +37,7 @@ export default function ClientApplicationsPanel() {
     applications,
     applicationsLoading,
     applicationsError,
+    interestList,
   } = useAppSelector((state) => state.client);
 
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
@@ -81,6 +83,7 @@ export default function ClientApplicationsPanel() {
 
   useEffect(() => {
     dispatch(fetchCareRequests());
+    dispatch(fetchInterestList());
   }, [dispatch]);
 
   // Show all care requests so clients can view applications proposed by G&G or themselves
@@ -275,6 +278,20 @@ export default function ClientApplicationsPanel() {
                                 {(app as any).carer?.firstName || (app as any).carerProfile?.user?.firstName || "Carer"}{" "}
                                 {(app as any).carer?.lastName || (app as any).carerProfile?.user?.lastName || ""}
                               </h5>
+                              {(() => {
+                                const carerProfileId = app.carerProfileId || (app as any).carerProfile?.id;
+                                const isFromInterestList = interestList?.some(
+                                  (carer: any) => carer.id === carerProfileId
+                                );
+                                if (isFromInterestList && app.isAssignedByAdmin) {
+                                  return (
+                                    <div className="mt-1 text-[9px] text-emerald-400 font-bold bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded w-fit uppercase tracking-wider">
+                                      Selected by admin from interest list
+                                    </div>
+                                  );
+                                }
+                                return null;
+                              })()}
                               {((app as any).carer?.experienceYears !== undefined || (app as any).carerProfile?.experienceYears !== undefined) && (
                                 <p className="text-xs text-gold-100/70 mt-0.5">
                                   {(app as any).carer?.experienceYears ?? (app as any).carerProfile?.experienceYears} Years Experience

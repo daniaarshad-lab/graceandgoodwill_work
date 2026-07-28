@@ -83,6 +83,11 @@ function SortableCarerCard({ carer, onRemove, removingId, router }: { carer: Car
           <p className="text-xs text-gold-100/50 mt-0.5">
             Professional Experience: {carer.experience}
           </p>
+          {(carer as any).isAssigned && (
+            <div className="mt-2 text-[9px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded w-fit uppercase tracking-wider">
+              Selected by admin from interest list
+            </div>
+          )}
         </div>
 
         <div className="space-y-1">

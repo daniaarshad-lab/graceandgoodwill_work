@@ -86,6 +86,8 @@ export const fetchInterestList = createAsyncThunk<
           mapped.id = item.carerProfileId;
         }
 
+        (mapped as any).isAssigned = item.isAssigned;
+
         return mapped;
       });
 

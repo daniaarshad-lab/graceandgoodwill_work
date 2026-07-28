@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Heart, User, UserCheck } from "lucide-react";
+import { ArrowLeft, Heart, User, UserCheck, Check } from "lucide-react";
 import { adminService } from "@/services/admin/admin.service";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 
@@ -22,6 +22,7 @@ interface InterestListCarer {
   avatarBg?: string;
   carerProfileId?: string;
   userId?: string;
+  isAssigned?: boolean;
 }
 
 // ── SafeImage helper (same pattern as client portal) ───────────────────────
@@ -67,6 +68,7 @@ function CarerCard({
   canAssign,
   assigningId,
   onAssign,
+  onApprove,
 }: {
   carer: InterestListCarer;
   index: number;
@@ -74,6 +76,7 @@ function CarerCard({
   canAssign: boolean;
   assigningId: string | null;
   onAssign: (carerId: string) => void;
+  onApprove: (carerId: string) => void;
 }) {
   const router = useRouter();
   const avatarBg = carer.avatarBg ?? getAvatarBg(index);
@@ -129,12 +132,16 @@ function CarerCard({
           </span>
         </div>
 
-        {/* Name & Experience */}
         <div>
           <h4 className="text-lg font-bold text-gold-50">{carer.name}</h4>
           <p className="text-xs text-gold-100/50 mt-0.5">
             Professional Experience: {carer.experience}
           </p>
+          {carer.isAssigned && (
+            <div className="mt-2 text-[9px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded w-fit uppercase tracking-wider">
+              Selected by admin from interest list
+            </div>
+          )}
         </div>
 
         {/* Specialties */}
@@ -155,16 +162,26 @@ function CarerCard({
 
       {/* Actions */}
       <div className="space-y-2.5">
-        {/* Assign Button */}
+        {/* Assign & Approve Buttons */}
         {canAssign && (
-          <button
-            onClick={() => onAssign(carer.carerProfileId ?? carer.id)}
-            disabled={assigningId === (carer.carerProfileId ?? carer.id)}
-            className="w-full flex items-center justify-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-2.5 text-xs font-semibold text-emerald-400 hover:bg-emerald-500/20 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <UserCheck className="w-3.5 h-3.5" />
-            {assigningId === (carer.carerProfileId ?? carer.id) ? "Assigning..." : "Assign to Care Request"}
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => onApprove(carer.carerProfileId ?? carer.id)}
+              disabled={assigningId === (carer.carerProfileId ?? carer.id)}
+              className="flex-1 flex items-center justify-center gap-1.5 rounded-xl border border-gold bg-gold text-navy-950 px-3 py-2.5 text-xs font-bold hover:bg-gold-200 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Check className="w-3.5 h-3.5" />
+              {assigningId === (carer.carerProfileId ?? carer.id) ? "..." : "Approve"}
+            </button>
+            <button
+              onClick={() => onAssign(carer.carerProfileId ?? carer.id)}
+              disabled={assigningId === (carer.carerProfileId ?? carer.id) || carer.isAssigned}
+              className="flex-1 flex items-center justify-center gap-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2.5 text-xs font-semibold text-emerald-400 hover:bg-emerald-500/20 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <UserCheck className="w-3.5 h-3.5" />
+              {carer.isAssigned ? "Assigned" : (assigningId === (carer.carerProfileId ?? carer.id) ? "..." : "Assign")}
+            </button>
+          </div>
         )}
 
         <button
@@ -287,6 +304,7 @@ function AdminClientInterestListContent() {
                 "No biography provided.",
               profilePhotoUrl: profile.profilePhotoUrl ?? null,
               avatarBg: getAvatarBg(idx),
+              isAssigned: !!(item.isAssigned || profile.isAssigned),
             };
           }
         );
@@ -299,6 +317,34 @@ function AdminClientInterestListContent() {
     }
     load();
   }, [clientId]);
+
+  /**
+   * Handler for directly approving a carer and creating a placement.
+   */
+  const handleApprove = async (carerId: string) => {
+    if (!careRequestId) {
+      showErrorToast("Approval Failed", "Could not identify the target Care Request.");
+      return;
+    }
+
+    setAssigningId(carerId);
+    try {
+      await adminService.reviewInterestList({
+        careRequestId,
+        clientId,
+        carerId,
+        status: "SELECTED"
+      });
+      showSuccessToast("Approved", "Placement has been created successfully.");
+      
+      // Refresh the page to reflect the new state
+      window.location.reload();
+    } catch (err: any) {
+      showErrorToast("Approval Failed", err?.message || "Failed to approve carer.");
+    } finally {
+      setAssigningId(null);
+    }
+  };
 
   /**
    * Handler for assigning a carer to a care request.
@@ -315,9 +361,9 @@ function AdminClientInterestListContent() {
         careRequestId,
         clientId,
         carerId,
-        status: "SELECTED"
+        status: "ASSIGNED"
       });
-      showSuccessToast("Assigned", "Carer has been assigned to the care request.");
+      showSuccessToast("Assigned", "Carer has been assigned to the care request (awaiting client approval).");
       
       // Refresh the page to reflect the new state
       window.location.reload();
@@ -395,7 +441,7 @@ function AdminClientInterestListContent() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {carers.map((carer, idx) => (
-              <CarerCard key={carer.id} carer={carer} index={idx} clientId={clientId} canAssign={canAssign} assigningId={assigningId} onAssign={handleAssign} />
+              <CarerCard key={carer.id} carer={carer} index={idx} clientId={clientId} canAssign={canAssign} assigningId={assigningId} onAssign={handleAssign} onApprove={handleApprove} />
             ))}
           </div>
         )}

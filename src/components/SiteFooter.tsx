@@ -29,7 +29,7 @@ const values = [
 
 function SiteFooter() {
   return (
-    <footer className="relative" style={{ background: "linear-gradient(180deg, #080e22 0%, #060b1c 100%)" }}>
+    <footer className="relative bg-navy-950">
       {/* Top gold accent line */}
       <div className="h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(212,175,55,0.4) 30%, rgba(212,175,55,0.55) 50%, rgba(212,175,55,0.4) 70%, transparent)" }} />
 

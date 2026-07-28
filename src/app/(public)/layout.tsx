@@ -1,6 +1,5 @@
 import React from "react";
-import StaticSiteHeader from "@/components/StaticSiteHeader";
-import SiteFooter from "@/components/SiteFooter";
+import PublicLayoutWrapper from "./PublicLayoutWrapper";
 
 export default function PublicLayout({
   children,
@@ -8,10 +7,8 @@ export default function PublicLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
-      <StaticSiteHeader />
-      <div className="flex-grow">{children}</div>
-      <SiteFooter />
-    </>
+    <PublicLayoutWrapper>
+      {children}
+    </PublicLayoutWrapper>
   );
 }

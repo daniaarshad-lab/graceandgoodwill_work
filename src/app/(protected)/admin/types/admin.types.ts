@@ -42,6 +42,8 @@ export interface ClientRequest {
   email: string;
   phone: string;
   interestListCount?: number;
+  clientStatus?: string;
+  clientAgreedWeeklyFee?: number | null;
 }
 
 export interface PlacementTimelineEvent {

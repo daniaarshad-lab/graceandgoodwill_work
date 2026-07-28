@@ -90,7 +90,7 @@ export default function PlacementTracking({
   };
 
   const handlePauseBilling = async (placementId: string) => {
-    if (!confirm("Are you sure you want to pause Stripe billing collection for this placement?")) return;
+    if (!confirm("Are you sure you want to pause subscription billing collection for this placement?")) return;
     setActionLoading(`pause-${placementId}`);
     setErrorMessage(null);
     setSuccessMessage(null);
@@ -124,6 +124,32 @@ export default function PlacementTracking({
     }
   };
 
+  const handleCancelPlacement = async (placementId: string) => {
+    if (
+      !confirm(
+        "Are you sure you want to cancel this care placement and weekly subscription? A final prorated invoice will be generated automatically for the active days since the last invoice."
+      )
+    )
+      return;
+    setActionLoading(`cancel-placement-${placementId}`);
+    setErrorMessage(null);
+    setSuccessMessage(null);
+    try {
+      await adminService.updatePlacementStatus(placementId, "CANCELLED", new Date().toISOString());
+      setSuccessMessage(`Care placement and subscription cancelled successfully.`);
+      showSuccessToast("Placement Cancelled", "Care placement and subscription cancelled successfully.");
+      await fetchPlacementBilling(placementId);
+      if (refreshPlacements) {
+        refreshPlacements();
+      }
+    } catch (err: any) {
+      setErrorMessage(err.message || "Failed to cancel placement.");
+      showErrorToast("Error", err.message || "Failed to cancel placement.");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
   const handleResendInvoice = async (invoiceId: string, placementId: string) => {
     setActionLoading(`resend-${invoiceId}`);
     try {
@@ -145,7 +171,7 @@ export default function PlacementTracking({
       showSuccessToast("Refund Success", "Payment refunded successfully.");
       await fetchPlacementBilling(placementId);
     } catch (err: any) {
-      showErrorToast("Error", err.message || "Stripe refund trigger failed.");
+      showErrorToast("Error", err.message || "Refund trigger failed.");
     } finally {
       setActionLoading(null);
     }
@@ -205,7 +231,8 @@ export default function PlacementTracking({
                 <div class="details">
                   <strong>Invoice Number:</strong> ${inv.invoiceNumber || inv.id}<br/>
                   <strong>Date of Issue:</strong> ${new Date(inv.invoiceDate || inv.createdAt).toLocaleDateString()}<br/>
-                  <strong>Status:</strong> <span class="badge">${inv.status}</span>
+                  <strong>Status:</strong> <span class="badge">${inv.status}</span><br/>
+                  ${inv.gocardlessPaymentId ? `<strong>GoCardless Payment ID:</strong> ${inv.gocardlessPaymentId}` : ""}
                 </div>
               </div>
             </div>
@@ -519,7 +546,7 @@ export default function PlacementTracking({
                                 </span>
                               </div>
                               <div>
-                                <span className="text-[9px] text-gold-100/40 uppercase tracking-wider block mb-0.5">Stripe Subscription Status</span>
+                                <span className="text-[9px] text-gold-100/40 uppercase tracking-wider block mb-0.5">Subscription Status</span>
                                 <span className="text-slate-350 text-[10px] font-medium">{detail.billingStatus || "Unsubscribed"}</span>
                               </div>
                               <div>
@@ -535,7 +562,7 @@ export default function PlacementTracking({
                             {/* Billing Action Controls */}
                             <div className="flex flex-wrap items-center justify-end gap-3 p-3 rounded-lg bg-navy-950 border border-gold-300/5">
                               <div className="flex gap-2 ml-auto">
-                                {detail.billingStatus === "ACTIVE" ? (
+                                {detail.billingStatus === "ACTIVE" && (
                                   <button
                                     onClick={() => handlePauseBilling(place.id)}
                                     disabled={actionLoading !== null}
@@ -543,7 +570,8 @@ export default function PlacementTracking({
                                   >
                                     Pause Billing
                                   </button>
-                                ) : detail.billingStatus === "PAUSED" ? (
+                                )}
+                                {detail.billingStatus === "PAUSED" && (
                                   <button
                                     onClick={() => handleResumeBilling(place.id)}
                                     disabled={actionLoading !== null}
@@ -551,7 +579,16 @@ export default function PlacementTracking({
                                   >
                                     Resume Billing
                                   </button>
-                                ) : null}
+                                )}
+                                {(place.status === "PLACEMENT_STARTED" || place.status === "ONGOING") && (
+                                  <button
+                                    onClick={() => handleCancelPlacement(place.id)}
+                                    disabled={actionLoading !== null}
+                                    className="bg-rose-950/40 hover:bg-rose-900/40 text-rose-400 border border-rose-500/20 px-3 py-1 rounded text-[10px] font-semibold transition"
+                                  >
+                                    Cancel Placement & Subscription
+                                  </button>
+                                )}
                               </div>
                             </div>
 
@@ -603,9 +640,6 @@ export default function PlacementTracking({
                                               <div className="flex justify-end items-center gap-2">
                                                 {inv.pdfUrl && (
                                                   <a href={inv.pdfUrl} target="_blank" rel="noreferrer" className="text-gold-DEFAULT hover:underline font-bold text-[9px]">PDF</a>
-                                                )}
-                                                {inv.receiptUrl && (
-                                                  <a href={inv.receiptUrl} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-gold-DEFAULT hover:underline font-bold text-[9px]">Stripe</a>
                                                 )}
                                                 <button onClick={() => handlePrintInvoice(inv, clientName, clientEmail)} className="text-gold-DEFAULT hover:underline font-bold text-[9px]">Print</button>
                                                 {inv.status !== "PAID" && (

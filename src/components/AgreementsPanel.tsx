@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { agreementsService, LegalAgreement, SignedAgreement } from "@/services/agreements/agreements.service";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
@@ -11,8 +11,26 @@ import { clientService } from "@/services/client/client.service";
 export default function AgreementsPage() {
   const { user, refreshUser } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
   const { profile } = useAppSelector((state) => state.client);
+  const paymentStatus = searchParams.get("payment");
+
+  useEffect(() => {
+    if (paymentStatus === "success" && profile && !profile.isLifetimeFeePaid) {
+      let pollCount = 0;
+      const interval = setInterval(async () => {
+        pollCount++;
+        await refreshUser();
+        dispatch(fetchClientProfile());
+        
+        if (pollCount >= 12) {
+          clearInterval(interval);
+        }
+      }, 2000);
+      return () => clearInterval(interval);
+    }
+  }, [paymentStatus, profile, refreshUser, dispatch]);
   const [pending, setPending] = useState<LegalAgreement[]>([]);
   const [history, setHistory] = useState<SignedAgreement[]>([]);
   const [activeTab, setActiveTab] = useState<"pending" | "history">("pending");
@@ -106,25 +124,12 @@ export default function AgreementsPage() {
     }
   };
 
-  const handleDashboardRedirect = () => {
-    const role = user?.role?.toUpperCase();
-    if (role === "CLIENT") {
-      router.push("/client");
-    } else if (role === "CARER") {
-      router.push("/carer");
-    } else if (role === "ADMIN") {
-      router.push("/admin");
-    } else {
-      router.push("/");
-    }
-  };
 
   const handlePayLifetimeFee = async () => {
     try {
       setPayingFee(true);
-      setError(null);
-      const successUrl = `${window.location.origin}/client?session=success`;
-      const cancelUrl = `${window.location.origin}/agreements?session=cancelled`;
+      const successUrl = `${window.location.origin}/client?payment=success`;
+      const cancelUrl = `${window.location.origin}/client?payment=failed`;
       
       const { url } = await clientService.createLifetimeFeeCheckout(successUrl, cancelUrl);
       if (url) {
@@ -133,7 +138,7 @@ export default function AgreementsPage() {
         throw new Error("Failed to generate checkout URL");
       }
     } catch (err: any) {
-      setError(err?.message || "Failed to initiate Stripe Checkout.");
+      setError(err?.message || "Failed to initiate checkout.");
     } finally {
       setPayingFee(false);
     }
@@ -253,71 +258,97 @@ export default function AgreementsPage() {
           <div>
             {pending.length === 0 ? (
               user?.role?.toUpperCase() === "CLIENT" && !profile?.isLifetimeFeePaid ? (
-                <div className="bg-navy-900/60 border border-navy-800 rounded-2xl p-12 text-center max-w-2xl mx-auto shadow-soft space-y-6">
-                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gold/10 border border-gold/30 text-[#d4af37] mb-6">
-                    <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                    </svg>
+                paymentStatus === "success" ? (
+                  <div className="bg-navy-900/60 border border-navy-800 rounded-2xl p-12 text-center max-w-2xl mx-auto shadow-soft space-y-6">
+                    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gold-DEFAULT/10 border border-gold-DEFAULT/30 text-[#d4af37] animate-pulse">
+                      <svg className="animate-spin h-8 w-8 text-gold-DEFAULT" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                    </div>
+                    <h3 className="text-2xl font-serif font-bold text-white">Direct Debit Payment Authorizing...</h3>
+                    <p className="text-slate-350 text-sm max-w-md mx-auto">
+                      We are setting up your GoCardless mandate. This may take a few moments as we verify details with Bacs. Please do not refresh or close this window.
+                    </p>
                   </div>
-                  <h3 className="text-2xl font-serif font-bold text-white">Activate Your Client Account</h3>
-                  <p className="text-slate-300 text-sm leading-relaxed max-w-lg mx-auto">
-                    Agreements signed successfully! To unlock carer matching, search profiles, and submit introduction requests, please pay the one-off Lifetime Platform Fee.
-                  </p>
-                  
-                  <div className="p-4 rounded-xl bg-navy-950 border border-navy-850 max-w-md mx-auto text-left space-y-3">
-                    <div className="flex justify-between items-center text-xs font-semibold text-slate-400 uppercase">
-                      <span>Item</span>
-                      <span>Price</span>
-                    </div>
-                    <div className="flex justify-between items-center text-sm font-bold text-white">
-                      <span>Lifetime Registration Fee</span>
-                      <span>£299.00</span>
-                    </div>
-                    <div className="flex justify-between items-center text-sm text-slate-350">
-                      <span>VAT (20%)</span>
-                      <span>£59.80</span>
-                    </div>
-                    <div className="border-t border-navy-800 pt-2 flex justify-between items-center text-base font-bold text-gold">
-                      <span>Total Due</span>
-                      <span>£358.80</span>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={handlePayLifetimeFee}
-                    disabled={payingFee}
-                    className="px-8 py-3.5 bg-[#b59469] hover:bg-[#a08054] text-navy-950 rounded-xl font-bold transition-all shadow-[0_8px_30px_rgba(160,128,84,0.24)] flex items-center justify-center mx-auto min-w-[240px] disabled:opacity-50"
-                  >
-                    {payingFee ? (
-                      <>
-                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-navy-950" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                        </svg>
-                        Redirecting to Stripe...
-                      </>
-                    ) : (
-                      "Pay Fee & Activate Matching"
+                ) : (
+                  <div className="bg-navy-900/60 border border-navy-800 rounded-2xl p-12 text-center max-w-2xl mx-auto shadow-soft space-y-6">
+                    {paymentStatus === "failed" && (
+                      <div className="mb-6 p-4 rounded-xl bg-red-950/40 border border-red-500/20 text-red-200 text-sm font-semibold flex items-center justify-center gap-2">
+                        <span>⚠️</span>
+                        <span>Direct Debit mandate setup failed or was cancelled. Please try again.</span>
+                      </div>
                     )}
-                  </button>
-                </div>
-              ) : (
-                <div className="bg-navy-900/60 border border-navy-800 rounded-2xl p-12 text-center max-w-xl mx-auto shadow-soft">
-                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-950/50 border border-emerald-500/30 text-emerald-400 mb-6">
-                    <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                    </svg>
+                    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gold/10 border border-gold/30 text-[#d4af37] mb-6">
+                      <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                      </svg>
+                    </div>
+                    <h3 className="text-2xl font-serif font-bold text-white">Activate Your Client Account</h3>
+                    <p className="text-slate-300 text-sm leading-relaxed max-w-lg mx-auto">
+                      Agreements signed successfully! To unlock carer matching, search profiles, and submit introduction requests, please pay the one-off Lifetime Platform Fee.
+                    </p>
+                    
+                    <div className="p-4 rounded-xl bg-navy-950 border border-navy-850 max-w-md mx-auto text-left space-y-3">
+                      <div className="flex justify-between items-center text-xs font-semibold text-slate-400 uppercase">
+                        <span>Item</span>
+                        <span>Price</span>
+                      </div>
+                      <div className="flex justify-between items-center text-sm font-bold text-white">
+                        <span>Lifetime Registration Fee</span>
+                        <span>£299.00</span>
+                      </div>
+                      <div className="flex justify-between items-center text-sm text-slate-350">
+                        <span>VAT (20%)</span>
+                        <span>£59.80</span>
+                      </div>
+                      <div className="border-t border-navy-800 pt-2 flex justify-between items-center text-base font-bold text-gold">
+                        <span>Total Due</span>
+                        <span>£358.80</span>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={handlePayLifetimeFee}
+                      disabled={payingFee}
+                      className="px-8 py-3.5 bg-[#b59469] hover:bg-[#a08054] text-navy-950 rounded-xl font-bold transition-all shadow-[0_8px_30px_rgba(160,128,84,0.24)] flex items-center justify-center mx-auto min-w-[240px] disabled:opacity-50"
+                    >
+                      {payingFee ? (
+                        <>
+                          <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-navy-950" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                          </svg>
+                          Redirecting to Checkout...
+                        </>
+                      ) : (
+                        "Pay Fee & Activate Matching"
+                      )}
+                    </button>
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-2">All Caught Up!</h3>
-                  <p className="text-slate-400 mb-6">
-                    You have signed all required agreements. You can now access full features of the Grace & Goodwill care platform.
-                  </p>
-                  <button
-                    onClick={handleDashboardRedirect}
-                    className="px-6 py-3 bg-[#b59469] hover:bg-[#a08054] text-navy-950 rounded-lg font-semibold transition shadow-[0_8px_30px_rgba(160,128,84,0.24)]"
-                  >
-                    Go to Dashboard
-                  </button>
+                )
+              ) : (
+                <div className="relative w-full py-8 sm:py-12 flex flex-col items-center justify-center group">
+                  {/* Subtle ambient glow behind the content */}
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div className="h-40 w-40 rounded-full bg-gold-DEFAULT/5 blur-[80px] group-hover:bg-gold-DEFAULT/10 transition-all duration-1000"></div>
+                  </div>
+                  
+                  <div className="relative z-10 flex flex-col items-center">
+                    <div className="relative flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-full border border-gold-400/20 bg-gradient-to-b from-gold-400/10 to-transparent mb-5 shadow-[0_0_30px_rgba(181,148,105,0.15)]">
+                      <div className="absolute inset-0 rounded-full border border-gold-400/30 animate-[spin_6s_linear_infinite] border-t-transparent border-l-transparent"></div>
+                      <div className="absolute inset-2 rounded-full border border-gold-400/20 animate-[spin_4s_linear_infinite_reverse] border-b-transparent border-r-transparent"></div>
+                      <svg className="h-6 w-6 sm:h-8 sm:w-8 text-gold-400 drop-shadow-[0_0_10px_rgba(181,148,105,0.6)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    
+                    <h3 className="text-xl sm:text-2xl font-semibold text-white tracking-wide mb-2 text-transparent bg-clip-text bg-gradient-to-b from-white to-gold-200">All Caught Up!</h3>
+                    
+                    <p className="text-gold-100/60 text-sm sm:text-base leading-relaxed max-w-md mx-auto font-medium text-center">
+                      You have successfully signed all your required agreements! Sit back, relax, and enjoy exploring all the features the Grace & Goodwill care platform has to offer.
+                    </p>
+                  </div>
                 </div>
               )
             ) : (

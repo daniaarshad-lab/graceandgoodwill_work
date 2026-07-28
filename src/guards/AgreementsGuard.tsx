@@ -57,7 +57,8 @@ export default function AgreementsGuard({ children }: AgreementsGuardProps) {
         const pending = await agreementsService.getPendingAgreements();
         if (pending && pending.length > 0) {
           setHasPending(true);
-          router.replace("/agreements");
+          const search = typeof window !== "undefined" ? window.location.search : "";
+          router.replace(`/agreements${search}`);
         } else {
           setHasPending(false);
         }

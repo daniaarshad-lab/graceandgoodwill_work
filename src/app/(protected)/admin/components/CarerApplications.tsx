@@ -298,7 +298,9 @@ export default function CarerApplications({
           >
             <option value="ALL">All</option>
             <option value="PENDING">Pending</option>
-            <option value="SELECTED">Selected</option>
+            <option value="APPROVED">Approved</option>
+            <option value="ACTIVE">Active</option>
+            <option value="SUSPENDED">Suspended</option>
             <option value="REJECTED">Rejected</option>
           </select>
         </div>

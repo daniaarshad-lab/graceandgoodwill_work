@@ -137,24 +137,6 @@ function AdminDashboardContent() {
   return (
     <main className="min-h-screen bg-navy-950 py-10 text-gold-100">
       <div className="container-wrapper space-y-8">
-        {/* --- PREMIUM PORTAL HEADER --- */}
-        <header className="rounded-2xl border border-gold-300/10 bg-gradient-to-r from-navy-900 via-navy-950 to-navy-900 p-6 shadow-soft backdrop-blur-md">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="space-y-3">
-              <span className="inline-block rounded-full bg-gold/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-gold border border-gold/20">
-                Administrative Control Panel
-              </span>
-              <h1 className="text-2xl font-serif tracking-tight text-gold-200 sm:text-3xl">
-                Grace & Goodwill Admin Portal
-              </h1>
-              <div className="text-xs sm:text-sm text-gold-100/50 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                <span>Welcome, Admin {user?.firstName || "System Controller"}</span>
-                <span className="hidden sm:inline">•</span>
-                <span className="text-gold-200/60 font-medium">Authorization Level: Tier 1</span>
-              </div>
-            </div>
-          </div>
-        </header>
 
         {/* --- NAVIGATION TABS BAR --- */}
         <nav

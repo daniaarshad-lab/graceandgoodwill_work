@@ -223,7 +223,7 @@ export const adminService = {
     });
   },
 
-  async reviewInterestList(payload: { careRequestId: string; clientId: string; carerId: string; status: "SELECTED" | "REJECTED"; adminNotes?: string }): Promise<any> {
+  async reviewInterestList(payload: { careRequestId: string; clientId: string; carerId: string; status: "SELECTED" | "REJECTED" | "ASSIGNED"; adminNotes?: string }): Promise<any> {
     const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
     if (!token) throw new Error("No token found");
 
@@ -312,7 +312,11 @@ export const adminService = {
     });
   },
 
-  async updateCarerPaymentStatus(paymentId: string, formData: FormData): Promise<any> {
+  async updateCarerPaymentStatus(
+    paymentId: string,
+    statusOrFormData: string | FormData,
+    file?: File
+  ): Promise<any> {
     const token =
       typeof window !== "undefined"
         ? localStorage.getItem("accessToken")
@@ -322,12 +326,41 @@ export const adminService = {
       throw new Error("No token found");
     }
 
+    let bodyData: FormData;
+    if (statusOrFormData instanceof FormData) {
+      bodyData = statusOrFormData;
+    } else {
+      bodyData = new FormData();
+      bodyData.append("status", statusOrFormData);
+      if (file) {
+        bodyData.append("file", file);
+      }
+    }
+
     return apiFetch(`/admin/carer-payments/${paymentId}/pay`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${token}`,
       },
-      body: formData,
+      body: bodyData,
+    });
+  },
+
+  async getCarerPayments(placementId: string): Promise<any[]> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch(`/admin/placements/${placementId}/carer-payments`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
   },
 

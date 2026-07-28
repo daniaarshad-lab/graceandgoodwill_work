@@ -150,12 +150,25 @@ export default function ClientRequests({
                             const currentIndex = CARE_REQUEST_STATUS_OPTIONS.findIndex(
                               (o) => o.value === req.status
                             );
-                            const isDisabled = currentIndex !== -1 && index <= currentIndex;
+                            let isDisabled = currentIndex !== -1 && index <= currentIndex;
+                            let titleText = "";
+                            
+                            if (opt.value === "OPEN_FOR_APPLICATIONS") {
+                              const isNotApproved = req.clientStatus !== "APPROVED";
+                              const noFees = !req.clientAgreedWeeklyFee;
+                              
+                              if (isNotApproved || noFees) {
+                                isDisabled = true;
+                                titleText = "Client must be approved and weekly fees must be updated";
+                              }
+                            }
+                            
                             return (
                               <option
                                 key={opt.value}
                                 value={opt.value}
                                 disabled={isDisabled}
+                                title={titleText}
                                 className={isDisabled ? "opacity-50 cursor-not-allowed text-gold-100/30" : ""}
                               >
                                 {opt.label}
@@ -269,6 +282,7 @@ export default function ClientRequests({
           careRequestId={selectedRequestIdForApps}
           clientProfileId={requests.find(r => r.id === selectedRequestIdForApps)?.clientProfileId || ""}
           onClose={() => setSelectedRequestIdForApps(null)}
+          onStatusUpdated={refreshRequests}
         />
       )}
     </div>

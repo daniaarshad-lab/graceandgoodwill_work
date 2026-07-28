@@ -79,10 +79,10 @@ export default function PortalHeader({ user }: PortalHeaderProps) {
   const initials = `${displayUser?.firstName?.charAt(0) || "C"}${displayUser?.lastName?.charAt(0) || "P"}`;
 
   return (
-    <section className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 flex-wrap rounded-3xl border border-gold-300/10 bg-navy-900/40 p-4 sm:p-6 md:p-8 shadow-elegant backdrop-blur-md">
-      <div className="flex items-center gap-5">
+    <section className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 flex-wrap rounded-3xl border border-gold-300/10 bg-navy-900/40 py-3 px-4 sm:py-4 sm:px-6 md:py-4 md:px-8 shadow-elegant backdrop-blur-md">
+      <div className="flex items-center gap-4 sm:gap-5">
         <label className="relative group cursor-pointer block">
-          <div className="relative h-24 w-24 sm:h-28 sm:w-28 shrink-0 overflow-hidden rounded-full border-2 border-gold-DEFAULT bg-navy-950 flex items-center justify-center text-4xl font-bold text-gold-DEFAULT transition-transform duration-300 group-hover:scale-105 shadow-soft">
+          <div className="relative h-16 w-16 sm:h-20 sm:w-20 md:h-24 md:w-24 shrink-0 overflow-hidden rounded-full border-2 border-gold-DEFAULT bg-navy-950 flex items-center justify-center text-3xl font-bold text-gold-DEFAULT transition-transform duration-300 group-hover:scale-105 shadow-soft">
             {profilePhotoUrl && !imgError ? (
               <img
                 src={getPhotoUrl(profilePhotoUrl, profile?.updatedAt)}
@@ -136,16 +136,10 @@ export default function PortalHeader({ user }: PortalHeaderProps) {
 
         <div className="min-w-0 flex-1">
           <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.3em] text-gold-300 truncate">
-            Family & Client Portal
+            Profile Photo
           </p>
-
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gold-50 mt-1 leading-tight truncate">
-            Welcome back, {displayUser?.firstName || "Family"}{" "}
-            {displayUser?.lastName || ""}
-          </h1>
-
           <p className="text-xs sm:text-sm text-gold-100/60 mt-1 truncate">
-            {displayUser?.email}
+            Click your photo to upload a new one.
           </p>
         </div>
       </div>

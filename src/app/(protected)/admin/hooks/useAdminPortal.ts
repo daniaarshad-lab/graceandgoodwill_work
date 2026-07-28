@@ -215,6 +215,8 @@ const mapBackendCareRequests = (careRequests: any[]): ClientRequest[] => {
       status,
       email: clientUser.email || req.requestorEmail || "",
       phone: clientUser.phoneNumber || req.requestorPhone || "No phone listed",
+      clientStatus: profile.status,
+      clientAgreedWeeklyFee: profile.agreedWeeklyFee ?? req.agreedWeeklyFee,
     };
   });
 };

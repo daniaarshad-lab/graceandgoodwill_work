@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { PlusCircle, FileText, AlertTriangle, RefreshCw, Paperclip, Clock, Edit2, Search, XCircle, Check } from "lucide-react";
 import Button from "@/components/Button";
 import { adminService } from "@/services/admin/admin.service";
@@ -35,6 +35,9 @@ export default function InternalNotes({ entityId, entityType }: InternalNotesPro
   const [priorityFilter, setPriorityFilter] = useState("ALL");
   const [categoryFilter, setCategoryFilter] = useState("ALL");
   const [pinnedFilter, setPinnedFilter] = useState("ALL");
+  const [dateRangeFilter, setDateRangeFilter] = useState("ALL");
+  const [customStartDate, setCustomStartDate] = useState("");
+  const [customEndDate, setCustomEndDate] = useState("");
 
   const handleResetFilters = () => {
     setSearchQuery("");
@@ -42,6 +45,9 @@ export default function InternalNotes({ entityId, entityType }: InternalNotesPro
     setPriorityFilter("ALL");
     setCategoryFilter("ALL");
     setPinnedFilter("ALL");
+    setDateRangeFilter("ALL");
+    setCustomStartDate("");
+    setCustomEndDate("");
   };
 
   useEffect(() => {
@@ -56,26 +62,13 @@ export default function InternalNotes({ entityId, entityType }: InternalNotesPro
       setLoading(true);
       setError(null);
       
-      const params: GetInternalNotesParams = {};
+      const params: GetInternalNotesParams = { limit: 5000 };
       if (entityType === "CARER") params.carerProfileId = entityId;
       if (entityType === "CLIENT") params.clientProfileId = entityId;
       if (entityType === "PLACEMENT") params.placementId = entityId;
       
-      if (debouncedSearch) params.search = debouncedSearch;
-      if (statusFilter !== "ALL") params.status = statusFilter;
-      if (priorityFilter !== "ALL") params.priority = priorityFilter;
-      if (categoryFilter !== "ALL") params.category = categoryFilter;
-      if (pinnedFilter === "PINNED") params.isPinned = true;
-      
       const response = await adminService.getInternalNotes(params);
-      
-      // Sort pinned first, then newest first based on createdAt
-      const sorted = [...response.items].sort((a, b) => {
-        if (a.isPinned && !b.isPinned) return -1;
-        if (!a.isPinned && b.isPinned) return 1;
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      });
-      setNotes(sorted);
+      setNotes(response.items || []);
     } catch (err: any) {
       console.error("Failed to load internal notes", err);
       setError(err.message || "Could not load internal notes.");
@@ -89,7 +82,95 @@ export default function InternalNotes({ entityId, entityType }: InternalNotesPro
       fetchNotes();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [entityId, entityType, debouncedSearch, statusFilter, priorityFilter, categoryFilter, pinnedFilter]);
+  }, [entityId, entityType]);
+
+  const filteredNotes = useMemo(() => {
+    return notes
+      .filter((note) => {
+        // 1. Global Search
+        if (debouncedSearch) {
+          const s = debouncedSearch.toLowerCase().trim();
+          
+          const title = (note.title || "").toLowerCase();
+          const content = (note.content || "").toLowerCase();
+          const authorFirst = (note.author?.firstName || "").toLowerCase();
+          const authorLast = (note.author?.lastName || "").toLowerCase();
+          const authorFull = `${authorFirst} ${authorLast}`.trim();
+          const category = (note.category || "").toLowerCase();
+          
+          const matchTitle = title.includes(s);
+          const matchContent = content.includes(s);
+          const matchAuthorFirst = authorFirst.includes(s);
+          const matchAuthorLast = authorLast.includes(s);
+          const matchAuthorFull = authorFull.includes(s);
+          const matchCategory = category.includes(s);
+          
+          if (!matchTitle && !matchContent && !matchAuthorFirst && !matchAuthorLast && !matchAuthorFull && !matchCategory) {
+            return false;
+          }
+        }
+
+        // 2. Status
+        if (statusFilter !== "ALL" && note.status !== statusFilter) return false;
+        
+        // 3. Priority
+        if (priorityFilter !== "ALL" && note.priority !== priorityFilter) return false;
+        
+        // 4. Category
+        if (categoryFilter !== "ALL" && note.category !== categoryFilter) return false;
+        
+        // 5. Pinned
+        if (pinnedFilter === "PINNED" && !note.isPinned) return false;
+
+        // 6. Date Range
+        if (dateRangeFilter !== "ALL") {
+          if (!note.createdAt) return false;
+          
+          const noteDate = new Date(note.createdAt);
+          if (isNaN(noteDate.getTime())) return false;
+          
+          const now = new Date();
+          
+          if (dateRangeFilter === "TODAY") {
+            if (noteDate.toDateString() !== now.toDateString()) return false;
+          } else if (dateRangeFilter === "YESTERDAY") {
+            const yesterday = new Date(now);
+            yesterday.setDate(yesterday.getDate() - 1);
+            if (noteDate.toDateString() !== yesterday.toDateString()) return false;
+          } else if (dateRangeFilter === "LAST_7_DAYS") {
+            const sevenDaysAgo = new Date(now);
+            sevenDaysAgo.setHours(0, 0, 0, 0);
+            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+            if (noteDate < sevenDaysAgo) return false;
+          } else if (dateRangeFilter === "LAST_30_DAYS") {
+            const thirtyDaysAgo = new Date(now);
+            thirtyDaysAgo.setHours(0, 0, 0, 0);
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            if (noteDate < thirtyDaysAgo) return false;
+          } else if (dateRangeFilter === "THIS_MONTH") {
+            if (noteDate.getMonth() !== now.getMonth() || noteDate.getFullYear() !== now.getFullYear()) return false;
+          } else if (dateRangeFilter === "CUSTOM") {
+            if (customStartDate) {
+              const start = new Date(customStartDate);
+              start.setHours(0, 0, 0, 0);
+              if (noteDate < start) return false;
+            }
+            if (customEndDate) {
+              const end = new Date(customEndDate);
+              end.setHours(23, 59, 59, 999);
+              if (noteDate > end) return false;
+            }
+          }
+        }
+
+        return true;
+      })
+      .sort((a, b) => {
+        if (a.isPinned && !b.isPinned) return -1;
+        if (!a.isPinned && b.isPinned) return 1;
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      });
+  }, [notes, debouncedSearch, statusFilter, priorityFilter, categoryFilter, pinnedFilter, dateRangeFilter, customStartDate, customEndDate]);
 
   const handleAddNote = async (payload: Omit<CreateInternalNotePayload, "carerProfileId" | "clientProfileId" | "placementId">) => {
     try {
@@ -227,18 +308,59 @@ export default function InternalNotes({ entityId, entityType }: InternalNotesPro
             <option value="ALL">All Notes</option>
             <option value="PINNED">Pinned Only</option>
           </select>
+
+          <select
+            value={dateRangeFilter}
+            onChange={(e) => setDateRangeFilter(e.target.value)}
+            className="bg-navy-900 border border-gold-300/20 rounded-lg px-2.5 py-1.5 text-xs text-gold-100 focus:outline-none focus:border-gold-500/50 transition-colors min-w-[100px] flex-1 sm:flex-none"
+          >
+            <option value="ALL">All Time</option>
+            <option value="TODAY">Today</option>
+            <option value="YESTERDAY">Yesterday</option>
+            <option value="LAST_7_DAYS">Last 7 Days</option>
+            <option value="LAST_30_DAYS">Last 30 Days</option>
+            <option value="THIS_MONTH">This Month</option>
+            <option value="CUSTOM">Custom Range</option>
+          </select>
+
+          {dateRangeFilter === "CUSTOM" && (() => {
+            const today = new Date();
+            const maxDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+            return (
+              <div className="flex items-center gap-2">
+                <input
+                  type="date"
+                  value={customStartDate}
+                  max={customEndDate || maxDate}
+                  onChange={(e) => setCustomStartDate(e.target.value)}
+                  className="bg-navy-900 border border-gold-300/20 rounded-lg px-2.5 py-1.5 text-xs text-gold-100 focus:outline-none focus:border-gold-500/50 transition-colors"
+                  title="Start Date"
+                />
+                <span className="text-gold-200/50 text-xs">to</span>
+                <input
+                  type="date"
+                  value={customEndDate}
+                  min={customStartDate}
+                  max={maxDate}
+                  onChange={(e) => setCustomEndDate(e.target.value)}
+                  className="bg-navy-900 border border-gold-300/20 rounded-lg px-2.5 py-1.5 text-xs text-gold-100 focus:outline-none focus:border-gold-500/50 transition-colors"
+                  title="End Date"
+                />
+              </div>
+            );
+          })()}
           
           <button
             onClick={handleResetFilters}
-            disabled={!(searchQuery || statusFilter !== "ALL" || priorityFilter !== "ALL" || categoryFilter !== "ALL" || pinnedFilter !== "ALL")}
+            disabled={!(searchQuery || statusFilter !== "ALL" || priorityFilter !== "ALL" || categoryFilter !== "ALL" || pinnedFilter !== "ALL" || dateRangeFilter !== "ALL")}
             className={`flex items-center gap-1 text-[11px] font-medium px-2 py-1.5 rounded-lg transition-all duration-200 ${
-              (searchQuery || statusFilter !== "ALL" || priorityFilter !== "ALL" || categoryFilter !== "ALL" || pinnedFilter !== "ALL")
+              (searchQuery || statusFilter !== "ALL" || priorityFilter !== "ALL" || categoryFilter !== "ALL" || pinnedFilter !== "ALL" || dateRangeFilter !== "ALL")
                 ? "text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 cursor-pointer"
                 : "opacity-0 pointer-events-none"
             }`}
           >
             <XCircle className="h-3 w-3" />
-            Reset
+            Clear Filters
           </button>
         </div>
       </div>
@@ -267,26 +389,26 @@ export default function InternalNotes({ entityId, entityType }: InternalNotesPro
               <RefreshCw className="h-4 w-4" /> Retry
             </Button>
           </div>
-        ) : notes.length === 0 ? (
+        ) : filteredNotes.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
             <div className="h-12 w-12 rounded-full bg-gold-300/5 flex items-center justify-center text-gold-200/50 mb-3">
-              {searchQuery || statusFilter !== "ALL" || priorityFilter !== "ALL" || categoryFilter !== "ALL" || pinnedFilter !== "ALL" ? (
+              {searchQuery || statusFilter !== "ALL" || priorityFilter !== "ALL" || categoryFilter !== "ALL" || pinnedFilter !== "ALL" || dateRangeFilter !== "ALL" ? (
                 <Search className="h-6 w-6" />
               ) : (
                 <FileText className="h-6 w-6" />
               )}
             </div>
             <p className="text-sm font-semibold text-gold-200">
-              {searchQuery || statusFilter !== "ALL" || priorityFilter !== "ALL" || categoryFilter !== "ALL" || pinnedFilter !== "ALL" 
+              {searchQuery || statusFilter !== "ALL" || priorityFilter !== "ALL" || categoryFilter !== "ALL" || pinnedFilter !== "ALL" || dateRangeFilter !== "ALL"
                 ? "No matches found" 
                 : "No Internal Notes"}
             </p>
             <p className="text-xs text-gold-100/50 mt-1 max-w-sm">
-              {searchQuery || statusFilter !== "ALL" || priorityFilter !== "ALL" || categoryFilter !== "ALL" || pinnedFilter !== "ALL" 
+              {searchQuery || statusFilter !== "ALL" || priorityFilter !== "ALL" || categoryFilter !== "ALL" || pinnedFilter !== "ALL" || dateRangeFilter !== "ALL"
                 ? "Try adjusting your search or filters to find what you're looking for." 
                 : `There are currently no internal notes for this ${entityType.toLowerCase()}. Click "Add Note" to create one.`}
             </p>
-            {(searchQuery || statusFilter !== "ALL" || priorityFilter !== "ALL" || categoryFilter !== "ALL" || pinnedFilter !== "ALL") && (
+            {(searchQuery || statusFilter !== "ALL" || priorityFilter !== "ALL" || categoryFilter !== "ALL" || pinnedFilter !== "ALL" || dateRangeFilter !== "ALL") && (
               <Button variant="outline" onClick={handleResetFilters} size="sm" fullWidth={false} className="mt-4">
                 Clear Filters
               </Button>
@@ -294,7 +416,7 @@ export default function InternalNotes({ entityId, entityType }: InternalNotesPro
           </div>
         ) : (
           <div className="flex-1 overflow-y-auto pr-2 space-y-3 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gold-300/20 hover:[&::-webkit-scrollbar-thumb]:bg-gold-300/40 [&::-webkit-scrollbar-thumb]:rounded-full">
-            {notes.map((note) => (
+            {filteredNotes.map((note) => (
               <div 
                 key={note.id} 
                 onClick={() => openDetails(note)}

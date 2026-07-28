@@ -201,7 +201,7 @@ export default function MembershipManagement() {
                   disabled={processing}
                   variant="ghost-gold"
                   size="md"
-                  text="Manage Billing on Stripe"
+                  text="Manage Billing"
                 />
                 {!subscription?.cancelAtPeriodEnd && (
                   <button
@@ -389,16 +389,6 @@ export default function MembershipManagement() {
                           className="inline-flex items-center gap-1.5 font-bold text-gold-DEFAULT hover:text-gold-100 transition-colors"
                         >
                           <Download className="w-3.5 h-3.5" /> PDF
-                        </a>
-                      )}
-                      {inv.hostedUrl && (
-                        <a
-                          href={inv.hostedUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 font-bold text-gold-200/60 hover:text-gold-DEFAULT transition-colors"
-                        >
-                          <ExternalLink className="w-3.5 h-3.5" /> Stripe
                         </a>
                       )}
                     </td>

@@ -9,45 +9,53 @@ import { useClientPortal } from "./hooks/useClientPortal";
 import PortalHeader from "./components/PortalHeader";
 import PortalTabs, { TabType } from "./components/PortalTabs";
 
+import { Loader2 } from "lucide-react";
+
+const LoadingFallback = () => (
+  <div className="flex h-64 w-full items-center justify-center">
+    <Loader2 className="h-10 w-10 animate-spin text-gold-DEFAULT opacity-80" />
+  </div>
+);
+
 const DashboardOverview = dynamic(
   () => import("./components/DashboardOverview"),
-  { ssr: false },
+  { ssr: false, loading: () => <LoadingFallback /> },
 );
 const ClientProfileManagement = dynamic(
   () => import("./components/ClientProfileManagement"),
-  { ssr: false },
+  { ssr: false, loading: () => <LoadingFallback /> },
 );
 const CareRequestForm = dynamic(() => import("./components/CareRequestForm"), {
-  ssr: false,
+  ssr: false, loading: () => <LoadingFallback />
 });
 const CarerProfiles = dynamic(() => import("./components/CarerProfiles"), {
-  ssr: false,
+  ssr: false, loading: () => <LoadingFallback />
 });
 const RequestTracking = dynamic(() => import("./components/RequestTracking"), {
-  ssr: false,
+  ssr: false, loading: () => <LoadingFallback />
 });
 const SupportEnquiryPanel = dynamic(
   () => import("./components/enquiry/SupportEnquiryPanel"),
-  { ssr: false },
+  { ssr: false, loading: () => <LoadingFallback /> },
 );
 const InterestListPanel = dynamic(
   () => import("./components/InterestListPanel"),
-  { ssr: false },
+  { ssr: false, loading: () => <LoadingFallback /> },
 );
 
 const ClientApplicationsPanel = dynamic(
   () => import("./components/ClientApplicationsPanel"),
-  { ssr: false },
+  { ssr: false, loading: () => <LoadingFallback /> },
 );
 
 const AgreementsPanel = dynamic(
   () => import("@/components/AgreementsPanel"),
-  { ssr: false },
+  { ssr: false, loading: () => <LoadingFallback /> },
 );
 
 const BillingPanel = dynamic(
   () => import("./components/BillingPanel"),
-  { ssr: false },
+  { ssr: false, loading: () => <LoadingFallback /> },
 );
 
 export default function ClientDashboard() {
@@ -56,6 +64,13 @@ export default function ClientDashboard() {
   const router = useRouter();
   const tabParam = searchParams.get("tab") as TabType;
   const [activeTab, setActiveTab] = useState<TabType>("request");
+
+  const handleTabChange = (tab: TabType) => {
+    setActiveTab(tab);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("tab", tab);
+    router.push(`/client?${params.toString()}`);
+  };
 
   useEffect(() => {
     if (
@@ -119,7 +134,7 @@ export default function ClientDashboard() {
 
         <PortalTabs
           activeTab={activeTab}
-          setActiveTab={setActiveTab}
+          setActiveTab={handleTabChange}
         />
 
         <div className="transition-all duration-300">
@@ -128,7 +143,7 @@ export default function ClientDashboard() {
             <DashboardOverview
               user={user}
               careRequests={portal.careRequests}
-              setActiveTab={setActiveTab}
+              setActiveTab={handleTabChange}
             />
           )}
 
@@ -166,10 +181,10 @@ export default function ClientDashboard() {
                 e.preventDefault();
                 const success = await portal.handleCareSubmit(e);
                 if (success) {
-                  setActiveTab("carers");
+                  handleTabChange("carers");
                 }
               }}
-              setActiveTab={setActiveTab}
+              setActiveTab={handleTabChange}
             />
           )}
 
@@ -201,7 +216,7 @@ export default function ClientDashboard() {
               loading={portal.placementsLoading}
               error={portal.placementsError}
               onRetry={portal.fetchPlacements}
-              setActiveTab={setActiveTab}
+              setActiveTab={handleTabChange}
             />
           )}
 

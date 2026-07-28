@@ -29,20 +29,11 @@ export default function AgreementsGuard({ children }: AgreementsGuardProps) {
       return;
     }
 
-    // Don't redirect if we're already on the agreements page or login/register/unauthorized
-    if (
-      pathname === "/agreements" ||
-      pathname.startsWith("/login") ||
-      pathname.startsWith("/register") ||
-      pathname.startsWith("/unauthorized")
-    ) {
-      setHasPending(false);
-      return;
-    }
-
     // Bypass redirect for Carers during onboarding, because the /carer route 
     // natively handles Legal Agreements as Step 2 of the onboarding stepper.
-    if (user.role?.toUpperCase() === "CARER" && pathname === "/carer") {
+    const normalizedPath = pathname.endsWith("/") ? pathname.slice(0, -1) : pathname;
+
+    if (user.role?.toUpperCase() === "CARER" && normalizedPath === "/carer") {
       const isOnboardingParam = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get("onboarding") === "true";
       const isDone = typeof window !== 'undefined' && localStorage.getItem(`carer_onboarding_done_${user.id}`) === "true";
       
@@ -51,6 +42,18 @@ export default function AgreementsGuard({ children }: AgreementsGuardProps) {
         return;
       }
     }
+
+    // Don't redirect if we're already on the agreements page or login/register/unauthorized
+    if (
+      normalizedPath === "/agreements" ||
+      normalizedPath.startsWith("/login") ||
+      normalizedPath.startsWith("/register") ||
+      normalizedPath.startsWith("/unauthorized")
+    ) {
+      setHasPending(false);
+      return;
+    }
+
 
     const checkAgreements = async () => {
       try {

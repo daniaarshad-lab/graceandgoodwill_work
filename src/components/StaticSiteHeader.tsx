@@ -18,7 +18,8 @@ const navLinks = [
 ];
 
 function StaticSiteHeader() {
-  const pathname = usePathname();
+  const rawPathname = usePathname() || "";
+  const pathname = rawPathname.endsWith("/") && rawPathname !== "/" ? rawPathname.slice(0, -1) : rawPathname;
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleMenu = useCallback(() => setIsMobileMenuOpen((v) => !v), []);

@@ -63,7 +63,7 @@ export default function PortalHeader({
 
         <div className="min-w-0 flex-1">
           <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.3em] text-gold-300 truncate">
-            Carer Dashboard
+            Profile Details
           </p>
           <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gold-50 mt-1 leading-tight truncate">
             {firstName} {lastName}

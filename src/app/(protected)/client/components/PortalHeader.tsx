@@ -136,16 +136,10 @@ export default function PortalHeader({ user }: PortalHeaderProps) {
 
         <div className="min-w-0 flex-1">
           <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.3em] text-gold-300 truncate">
-            Family & Client Portal
+            Profile Photo
           </p>
-
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gold-50 mt-1 leading-tight truncate">
-            Welcome back, {displayUser?.firstName || "Family"}{" "}
-            {displayUser?.lastName || ""}
-          </h1>
-
           <p className="text-xs sm:text-sm text-gold-100/60 mt-1 truncate">
-            {displayUser?.email}
+            Click your photo to upload a new one.
           </p>
         </div>
       </div>

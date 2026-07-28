@@ -9,8 +9,8 @@ env:
     AWS_REGION: ${{ secrets.AWS_REGION }}
     ECR_REPOSITORY: care_management_fe
     ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
-    ECS_CLUSTER: care_management_cluster
-    ECS_SERVICE: care_management_fe-service-72xi5c3f
+    ECS_CLUSTER: ${{ secrets.ECS_CLUSTER }}
+    ECS_SERVICE: ${{ secrets.ECS_SERVICE }}
 
 permissions:
   id-token: write
@@ -107,6 +107,6 @@ jobs:
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: ${{ steps.render-task-def.outputs.task-definition }}
-          service: ${{ env.ECS_SERVICE }}
-          cluster: ${{ env.ECS_CLUSTER }}
+          service: ${{ secrets.ECS_SERVIC }}
+          cluster: ${{ secrets.ECS_CLUSTER }}
           wait-for-service-stability: true

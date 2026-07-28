@@ -124,18 +124,6 @@ export default function AgreementsPage() {
     }
   };
 
-  const handleDashboardRedirect = () => {
-    const role = user?.role?.toUpperCase();
-    if (role === "CLIENT") {
-      router.push("/client");
-    } else if (role === "CARER") {
-      router.push("/carer");
-    } else if (role === "ADMIN") {
-      router.push("/admin");
-    } else {
-      router.push("/");
-    }
-  };
 
   const handlePayLifetimeFee = async () => {
     try {
@@ -340,22 +328,27 @@ export default function AgreementsPage() {
                   </div>
                 )
               ) : (
-                <div className="bg-navy-900/60 border border-navy-800 rounded-2xl p-12 text-center max-w-xl mx-auto shadow-soft">
-                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-950/50 border border-emerald-500/30 text-emerald-400 mb-6">
-                    <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                    </svg>
+                <div className="relative w-full py-8 sm:py-12 flex flex-col items-center justify-center group">
+                  {/* Subtle ambient glow behind the content */}
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div className="h-40 w-40 rounded-full bg-gold-DEFAULT/5 blur-[80px] group-hover:bg-gold-DEFAULT/10 transition-all duration-1000"></div>
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-2">All Caught Up!</h3>
-                  <p className="text-slate-400 mb-6">
-                    You have signed all required agreements. You can now access full features of the Grace & Goodwill care platform.
-                  </p>
-                  <button
-                    onClick={handleDashboardRedirect}
-                    className="px-6 py-3 bg-[#b59469] hover:bg-[#a08054] text-navy-950 rounded-lg font-semibold transition shadow-[0_8px_30px_rgba(160,128,84,0.24)]"
-                  >
-                    Go to Dashboard
-                  </button>
+                  
+                  <div className="relative z-10 flex flex-col items-center">
+                    <div className="relative flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-full border border-gold-400/20 bg-gradient-to-b from-gold-400/10 to-transparent mb-5 shadow-[0_0_30px_rgba(181,148,105,0.15)]">
+                      <div className="absolute inset-0 rounded-full border border-gold-400/30 animate-[spin_6s_linear_infinite] border-t-transparent border-l-transparent"></div>
+                      <div className="absolute inset-2 rounded-full border border-gold-400/20 animate-[spin_4s_linear_infinite_reverse] border-b-transparent border-r-transparent"></div>
+                      <svg className="h-6 w-6 sm:h-8 sm:w-8 text-gold-400 drop-shadow-[0_0_10px_rgba(181,148,105,0.6)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    
+                    <h3 className="text-xl sm:text-2xl font-semibold text-white tracking-wide mb-2 text-transparent bg-clip-text bg-gradient-to-b from-white to-gold-200">All Caught Up!</h3>
+                    
+                    <p className="text-gold-100/60 text-sm sm:text-base leading-relaxed max-w-md mx-auto font-medium text-center">
+                      You have successfully signed all your required agreements! Sit back, relax, and enjoy exploring all the features the Grace & Goodwill care platform has to offer.
+                    </p>
+                  </div>
                 </div>
               )
             ) : (

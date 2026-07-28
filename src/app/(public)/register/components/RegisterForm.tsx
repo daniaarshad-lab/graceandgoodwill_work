@@ -73,7 +73,7 @@ export default function RegisterForm() {
       if (selectedRole === "CARER") {
         router.push("/carer?onboarding=true");
       } else {
-        router.push("/client?onboarding=true");
+        router.push("/agreements?onboarding=true");
       }
     } catch (error: any) {
       const errorMsg =

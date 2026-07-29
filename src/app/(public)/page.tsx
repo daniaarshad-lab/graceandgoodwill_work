@@ -1,4 +1,4 @@
-import { Newspaper, ExternalLink, MessageCircle } from "lucide-react";
+import { Newspaper, ExternalLink, MessageCircle, MessageCircleMore, HandHeart, ChevronRight } from "lucide-react";
 import happySeniorCouple from "@/assets/open/happy_senior_couple.png";
 import bbcImage2 from "@/assets/open/bbc-image2.jpg";
 import bbcImage3 from "@/assets/open/bbc-image3.jpg";
@@ -62,46 +62,56 @@ export default function HomePage() {
           </div>
 
           <div className="flex flex-col xl:flex-row items-start xl:items-center gap-4 flex-wrap xl:flex-nowrap w-full max-w-[100%] overflow-visible">
-            <Button
-              asChild
-              variant="goldDarker"
-              fullWidth={false}
-              className="h-14 px-6 w-full xl:w-max shrink-0"
+            <Link 
+              href="/contact" 
+              prefetch={false}
+              className="group relative flex items-center justify-between h-14 px-4 sm:px-5 rounded-2xl bg-[#5C441D] shrink-0 shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 hover:shadow-[0_0_25px_rgba(212,175,55,0.25)] hover:bg-[#6E5223] w-full xl:w-max"
             >
-              <Link href="/contact" prefetch={false}>
-                Request Care
-              </Link>
-            </Button>
+              <div className="flex items-center gap-2 sm:gap-3 text-left z-10">
+                <div className="relative flex items-center justify-center w-10 h-10">
+                  <div className="absolute inset-0 scale-125 rounded-full bg-[radial-gradient(circle,_rgba(247,215,116,0.15)_0%,_transparent_70%)] blur-sm"></div>
+                  <HandHeart className="w-8 h-8 text-[#F7D774] relative z-10 drop-shadow-sm" strokeWidth={1.5} />
+                </div>
+                <span className="text-[#FDF2D5] font-semibold text-[14px] leading-snug tracking-wide drop-shadow-sm">
+                  Request Care
+                </span>
+              </div>
+              <ChevronRight strokeWidth={3} className="text-[#FDF2D5]/70 w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1 z-10" />
+            </Link>
+            
             <EmergencyButton className="w-full xl:w-max" />
-            <Button
-              asChild
-              variant="whatsapp"
-              fullWidth={false}
-              className="h-14 px-6 w-full xl:w-max shrink-0 gap-2 group"
+            
+            <a
+              href="https://wa.me/447700000000?text=Hello%2C%20I'd%20like%20to%20enquire%20about%20live%20in%20care%20services%20from%20Grace%20%26%20Goodwill."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative flex items-center justify-between h-14 px-4 sm:px-5 rounded-2xl bg-[#063D24] shrink-0 shadow-[0_0_15px_rgba(0,198,83,0.1)] transition-all duration-300 hover:shadow-[0_0_25px_rgba(0,198,83,0.2)] hover:bg-[#085230] w-full xl:w-max"
             >
-              <a
-                href="https://wa.me/447700000000?text=Hello%2C%20I'd%20like%20to%20enquire%20about%20live%20in%20care%20services%20from%20Grace%20%26%20Goodwill."
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <MessageCircle className="w-5 h-5 fill-current text-emerald-400 group-hover:text-emerald-300 transition-colors" />
-                Chat to Our Team
-              </a>
-            </Button>
+              <div className="flex items-center gap-2 sm:gap-3 text-left z-10">
+                <div className="relative flex items-center justify-center w-10 h-10">
+                  <div className="absolute inset-0 scale-125 rounded-full bg-[radial-gradient(circle,_rgba(0,198,83,0.15)_0%,_transparent_70%)] blur-sm"></div>
+                  <MessageCircleMore className="w-8 h-8 fill-current text-[#00C653] relative z-10 drop-shadow-sm" strokeWidth={1.5} />
+                </div>
+                <span className="text-[#E0F8EA] font-semibold text-[14px] leading-snug tracking-wide drop-shadow-sm">
+                  Speak To Our Team
+                </span>
+              </div>
+              <ChevronRight strokeWidth={3} className="text-[#00C653]/70 w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1 z-10" />
+            </a>
           </div>
         </div>
 
         <div className="relative flex items-center justify-center mt-0 sm:mt-8 lg:mt-0 w-full lg:flex-1 xl:flex-none lg:max-w-xl h-[380px] sm:h-[450px] overflow-visible">
           {/* Glowing concentric radiating gold rings */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="absolute w-[260px] sm:w-[280px] h-[260px] sm:h-[280px] rounded-full border-2 border-gold-400 animate-ring-pulse-1" />
-            <div className="absolute w-[300px] sm:w-[360px] lg:w-[320px] xl:w-[360px] h-[300px] sm:h-[360px] lg:h-[320px] xl:h-[360px] rounded-full border-2 border-gold-400 animate-ring-pulse-2" />
-            <div className="absolute w-[340px] sm:w-[440px] lg:w-[380px] xl:w-[440px] h-[340px] sm:h-[440px] lg:h-[380px] xl:h-[440px] rounded-full border-2 border-gold-400 animate-ring-pulse-3" />
-            <div className="absolute w-[380px] sm:w-[520px] lg:w-[440px] xl:w-[520px] max-w-[95vw] lg:max-w-none h-[380px] sm:h-[520px] lg:h-[440px] xl:h-[520px] max-h-[95vw] lg:max-h-none rounded-full border-2 border-gold-400 animate-ring-pulse-4" />
+            <div className="absolute w-[260px] sm:w-[290px] lg:w-[320px] h-[260px] sm:h-[290px] lg:h-[320px] rounded-full border-2 border-gold-400 animate-ring-pulse-1" />
+            <div className="absolute w-[300px] sm:w-[330px] lg:w-[360px] h-[300px] sm:h-[330px] lg:h-[360px] rounded-full border-2 border-gold-400 animate-ring-pulse-2" />
+            <div className="absolute w-[340px] sm:w-[370px] lg:w-[400px] h-[340px] sm:h-[370px] lg:h-[400px] rounded-full border-2 border-gold-400 animate-ring-pulse-3" />
+            <div className="absolute w-[380px] sm:w-[410px] lg:w-[440px] max-w-[95vw] lg:max-w-none h-[380px] sm:h-[410px] lg:h-[440px] max-h-[95vw] lg:max-h-none rounded-full border-2 border-gold-400 animate-ring-pulse-4" />
           </div>
 
           {/* Focal Circular Portrait Container */}
-          <div className="relative w-64 h-64 sm:w-72 sm:h-72 lg:w-80 lg:h-80 rounded-full border-4 border-gold-400 bg-navy-950 shadow-elegant overflow-hidden transition-all duration-500 hover:scale-[1.02] animate-image-pulse">
+          <div className="relative w-56 h-56 sm:w-64 sm:h-64 lg:w-72 lg:h-72 rounded-full border-4 border-gold-400 bg-navy-950 shadow-elegant overflow-hidden transition-all duration-500 hover:scale-[1.02] animate-image-pulse">
             <Image
               src={happySeniorCouple}
               alt="Reassured senior couple supported by Grace & Goodwill live in care"

@@ -16,7 +16,7 @@ export default function HomePage() {
       <section className="container-wrapper relative flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between pb-16">
 
         {/* As Seen In Media Badge (Top Right) */}
-        <div className="relative lg:absolute lg:-top-8 lg:right-0 2xl:-top-16 2xl:-right-16 z-30 inline-flex self-start lg:self-auto items-center gap-3 bg-navy-900 border border-gold-muted/30 px-4 py-2 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.3)] backdrop-blur-md hover:border-gold-400/50 hover:shadow-[0_0_15px_rgba(247,215,116,0.15)] transition-all cursor-default">
+        <div className="relative lg:absolute lg:-top-8 lg:right-[calc(-50vw+50%+2rem)] 2xl:-top-16 2xl:right-[calc(-50vw+50%+4rem)] z-30 inline-flex self-start lg:self-auto items-center gap-3 bg-navy-900 border border-gold-muted/30 px-4 py-2 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.3)] backdrop-blur-md hover:border-gold-400/50 hover:shadow-[0_0_15px_rgba(247,215,116,0.15)] transition-all cursor-default">
           <span className="text-[10px] sm:text-xs font-semibold text-gold-200 uppercase tracking-widest inline-block">
             As Featured on
           </span>
@@ -40,7 +40,7 @@ export default function HomePage() {
             <span className="text-3xl sm:text-4xl lg:text-[2.5rem] text-white">
               Live In Care Services
             </span><br />
-            <span className="font-sans text-lg sm:text-xl lg:text-2xl font-semibold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-[#D4AF37] via-[#F7D774] to-[#E6C35C] inline-block mt-2">
+            <span className="font-sans text-lg sm:text-xl lg:text-2xl font-semibold tracking-wide text-[rgb(245,212,160)] inline-block mt-2">
               Across The UK
             </span>
           </h1>
@@ -113,7 +113,7 @@ export default function HomePage() {
           </div>
 
           {/* Testimonial Quote Bubble overlapping the circle */}
-          <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 xl:bottom-6 xl:-left-12 xl:translate-x-0 bg-navy-900/90 border border-gold-muted/30 shadow-elegant rounded-2xl p-3 sm:p-4 w-[260px] max-w-[90vw] sm:w-auto sm:max-w-[280px] backdrop-blur-md transition-all duration-300 hover:scale-[1.02] flex flex-col gap-1 z-10">
+          <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 xl:-bottom-2 xl:left-auto xl:-right-12 xl:translate-x-0 bg-navy-900/90 border border-gold-muted/30 shadow-elegant rounded-2xl p-3 sm:p-4 w-[260px] max-w-[90vw] sm:w-auto sm:max-w-[280px] backdrop-blur-md transition-all duration-300 hover:scale-[1.02] flex flex-col gap-1 z-10">
             <span className="text-2xl sm:text-3xl font-serif text-gold-300/70 leading-none h-3 sm:h-4">
               “
             </span>

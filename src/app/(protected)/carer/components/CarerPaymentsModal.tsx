@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { X, CheckCircle, Calendar, DollarSign, Clock, AlertTriangle } from "lucide-react";
 import { carerService } from "@/services/carer/carer.service";
+import { storageService } from "@/services/storage.service";
 
 interface Payment {
   id: string;
@@ -126,9 +127,16 @@ export const CarerPaymentsModal: React.FC<CarerPaymentsModalProps> = ({
                   <div className="w-full sm:w-auto flex justify-end sm:justify-start border-t sm:border-t-0 border-gold-300/10 pt-4 sm:pt-0">
                     {payment.transactionProofUrl ? (
                       <a 
-                        href={payment.transactionProofUrl.startsWith('http') ? payment.transactionProofUrl : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}${payment.transactionProofUrl}`}
+                        href={payment.transactionProofUrl}
                         target="_blank"
                         rel="noreferrer"
+                        onClick={async (e) => {
+                          e.preventDefault();
+                          if (payment.transactionProofUrl) {
+                            const url = await storageService.getPresignedUrl(payment.transactionProofUrl);
+                            window.open(url, "_blank", "noopener,noreferrer");
+                          }
+                        }}
                         className="px-4 py-2 bg-navy-950 border border-gold-300/20 text-gold-200 font-medium rounded-lg hover:bg-navy-900 hover:text-gold-100 transition-colors text-sm flex items-center justify-center gap-2 w-full sm:w-auto"
                       >
                         <DollarSign className="w-4 h-4" /> View Receipt

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { X, CheckCircle, Upload, Calendar, DollarSign, Clock } from "lucide-react";
 import { adminService } from "../../../../services/admin/admin.service";
+import { storageService } from "@/services/storage.service";
 
 interface Payment {
   id: string;
@@ -174,9 +175,16 @@ export const AdminCarerPaymentsModal: React.FC<AdminCarerPaymentsModalProps> = (
                     ) : (
                       payment.transactionProofUrl && (
                         <a 
-                          href={payment.transactionProofUrl.startsWith('http') ? payment.transactionProofUrl : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}${payment.transactionProofUrl}`}
+                          href={payment.transactionProofUrl}
                           target="_blank"
                           rel="noreferrer"
+                          onClick={async (e) => {
+                            e.preventDefault();
+                            if (payment.transactionProofUrl) {
+                              const url = await storageService.getPresignedUrl(payment.transactionProofUrl);
+                              window.open(url, "_blank", "noopener,noreferrer");
+                            }
+                          }}
                           className="px-4 py-2 bg-navy-950 border border-gold-300/20 text-gold-200 font-medium rounded-lg hover:bg-navy-900 hover:text-gold-100 transition-colors text-sm flex items-center justify-center gap-2 w-full md:w-auto"
                         >
                           <DollarSign className="w-4 h-4" /> View Receipt

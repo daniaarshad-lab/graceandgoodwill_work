@@ -4,6 +4,8 @@ import { X, Paperclip, Clock, Upload, File as FileIcon } from "lucide-react";
 import Button from "@/components/Button";
 import { InternalNote, InternalNoteHistory, InternalNoteAttachment } from "@/app/(protected)/admin/types/admin.types";
 import { adminService } from "@/services/admin/admin.service";
+import { storageService } from "@/services/storage.service";
+
 
 interface NoteDetailsModalProps {
   isOpen: boolean;
@@ -174,6 +176,12 @@ export default function NoteDetailsModal({ isOpen, onClose, note, onAttachmentUp
                       href={attachment.fileUrl}
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={async (e) => {
+                        e.preventDefault();
+                        const targetKey = attachment.fileKey || attachment.fileUrl;
+                        const signedUrl = await storageService.getPresignedUrl(targetKey);
+                        window.open(signedUrl, "_blank", "noopener,noreferrer");
+                      }}
                       className="flex items-center gap-3 rounded-lg border border-gold-300/10 bg-navy-950 p-3 hover:border-gold-300/30 transition-colors"
                     >
                       <div className="rounded bg-navy-900 p-2">
@@ -184,6 +192,7 @@ export default function NoteDetailsModal({ isOpen, onClose, note, onAttachmentUp
                       </span>
                     </a>
                   ))
+
                 )}
               </div>
             </div>

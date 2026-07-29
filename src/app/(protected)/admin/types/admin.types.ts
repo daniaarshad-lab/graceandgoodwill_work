@@ -84,7 +84,9 @@ export interface InternalNoteAttachment {
   id: string;
   fileName: string;
   fileUrl: string;
+  fileKey?: string;
 }
+
 
 export interface InternalNoteHistory {
   id: string;

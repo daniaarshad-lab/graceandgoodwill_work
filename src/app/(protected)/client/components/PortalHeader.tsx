@@ -79,7 +79,7 @@ export default function PortalHeader({ user }: PortalHeaderProps) {
   const initials = `${displayUser?.firstName?.charAt(0) || "C"}${displayUser?.lastName?.charAt(0) || "P"}`;
 
   return (
-    <section className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 flex-wrap rounded-3xl border border-gold-300/10 bg-navy-900/40 py-3 px-4 sm:py-4 sm:px-6 md:py-4 md:px-8 shadow-elegant backdrop-blur-md">
+    <section className="w-full flex flex-col md:flex-row justify-between items-start md:items-center gap-4 flex-wrap rounded-3xl border border-gold-300/10 bg-navy-900/40 py-3 px-4 sm:py-4 sm:px-6 md:py-4 md:px-8 shadow-elegant backdrop-blur-md">
       <div className="flex items-center gap-4 sm:gap-5">
         <label className="relative group cursor-pointer block">
           <div className="relative h-16 w-16 sm:h-20 sm:w-20 md:h-24 md:w-24 shrink-0 overflow-hidden rounded-full border-2 border-gold-DEFAULT bg-navy-950 flex items-center justify-center text-3xl font-bold text-gold-DEFAULT transition-transform duration-300 group-hover:scale-105 shadow-soft">

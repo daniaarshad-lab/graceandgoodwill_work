@@ -45,7 +45,7 @@ export default function PortalHeader({
     return finalUrl;
   };
   return (
-    <section className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 rounded-3xl border border-gold-300/10 bg-navy-900/40 p-4 sm:p-6 md:p-8 shadow-elegant backdrop-blur-md">
+    <section className="w-full flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 rounded-3xl border border-gold-300/10 bg-navy-900/40 p-4 sm:p-6 md:p-8 shadow-elegant backdrop-blur-md">
       <div className="flex items-center gap-5">
         <div className="relative group block">
           <div className="relative h-24 w-24 sm:h-28 sm:w-28 shrink-0 overflow-hidden rounded-full border-2 border-gold-DEFAULT bg-navy-950 flex items-center justify-center text-4xl font-bold text-gold-DEFAULT shadow-soft">

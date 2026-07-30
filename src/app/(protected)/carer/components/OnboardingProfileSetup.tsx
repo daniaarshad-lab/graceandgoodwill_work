@@ -49,7 +49,14 @@ export default function OnboardingProfileSetup({
       finalUrl = `${baseUrl}${cleanPath}`;
     }
     
-    if (updatedAt && !finalUrl.startsWith("blob:")) {
+    if (
+      updatedAt &&
+      !finalUrl.startsWith("blob:") &&
+      !finalUrl.includes("X-Amz-Signature") &&
+      !finalUrl.includes("Signature=") &&
+      !finalUrl.includes("Amz-Credential") &&
+      !finalUrl.includes("X-Amz-")
+    ) {
       const separator = finalUrl.includes("?") ? "&" : "?";
       finalUrl += `${separator}t=${new Date(updatedAt).getTime()}`;
     }

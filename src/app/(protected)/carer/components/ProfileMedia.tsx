@@ -25,7 +25,9 @@ const getFullMediaUrl = (path: string | null | undefined, updatedAt?: string) =>
     updatedAt &&
     !finalUrl.startsWith("blob:") &&
     !finalUrl.includes("X-Amz-Signature") &&
-    !finalUrl.includes("Signature=")
+    !finalUrl.includes("Signature=") &&
+    !finalUrl.includes("Amz-Credential") &&
+    !finalUrl.includes("X-Amz-")
   ) {
     const timestamp = new Date(updatedAt).getTime();
     const separator = finalUrl.includes("?") ? "&" : "?";

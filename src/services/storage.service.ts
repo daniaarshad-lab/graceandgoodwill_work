@@ -62,15 +62,6 @@ export const storageService = {
   async getPresignedUrl(keyOrUrl: string, expiresIn?: number): Promise<string> {
     if (!keyOrUrl) return "";
 
-    // Profile pictures and intro videos return direct public S3 URLs so they never expire
-    if (isProfilePicOrIntroVideo(keyOrUrl)) {
-      if (keyOrUrl.startsWith("http://") || keyOrUrl.startsWith("https://")) {
-        return keyOrUrl.split("?")[0];
-      }
-      const cleanKey = keyOrUrl.replace(/^\//, "").split("?")[0];
-      return `https://graceanddoodwill-storage-prod.s3.eu-west-2.amazonaws.com/${cleanKey}`;
-    }
-
     // If it's already a blob URL or signed URL with signature query params, return as-is
     if (
       keyOrUrl.startsWith("blob:") ||

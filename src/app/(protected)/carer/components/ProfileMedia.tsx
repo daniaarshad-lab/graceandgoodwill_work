@@ -21,7 +21,12 @@ const getFullMediaUrl = (path: string | null | undefined, updatedAt?: string) =>
     finalUrl = `${baseUrl}${cleanPath}`;
   }
   
-  if (updatedAt && !finalUrl.startsWith("blob:")) {
+  if (
+    updatedAt &&
+    !finalUrl.startsWith("blob:") &&
+    !finalUrl.includes("X-Amz-Signature") &&
+    !finalUrl.includes("Signature=")
+  ) {
     const timestamp = new Date(updatedAt).getTime();
     const separator = finalUrl.includes("?") ? "&" : "?";
     finalUrl += `${separator}t=${timestamp}`;

@@ -1,5 +1,7 @@
+import { useState, useEffect } from "react";
 import { ComplianceDoc } from "../types/carer.types";
 import Button from "@/components/Button";
+import { storageService } from "@/services/storage.service";
 
 interface UploadDocumentModalProps {
   previewDoc: ComplianceDoc | null;
@@ -16,6 +18,19 @@ export default function UploadDocumentModal({
   setDocToDelete,
   confirmDelete,
 }: UploadDocumentModalProps) {
+  const [signedUrl, setSignedUrl] = useState<string>("");
+
+  useEffect(() => {
+    const target = previewDoc?.fileKey || previewDoc?.previewUrl || previewDoc?.fileUrl;
+    if (target) {
+      storageService.getPresignedUrl(target).then((url) => {
+        setSignedUrl(url);
+      });
+    } else {
+      setSignedUrl("");
+    }
+  }, [previewDoc]);
+
   function getFullUrl(url: string | null | undefined) {
     if (!url) return "";
     let finalUrl = url;
@@ -33,7 +48,8 @@ export default function UploadDocumentModal({
     return finalUrl;
   }
 
-  const fullPreviewUrl = previewDoc ? getFullUrl(previewDoc.previewUrl) : "";
+  const fullPreviewUrl = signedUrl || (previewDoc ? getFullUrl(previewDoc.previewUrl) : "");
+
 
   return (
     <>

@@ -80,88 +80,123 @@ export default function AboutPage() {
             </p>
           </div>
 
-      <div className="space-y-8 text-sm sm:text-base text-gold-100/90 leading-relaxed font-light">
-  <p>
-    Throughout my life, I have been drawn to helping others, whether through
-    supporting vulnerable people professionally, caring for family members, or
-    standing alongside those facing difficult moments in life. I have always
-    believed that every person deserves to be treated with dignity, kindness,
-    compassion, and genuine respect.
-  </p>
+          <div className="space-y-8 text-sm sm:text-base text-gold-100/90 leading-relaxed font-light">
+            <p>
+              Throughout my life, I have been drawn to helping others, whether through
+              supporting vulnerable people professionally, caring for family members, or
+              standing alongside those facing difficult moments in life. I have always
+              believed that every person deserves to be treated with dignity, kindness,
+              compassion, and genuine respect.
+            </p>
 
-  <p>
-    After spending years working within the Probation Service, I realised that
-    my purpose was not simply to work within a system, but to create something
-    that could make a lasting difference in people&apos;s lives. Grace &amp;
-    Goodwill was founded on the belief that families deserve honesty, carers
-    deserve respect, and those receiving support deserve a trusted match, and
-    meaningful human connection.
-  </p>
+            <p>
+              After spending years working within the Probation Service, I realised that
+              my purpose was not simply to work within a system, but to create something
+              that could make a lasting difference in people&apos;s lives. Grace &amp;
+              Goodwill was founded on the belief that families deserve honesty, carers
+              deserve respect, and those receiving support deserve a trusted match, and
+              meaningful human connection.
+            </p>
 
-  <div className="relative mx-auto w-full max-w-2xl my-8 sm:my-12">
-    <div className="relative rounded-2xl overflow-hidden border border-gold-400/20 shadow-2xl bg-navy-950 p-2 sm:p-3 group">
-      <div className="relative rounded-xl overflow-hidden">
-        <Image 
-          src={aboutUsFirstImg} 
-          alt="Aurea and Erica"
-          className="w-full h-auto object-cover filter contrast-[1.02] transition-transform duration-1000 group-hover:scale-[1.03]"
-        />
-        <div className="absolute inset-0 ring-1 ring-inset ring-gold-400/10 rounded-xl pointer-events-none" />
-      </div>
-    </div>
-  </div>
+            <div className="relative mx-auto w-full max-w-2xl my-8 sm:my-12">
+              <div className="relative rounded-2xl overflow-hidden border border-gold-400/20 shadow-2xl bg-navy-950 p-2 sm:p-3 group">
+                <div className="relative rounded-xl overflow-hidden">
+                  <Image
+                    src={aboutUsFirstImg}
+                    alt="Aurea and Erica"
+                    className="w-full h-auto object-cover filter contrast-[1.02] transition-transform duration-1000 group-hover:scale-[1.03]"
+                  />
+                  <div className="absolute inset-0 ring-1 ring-inset ring-gold-400/10 rounded-xl pointer-events-none" />
+                </div>
+              </div>
+            </div>
 
-  <p>
-    My sister Erica has been one of my greatest teachers in life. Supporting
-    and caring for her over the years gave me first-hand insight into how
-    important dignity, patience, consistency, and genuine human connection are
-    to a person&apos;s wellbeing. She showed me the difference that the right
-    support can make, not only for the individual receiving care, but also for
-    the people who love them.
-  </p>
+            <p>
+              My sister Erica has been one of my greatest teachers in life. Supporting
+              and caring for her over the years gave me first-hand insight into how
+              important dignity, patience, consistency, and genuine human connection are
+              to a person&apos;s wellbeing. She showed me the difference that the right
+              support can make, not only for the individual receiving care, but also for
+              the people who love them. This experience, together with my professional background supporting
+              vulnerable people, continues to shape every decision we make at Grace &amp;
+              Goodwill.
+            </p>
 
-  <div className="relative mx-auto w-full max-w-2xl my-8 sm:my-12">
-    <div className="relative rounded-2xl overflow-hidden border border-gold-400/20 shadow-2xl bg-navy-950 p-2 sm:p-3 group">
-      <div className="relative rounded-xl overflow-hidden">
-        <Image 
-          src={aboutUsSecondImg} 
-          alt="Aurea and Erica holding hands"
-          className="w-full h-auto object-cover filter contrast-[1.02] transition-transform duration-1000 group-hover:scale-[1.03]"
-        />
-        <div className="absolute inset-0 ring-1 ring-inset ring-gold-400/10 rounded-xl pointer-events-none" />
-      </div>
-    </div>
-  </div>
 
-  <p>
-    This experience, together with my professional background supporting
-    vulnerable people, continues to shape every decision we make at Grace &amp;
-    Goodwill.
-  </p>
+            <div className="relative mx-auto w-full max-w-2xl my-8 sm:my-12">
+              <div className="relative rounded-2xl overflow-hidden border border-gold-400/20 shadow-2xl bg-navy-950 p-2 sm:p-3 group">
+                <div className="relative rounded-xl overflow-hidden">
+                  <Image
+                    src={aboutUsSecondImg}
+                    alt="Aurea and Erica holding hands"
+                    className="w-full h-auto object-cover filter contrast-[1.02] transition-transform duration-1000 group-hover:scale-[1.03]"
+                  />
+                  <div className="absolute inset-0 ring-1 ring-inset ring-gold-400/10 rounded-xl pointer-events-none" />
+                </div>
+              </div>
+            </div>
 
-  <div className="relative mx-auto w-full max-w-2xl my-8 sm:my-12">
-    <div className="relative rounded-2xl overflow-hidden border border-gold-400/20 shadow-2xl bg-navy-950 p-2 sm:p-3 group">
-      <div className="relative rounded-xl overflow-hidden">
-        <Image 
-          src={aboutUsThirdImg} 
-          alt="Holding hands close up"
-          className="w-full h-auto object-cover filter contrast-[1.02] transition-transform duration-1000 group-hover:scale-[1.03]"
-        />
-        <div className="absolute inset-0 ring-1 ring-inset ring-gold-400/10 rounded-xl pointer-events-none" />
-      </div>
-    </div>
-  </div>
+            <p className="italic text-lg sm:text-xl text-gold-300/90 font-serif leading-relaxed text-center">
+              At the heart of Grace &amp; Goodwill is a simple belief: when people feel seen, valued, respected and genuinely cared for, lives change. Our mission is to build trusted relationships and leave the world a little better than we found it, one person and one family at a time.
+            </p>
+          </div>
+        </div>
+      </section>
 
-  <div className="mt-12 pt-10 border-t border-gold-400/15">
-    <p className="italic text-lg sm:text-xl text-gold-300/90 font-serif leading-relaxed text-center">
-      At the heart of Grace &amp; Goodwill is a simple belief: when people feel
-      seen, valued, respected, and genuinely cared for, lives change. Our
-      mission is to build those relationships, create that trust, and leave the
-      world a little better than we found it, one person, one family, and one
-      act of kindness at a time.
-    </p>
-  </div>
-</div>
+      {/* ── SECTION 2 · OUR STORY ──────────────────────────────────────── */}
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-navy-950 to-navy-900 text-gold-50 shadow-elegant ring-1 ring-gold-400/10 px-6 py-12 sm:px-12 sm:py-20 lg:p-24 mb-24 max-w-[1400px] mx-auto">
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gold-400/5 rounded-full blur-[140px] pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-navy-800/30 rounded-full blur-[120px] pointer-events-none" />
+
+        {/* Inner subtle premium glow to add visual depth to the story content */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gold-400/[0.02] via-transparent to-transparent pointer-events-none" />
+
+        <div className="relative z-10 w-full max-w-6xl mx-auto">
+          {/* Header */}
+          <div className="mb-12 md:mb-16 text-center">
+            <div className="flex items-center justify-center gap-4 mb-4">
+              <div className="h-px w-12 sm:w-24 bg-gradient-to-r from-transparent to-gold-400/50" />
+              <h2 className="text-3xl sm:text-4xl font-serif text-gold-50 tracking-wide">
+                Our Story
+              </h2>
+              <div className="h-px w-12 sm:w-24 bg-gradient-to-l from-transparent to-gold-400/50" />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            {/* Left Column: Image */}
+            <div className="relative w-full max-w-xl mx-auto lg:mx-0">
+              <div className="relative rounded-2xl overflow-hidden border border-gold-400/20 shadow-2xl bg-navy-950 p-2 sm:p-3 group">
+                <div className="relative rounded-xl overflow-hidden">
+                  <Image
+                    src={aboutUsThirdImg}
+                    alt="Holding hands close up"
+                    className="w-full h-auto object-cover filter contrast-[1.02] transition-transform duration-1000 group-hover:scale-[1.03]"
+                  />
+                  <div className="absolute inset-0 ring-1 ring-inset ring-gold-400/10 rounded-xl pointer-events-none" />
+                </div>
+              </div>
+              {/* Decorative corners */}
+              <div className="absolute -bottom-6 -right-6 w-24 h-24 border-b-2 border-r-2 border-gold-400/20 rounded-br-3xl pointer-events-none hidden sm:block" />
+              <div className="absolute -top-6 -left-6 w-24 h-24 border-t-2 border-l-2 border-gold-400/20 rounded-tl-3xl pointer-events-none hidden sm:block" />
+            </div>
+
+            {/* Right Column: Text */}
+            <div className="space-y-6 text-base text-gold-100/80 leading-relaxed font-light">
+              <p>
+                Grace &amp; Goodwill was created because too many families are left feeling overwhelmed when trying to find care they can genuinely trust, while many exceptional carers struggle to find ethical opportunities where they are respected, valued and treated fairly.
+              </p>
+              <p>
+                We believe outstanding care starts with people. Skills and experience matter, but kindness, trust and genuine human connection matter just as much. Every family has a unique story, every carer brings something valuable, and every care journey deserves to be met with dignity, compassion and respect.
+              </p>
+              <p>
+                For me, care has never been just a profession. My sister, Erica, has been one of my greatest teachers. Through supporting and advocating for her, I learned that dignity, patience, consistency and genuine human connection aren&apos;t just ideals—they are the foundation of exceptional care. It showed me the profound difference the right support can make, not only for the person receiving care, but for the family who loves them.
+              </p>
+              <p>
+                Combined with my years of professionally supporting vulnerable people, those experiences continue to shape every decision we make at Grace &amp; Goodwill and the standards we expect from every carer we introduce.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -326,91 +361,6 @@ export default function AboutPage() {
       </section>
       */}
 
-      {/* ── SECTION 2 · WHY WE STARTED ──────────────────────────────────────── */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-navy-950 to-navy-900 text-gold-50 shadow-elegant ring-1 ring-gold-400/10 px-6 py-12 sm:px-12 sm:py-20 lg:p-24 mb-24">
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gold-400/5 rounded-full blur-[140px] pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-navy-800/30 rounded-full blur-[120px] pointer-events-none" />
-
-        {/* Inner subtle premium glow to add visual depth to the story content */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gold-400/[0.02] via-transparent to-transparent pointer-events-none" />
-
-        <div className="relative z-10 max-w-[1400px] mx-auto">
-          <div className="w-full">
-            {/* Header */}
-            <div className="mb-14 space-y-4">
-              <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide">
-                Why We Started
-              </h2>
-            </div>
-
-            {/* Opening Statement - Featured Intro Block */}
-            {/* <div className="mb-14 relative">
-              <div className="absolute -left-6 top-0 bottom-0 w-1 bg-gradient-to-b from-gold-400/40 to-transparent rounded-full" />
-              <p className="text-xl sm:text-[1.35rem] text-gold-100 leading-relaxed font-serif italic">
-                Grace &amp; Goodwill was created because too many families are
-                left feeling overwhelmed when trying to find support they can
-                genuinely trust, while many exceptional carers struggle to find
-                ethical opportunities where they are respected, valued and
-                treated fairly.
-              </p>
-            </div> */}
-
-            <div className="space-y-10 text-sm sm:text-base text-gold-100/80 leading-relaxed font-light">
-              <p>
-                {" "}
-                Grace &amp; Goodwill was created because too many families are
-                left feeling overwhelmed when trying to find support they can
-                genuinely trust, while many exceptional carers struggle to find
-                ethical opportunities where they are respected, valued and
-                treated fairly.
-              </p>
-              <p>
-                We believe that successful care begins with people. Skills
-                matter, experience matters, but kindness, trust and human
-                connection matter too. Every family has a different story, every
-                carer brings something unique, and every care journey deserves
-                to be treated with the dignity and attention it deserves.
-              </p>
-
-              <p>
-                For me, care has never been just a profession. My sister Erica
-                has been one of my greatest teachers in life. Supporting and
-                advocating for her over the years gave me a first hand
-                understanding of how important dignity, patience, consistency
-                and genuine human connection are to a person&apos;s wellbeing.
-                It showed me the difference that the right support can make, not
-                only for the individual receiving care, but for the people who
-                love them.
-              </p>
-              <p>
-                That experience, together with my professional background
-                supporting vulnerable people, continues to shape every decision
-                we make at Grace &amp; Goodwill.
-              </p>
-              <p>
-                At the heart of Grace &amp; Goodwill is a simple belief: when
-                people feel seen, valued, respected and genuinely cared for,
-                lives change. Our mission is to build those relationships,
-                create that trust, and leave the world a little better than we
-                found it, one person, one family and one act of kindness at a
-                time.
-              </p>
-
-              {/* Featured Closing Mission Pull-Quote
-              <div className="mt-20 pt-14 border-t border-gold-400/10 relative">
-                <p className="italic text-[1.35rem] sm:text-2xl text-gold-200/95 font-serif leading-[1.6]">
-                  At the heart of Grace &amp; Goodwill is a simple belief: when
-                  people feel seen, valued, respected and genuinely cared for,
-                  lives change. Our mission is to build those relationships,
-                  create that trust, and leave the world a little better than we
-                  found it, one person, one family and one act of kindness at a
-                  time.
-                </p>
-              </div> */}
-            </div>
-          </div>
-        </div>
-      </section>
     </main>
   );
 }

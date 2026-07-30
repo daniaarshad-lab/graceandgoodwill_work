@@ -150,19 +150,26 @@ export default function ContactSalesForm() {
     }
   };
 
-  const getInputClass = (hasError: boolean) =>
-    `w-full bg-navy-900/60 border rounded-xl px-4 py-3 text-gold-50 focus:outline-none focus:ring-1 transition-colors ${
+  // ── Label helper ──────────────────────────────────────────────────────
+  const fieldLabel = (text: string) => (
+    <span className="text-[11px] font-semibold uppercase tracking-wider text-gold-200/70 ml-1 block mb-2">
+      {text}
+    </span>
+  );
+
+  // ── Input overrides for dark theme ────────────────────────────────────
+  const darkInput = (hasError: boolean) =>
+    `w-full bg-navy-950/50 border rounded-xl px-4 py-3 text-gold-100 outline-none transition duration-300 text-sm placeholder:text-gold-100/30 shadow-[inset_0_1px_2px_rgba(0,0,0,0.3)] ${
       hasError
-        ? "border-red-500/50 focus:border-red-500/50 focus:ring-red-500/50"
-        : "border-gold-muted/20 focus:border-gold-400/50 focus:ring-gold-400/50"
+        ? "border-red-500/50 focus:border-red-500/50 focus:ring-2 focus:ring-red-500/20"
+        : "border-gold-400/20 focus:border-gold-400/60 focus:ring-2 focus:ring-gold-400/20"
     }`;
 
+  const darkSelect = (hasError: boolean) => darkInput(hasError);
+
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="bg-navy-950/80 p-4 sm:p-8 md:p-12 rounded-3xl border border-gold-400/10 shadow-xl space-y-6 backdrop-blur-sm"
-    >
-      <div className="grid md:grid-cols-2 gap-6">
+    <form onSubmit={handleSubmit} className="space-y-5">
+      <div className="grid md:grid-cols-2 gap-4">
         <div className="space-y-2">
           <label htmlFor="name" className="text-sm text-gold-200/80 ml-1">
             Full Name *
@@ -199,11 +206,9 @@ export default function ContactSalesForm() {
         </div>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <label htmlFor="email" className="text-sm text-gold-200/80 ml-1">
-            Email Address *
-          </label>
+          {fieldLabel("Email Address")}
           <input
             type="email"
             id="email"
@@ -211,17 +216,16 @@ export default function ContactSalesForm() {
             onChange={(e) =>
               setFormData({ ...formData, email: e.target.value })
             }
-            className={getInputClass(!!errors.email)}
+            className={darkInput(!!errors.email)}
             disabled={isSubmitting}
+            placeholder="name@example.com"
           />
           {errors.email && (
             <p className="text-red-400 text-xs ml-1">{errors.email}</p>
           )}
         </div>
         <div className="space-y-2">
-          <label htmlFor="phone" className="text-sm text-gold-200/80 ml-1">
-            Phone Number *
-          </label>
+          {fieldLabel("Phone Number")}
           <input
             type="tel"
             id="phone"
@@ -229,8 +233,9 @@ export default function ContactSalesForm() {
             onChange={(e) =>
               setFormData({ ...formData, phone: e.target.value })
             }
-            className={getInputClass(!!errors.phone)}
+            className={darkInput(!!errors.phone)}
             disabled={isSubmitting}
+            placeholder="Enter contact number"
           />
           {errors.phone && (
             <p className="text-red-400 text-xs ml-1">{errors.phone}</p>
@@ -238,39 +243,49 @@ export default function ContactSalesForm() {
         </div>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <label htmlFor="employees" className="text-sm text-gold-200/80 ml-1">
-            Number of Employees *
-          </label>
-          <input
-            type="text"
+          {fieldLabel("Number of Employees")}
+          <select
             id="employees"
             value={formData.employees}
             onChange={(e) =>
               setFormData({ ...formData, employees: e.target.value })
             }
-            className={getInputClass(!!errors.employees)}
+            className={darkSelect(!!errors.employees)}
             disabled={isSubmitting}
-          />
+          >
+            <option value="" disabled className="bg-navy-900 text-gold-200/50">
+              Select company size
+            </option>
+            <option value="1-10" className="bg-navy-900">1 - 10</option>
+            <option value="11-50" className="bg-navy-900">11 - 50</option>
+            <option value="51-200" className="bg-navy-900">51 - 200</option>
+            <option value="201+" className="bg-navy-900">201+</option>
+          </select>
           {errors.employees && (
             <p className="text-red-400 text-xs ml-1">{errors.employees}</p>
           )}
         </div>
         <div className="space-y-2">
-          <label htmlFor="service" className="text-sm text-gold-200/80 ml-1">
-            Service Interest *
-          </label>
-          <input
-            type="text"
+          {fieldLabel("Primary Service of Interest")}
+          <select
             id="service"
             value={formData.service}
             onChange={(e) =>
               setFormData({ ...formData, service: e.target.value })
             }
-            className={getInputClass(!!errors.service)}
+            className={darkSelect(!!errors.service)}
             disabled={isSubmitting}
-          />
+          >
+            <option value="" disabled className="bg-navy-900 text-gold-200/50">
+              Select an option
+            </option>
+            <option value="carer_management" className="bg-navy-900">Carer Management Platform</option>
+            <option value="agency_crm" className="bg-navy-900">Agency CRM</option>
+            <option value="white_label" className="bg-navy-900">White-label Solution</option>
+            <option value="other" className="bg-navy-900">Other</option>
+          </select>
           {errors.service && (
             <p className="text-red-400 text-xs ml-1">{errors.service}</p>
           )}
@@ -278,9 +293,7 @@ export default function ContactSalesForm() {
       </div>
 
       <div className="space-y-2">
-        <label htmlFor="message" className="text-sm text-gold-200/80 ml-1">
-          Message / Requirements *
-        </label>
+        {fieldLabel("How can we help?")}
         <textarea
           id="message"
           rows={4}
@@ -288,9 +301,10 @@ export default function ContactSalesForm() {
           onChange={(e) =>
             setFormData({ ...formData, message: e.target.value })
           }
-          className={`${getInputClass(!!errors.message)} resize-none`}
+          className={`${darkInput(!!errors.message)} resize-none`}
           disabled={isSubmitting}
-        ></textarea>
+          placeholder="Please share details about your business requirements..."
+        />
         {errors.message && (
           <p className="text-red-400 text-xs ml-1">{errors.message}</p>
         )}
@@ -300,11 +314,18 @@ export default function ContactSalesForm() {
         <Button
           type="submit"
           variant="primary"
+          size="lg"
           fullWidth
-          className="py-4"
           disabled={isSubmitting}
         >
-          {isSubmitting ? "Submitting..." : "Submit Inquiry"}
+          {isSubmitting ? (
+            <div className="flex items-center justify-center gap-2">
+              <div className="w-5 h-5 border-2 border-navy-950 border-t-transparent rounded-full animate-spin" />
+              <span>Submitting...</span>
+            </div>
+          ) : (
+            "Contact Sales Team"
+          )}
         </Button>
       </div>
     </form>

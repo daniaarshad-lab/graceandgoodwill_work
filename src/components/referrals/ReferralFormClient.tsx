@@ -158,7 +158,7 @@ export default function ReferralFormClient({
                 Refer a Friend
               </h3>
               <p className="text-xs text-gold-100/50 mt-0.5 leading-relaxed">
-                Help families discover trusted care services through Grace &
+                Help families discover trusted independent carers through Grace &
                 Goodwill.
               </p>
             </div>

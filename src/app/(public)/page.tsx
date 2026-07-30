@@ -38,7 +38,7 @@ export default function HomePage() {
 
           <h1 className="font-serif font-medium leading-[1.2] tracking-tight drop-shadow-md">
             <span className="text-3xl sm:text-4xl lg:text-[2.5rem] text-white">
-              Live In Care Services
+              Carer Introduction & Matching
             </span><br />
             <span className="font-sans text-lg sm:text-xl lg:text-2xl font-semibold tracking-wide text-[rgb(245,212,160)] inline-block mt-2">
               Across The UK
@@ -47,17 +47,16 @@ export default function HomePage() {
 
           <div className="max-w-xl text-gold-100/80 space-y-4 text-lg sm:text-xl leading-relaxed font-light">
             <p>
-              Helping families across the UK find trusted live in care with
+              Helping families across the UK find trusted independent live-in carers with
               compassion, continuity, and genuine human support.
             </p>
             <p className="text-base sm:text-lg opacity-80">
-              At Grace & Goodwill, we carefully match families with professional
-              carers to provide safe, personal, and dependable care at home.
+              At Grace & Goodwill, we introduce families to independent, self-employed carers 
+              who can support individuals safely and dependably at home.
             </p>
             <p className="text-base sm:text-lg opacity-80">
-              From everyday support to urgent care needs, our team is here to
-              guide families with integrity, reassurance, and a truly personal
-              approach.
+              From everyday support to urgent carer requirements, we facilitate introductions 
+              to guide families with integrity, reassurance, and a truly personal approach.
             </p>
           </div>
 
@@ -187,8 +186,8 @@ export default function HomePage() {
                 </h3>
                 <p className="text-xs text-gold-100/80 leading-relaxed drop-shadow-md">
                   Read how Grace & Goodwill expands its impact by drawing on
-                  personal, lived experiences to deliver high-quality,
-                  compassionate live-in care support.
+                  personal, lived experiences to introduce families to high-quality,
+                  compassionate independent live-in carers.
                 </p>
               </div>
             </div>

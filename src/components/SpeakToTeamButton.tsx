@@ -29,7 +29,7 @@ export default function SpeakToTeamButton({
             Chat to Our Team
           </span>
           <span className="text-[#a7f3d0]/70 font-medium text-[11px] leading-snug whitespace-nowrap">
-            Chat with our care team
+            Chat with our matching specialists
           </span>
         </div>
       </div>

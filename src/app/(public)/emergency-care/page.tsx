@@ -62,7 +62,7 @@ export default function EmergencyCarePage() {
                       Emergency Placement Request
                     </h2>
                     <p className="text-sm text-gold-200/60 leading-relaxed font-light max-w-3xl">
-                      Our team coordinates rapid-response placements with absolute integrity and speed. Facing a sudden change in health, a transition home, or a carer emergency — we are here to help. This form routes directly to our critical placement queue.
+                      Our team facilitates rapid-response carer introductions with absolute integrity and speed. Facing a sudden change in health, a transition home, or a carer emergency — we are here to help. This form routes directly to our critical introduction queue.
                     </p>
                   </div>
                 </div>

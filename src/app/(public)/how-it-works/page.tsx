@@ -90,18 +90,16 @@ export default function HowItWorksPage() {
               return (
                 <div
                   key={step.title}
-                  className={`group relative flex flex-col md:flex-row md:items-center ${
-                    isEven ? "md:justify-start" : "md:justify-end"
-                  }`}
+                  className={`group relative flex flex-col md:flex-row md:items-center ${isEven ? "md:justify-start" : "md:justify-end"
+                    }`}
                 >
                   <div className="absolute left-8 top-8 z-10 flex h-0.5 w-0.5 items-center justify-center md:left-1/2 md:top-1/2">
                     <div className="h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border border-gold-300 bg-navy-950 shadow-[0_0_12px_rgba(212,175,55,0.4)] group-hover:scale-125 group-hover:border-gold-200 transition-all duration-300" />
                   </div>
 
                   <div
-                    className={`ml-16 w-auto rounded-[24px] border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)] md:ml-0 md:w-[calc(50%-40px)] ${
-                      isEven ? "md:mr-auto" : "md:ml-auto"
-                    }`}
+                    className={`ml-16 w-auto rounded-[24px] border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)] md:ml-0 md:w-[calc(50%-40px)] ${isEven ? "md:mr-auto" : "md:ml-auto"
+                      }`}
                   >
                     <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
                       {/* Left: Icon and Details */}
@@ -143,8 +141,7 @@ export default function HowItWorksPage() {
             Ready to find trusted support?
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-gold-200/80 sm:text-base">
-            Begin with confidence. We coordinate and support every moment so you
-            can focus on what truly matters.
+            Begin with confidence. We help families find trusted, independent self-employed carers through a carefully managed introduction and matching process, giving you the confidence to choose the right person for your needs.
           </p>
           <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
             <Button asChild variant="navy">

@@ -12,7 +12,7 @@ export default async function RegisterPage({ searchParams }: PageProps) {
   return (
     <AuthSplitLayout
       title="Create Account"
-      subtitle="Register to access the care management platform."
+      subtitle="Register to access the carer matching platform."
       option={option}
     >
       <RegisterForm />

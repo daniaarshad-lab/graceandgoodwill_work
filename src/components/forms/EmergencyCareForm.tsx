@@ -92,8 +92,8 @@ export default function EmergencyCareForm() {
             Priority Protocol Activated
           </h3>
           <p className="text-xs text-gold-100/70 leading-relaxed max-w-md mx-auto">
-            Your priority application has been transmitted. A Senior Operations
-            Coordinator is reviewing carer schedules and will call you back at{" "}
+            Your priority application has been transmitted. A Matching
+            Specialist is reviewing carer schedules and will call you back at{" "}
             {phone} within 30 minutes.
           </p>
         </div>

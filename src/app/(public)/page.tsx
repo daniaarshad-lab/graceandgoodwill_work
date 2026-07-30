@@ -95,7 +95,7 @@ export default function HomePage() {
                   </svg>
                 </div>
                 <span className="text-[#E0F8EA] font-semibold text-[14px] leading-snug tracking-wide drop-shadow-sm">
-                  Speak To Our Team
+                  Chat To Our Team
                 </span>
               </div>
               <ChevronRight strokeWidth={3} className="text-[#00C653]/70 w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1 z-10" />

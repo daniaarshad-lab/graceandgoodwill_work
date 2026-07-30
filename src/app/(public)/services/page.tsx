@@ -12,7 +12,7 @@ import {
 
 const coreServices = [
   {
-    title: "Live-in Care Services",
+    title: "Live-in Care Matching",
     description:
       "Personalized matching with highly vetted, professional live-in carers who reside in your home, providing 24/7 care, reassurance, and dedicated support.",
     icon: (
@@ -47,7 +47,7 @@ const coreServices = [
   {
     title: "Recovery after hospital discharge",
     description:
-      "Support during the critical transition back home, assisting with post-operative exercises, medication management, and therapy plans.",
+      "We introduce families to independent, self-employed carers who can support individuals following hospital discharge. Depending on the client’s requirements, support may include assistance with daily routines, mobility, meal preparation and encouraging independence during recovery. Grace & Goodwill does not provide nursing or clinical services.",
     icon: (
       <BadgeCheck
         className="h-8 w-8 text-gold-300 transition-transform duration-300 group-hover:scale-110"
@@ -58,7 +58,7 @@ const coreServices = [
   {
     title: "Respite arrangements",
     description:
-      "Temporary, flexible cover allowing primary family caregivers to take a necessary, restorative break while ensuring the client remains in familiar comfort.",
+      "We introduce families to independent, self-employed carers who can provide temporary live-in support, allowing primary family carers to take a planned or emergency break while maintaining continuity and familiarity at home.",
     icon: (
       <Sun
         className="h-8 w-8 text-gold-300 transition-transform duration-300 group-hover:scale-110"
@@ -69,7 +69,7 @@ const coreServices = [
   {
     title: "Couples support",
     description:
-      "Customized care programs allowing couples to continue sharing life together under one roof, respecting their shared history and distinct needs.",
+      "We introduce experienced self-employed live-in carers who can support couples wishing to remain together in their own home, with care arrangements tailored to each person’s individual needs.",
     icon: (
       <Heart
         className="h-8 w-8 text-gold-300 transition-transform duration-300 group-hover:scale-110"
@@ -97,9 +97,7 @@ export default function ServicesPage() {
           </div>
 
           <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-gold-200/80">
-            Every family is unique, and so is our support. Explore our core
-            services structured around dignity, careful matching, and warm human
-            connection.
+            Grace & Goodwill is an introductory platform that connects families with carefully vetted, independent, self-employed live-in carers across the UK. Grace & Goodwill does not directly provide or manage care. Clients choose their preferred carer and enter into a separate agreement directly with that carer.
           </p>
         </section>
 
@@ -144,8 +142,7 @@ export default function ServicesPage() {
                   </div>
                 </div>
                 <p className="text-sm leading-relaxed text-gold-200/75 sm:text-base">
-                  We understand that care requirements can adapt, and
-                  consistency is crucial. If your live-in carer is no longer available, we can quickly introduce suitable replacement carers from our nationwide network. Clients remain responsible for choosing and engaging their preferred self-employed carer..
+                  If your chosen self-employed live-in carer becomes unavailable, Grace & Goodwill will make every reasonable effort to introduce suitable replacement carers from our nationwide network as quickly as possible. The client remains responsible for selecting and engaging their preferred carer
                 </p>
               </div>
 
@@ -155,7 +152,7 @@ export default function ServicesPage() {
                     Care Standard
                   </p>
                   <p className="text-xl font-semibold text-gold-50 mt-1">
-                    Rapid Replacement Service
+                    Rapid Replacement Introductions
                   </p>
                 </div>
               </div>
@@ -168,8 +165,7 @@ export default function ServicesPage() {
             Let&apos;s discuss how we can support you.
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-gold-200/80 sm:text-base">
-            Reach out to our care matching experts to discuss your requirements,
-            answer your questions, and design a supportive care arrangement.
+            Speak with our care matching specialists to discuss your requirements. We’ll help you find and introduce suitable independent, self-employed carers based on your individual needs and preferences.
           </p>
           <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
             <Button

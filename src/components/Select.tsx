@@ -1,7 +1,7 @@
 import { SelectHTMLAttributes } from "react";
 
 interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
-  label: string;
+  label: React.ReactNode;
   options: { value: string; label: string }[];
   error?: string;
 }

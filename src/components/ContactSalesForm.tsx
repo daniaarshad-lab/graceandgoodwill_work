@@ -179,7 +179,7 @@ export default function ContactSalesForm() {
             id="name"
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            className={getInputClass(!!errors.name)}
+            className={darkInput(!!errors.name)}
             disabled={isSubmitting}
           />
           {errors.name && (
@@ -197,7 +197,7 @@ export default function ContactSalesForm() {
             onChange={(e) =>
               setFormData({ ...formData, company: e.target.value })
             }
-            className={getInputClass(!!errors.company)}
+            className={darkInput(!!errors.company)}
             disabled={isSubmitting}
           />
           {errors.company && (

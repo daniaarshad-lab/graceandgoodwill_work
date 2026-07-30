@@ -7,7 +7,7 @@ interface Option {
 }
 
 interface MultiSelectProps {
-  label: string;
+  label: React.ReactNode;
   options: Option[];
   value: string[];
   onChange: (val: string[]) => void;

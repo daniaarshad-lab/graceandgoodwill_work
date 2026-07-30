@@ -9,12 +9,13 @@ const ReactPhoneInput = dynamic(() => import("react-phone-input-2"), {
 });
 
 interface PhoneInputProps {
-  label: string;
+  label: React.ReactNode;
   value: string;
   onChange: (value: string) => void;
   error?: string;
   placeholder?: string;
   disabled?: boolean;
+  className?: string;
 }
 
 export default function PhoneInput({
@@ -24,6 +25,7 @@ export default function PhoneInput({
   error,
   placeholder = "Enter phone number",
   disabled = false,
+  className = "",
 }: PhoneInputProps) {
   const handlePhoneChange = (phoneVal: string) => {
     if (phoneVal) {

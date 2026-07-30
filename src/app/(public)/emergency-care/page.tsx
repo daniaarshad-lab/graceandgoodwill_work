@@ -33,7 +33,7 @@ export default function EmergencyCarePage() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
               <div className="hidden sm:block h-px w-12 lg:w-16 bg-gradient-to-r from-transparent to-gold-400/50" />
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium text-gold-50 leading-[1.15] tracking-tight text-center max-w-2xl">
-                Urgent Live-In Care Support <span className="text-gold-300 italic ml-1.5 font-light">When You Need It Most</span>
+                Urgent Live-in Care Matching <span className="text-gold-300 ml-1.5 font-light">When You Need It Most</span>
               </h1>
               <div className="hidden sm:block h-px w-12 lg:w-16 bg-gradient-to-l from-transparent to-gold-400/50" />
             </div>
@@ -59,10 +59,10 @@ export default function EmergencyCarePage() {
                   </div>
                   <div className="space-y-2">
                     <h2 className="text-xl sm:text-2xl font-serif text-gold-50">
-                      Emergency Placement Request
+                      Urgent Care Matching Request
                     </h2>
                     <p className="text-sm text-gold-200/60 leading-relaxed font-light max-w-3xl">
-                      Our team facilitates rapid-response carer introductions with absolute integrity and speed. Facing a sudden change in health, a transition home, or a carer emergency — we are here to help. This form routes directly to our critical introduction queue.
+                      Complete this form and our Urgent Matching Team will review your requirements as quickly as possible. We will begin identifying suitable independent self-employed carers and contact you to discuss available introductions.
                     </p>
                   </div>
                 </div>
@@ -89,7 +89,7 @@ export default function EmergencyCarePage() {
                   </div>
                   <div>
                     <h3 className="text-base font-semibold text-gold-50">Priority Hotline</h3>
-                    <p className="text-xs text-gold-200/50 font-light mt-0.5">On-call 24 hours · 7 days a week</p>
+                    <p className="text-xs text-gold-200/50 font-light mt-0.5">Connect instantly with our Urgent Matching Team on call 24 hours a day</p>
                   </div>
                 </div>
 
@@ -133,9 +133,9 @@ export default function EmergencyCarePage() {
                       1
                     </div>
                     <div className="pt-0.5">
-                      <p className="text-xs font-semibold text-gold-100/80">Instant Review</p>
+                      <p className="text-xs font-semibold text-gold-100/80">Urgent Matching Team</p>
                       <p className="text-xs text-gold-100/50 leading-relaxed mt-0.5 font-light">
-                        A duty officer reviews your request and begins matching carers immediately.
+                        Our Urgent Matching Team reviews urgent enquiries, identifies suitable independent self-employed carers and facilitates introductions as quickly as possible.
                       </p>
                     </div>
                   </div>
@@ -145,21 +145,9 @@ export default function EmergencyCarePage() {
                       2
                     </div>
                     <div className="pt-0.5">
-                      <p className="text-xs font-semibold text-gold-100/80">30-Minute Callback</p>
+                      <p className="text-xs font-semibold text-gold-100/80">24–48 Hour Matching</p>
                       <p className="text-xs text-gold-100/50 leading-relaxed mt-0.5 font-light">
-                        You receive a personal call to discuss care requirements in detail.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-4 items-start relative">
-                    <div className="flex-shrink-0 flex items-center justify-center w-7 h-7 rounded-full bg-gold-400/15 text-gold-300 ring-1 ring-gold-400/20 text-xs font-bold z-10">
-                      3
-                    </div>
-                    <div className="pt-0.5">
-                      <p className="text-xs font-semibold text-gold-100/80">Carer Deployed</p>
-                      <p className="text-xs text-gold-100/50 leading-relaxed mt-0.5 font-light">
-                        A trained, DBS-checked professional is placed within 24–48 hours.
+                        Where suitable carers are available, we aim to introduce independent self-employed live-in carers within 24 to 48 hours across the UK. Times may vary depending on location, availability and individual requirements.
                       </p>
                     </div>
                   </div>

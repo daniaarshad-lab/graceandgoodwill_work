@@ -14,7 +14,7 @@ const coreServices = [
   {
     title: "Live-in Care Matching",
     description:
-      "Personalized matching with highly vetted, professional live-in carers who reside in your home, providing 24/7 care, reassurance, and dedicated support.",
+      "We introduce families to carefully vetted, independent self-employed live-in carers who can provide personalised support within the client’s home. Grace & Goodwill supports the matching and introduction process while the client remains in control of selecting their preferred carer and agreeing care arrangements directly with them.",
     icon: (
       <Home
         className="h-8 w-8 text-gold-300 transition-transform duration-300 group-hover:scale-110"
@@ -23,9 +23,9 @@ const coreServices = [
     ),
   },
   {
-    title: "Companionship focused support",
+    title: "Companionship Support",
     description:
-      "Help with daily routines, sharing hobbies, preparing fresh meals, and warm social connection designed to keep minds active and lives socially rich.",
+      "Find independent self-employed carers who can provide companionship, assistance with daily routines, meal preparation, hobbies and meaningful social interaction tailored to individual preferences and requirements.",
     icon: (
       <Users
         className="h-8 w-8 text-gold-300 transition-transform duration-300 group-hover:scale-110"
@@ -34,9 +34,9 @@ const coreServices = [
     ),
   },
   {
-    title: "Dementia focused support",
+    title: "Dementia support",
     description:
-      "Reassuring, structured support tailored for individuals living with memory-related needs, focusing on safety, validation, and cognitive comfort.",
+      "We introduce families to independent self-employed carers with experience supporting people living with dementia, helping families find compassionate, person-centred support suited to their needs.",
     icon: (
       <Award
         className="h-8 w-8 text-gold-300 transition-transform duration-300 group-hover:scale-110"

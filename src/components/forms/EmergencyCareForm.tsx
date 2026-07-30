@@ -2,6 +2,8 @@
 
 import React, { useState } from "react";
 import PhoneInput from "@/components/PhoneInput";
+import Input from "@/components/Input";
+import Select from "@/components/Select";
 import Button from "@/components/Button";
 import { Check, AlertCircle } from "lucide-react";
 
@@ -66,6 +68,19 @@ export default function EmergencyCareForm() {
     setIsSubmitted(false);
   };
 
+  // ── Label helper ──────────────────────────────────────────────────────
+  const fieldLabel = (text: string) => (
+    <span className="text-[11px] font-semibold uppercase tracking-wider text-gold-200/70">
+      {text}
+    </span>
+  );
+
+  // ── Input overrides for dark theme ────────────────────────────────────
+  const darkInput =
+    "!bg-navy-950/50 !border-gold-400/20 !text-gold-100 focus:!border-gold-400/60 focus:!ring-gold-400/20 placeholder:!text-gold-100/30 !shadow-[inset_0_1px_2px_rgba(0,0,0,0.3)]";
+  const darkSelect =
+    "!bg-navy-950/50 !border-gold-400/20 !text-gold-100 focus:!border-gold-400/60 focus:!ring-gold-400/20 !shadow-[inset_0_1px_2px_rgba(0,0,0,0.3)]";
+
   if (isSubmitted) {
     return (
       <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-6 text-center space-y-4">
@@ -95,132 +110,92 @@ export default function EmergencyCareForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      {/* Full Name & Email Input Group */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-1.5">
-          <label className="text-[11px] font-semibold uppercase tracking-wider text-amber-200/90">
-            Full Name
-          </label>
-          <input
-            type="text"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            placeholder="Enter your full name"
-            className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-amber-500/40 transition duration-300 text-sm ${errors.fullName ? "border-red-500" : "border-gold-muted/20"
-              }`}
-          />
-          {errors.fullName && (
-            <p className="text-[10px] text-red-500 font-medium">
-              {errors.fullName}
-            </p>
-          )}
-        </div>
-
-        <div className="space-y-1.5">
-          <label className="text-[11px] font-semibold uppercase tracking-wider text-amber-200/90">
-            Email Address
-          </label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="name@example.com"
-            className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-amber-500/40 transition duration-300 text-sm ${errors.email ? "border-red-500" : "border-gold-muted/20"
-              }`}
-          />
-          {errors.email && (
-            <p className="text-[10px] text-red-500 font-medium">
-              {errors.email}
-            </p>
-          )}
-        </div>
+        <Input
+          label={fieldLabel("Full Name")}
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          placeholder="Enter your full name"
+          error={errors.fullName}
+          className={darkInput}
+        />
+        <Input
+          label={fieldLabel("Email Address")}
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="name@example.com"
+          error={errors.email}
+          className={darkInput}
+        />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-1.5">
-          <PhoneInput
-            label="Phone Number"
-            placeholder="Enter contact number"
-            value={phone}
-            onChange={setPhone}
-            error={errors.phone}
-          />
-        </div>
-
-        <div className="space-y-1.5">
-          <label className="text-[11px] font-semibold uppercase tracking-wider text-amber-200/90">
-            Who Needs Support?
-          </label>
-          <select
-            value={whoNeedsSupport}
-            onChange={(e) => setWhoNeedsSupport(e.target.value)}
-            className="w-full rounded-xl border border-gold-muted/20 bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-amber-500/40 transition duration-300 text-sm"
-          >
-            <option value="myself">Myself</option>
-            <option value="parent">My Parent</option>
-            <option value="partner">My Partner</option>
-            <option value="child">My Child</option>
-            <option value="other">Other Relative</option>
-          </select>
-        </div>
+        <PhoneInput
+          label={fieldLabel("Phone Number")}
+          placeholder="Enter contact number"
+          value={phone}
+          onChange={setPhone}
+          error={errors.phone}
+          className={darkInput}
+        />
+        <Select
+          label={fieldLabel("Who Needs Support?")}
+          value={whoNeedsSupport}
+          onChange={(e) => setWhoNeedsSupport(e.target.value)}
+          options={[
+            { value: "myself", label: "Myself" },
+            { value: "parent", label: "My Parent" },
+            { value: "partner", label: "My Partner" },
+            { value: "child", label: "My Child" },
+            { value: "other", label: "Other Relative" },
+          ]}
+          className={darkSelect}
+        />
       </div>
 
-      {/* Location & Preferred Contact Method */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-1.5">
-          <label className="text-[11px] font-semibold uppercase tracking-wider text-amber-200/90">
-            Location
-          </label>
-          <input
-            type="text"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            placeholder="e.g. City or Postcode"
-            className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-amber-500/40 transition duration-300 text-sm ${errors.location ? "border-red-500" : "border-gold-muted/20"
-              }`}
-          />
-          {errors.location && (
-            <p className="text-[10px] text-red-500 font-medium">
-              {errors.location}
-            </p>
-          )}
-        </div>
-
-        <div className="space-y-1.5">
-          <label className="text-[11px] font-semibold uppercase tracking-wider text-amber-200/90">
-            Preferred Contact Method
-          </label>
-          <select
-            value={contactMethod}
-            onChange={(e) => setContactMethod(e.target.value)}
-            className="w-full rounded-xl border border-gold-muted/20 bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-amber-500/40 transition duration-300 text-sm"
-          >
-            <option value="phone">Phone Call (Highest Priority)</option>
-            <option value="whatsapp">WhatsApp Message</option>
-            <option value="email">Email Response</option>
-          </select>
-        </div>
+        <Input
+          label={fieldLabel("Location")}
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          placeholder="e.g. City or Postcode"
+          error={errors.location}
+          className={darkInput}
+        />
+        <Select
+          label={fieldLabel("Preferred Contact Method")}
+          value={contactMethod}
+          onChange={(e) => setContactMethod(e.target.value)}
+          options={[
+            { value: "phone", label: "Phone Call (Highest Priority)" },
+            { value: "whatsapp", label: "WhatsApp Message" },
+            { value: "email", label: "Email Response" },
+          ]}
+          className={darkSelect}
+        />
       </div>
 
-      <div className="space-y-1.5">
-        <label className="text-[11px] font-semibold uppercase tracking-wider text-amber-200/90">
+      <div className="space-y-2">
+        <label className="text-[11px] font-semibold uppercase tracking-wider text-gold-200/70">
           Additional Emergency Details
         </label>
         <textarea
-          rows={5}
+          rows={4}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Please outline the urgency, key care diagnostics, or hospital discharge schedule details..."
-          className="w-full rounded-xl border border-gold-muted/20 bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-amber-500/40 transition duration-300 text-sm"
+          className="w-full rounded-xl border border-gold-400/20 bg-navy-950/50 px-4 py-3 text-gold-100 outline-none focus:border-gold-400/60 focus:ring-2 focus:ring-gold-400/20 transition duration-300 text-sm placeholder:text-gold-100/30 shadow-[inset_0_1px_2px_rgba(0,0,0,0.3)]"
         />
       </div>
 
       <div className="pt-2">
         <Button
           type="submit"
-          disabled={isSubmitting}
           variant="primary"
+          size="lg"
           fullWidth
+          disabled={isSubmitting}
         >
           {isSubmitting ? (
             <div className="flex items-center justify-center gap-2">
@@ -229,8 +204,8 @@ export default function EmergencyCareForm() {
             </div>
           ) : (
             <div className="flex items-center justify-center gap-2">
-              <AlertCircle className="w-5 h-5 fill-current" />
-              <span>Submit emergency care  Support</span>
+              <AlertCircle className="w-5 h-5" />
+              <span>Submit Emergency Care Request</span>
             </div>
           )}
         </Button>

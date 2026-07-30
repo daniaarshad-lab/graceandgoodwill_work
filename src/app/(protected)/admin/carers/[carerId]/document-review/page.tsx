@@ -7,8 +7,13 @@ import { fetchCarerDetails, verifyDocument, rejectDocument } from "@/store/slice
 import { useAuth } from "@/contexts/AuthContext";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 import Link from "next/link";
+
 import { ArrowLeft, Check, X, FileText, Image as ImageIcon, Calendar, User, ExternalLink, Eye, CheckCircle2, AlertTriangle, ShieldCheck, Download } from "lucide-react";
+
 import { getDocumentFileLabel } from "@/types/document.types";
+import { storageService } from "@/services/storage.service";
+
+
 
 export default function DocumentReviewPage() {
   return (
@@ -110,7 +115,23 @@ function DocumentReviewContent() {
   };
 
   const rawDocs = extractDocuments();
+
+
   const activeDoc = rawDocs.find((doc: any) => doc.id === activeDocId) || rawDocs[0];
+  const [previewSignedUrl, setPreviewSignedUrl] = useState<string>("");
+
+  useEffect(() => {
+    if (activeDoc) {
+      const keyOrUrl = activeDoc.fileKey || activeDoc.fileUrl;
+      if (keyOrUrl) {
+        storageService.getPresignedUrl(keyOrUrl).then((url) => {
+          setPreviewSignedUrl(url);
+        });
+      } else {
+        setPreviewSignedUrl("");
+      }
+    }
+  }, [activeDoc?.id, activeDoc?.fileKey, activeDoc?.fileUrl]);
 
   useEffect(() => {
     if (activeDoc && !activeDocId) {
@@ -121,6 +142,7 @@ function DocumentReviewContent() {
   useEffect(() => {
     setValidationError(null);
   }, [activeDocId]);
+
 
   const handleVerify = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -219,7 +241,8 @@ function DocumentReviewContent() {
     /\.(jpg|jpeg|png|webp|gif|svg)$/i.test(activeDoc?.fileName || "") || 
     /\.(jpg|jpeg|png|webp|gif|svg)$/i.test(activeDoc?.fileUrl || "");
 
-  const fullFileUrl = getFullFileUrl(activeDoc?.fileUrl);
+  const fullFileUrl = previewSignedUrl || getFullFileUrl(activeDoc?.fileUrl);
+
 
   return (
     <main className="min-h-screen bg-navy-950 py-10 text-gold-100">

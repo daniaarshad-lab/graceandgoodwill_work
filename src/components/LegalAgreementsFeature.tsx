@@ -32,6 +32,8 @@ export default function LegalAgreementsFeature({ isOnboardingMode, onAllSigned, 
   const [payingFee, setPayingFee] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [immediateServiceConsent, setImmediateServiceConsent] = useState(false);
+  const [lossOfRightToCancelConsent, setLossOfRightToCancelConsent] = useState(false);
 
   const fetchAgreements = async () => {
     try {
@@ -128,6 +130,12 @@ export default function LegalAgreementsFeature({ isOnboardingMode, onAllSigned, 
   };
 
   const handlePayLifetimeFee = async () => {
+    if (!immediateServiceConsent || !lossOfRightToCancelConsent) {
+      setError("You must consent to the immediate commencement of the service before proceeding with payment.");
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    
     try {
       setPayingFee(true);
       const successUrl = `${window.location.origin}/client?payment=success`;
@@ -267,22 +275,24 @@ export default function LegalAgreementsFeature({ isOnboardingMode, onAllSigned, 
           </div>
         </div>
 
-        {activeTab === "pending" && pending.length === 0 ? (
+        {activeTab === "pending" && (
+          <>
+            {pending.length === 0 ? (
           <div className="animate-fade-in">
             {user?.role?.toUpperCase() === "CLIENT" && !profile?.isLifetimeFeePaid && !isOnboardingMode ? (
-              <div className="bg-gradient-to-b from-navy-900/80 to-navy-900/40 border border-navy-800 rounded-2xl p-8 sm:p-10 text-center max-w-xl mx-auto shadow-xl mt-6">
-                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-tr from-[#b59469]/20 to-[#d4af37]/10 border border-[#b59469]/30 text-[#b59469] mb-6 shadow-inner">
-                  <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="bg-gradient-to-b from-navy-900/80 to-navy-900/40 border border-navy-800 rounded-2xl p-6 sm:p-8 text-center w-full max-w-5xl mx-auto shadow-xl mt-4">
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-tr from-[#b59469]/20 to-[#d4af37]/10 border border-[#b59469]/30 text-[#b59469] mb-4 shadow-inner">
+                  <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                   </svg>
                 </div>
 
-                <h3 className="text-2xl font-bold text-white mb-3">Activate Your Client Account</h3>
-                <p className="text-slate-300 text-sm leading-relaxed max-w-sm mx-auto mb-8">
+                <h3 className="text-2xl font-bold text-white mb-2">Activate Your Client Account</h3>
+                <p className="text-slate-300 text-sm leading-relaxed max-w-2xl mx-auto mb-6">
                   Agreements signed successfully! To unlock carer matching, search profiles, and submit care requests, please pay the one-off Lifetime Platform Fee.
                 </p>
 
-                <div className="bg-navy-950/50 border border-navy-800/80 rounded-xl p-6 max-w-sm mx-auto text-left mb-8 shadow-inner">
+                <div className="bg-navy-950/50 border border-navy-800/80 rounded-xl p-5 w-full max-w-2xl mx-auto text-left mb-6 shadow-inner">
                   <div className="flex justify-between items-center text-xs font-bold text-slate-500 uppercase tracking-wider mb-5">
                     <span>Item</span>
                     <span>Price</span>
@@ -305,12 +315,54 @@ export default function LegalAgreementsFeature({ isOnboardingMode, onAllSigned, 
                   </div>
                 </div>
 
+                <div className="w-full max-w-4xl mx-auto mb-6 text-left bg-navy-950/30 border border-navy-800/60 rounded-xl p-5 shadow-inner">
+                  <div className="space-y-4">
+                    <label className="flex items-start gap-3 cursor-pointer group">
+                      <div className="mt-0.5 relative flex items-center justify-center shrink-0">
+                        <input
+                          type="checkbox"
+                          checked={immediateServiceConsent}
+                          onChange={(e) => setImmediateServiceConsent(e.target.checked)}
+                          className="peer appearance-none w-5 h-5 border-2 border-navy-700 rounded bg-navy-900/50 checked:bg-[#b59469] checked:border-[#b59469] focus:outline-none focus:ring-2 focus:ring-[#b59469]/30 transition-all cursor-pointer shadow-inner"
+                        />
+                        <svg className="absolute w-3.5 h-3.5 text-navy-950 opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <span className="text-sm text-slate-300 leading-relaxed group-hover:text-slate-200 transition-colors">
+                        I expressly request Grace & Goodwill to begin providing the introductory and matching service immediately after my payment is made, without waiting until the end of the 14-day cancellation period.
+                      </span>
+                    </label>
+
+                    <label className="flex items-start gap-3 cursor-pointer group">
+                      <div className="mt-0.5 relative flex items-center justify-center shrink-0">
+                        <input
+                          type="checkbox"
+                          checked={lossOfRightToCancelConsent}
+                          onChange={(e) => setLossOfRightToCancelConsent(e.target.checked)}
+                          className="peer appearance-none w-5 h-5 border-2 border-navy-700 rounded bg-navy-900/50 checked:bg-[#b59469] checked:border-[#b59469] focus:outline-none focus:ring-2 focus:ring-[#b59469]/30 transition-all cursor-pointer shadow-inner"
+                        />
+                        <svg className="absolute w-3.5 h-3.5 text-navy-950 opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <span className="text-sm text-slate-300 leading-relaxed group-hover:text-slate-200 transition-colors">
+                        I understand that by requesting the service to begin immediately, if Grace & Goodwill starts providing the service (including reviewing my requirements, searching for suitable carers, contacting carers, or commencing the matching process), I may lose my right to cancel or receive a refund in accordance with the Consumer Contracts Regulations 2013.
+                      </span>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="w-full max-w-4xl mx-auto mb-6 text-xs text-slate-400/80 italic leading-relaxed px-2">
+                  By clicking 'Pay £358.80 & Start Matching Immediately', you confirm that you have read and accepted the Client Agreement, Privacy Policy and Terms & Conditions, and have made the express request above for the service to begin immediately.
+                </div>
+
                 <Button
                   onClick={handlePayLifetimeFee}
-                  disabled={payingFee}
+                  disabled={payingFee || !immediateServiceConsent || !lossOfRightToCancelConsent}
                   variant="primary"
                   size="lg"
-                  className="mx-auto min-w-[280px] shadow-[0_0_20px_rgba(181,148,105,0.3)] hover:shadow-[0_0_25px_rgba(181,148,105,0.5)]"
+                  className="mx-auto min-w-[280px] shadow-[0_0_20px_rgba(181,148,105,0.3)] hover:shadow-[0_0_25px_rgba(181,148,105,0.5)] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {payingFee ? (
                     <>
@@ -321,7 +373,7 @@ export default function LegalAgreementsFeature({ isOnboardingMode, onAllSigned, 
                       Redirecting to Stripe...
                     </>
                   ) : (
-                    "Pay Fee & Activate Matching"
+                    "Pay £358.80 & Start Matching Immediately"
                   )}
                 </Button>
               </div>
@@ -358,8 +410,7 @@ export default function LegalAgreementsFeature({ isOnboardingMode, onAllSigned, 
           </div>
         ) : (
           <div className="w-full border border-white/10 rounded-2xl p-6 sm:p-8 bg-navy-950/50 animate-fade-in">
-            {activeTab === "pending" && pending.length > 0 && (
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-6xl mx-auto">
                 {/* List of pending docs */}
                 <div className="lg:col-span-5 space-y-4">
 
@@ -508,9 +559,10 @@ export default function LegalAgreementsFeature({ isOnboardingMode, onAllSigned, 
                   )}
                 </div>
               </div>
-            )}
-          </div>
-        )}
+            </div>
+          )}
+        </>
+      )}
 
         {/* History Tab */}
         {activeTab === "history" && (

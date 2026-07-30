@@ -15,12 +15,23 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}) {
   // multipart boundary), so we only inject the JSON header for all other calls.
   const isFormData = restOptions.body instanceof FormData;
 
+  // Inject Authorization token if present in localStorage and not explicitly set by caller
+  const token =
+    typeof window !== "undefined"
+      ? localStorage.getItem("accessToken") || localStorage.getItem("token")
+      : null;
+  const authHeader: Record<string, string> = {};
+  if (token && (!callerHeaders || !(callerHeaders as Record<string, string>)["Authorization"])) {
+    authHeader["Authorization"] = `Bearer ${token}`;
+  }
+
   // Ensure the endpoint starts with /api
   const apiPath = endpoint.startsWith("/api") ? endpoint : `/api${endpoint.startsWith("/") ? "" : "/"}${endpoint}`;
 
   const response = await fetch(`${API_URL}${apiPath}`, {
     headers: {
       ...(isFormData ? {} : { "Content-Type": "application/json" }),
+      ...authHeader,
       ...(callerHeaders || {}),
     },
     ...restOptions,

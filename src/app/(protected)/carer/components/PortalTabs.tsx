@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useTransition } from "react";
+import { Loader2 } from "lucide-react";
 
 export type TabType =
   | "overview"
@@ -27,6 +28,7 @@ export default function PortalTabs({
 }: PortalTabsProps) {
   const router = useRouter();
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -116,25 +118,36 @@ export default function PortalTabs({
   ] as const;
 
   const handleTabClick = (tabId: TabType, href: string) => {
-    if (tabId === "referrals") {
-      router.push(href);
-    } else {
-      if (setActiveTab) {
-        setActiveTab(tabId);
-        if (
-          typeof window !== "undefined" &&
-          window.location.pathname.includes("/referrals")
-        ) {
+    startTransition(() => {
+      if (tabId === "referrals") {
+        router.push(href);
+      } else {
+        if (setActiveTab) {
+          setActiveTab(tabId);
+          if (
+            typeof window !== "undefined" &&
+            window.location.pathname.includes("/referrals")
+          ) {
+            router.push(href);
+          }
+        } else {
           router.push(href);
         }
-      } else {
-        router.push(href);
       }
-    }
+    });
   };
 
   return (
-    <div className="relative">
+    <>
+      {isPending && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-navy-950/40 backdrop-blur-[2px]">
+          <div className="bg-navy-900/90 p-4 rounded-2xl border border-navy-800 shadow-2xl flex flex-col items-center space-y-3">
+            <Loader2 className="h-8 w-8 animate-spin text-gold-DEFAULT" />
+            <p className="text-xs font-medium text-gold-200 tracking-wider uppercase">Loading...</p>
+          </div>
+        </div>
+      )}
+      <div className="relative">
       <div
         ref={scrollRef}
         className="flex border-b border-gold-300/10 pb-1 overflow-x-auto gap-1 sm:gap-2 portal-tabs"
@@ -155,5 +168,6 @@ export default function PortalTabs({
         ))}
       </div>
     </div>
+    </>
   );
 }

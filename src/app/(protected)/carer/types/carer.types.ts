@@ -8,6 +8,8 @@ export interface ComplianceDoc {
   status: "verified" | "pending" | "failed";
   size: string;
   previewUrl?: string;
+  fileKey?: string;
+  fileUrl?: string;
   rejectionReason?: string | null;
 }
 

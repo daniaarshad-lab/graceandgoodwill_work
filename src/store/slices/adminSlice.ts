@@ -26,6 +26,16 @@ const initialState: AdminState = {
     loading: false,
     error: null,
   },
+  emergencyCareRequests: {
+    items: [],
+    page: 1,
+    limit: 10,
+    totalItems: 0,
+    totalPages: 0,
+    status: "ALL",
+    loading: false,
+    error: null,
+  },
   clients: {
     items: [],
     page: 1,
@@ -80,6 +90,18 @@ export const fetchAdminCareRequests = createAsyncThunk<
     return await adminService.getCareRequests(page, limit, status);
   } catch (error: any) {
     return rejectWithValue(error?.message || "Failed to fetch care requests");
+  }
+});
+
+export const fetchAdminEmergencyCareRequests = createAsyncThunk<
+  { items: any[]; total: number; page: number; limit: number },
+  { page: number; limit: number; status: string },
+  { rejectValue: string }
+>("admin/fetchEmergencyCareRequests", async ({ page, limit, status }, { rejectWithValue }) => {
+  try {
+    return await adminService.getEmergencyCareRequests(page, limit, status);
+  } catch (error: any) {
+    return rejectWithValue(error?.message || "Failed to fetch emergency care requests");
   }
 });
 
@@ -235,6 +257,17 @@ const adminSlice = createSlice({
       state.careRequests.limit = action.payload;
       state.careRequests.page = 1;
     },
+    setEmergencyCareRequestsPage(state, action: PayloadAction<number>) {
+      state.emergencyCareRequests.page = action.payload;
+    },
+    setEmergencyCareRequestsStatus(state, action: PayloadAction<string>) {
+      state.emergencyCareRequests.status = action.payload;
+      state.emergencyCareRequests.page = 1;
+    },
+    setEmergencyCareRequestsLimit(state, action: PayloadAction<number>) {
+      state.emergencyCareRequests.limit = action.payload;
+      state.emergencyCareRequests.page = 1;
+    },
     setClientsPage(state, action: PayloadAction<number>) {
       state.clients.page = action.payload;
     },
@@ -299,6 +332,22 @@ const adminSlice = createSlice({
     builder.addCase(fetchAdminCareRequests.rejected, (state, action) => {
       state.careRequests.loading = false;
       state.careRequests.error = action.payload || "Failed to fetch care requests";
+    });
+
+    // fetchAdminEmergencyCareRequests
+    builder.addCase(fetchAdminEmergencyCareRequests.pending, (state) => {
+      state.emergencyCareRequests.loading = true;
+      state.emergencyCareRequests.error = null;
+    });
+    builder.addCase(fetchAdminEmergencyCareRequests.fulfilled, (state, action) => {
+      state.emergencyCareRequests.loading = false;
+      state.emergencyCareRequests.items = action.payload.items || [];
+      state.emergencyCareRequests.totalItems = action.payload.total || 0;
+      state.emergencyCareRequests.totalPages = Math.ceil((action.payload.total || 0) / state.emergencyCareRequests.limit);
+    });
+    builder.addCase(fetchAdminEmergencyCareRequests.rejected, (state, action) => {
+      state.emergencyCareRequests.loading = false;
+      state.emergencyCareRequests.error = action.payload || "Failed to fetch emergency care requests";
     });
 
     // fetchAdminClients
@@ -405,6 +454,9 @@ export const {
   setCareRequestsPage,
   setCareRequestsStatus,
   setCareRequestsLimit,
+  setEmergencyCareRequestsPage,
+  setEmergencyCareRequestsStatus,
+  setEmergencyCareRequestsLimit,
   setClientsPage,
   setClientsStatus,
   setClientsLimit,

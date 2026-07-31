@@ -90,7 +90,7 @@ export default function AboutPage() {
             </p>
 
             <p>
-              After spending years working within the Probation Service, I realised that
+              After spending years working within the National Probation Service, I realised that
               my purpose was not simply to work within a system, but to create something
               that could make a lasting difference in people&apos;s lives. Grace &amp;
               Goodwill was founded on the belief that families deserve honesty, carers
@@ -137,7 +137,7 @@ export default function AboutPage() {
             </div>
 
             <p className="italic text-lg sm:text-xl text-gold-300/90 font-serif leading-relaxed text-center">
-              At the heart of Grace &amp; Goodwill is a simple belief: when people feel seen, valued, respected and genuinely cared for, lives change. Our mission is to build trusted relationships and leave the world a little better than we found it, one person and one family at a time.
+              At the heart of Grace &amp; Goodwill is a simple belief: when people feel seen, valued, respected and genuinely cared for, lives change. Our mission is to build trusted relationships and leave the world a little better than we found it, one person, one family and one home at a time.
             </p>
           </div>
         </div>

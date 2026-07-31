@@ -27,6 +27,10 @@ const PlacementTracking = dynamic(
 const EmergencyCases = dynamic(() => import("./components/EmergencyCases"), {
   ssr: false,
 });
+const AdminEmergencyCareRequests = dynamic(
+  () => import("./components/AdminEmergencyCareRequests"),
+  { ssr: false },
+);
 const ApprovalModal = dynamic(() => import("./components/ApprovalModal"), {
   ssr: false,
 });
@@ -129,6 +133,7 @@ function AdminDashboardContent() {
     requests: "Client Requests",
     placements: "Tracking & Overrides",
     emergency: "Emergency Triage",
+    "emergency-requests": "Emergency Care Requests",
     billing: "Billing & Invoices",
     enquiries: "Support & Enquiries",
     "profile-updates": "Profile Updates",
@@ -278,6 +283,21 @@ function AdminDashboardContent() {
                   requests={portal.requests}
                   carers={portal.carers}
                   onCreateMatch={portal.handleCreatePlacement}
+                />
+              )}
+
+              {/* TAB 6.5: EMERGENCY CARE REQUESTS (PUBLIC API) */}
+              {portal.activeTab === "emergency-requests" && (
+                <AdminEmergencyCareRequests
+                  requests={portal.emergencyCareRequests}
+                  page={portal.emergencyCareRequestsPagination.page}
+                  totalPages={portal.emergencyCareRequestsPagination.totalPages}
+                  totalItems={portal.emergencyCareRequestsPagination.totalItems}
+                  status={portal.emergencyCareRequestsPagination.status}
+                  onPageChange={portal.setEmergencyCareRequestsPage}
+                  onStatusChange={portal.setEmergencyCareRequestsStatus}
+                  loading={portal.emergencyCareRequestsPagination.loading}
+                  error={portal.emergencyCareRequestsPagination.error}
                 />
               )}
 

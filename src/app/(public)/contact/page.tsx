@@ -66,8 +66,8 @@ export default function ContactPage() {
                     Regulatory & Vetting Standards
                   </h4>
                   <p className="text-xs text-gold-100/60 leading-normal mt-0.5">
-                    All professional carers undergo continuous vetting, complete
-                    background checks, and strictly follow CQC code guidelines.
+                    All professional carers undergo vetting, complete
+                    background checks.
                   </p>
                 </div>
               </div>

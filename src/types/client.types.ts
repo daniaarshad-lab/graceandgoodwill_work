@@ -264,3 +264,13 @@ export interface CarerProfile {
   experience: string | null;
   summary: string | null;
 }
+
+export interface EmergencyCareRequestPayload {
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  whoNeedsSupport: string;
+  location: string;
+  preferredContactMethod: string;
+  additionalEmergencyDetails?: string;
+}

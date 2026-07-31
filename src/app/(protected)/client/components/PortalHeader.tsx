@@ -38,7 +38,7 @@ export default function PortalHeader({ user }: PortalHeaderProps) {
       const cleanPath = url.startsWith("/") ? url : `/${url}`;
       finalUrl = `${baseUrl}${cleanPath}`;
     }
-    
+
     if (
       updatedAt &&
       !finalUrl.startsWith("blob:") &&
@@ -72,6 +72,15 @@ export default function PortalHeader({ user }: PortalHeaderProps) {
       setPhotoUploading(false);
       e.target.value = "";
     }
+  };
+
+  const WHATSAPP_NUMBER = "4402045781269";
+  const WHATSAPP_MESSAGE = encodeURIComponent(
+    "Hello, I need emergency care support within the next 24 hours."
+  );
+
+  const handleWhatsAppRedirect = () => {
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MESSAGE}`, "_blank");
   };
 
   const initials = `${displayUser?.firstName?.charAt(0) || "C"}${displayUser?.lastName?.charAt(0) || "P"}`;

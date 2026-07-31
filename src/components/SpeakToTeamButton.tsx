@@ -9,7 +9,7 @@ interface SpeakToTeamButtonProps {
 }
 
 export default function SpeakToTeamButton({
-  href = "https://wa.me/447700000000?text=Hello%2C%20I'd%20like%20to%20enquire%20about%20live%20in%20care%20services%20from%20Grace%20%26%20Goodwill.",
+  href = "https://wa.me/4402045781269?text=Hello%2C%20I'd%20like%20to%20enquire%20about%20live%20in%20care%20services%20from%20Grace%20%26%20Goodwill.",
   onClick,
   className = "",
 }: SpeakToTeamButtonProps) {

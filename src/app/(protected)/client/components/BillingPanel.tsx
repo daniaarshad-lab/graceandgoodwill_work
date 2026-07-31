@@ -126,7 +126,7 @@ export default function ClientBillingPage() {
         throw new Error("Failed to generate checkout URL");
       }
     } catch (err: any) {
-      setError(err?.message || "Failed to initiate GoCardless Checkout.");
+      setError(err?.message || "Failed to initiate Go Cardless Checkout.");
     } finally {
       setActionLoading(null);
     }

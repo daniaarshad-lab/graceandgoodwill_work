@@ -38,7 +38,7 @@ export default function HomePage() {
 
           <h1 className="font-serif font-medium leading-[1.2] tracking-tight drop-shadow-md">
             <span className="text-3xl sm:text-4xl lg:text-[2.5rem] text-white">
-              Carer Introduction & Matching
+              Live-in Care Introduction & Matching
             </span><br />
             <span className="font-sans text-lg sm:text-xl lg:text-2xl font-semibold tracking-wide text-[rgb(245,212,160)] inline-block mt-2">
               Across The UK
@@ -60,6 +60,10 @@ export default function HomePage() {
             </p>
           </div>
 
+          <p className="text-base sm:text-lg text-gold-100/90 font-medium pt-2 pb-2">
+            Choose the option below that best matches your current needs.
+          </p>
+
           <div className="flex flex-col xl:flex-row items-start xl:items-center gap-4 flex-wrap xl:flex-nowrap w-full max-w-[100%] overflow-visible">
             <Link 
               href="/contact" 
@@ -72,7 +76,7 @@ export default function HomePage() {
                   <HandHeart className="w-8 h-8 text-[#F7D774] relative z-10 drop-shadow-sm" strokeWidth={1.5} />
                 </div>
                 <span className="text-[#FDF2D5] font-semibold text-[14px] leading-snug tracking-wide drop-shadow-sm">
-                  Request Care
+                  Find a Live-in Carer
                 </span>
               </div>
               <ChevronRight strokeWidth={3} className="text-[#FDF2D5]/70 w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1 z-10" />

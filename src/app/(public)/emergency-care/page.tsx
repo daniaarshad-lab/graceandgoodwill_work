@@ -104,7 +104,7 @@ export default function EmergencyCarePage() {
                     020 4578 1269
                   </a>
                   <a
-                    href="https://wa.me/447700000000?text=URGENT%3A%20I%20need%20to%20chat%20about%20an%20immediate%20live%20in%20care%20placement."
+                    href="https://wa.me/4402045781269?text=URGENT%3A%20I%20need%20to%20chat%20about%20an%20immediate%20live%20in%20care%20placement."
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center gap-2.5 w-full px-4 py-3.5 rounded-xl border border-emerald-500/30 bg-emerald-500/5 text-emerald-300 text-sm font-semibold hover:bg-emerald-500/10 hover:text-emerald-200 hover:-translate-y-[1px] transition-all duration-300"

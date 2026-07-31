@@ -95,7 +95,7 @@ export default function ContactPage() {
 
                 <Button asChild variant="whatsapp" size="sm" fullWidth>
                   <a
-                    href="https://wa.me/447700000000?text=Hi%2C%20I'd%20like%20to%20chat%20about%20your%20care%20solutions."
+                    href="https://wa.me/4402045781269?text=Hi%2C%20I'd%20like%20to%20chat%20about%20your%20care%20solutions."
                     target="_blank"
                     rel="noopener noreferrer"
                     className="gap-2"

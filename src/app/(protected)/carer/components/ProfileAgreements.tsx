@@ -164,8 +164,12 @@ export default function ProfileAgreements() {
       await refreshUser();
       
       // Reload lists manually to verify count before redirect
-      const pendingData = await agreementsService.getPendingAgreements();
+      const rawPendingData = await agreementsService.getPendingAgreements();
       const historyData = await agreementsService.getSignedHistory();
+      
+      // Optimistically filter out the signed agreement in case of backend delay
+      const pendingData = rawPendingData.filter(doc => doc.id !== selectedAgreement.id);
+      
       setPending(pendingData);
       setHistory(historyData);
 

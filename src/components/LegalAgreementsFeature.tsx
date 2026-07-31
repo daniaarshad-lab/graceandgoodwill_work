@@ -141,7 +141,7 @@ export default function LegalAgreementsFeature({ isOnboardingMode, onAllSigned, 
       const successUrl = `${window.location.origin}/client?payment=success`;
       const cancelUrl = `${window.location.origin}/client?payment=failed`;
 
-      const { url } = await clientService.createLifetimeFeeCheckout(successUrl, cancelUrl);
+      const { url } = await clientService.createLifetimeFeeCheckout(successUrl, cancelUrl, immediateServiceConsent, lossOfRightToCancelConsent);
       if (url) {
         window.location.href = url;
       } else {
@@ -186,8 +186,12 @@ export default function LegalAgreementsFeature({ isOnboardingMode, onAllSigned, 
       await refreshUser();
 
       // Reload lists manually to verify count before redirect
-      const pendingData = await agreementsService.getPendingAgreements();
+      const rawPendingData = await agreementsService.getPendingAgreements();
       const historyData = await agreementsService.getSignedHistory();
+      
+      // Optimistically filter out the signed agreement in case of backend delay
+      const pendingData = rawPendingData.filter(doc => doc.id !== selectedAgreement.id);
+      
       setPending(pendingData);
       setHistory(historyData);
 

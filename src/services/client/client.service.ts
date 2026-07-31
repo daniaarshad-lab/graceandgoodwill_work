@@ -347,7 +347,7 @@ export const clientService = {
     });
   },
 
-  async createLifetimeFeeCheckout(successUrl: string, cancelUrl: string): Promise<{ url: string }> {
+  async createLifetimeFeeCheckout(successUrl: string, cancelUrl: string, immediateServiceConsent?: boolean, lossOfRightToCancelConsent?: boolean): Promise<{ url: string }> {
     const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
     if (!token) throw new Error("No token found");
 
@@ -357,7 +357,7 @@ export const clientService = {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ successUrl, cancelUrl }),
+      body: JSON.stringify({ successUrl, cancelUrl, immediateServiceConsent, lossOfRightToCancelConsent }),
     });
   },
 

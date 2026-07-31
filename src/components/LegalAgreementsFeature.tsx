@@ -196,10 +196,14 @@ export default function LegalAgreementsFeature({ isOnboardingMode, onAllSigned, 
       setHistory(historyData);
 
       if (pendingData.length === 0) {
-        if (isOnboardingMode && onAllSigned) {
+        const role = user?.role?.toUpperCase();
+        
+        // Prevent auto-redirect for unpaid clients so they can see the payment UI
+        if (role === "CLIENT" && !profile?.isLifetimeFeePaid) {
+          // Do nothing, let the component render the payment UI
+        } else if (isOnboardingMode && onAllSigned) {
           onAllSigned();
         } else {
-          const role = user?.role?.toUpperCase();
           if (role === "CLIENT") {
             dispatch(fetchClientProfile());
             if (profile?.isLifetimeFeePaid) {
@@ -283,7 +287,7 @@ export default function LegalAgreementsFeature({ isOnboardingMode, onAllSigned, 
           <>
             {pending.length === 0 ? (
           <div className="animate-fade-in">
-            {user?.role?.toUpperCase() === "CLIENT" && !profile?.isLifetimeFeePaid && !isOnboardingMode ? (
+            {user?.role?.toUpperCase() === "CLIENT" && !profile?.isLifetimeFeePaid ? (
               <div className="bg-gradient-to-b from-navy-900/80 to-navy-900/40 border border-navy-800 rounded-2xl p-6 sm:p-8 text-center w-full max-w-5xl mx-auto shadow-xl mt-4">
                 <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-tr from-[#b59469]/20 to-[#d4af37]/10 border border-[#b59469]/30 text-[#b59469] mb-4 shadow-inner">
                   <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">

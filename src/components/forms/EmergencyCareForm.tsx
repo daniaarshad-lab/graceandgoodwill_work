@@ -1,6 +1,7 @@
 "use client"; // force turbopack cache invalidation
 
 import React, { useState, useEffect } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 import { useAppSelector } from "@/store/hooks";
 import PhoneInput from "@/components/PhoneInput";
 import Input from "@/components/Input";
@@ -19,8 +20,12 @@ interface EmergencyCareFormProps {
 export default function EmergencyCareForm({
   isAuthenticated = false,
 }: EmergencyCareFormProps) {
-  const { user, isAuthenticated: isReduxAuthenticated } = useAppSelector((state) => state.auth);
-  const effectiveIsAuthenticated = isAuthenticated || isReduxAuthenticated;
+  const { user: authUser, isAuthenticated: isContextAuth } = useAuth();
+  const { user: reduxUser, isAuthenticated: isReduxAuthenticated } = useAppSelector((state) => state.auth);
+  
+  // Use context auth preferably, fallback to redux if needed
+  const user = authUser || reduxUser;
+  const effectiveIsAuthenticated = isAuthenticated || isContextAuth || isReduxAuthenticated;
 
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
@@ -31,13 +36,19 @@ export default function EmergencyCareForm({
   const [contactMethod, setContactMethod] = useState("phone");
   const [message, setMessage] = useState("");
 
+  const [hasPrefilled, setHasPrefilled] = useState(false);
+
   useEffect(() => {
-    if (effectiveIsAuthenticated && user) {
-      if (user.email && !email) setEmail(user.email);
-      if (user.firstName && user.lastName && !fullName) setFullName(`${user.firstName} ${user.lastName}`);
-      if (user.phone && !phone) setPhone(user.phone);
+    if (effectiveIsAuthenticated && user && !hasPrefilled) {
+      // Only prefill for clients
+      if (user.role === "client" || user.role === "CLIENT") {
+        if (user.email && !email) setEmail(user.email);
+        if (user.firstName && user.lastName && !fullName) setFullName(`${user.firstName} ${user.lastName}`);
+        if (user.phone && !phone) setPhone(user.phone);
+      }
+      setHasPrefilled(true);
     }
-  }, [effectiveIsAuthenticated, user]);
+  }, [effectiveIsAuthenticated, user, hasPrefilled, email, fullName, phone]);
 
   // UX & Validation State
   const [errors, setErrors] = useState<Record<string, string>>({});

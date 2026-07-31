@@ -136,6 +136,13 @@ function SiteFooter() {
             Cookie Preferences
           </button>
         </div>
+
+        {/* Disclaimer */}
+        <div className="mt-6 text-center max-w-3xl mx-auto px-4">
+          <p className="text-[10px] sm:text-[11px] text-gold-100/30 font-light leading-relaxed">
+            Grace &amp; Goodwill is an introductory agency for independent live-in carers and does not provide regulated care services.
+          </p>
+        </div>
       </div>
 
       {/* Bottom accent */}

@@ -44,10 +44,10 @@ export default function EmergencyButton({
 
         <div className="flex flex-col justify-center">
           <span className="text-[#FDF2D5] font-bold text-[15px] leading-snug tracking-wide drop-shadow-md">
-            EMERGENCY CARE 24/7
+            EMERGENCY LIVE-IN CARE 24/7
           </span>
           <span className="text-[#FDF2D5]/80 font-medium text-[11px] leading-snug">
-            Support within 24 hours
+            Matched within 24 hours
           </span>
         </div>
       </div>

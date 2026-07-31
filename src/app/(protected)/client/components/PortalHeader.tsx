@@ -143,9 +143,17 @@ export default function PortalHeader({ user }: PortalHeaderProps) {
 
         <div className="min-w-0 flex-1">
           <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.3em] text-gold-300 truncate">
-            Profile Photo
+            {displayUser?.firstName ? `${displayUser.firstName} ${displayUser.lastName || ""}` : "Client Portal"}
           </p>
-          <p className="text-xs sm:text-sm text-gold-100/60 mt-1 truncate">
+          {(displayUser?.publicProfileId || user?.publicProfileId) && (
+            <div className="mt-1 flex items-center gap-1.5">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-gold-300/70">Public Profile ID:</span>
+              <span className="text-xs font-mono font-bold text-gold-DEFAULT bg-gold/10 px-2.5 py-0.5 rounded border border-gold/20">
+                {displayUser?.publicProfileId || user?.publicProfileId}
+              </span>
+            </div>
+          )}
+          <p className="text-xs text-gold-100/60 mt-1 truncate">
             Click your photo to upload a new one.
           </p>
         </div>

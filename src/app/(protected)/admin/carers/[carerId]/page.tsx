@@ -32,8 +32,10 @@ import {
   Camera,
   Video,
   Info,
+  History,
 } from "lucide-react";
 import InternalNotes from "../../components/shared/InternalNotes/InternalNotes";
+import UserAuditLogs from "../../components/shared/UserAuditLogs";
 
 // Document categories are determined by the backend response
 
@@ -67,8 +69,8 @@ function CarerDetailsContent() {
     (state) => state.admin.selectedCarer
   );
 
-  const initialTab = (searchParams.get("tab") as "profile" | "documents" | "media") || "profile";
-  const [activeTab, setActiveTab] = useState<"profile" | "documents" | "media">(initialTab);
+  const initialTab = (searchParams.get("tab") as "profile" | "documents" | "media" | "audit") || "profile";
+  const [activeTab, setActiveTab] = useState<"profile" | "documents" | "media" | "audit">(initialTab);
   const [approvingCarer, setApprovingCarer] = useState(false);
 
   // Dynamic placement data from backend
@@ -423,6 +425,16 @@ function CarerDetailsContent() {
                   >
                     DBS: {dbsStatus}
                   </span>
+                  {carer.user?.internalAccountNumber && (
+                    <span className="text-[8px] font-bold font-mono text-gold-200 bg-gold/10 px-1.5 py-0.5 rounded border border-gold/20">
+                      {carer.user.internalAccountNumber}
+                    </span>
+                  )}
+                  {carer.user?.publicProfileId && (
+                    <span className="text-[8px] font-bold font-mono text-gold-200/80 bg-gold-300/10 px-1.5 py-0.5 rounded border border-gold-300/20">
+                      {carer.user.publicProfileId}
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
@@ -495,6 +507,15 @@ function CarerDetailsContent() {
           >
             Media
           </button>
+          <button
+            onClick={() => setActiveTab("audit")}
+            className={`px-5 py-3 text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap cursor-pointer ${activeTab === "audit"
+              ? "border-b-2 border-gold text-gold bg-gold/5"
+              : "text-gold-200/60 hover:text-gold-50"
+              }`}
+          >
+            Audit Logs
+          </button>
         </nav>
 
         {/* --- TABS CONTENT --- */}
@@ -513,6 +534,30 @@ function CarerDetailsContent() {
                     </h3>
 
                     <div className="space-y-4 text-xs flex-1 overflow-y-auto pr-2 mt-4 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gold-300/20 hover:[&::-webkit-scrollbar-thumb]:bg-gold-300/40 [&::-webkit-scrollbar-thumb]:rounded-full">
+                      {carer.user?.internalAccountNumber && (
+                        <div className="flex items-center gap-3 p-2 rounded-xl bg-gold/5 border border-gold-300/10">
+                          <ShieldCheck className="h-4 w-4 text-gold flex-shrink-0" />
+                          <div className="min-w-0">
+                            <span className="text-[9px] uppercase font-bold tracking-wider text-gold-100/40 block">Internal Account No.</span>
+                            <span className="font-bold text-gold-200 font-mono text-xs block">
+                              {carer.user.internalAccountNumber}
+                            </span>
+                          </div>
+                        </div>
+                      )}
+
+                      {carer.user?.publicProfileId && (
+                        <div className="flex items-center gap-3 p-2 rounded-xl bg-gold/5 border border-gold-300/10">
+                          <User className="h-4 w-4 text-gold flex-shrink-0" />
+                          <div className="min-w-0">
+                            <span className="text-[9px] uppercase font-bold tracking-wider text-gold-100/40 block">Public Profile ID</span>
+                            <span className="font-bold text-gold-200 font-mono text-xs block">
+                              {carer.user.publicProfileId}
+                            </span>
+                          </div>
+                        </div>
+                      )}
+
                       <div className="flex items-center gap-3 p-2 rounded-xl bg-navy-950/40 border border-gold-300/5">
                         <Mail className="h-4 w-4 text-gold flex-shrink-0" />
                         <div className="min-w-0">
@@ -963,6 +1008,14 @@ function CarerDetailsContent() {
               </div>
             );
           })()}
+
+          {activeTab === "audit" && (
+            <UserAuditLogs
+              userId={carer.user?.id || carer.userId}
+              title="Carer Audit Trail"
+              subtitle={`Governance and activity log history for ${carerName}`}
+            />
+          )}
         </div>
       </div>
     </main>

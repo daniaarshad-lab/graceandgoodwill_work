@@ -7,6 +7,8 @@ import Table, { TableColumn } from "./shared/Table";
 
 interface ClientDetailItem {
   id: string;
+  internalAccountNumber?: string;
+  publicProfileId?: string;
   name: string;
   email: string;
   phone: string;
@@ -51,13 +53,29 @@ export default function ClientRegistry({
       sortable: true,
       render: (client) => (
         <div className="flex items-center gap-3">
-          <div className="h-8 w-8 rounded-full bg-gold/10 flex items-center justify-center text-gold border border-gold/20 shrink-0">
-            <User className="h-4 w-4" />
+          <div className="h-8 w-8 rounded-full bg-gold/10 flex items-center justify-center text-gold border border-gold/20 shrink-0 font-bold text-xs uppercase">
+            {client.name.split(" ").map((n) => n[0]).join("")}
           </div>
-          <span className="truncate max-w-[150px] font-bold text-gold-200" title={client.name}>
-            {client.name}
-          </span>
+          <div className="min-w-0">
+            <span className="truncate max-w-[150px] font-bold text-gold-200 block" title={client.name}>
+              {client.name}
+            </span>
+            {client.internalAccountNumber && (
+              <span className="text-[9px] font-mono text-gold-200/70 block">
+                {client.internalAccountNumber}
+              </span>
+            )}
+          </div>
         </div>
+      ),
+    },
+    {
+      header: "Public ID",
+      key: "publicProfileId",
+      render: (client) => (
+        <span className="font-mono text-xs font-semibold text-gold-200/90 bg-gold-300/10 px-2 py-0.5 rounded border border-gold-300/20">
+          {client.publicProfileId || "N/A"}
+        </span>
       ),
     },
     {

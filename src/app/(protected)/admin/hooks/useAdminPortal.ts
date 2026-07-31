@@ -64,6 +64,8 @@ const mapBackendClients = (backendClients: any[]): any[] => {
     const profile = client.clientProfile || {};
     return {
       id: client.id,
+      internalAccountNumber: client.internalAccountNumber || "",
+      publicProfileId: client.publicProfileId || "",
       name: `${client.firstName || ""} ${client.lastName || ""}`.trim() || "Registered Client",
       email: client.email || "No email listed",
       phone: client.phoneNumber || "No phone listed",
@@ -162,6 +164,8 @@ const mapBackendCarers = (backendCarers: any[]): CarerApplication[] => {
     return {
       id: carer.id,
       carerProfileId: profile.id,
+      internalAccountNumber: carer.internalAccountNumber || "",
+      publicProfileId: carer.publicProfileId || "",
       name: `${carer.firstName || "Unknown"} ${carer.lastName || ""}`.trim(),
       experience:
         profile.experience ||
@@ -556,6 +560,49 @@ export function useAdminPortal() {
     }
   }, [checkEnquiriesDiff]);
 
+  // Load real audit logs from backend API
+  const loadAuditLogs = useCallback(async () => {
+    try {
+      const res = await adminService.getAuditLogs({ limit: 25 });
+      if (res && res.items && res.items.length > 0) {
+        const mapped: AdminActivity[] = res.items.map((item: any) => {
+          let type: "info" | "success" | "warning" | "error" = "info";
+          if (item.action === "APPROVE" || item.event?.includes("APPROVED") || item.event?.includes("CREATED")) {
+            type = "success";
+          } else if (item.action === "REJECT" || item.event?.includes("REJECTED")) {
+            type = "warning";
+          } else if (item.event?.includes("CANCELLED") || item.event?.includes("FAILED")) {
+            type = "error";
+          }
+
+          let dateStr = "";
+          if (item.timestamp) {
+            const dt = new Date(item.timestamp);
+            if (!isNaN(dt.getTime())) {
+              dateStr = dt.toISOString().replace("T", " ").substring(0, 16);
+            }
+          }
+
+          let adminName = "System";
+          if (item.adminUser) {
+            adminName = `${item.adminUser.firstName || ""} ${item.adminUser.lastName || ""}`.trim() || item.adminUser.email || "Admin";
+          }
+
+          return {
+            id: item.id,
+            timestamp: dateStr || "Recent",
+            message: item.details || item.event,
+            type,
+            adminName,
+          };
+        });
+        setActivities(mapped);
+      }
+    } catch (err: any) {
+      console.error("Failed to load audit logs:", err.message);
+    }
+  }, []);
+
   // Handle initial data loading for unpaginated components & counts
   useEffect(() => {
     const loadAllData = async () => {
@@ -566,6 +613,7 @@ export function useAdminPortal() {
           loadPlacements(),
           loadEnquiries(),
           loadStatsCounts(),
+          loadAuditLogs(),
         ]);
       } catch (err: any) {
         console.error("Failed to load admin dashboard data:", err);
@@ -575,7 +623,7 @@ export function useAdminPortal() {
       }
     };
     loadAllData();
-  }, [loadPlacements, loadEnquiries, loadStatsCounts]);
+  }, [loadPlacements, loadEnquiries, loadStatsCounts, loadAuditLogs]);
 
   const loadClients = useCallback(() => {
     dispatch(

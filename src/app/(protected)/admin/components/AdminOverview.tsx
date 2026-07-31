@@ -244,9 +244,13 @@ export default function AdminOverview({
                           <p className="text-sm font-medium text-gold-100/90">
                             {act.message}
                           </p>
-                          <p className="text-xs text-gold-100/40">
-                            {act.timestamp}
-                          </p>
+                          <div className="flex items-center gap-2 text-xs text-gold-100/40">
+                            <span>{act.timestamp}</span>
+                            <span>•</span>
+                            <span className="font-semibold text-gold-200/70">
+                              By: {act.adminName || "System"}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </li>

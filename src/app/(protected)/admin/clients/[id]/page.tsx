@@ -21,10 +21,14 @@ import {
 import { adminService } from "@/services/admin/admin.service";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 import InternalNotes from "../../components/shared/InternalNotes/InternalNotes";
+import UserAuditLogs from "../../components/shared/UserAuditLogs";
 
 // Define strict types for client detail view
 interface ClientDetail {
   id: string;
+  userId?: string;
+  internalAccountNumber?: string;
+  publicProfileId?: string;
   name: string;
   email: string;
   phone: string;
@@ -127,6 +131,9 @@ function ClientDetailsContent() {
 
         setClient({
           id: res.id || id,
+          userId: userObj.id || res.userId || id,
+          internalAccountNumber: userObj.internalAccountNumber || res.internalAccountNumber || "",
+          publicProfileId: userObj.publicProfileId || res.publicProfileId || "",
           name: `${firstName} ${lastName}`.trim() || "Registered Client",
           email: email,
           phone: phoneNumber,
@@ -359,21 +366,30 @@ function ClientDetailsContent() {
           </div>
 
           <div className="flex items-center gap-4 bg-navy-900/40 px-4 py-3 rounded-xl border border-gold-300/5">
-            <div className="h-10 w-10 rounded-full bg-gold/10 flex items-center justify-center text-gold border border-gold/20">
-              <User className="h-5 w-5" />
+            <div className="h-10 w-10 rounded-full bg-gold/10 flex items-center justify-center text-gold border border-gold/20 font-bold uppercase">
+              {client.name.split(" ").map((n) => n[0]).join("")}
             </div>
             <div>
               <p className="text-sm font-bold text-gold-200">{client.name}</p>
-              <p className="text-[10px] text-gold-100/40 uppercase tracking-wider font-semibold">
-                Status:{" "}
+              <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
                 <span
-                  className={`font-bold ml-1 px-1.5 py-0.5 rounded ${getStatusBadgeStyles(
+                  className={`text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded ${getStatusBadgeStyles(
                     client.status,
                   )}`}
                 >
                   {client.status === "PLACEMENT_STARTED" ? "Active" : client.status === "PLACEMENT_CONFIRMED" ? "Matched" : client.status}
                 </span>
-              </p>
+                {client.internalAccountNumber && (
+                  <span className="text-[8px] font-bold font-mono text-gold-200 bg-gold/10 px-1.5 py-0.5 rounded border border-gold/20">
+                    {client.internalAccountNumber}
+                  </span>
+                )}
+                {client.publicProfileId && (
+                  <span className="text-[8px] font-bold font-mono text-gold-200/80 bg-gold-300/10 px-1.5 py-0.5 rounded border border-gold-300/20">
+                    {client.publicProfileId}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         </header>
@@ -389,6 +405,29 @@ function ClientDetailsContent() {
               </h3>
 
               <div className="space-y-4">
+                {client.internalAccountNumber && (
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-gold-100/40 font-semibold flex items-center gap-1.5">
+                      <ShieldCheck className="h-4 w-4 text-gold/60" /> Account Number:
+                    </span>
+                    <span className="text-gold-200 font-bold font-mono">
+                      {client.internalAccountNumber}
+                    </span>
+                  </div>
+                )}
+
+                {client.publicProfileId && (
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-gold-100/40 font-semibold flex items-center gap-1.5">
+                      <User className="h-4 w-4 text-gold/60" /> Public Profile ID:
+                    </span>
+                    <span className="text-gold-200 font-bold font-mono">
+                      {client.publicProfileId}
+                    </span>
+                  </div>
+                )}
+
+
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-gold-100/40 font-semibold flex items-center gap-1.5">
                     <Calendar className="h-4 w-4 text-gold/60" /> Registered Since:
@@ -746,6 +785,15 @@ function ClientDetailsContent() {
           ) : (
             <p className="text-sm text-gold-100/50">Client profile ID not found for notes.</p>
           )}
+        </section>
+
+        {/* AUDIT LOGS MODULE */}
+        <section className="mt-8">
+          <UserAuditLogs
+            userId={client?.userId || client?.id}
+            title="Client Governance Audit Logs"
+            subtitle={`Activity and governance audit history for ${client.name}`}
+          />
         </section>
       </div>
     </main>

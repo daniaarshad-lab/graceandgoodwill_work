@@ -847,4 +847,58 @@ export const adminService = {
       headers: { Authorization: `Bearer ${token}` },
     });
   },
+
+  async getAuditLogs(params?: {
+    page?: number;
+    limit?: number;
+    event?: string;
+    action?: string;
+    targetUserId?: string;
+    targetEntityType?: string;
+  }): Promise<{ items: any[]; total: number; page: number; limit: number; totalPages: number }> {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+
+    const query = new URLSearchParams();
+    if (params?.page) query.append("page", String(params.page));
+    if (params?.limit) query.append("limit", String(params.limit));
+    if (params?.event) query.append("event", params.event);
+    if (params?.action) query.append("action", params.action);
+    if (params?.targetUserId) query.append("targetUserId", params.targetUserId);
+    if (params?.targetEntityType) query.append("targetEntityType", params.targetEntityType);
+
+    return apiFetch(`/admin/audit-logs?${query.toString()}`, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  },
+
+  async getAuditLogsForUser(
+    userId: string,
+    page: number = 1,
+    limit: number = 25,
+  ): Promise<{ items: any[]; total: number; page: number; limit: number; totalPages: number }> {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+
+    return apiFetch(`/admin/audit-logs/user/${userId}?page=${page}&limit=${limit}`, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  },
+
+  async getAuditLogsForEntity(
+    entityType: string,
+    entityId: string,
+    page: number = 1,
+    limit: number = 25,
+  ): Promise<{ items: any[]; total: number; page: number; limit: number; totalPages: number }> {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+
+    return apiFetch(`/admin/audit-logs/entity/${entityType}/${entityId}?page=${page}&limit=${limit}`, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  },
 };

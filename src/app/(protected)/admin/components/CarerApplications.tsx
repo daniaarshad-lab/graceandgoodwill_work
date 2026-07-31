@@ -208,10 +208,26 @@ export default function CarerApplications({
           <div className="h-8 w-8 rounded-full bg-gold/10 flex items-center justify-center text-gold border border-gold/20 shrink-0 font-bold text-xs uppercase">
             {carer.name.split(" ").map((n) => n[0]).join("")}
           </div>
-          <span className="font-bold text-gold-200 truncate max-w-[150px]" title={carer.name}>
-            {carer.name}
-          </span>
+          <div className="min-w-0">
+            <span className="font-bold text-gold-200 truncate max-w-[150px] block" title={carer.name}>
+              {carer.name}
+            </span>
+            {carer.internalAccountNumber && (
+              <span className="text-[9px] font-mono text-gold-200/70 block">
+                {carer.internalAccountNumber}
+              </span>
+            )}
+          </div>
         </div>
+      ),
+    },
+    {
+      header: "Public ID",
+      key: "publicProfileId",
+      render: (carer) => (
+        <span className="font-mono text-xs font-semibold text-gold-200/90 bg-gold-300/10 px-2 py-0.5 rounded border border-gold-300/20">
+          {carer.publicProfileId || "N/A"}
+        </span>
       ),
     },
     {

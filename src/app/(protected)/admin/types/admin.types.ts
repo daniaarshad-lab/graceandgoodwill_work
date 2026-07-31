@@ -10,6 +10,8 @@ export interface DocumentStatus {
 export interface CarerApplication {
   id: string;
   carerProfileId?: string;
+  internalAccountNumber?: string;
+  publicProfileId?: string;
   name: string;
   experience: string; // e.g., "5 years"
   city: string;
@@ -26,6 +28,8 @@ export interface ClientRequest {
   id: string;
   clientProfileId?: string;
   clientId?: string;
+  internalAccountNumber?: string;
+  publicProfileId?: string;
   clientName: string;
   careType: string; // e.g., "Live-in Care", "Hourly Care"
   location: string;
@@ -78,6 +82,7 @@ export interface AdminActivity {
   timestamp: string;
   message: string;
   type: "info" | "success" | "warning" | "error";
+  adminName?: string;
 }
 
 export interface InternalNoteAttachment {

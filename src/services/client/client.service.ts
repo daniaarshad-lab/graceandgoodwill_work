@@ -9,6 +9,7 @@ import {
   ClientPlacement,
   ClientFeedback,
   FeedbackPayload,
+  EmergencyCareRequestPayload,
 } from "@/types/client.types";
 
 export const clientService = {
@@ -413,6 +414,20 @@ export const clientService = {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ reason }),
+    });
+  },
+
+  /**
+   * POST /client/emergency-care-request
+   * Works for both public (no token) and authenticated (with token) users.
+   * apiFetch auto-injects Bearer token from localStorage when available.
+   */
+  async submitEmergencyCareRequest(
+    payload: EmergencyCareRequestPayload,
+  ): Promise<any> {
+    return apiFetch("/client/emergency-care-request", {
+      method: "POST",
+      body: JSON.stringify(payload),
     });
   },
 };

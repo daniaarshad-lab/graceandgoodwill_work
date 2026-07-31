@@ -61,12 +61,27 @@ export const CARE_REQUEST_STATUS_OPTIONS: { value: CareRequestStatusValue; label
   { value: "CARER_SELECTED", label: "Carer Selected" },
 ];
 
+export interface EmergencyCareRequest {
+  id: string;
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  whoNeedsSupport: string;
+  location: string;
+  preferredContactMethod: string;
+  additionalEmergencyDetails?: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface AdminState {
   stats: AdminDashboardStats | null;
   loading: boolean;
   error: string | null;
   carers: PaginationData<any>;
   careRequests: PaginationData<any>;
+  emergencyCareRequests: PaginationData<EmergencyCareRequest>;
   clients: PaginationData<any>;
   selectedCarer: {
     data: any | null;

@@ -74,15 +74,6 @@ export default function PortalHeader({ user }: PortalHeaderProps) {
     }
   };
 
-  const WHATSAPP_NUMBER = "<TO_BE_PROVIDED_BY_CLIENT>";
-  const WHATSAPP_MESSAGE = encodeURIComponent(
-    "Hello, I need emergency care support within the next 24 hours."
-  );
-
-  const handleWhatsAppRedirect = () => {
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MESSAGE}`, "_blank");
-  };
-
   const initials = `${displayUser?.firstName?.charAt(0) || "C"}${displayUser?.lastName?.charAt(0) || "P"}`;
 
   return (
@@ -152,7 +143,7 @@ export default function PortalHeader({ user }: PortalHeaderProps) {
       </div>
 
       <div className="mt-4 w-full md:w-auto md:mt-0">
-        <EmergencyButton onClick={handleWhatsAppRedirect} />
+        <EmergencyButton />
       </div>
     </section>
   );

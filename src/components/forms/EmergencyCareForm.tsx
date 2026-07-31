@@ -1,13 +1,27 @@
-"use client";
+"use client"; // force turbopack cache invalidation
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useAppSelector } from "@/store/hooks";
 import PhoneInput from "@/components/PhoneInput";
 import Input from "@/components/Input";
 import Select from "@/components/Select";
 import Button from "@/components/Button";
 import { Check, AlertCircle } from "lucide-react";
+import { clientService } from "@/services/client/client.service";
+import { showSuccessToast, showErrorToast } from "@/utils/toast";
+import { validateFullName, validateEmail, validatePhone } from "@/lib/validation";
 
-export default function EmergencyCareForm() {
+interface EmergencyCareFormProps {
+  /** When true, shows toasts alongside inline feedback (client portal context) */
+  isAuthenticated?: boolean;
+}
+
+export default function EmergencyCareForm({
+  isAuthenticated = false,
+}: EmergencyCareFormProps) {
+  const { user, isAuthenticated: isReduxAuthenticated } = useAppSelector((state) => state.auth);
+  const effectiveIsAuthenticated = isAuthenticated || isReduxAuthenticated;
+
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
@@ -17,24 +31,31 @@ export default function EmergencyCareForm() {
   const [contactMethod, setContactMethod] = useState("phone");
   const [message, setMessage] = useState("");
 
+  useEffect(() => {
+    if (effectiveIsAuthenticated && user) {
+      if (user.email && !email) setEmail(user.email);
+      if (user.firstName && user.lastName && !fullName) setFullName(`${user.firstName} ${user.lastName}`);
+      if (user.phone && !phone) setPhone(user.phone);
+    }
+  }, [effectiveIsAuthenticated, user]);
+
   // UX & Validation State
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const validate = () => {
     const tempErrors: Record<string, string> = {};
-    if (!fullName.trim()) tempErrors.fullName = "Full name is required";
 
-    if (!phone.trim()) {
-      tempErrors.phone = "Phone number is required";
-    }
+    const fullNameError = validateFullName(fullName);
+    if (fullNameError) tempErrors.fullName = fullNameError;
 
-    if (!email.trim()) {
-      tempErrors.email = "Email address is required";
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      tempErrors.email = "Enter a valid email address";
-    }
+    const phoneError = validatePhone(phone);
+    if (phoneError) tempErrors.phone = phoneError;
+
+    const emailError = validateEmail(email);
+    if (emailError) tempErrors.email = emailError;
 
     if (!location.trim()) {
       tempErrors.location = "Required (City or Postcode)";
@@ -44,15 +65,43 @@ export default function EmergencyCareForm() {
     return Object.keys(tempErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
 
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
+    setSubmitError(null);
+
+    try {
+      await clientService.submitEmergencyCareRequest({
+        fullName,
+        email,
+        phoneNumber: phone,
+        whoNeedsSupport,
+        location,
+        preferredContactMethod: contactMethod,
+        additionalEmergencyDetails: message || undefined,
+      });
+
       setIsSubmitted(true);
-    }, 1200);
+
+      if (effectiveIsAuthenticated) {
+        showSuccessToast(
+          "Request Submitted",
+          "Your emergency care request has been submitted. A Matching Specialist will contact you shortly.",
+        );
+      }
+    } catch (err: any) {
+      const errorMessage =
+        err?.message || "Failed to submit request. Please try again.";
+      setSubmitError(errorMessage);
+
+      if (effectiveIsAuthenticated) {
+        showErrorToast("Submission Failed", errorMessage);
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const resetForm = () => {
@@ -65,6 +114,7 @@ export default function EmergencyCareForm() {
     setContactMethod("phone");
     setMessage("");
     setErrors({});
+    setSubmitError(null);
     setIsSubmitted(false);
   };
 
@@ -109,12 +159,22 @@ export default function EmergencyCareForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+      {/* Inline error banner */}
+      {submitError && (
+        <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-center">
+          <p className="text-sm text-red-300">{submitError}</p>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Input
           label={fieldLabel("Full Name")}
           value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
+          onChange={(e) => {
+            setFullName(e.target.value);
+            if (errors.fullName) setErrors(prev => ({ ...prev, fullName: "" }));
+          }}
           placeholder="Enter your full name"
           error={errors.fullName}
           className={darkInput}
@@ -123,7 +183,10 @@ export default function EmergencyCareForm() {
           label={fieldLabel("Email Address")}
           type="email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            if (errors.email) setErrors(prev => ({ ...prev, email: "" }));
+          }}
           placeholder="name@example.com"
           error={errors.email}
           className={darkInput}
@@ -135,7 +198,10 @@ export default function EmergencyCareForm() {
           label={fieldLabel("Phone Number")}
           placeholder="Enter contact number"
           value={phone}
-          onChange={setPhone}
+          onChange={(val) => {
+            setPhone(val);
+            if (errors.phone) setErrors(prev => ({ ...prev, phone: "" }));
+          }}
           error={errors.phone}
           className={darkInput}
         />
@@ -158,7 +224,10 @@ export default function EmergencyCareForm() {
         <Input
           label={fieldLabel("Location")}
           value={location}
-          onChange={(e) => setLocation(e.target.value)}
+          onChange={(e) => {
+            setLocation(e.target.value);
+            if (errors.location) setErrors(prev => ({ ...prev, location: "" }));
+          }}
           placeholder="e.g. City or Postcode"
           error={errors.location}
           className={darkInput}

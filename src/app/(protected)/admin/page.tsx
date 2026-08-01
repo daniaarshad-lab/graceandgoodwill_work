@@ -24,9 +24,10 @@ const PlacementTracking = dynamic(
   () => import("./components/PlacementTracking"),
   { ssr: false },
 );
-const EmergencyCases = dynamic(() => import("./components/EmergencyCases"), {
-  ssr: false,
-});
+const EmergencyCareRequestsList = dynamic(
+  () => import("./components/EmergencyCareRequestsList"),
+  { ssr: false },
+);
 const ApprovalModal = dynamic(() => import("./components/ApprovalModal"), {
   ssr: false,
 });
@@ -128,7 +129,7 @@ function AdminDashboardContent() {
     clients: "Client Registry",
     requests: "Client Requests",
     placements: "Tracking & Overrides",
-    emergency: "Emergency Triage",
+    emergency: "Emergency Care Requests",
     billing: "Billing & Invoices",
     enquiries: "Support & Enquiries",
     "profile-updates": "Profile Updates",
@@ -145,7 +146,7 @@ function AdminDashboardContent() {
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           <style>{`.admin-tabs-nav::-webkit-scrollbar { display: none; }`}</style>
-          {(Object.keys(tabLabels) as AdminTabType[]).filter(tab => tab !== "emergency").map((tab) => {
+          {(Object.keys(tabLabels) as AdminTabType[]).map((tab) => {
             const isActive = portal.activeTab === tab;
             return (
               <button
@@ -158,11 +159,11 @@ function AdminDashboardContent() {
                 }`}
               >
                 {tabLabels[tab]}
-                {/* tab === "emergency" && portal.stats.emergencyCases > 0 && (
+                {tab === "emergency" && portal.stats.emergencyCases > 0 && (
                   <span className="ml-1.5 inline-flex items-center justify-center rounded-full bg-rose-500 px-1.5 py-0.5 text-[9px] font-black text-white animate-pulse">
                     {portal.stats.emergencyCases}
                   </span>
-                ) */}
+                )}
                 {tab === "carers" && portal.stats.pendingCarers > 0 && (
                   <span className="ml-1.5 inline-flex items-center justify-center rounded-full bg-gold-600 px-1.5 py-0.5 text-[9px] font-black text-navy-950">
                     {portal.stats.pendingCarers}
@@ -272,12 +273,21 @@ function AdminDashboardContent() {
                 />
               )}
 
-              {/* TAB 6: EMERGENCY CASES TRIAGE */}
+              {/* TAB 6: EMERGENCY CARE REQUESTS */}
               {portal.activeTab === "emergency" && (
-                <EmergencyCases
-                  requests={portal.requests}
-                  carers={portal.carers}
-                  onCreateMatch={portal.handleCreatePlacement}
+                <EmergencyCareRequestsList
+                  requests={portal.emergencyCareRequestsPagination.items}
+                  page={portal.emergencyCareRequestsPagination.page}
+                  totalPages={portal.emergencyCareRequestsPagination.totalPages}
+                  totalItems={portal.emergencyCareRequestsPagination.totalItems}
+                  status={portal.emergencyCareRequestsPagination.status}
+                  limit={portal.emergencyCareRequestsPagination.limit}
+                  loading={portal.emergencyCareRequestsPagination.loading}
+                  error={portal.emergencyCareRequestsPagination.error}
+                  onPageChange={portal.setEmergencyCareRequestsPage}
+                  onStatusChange={portal.setEmergencyCareRequestsStatus}
+                  onStatusUpdate={portal.changeEmergencyRequestStatus}
+                  onLimitChange={portal.setEmergencyCareRequestsLimit}
                 />
               )}
 

@@ -213,6 +213,58 @@ export const adminService = {
     });
   },
 
+  async getEmergencyCareRequests(
+    page: number = 1,
+    limit: number = 10,
+    status: string = "ALL",
+  ): Promise<any> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    const query = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+    });
+    
+    if (status && status !== "ALL") {
+      query.append("status", status);
+    }
+
+    const response = await apiFetch(`/admin/emergency-care-requests?${query.toString()}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    
+    // Backend returns a flat array for emergency care requests
+    return {
+      items: Array.isArray(response) ? response : [],
+      total: Array.isArray(response) ? response.length : 0,
+      page,
+      limit,
+    };
+  },
+
+  async updateEmergencyCareRequestStatus(id: string, status: string): Promise<any> {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+
+    return apiFetch(`/admin/emergency-care-requests/${id}/status`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ status }),
+    });
+  },
+
   async getCareRequestApplications(careRequestId: string): Promise<any[]> {
     const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
     if (!token) throw new Error("No token found");

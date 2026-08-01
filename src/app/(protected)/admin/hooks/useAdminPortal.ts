@@ -23,6 +23,11 @@ import {
   setClientsPage,
   setClientsStatus,
   setClientsLimit,
+  fetchAdminEmergencyCareRequests,
+  updateAdminEmergencyCareRequestStatus,
+  setEmergencyCareRequestsPage,
+  setEmergencyCareRequestsStatus,
+  setEmergencyCareRequestsLimit,
 } from "@/store/slices/adminSlice";
 
 // Helper to map backend document category to frontend status with file URLs and IDs
@@ -306,6 +311,9 @@ export function useAdminPortal() {
   const requestsPagination = useAppSelector(
     (state) => state.admin.careRequests,
   );
+  const emergencyCareRequestsPagination = useAppSelector(
+    (state) => state.admin.emergencyCareRequests,
+  );
   const clientsPagination = useAppSelector((state) => state.admin.clients);
 
   const carers = mapBackendCarers(carersPagination.items);
@@ -519,7 +527,6 @@ export function useAdminPortal() {
     carersPagination.status,
   ]);
 
-  // Load client requests from backend API (paginated)
   const loadRequests = useCallback(() => {
     dispatch(
       fetchAdminCareRequests({
@@ -534,6 +541,35 @@ export function useAdminPortal() {
     requestsPagination.limit,
     requestsPagination.status,
   ]);
+
+  const loadEmergencyRequests = useCallback(() => {
+    dispatch(
+      fetchAdminEmergencyCareRequests({
+        page: emergencyCareRequestsPagination.page,
+        limit: emergencyCareRequestsPagination.limit,
+        status: emergencyCareRequestsPagination.status,
+      }),
+    );
+  }, [
+    dispatch,
+    emergencyCareRequestsPagination.page,
+    emergencyCareRequestsPagination.limit,
+    emergencyCareRequestsPagination.status,
+  ]);
+
+  const changeEmergencyRequestStatus = useCallback(
+    (id: string, status: string) => {
+      dispatch(updateAdminEmergencyCareRequestStatus({ id, status }))
+        .unwrap()
+        .then(() => {
+          toast.success("Emergency care request status updated");
+        })
+        .catch((err: any) => {
+          toast.error(err || "Failed to update status");
+        });
+    },
+    [dispatch]
+  );
 
   // Load placements from backend API
   const loadPlacements = useCallback(async () => {
@@ -649,6 +685,11 @@ export function useAdminPortal() {
   useEffect(() => {
     loadRequests();
   }, [loadRequests]);
+
+  // Refetch emergency requests whenever page, limit, or status changes
+  useEffect(() => {
+    loadEmergencyRequests();
+  }, [loadEmergencyRequests]);
 
   // Refetch clients whenever page, limit, or status changes
   useEffect(() => {
@@ -897,6 +938,7 @@ export function useAdminPortal() {
     // Pagination helpers and states
     carersPagination,
     requestsPagination,
+    emergencyCareRequestsPagination,
     clientsPagination,
     setCarersPage: (page: number) => dispatch(setCarersPage(page)),
     setCarersStatus: (status: string) => dispatch(setCarersStatus(status)),
@@ -905,12 +947,19 @@ export function useAdminPortal() {
     setRequestsStatus: (status: string) =>
       dispatch(setCareRequestsStatus(status)),
     setRequestsLimit: (limit: number) => dispatch(setCareRequestsLimit(limit)),
+    setEmergencyCareRequestsPage: (page: number) => dispatch(setEmergencyCareRequestsPage(page)),
+    setEmergencyCareRequestsStatus: (status: string) =>
+      dispatch(setEmergencyCareRequestsStatus(status)),
+    setEmergencyCareRequestsLimit: (limit: number) => dispatch(setEmergencyCareRequestsLimit(limit)),
     setClientsPage: (page: number) => dispatch(setClientsPage(page)),
     setClientsStatus: (status: string) => dispatch(setClientsStatus(status)),
     setClientsLimit: (limit: number) => dispatch(setClientsLimit(limit)),
     refreshRequests: loadRequests,
+    refreshEmergencyRequests: loadEmergencyRequests,
     refreshPlacements: loadPlacements,
     loadStatsCounts,
+    loadEmergencyRequests,
+    changeEmergencyRequestStatus,
   };
 }
 export type UseAdminPortalReturn = ReturnType<typeof useAdminPortal>;

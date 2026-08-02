@@ -10,6 +10,7 @@ interface AdminEmergencyCareRequestsProps {
   status: string;
   onPageChange: (page: number) => void;
   onStatusChange: (status: string) => void;
+  onStatusUpdate?: (id: string, status: string) => void;
   loading: boolean;
   error: string | null;
 }
@@ -22,6 +23,7 @@ export default function AdminEmergencyCareRequests({
   status,
   onPageChange,
   onStatusChange,
+  onStatusUpdate,
   loading,
   error,
 }: AdminEmergencyCareRequestsProps) {
@@ -136,17 +138,24 @@ export default function AdminEmergencyCareRequests({
                       </td>
 
                       <td className="p-4">
-                        <span
-                          className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
+                        <select
+                          value={req.status || "PENDING"}
+                          onChange={(e) => onStatusUpdate && onStatusUpdate(req.id, e.target.value)}
+                          className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border cursor-pointer outline-none focus:ring-1 focus:ring-gold-500/50 appearance-none bg-transparent ${
                             req.status === "PENDING"
                               ? "bg-amber-500/10 text-amber-400 border-amber-500/20"
                               : req.status === "RESOLVED"
                                 ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-                                : "bg-gold-500/10 text-gold-400 border-gold-500/20"
+                                : req.status === "CLOSED"
+                                  ? "bg-gray-500/10 text-gray-400 border-gray-500/20"
+                                  : "bg-gold-500/10 text-gold-400 border-gold-500/20"
                           }`}
                         >
-                          {req.status || "PENDING"}
-                        </span>
+                          <option value="PENDING" className="bg-navy-950 text-amber-400">PENDING</option>
+                          <option value="IN_PROGRESS" className="bg-navy-950 text-gold-400">IN PROGRESS</option>
+                          <option value="RESOLVED" className="bg-navy-950 text-emerald-400">RESOLVED</option>
+                          <option value="CLOSED" className="bg-navy-950 text-gray-400">CLOSED</option>
+                        </select>
                       </td>
 
                       <td className="p-4 text-right">

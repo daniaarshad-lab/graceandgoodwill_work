@@ -305,6 +305,7 @@ function AdminDashboardContent() {
                   status={portal.emergencyCareRequestsPagination.status}
                   onPageChange={portal.setEmergencyCareRequestsPage}
                   onStatusChange={portal.setEmergencyCareRequestsStatus}
+                  onStatusUpdate={portal.changeEmergencyRequestStatus}
                   loading={portal.emergencyCareRequestsPagination.loading}
                   error={portal.emergencyCareRequestsPagination.error}
                 />

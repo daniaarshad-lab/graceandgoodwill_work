@@ -61,6 +61,19 @@ export const CARE_REQUEST_STATUS_OPTIONS: { value: CareRequestStatusValue; label
   { value: "CARER_SELECTED", label: "Carer Selected" },
 ];
 
+export type EmergencyCareRequestStatusValue =
+  | "PENDING"
+  | "IN_PROGRESS"
+  | "RESOLVED"
+  | "CLOSED";
+
+export const EMERGENCY_CARE_REQUEST_STATUS_OPTIONS: { value: EmergencyCareRequestStatusValue; label: string }[] = [
+  { value: "PENDING", label: "Pending" },
+  { value: "IN_PROGRESS", label: "In Progress" },
+  { value: "RESOLVED", label: "Resolved" },
+  { value: "CLOSED", label: "Closed" },
+];
+
 export interface EmergencyCareRequest {
   id: string;
   fullName: string;
@@ -70,7 +83,7 @@ export interface EmergencyCareRequest {
   location: string;
   preferredContactMethod: string;
   additionalEmergencyDetails?: string;
-  status: string;
+  status: EmergencyCareRequestStatusValue;
   createdAt: string;
   updatedAt: string;
 }

@@ -148,7 +148,7 @@ export default function LegalAgreementsFeature({ isOnboardingMode, onAllSigned, 
         throw new Error("Failed to generate checkout URL");
       }
     } catch (err: any) {
-      setError(err?.message || "Failed to initiate Stripe Checkout.");
+      setError(err?.message || "Failed to initiate GoCardless Checkout.");
     } finally {
       setPayingFee(false);
     }
@@ -196,10 +196,14 @@ export default function LegalAgreementsFeature({ isOnboardingMode, onAllSigned, 
       setHistory(historyData);
 
       if (pendingData.length === 0) {
-        if (isOnboardingMode && onAllSigned) {
+        const role = user?.role?.toUpperCase();
+        
+        // Prevent auto-redirect for unpaid clients so they can see the payment UI
+        if (role === "CLIENT" && !profile?.isLifetimeFeePaid) {
+          // Do nothing, let the component render the payment UI
+        } else if (isOnboardingMode && onAllSigned) {
           onAllSigned();
         } else {
-          const role = user?.role?.toUpperCase();
           if (role === "CLIENT") {
             dispatch(fetchClientProfile());
             if (profile?.isLifetimeFeePaid) {
@@ -283,7 +287,7 @@ export default function LegalAgreementsFeature({ isOnboardingMode, onAllSigned, 
           <>
             {pending.length === 0 ? (
           <div className="animate-fade-in">
-            {user?.role?.toUpperCase() === "CLIENT" && !profile?.isLifetimeFeePaid && !isOnboardingMode ? (
+            {user?.role?.toUpperCase() === "CLIENT" && !profile?.isLifetimeFeePaid ? (
               <div className="bg-gradient-to-b from-navy-900/80 to-navy-900/40 border border-navy-800 rounded-2xl p-6 sm:p-8 text-center w-full max-w-5xl mx-auto shadow-xl mt-4">
                 <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-tr from-[#b59469]/20 to-[#d4af37]/10 border border-[#b59469]/30 text-[#b59469] mb-4 shadow-inner">
                   <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -374,7 +378,7 @@ export default function LegalAgreementsFeature({ isOnboardingMode, onAllSigned, 
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                       </svg>
-                      Redirecting to Stripe...
+                      Redirecting to GoCardless...
                     </>
                   ) : (
                     "Pay £358.80 & Start Matching Immediately"

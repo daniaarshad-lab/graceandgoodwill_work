@@ -126,7 +126,7 @@ export default function ClientBillingPage() {
         throw new Error("Failed to generate checkout URL");
       }
     } catch (err: any) {
-      setError(err?.message || "Failed to initiate GoCardless Checkout.");
+      setError(err?.message || "Failed to initiate Go Cardless Checkout.");
     } finally {
       setActionLoading(null);
     }
@@ -153,35 +153,75 @@ export default function ClientBillingPage() {
   };
 
   const handlePrintInvoice = (inv: Invoice) => {
-    const printWindow = window.open("", "_blank", "width=800,height=900");
+    const printWindow = window.open("", "_blank", "width=960,height=900");
     if (printWindow) {
       const isReg = inv.invoiceNumber.startsWith("REG-");
       const clientName = profile?.user ? `${profile.user.firstName} ${profile.user.lastName}` : "Client Family";
       const clientEmail = profile?.user?.email || "";
+      const publicProfileId = (profile?.user as any)?.publicProfileId || (profile as any)?.publicProfileId || (user as any)?.publicProfileId || (user as any)?.clientProfile?.publicProfileId || "";
+      const logoUrl = typeof window !== "undefined" ? `${window.location.origin}/website_logo.png` : "/website_logo.png";
       
       printWindow.document.write(`
         <html>
           <head>
-            <title>Invoice - ${inv.invoiceNumber}</title>
+            <title></title>
             <style>
-              body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #1e293b; padding: 40px; line-height: 1.5; }
-              .header { display: flex; justify-content: space-between; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 30px; }
-              .logo { font-size: 24px; font-weight: bold; color: #1e3a8a; }
+              * { box-sizing: border-box; }
+              html, body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+                color: #1e293b;
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                line-height: 1.5;
+                background: #f8fafc;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+              }
+              .invoice-container {
+                width: 100%;
+                max-width: 900px;
+                margin: 20px auto;
+                padding: 40px;
+                background: #ffffff;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+              }
+              .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 30px; }
+              .logo { font-size: 22px; font-weight: bold; color: #1e3a8a; line-height: 1.2; }
               .company-details { text-align: right; font-size: 12px; color: #64748b; }
               .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 40px; }
               .section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #64748b; margin-bottom: 8px; letter-spacing: 0.05em; }
               .details { font-size: 14px; }
               .table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
-              .table th { background: #f8fafc; border-bottom: 1px solid #e2e8f0; padding: 12px; text-align: left; font-size: 12px; font-weight: 600; color: #64748b; }
-              .table td { padding: 12px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
+              .table th { background: #f8fafc; border-bottom: 2px solid #e2e8f0; padding: 12px; text-align: left; font-size: 12px; font-weight: 600; color: #64748b; }
+              .table td { padding: 14px 12px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
               .totals-box { display: flex; flex-direction: column; align-items: flex-end; margin-top: 20px; }
-              .total-row { display: flex; justify-content: space-between; width: 250px; padding: 6px 0; font-size: 13px; }
+              .total-row { display: flex; justify-content: space-between; width: 280px; padding: 6px 0; font-size: 13px; }
               .total-row.grand-total { border-top: 2px solid #e2e8f0; padding-top: 10px; font-size: 18px; font-weight: bold; color: #0f172a; }
               .badge { display: inline-block; padding: 4px 12px; background: #dcfce7; color: #15803d; border-radius: 9999px; font-size: 12px; font-weight: bold; text-transform: uppercase; }
-              .footer { text-align: center; border-top: 1px solid #e2e8f0; padding-top: 20px; margin-top: 50px; font-size: 12px; color: #94a3b8; }
+              .footer { text-align: center; border-top: 1px solid #e2e8f0; padding-top: 24px; margin-top: 60px; font-size: 12px; color: #94a3b8; }
               @media print {
-                .no-print { display: none; }
-                body { padding: 0; }
+                @page {
+                  size: A4 portrait;
+                  margin: 10mm 12mm;
+                }
+                .no-print { display: none !important; }
+                html, body {
+                  margin: 0 !important;
+                  padding: 0 !important;
+                  width: 100% !important;
+                  background: #ffffff !important;
+                }
+                .invoice-container {
+                  padding: 0 !important;
+                  margin: 0 !important;
+                  width: 100% !important;
+                  max-width: 100% !important;
+                  box-shadow: none !important;
+                  border-radius: 0 !important;
+                  background: transparent !important;
+                }
               }
             </style>
           </head>
@@ -192,82 +232,91 @@ export default function ClientBillingPage() {
               </button>
             </div>
             
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 30px;">
-              <div>
-                <div class="logo">Grace & Goodwill</div>
-                <div style="font-size: 12px; color: #64748b; margin-top: 4px;">CARE DEFINED BY INTEGRITY</div>
-              </div>
-              <div class="company-details">
-                <strong>Grace & Goodwill Ltd</strong><br/>
-                123 Care Street, London, UK<br/>
-                VAT Registration No: GB 123 4567 89
-              </div>
-            </div>
-
-            <div class="meta-grid">
-              <div>
-                <div class="section-title">Invoice To</div>
-                <div class="details">
-                  <strong>${clientName}</strong><br/>
-                  ${clientEmail}
+            <div class="invoice-container">
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 30px;">
+                <div style="display: flex; align-items: center; gap: 14px;">
+                  <img src="${logoUrl}" alt="Grace & Goodwill Logo" style="height: 52px; width: auto; object-fit: contain;" />
+                  <div>
+                    <div class="logo">Grace & Goodwill</div>
+                    <div style="font-size: 11px; font-weight: 700; color: #64748b; margin-top: 2px; letter-spacing: 0.08em; text-transform: uppercase;">CARE DEFINED BY INTEGRITY</div>
+                  </div>
+                </div>
+                <div class="company-details" style="text-align: right;">
+                  <h1 style="font-size: 24px; font-weight: 800; color: #1e3a8a; margin: 0 0 2px 0; text-transform: uppercase; letter-spacing: 0.05em;">INVOICE</h1>
+                  <div style="font-size: 14px; font-weight: 700; color: #0f172a; font-family: monospace; margin-bottom: 8px;"># ${inv.invoiceNumber}</div>
+                  <strong>Grace & Goodwill Ltd</strong><br/>
+                  123 Care Street, London, UK<br/>
+                  VAT Registration No: GB 123 4567 89
                 </div>
               </div>
-              <div style="text-align: right;">
-                <div class="section-title">Invoice Details</div>
-                <div class="details">
-                  <strong>Invoice Number:</strong> ${inv.invoiceNumber}<br/>
-                  <strong>Date of Issue:</strong> ${new Date(inv.invoiceDate).toLocaleDateString()}<br/>
-                  <strong>Status:</strong> <span class="badge">${inv.status}</span><br/>
-                  ${inv.gocardlessPaymentId ? `<strong>GoCardless Payment ID:</strong> ${inv.gocardlessPaymentId}` : ""}
+
+              <div class="meta-grid">
+                <div>
+                  <div class="section-title">Invoice To</div>
+                  <div class="details">
+                    <strong>${clientName}</strong><br/>
+                    ${clientEmail}
+                    ${publicProfileId ? `<div style="margin-top: 6px; font-family: monospace; font-size: 12px; font-weight: bold; color: #1e3a8a; background: #eff6ff; padding: 3px 8px; border-radius: 4px; display: inline-block; border: 1px solid #dbeafe;">Public Profile ID: ${publicProfileId}</div>` : ""}
+                  </div>
+                </div>
+                <div style="text-align: right;">
+                  <div class="section-title">Invoice Details</div>
+                  <div class="details">
+                    <strong>Invoice Number:</strong> ${inv.invoiceNumber}<br/>
+                    <strong>Date of Issue:</strong> ${new Date(inv.invoiceDate).toLocaleDateString()}<br/>
+                    <strong>Status:</strong> <span class="badge">${inv.status}</span><br/>
+                    ${publicProfileId ? `<strong>Public Profile ID:</strong> <span style="font-family: monospace; font-weight: bold; color: #1e3a8a;">${publicProfileId}</span><br/>` : ""}
+                    ${inv.gocardlessPaymentId ? `<strong>GoCardless Payment ID:</strong> ${inv.gocardlessPaymentId}` : ""}
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Description</th>
-                  <th style="text-align: right;">Subtotal</th>
-                  <th style="text-align: right;">VAT (20%)</th>
-                  <th style="text-align: right;">Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>
-                    <strong>${isReg ? 'Lifetime Matching Platform Access' : 'Live-in Care Weekly Placement Service'}</strong><br/>
-                    <span style="font-size: 12px; color: #64748b;">
-                      ${isReg 
-                        ? 'One-off registration fee covering onboarding, profiling, and lifetime matched access.' 
-                        : `Weekly recurring placement cycle: ${new Date(inv.billingPeriodStart).toLocaleDateString()} to ${new Date(inv.billingPeriodEnd).toLocaleDateString()}`
-                      }
-                    </span>
-                  </td>
-                  <td style="text-align: right;">£${Number(inv.subtotal || (Number(inv.total) / 1.2)).toFixed(2)}</td>
-                  <td style="text-align: right;">£${Number(inv.vat || (Number(inv.total) - (Number(inv.total) / 1.2))).toFixed(2)}</td>
-                  <td style="text-align: right;">£${Number(inv.total).toFixed(2)}</td>
-                </tr>
-              </tbody>
-            </table>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Description</th>
+                    <th style="text-align: right;">Subtotal</th>
+                    <th style="text-align: right;">VAT (20%)</th>
+                    <th style="text-align: right;">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <strong>${isReg ? 'Lifetime Matching Platform Access' : 'Live-in Care Weekly Placement Service'}</strong><br/>
+                      <span style="font-size: 12px; color: #64748b;">
+                        ${isReg 
+                          ? 'One-off registration fee covering onboarding, profiling, and lifetime matched access.' 
+                          : `Weekly recurring placement cycle: ${new Date(inv.billingPeriodStart).toLocaleDateString()} to ${new Date(inv.billingPeriodEnd).toLocaleDateString()}`
+                        }
+                      </span>
+                    </td>
+                    <td style="text-align: right;">£${Number(inv.subtotal || (Number(inv.total) / 1.2)).toFixed(2)}</td>
+                    <td style="text-align: right;">£${Number(inv.vat || (Number(inv.total) - (Number(inv.total) / 1.2))).toFixed(2)}</td>
+                    <td style="text-align: right;">£${Number(inv.total).toFixed(2)}</td>
+                  </tr>
+                </tbody>
+              </table>
 
-            <div class="totals-box">
-              <div class="total-row">
-                <span>Subtotal</span>
-                <span>£${Number(inv.subtotal || (Number(inv.total) / 1.2)).toFixed(2)}</span>
+              <div class="totals-box">
+                <div class="total-row">
+                  <span>Subtotal</span>
+                  <span>£${Number(inv.subtotal || (Number(inv.total) / 1.2)).toFixed(2)}</span>
+                </div>
+                <div class="total-row">
+                  <span>VAT (20%)</span>
+                  <span>£${Number(inv.vat || (Number(inv.total) - (Number(inv.total) / 1.2))).toFixed(2)}</span>
+                </div>
+                <div class="total-row grand-total">
+                  <span>Total Paid</span>
+                  <span>£${Number(inv.total).toFixed(2)}</span>
+                </div>
               </div>
-              <div class="total-row">
-                <span>VAT (20%)</span>
-                <span>£${Number(inv.vat || (Number(inv.total) - (Number(inv.total) / 1.2))).toFixed(2)}</span>
-              </div>
-              <div class="total-row grand-total">
-                <span>Total Paid</span>
-                <span>£${Number(inv.total).toFixed(2)}</span>
-              </div>
-            </div>
 
-            <div class="footer">
-              Thank you for choosing Grace & Goodwill.<br/>
-              If you have any questions about this statement, please contact accounts@graceandgoodwill.com
+              <div class="footer">
+                Thank you for choosing Grace & Goodwill.<br/>
+                If you have any questions about this statement, please contact accounts@graceandgoodwill.com
+              </div>
             </div>
             
             <script>

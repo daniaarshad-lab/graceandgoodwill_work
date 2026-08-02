@@ -139,6 +139,25 @@ export const adminService = {
     });
   },
 
+  async getEmergencyCareRequests(
+    page: number = 1,
+    limit: number = 10,
+    status: string = "ALL",
+  ): Promise<any> {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) throw new Error("No token found");
+
+    return apiFetch(
+      `/admin/emergency-care-requests?page=${page}&limit=${limit}&status=${status}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+  },
+
   async getCarers(
     page: number = 1,
     limit: number = 10,

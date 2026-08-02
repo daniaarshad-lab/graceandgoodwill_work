@@ -1,12 +1,12 @@
+import { EmergencyCareContent } from "@/components/emergency/EmergencyCareContent";
 import EmergencyCareForm from "@/components/forms/EmergencyCareForm";
-import { Clock, ShieldCheck, Phone, MessageCircle, HeartPulse, AlertCircle } from "lucide-react";
+import { AlertCircle, Clock, HeartPulse, Phone, ShieldCheck } from "lucide-react";
 
 export const metadata = {
   title: "Urgent Live In Care | Grace & Goodwill",
   description:
     "Arrange rapid-response priority care placements within 24-48 hours.",
 };
-
 const WhatsAppIcon = ({ className }: { className?: string }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"

@@ -14,20 +14,20 @@ import {
   fetchAdminCarers,
   fetchAdminCareRequests,
   fetchAdminClients,
+  fetchAdminEmergencyCareRequests,
   setCarersPage,
   setCarersStatus,
   setCarersLimit,
   setCareRequestsPage,
   setCareRequestsStatus,
   setCareRequestsLimit,
-  setClientsPage,
-  setClientsStatus,
-  setClientsLimit,
-  fetchAdminEmergencyCareRequests,
-  updateAdminEmergencyCareRequestStatus,
   setEmergencyCareRequestsPage,
   setEmergencyCareRequestsStatus,
   setEmergencyCareRequestsLimit,
+  setClientsPage,
+  setClientsStatus,
+  setClientsLimit,
+  updateAdminEmergencyCareRequestStatus,
 } from "@/store/slices/adminSlice";
 
 // Helper to map backend document category to frontend status with file URLs and IDs
@@ -76,7 +76,7 @@ const mapBackendClients = (backendClients: any[]): any[] => {
       phone: client.phoneNumber || "No phone listed",
       status: client.status || "PENDING",
       createdAt: client.createdAt,
-      
+
       address: profile.address || "No address listed",
       city: profile.city || "Unknown",
       postcode: profile.postcode || "",
@@ -158,9 +158,9 @@ const mapBackendCarers = (backendCarers: any[]): CarerApplication[] => {
         ? profile.careSpecialties
         : typeof profile.careSpecialties === "string"
           ? profile.careSpecialties
-              .split(",")
-              .map((s: string) => s.trim())
-              .filter(Boolean)
+            .split(",")
+            .map((s: string) => s.trim())
+            .filter(Boolean)
           : [];
     } else if (profile.careTypes && Array.isArray(profile.careTypes)) {
       specialtiesList = profile.careTypes;
@@ -293,6 +293,7 @@ export type AdminTabType =
   | "requests"
   | "placements"
   | "emergency"
+  | "emergency-requests"
   | "billing"
   | "enquiries"
   | "profile-updates";
@@ -301,7 +302,7 @@ export function useAdminPortal() {
   const searchParams = useSearchParams();
   const tabParam = searchParams.get("tab") as AdminTabType;
   const [activeTab, setActiveTab] = useState<AdminTabType>(
-    (tabParam && ["overview", "carers", "clients", "requests", "placements", "emergency", "billing", "enquiries", "profile-updates"].includes(tabParam))
+    (tabParam && ["overview", "carers", "clients", "requests", "placements", "emergency", "emergency-requests", "billing", "enquiries", "profile-updates"].includes(tabParam))
       ? tabParam
       : "overview"
   );
@@ -311,13 +312,14 @@ export function useAdminPortal() {
   const requestsPagination = useAppSelector(
     (state) => state.admin.careRequests,
   );
-  const emergencyCareRequestsPagination = useAppSelector(
+  const emergencyRequestsPagination = useAppSelector(
     (state) => state.admin.emergencyCareRequests,
   );
   const clientsPagination = useAppSelector((state) => state.admin.clients);
 
   const carers = mapBackendCarers(carersPagination.items);
   const requests = mapBackendCareRequests(requestsPagination.items);
+  const emergencyCareRequests = emergencyRequestsPagination.items;
   const clients = mapBackendClients(clientsPagination.items);
 
   const [placements, setPlacements] = useState<Placement[]>([]);
@@ -535,26 +537,36 @@ export function useAdminPortal() {
         status: requestsPagination.status,
       }),
     );
+    dispatch(
+      fetchAdminEmergencyCareRequests({
+        page: emergencyRequestsPagination.page,
+        limit: emergencyRequestsPagination.limit,
+        status: emergencyRequestsPagination.status,
+      }),
+    );
   }, [
     dispatch,
     requestsPagination.page,
     requestsPagination.limit,
     requestsPagination.status,
+    emergencyRequestsPagination.page,
+    emergencyRequestsPagination.limit,
+    emergencyRequestsPagination.status,
   ]);
 
   const loadEmergencyRequests = useCallback(() => {
     dispatch(
       fetchAdminEmergencyCareRequests({
-        page: emergencyCareRequestsPagination.page,
-        limit: emergencyCareRequestsPagination.limit,
-        status: emergencyCareRequestsPagination.status,
+        page: emergencyRequestsPagination.page,
+        limit: emergencyRequestsPagination.limit,
+        status: emergencyRequestsPagination.status,
       }),
     );
   }, [
     dispatch,
-    emergencyCareRequestsPagination.page,
-    emergencyCareRequestsPagination.limit,
-    emergencyCareRequestsPagination.status,
+    emergencyRequestsPagination.page,
+    emergencyRequestsPagination.limit,
+    emergencyRequestsPagination.status,
   ]);
 
   const changeEmergencyRequestStatus = useCallback(
@@ -787,10 +799,9 @@ export function useAdminPortal() {
         // for now we simulate success or rely on future admin/placement status API).
         // Since updateIntroductionStatus is descoped, we'd need a PATCH /admin/placements/:id
         // which wasn't specified in the plan, but we can assume we'll just log and reload.
-        
+
         logActivity(
-          `Contact details sharing for ${place.clientName} and ${place.carerName} has been ${
-            released ? "Released / Enabled" : "Revoked / Disabled"
+          `Contact details sharing for ${place.clientName} and ${place.carerName} has been ${released ? "Released / Enabled" : "Revoked / Disabled"
           }.`,
           released ? "success" : "warning",
         );
@@ -909,6 +920,7 @@ export function useAdminPortal() {
     setActiveTab,
     carers,
     requests,
+    emergencyCareRequests,
     clients,
     placements,
     activities,
@@ -938,19 +950,17 @@ export function useAdminPortal() {
     // Pagination helpers and states
     carersPagination,
     requestsPagination,
-    emergencyCareRequestsPagination,
+    emergencyCareRequestsPagination: emergencyRequestsPagination,
     clientsPagination,
     setCarersPage: (page: number) => dispatch(setCarersPage(page)),
     setCarersStatus: (status: string) => dispatch(setCarersStatus(status)),
     setCarersLimit: (limit: number) => dispatch(setCarersLimit(limit)),
     setRequestsPage: (page: number) => dispatch(setCareRequestsPage(page)),
-    setRequestsStatus: (status: string) =>
-      dispatch(setCareRequestsStatus(status)),
-    setRequestsLimit: (limit: number) => dispatch(setCareRequestsLimit(limit)),
-    setEmergencyCareRequestsPage: (page: number) => dispatch(setEmergencyCareRequestsPage(page)),
-    setEmergencyCareRequestsStatus: (status: string) =>
-      dispatch(setEmergencyCareRequestsStatus(status)),
-    setEmergencyCareRequestsLimit: (limit: number) => dispatch(setEmergencyCareRequestsLimit(limit)),
+    setRequestsStatus: (s: string) => dispatch(setCareRequestsStatus(s)),
+    setRequestsLimit: (l: number) => dispatch(setCareRequestsLimit(l)),
+    setEmergencyCareRequestsPage: (p: number) => dispatch(setEmergencyCareRequestsPage(p)),
+    setEmergencyCareRequestsStatus: (s: string) => dispatch(setEmergencyCareRequestsStatus(s)),
+    setEmergencyCareRequestsLimit: (l: number) => dispatch(setEmergencyCareRequestsLimit(l)),
     setClientsPage: (page: number) => dispatch(setClientsPage(page)),
     setClientsStatus: (status: string) => dispatch(setClientsStatus(status)),
     setClientsLimit: (limit: number) => dispatch(setClientsLimit(limit)),

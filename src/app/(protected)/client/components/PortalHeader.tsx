@@ -38,7 +38,7 @@ export default function PortalHeader({ user }: PortalHeaderProps) {
       const cleanPath = url.startsWith("/") ? url : `/${url}`;
       finalUrl = `${baseUrl}${cleanPath}`;
     }
-    
+
     if (
       updatedAt &&
       !finalUrl.startsWith("blob:") &&
@@ -160,7 +160,7 @@ export default function PortalHeader({ user }: PortalHeaderProps) {
       </div>
 
       <div className="mt-4 w-full md:w-auto md:mt-0">
-        <EmergencyButton onClick={handleWhatsAppRedirect} />
+        <EmergencyButton href="/client/emergency-care" />
       </div>
     </section>
   );

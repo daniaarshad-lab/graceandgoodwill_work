@@ -69,9 +69,10 @@ export interface EmergencyCareRequest {
   whoNeedsSupport: string;
   location: string;
   preferredContactMethod: string;
-  additionalEmergencyDetails: string;
-  createdAt: string;
+  additionalEmergencyDetails?: string;
   status: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface AdminState {
@@ -80,8 +81,8 @@ export interface AdminState {
   error: string | null;
   carers: PaginationData<any>;
   careRequests: PaginationData<any>;
-  clients: PaginationData<any>;
   emergencyCareRequests: PaginationData<EmergencyCareRequest>;
+  clients: PaginationData<any>;
   selectedCarer: {
     data: any | null;
     loading: boolean;

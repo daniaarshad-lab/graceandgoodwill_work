@@ -24,8 +24,11 @@ const PlacementTracking = dynamic(
   () => import("./components/PlacementTracking"),
   { ssr: false },
 );
-const EmergencyCareRequestsList = dynamic(
-  () => import("./components/EmergencyCareRequestsList"),
+const EmergencyCases = dynamic(() => import("./components/EmergencyCases"), {
+  ssr: false,
+});
+const AdminEmergencyCareRequests = dynamic(
+  () => import("./components/AdminEmergencyCareRequests"),
   { ssr: false },
 );
 const ApprovalModal = dynamic(() => import("./components/ApprovalModal"), {
@@ -49,6 +52,7 @@ const ProfileUpdateRequests = dynamic(
 );
 
 import { Suspense } from "react";
+import EmergencyCareRequestsList from "./components/EmergencyCareRequestsList";
 
 export default function AdminDashboard() {
   return (
@@ -72,14 +76,14 @@ function AdminDashboardContent() {
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
-    
+
     const onWheel = (e: WheelEvent) => {
       if (e.deltaY !== 0 && e.deltaX === 0) {
         e.preventDefault();
         el.scrollLeft += e.deltaY;
       }
     };
-    
+
     let isDown = false;
     let startX = 0;
     let scrollLeftPos = 0;
@@ -102,13 +106,13 @@ function AdminDashboardContent() {
       const walk = (x - startX) * 2;
       el.scrollLeft = scrollLeftPos - walk;
     };
-    
+
     el.addEventListener('wheel', onWheel, { passive: false });
     el.addEventListener('mousedown', onMouseDown);
     el.addEventListener('mouseleave', onMouseLeave);
     el.addEventListener('mouseup', onMouseUp);
     el.addEventListener('mousemove', onMouseMove);
-    
+
     return () => {
       el.removeEventListener('wheel', onWheel);
       el.removeEventListener('mousedown', onMouseDown);
@@ -129,7 +133,8 @@ function AdminDashboardContent() {
     clients: "Client Registry",
     requests: "Client Requests",
     placements: "Tracking & Overrides",
-    emergency: "Emergency Care Requests",
+    emergency: "Emergency Triage",
+    "emergency-requests": "Emergency Care Requests",
     billing: "Billing & Invoices",
     enquiries: "Support & Enquiries",
     "profile-updates": "Profile Updates",
@@ -152,11 +157,10 @@ function AdminDashboardContent() {
               <button
                 key={tab}
                 onClick={() => portal.setActiveTab(tab)}
-                className={`px-3 sm:px-5 py-3 min-h-[44px] text-xs sm:text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap flex-shrink-0 ${
-                  isActive
+                className={`px-3 sm:px-5 py-3 min-h-[44px] text-xs sm:text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap flex-shrink-0 ${isActive
                     ? "border-b-2 border-gold-DEFAULT text-gold-DEFAULT bg-gold-DEFAULT/5"
                     : "text-gold-200/60 hover:text-gold-50"
-                }`}
+                  }`}
               >
                 {tabLabels[tab]}
                 {tab === "emergency" && portal.stats.emergencyCases > 0 && (
@@ -288,6 +292,21 @@ function AdminDashboardContent() {
                   onStatusChange={portal.setEmergencyCareRequestsStatus}
                   onStatusUpdate={portal.changeEmergencyRequestStatus}
                   onLimitChange={portal.setEmergencyCareRequestsLimit}
+                />
+              )}
+
+              {/* TAB 6.5: EMERGENCY CARE REQUESTS (PUBLIC API) */}
+              {portal.activeTab === "emergency-requests" && (
+                <AdminEmergencyCareRequests
+                  requests={portal.emergencyCareRequests}
+                  page={portal.emergencyCareRequestsPagination.page}
+                  totalPages={portal.emergencyCareRequestsPagination.totalPages}
+                  totalItems={portal.emergencyCareRequestsPagination.totalItems}
+                  status={portal.emergencyCareRequestsPagination.status}
+                  onPageChange={portal.setEmergencyCareRequestsPage}
+                  onStatusChange={portal.setEmergencyCareRequestsStatus}
+                  loading={portal.emergencyCareRequestsPagination.loading}
+                  error={portal.emergencyCareRequestsPagination.error}
                 />
               )}
 

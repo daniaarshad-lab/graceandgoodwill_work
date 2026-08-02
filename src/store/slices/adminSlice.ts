@@ -271,17 +271,6 @@ const adminSlice = createSlice({
       state.careRequests.limit = action.payload;
       state.careRequests.page = 1;
     },
-    setClientsPage(state, action: PayloadAction<number>) {
-      state.clients.page = action.payload;
-    },
-    setClientsStatus(state, action: PayloadAction<string>) {
-      state.clients.status = action.payload;
-      state.clients.page = 1;
-    },
-    setClientsLimit(state, action: PayloadAction<number>) {
-      state.clients.limit = action.payload;
-      state.clients.page = 1;
-    },
     setEmergencyCareRequestsPage(state, action: PayloadAction<number>) {
       state.emergencyCareRequests.page = action.payload;
     },
@@ -293,6 +282,18 @@ const adminSlice = createSlice({
       state.emergencyCareRequests.limit = action.payload;
       state.emergencyCareRequests.page = 1;
     },
+    setClientsPage(state, action: PayloadAction<number>) {
+      state.clients.page = action.payload;
+    },
+    setClientsStatus(state, action: PayloadAction<string>) {
+      state.clients.status = action.payload;
+      state.clients.page = 1;
+    },
+    setClientsLimit(state, action: PayloadAction<number>) {
+      state.clients.limit = action.payload;
+      state.clients.page = 1;
+    },
+
     clearCareRequestApplications(state) {
       state.selectedCareRequestApplications = [];
       state.applicationsError = null;
@@ -373,7 +374,6 @@ const adminSlice = createSlice({
         item.status = action.payload.status;
       }
     });
-
     // fetchAdminClients
     builder.addCase(fetchAdminClients.pending, (state) => {
       state.clients.loading = true;
@@ -478,12 +478,13 @@ export const {
   setCareRequestsPage,
   setCareRequestsStatus,
   setCareRequestsLimit,
-  setClientsPage,
-  setClientsStatus,
-  setClientsLimit,
   setEmergencyCareRequestsPage,
   setEmergencyCareRequestsStatus,
   setEmergencyCareRequestsLimit,
+  setClientsPage,
+  setClientsStatus,
+  setClientsLimit,
+
   clearCareRequestApplications,
 } = adminSlice.actions;
 

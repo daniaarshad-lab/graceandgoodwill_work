@@ -47,7 +47,8 @@ export default function AdminEmergencyCareRequests({
             </h3>
           </div>
           <p className="text-xs text-gold-100/50 max-w-xl leading-relaxed">
-            Review incoming emergency care requests submitted via the public portal.
+            Review incoming emergency care requests submitted via the public
+            portal.
           </p>
         </div>
       </div>
@@ -67,7 +68,8 @@ export default function AdminEmergencyCareRequests({
             No Emergency Requests Found
           </p>
           <p className="text-xs text-gold-100/40">
-            There are currently no emergency care requests matching your criteria.
+            There are currently no emergency care requests matching your
+            criteria.
           </p>
         </div>
       ) : (
@@ -75,12 +77,16 @@ export default function AdminEmergencyCareRequests({
           <table className="w-full text-left border-collapse min-w-[800px]">
             <thead>
               <tr className="border-b border-gold-300/10 text-[10px] font-bold uppercase tracking-wider text-gold-200/60 bg-navy-950/60">
-                <th className="p-4 rounded-tl-xl whitespace-nowrap">Contact Details</th>
+                <th className="p-4 rounded-tl-xl whitespace-nowrap">
+                  Contact Details
+                </th>
                 <th className="p-4 whitespace-nowrap">Support For</th>
                 <th className="p-4 whitespace-nowrap">Location</th>
                 <th className="p-4 whitespace-nowrap">Submitted At</th>
                 <th className="p-4 whitespace-nowrap">Status</th>
-                <th className="p-4 text-right rounded-tr-xl whitespace-nowrap">Actions</th>
+                <th className="p-4 text-right rounded-tr-xl whitespace-nowrap">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gold-300/5">
@@ -101,16 +107,46 @@ export default function AdminEmergencyCareRequests({
                           </span>
                           <div className="flex flex-col gap-0.5 text-xs text-gold-100/60">
                             <span className="flex items-center gap-1.5">
-                              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                              <svg
+                                className="w-3 h-3"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                                />
                               </svg>
-                              <a href={`mailto:${req.email}`} className="hover:text-gold-300 transition-colors">{req.email}</a>
+                              <a
+                                href={`mailto:${req.email}`}
+                                className="hover:text-gold-300 transition-colors"
+                              >
+                                {req.email}
+                              </a>
                             </span>
                             <span className="flex items-center gap-1.5">
-                              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                              <svg
+                                className="w-3 h-3"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                                />
                               </svg>
-                              <a href={`tel:${req.phoneNumber}`} className="hover:text-gold-300 transition-colors">{req.phoneNumber}</a>
+                              <a
+                                href={`tel:${req.phoneNumber}`}
+                                className="hover:text-gold-300 transition-colors"
+                              >
+                                {req.phoneNumber}
+                              </a>
                             </span>
                             <span className="flex items-center gap-1.5 mt-1 text-[10px] text-emerald-400">
                               Method: {req.preferredContactMethod}
@@ -140,7 +176,10 @@ export default function AdminEmergencyCareRequests({
                       <td className="p-4">
                         <select
                           value={req.status || "PENDING"}
-                          onChange={(e) => onStatusUpdate && onStatusUpdate(req.id, e.target.value)}
+                          onChange={(e) =>
+                            onStatusUpdate &&
+                            onStatusUpdate(req.id, e.target.value)
+                          }
                           className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border cursor-pointer outline-none focus:ring-1 focus:ring-gold-500/50 appearance-none bg-transparent ${
                             req.status === "PENDING"
                               ? "bg-amber-500/10 text-amber-400 border-amber-500/20"
@@ -151,10 +190,30 @@ export default function AdminEmergencyCareRequests({
                                   : "bg-gold-500/10 text-gold-400 border-gold-500/20"
                           }`}
                         >
-                          <option value="PENDING" className="bg-navy-950 text-amber-400">PENDING</option>
-                          <option value="IN_PROGRESS" className="bg-navy-950 text-gold-400">IN PROGRESS</option>
-                          <option value="RESOLVED" className="bg-navy-950 text-emerald-400">RESOLVED</option>
-                          <option value="CLOSED" className="bg-navy-950 text-gray-400">CLOSED</option>
+                          <option
+                            value="PENDING"
+                            className="bg-navy-950 text-amber-400"
+                          >
+                            PENDING
+                          </option>
+                          <option
+                            value="IN_PROGRESS"
+                            className="bg-navy-950 text-gold-400"
+                          >
+                            IN PROGRESS
+                          </option>
+                          <option
+                            value="RESOLVED"
+                            className="bg-navy-950 text-emerald-400"
+                          >
+                            RESOLVED
+                          </option>
+                          <option
+                            value="CLOSED"
+                            className="bg-navy-950 text-gray-400"
+                          >
+                            CLOSED
+                          </option>
                         </select>
                       </td>
 
@@ -172,7 +231,12 @@ export default function AdminEmergencyCareRequests({
                             viewBox="0 0 24 24"
                             stroke="currentColor"
                           >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 9l-7 7-7-7"
+                            />
                           </svg>
                         </button>
                       </td>

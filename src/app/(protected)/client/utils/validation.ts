@@ -57,13 +57,13 @@ export function validateCareForm(data: {
     } else if (data.startDate && data.duration) {
       const start = new Date(data.startDate);
       const end = new Date(data.duration);
-      
+
       // Calculate difference in time (milliseconds)
       const diffTime = end.getTime() - start.getTime();
-      
+
       // Calculate difference in days
       const diffDays = diffTime / (1000 * 3600 * 24);
-      
+
       if (diffDays < 2) {
         errors.duration = "Care duration must be at least 2 days.";
       }
@@ -100,7 +100,9 @@ export function validateEnquiryForm(data: {
 
 export function scrollToFirstError() {
   setTimeout(() => {
-    const firstErrorElement = document.querySelector(".text-red-500, .border-red-500");
+    const firstErrorElement = document.querySelector(
+      ".text-red-500, .border-red-500",
+    );
     if (firstErrorElement) {
       firstErrorElement.scrollIntoView({ behavior: "smooth", block: "center" });
     }

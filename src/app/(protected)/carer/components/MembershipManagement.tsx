@@ -17,7 +17,7 @@ import {
   Clock,
   CreditCard,
   X,
-  FileText
+  FileText,
 } from "lucide-react";
 
 interface CarerSubscription {
@@ -43,7 +43,9 @@ interface MembershipInvoice {
 }
 
 export default function MembershipManagement() {
-  const [subscription, setSubscription] = useState<CarerSubscription | null>(null);
+  const [subscription, setSubscription] = useState<CarerSubscription | null>(
+    null,
+  );
   const [invoices, setInvoices] = useState<MembershipInvoice[]>([]);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
@@ -66,7 +68,7 @@ export default function MembershipManagement() {
           status: "ACTIVE",
           startDate: "",
           expiresAt: "",
-          cancelAtPeriodEnd: false
+          cancelAtPeriodEnd: false,
         });
       } else {
         setSubscription(subInfo);
@@ -75,26 +77,38 @@ export default function MembershipManagement() {
       const invoiceList = await carerService.getSubscriptionInvoices();
       setInvoices(invoiceList || []);
     } catch (err: any) {
-      showErrorToast("Error", err.message || "Failed to load subscription details");
+      showErrorToast(
+        "Error",
+        err.message || "Failed to load subscription details",
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  const handleUpgrade = async (tier: "GOLD_ELITE" | "VERIFIED_PROFESSIONAL") => {
+  const handleUpgrade = async (
+    tier: "GOLD_ELITE" | "VERIFIED_PROFESSIONAL",
+  ) => {
     setProcessing(true);
     try {
       const successUrl = `${window.location.origin}/carer?tab=membership&upgrade=success`;
       const cancelUrl = `${window.location.origin}/carer?tab=membership&upgrade=cancel`;
 
-      const session = await carerService.createCheckoutSession(tier, successUrl, cancelUrl);
+      const session = await carerService.createCheckoutSession(
+        tier,
+        successUrl,
+        cancelUrl,
+      );
       if (session && session.url) {
         window.location.href = session.url;
       } else {
         throw new Error("Invalid session response");
       }
     } catch (err: any) {
-      showErrorToast("Upgrade Failed", err.message || "Failed to connect to payment gateway");
+      showErrorToast(
+        "Upgrade Failed",
+        err.message || "Failed to connect to payment gateway",
+      );
       setProcessing(false);
     }
   };
@@ -119,11 +133,17 @@ export default function MembershipManagement() {
     setProcessing(true);
     try {
       const res = await carerService.cancelSubscription();
-      showSuccessToast("Subscription Cancelled", res.message || "Your subscription will not renew next month.");
+      showSuccessToast(
+        "Subscription Cancelled",
+        res.message || "Your subscription will not renew next month.",
+      );
       setShowCancelModal(false);
       await fetchBillingData();
     } catch (err: any) {
-      showErrorToast("Cancellation Failed", err.message || "Failed to cancel subscription");
+      showErrorToast(
+        "Cancellation Failed",
+        err.message || "Failed to cancel subscription",
+      );
     } finally {
       setProcessing(false);
     }
@@ -139,9 +159,12 @@ export default function MembershipManagement() {
   }
 
   const currentTier = subscription?.tier || "FREE";
-  const isGoldActive = currentTier === "GOLD_ELITE" || currentTier === "VERIFIED_PROFESSIONAL";
+  const isGoldActive =
+    currentTier === "GOLD_ELITE" || currentTier === "VERIFIED_PROFESSIONAL";
   const isVerifiedActive = currentTier === "VERIFIED_PROFESSIONAL";
-  const renewDate = subscription?.expiresAt ? new Date(subscription.expiresAt).toLocaleDateString() : "N/A";
+  const renewDate = subscription?.expiresAt
+    ? new Date(subscription.expiresAt).toLocaleDateString()
+    : "N/A";
 
   const getTierBadge = () => {
     if (isVerifiedActive) {
@@ -174,12 +197,15 @@ export default function MembershipManagement() {
       <SectionCard className="p-6 md:p-8 border border-gold-300/10 bg-gradient-to-b from-navy-900/60 to-navy-950/80 shadow-elegant">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-b border-gold-300/10 pb-6">
           <div className="space-y-2">
-            <p className="text-[11px] font-bold uppercase tracking-widest text-gold-200/50">My Membership Plan</p>
+            <p className="text-[11px] font-bold uppercase tracking-widest text-gold-200/50">
+              My Membership Plan
+            </p>
             <div className="flex flex-wrap items-center gap-3">
               <h3 className="text-xl sm:text-2xl font-serif text-gold-50 tracking-wide">
                 {currentTier === "FREE" && "Free Membership"}
                 {currentTier === "GOLD_ELITE" && "Gold Elite Membership"}
-                {currentTier === "VERIFIED_PROFESSIONAL" && "Verified Professional™ Status"}
+                {currentTier === "VERIFIED_PROFESSIONAL" &&
+                  "Verified Professional™ Status"}
               </h3>
               {getTierBadge()}
             </div>
@@ -222,7 +248,9 @@ export default function MembershipManagement() {
           <div className="flex items-start gap-3">
             <Clock className="w-5 h-5 text-gold-DEFAULT shrink-0 mt-0.5" />
             <div>
-              <span className="text-[10px] text-gold-100/40 uppercase tracking-wider block">Billing Period</span>
+              <span className="text-[10px] text-gold-100/40 uppercase tracking-wider block">
+                Billing Period
+              </span>
               <span className="text-xs text-gold-100">
                 {currentTier === "FREE" ? "Forever Free" : "Monthly Auto-renew"}
               </span>
@@ -233,7 +261,9 @@ export default function MembershipManagement() {
             <Calendar className="w-5 h-5 text-gold-DEFAULT shrink-0 mt-0.5" />
             <div>
               <span className="text-[10px] text-gold-100/40 uppercase tracking-wider block">
-                {subscription?.cancelAtPeriodEnd ? "Expiration Date" : "Renewal Date"}
+                {subscription?.cancelAtPeriodEnd
+                  ? "Expiration Date"
+                  : "Renewal Date"}
               </span>
               <span className="text-xs text-gold-100">
                 {currentTier === "FREE" ? "No Renewal Required" : renewDate}
@@ -244,11 +274,14 @@ export default function MembershipManagement() {
           <div className="flex items-start gap-3">
             <CreditCard className="w-5 h-5 text-gold-DEFAULT shrink-0 mt-0.5" />
             <div>
-              <span className="text-[10px] text-gold-100/40 uppercase tracking-wider block">Pricing Tier</span>
+              <span className="text-[10px] text-gold-100/40 uppercase tracking-wider block">
+                Pricing Tier
+              </span>
               <span className="text-xs text-gold-100">
                 {currentTier === "FREE" && "£0"}
                 {currentTier === "GOLD_ELITE" && "£29.99 / mo (VAT Inc.)"}
-                {currentTier === "VERIFIED_PROFESSIONAL" && "£39.99 / mo (VAT Inc.)"}
+                {currentTier === "VERIFIED_PROFESSIONAL" &&
+                  "£39.99 / mo (VAT Inc.)"}
               </span>
             </div>
           </div>
@@ -259,10 +292,15 @@ export default function MembershipManagement() {
           <div className="mt-6 p-4 rounded-xl bg-amber-500/5 border border-amber-500/20 flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
             <div>
-              <h5 className="text-xs font-bold text-amber-400 uppercase tracking-wide">Cancellation Scheduled</h5>
+              <h5 className="text-xs font-bold text-amber-400 uppercase tracking-wide">
+                Cancellation Scheduled
+              </h5>
               <p className="text-[11px] text-gold-100/70 leading-normal mt-0.5">
-                Your subscription will cancel automatically at the end of the billing period on <strong>{renewDate}</strong>.
-                You will continue to receive all premium benefits until then, after which your account will revert to the <strong>Free Membership</strong> and no further charges will apply.
+                Your subscription will cancel automatically at the end of the
+                billing period on <strong>{renewDate}</strong>. You will
+                continue to receive all premium benefits until then, after which
+                your account will revert to the <strong>Free Membership</strong>{" "}
+                and no further charges will apply.
               </p>
             </div>
           </div>
@@ -281,13 +319,23 @@ export default function MembershipManagement() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="space-y-4">
             <p className="text-xs text-gold-100/80 leading-relaxed font-light">
-              The <strong>Grace & Goodwill Verified Professional™</strong> add-on status is our highest badge of trust. Carers with this badge are featured before all other profile searches, receive highest matching priority, and gain early access to high-rate placements.
+              The <strong>Grace & Goodwill Verified Professional™</strong>{" "}
+              add-on status is our highest badge of trust. Carers with this
+              badge are featured before all other profile searches, receive
+              highest matching priority, and gain early access to high-rate
+              placements.
             </p>
             <div className="p-4 bg-navy-950/40 border border-gold-300/5 rounded-2xl">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-gold-200 block mb-1">Add-on Cost</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-gold-200 block mb-1">
+                Add-on Cost
+              </span>
               <div className="flex items-baseline gap-1">
-                <span className="text-xl font-bold text-gold-50 font-serif">+£10.00</span>
-                <span className="text-[11px] text-gold-100/50">/ month (combined: £39.99/mo)</span>
+                <span className="text-xl font-bold text-gold-50 font-serif">
+                  +£10.00
+                </span>
+                <span className="text-[11px] text-gold-100/50">
+                  / month (combined: £39.99/mo)
+                </span>
               </div>
             </div>
           </div>
@@ -298,13 +346,26 @@ export default function MembershipManagement() {
             </span>
             <ul className="space-y-2.5 text-xs text-gold-100/80">
               <li className="flex items-start gap-2.5">
-                <div className={`mt-0.5 flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full ${isGoldActive ? "bg-emerald-500/10 border border-emerald-500/20" : "bg-gold-DEFAULT/5 border border-gold-300/10"
-                  }`}>
-                  <Check className={`h-3 w-3 ${isGoldActive ? "text-emerald-400" : "text-gold-200/20"}`} strokeWidth={3} />
+                <div
+                  className={`mt-0.5 flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full ${
+                    isGoldActive
+                      ? "bg-emerald-500/10 border border-emerald-500/20"
+                      : "bg-gold-DEFAULT/5 border border-gold-300/10"
+                  }`}
+                >
+                  <Check
+                    className={`h-3 w-3 ${isGoldActive ? "text-emerald-400" : "text-gold-200/20"}`}
+                    strokeWidth={3}
+                  />
                 </div>
                 <div>
-                  <span className="font-semibold text-gold-200">Gold Elite Membership</span>
-                  <p className="text-[11px] text-gold-100/50 mt-0.5">Maintain active Gold status for minimum 3 consecutive months.</p>
+                  <span className="font-semibold text-gold-200">
+                    Gold Elite Membership
+                  </span>
+                  <p className="text-[11px] text-gold-100/50 mt-0.5">
+                    Maintain active Gold status for minimum 3 consecutive
+                    months.
+                  </p>
                 </div>
               </li>
 
@@ -313,8 +374,13 @@ export default function MembershipManagement() {
                   <Check className="h-3 w-3 text-gold-200/20" strokeWidth={3} />
                 </div>
                 <div>
-                  <span className="font-semibold text-gold-200">Compliance & Docs Verification</span>
-                  <p className="text-[11px] text-gold-100/50 mt-0.5">Ensure DBS, CV, references, Right to Work, and training are fully approved.</p>
+                  <span className="font-semibold text-gold-200">
+                    Compliance & Docs Verification
+                  </span>
+                  <p className="text-[11px] text-gold-100/50 mt-0.5">
+                    Ensure DBS, CV, references, Right to Work, and training are
+                    fully approved.
+                  </p>
                 </div>
               </li>
 
@@ -323,8 +389,13 @@ export default function MembershipManagement() {
                   <Check className="h-3 w-3 text-gold-200/20" strokeWidth={3} />
                 </div>
                 <div>
-                  <span className="font-semibold text-gold-200">Successful Placements</span>
-                  <p className="text-[11px] text-gold-100/50 mt-0.5">Complete at least 3 placements successfully through Grace & Goodwill.</p>
+                  <span className="font-semibold text-gold-200">
+                    Successful Placements
+                  </span>
+                  <p className="text-[11px] text-gold-100/50 mt-0.5">
+                    Complete at least 3 placements successfully through Grace &
+                    Goodwill.
+                  </p>
                 </div>
               </li>
 
@@ -333,8 +404,13 @@ export default function MembershipManagement() {
                   <Check className="h-3 w-3 text-gold-200/20" strokeWidth={3} />
                 </div>
                 <div>
-                  <span className="font-semibold text-gold-200">Virtual Interview</span>
-                  <p className="text-[11px] text-gold-100/50 mt-0.5">Pass a professional interview review with our care management team.</p>
+                  <span className="font-semibold text-gold-200">
+                    Virtual Interview
+                  </span>
+                  <p className="text-[11px] text-gold-100/50 mt-0.5">
+                    Pass a professional interview review with our care
+                    management team.
+                  </p>
                 </div>
               </li>
             </ul>
@@ -353,7 +429,9 @@ export default function MembershipManagement() {
 
         {invoices.length === 0 ? (
           <div className="text-center py-10 bg-navy-950/20 border border-dashed border-gold-300/10 rounded-2xl">
-            <span className="text-gold-200/30 text-xs block">No membership invoices recorded yet</span>
+            <span className="text-gold-200/30 text-xs block">
+              No membership invoices recorded yet
+            </span>
           </div>
         ) : (
           <div className="overflow-x-auto rounded-2xl border border-gold-300/5 bg-navy-950/20">
@@ -369,12 +447,21 @@ export default function MembershipManagement() {
               </thead>
               <tbody>
                 {invoices.map((inv) => (
-                  <tr key={inv.id} className="border-b border-gold-300/5 hover:bg-navy-900/20 transition-colors">
-                    <td className="p-4 font-mono font-medium text-gold-100">{inv.id.substring(0, 18)}...</td>
-                    <td className="p-4 text-gold-100/70">
-                      {inv.paidAt ? new Date(inv.paidAt).toLocaleDateString() : "Pending"}
+                  <tr
+                    key={inv.id}
+                    className="border-b border-gold-300/5 hover:bg-navy-900/20 transition-colors"
+                  >
+                    <td className="p-4 font-mono font-medium text-gold-100">
+                      {inv.id.substring(0, 18)}...
                     </td>
-                    <td className="p-4 text-gold-50 font-semibold">£{Number(inv.amount).toFixed(2)}</td>
+                    <td className="p-4 text-gold-100/70">
+                      {inv.paidAt
+                        ? new Date(inv.paidAt).toLocaleDateString()
+                        : "Pending"}
+                    </td>
+                    <td className="p-4 text-gold-50 font-semibold">
+                      £{Number(inv.amount).toFixed(2)}
+                    </td>
                     <td className="p-4">
                       <span className="rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-emerald-400">
                         {inv.status}
@@ -421,12 +508,17 @@ export default function MembershipManagement() {
 
               <div className="space-y-3">
                 <p className="text-xs text-gold-100/90 leading-relaxed font-light">
-                  Are you sure you want to cancel your Gold Elite membership subscription?
+                  Are you sure you want to cancel your Gold Elite membership
+                  subscription?
                 </p>
                 <div className="p-3.5 bg-amber-500/5 border border-amber-500/20 rounded-xl">
                   <p className="text-[11px] text-amber-300 leading-normal">
-                    <strong>Notice:</strong> If you cancel, your premium benefits will remain active until the end of your billing cycle on <strong>{renewDate}</strong>.
-                    Your account will then automatically revert to the <strong>Free Membership</strong>. You will not be charged again.
+                    <strong>Notice:</strong> If you cancel, your premium
+                    benefits will remain active until the end of your billing
+                    cycle on <strong>{renewDate}</strong>. Your account will
+                    then automatically revert to the{" "}
+                    <strong>Free Membership</strong>. You will not be charged
+                    again.
                   </p>
                 </div>
               </div>
@@ -474,28 +566,37 @@ export default function MembershipManagement() {
                   <h4 className="text-lg font-serif text-gold-DEFAULT tracking-wide font-bold">
                     Gold Elite Membership
                   </h4>
-                  <p className="text-[10px] uppercase tracking-widest text-gold-200/50">Plan Upgrades & Benefits</p>
+                  <p className="text-[10px] uppercase tracking-widest text-gold-200/50">
+                    Plan Upgrades & Benefits
+                  </p>
                 </div>
               </div>
 
               {/* Package details */}
               <div className="space-y-4">
                 <div className="flex justify-between items-baseline p-4 bg-gold-DEFAULT/5 rounded-xl border border-gold-DEFAULT/10">
-                  <span className="text-sm font-semibold text-gold-100">Membership Fee</span>
+                  <span className="text-sm font-semibold text-gold-100">
+                    Membership Fee
+                  </span>
                   <div className="text-right">
-                    <span className="text-2xl font-serif text-gold-50 tracking-wide font-bold">£29.99</span>
+                    <span className="text-2xl font-serif text-gold-50 tracking-wide font-bold">
+                      £29.99
+                    </span>
                     <span className="text-xs text-gold-200/60"> / month</span>
                   </div>
                 </div>
 
                 <div className="space-y-3">
                   <p className="text-xs text-gold-100/90 leading-relaxed font-light">
-                    Premium tier for active professionals seeking first access to placements.
+                    Premium tier for active professionals seeking first access
+                    to placements.
                   </p>
 
                   {/* Benefits checklist */}
                   <div className="space-y-3 pt-2 pb-2">
-                    <p className="text-[11px] font-bold uppercase tracking-wider text-gold-300">Premium Benefits Included:</p>
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-gold-300">
+                      Premium Benefits Included:
+                    </p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {[
                         "Priority placement alerts",
@@ -509,11 +610,16 @@ export default function MembershipManagement() {
                         "Enhanced placement opportunities",
                         "Advanced training discounts",
                         "End of Life Care Pathway",
-                        "DBS support and guidance"
+                        "DBS support and guidance",
                       ].map((benefit, idx) => (
                         <div key={idx} className="flex items-start gap-2.5">
-                          <Check className="w-3.5 h-3.5 text-gold-DEFAULT mt-0.5 shrink-0" strokeWidth={2.5} />
-                          <span className="text-xs text-gold-100/80 leading-relaxed font-light">{benefit}</span>
+                          <Check
+                            className="w-3.5 h-3.5 text-gold-DEFAULT mt-0.5 shrink-0"
+                            strokeWidth={2.5}
+                          />
+                          <span className="text-xs text-gold-100/80 leading-relaxed font-light">
+                            {benefit}
+                          </span>
                         </div>
                       ))}
                     </div>

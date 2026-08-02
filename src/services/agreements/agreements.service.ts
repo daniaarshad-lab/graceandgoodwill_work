@@ -23,7 +23,10 @@ export interface SignedAgreement {
 
 export const agreementsService = {
   getHeaders() {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     return {
       Authorization: `Bearer ${token || ""}`,
       "Content-Type": "application/json",
@@ -37,7 +40,10 @@ export const agreementsService = {
     });
   },
 
-  async signAgreement(agreementId: string, signatureName: string): Promise<any> {
+  async signAgreement(
+    agreementId: string,
+    signatureName: string,
+  ): Promise<any> {
     return apiFetch("/agreements/sign", {
       method: "POST",
       headers: this.getHeaders(),

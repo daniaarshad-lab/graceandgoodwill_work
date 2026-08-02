@@ -1,6 +1,11 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { adminService } from "@/services/admin/admin.service";
-import { AdminDashboardStats, AdminState, AdminCareRequestApplication } from "@/types/admin.types";
+import {
+  AdminDashboardStats,
+  AdminState,
+  AdminCareRequestApplication,
+  EmergencyCareRequestStatusValue,
+} from "@/types/admin.types";
 
 const initialState: AdminState = {
   stats: null,
@@ -85,51 +90,65 @@ export const fetchAdminCareRequests = createAsyncThunk<
   { items: any[]; total: number; page: number; limit: number },
   { page: number; limit: number; status: string },
   { rejectValue: string }
->("admin/fetchCareRequests", async ({ page, limit, status }, { rejectWithValue }) => {
-  try {
-    return await adminService.getCareRequests(page, limit, status);
-  } catch (error: any) {
-    return rejectWithValue(error?.message || "Failed to fetch care requests");
-  }
-});
+>(
+  "admin/fetchCareRequests",
+  async ({ page, limit, status }, { rejectWithValue }) => {
+    try {
+      return await adminService.getCareRequests(page, limit, status);
+    } catch (error: any) {
+      return rejectWithValue(error?.message || "Failed to fetch care requests");
+    }
+  },
+);
 
 export const fetchAdminEmergencyCareRequests = createAsyncThunk<
   { items: any[]; total: number; page: number; limit: number },
   { page: number; limit: number; status: string },
   { rejectValue: string }
->("admin/fetchEmergencyCareRequests", async ({ page, limit, status }, { rejectWithValue }) => {
-  try {
-    return await adminService.getEmergencyCareRequests(page, limit, status);
-  } catch (error: any) {
-    return rejectWithValue(error?.message || "Failed to fetch emergency care requests");
-  }
-});
+>(
+  "admin/fetchEmergencyCareRequests",
+  async ({ page, limit, status }, { rejectWithValue }) => {
+    try {
+      return await adminService.getEmergencyCareRequests(page, limit, status);
+    } catch (error: any) {
+      return rejectWithValue(
+        error?.message || "Failed to fetch emergency care requests",
+      );
+    }
+  },
+);
 
 export const fetchAdminClients = createAsyncThunk<
   { items: any[]; total: number; page: number; limit: number },
   { page: number; limit: number; status: string },
   { rejectValue: string }
->("admin/fetchClients", async ({ page, limit, status }, { rejectWithValue }) => {
-  try {
-    return await adminService.getClients(page, limit, status);
-  } catch (error: any) {
-    return rejectWithValue(error?.message || "Failed to fetch clients");
-  }
-});
+>(
+  "admin/fetchClients",
+  async ({ page, limit, status }, { rejectWithValue }) => {
+    try {
+      return await adminService.getClients(page, limit, status);
+    } catch (error: any) {
+      return rejectWithValue(error?.message || "Failed to fetch clients");
+    }
+  },
+);
 
 /** Update carer account status (e.g. APPROVED) */
 export const updateAdminCarerStatus = createAsyncThunk<
   { id: string; status: string },
   { carerId: string; status: string },
   { rejectValue: string }
->("admin/updateCarerStatus", async ({ carerId, status }, { rejectWithValue }) => {
-  try {
-    const result = await adminService.updateCarerStatus(carerId, status);
-    return result;
-  } catch (error: any) {
-    return rejectWithValue(error?.message || "Failed to update carer status");
-  }
-});
+>(
+  "admin/updateCarerStatus",
+  async ({ carerId, status }, { rejectWithValue }) => {
+    try {
+      const result = await adminService.updateCarerStatus(carerId, status);
+      return result;
+    } catch (error: any) {
+      return rejectWithValue(error?.message || "Failed to update carer status");
+    }
+  },
+);
 
 export const fetchCarerDetails = createAsyncThunk<
   any,
@@ -153,7 +172,11 @@ export const verifyDocument = createAsyncThunk<
   { rejectValue: string }
 >("admin/verifyDocument", async ({ docId, notes }, { rejectWithValue }) => {
   try {
-    const response = await adminService.updateDocumentStatus(docId, "VERIFIED", notes);
+    const response = await adminService.updateDocumentStatus(
+      docId,
+      "VERIFIED",
+      notes,
+    );
     return { docId, status: "VERIFIED", data: response };
   } catch (error: any) {
     return rejectWithValue(error?.message || "Failed to verify document");
@@ -164,39 +187,57 @@ export const rejectDocument = createAsyncThunk<
   { docId: string; status: string; data?: any },
   { docId: string; rejectionReason: string },
   { rejectValue: string }
->("admin/rejectDocument", async ({ docId, rejectionReason }, { rejectWithValue }) => {
-  try {
-    const response = await adminService.updateDocumentStatus(docId, "REJECTED", rejectionReason);
-    return { docId, status: "REJECTED", data: response };
-  } catch (error: any) {
-    return rejectWithValue(error?.message || "Failed to reject document");
-  }
-});
+>(
+  "admin/rejectDocument",
+  async ({ docId, rejectionReason }, { rejectWithValue }) => {
+    try {
+      const response = await adminService.updateDocumentStatus(
+        docId,
+        "REJECTED",
+        rejectionReason,
+      );
+      return { docId, status: "REJECTED", data: response };
+    } catch (error: any) {
+      return rejectWithValue(error?.message || "Failed to reject document");
+    }
+  },
+);
 
 /** Fetch applications for a specific care request */
 export const fetchAdminCareRequestApplications = createAsyncThunk<
   AdminCareRequestApplication[],
   string,
   { rejectValue: string }
->("admin/fetchCareRequestApplications", async (careRequestId, { rejectWithValue }) => {
-  try {
-    const data = await adminService.getCareRequestApplications(careRequestId);
-    return Array.isArray(data) ? data : [];
-  } catch (error: any) {
-    return rejectWithValue(error?.message || "Failed to fetch applications");
-  }
-});
+>(
+  "admin/fetchCareRequestApplications",
+  async (careRequestId, { rejectWithValue }) => {
+    try {
+      const data = await adminService.getCareRequestApplications(careRequestId);
+      return Array.isArray(data) ? data : [];
+    } catch (error: any) {
+      return rejectWithValue(error?.message || "Failed to fetch applications");
+    }
+  },
+);
 
 /** Review interest list application (Approve/Reject) */
 export const reviewInterestList = createAsyncThunk<
   any,
-  { careRequestId: string; clientId: string; carerId: string; status: "SELECTED" | "REJECTED" | "ASSIGNED"; adminNotes?: string },
+  {
+    careRequestId: string;
+    clientId: string;
+    carerId: string;
+    status: "SELECTED" | "REJECTED" | "ASSIGNED";
+    adminNotes?: string;
+  },
   { rejectValue: string }
 >("admin/reviewInterestList", async (payload, { rejectWithValue }) => {
   try {
     return await adminService.reviewInterestList(payload);
   } catch (error: any) {
-    return rejectWithValue(error?.message || "Failed to review interest list application");
+    return rejectWithValue(
+      error?.message || "Failed to review interest list application",
+    );
   }
 });
 
@@ -205,28 +246,38 @@ export const updateAdminCareRequestStatus = createAsyncThunk<
   { careRequestId: string; status: string },
   { careRequestId: string; status: string },
   { rejectValue: string }
->("admin/updateCareRequestStatus", async ({ careRequestId, status }, { rejectWithValue }) => {
-  try {
-    await adminService.updateCareRequestStatus(careRequestId, status);
-    return { careRequestId, status };
-  } catch (error: any) {
-    return rejectWithValue(error?.message || "Failed to update care request status");
-  }
-});
+>(
+  "admin/updateCareRequestStatus",
+  async ({ careRequestId, status }, { rejectWithValue }) => {
+    try {
+      await adminService.updateCareRequestStatus(careRequestId, status);
+      return { careRequestId, status };
+    } catch (error: any) {
+      return rejectWithValue(
+        error?.message || "Failed to update care request status",
+      );
+    }
+  },
+);
 
 /** Update emergency care request status */
 export const updateAdminEmergencyCareRequestStatus = createAsyncThunk<
-  { id: string; status: string },
+  { id: string; status: EmergencyCareRequestStatusValue },
   { id: string; status: string },
   { rejectValue: string }
->("admin/updateEmergencyCareRequestStatus", async ({ id, status }, { rejectWithValue }) => {
-  try {
-    await adminService.updateEmergencyCareRequestStatus(id, status);
-    return { id, status };
-  } catch (error: any) {
-    return rejectWithValue(error?.message || "Failed to update emergency care request status");
-  }
-});
+>(
+  "admin/updateEmergencyCareRequestStatus",
+  async ({ id, status }, { rejectWithValue }) => {
+    try {
+      await adminService.updateEmergencyCareRequestStatus(id, status);
+      return { id, status: status as EmergencyCareRequestStatusValue };
+    } catch (error: any) {
+      return rejectWithValue(
+        error?.message || "Failed to update emergency care request status",
+      );
+    }
+  },
+);
 
 /** Trigger billing run */
 export const triggerAdminBillingRun = createAsyncThunk<
@@ -326,7 +377,9 @@ const adminSlice = createSlice({
       state.carers.loading = false;
       state.carers.items = action.payload.items || [];
       state.carers.totalItems = action.payload.total || 0;
-      state.carers.totalPages = Math.ceil((action.payload.total || 0) / state.carers.limit);
+      state.carers.totalPages = Math.ceil(
+        (action.payload.total || 0) / state.carers.limit,
+      );
     });
     builder.addCase(fetchAdminCarers.rejected, (state, action) => {
       state.carers.loading = false;
@@ -342,11 +395,14 @@ const adminSlice = createSlice({
       state.careRequests.loading = false;
       state.careRequests.items = action.payload.items || [];
       state.careRequests.totalItems = action.payload.total || 0;
-      state.careRequests.totalPages = Math.ceil((action.payload.total || 0) / state.careRequests.limit);
+      state.careRequests.totalPages = Math.ceil(
+        (action.payload.total || 0) / state.careRequests.limit,
+      );
     });
     builder.addCase(fetchAdminCareRequests.rejected, (state, action) => {
       state.careRequests.loading = false;
-      state.careRequests.error = action.payload || "Failed to fetch care requests";
+      state.careRequests.error =
+        action.payload || "Failed to fetch care requests";
     });
 
     // fetchAdminEmergencyCareRequests
@@ -354,26 +410,38 @@ const adminSlice = createSlice({
       state.emergencyCareRequests.loading = true;
       state.emergencyCareRequests.error = null;
     });
-    builder.addCase(fetchAdminEmergencyCareRequests.fulfilled, (state, action) => {
-      state.emergencyCareRequests.loading = false;
-      state.emergencyCareRequests.items = action.payload.items || [];
-      state.emergencyCareRequests.totalItems = action.payload.total || 0;
-      state.emergencyCareRequests.totalPages = Math.ceil((action.payload.total || 0) / state.emergencyCareRequests.limit);
-    });
-    builder.addCase(fetchAdminEmergencyCareRequests.rejected, (state, action) => {
-      state.emergencyCareRequests.loading = false;
-      state.emergencyCareRequests.error = action.payload || "Failed to fetch emergency care requests";
-    });
+    builder.addCase(
+      fetchAdminEmergencyCareRequests.fulfilled,
+      (state, action) => {
+        state.emergencyCareRequests.loading = false;
+        state.emergencyCareRequests.items = action.payload.items || [];
+        state.emergencyCareRequests.totalItems = action.payload.total || 0;
+        state.emergencyCareRequests.totalPages = Math.ceil(
+          (action.payload.total || 0) / state.emergencyCareRequests.limit,
+        );
+      },
+    );
+    builder.addCase(
+      fetchAdminEmergencyCareRequests.rejected,
+      (state, action) => {
+        state.emergencyCareRequests.loading = false;
+        state.emergencyCareRequests.error =
+          action.payload || "Failed to fetch emergency care requests";
+      },
+    );
 
     // updateAdminEmergencyCareRequestStatus
-    builder.addCase(updateAdminEmergencyCareRequestStatus.fulfilled, (state, action) => {
-      const item = state.emergencyCareRequests.items.find(
-        (r) => r.id === action.payload.id
-      );
-      if (item) {
-        item.status = action.payload.status;
-      }
-    });
+    builder.addCase(
+      updateAdminEmergencyCareRequestStatus.fulfilled,
+      (state, action) => {
+        const item = state.emergencyCareRequests.items.find(
+          (r) => r.id === action.payload.id,
+        );
+        if (item) {
+          item.status = action.payload.status;
+        }
+      },
+    );
     // fetchAdminClients
     builder.addCase(fetchAdminClients.pending, (state) => {
       state.clients.loading = true;
@@ -383,7 +451,9 @@ const adminSlice = createSlice({
       state.clients.loading = false;
       state.clients.items = action.payload.items || [];
       state.clients.totalItems = action.payload.total || 0;
-      state.clients.totalPages = Math.ceil((action.payload.total || 0) / state.clients.limit);
+      state.clients.totalPages = Math.ceil(
+        (action.payload.total || 0) / state.clients.limit,
+      );
     });
     builder.addCase(fetchAdminClients.rejected, (state, action) => {
       state.clients.loading = false;
@@ -395,13 +465,17 @@ const adminSlice = createSlice({
       state.selectedCarer.loading = true;
       state.selectedCarer.error = null;
     });
-    builder.addCase(fetchCarerDetails.fulfilled, (state, action: PayloadAction<any>) => {
-      state.selectedCarer.loading = false;
-      state.selectedCarer.data = action.payload;
-    });
+    builder.addCase(
+      fetchCarerDetails.fulfilled,
+      (state, action: PayloadAction<any>) => {
+        state.selectedCarer.loading = false;
+        state.selectedCarer.data = action.payload;
+      },
+    );
     builder.addCase(fetchCarerDetails.rejected, (state, action) => {
       state.selectedCarer.loading = false;
-      state.selectedCarer.error = action.payload || "Failed to fetch carer details";
+      state.selectedCarer.error =
+        action.payload || "Failed to fetch carer details";
     });
 
     const applyDocumentUpdate = (state: any, docId: string, updates: any) => {
@@ -452,21 +526,26 @@ const adminSlice = createSlice({
       applyDocumentUpdate(state, docId, { status, ...data });
     });
 
-
-
     // fetchAdminCareRequestApplications
     builder.addCase(fetchAdminCareRequestApplications.pending, (state) => {
       state.applicationsLoading = true;
       state.applicationsError = null;
     });
-    builder.addCase(fetchAdminCareRequestApplications.fulfilled, (state, action: PayloadAction<AdminCareRequestApplication[]>) => {
-      state.applicationsLoading = false;
-      state.selectedCareRequestApplications = action.payload;
-    });
-    builder.addCase(fetchAdminCareRequestApplications.rejected, (state, action) => {
-      state.applicationsLoading = false;
-      state.applicationsError = action.payload || "Failed to fetch applications";
-    });
+    builder.addCase(
+      fetchAdminCareRequestApplications.fulfilled,
+      (state, action: PayloadAction<AdminCareRequestApplication[]>) => {
+        state.applicationsLoading = false;
+        state.selectedCareRequestApplications = action.payload;
+      },
+    );
+    builder.addCase(
+      fetchAdminCareRequestApplications.rejected,
+      (state, action) => {
+        state.applicationsLoading = false;
+        state.applicationsError =
+          action.payload || "Failed to fetch applications";
+      },
+    );
   },
 });
 

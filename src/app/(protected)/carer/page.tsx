@@ -67,7 +67,16 @@ function CarerDashboardContent() {
   useEffect(() => {
     if (
       tabParam &&
-      ["overview", "profile", "compliance", "availability", "opportunities", "placements", "membership", "agreements"].includes(tabParam)
+      [
+        "overview",
+        "profile",
+        "compliance",
+        "availability",
+        "opportunities",
+        "placements",
+        "membership",
+        "agreements",
+      ].includes(tabParam)
     ) {
       setActiveTab(tabParam);
     }
@@ -153,7 +162,8 @@ function CarerDashboardContent() {
 
             // Step 2: Legal Agreements
             try {
-              const pendingData = await agreementsService.getPendingAgreements();
+              const pendingData =
+                await agreementsService.getPendingAgreements();
               if (pendingData.length > 0) return 2;
             } catch (e) {
               console.error("Failed to check pending agreements", e);
@@ -173,7 +183,11 @@ function CarerDashboardContent() {
             }
 
             // Step 4: Professional Info
-            if (!ap.summary || !ap.experienceYears || !ap.careSpecialties?.length) {
+            if (
+              !ap.summary ||
+              !ap.experienceYears ||
+              !ap.careSpecialties?.length
+            ) {
               return 4;
             }
 
@@ -210,11 +224,15 @@ function CarerDashboardContent() {
               (d: any) => d.fileType === DocumentFileType.RIGHT_TO_WORK,
             );
             const hasNiProof = docs.some(
-              (d: any) => d.fileType === DocumentFileType.NATIONAL_INSURANCE_PROOF,
+              (d: any) =>
+                d.fileType === DocumentFileType.NATIONAL_INSURANCE_PROOF,
             );
 
             let identityValid =
-              hasPassportOrDL && hasProofOfAddress && hasRightToWork && hasNiProof;
+              hasPassportOrDL &&
+              hasProofOfAddress &&
+              hasRightToWork &&
+              hasNiProof;
 
             if (hasDL) {
               let dp = ap.drivingPreferences || [];
@@ -231,7 +249,8 @@ function CarerDashboardContent() {
               if (
                 hasOwnVehiclePref &&
                 !docs.some(
-                  (d: any) => d.fileType === DocumentFileType.BUSINESS_INSURANCE,
+                  (d: any) =>
+                    d.fileType === DocumentFileType.BUSINESS_INSURANCE,
                 )
               ) {
                 identityValid = false;
@@ -297,7 +316,15 @@ function CarerDashboardContent() {
         initialize();
       }
     }
-  }, [profile, documents, loading, documentsLoading, isOnboardingParam, initialStepSet, user?.id]);
+  }, [
+    profile,
+    documents,
+    loading,
+    documentsLoading,
+    isOnboardingParam,
+    initialStepSet,
+    user?.id,
+  ]);
 
   useEffect(() => {
     if (initialStepSet && user?.id) {
@@ -351,16 +378,22 @@ function CarerDashboardContent() {
     }
 
     const hasPassportOrDL = complianceDocs.some(
-      (d: any) => d.type === DocumentFileType.PASSPORT || d.type === DocumentFileType.DRIVING_LICENCE,
+      (d: any) =>
+        d.type === DocumentFileType.PASSPORT ||
+        d.type === DocumentFileType.DRIVING_LICENCE,
     );
-    const hasDL = complianceDocs.some((d: any) => d.type === DocumentFileType.DRIVING_LICENCE);
+    const hasDL = complianceDocs.some(
+      (d: any) => d.type === DocumentFileType.DRIVING_LICENCE,
+    );
     const hasProofOfAddress = complianceDocs.some(
       (d: any) => d.type === DocumentFileType.PROOF_OF_ADDRESS,
     );
     const hasRightToWork = complianceDocs.some(
       (d: any) => d.type === DocumentFileType.RIGHT_TO_WORK,
     );
-    const hasNiProof = complianceDocs.some((d: any) => d.type === DocumentFileType.NATIONAL_INSURANCE_PROOF);
+    const hasNiProof = complianceDocs.some(
+      (d: any) => d.type === DocumentFileType.NATIONAL_INSURANCE_PROOF,
+    );
 
     let identityValid =
       hasPassportOrDL && hasProofOfAddress && hasRightToWork && hasNiProof;
@@ -370,7 +403,9 @@ function CarerDashboardContent() {
       );
       if (
         hasOwnVehiclePref &&
-        !complianceDocs.some((d: any) => d.type === DocumentFileType.BUSINESS_INSURANCE)
+        !complianceDocs.some(
+          (d: any) => d.type === DocumentFileType.BUSINESS_INSURANCE,
+        )
       ) {
         identityValid = false;
       }
@@ -419,7 +454,13 @@ function CarerDashboardContent() {
     )
       missing.push("Insurance Documents");
 
-    if (!bankName || !accountName || !accountNumber || !sortCode || !nationalInsuranceNumber) {
+    if (
+      !bankName ||
+      !accountName ||
+      !accountNumber ||
+      !sortCode ||
+      !nationalInsuranceNumber
+    ) {
       missing.push("Supplemental Details");
     }
 
@@ -526,7 +567,8 @@ function CarerDashboardContent() {
                 onBack={() => setOnboardingStep(11)}
                 onSubmit={async () => {
                   try {
-                    const pendingData = await agreementsService.getPendingAgreements();
+                    const pendingData =
+                      await agreementsService.getPendingAgreements();
                     if (pendingData.length > 0) {
                       showErrorToast(
                         "Incomplete",
@@ -593,8 +635,11 @@ function CarerDashboardContent() {
                 </h3>
 
                 <p className="text-gold-100/60 max-w-md mx-auto leading-relaxed mb-10 text-[14px]">
-                  Your profile is now pending review by Grace & Goodwill.<br /><br />
-                  We will verify your documents and contact you regarding approval.
+                  Your profile is now pending review by Grace & Goodwill.
+                  <br />
+                  <br />
+                  We will verify your documents and contact you regarding
+                  approval.
                 </p>
 
                 <div className="flex flex-col items-center gap-5 w-full">
@@ -658,7 +703,9 @@ function CarerDashboardContent() {
           lastName={profileUser?.lastName || portal.lastName}
           email={profileUser?.email || portal.email}
           phone={profileUser?.phoneNumber || portal.phone}
-          profilePhoto={profile?.profilePhotoUrl || actualProfile?.profilePhotoUrl || null}
+          profilePhoto={
+            profile?.profilePhotoUrl || actualProfile?.profilePhotoUrl || null
+          }
         />
 
         <PortalTabs activeTab={activeTab} setActiveTab={setActiveTab} />
@@ -668,7 +715,9 @@ function CarerDashboardContent() {
             <DashboardOverview
               applicationStatus={portal.applicationStatus}
               complianceDocs={portal.complianceDocs}
-              availability={actualProfile?.availability ?? profile?.availability ?? []}
+              availability={
+                actualProfile?.availability ?? profile?.availability ?? []
+              }
               setActiveTab={setActiveTab}
             />
           )}
@@ -720,8 +769,12 @@ function CarerDashboardContent() {
 
           {activeTab === "media" && (
             <ProfileMedia
-              profilePhotoUrl={profile?.profilePhotoUrl || actualProfile?.profilePhotoUrl}
-              introVideoUrl={profile?.introVideoUrl || actualProfile?.introVideoUrl}
+              profilePhotoUrl={
+                profile?.profilePhotoUrl || actualProfile?.profilePhotoUrl
+              }
+              introVideoUrl={
+                profile?.introVideoUrl || actualProfile?.introVideoUrl
+              }
               updatedAt={profile?.updatedAt || actualProfile?.updatedAt}
             />
           )}
@@ -742,25 +795,15 @@ function CarerDashboardContent() {
             <AvailabilitySchedule isProfileLoading={loading} />
           )}
 
-          {activeTab === "opportunities" && (
-            <PlacementOpportunities />
-          )}
+          {activeTab === "opportunities" && <PlacementOpportunities />}
 
-          {activeTab === "applications" && (
-            <MyApplications />
-          )}
+          {activeTab === "applications" && <MyApplications />}
 
-          {activeTab === "history" && (
-            <ApplicationHistory />
-          )}
+          {activeTab === "history" && <ApplicationHistory />}
 
-          {activeTab === "placements" && (
-            <CarerPlacements />
-          )}
+          {activeTab === "placements" && <CarerPlacements />}
 
-          {activeTab === "agreements" && (
-            <ProfileAgreements />
-          )}
+          {activeTab === "agreements" && <ProfileAgreements />}
         </div>
       </div>
 

@@ -42,10 +42,17 @@ export default function EmergencyCareRequestsList({
       render: (req) => (
         <div className="flex items-center gap-3">
           <div className="h-8 w-8 rounded-full bg-rose-500/10 flex items-center justify-center text-rose-400 border border-rose-500/20 shrink-0 font-bold text-xs uppercase">
-            {req.fullName.split(" ").map((n: string) => n[0]).join("").substring(0, 2)}
+            {req.fullName
+              .split(" ")
+              .map((n: string) => n[0])
+              .join("")
+              .substring(0, 2)}
           </div>
           <div className="min-w-0">
-            <span className="truncate max-w-[150px] font-bold text-gold-200 block" title={req.fullName}>
+            <span
+              className="truncate max-w-[150px] font-bold text-gold-200 block"
+              title={req.fullName}
+            >
               {req.fullName}
             </span>
           </div>
@@ -92,7 +99,10 @@ export default function EmergencyCareRequestsList({
       key: "additionalEmergencyDetails",
       render: (req) => (
         <div className="max-w-[200px]">
-          <span className="text-xs text-gold-100/70 line-clamp-2" title={req.additionalEmergencyDetails}>
+          <span
+            className="text-xs text-gold-100/70 line-clamp-2"
+            title={req.additionalEmergencyDetails}
+          >
             {req.additionalEmergencyDetails || "No additional details"}
           </span>
           <span className="text-[10px] text-gold-200/50 mt-1 block">
@@ -109,11 +119,13 @@ export default function EmergencyCareRequestsList({
         <div className="flex items-center gap-1.5 text-gold-100/60 font-mono">
           <Calendar className="h-3.5 w-3.5 text-gold/45" />
           <span className="text-xs">
-            {req.createdAt ? new Date(req.createdAt).toLocaleDateString("en-GB", {
-              day: "2-digit",
-              month: "short",
-              year: "numeric",
-            }) : "N/A"}
+            {req.createdAt
+              ? new Date(req.createdAt).toLocaleDateString("en-GB", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                })
+              : "N/A"}
           </span>
         </div>
       ),
@@ -152,7 +164,10 @@ export default function EmergencyCareRequestsList({
             ))}
           </div>
           {[...Array(5)].map((_, idx) => (
-            <div key={idx} className="grid grid-cols-7 gap-4 py-3.5 border-b border-gold-300/5">
+            <div
+              key={idx}
+              className="grid grid-cols-7 gap-4 py-3.5 border-b border-gold-300/5"
+            >
               {[...Array(7)].map((_, i) => (
                 <div key={i} className="h-3 bg-gold/5 rounded animate-pulse" />
               ))}
@@ -166,7 +181,9 @@ export default function EmergencyCareRequestsList({
   if (error) {
     return (
       <div className="rounded-2xl border border-red-500/20 bg-red-950/10 p-8 text-center text-red-400 max-w-xl mx-auto space-y-4">
-        <p className="font-semibold text-sm">Failed to load Emergency Care Requests</p>
+        <p className="font-semibold text-sm">
+          Failed to load Emergency Care Requests
+        </p>
         <p className="text-xs text-red-500/80">{error}</p>
         <button
           onClick={() => onPageChange(page)}
@@ -192,7 +209,8 @@ export default function EmergencyCareRequestsList({
             </h3>
           </div>
           <p className="text-xs text-gold-100/50 max-w-xl">
-            View and manage emergency care requests submitted from the public website and client portals.
+            View and manage emergency care requests submitted from the public
+            website and client portals.
           </p>
         </div>
 
@@ -218,7 +236,8 @@ export default function EmergencyCareRequestsList({
           <AlertCircle className="h-12 w-12 text-gold-100/20 mb-4" />
           <h3 className="text-lg font-bold text-gold-200">No Requests Found</h3>
           <p className="text-xs max-w-sm mt-2">
-            There are currently no emergency care requests matching the selected filters.
+            There are currently no emergency care requests matching the selected
+            filters.
           </p>
         </div>
       ) : (

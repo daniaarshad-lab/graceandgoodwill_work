@@ -11,7 +11,7 @@ function AgreementsPageContent() {
   const isOnboarding = searchParams.get("onboarding") === "true";
 
   return (
-    <LegalAgreementsFeature 
+    <LegalAgreementsFeature
       isOnboardingMode={isOnboarding}
       onAllSigned={() => {
         router.push("/client");
@@ -22,11 +22,13 @@ function AgreementsPageContent() {
 
 export default function AgreementsPage() {
   return (
-    <Suspense fallback={
-      <div className="flex min-h-screen items-center justify-center bg-navy-950 text-gold-100">
-        <Loader2 className="h-10 w-10 animate-spin text-gold-DEFAULT opacity-80" />
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-navy-950 text-gold-100">
+          <Loader2 className="h-10 w-10 animate-spin text-gold-DEFAULT opacity-80" />
+        </div>
+      }
+    >
       <AgreementsPageContent />
     </Suspense>
   );

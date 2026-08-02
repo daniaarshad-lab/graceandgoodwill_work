@@ -4,7 +4,10 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { clientService } from "@/services/client/client.service";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { fetchClientProfile, getClientPlacements } from "@/store/slices/clientSlice";
+import {
+  fetchClientProfile,
+  getClientPlacements,
+} from "@/store/slices/clientSlice";
 import { Download, Printer } from "lucide-react";
 
 interface Invoice {
@@ -44,9 +47,11 @@ export default function ClientBillingPage() {
       dispatch(fetchClientProfile());
       dispatch(getClientPlacements());
       const invoicesData = await clientService.getInvoices();
-      const list = Array.isArray(invoicesData) 
-        ? invoicesData 
-        : (invoicesData && Array.isArray((invoicesData as any).items) ? (invoicesData as any).items : []);
+      const list = Array.isArray(invoicesData)
+        ? invoicesData
+        : invoicesData && Array.isArray((invoicesData as any).items)
+          ? (invoicesData as any).items
+          : [];
       setInvoices(list);
     } catch (err: any) {
       console.error(err);
@@ -60,20 +65,29 @@ export default function ClientBillingPage() {
     loadBillingData();
 
     // Check if redirected back from a checkout success
-    const params = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
+    const params = new URLSearchParams(
+      typeof window !== "undefined" ? window.location.search : "",
+    );
     const session = params.get("session");
     const billingRequestId = params.get("billing_request_id");
     const paymentStatus = params.get("payment");
 
     if (paymentStatus === "failed" || session === "cancelled") {
-      setError("GoCardless payment mandate setup failed or was cancelled. Please try again.");
+      setError(
+        "GoCardless payment mandate setup failed or was cancelled. Please try again.",
+      );
     }
 
-    if (session === "success" || billingRequestId || paymentStatus === "success") {
+    if (
+      session === "success" ||
+      billingRequestId ||
+      paymentStatus === "success"
+    ) {
       refreshUser();
 
       if (billingRequestId) {
-        clientService.verifyLifetimeFee(billingRequestId)
+        clientService
+          .verifyLifetimeFee(billingRequestId)
           .then((res) => {
             console.log("Lifetime fee verified:", res);
             refreshUser();
@@ -88,16 +102,18 @@ export default function ClientBillingPage() {
       let pollCount = 0;
       const interval = setInterval(async () => {
         pollCount++;
-        
+
         await refreshUser();
         dispatch(fetchClientProfile());
         dispatch(getClientPlacements());
-        
+
         try {
           const invoicesData = await clientService.getInvoices();
-          const list = Array.isArray(invoicesData) 
-            ? invoicesData 
-            : (invoicesData && Array.isArray((invoicesData as any).items) ? (invoicesData as any).items : []);
+          const list = Array.isArray(invoicesData)
+            ? invoicesData
+            : invoicesData && Array.isArray((invoicesData as any).items)
+              ? (invoicesData as any).items
+              : [];
           setInvoices(list);
         } catch (e) {
           console.error("Polling invoices failed", e);
@@ -118,8 +134,11 @@ export default function ClientBillingPage() {
       setActionLoading("lifetime");
       const successUrl = `${window.location.origin}/client?payment=success`;
       const cancelUrl = `${window.location.origin}/client?payment=failed`;
-      
-      const { url } = await clientService.createLifetimeFeeCheckout(successUrl, cancelUrl);
+
+      const { url } = await clientService.createLifetimeFeeCheckout(
+        successUrl,
+        cancelUrl,
+      );
       if (url) {
         window.location.href = url;
       } else {
@@ -138,15 +157,21 @@ export default function ClientBillingPage() {
       setError(null);
       const successUrl = `${window.location.origin}/client?tab=billing&session=success`;
       const cancelUrl = `${window.location.origin}/client?tab=billing&session=cancelled`;
-      
-      const { url } = await clientService.subscribeToPlacement(placementId, successUrl, cancelUrl);
+
+      const { url } = await clientService.subscribeToPlacement(
+        placementId,
+        successUrl,
+        cancelUrl,
+      );
       if (url) {
         window.location.href = url;
       } else {
         throw new Error("Failed to generate subscription checkout URL");
       }
     } catch (err: any) {
-      setError(err?.message || "Failed to initiate GoCardless subscription setup.");
+      setError(
+        err?.message || "Failed to initiate GoCardless subscription setup.",
+      );
     } finally {
       setActionLoading(null);
     }
@@ -156,11 +181,21 @@ export default function ClientBillingPage() {
     const printWindow = window.open("", "_blank", "width=960,height=900");
     if (printWindow) {
       const isReg = inv.invoiceNumber.startsWith("REG-");
-      const clientName = profile?.user ? `${profile.user.firstName} ${profile.user.lastName}` : "Client Family";
+      const clientName = profile?.user
+        ? `${profile.user.firstName} ${profile.user.lastName}`
+        : "Client Family";
       const clientEmail = profile?.user?.email || "";
-      const publicProfileId = (profile?.user as any)?.publicProfileId || (profile as any)?.publicProfileId || (user as any)?.publicProfileId || (user as any)?.clientProfile?.publicProfileId || "";
-      const logoUrl = typeof window !== "undefined" ? `${window.location.origin}/website_logo.png` : "/website_logo.png";
-      
+      const publicProfileId =
+        (profile?.user as any)?.publicProfileId ||
+        (profile as any)?.publicProfileId ||
+        (user as any)?.publicProfileId ||
+        (user as any)?.clientProfile?.publicProfileId ||
+        "";
+      const logoUrl =
+        typeof window !== "undefined"
+          ? `${window.location.origin}/website_logo.png`
+          : "/website_logo.png";
+
       printWindow.document.write(`
         <html>
           <head>
@@ -283,16 +318,17 @@ export default function ClientBillingPage() {
                 <tbody>
                   <tr>
                     <td>
-                      <strong>${isReg ? 'Lifetime Matching Platform Access' : 'Live-in Care Weekly Placement Service'}</strong><br/>
+                      <strong>${isReg ? "Lifetime Matching Platform Access" : "Live-in Care Weekly Placement Service"}</strong><br/>
                       <span style="font-size: 12px; color: #64748b;">
-                        ${isReg 
-                          ? 'One-off registration fee covering onboarding, profiling, and lifetime matched access.' 
-                          : `Weekly recurring placement cycle: ${new Date(inv.billingPeriodStart).toLocaleDateString()} to ${new Date(inv.billingPeriodEnd).toLocaleDateString()}`
+                        ${
+                          isReg
+                            ? "One-off registration fee covering onboarding, profiling, and lifetime matched access."
+                            : `Weekly recurring placement cycle: ${new Date(inv.billingPeriodStart).toLocaleDateString()} to ${new Date(inv.billingPeriodEnd).toLocaleDateString()}`
                         }
                       </span>
                     </td>
-                    <td style="text-align: right;">£${Number(inv.subtotal || (Number(inv.total) / 1.2)).toFixed(2)}</td>
-                    <td style="text-align: right;">£${Number(inv.vat || (Number(inv.total) - (Number(inv.total) / 1.2))).toFixed(2)}</td>
+                    <td style="text-align: right;">£${Number(inv.subtotal || Number(inv.total) / 1.2).toFixed(2)}</td>
+                    <td style="text-align: right;">£${Number(inv.vat || Number(inv.total) - Number(inv.total) / 1.2).toFixed(2)}</td>
                     <td style="text-align: right;">£${Number(inv.total).toFixed(2)}</td>
                   </tr>
                 </tbody>
@@ -301,11 +337,11 @@ export default function ClientBillingPage() {
               <div class="totals-box">
                 <div class="total-row">
                   <span>Subtotal</span>
-                  <span>£${Number(inv.subtotal || (Number(inv.total) / 1.2)).toFixed(2)}</span>
+                  <span>£${Number(inv.subtotal || Number(inv.total) / 1.2).toFixed(2)}</span>
                 </div>
                 <div class="total-row">
                   <span>VAT (20%)</span>
-                  <span>£${Number(inv.vat || (Number(inv.total) - (Number(inv.total) / 1.2))).toFixed(2)}</span>
+                  <span>£${Number(inv.vat || Number(inv.total) - Number(inv.total) / 1.2).toFixed(2)}</span>
                 </div>
                 <div class="total-row grand-total">
                   <span>Total Paid</span>
@@ -349,14 +385,14 @@ export default function ClientBillingPage() {
   return (
     <div className="w-full text-slate-100">
       <div className="w-full space-y-6">
-        
         {/* Header */}
         <div className="mb-2">
           <h2 className="text-xl font-bold text-gold-100">
             Billing & Payments
           </h2>
           <p className="mt-1 text-sm text-gold-200/60">
-            Manage your platform fees, active placements subscription, and view invoice receipts.
+            Manage your platform fees, active placements subscription, and view
+            invoice receipts.
           </p>
         </div>
 
@@ -368,12 +404,13 @@ export default function ClientBillingPage() {
 
         {/* Core Cards: Lifetime Fee & Active Placements */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          
           {/* Lifetime Platform Fee Card */}
           <div className="bg-navy-900/60 border border-navy-800 rounded-2xl p-6 shadow-soft flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-bold text-white uppercase tracking-wider">Lifetime Platform Fee</h2>
+                <h2 className="text-lg font-bold text-white uppercase tracking-wider">
+                  Lifetime Platform Fee
+                </h2>
                 {isLifetimePaid ? (
                   <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-950/60 border border-emerald-500/30 text-emerald-400">
                     Active & Paid
@@ -385,17 +422,32 @@ export default function ClientBillingPage() {
                 )}
               </div>
               <p className="text-slate-300 text-sm leading-relaxed mb-6">
-                Grace & Goodwill charges a one-off lifetime registration fee of <span className="font-semibold text-white">£299 + VAT</span> which covers your initial consultation, comprehensive client onboarding, and lifetime access to our carer matching platform.
+                Grace & Goodwill charges a one-off lifetime registration fee of{" "}
+                <span className="font-semibold text-white">£299 + VAT</span>{" "}
+                which covers your initial consultation, comprehensive client
+                onboarding, and lifetime access to our carer matching platform.
               </p>
             </div>
 
             <div>
               {isLifetimePaid ? (
                 <div className="bg-navy-950 border border-navy-850 rounded-xl p-4 flex items-center space-x-3 text-slate-400">
-                  <svg className="h-6 w-6 text-emerald-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
+                  <svg
+                    className="h-6 w-6 text-emerald-400 flex-shrink-0"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2.5"
+                      d="M5 13l4 4L19 7"
+                    />
                   </svg>
-                  <span className="text-sm">Verified on security log. Matching active.</span>
+                  <span className="text-sm">
+                    Verified on security log. Matching active.
+                  </span>
                 </div>
               ) : (
                 <button
@@ -405,9 +457,24 @@ export default function ClientBillingPage() {
                 >
                   {actionLoading === "lifetime" ? (
                     <>
-                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-navy-950" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      <svg
+                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-navy-950"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        />
                       </svg>
                       Redirecting to Checkout...
                     </>
@@ -422,58 +489,107 @@ export default function ClientBillingPage() {
           {/* Active Placements Subscription Card */}
           <div className="bg-navy-900/60 border border-navy-800 rounded-2xl p-6 shadow-soft flex flex-col justify-between">
             <div>
-              <h2 className="text-lg font-bold text-white uppercase tracking-wider mb-4">Placement Weekly Subscription</h2>
+              <h2 className="text-lg font-bold text-white uppercase tracking-wider mb-4">
+                Placement Weekly Subscription
+              </h2>
               <p className="text-slate-300 text-sm leading-relaxed mb-6">
-                Once we match you with a carer and confirm the placement, you must set up your weekly recurring subscription. Weekly fees are collected in advance every 7 days via Direct Debit (GoCardless).
+                Once we match you with a carer and confirm the placement, you
+                must set up your weekly recurring subscription. Weekly fees are
+                collected in advance every 7 days via Direct Debit (GoCardless).
               </p>
             </div>
 
             <div>
               {!placements || placements.length === 0 ? (
-                <p className="text-slate-400 text-sm py-4 text-center">No care placements found requiring configuration.</p>
+                <p className="text-slate-400 text-sm py-4 text-center">
+                  No care placements found requiring configuration.
+                </p>
               ) : (
                 <div className="space-y-4 mb-6">
                   {placements.map((placement) => {
-                    const carerName = placement.carerProfile?.user 
-                      ? `${placement.carerProfile.user.firstName} ${placement.carerProfile.user.lastName}` 
+                    const carerName = placement.carerProfile?.user
+                      ? `${placement.carerProfile.user.firstName} ${placement.carerProfile.user.lastName}`
                       : "Carer Specialist";
-                    const startDateStr = new Date(placement.startDate).toLocaleDateString();
-                    const endDateStr = placement.endDate ? new Date(placement.endDate).toLocaleDateString() : "Ongoing";
+                    const startDateStr = new Date(
+                      placement.startDate,
+                    ).toLocaleDateString();
+                    const endDateStr = placement.endDate
+                      ? new Date(placement.endDate).toLocaleDateString()
+                      : "Ongoing";
                     const isSubscribed = !!placement.gocardlessMandateId;
-                    
+
                     return (
-                      <div key={placement.id} className="bg-navy-950 border border-navy-850 rounded-xl p-4 flex flex-col justify-between gap-4">
+                      <div
+                        key={placement.id}
+                        className="bg-navy-950 border border-navy-850 rounded-xl p-4 flex flex-col justify-between gap-4"
+                      >
                         <div className="space-y-1">
-                          <h3 className="font-bold text-white text-sm">{carerName}</h3>
+                          <h3 className="font-bold text-white text-sm">
+                            {carerName}
+                          </h3>
                           <div className="flex flex-col gap-1 text-xs text-slate-400">
                             <span>
-                              <strong className="text-slate-300">Period:</strong> {startDateStr} — {endDateStr}
+                              <strong className="text-slate-300">
+                                Period:
+                              </strong>{" "}
+                              {startDateStr} — {endDateStr}
                             </span>
                             <span>
-                              <strong className="text-slate-300">Weekly Fee:</strong> £{Number(placement.weeklyFee || 0).toFixed(2)} / week
+                              <strong className="text-slate-300">
+                                Weekly Fee:
+                              </strong>{" "}
+                              £{Number(placement.weeklyFee || 0).toFixed(2)} /
+                              week
                             </span>
                           </div>
                         </div>
-                        
+
                         <div className="flex items-center w-full">
                           {isSubscribed ? (
                             <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-950/60 border border-emerald-500/30 text-emerald-400 w-full justify-center">
-                              <svg className="w-3.5 h-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
+                              <svg
+                                className="w-3.5 h-3.5 mr-1"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2.5"
+                                  d="M5 13l4 4L19 7"
+                                />
                               </svg>
                               Direct Debit Active
                             </span>
                           ) : (
                             <button
-                              onClick={() => handleSubscribePlacement(placement.id)}
+                              onClick={() =>
+                                handleSubscribePlacement(placement.id)
+                              }
                               disabled={actionLoading !== null}
                               className="w-full bg-[#d4af37] hover:bg-gold-400 text-navy-950 font-bold py-2.5 px-4 rounded-xl text-xs transition flex items-center justify-center disabled:opacity-50"
                             >
                               {actionLoading === placement.id ? (
                                 <>
-                                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-navy-950" fill="none" viewBox="0 0 24 24">
-                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                  <svg
+                                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-navy-950"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <circle
+                                      className="opacity-25"
+                                      cx="12"
+                                      cy="12"
+                                      r="10"
+                                      stroke="currentColor"
+                                      strokeWidth="4"
+                                    />
+                                    <path
+                                      className="opacity-75"
+                                      fill="currentColor"
+                                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                    />
                                   </svg>
                                   Redirecting...
                                 </>
@@ -488,28 +604,41 @@ export default function ClientBillingPage() {
                   })}
                 </div>
               )}
-              
+
               <div className="bg-navy-950 border border-navy-850 rounded-xl p-4 flex items-center space-x-3 text-slate-400">
-                <svg className="h-5 w-5 text-gold-DEFAULT flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <svg
+                  className="h-5 w-5 text-gold-DEFAULT flex-shrink-0"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
                 </svg>
-                <span className="text-sm">Subscriptions anchor to the placement start date.</span>
+                <span className="text-sm">
+                  Subscriptions anchor to the placement start date.
+                </span>
               </div>
             </div>
           </div>
-
         </div>
 
         {/* Invoice History */}
         <div className="bg-navy-900/60 border border-navy-800 rounded-2xl p-6 shadow-soft">
           <h2 className="text-xl font-bold text-white mb-6">Payment History</h2>
-          
+
           {loading ? (
             <div className="py-12 flex justify-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gold-DEFAULT"></div>
             </div>
           ) : invoices.length === 0 ? (
-            <p className="text-slate-400 text-center py-12">No invoices generated yet.</p>
+            <p className="text-slate-400 text-center py-12">
+              No invoices generated yet.
+            </p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse text-sm text-slate-300">
@@ -525,17 +654,27 @@ export default function ClientBillingPage() {
                 </thead>
                 <tbody>
                   {invoices.map((inv) => (
-                    <tr key={inv.id} className="border-b border-navy-850 hover:bg-navy-850/20 transition-colors">
-                      <td className="py-4 px-4 font-semibold text-white">{inv.invoiceNumber}</td>
-                      <td className="py-4 px-4 text-slate-400">
-                        {new Date(inv.billingPeriodStart).toLocaleDateString()} - {new Date(inv.billingPeriodEnd).toLocaleDateString()}
+                    <tr
+                      key={inv.id}
+                      className="border-b border-navy-850 hover:bg-navy-850/20 transition-colors"
+                    >
+                      <td className="py-4 px-4 font-semibold text-white">
+                        {inv.invoiceNumber}
                       </td>
-                      <td className="py-4 px-4">{new Date(inv.invoiceDate).toLocaleDateString()}</td>
+                      <td className="py-4 px-4 text-slate-400">
+                        {new Date(inv.billingPeriodStart).toLocaleDateString()}{" "}
+                        - {new Date(inv.billingPeriodEnd).toLocaleDateString()}
+                      </td>
+                      <td className="py-4 px-4">
+                        {new Date(inv.invoiceDate).toLocaleDateString()}
+                      </td>
                       <td className="py-4 px-4 text-right font-semibold text-white">
                         £{Number(inv.total).toFixed(2)}
                       </td>
                       <td className="py-4 px-4 text-center">
-                        <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${getStatusBadge(inv.status)}`}>
+                        <span
+                          className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${getStatusBadge(inv.status)}`}
+                        >
                           {inv.status}
                         </span>
                       </td>
@@ -566,7 +705,6 @@ export default function ClientBillingPage() {
             </div>
           )}
         </div>
-
       </div>
     </div>
   );

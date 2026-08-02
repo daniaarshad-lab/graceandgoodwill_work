@@ -6,13 +6,18 @@ export const mapCarerProfileToUICarer = (carer: any): Carer => {
   const city = carer.city || (carer as any).postcode ? carer.city : "";
   const postcode = carer.postcode || "";
   const locationParts = [city, postcode].filter(Boolean);
-  const location = locationParts.length > 0 ? locationParts.join(", ") : undefined;
+  const location =
+    locationParts.length > 0 ? locationParts.join(", ") : undefined;
 
   const availabilityVal = carer.availability;
-  let availabilityStatus: "Available" | "Limited Availability" | "Unavailable" = "Limited Availability";
+  let availabilityStatus: "Available" | "Limited Availability" | "Unavailable" =
+    "Limited Availability";
   if (availabilityVal === "AVAILABLE" || availabilityVal === "Available") {
     availabilityStatus = "Available";
-  } else if (availabilityVal === "UNAVAILABLE" || availabilityVal === "Unavailable") {
+  } else if (
+    availabilityVal === "UNAVAILABLE" ||
+    availabilityVal === "Unavailable"
+  ) {
     availabilityStatus = "Unavailable";
   } else if (Array.isArray(availabilityVal) && availabilityVal.length > 0) {
     availabilityStatus = "Available";
@@ -24,11 +29,13 @@ export const mapCarerProfileToUICarer = (carer: any): Carer => {
     experience: carer.experienceYears
       ? `${carer.experienceYears} Years`
       : "Profile information pending",
-    specialties: Array.isArray(carer.careSpecialties) && carer.careSpecialties.length > 0
-      ? carer.careSpecialties.join(", ")
-      : typeof carer.careSpecialties === "string" && carer.careSpecialties.trim() !== ""
-        ? carer.careSpecialties
-        : "Profile information pending",
+    specialties:
+      Array.isArray(carer.careSpecialties) && carer.careSpecialties.length > 0
+        ? carer.careSpecialties.join(", ")
+        : typeof carer.careSpecialties === "string" &&
+            carer.careSpecialties.trim() !== ""
+          ? carer.careSpecialties
+          : "Profile information pending",
     availability: availabilityStatus,
     bio: carer.summary || carer.bio || "Profile information pending",
     avatarBg: "bg-amber-500/20 text-amber-300 border-amber-500/30",
@@ -37,16 +44,22 @@ export const mapCarerProfileToUICarer = (carer: any): Carer => {
     qualifications: carer.qualifications || "Profile information pending",
     profilePhotoUrl: carer.profilePhotoUrl || null,
     fullBiography: carer.bio || carer.summary || "Profile information pending",
-    experienceDetails: carer.experience || carer.summary || "Profile information pending",
+    experienceDetails:
+      carer.experience || carer.summary || "Profile information pending",
     availabilityDetails: Array.isArray(carer.availability)
       ? formatDateArrayToRanges(carer.availability)
       : typeof carer.availability === "string"
         ? [carer.availability]
         : [],
-    rawAvailability: Array.isArray(carer.availability) ? carer.availability : [],
+    rawAvailability: Array.isArray(carer.availability)
+      ? carer.availability
+      : [],
     email: carer.email || "",
     phone: carer.phone || "",
-    address: [carer.address, carer.city, carer.postcode || carer.pincode].filter(Boolean).join(", ") || "",
+    address:
+      [carer.address, carer.city, carer.postcode || carer.pincode]
+        .filter(Boolean)
+        .join(", ") || "",
     feedbacks: Array.isArray(carer.feedbacks) ? carer.feedbacks : [],
   };
 };

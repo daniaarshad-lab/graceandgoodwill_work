@@ -5,13 +5,33 @@ export interface DateRange {
 }
 
 const MONTH_NAMES = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ] as const;
 
 const MONTH_SHORT_NAMES = [
-  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
 ] as const;
 
 // ─── Validation ──────────────────────────────────────────────────────────────
@@ -34,7 +54,7 @@ export function isValidDateString(dateStr: string): boolean {
 export function sanitizeDateArray(dates: unknown): string[] {
   if (!Array.isArray(dates)) return [];
   return dates.filter(
-    (d): d is string => typeof d === "string" && isValidDateString(d)
+    (d): d is string => typeof d === "string" && isValidDateString(d),
   );
 }
 
@@ -63,7 +83,11 @@ export function toISODateString(date: Date): string {
 }
 
 /** Builds a "YYYY-MM-DD" string from individual parts (0-indexed month) */
-export function buildDateString(year: number, month: number, day: number): string {
+export function buildDateString(
+  year: number,
+  month: number,
+  day: number,
+): string {
   const m = String(month + 1).padStart(2, "0");
   const d = String(day).padStart(2, "0");
   return `${year}-${m}-${d}`;

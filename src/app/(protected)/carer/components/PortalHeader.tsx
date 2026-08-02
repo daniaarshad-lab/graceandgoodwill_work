@@ -37,7 +37,7 @@ export default function PortalHeader({
       const cleanPath = url.startsWith("/") ? url : `/${url}`;
       finalUrl = `${baseUrl}${cleanPath}`;
     }
-    
+
     if (
       updatedAt &&
       !finalUrl.startsWith("blob:") &&
@@ -82,11 +82,15 @@ export default function PortalHeader({
             <p className="text-[10px] text-gold-100/60 truncate">{email}</p>
             <p className="text-[10px] text-gold-100/60 truncate">{phone}</p>
           </div>
-          {((profile as any)?.publicProfileId || (profile as any)?.user?.publicProfileId) && (
+          {((profile as any)?.publicProfileId ||
+            (profile as any)?.user?.publicProfileId) && (
             <div className="mt-2 flex items-center gap-1.5">
-              <span className="text-[10px] uppercase font-bold tracking-wider text-gold-300/70">Public Profile ID:</span>
+              <span className="text-[10px] uppercase font-bold tracking-wider text-gold-300/70">
+                Public Profile ID:
+              </span>
               <span className="text-xs font-mono font-bold text-gold-DEFAULT bg-gold/10 px-2.5 py-0.5 rounded border border-gold/20">
-                {(profile as any)?.publicProfileId || (profile as any)?.user?.publicProfileId}
+                {(profile as any)?.publicProfileId ||
+                  (profile as any)?.user?.publicProfileId}
               </span>
             </div>
           )}

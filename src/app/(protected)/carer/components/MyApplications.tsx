@@ -18,7 +18,7 @@ import {
 export default function MyApplications() {
   const dispatch = useAppDispatch();
   const { applications, applicationsLoading, error } = useAppSelector(
-    (state) => state.carer
+    (state) => state.carer,
   );
 
   useEffect(() => {
@@ -73,8 +73,8 @@ export default function MyApplications() {
   };
 
   // Only show active applications (not in history tab)
-  const activeApplications = applications.filter((app) => 
-    ["PENDING", "SELECTED"].includes(app.status?.toUpperCase() || "")
+  const activeApplications = applications.filter((app) =>
+    ["PENDING", "SELECTED"].includes(app.status?.toUpperCase() || ""),
   );
 
   if (applicationsLoading) {
@@ -125,8 +125,12 @@ export default function MyApplications() {
       {activeApplications.length === 0 ? (
         <div className="rounded-2xl border border-gold-300/10 p-12 text-center text-gold-100/50">
           <FileText className="w-12 h-12 mx-auto mb-4 opacity-40" />
-          <p className="text-sm font-medium">You haven't submitted any applications yet.</p>
-          <p className="text-xs mt-1 opacity-60">Check the Placement Opportunities tab to apply for jobs.</p>
+          <p className="text-sm font-medium">
+            You haven't submitted any applications yet.
+          </p>
+          <p className="text-xs mt-1 opacity-60">
+            Check the Placement Opportunities tab to apply for jobs.
+          </p>
         </div>
       ) : (
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
@@ -170,16 +174,20 @@ export default function MyApplications() {
 
                     <div className="flex items-center gap-2 text-gold-100/80">
                       <Calendar className="h-4 w-4 shrink-0 opacity-60 text-gold-300" />
-                      <span className="text-sm">Starts: {formatDate(req.startDate)}</span>
+                      <span className="text-sm">
+                        Starts: {formatDate(req.startDate)}
+                      </span>
                     </div>
 
                     {req.shiftType && (
                       <div className="flex items-center gap-2 text-gold-100/80">
                         <Clock className="h-4 w-4 shrink-0 opacity-60 text-gold-300" />
-                        <span className="text-sm capitalize">{req.shiftType}</span>
+                        <span className="text-sm capitalize">
+                          {req.shiftType}
+                        </span>
                       </div>
                     )}
-                    
+
                     {req.weeklyPayRange && (
                       <div className="flex items-center gap-2 text-gold-100/80">
                         <Briefcase className="h-4 w-4 shrink-0 opacity-60 text-gold-300" />
@@ -190,9 +198,9 @@ export default function MyApplications() {
                 </div>
 
                 <div className="mt-5 border-t border-gold-300/10 pt-4">
-                   <p className="text-xs text-gold-100/40">
-                     Applied on: {formatDate(app.createdAt)}
-                   </p>
+                  <p className="text-xs text-gold-100/40">
+                    Applied on: {formatDate(app.createdAt)}
+                  </p>
                 </div>
               </div>
             );

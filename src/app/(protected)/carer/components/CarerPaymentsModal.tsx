@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { X, CheckCircle, Calendar, DollarSign, Clock, AlertTriangle } from "lucide-react";
+import {
+  X,
+  CheckCircle,
+  Calendar,
+  DollarSign,
+  Clock,
+  AlertTriangle,
+} from "lucide-react";
 import { carerService } from "@/services/carer/carer.service";
 import { storageService } from "@/services/storage.service";
 
@@ -56,14 +63,16 @@ export const CarerPaymentsModal: React.FC<CarerPaymentsModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/80 backdrop-blur-sm">
       <div className="bg-navy-900 border border-gold-300/20 rounded-xl w-full max-w-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-        
         {/* Header */}
         <div className="px-6 py-4 border-b border-gold-300/20 flex justify-between items-center bg-navy-900/50">
           <h2 className="text-xl font-bold text-gold-200 flex items-center gap-2">
             <DollarSign className="w-5 h-5" />
             My Payment History
           </h2>
-          <button onClick={onClose} className="p-2 hover:bg-navy-800 rounded-lg text-gold-200/60 hover:text-gold-200 transition-colors">
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-navy-800 rounded-lg text-gold-200/60 hover:text-gold-200 transition-colors"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -89,27 +98,34 @@ export const CarerPaymentsModal: React.FC<CarerPaymentsModalProps> = ({
           ) : (
             <div className="space-y-4">
               {payments.map((payment) => (
-                <div key={payment.id} className="bg-navy-800/50 border border-gold-300/10 rounded-xl p-5 flex flex-col sm:flex-row gap-4 sm:gap-6 justify-between items-start sm:items-center hover:bg-navy-800/80 transition-colors">
-                  
+                <div
+                  key={payment.id}
+                  className="bg-navy-800/50 border border-gold-300/10 rounded-xl p-5 flex flex-col sm:flex-row gap-4 sm:gap-6 justify-between items-start sm:items-center hover:bg-navy-800/80 transition-colors"
+                >
                   <div className="space-y-2 flex-1">
                     <div className="flex items-center gap-3">
-                      <span className={`px-2.5 py-1 text-xs font-bold rounded-full ${
-                        payment.status === "PAID" 
-                          ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" 
-                          : "bg-amber-500/10 text-amber-400 border border-amber-500/20"
-                      }`}>
+                      <span
+                        className={`px-2.5 py-1 text-xs font-bold rounded-full ${
+                          payment.status === "PAID"
+                            ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                            : "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                        }`}
+                      >
                         {payment.status}
                       </span>
                       <span className="text-sm font-medium text-gold-100/60 flex items-center gap-1.5">
                         <Calendar className="w-4 h-4" />
-                        {formatDateRange(payment.periodStartDate, payment.periodEndDate)}
+                        {formatDateRange(
+                          payment.periodStartDate,
+                          payment.periodEndDate,
+                        )}
                       </span>
                     </div>
-                    
+
                     <div className="text-2xl font-bold text-gold-DEFAULT">
                       {formatAmount(payment.amount)}
                     </div>
-                    
+
                     {payment.status === "PAID" && payment.paidAt && (
                       <div className="text-xs text-emerald-400/70 flex items-center gap-1.5">
                         <CheckCircle className="w-3.5 h-3.5" />
@@ -126,14 +142,16 @@ export const CarerPaymentsModal: React.FC<CarerPaymentsModalProps> = ({
 
                   <div className="w-full sm:w-auto flex justify-end sm:justify-start border-t sm:border-t-0 border-gold-300/10 pt-4 sm:pt-0">
                     {payment.transactionProofUrl ? (
-                      <a 
+                      <a
                         href={payment.transactionProofUrl}
                         target="_blank"
                         rel="noreferrer"
                         onClick={async (e) => {
                           e.preventDefault();
                           if (payment.transactionProofUrl) {
-                            const url = await storageService.getPresignedUrl(payment.transactionProofUrl);
+                            const url = await storageService.getPresignedUrl(
+                              payment.transactionProofUrl,
+                            );
                             window.open(url, "_blank", "noopener,noreferrer");
                           }
                         }}
@@ -147,13 +165,11 @@ export const CarerPaymentsModal: React.FC<CarerPaymentsModalProps> = ({
                       </div>
                     ) : null}
                   </div>
-                  
                 </div>
               ))}
             </div>
           )}
         </div>
-
       </div>
     </div>
   );

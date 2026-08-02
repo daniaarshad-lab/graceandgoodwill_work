@@ -33,13 +33,13 @@ const PREDEFINED_RELATIONSHIPS = [
   "Next of Kin",
   "Friend",
   "Neighbour",
-  "Carer"
+  "Carer",
 ];
 
 const RELATIONSHIP_OPTIONS = [
   { value: "", label: "Select relationship" },
-  ...PREDEFINED_RELATIONSHIPS.map(r => ({ value: r, label: r })),
-  { value: "Other", label: "Other" }
+  ...PREDEFINED_RELATIONSHIPS.map((r) => ({ value: r, label: r })),
+  { value: "Other", label: "Other" },
 ];
 
 export default function StepPersonalInfo({ portal, onNext, onBack }: Props) {
@@ -69,10 +69,11 @@ export default function StepPersonalInfo({ portal, onNext, onBack }: Props) {
   const [postcodeSuggestions, setPostcodeSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  
+
   const [dropdownRel, setDropdownRel] = useState<string>(() => {
     if (!emergencyContactRelation) return "";
-    if (PREDEFINED_RELATIONSHIPS.includes(emergencyContactRelation)) return emergencyContactRelation;
+    if (PREDEFINED_RELATIONSHIPS.includes(emergencyContactRelation))
+      return emergencyContactRelation;
     return "Other";
   });
 
@@ -153,7 +154,7 @@ export default function StepPersonalInfo({ portal, onNext, onBack }: Props) {
 
     setErrors({});
 
-    const syntheticEvent = { preventDefault: () => { } } as React.FormEvent;
+    const syntheticEvent = { preventDefault: () => {} } as React.FormEvent;
     const success = await portal.handleSaveProfile(syntheticEvent, 2);
     if (success) {
       onNext();
@@ -369,7 +370,11 @@ export default function StepPersonalInfo({ portal, onNext, onBack }: Props) {
                   }
                 }}
                 options={RELATIONSHIP_OPTIONS}
-                error={dropdownRel !== "Other" ? errors.emergencyContactRelation : undefined}
+                error={
+                  dropdownRel !== "Other"
+                    ? errors.emergencyContactRelation
+                    : undefined
+                }
               />
 
               {dropdownRel === "Other" && (

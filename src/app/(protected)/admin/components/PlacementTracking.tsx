@@ -27,9 +27,16 @@ export default function PlacementTracking({
   refreshPlacements,
 }: PlacementTrackingProps) {
   const [filter, setFilter] = useState<
-    "All" | "PLACEMENT_STARTED" | "PLACEMENT_CONFIRMED" | "COMPLETED" | "ONGOING" | "CANCELLED"
+    | "All"
+    | "PLACEMENT_STARTED"
+    | "PLACEMENT_CONFIRMED"
+    | "COMPLETED"
+    | "ONGOING"
+    | "CANCELLED"
   >("All");
-  const [updatingStatusFor, setUpdatingStatusFor] = useState<string | null>(null);
+  const [updatingStatusFor, setUpdatingStatusFor] = useState<string | null>(
+    null,
+  );
   const [expandedPlacementId, setExpandedPlacementId] = useState<string | null>(
     null,
   );
@@ -37,12 +44,18 @@ export default function PlacementTracking({
     null,
   );
   const [selectedNewCarerId, setSelectedNewCarerId] = useState<string>("");
-  const [detailModalPlacementId, setDetailModalPlacementId] = useState<string | null>(null);
+  const [detailModalPlacementId, setDetailModalPlacementId] = useState<
+    string | null
+  >(null);
 
   // Placement Billing States
   const [billingDetails, setBillingDetails] = useState<Record<string, any>>({});
-  const [loadingBilling, setLoadingBilling] = useState<Record<string, boolean>>({});
-  const [updatingWeeklyFee, setUpdatingWeeklyFee] = useState<Record<string, number>>({});
+  const [loadingBilling, setLoadingBilling] = useState<Record<string, boolean>>(
+    {},
+  );
+  const [updatingWeeklyFee, setUpdatingWeeklyFee] = useState<
+    Record<string, number>
+  >({});
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -53,7 +66,10 @@ export default function PlacementTracking({
       const detail = await adminService.getPlacementBilling(placementId);
       setBillingDetails((prev) => ({ ...prev, [placementId]: detail }));
       if (detail && detail.weeklyFee) {
-        setUpdatingWeeklyFee((prev) => ({ ...prev, [placementId]: detail.weeklyFee }));
+        setUpdatingWeeklyFee((prev) => ({
+          ...prev,
+          [placementId]: detail.weeklyFee,
+        }));
       }
     } catch (err: any) {
       console.error("Failed to load placement billing details", err);
@@ -79,7 +95,10 @@ export default function PlacementTracking({
     try {
       await adminService.updatePlacementWeeklyFee(placementId, fee);
       setSuccessMessage("Weekly fee overridden successfully!");
-      showSuccessToast("Fee Saved", "Agreed weekly fee overridden successfully.");
+      showSuccessToast(
+        "Fee Saved",
+        "Agreed weekly fee overridden successfully.",
+      );
       await fetchPlacementBilling(placementId);
     } catch (err: any) {
       setErrorMessage(err.message || "Failed to update weekly fee.");
@@ -90,14 +109,22 @@ export default function PlacementTracking({
   };
 
   const handlePauseBilling = async (placementId: string) => {
-    if (!confirm("Are you sure you want to pause subscription billing collection for this placement?")) return;
+    if (
+      !confirm(
+        "Are you sure you want to pause subscription billing collection for this placement?",
+      )
+    )
+      return;
     setActionLoading(`pause-${placementId}`);
     setErrorMessage(null);
     setSuccessMessage(null);
     try {
       await adminService.pausePlacementBilling(placementId);
       setSuccessMessage("Recurring weekly billing collection paused.");
-      showSuccessToast("Billing Paused", "Recurring weekly billing collection paused.");
+      showSuccessToast(
+        "Billing Paused",
+        "Recurring weekly billing collection paused.",
+      );
       await fetchPlacementBilling(placementId);
     } catch (err: any) {
       setErrorMessage(err.message || "Failed to pause billing.");
@@ -114,7 +141,10 @@ export default function PlacementTracking({
     try {
       await adminService.resumePlacementBilling(placementId);
       setSuccessMessage("Recurring weekly billing collection resumed.");
-      showSuccessToast("Billing Resumed", "Recurring weekly billing collection resumed.");
+      showSuccessToast(
+        "Billing Resumed",
+        "Recurring weekly billing collection resumed.",
+      );
       await fetchPlacementBilling(placementId);
     } catch (err: any) {
       setErrorMessage(err.message || "Failed to resume billing.");
@@ -127,7 +157,7 @@ export default function PlacementTracking({
   const handleCancelPlacement = async (placementId: string) => {
     if (
       !confirm(
-        "Are you sure you want to cancel this care placement and weekly subscription? A final prorated invoice will be generated automatically for the active days since the last invoice."
+        "Are you sure you want to cancel this care placement and weekly subscription? A final prorated invoice will be generated automatically for the active days since the last invoice.",
       )
     )
       return;
@@ -135,9 +165,18 @@ export default function PlacementTracking({
     setErrorMessage(null);
     setSuccessMessage(null);
     try {
-      await adminService.updatePlacementStatus(placementId, "CANCELLED", new Date().toISOString());
-      setSuccessMessage(`Care placement and subscription cancelled successfully.`);
-      showSuccessToast("Placement Cancelled", "Care placement and subscription cancelled successfully.");
+      await adminService.updatePlacementStatus(
+        placementId,
+        "CANCELLED",
+        new Date().toISOString(),
+      );
+      setSuccessMessage(
+        `Care placement and subscription cancelled successfully.`,
+      );
+      showSuccessToast(
+        "Placement Cancelled",
+        "Care placement and subscription cancelled successfully.",
+      );
       await fetchPlacementBilling(placementId);
       if (refreshPlacements) {
         refreshPlacements();
@@ -150,21 +189,35 @@ export default function PlacementTracking({
     }
   };
 
-  const handleResendInvoice = async (invoiceId: string, placementId: string) => {
+  const handleResendInvoice = async (
+    invoiceId: string,
+    placementId: string,
+  ) => {
     setActionLoading(`resend-${invoiceId}`);
     try {
       await adminService.resendInvoice(invoiceId);
       showSuccessToast("Reminder Sent", "Payment reminder notification sent.");
       await fetchPlacementBilling(placementId);
     } catch (err: any) {
-      showErrorToast("Error", err.message || "Failed to send invoice reminder.");
+      showErrorToast(
+        "Error",
+        err.message || "Failed to send invoice reminder.",
+      );
     } finally {
       setActionLoading(null);
     }
   };
 
-  const handleRefundPayment = async (paymentId: string, placementId: string) => {
-    if (!confirm("Are you sure you want to issue a refund for this transaction? This action is irreversible.")) return;
+  const handleRefundPayment = async (
+    paymentId: string,
+    placementId: string,
+  ) => {
+    if (
+      !confirm(
+        "Are you sure you want to issue a refund for this transaction? This action is irreversible.",
+      )
+    )
+      return;
     setActionLoading(`refund-${paymentId}`);
     try {
       await adminService.refundPayment(paymentId);
@@ -177,12 +230,26 @@ export default function PlacementTracking({
     }
   };
 
-  const handlePrintInvoice = (inv: any, clientName: string, clientEmail: string, publicProfileId?: string) => {
+  const handlePrintInvoice = (
+    inv: any,
+    clientName: string,
+    clientEmail: string,
+    publicProfileId?: string,
+  ) => {
     const printWindow = window.open("", "_blank", "width=960,height=900");
     if (printWindow) {
-      const isReg = inv.invoiceNumber ? inv.invoiceNumber.startsWith("REG-") : inv.id.startsWith("REG-");
-      const logoUrl = typeof window !== "undefined" ? `${window.location.origin}/website_logo.png` : "/website_logo.png";
-      const publicId = publicProfileId || inv.client?.user?.publicProfileId || inv.client?.publicProfileId || "";
+      const isReg = inv.invoiceNumber
+        ? inv.invoiceNumber.startsWith("REG-")
+        : inv.id.startsWith("REG-");
+      const logoUrl =
+        typeof window !== "undefined"
+          ? `${window.location.origin}/website_logo.png`
+          : "/website_logo.png";
+      const publicId =
+        publicProfileId ||
+        inv.client?.user?.publicProfileId ||
+        inv.client?.publicProfileId ||
+        "";
 
       printWindow.document.write(`
         <html>
@@ -303,23 +370,24 @@ export default function PlacementTracking({
                 <tbody>
                   <tr>
                     <td>
-                      <strong>${isReg ? 'Lifetime Matching Platform Access' : 'Live-in Care Weekly Placement Service'}</strong><br/>
+                      <strong>${isReg ? "Lifetime Matching Platform Access" : "Live-in Care Weekly Placement Service"}</strong><br/>
                       <span style="font-size: 12px; color: #64748b;">
-                        ${isReg 
-                          ? 'One-off registration fee covering onboarding, profiling, and lifetime matched access.' 
-                          : `Weekly recurring placement cycle: ${new Date(inv.billingPeriodStart).toLocaleDateString()} to ${new Date(inv.billingPeriodEnd).toLocaleDateString()}`
+                        ${
+                          isReg
+                            ? "One-off registration fee covering onboarding, profiling, and lifetime matched access."
+                            : `Weekly recurring placement cycle: ${new Date(inv.billingPeriodStart).toLocaleDateString()} to ${new Date(inv.billingPeriodEnd).toLocaleDateString()}`
                         }
                       </span>
                     </td>
-                    <td style="text-align: right;">£${Number(inv.subtotal || (Number(inv.total || inv.amount) / 1.2)).toFixed(2)}</td>
-                    <td style="text-align: right;">£${Number(inv.vat || (Number(inv.total || inv.amount) - (Number(inv.total || inv.amount) / 1.2))).toFixed(2)}</td>
+                    <td style="text-align: right;">£${Number(inv.subtotal || Number(inv.total || inv.amount) / 1.2).toFixed(2)}</td>
+                    <td style="text-align: right;">£${Number(inv.vat || Number(inv.total || inv.amount) - Number(inv.total || inv.amount) / 1.2).toFixed(2)}</td>
                     <td style="text-align: right;">£${Number(inv.total || inv.amount).toFixed(2)}</td>
                   </tr>
                 </tbody>
               </table>
               <div class="totals-box">
-                <div class="total-row"><span>Subtotal</span><span>£${Number(inv.subtotal || (Number(inv.total || inv.amount) / 1.2)).toFixed(2)}</span></div>
-                <div class="total-row"><span>VAT (20%)</span><span>£${Number(inv.vat || (Number(inv.total || inv.amount) - (Number(inv.total || inv.amount) / 1.2))).toFixed(2)}</span></div>
+                <div class="total-row"><span>Subtotal</span><span>£${Number(inv.subtotal || Number(inv.total || inv.amount) / 1.2).toFixed(2)}</span></div>
+                <div class="total-row"><span>VAT (20%)</span><span>£${Number(inv.vat || Number(inv.total || inv.amount) - Number(inv.total || inv.amount) / 1.2).toFixed(2)}</span></div>
                 <div class="total-row grand-total"><span>Total Paid</span><span>£${Number(inv.total || inv.amount).toFixed(2)}</span></div>
               </div>
             </div>
@@ -333,11 +401,13 @@ export default function PlacementTracking({
   const getStatusBadge = (status: string) => {
     const statusMap: Record<string, string> = {
       ACTIVE: "bg-emerald-950/60 border border-emerald-500/30 text-emerald-400",
-      PAUSED: "bg-amber-950/60 border border-amber-500/30 text-amber-400 animate-pulse",
+      PAUSED:
+        "bg-amber-950/60 border border-amber-500/30 text-amber-400 animate-pulse",
       CANCELLED: "bg-red-950/60 border border-red-500/30 text-red-400",
       PAID: "bg-emerald-950/60 border border-emerald-500/30 text-emerald-400",
       PENDING: "bg-amber-950/60 border border-amber-500/30 text-amber-400",
-      FAILED: "bg-red-950/60 border border-red-500/30 text-red-400 animate-pulse",
+      FAILED:
+        "bg-red-950/60 border border-red-500/30 text-red-400 animate-pulse",
       OVERDUE: "bg-rose-950/60 border border-rose-500/30 text-rose-400",
       REFUNDED: "bg-slate-900 border border-slate-700 text-slate-400",
     };
@@ -358,7 +428,10 @@ export default function PlacementTracking({
     setUpdatingStatusFor(placementId);
     try {
       await adminService.updatePlacementStatus(placementId, newStatus);
-      showSuccessToast("Status Updated", "Placement status successfully updated.");
+      showSuccessToast(
+        "Status Updated",
+        "Placement status successfully updated.",
+      );
       if (refreshPlacements) {
         refreshPlacements();
       } else {
@@ -384,7 +457,7 @@ export default function PlacementTracking({
           </p>
         </div>
 
-        <div 
+        <div
           className="flex flex-nowrap items-center rounded-xl bg-navy-950 p-1 border border-gold-300/10 gap-1 max-w-full overflow-x-auto admin-placement-tabs"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
@@ -412,9 +485,7 @@ export default function PlacementTracking({
         </div>
       </div>
 
-      <div 
-        className="space-y-3 max-h-[60vh] overflow-y-auto pr-2 admin-placement-list-scroll"
-      >
+      <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-2 admin-placement-list-scroll">
         <style>{`
           .admin-placement-list-scroll::-webkit-scrollbar {
             width: 6px;
@@ -436,12 +507,17 @@ export default function PlacementTracking({
           const isReassigning = reassignPlacementId === place.id;
 
           return (
-            <div key={place.id} className="rounded-xl border border-gold-300/10 bg-navy-900/60 p-4 shadow-sm backdrop-blur-md transition-all duration-200 hover:border-gold-300/20 space-y-3">
+            <div
+              key={place.id}
+              className="rounded-xl border border-gold-300/10 bg-navy-900/60 p-4 shadow-sm backdrop-blur-md transition-all duration-200 hover:border-gold-300/20 space-y-3"
+            >
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
                 <div className="flex-1 min-w-0 pr-4">
                   <div className="flex items-center gap-4">
                     <div className="flex flex-col min-w-[120px] max-w-[200px]">
-                      <span className="text-[9px] uppercase tracking-widest text-gold-100/40 font-bold mb-0.5">Client</span>
+                      <span className="text-[9px] uppercase tracking-widest text-gold-100/40 font-bold mb-0.5">
+                        Client
+                      </span>
                       <Link
                         href={`/admin/clients/${place.clientId}`}
                         className="text-[15px] font-medium text-white hover:text-gold hover:underline transition duration-200 cursor-pointer truncate"
@@ -450,22 +526,29 @@ export default function PlacementTracking({
                         {place.clientName}
                       </Link>
                     </div>
-                    
+
                     <div className="flex items-center justify-center shrink-0 w-6 h-6 rounded-full bg-navy-950 border border-gold-300/10 mt-3">
                       <ArrowRight className="w-3 h-3 text-gold/40" />
                     </div>
 
                     <div className="flex flex-col min-w-[120px] max-w-[200px]">
-                      <span className="text-[9px] uppercase tracking-widest text-gold-100/40 font-bold mb-0.5">Assigned Carer</span>
-                      <h4 className="text-[15px] font-medium text-gold-200 truncate" title={place.carerName}>
+                      <span className="text-[9px] uppercase tracking-widest text-gold-100/40 font-bold mb-0.5">
+                        Assigned Carer
+                      </span>
+                      <h4
+                        className="text-[15px] font-medium text-gold-200 truncate"
+                        title={place.carerName}
+                      >
                         {place.carerName}
                       </h4>
                     </div>
                   </div>
                   <p className="text-sm text-gold-100/50 mt-1 truncate">
-                    {place.careType && (Array.isArray(place.careType) ? place.careType.join(", ") : place.careType) + " • "}
-                    {place.location} • Commenced:{" "}
-                    {place.startDate}
+                    {place.careType &&
+                      (Array.isArray(place.careType)
+                        ? place.careType.join(", ")
+                        : place.careType) + " • "}
+                    {place.location} • Commenced: {place.startDate}
                   </p>
                 </div>
 
@@ -473,7 +556,9 @@ export default function PlacementTracking({
                   <select
                     value={place.status}
                     disabled={updatingStatusFor === place.id}
-                    onChange={(e) => handleUpdateStatus(place.id, e.target.value)}
+                    onChange={(e) =>
+                      handleUpdateStatus(place.id, e.target.value)
+                    }
                     className="rounded-md border border-gold-300/20 bg-navy-950 px-2 py-1.5 text-xs font-bold text-gold-200 outline-none focus:border-gold-300/50 transition duration-300 cursor-pointer"
                   >
                     <option value="PLACEMENT_CONFIRMED">Matched</option>
@@ -506,44 +591,44 @@ export default function PlacementTracking({
               {isExpanded && (
                 <div className="space-y-5 bg-navy-950/40 p-4 rounded-xl border border-gold-300/5 transition duration-300 mt-2">
                   <div className="grid gap-4 md:grid-cols-2">
-                  <div className="space-y-3">
-                    <h5 className="text-[10px] font-bold uppercase tracking-wider text-gold-200/60">
-                      Chronological Milestone Audit
-                    </h5>
-                    <div className="flow-root">
-                      <ul className="-mb-8">
-                        {place.timeline.map((event, eventIdx) => (
-                          <li key={event.title}>
-                            <div className="relative pb-6">
-                              {eventIdx !== place.timeline.length - 1 ? (
-                                <span
-                                  className="absolute top-3 left-3 -ml-px h-full w-[1px] bg-gold-300/10"
-                                  aria-hidden="true"
-                                />
-                              ) : null}
-                              <div className="relative flex space-x-2">
-                                <div>
-                                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-navy-950 text-gold-DEFAULT border border-gold-300/10 text-[10px]">
-                                    ✓
-                                  </span>
-                                </div>
-                                <div className="flex-1 min-w-0 pt-1">
-                                  <p className="text-[11px] font-bold text-gold-200 leading-tight">
-                                    {event.title}
-                                  </p>
-                                  <p className="text-[9px] text-gold-100/40 mt-0.5">
-                                    {event.timestamp}
-                                  </p>
-                                  <p className="text-[10px] text-gold-100/60 italic mt-0.5">
-                                    &ldquo;{event.description}&rdquo;
-                                  </p>
+                    <div className="space-y-3">
+                      <h5 className="text-[10px] font-bold uppercase tracking-wider text-gold-200/60">
+                        Chronological Milestone Audit
+                      </h5>
+                      <div className="flow-root">
+                        <ul className="-mb-8">
+                          {place.timeline.map((event, eventIdx) => (
+                            <li key={event.title}>
+                              <div className="relative pb-6">
+                                {eventIdx !== place.timeline.length - 1 ? (
+                                  <span
+                                    className="absolute top-3 left-3 -ml-px h-full w-[1px] bg-gold-300/10"
+                                    aria-hidden="true"
+                                  />
+                                ) : null}
+                                <div className="relative flex space-x-2">
+                                  <div>
+                                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-navy-950 text-gold-DEFAULT border border-gold-300/10 text-[10px]">
+                                      ✓
+                                    </span>
+                                  </div>
+                                  <div className="flex-1 min-w-0 pt-1">
+                                    <p className="text-[11px] font-bold text-gold-200 leading-tight">
+                                      {event.title}
+                                    </p>
+                                    <p className="text-[9px] text-gold-100/40 mt-0.5">
+                                      {event.timestamp}
+                                    </p>
+                                    <p className="text-[10px] text-gold-100/60 italic mt-0.5">
+                                      &ldquo;{event.description}&rdquo;
+                                    </p>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     </div>
                   </div>
 
@@ -553,7 +638,9 @@ export default function PlacementTracking({
                       Placement Financial & Billing Overview
                     </h5>
                     {loadingBilling[place.id] ? (
-                      <p className="text-xs text-gold-100/50">Loading placement financial metrics...</p>
+                      <p className="text-xs text-gold-100/50">
+                        Loading placement financial metrics...
+                      </p>
                     ) : billingDetails[place.id] ? (
                       (() => {
                         const detail = billingDetails[place.id];
@@ -577,41 +664,83 @@ export default function PlacementTracking({
                             {/* Financial KPI Grid */}
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-navy-950 p-3 rounded-lg border border-gold-300/5 text-xs">
                               <div>
-                                <span className="text-[9px] text-gold-100/40 uppercase tracking-wider block mb-0.5">Agreed Weekly Fee</span>
-                                <span className="font-mono text-gold-100 text-sm font-bold">£{Number(detail.weeklyFee).toFixed(2)}</span>
+                                <span className="text-[9px] text-gold-100/40 uppercase tracking-wider block mb-0.5">
+                                  Agreed Weekly Fee
+                                </span>
+                                <span className="font-mono text-gold-100 text-sm font-bold">
+                                  £{Number(detail.weeklyFee).toFixed(2)}
+                                </span>
                               </div>
                               <div>
-                                <span className="text-[9px] text-gold-100/40 uppercase tracking-wider block mb-0.5">Daily Rate (Calc)</span>
-                                <span className="font-mono text-gold-100 text-sm">£{Number(detail.dailyRate).toFixed(2)}</span>
+                                <span className="text-[9px] text-gold-100/40 uppercase tracking-wider block mb-0.5">
+                                  Daily Rate (Calc)
+                                </span>
+                                <span className="font-mono text-gold-100 text-sm">
+                                  £{Number(detail.dailyRate).toFixed(2)}
+                                </span>
                               </div>
                               <div>
-                                <span className="text-[9px] text-gold-100/40 uppercase tracking-wider block mb-0.5">Billing Frequency</span>
-                                <span className="text-slate-300 text-sm font-medium">{detail.billingFrequency}</span>
+                                <span className="text-[9px] text-gold-100/40 uppercase tracking-wider block mb-0.5">
+                                  Billing Frequency
+                                </span>
+                                <span className="text-slate-300 text-sm font-medium">
+                                  {detail.billingFrequency}
+                                </span>
                               </div>
                               <div>
-                                <span className="text-[9px] text-gold-100/40 uppercase tracking-wider block mb-0.5">Outstanding Balance</span>
-                                <span className="font-mono text-rose-400 text-sm font-bold">£{Number(detail.outstandingBalance).toFixed(2)}</span>
+                                <span className="text-[9px] text-gold-100/40 uppercase tracking-wider block mb-0.5">
+                                  Outstanding Balance
+                                </span>
+                                <span className="font-mono text-rose-400 text-sm font-bold">
+                                  £
+                                  {Number(detail.outstandingBalance).toFixed(2)}
+                                </span>
                               </div>
                             </div>
 
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-navy-950 p-3 rounded-lg border border-gold-300/5 text-xs">
                               <div>
-                                <span className="text-[9px] text-gold-100/40 uppercase tracking-wider block mb-0.5">Platform Fee Status</span>
-                                <span className={`text-[10px] font-bold ${detail.isLifetimeFeePaid ? "text-emerald-400" : "text-amber-500"}`}>
-                                  {detail.isLifetimeFeePaid ? "Paid & Confirmed" : "Pending Payment"}
+                                <span className="text-[9px] text-gold-100/40 uppercase tracking-wider block mb-0.5">
+                                  Platform Fee Status
+                                </span>
+                                <span
+                                  className={`text-[10px] font-bold ${detail.isLifetimeFeePaid ? "text-emerald-400" : "text-amber-500"}`}
+                                >
+                                  {detail.isLifetimeFeePaid
+                                    ? "Paid & Confirmed"
+                                    : "Pending Payment"}
                                 </span>
                               </div>
                               <div>
-                                <span className="text-[9px] text-gold-100/40 uppercase tracking-wider block mb-0.5">Subscription Status</span>
-                                <span className="text-slate-350 text-[10px] font-medium">{detail.billingStatus || "Unsubscribed"}</span>
+                                <span className="text-[9px] text-gold-100/40 uppercase tracking-wider block mb-0.5">
+                                  Subscription Status
+                                </span>
+                                <span className="text-slate-350 text-[10px] font-medium">
+                                  {detail.billingStatus || "Unsubscribed"}
+                                </span>
                               </div>
                               <div>
-                                <span className="text-[9px] text-gold-100/40 uppercase tracking-wider block mb-0.5">Next Billing Cycle</span>
-                                <span className="text-slate-350 font-mono text-[10px]">{detail.nextBillingDate ? new Date(detail.nextBillingDate).toLocaleDateString() : "N/A"}</span>
+                                <span className="text-[9px] text-gold-100/40 uppercase tracking-wider block mb-0.5">
+                                  Next Billing Cycle
+                                </span>
+                                <span className="text-slate-350 font-mono text-[10px]">
+                                  {detail.nextBillingDate
+                                    ? new Date(
+                                        detail.nextBillingDate,
+                                      ).toLocaleDateString()
+                                    : "N/A"}
+                                </span>
                               </div>
                               <div>
-                                <span className="text-[9px] text-gold-100/40 uppercase tracking-wider block mb-0.5">Subscription ID</span>
-                                <span className="text-slate-400 text-[9px] font-mono">{detail.stripeSubscriptionId ? detail.stripeSubscriptionId.slice(0, 15) + "..." : "None"}</span>
+                                <span className="text-[9px] text-gold-100/40 uppercase tracking-wider block mb-0.5">
+                                  Subscription ID
+                                </span>
+                                <span className="text-slate-400 text-[9px] font-mono">
+                                  {detail.stripeSubscriptionId
+                                    ? detail.stripeSubscriptionId.slice(0, 15) +
+                                      "..."
+                                    : "None"}
+                                </span>
                               </div>
                             </div>
 
@@ -629,16 +758,21 @@ export default function PlacementTracking({
                                 )}
                                 {detail.billingStatus === "PAUSED" && (
                                   <button
-                                    onClick={() => handleResumeBilling(place.id)}
+                                    onClick={() =>
+                                      handleResumeBilling(place.id)
+                                    }
                                     disabled={actionLoading !== null}
                                     className="bg-emerald-950/40 hover:bg-emerald-900/40 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded text-[10px] font-semibold transition"
                                   >
                                     Resume Billing
                                   </button>
                                 )}
-                                {(place.status === "PLACEMENT_STARTED" || place.status === "ONGOING") && (
+                                {(place.status === "PLACEMENT_STARTED" ||
+                                  place.status === "ONGOING") && (
                                   <button
-                                    onClick={() => handleCancelPlacement(place.id)}
+                                    onClick={() =>
+                                      handleCancelPlacement(place.id)
+                                    }
                                     disabled={actionLoading !== null}
                                     className="bg-rose-950/40 hover:bg-rose-900/40 text-rose-400 border border-rose-500/20 px-3 py-1 rounded text-[10px] font-semibold transition"
                                   >
@@ -650,59 +784,148 @@ export default function PlacementTracking({
 
                             {/* Placement Invoice History Table */}
                             <div className="space-y-2 mt-4">
-                              <span className="text-[9px] text-gold-100/50 uppercase tracking-widest font-bold block mb-1">Generated Placement Invoices</span>
+                              <span className="text-[9px] text-gold-100/50 uppercase tracking-widest font-bold block mb-1">
+                                Generated Placement Invoices
+                              </span>
                               {invoicesList.length === 0 ? (
-                                <p className="text-[10px] text-gold-100/30 py-2 bg-navy-950/30 rounded-lg text-center">No statements generated for this placement yet.</p>
+                                <p className="text-[10px] text-gold-100/30 py-2 bg-navy-950/30 rounded-lg text-center">
+                                  No statements generated for this placement
+                                  yet.
+                                </p>
                               ) : (
                                 <div className="overflow-x-auto rounded-lg border border-gold-300/5 bg-navy-950/20">
                                   <table className="w-full text-left border-collapse text-[10px] text-slate-350">
                                     <thead>
                                       <tr className="border-b border-gold-300/10 bg-navy-950/50 text-[9px] uppercase font-bold text-gold-200">
-                                        <th className="py-2 px-2">Invoice ID</th>
+                                        <th className="py-2 px-2">
+                                          Invoice ID
+                                        </th>
                                         <th className="py-2 px-2">Period</th>
                                         <th className="py-2 px-2">Subtotal</th>
                                         <th className="py-2 px-2">VAT (20%)</th>
                                         <th className="py-2 px-2">Total</th>
-                                        <th className="py-2 px-2 text-center">Status</th>
-                                        <th className="py-2 px-2 text-right">Actions</th>
+                                        <th className="py-2 px-2 text-center">
+                                          Status
+                                        </th>
+                                        <th className="py-2 px-2 text-right">
+                                          Actions
+                                        </th>
                                       </tr>
                                     </thead>
                                     <tbody>
                                       {invoicesList.map((inv: any) => {
-                                        const payment = inv.payments?.find((p: any) => p.status === "Paid");
+                                        const payment = inv.payments?.find(
+                                          (p: any) => p.status === "Paid",
+                                        );
                                         const isPaid = inv.status === "PAID";
-                                        
+
                                         return (
-                                          <tr key={inv.id} className="border-b border-gold-300/5 hover:bg-navy-900/20 transition-colors">
-                                            <td className="py-2 px-2 font-mono font-semibold text-white">{inv.invoiceNumber || inv.id}</td>
-                                            <td className="py-2 px-2 text-slate-400">
-                                              {inv.billingPeriodStart ? `${new Date(inv.billingPeriodStart).toLocaleDateString()} - ${new Date(inv.billingPeriodEnd).toLocaleDateString()}` : "Onboarding Access"}
+                                          <tr
+                                            key={inv.id}
+                                            className="border-b border-gold-300/5 hover:bg-navy-900/20 transition-colors"
+                                          >
+                                            <td className="py-2 px-2 font-mono font-semibold text-white">
+                                              {inv.invoiceNumber || inv.id}
                                             </td>
-                                            <td className="py-2 px-2 font-mono">£{Number(inv.subtotal || (Number(inv.total || inv.amount) / 1.2)).toFixed(2)}</td>
-                                            <td className="py-2 px-2 font-mono">£{Number(inv.vat || (Number(inv.total || inv.amount) - (Number(inv.total || inv.amount) / 1.2))).toFixed(2)}</td>
-                                            <td className="py-2 px-2 font-mono font-semibold text-gold-DEFAULT">£{Number(inv.total || inv.amount).toFixed(2)}</td>
+                                            <td className="py-2 px-2 text-slate-400">
+                                              {inv.billingPeriodStart
+                                                ? `${new Date(inv.billingPeriodStart).toLocaleDateString()} - ${new Date(inv.billingPeriodEnd).toLocaleDateString()}`
+                                                : "Onboarding Access"}
+                                            </td>
+                                            <td className="py-2 px-2 font-mono">
+                                              £
+                                              {Number(
+                                                inv.subtotal ||
+                                                  Number(
+                                                    inv.total || inv.amount,
+                                                  ) / 1.2,
+                                              ).toFixed(2)}
+                                            </td>
+                                            <td className="py-2 px-2 font-mono">
+                                              £
+                                              {Number(
+                                                inv.vat ||
+                                                  Number(
+                                                    inv.total || inv.amount,
+                                                  ) -
+                                                    Number(
+                                                      inv.total || inv.amount,
+                                                    ) /
+                                                      1.2,
+                                              ).toFixed(2)}
+                                            </td>
+                                            <td className="py-2 px-2 font-mono font-semibold text-gold-DEFAULT">
+                                              £
+                                              {Number(
+                                                inv.total || inv.amount,
+                                              ).toFixed(2)}
+                                            </td>
                                             <td className="py-2 px-2 text-center">
-                                              <span className={`inline-flex px-1.5 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-wider ${
-                                                inv.status === "PAID" 
-                                                  ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                                                  : inv.status === "PENDING"
-                                                    ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
-                                                    : "bg-rose-500/10 text-rose-400 border border-rose-500/20"
-                                              }`}>
+                                              <span
+                                                className={`inline-flex px-1.5 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-wider ${
+                                                  inv.status === "PAID"
+                                                    ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                                                    : inv.status === "PENDING"
+                                                      ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                                                      : "bg-rose-500/10 text-rose-400 border border-rose-500/20"
+                                                }`}
+                                              >
                                                 {inv.status}
                                               </span>
                                             </td>
                                             <td className="py-2 px-2 text-right">
                                               <div className="flex justify-end items-center gap-2">
                                                 {inv.pdfUrl && (
-                                                  <a href={inv.pdfUrl} target="_blank" rel="noreferrer" className="text-gold-DEFAULT hover:underline font-bold text-[9px]">PDF</a>
+                                                  <a
+                                                    href={inv.pdfUrl}
+                                                    target="_blank"
+                                                    rel="noreferrer"
+                                                    className="text-gold-DEFAULT hover:underline font-bold text-[9px]"
+                                                  >
+                                                    PDF
+                                                  </a>
                                                 )}
-                                                <button onClick={() => handlePrintInvoice(inv, clientName, clientEmail, detail.client?.user?.publicProfileId || detail.client?.publicProfileId)} className="text-gold-DEFAULT hover:underline font-bold text-[9px]">Print</button>
+                                                <button
+                                                  onClick={() =>
+                                                    handlePrintInvoice(
+                                                      inv,
+                                                      clientName,
+                                                      clientEmail,
+                                                      detail.client?.user
+                                                        ?.publicProfileId ||
+                                                        detail.client
+                                                          ?.publicProfileId,
+                                                    )
+                                                  }
+                                                  className="text-gold-DEFAULT hover:underline font-bold text-[9px]"
+                                                >
+                                                  Print
+                                                </button>
                                                 {inv.status !== "PAID" && (
-                                                  <button onClick={() => handleResendInvoice(inv.id, place.id)} className="text-gold-200/60 hover:text-gold-DEFAULT hover:underline font-bold text-[9px]">Remind</button>
+                                                  <button
+                                                    onClick={() =>
+                                                      handleResendInvoice(
+                                                        inv.id,
+                                                        place.id,
+                                                      )
+                                                    }
+                                                    className="text-gold-200/60 hover:text-gold-DEFAULT hover:underline font-bold text-[9px]"
+                                                  >
+                                                    Remind
+                                                  </button>
                                                 )}
                                                 {isPaid && payment && (
-                                                  <button onClick={() => handleRefundPayment(payment.id, place.id)} className="text-red-400 hover:underline font-bold text-[9px]">Refund</button>
+                                                  <button
+                                                    onClick={() =>
+                                                      handleRefundPayment(
+                                                        payment.id,
+                                                        place.id,
+                                                      )
+                                                    }
+                                                    className="text-red-400 hover:underline font-bold text-[9px]"
+                                                  >
+                                                    Refund
+                                                  </button>
                                                 )}
                                               </div>
                                             </td>
@@ -718,7 +941,9 @@ export default function PlacementTracking({
                         );
                       })()
                     ) : (
-                      <p className="text-xs text-gold-100/30">No billing information found for this placement.</p>
+                      <p className="text-xs text-gold-100/30">
+                        No billing information found for this placement.
+                      </p>
                     )}
                   </div>
 
@@ -733,15 +958,20 @@ export default function PlacementTracking({
                       Critical Placement Tools
                     </p>
 
-                    {place.status?.toUpperCase() === "PLACEMENT_STARTED" || place.status?.toUpperCase() === "ONGOING" ? (
+                    {place.status?.toUpperCase() === "PLACEMENT_STARTED" ||
+                    place.status?.toUpperCase() === "ONGOING" ? (
                       isReassigning ? (
                         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0">
                           <select
                             value={selectedNewCarerId}
-                            onChange={(e) => setSelectedNewCarerId(e.target.value)}
+                            onChange={(e) =>
+                              setSelectedNewCarerId(e.target.value)
+                            }
                             className="w-full sm:w-auto rounded bg-navy-950 border border-gold-300/10 px-2 py-1.5 text-[10px] text-gold-200 focus:outline-none"
                           >
-                            <option value="">Select Replacement Carer...</option>
+                            <option value="">
+                              Select Replacement Carer...
+                            </option>
                             {approvedCarers
                               .filter((c) => c.id !== place.carerId)
                               .map((c) => (

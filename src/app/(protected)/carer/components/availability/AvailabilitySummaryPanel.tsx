@@ -16,9 +16,7 @@ interface AvailabilitySummaryPanelProps {
   onEditRange: (id: string) => void;
   onRemoveRange: (id: string) => void;
   onSave: () => void;
-  onQuickAction: (
-    action: "next2" | "next7" | "next30" | "clear",
-  ) => void;
+  onQuickAction: (action: "next2" | "next7" | "next30" | "clear") => void;
   isSaving: boolean;
   hasChanges: boolean;
   isValid: boolean;
@@ -35,7 +33,6 @@ export default function AvailabilitySummaryPanel({
   hasChanges,
   isValid,
 }: AvailabilitySummaryPanelProps) {
-
   const isEmpty = ranges.length === 0;
 
   return (
@@ -129,13 +126,19 @@ export default function AvailabilitySummaryPanel({
                 key={range.id}
                 className={`group flex items-center justify-between px-3 py-3
                   rounded-xl border transition-all duration-200
-                  ${isEditing 
-                    ? "border-gold-300/40 bg-navy-900/60 shadow-[0_0_15px_rgba(212,175,55,0.15)] ring-1 ring-gold-500/20" 
-                    : "border-gold-300/8 bg-navy-950/30 hover:border-gold-300/20 hover:bg-navy-950/50"}`}
+                  ${
+                    isEditing
+                      ? "border-gold-300/40 bg-navy-900/60 shadow-[0_0_15px_rgba(212,175,55,0.15)] ring-1 ring-gold-500/20"
+                      : "border-gold-300/8 bg-navy-950/30 hover:border-gold-300/20 hover:bg-navy-950/50"
+                  }`}
               >
                 <div className="flex items-center gap-2.5 min-w-0">
-                  <span className={`flex-shrink-0 w-2.5 h-2.5 rounded-full ${rangeColor.dotClass}`} />
-                  <span className={`text-[13px] font-medium truncate ${isEditing ? "text-gold-50" : "text-gold-100/90"}`}>
+                  <span
+                    className={`flex-shrink-0 w-2.5 h-2.5 rounded-full ${rangeColor.dotClass}`}
+                  />
+                  <span
+                    className={`text-[13px] font-medium truncate ${isEditing ? "text-gold-50" : "text-gold-100/90"}`}
+                  >
                     {formatRangeDisplay(range)}
                   </span>
                 </div>
@@ -144,9 +147,11 @@ export default function AvailabilitySummaryPanel({
                     type="button"
                     onClick={() => onEditRange(range.id)}
                     className={`flex-shrink-0 p-1.5 rounded-lg transition-all duration-200
-                      ${isEditing 
-                        ? "text-gold-300 bg-gold-400/10" 
-                        : "text-gold-100/40 hover:text-gold-200 hover:bg-gold-400/10"}`}
+                      ${
+                        isEditing
+                          ? "text-gold-300 bg-gold-400/10"
+                          : "text-gold-100/40 hover:text-gold-200 hover:bg-gold-400/10"
+                      }`}
                     aria-label={`Edit range ${idx + 1}`}
                   >
                     <Pencil className="w-3.5 h-3.5" />
@@ -179,9 +184,10 @@ export default function AvailabilitySummaryPanel({
             outline-none cursor-pointer
             focus:ring-2 focus:ring-gold-muted/50 focus:ring-offset-2 focus:ring-offset-navy-950
             disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0
-            ${hasChanges && !isSaving && isValid
-              ? "bg-[#b59469] text-navy-950 hover:bg-[#c9a87d] hover:-translate-y-[1px] hover:shadow-[0_8px_30px_rgba(160,128,84,0.24)] active:translate-y-0 active:shadow-none"
-              : "bg-gold-muted/15 text-gold-100/50 border border-gold-muted/20"
+            ${
+              hasChanges && !isSaving && isValid
+                ? "bg-[#b59469] text-navy-950 hover:bg-[#c9a87d] hover:-translate-y-[1px] hover:shadow-[0_8px_30px_rgba(160,128,84,0.24)] active:translate-y-0 active:shadow-none"
+                : "bg-gold-muted/15 text-gold-100/50 border border-gold-muted/20"
             }`}
         >
           {isSaving ? (

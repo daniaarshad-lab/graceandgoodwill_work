@@ -27,7 +27,6 @@ const ALL_ACCEPTED: CookiePreferences = {
   marketing: true,
 };
 
-
 function loadConsent(): CookiePreferences | null {
   if (typeof window === "undefined") return null;
   try {
@@ -43,7 +42,6 @@ function saveConsent(prefs: CookiePreferences) {
   if (typeof window === "undefined") return;
   localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
 }
-
 
 export default function CookieConsentBanner() {
   const pathname = usePathname();
@@ -73,10 +71,16 @@ export default function CookieConsentBanner() {
       setShowModal(true);
     };
 
-    window.addEventListener("gg:open-cookie-preferences", handleOpenPreferences);
-    return () => window.removeEventListener("gg:open-cookie-preferences", handleOpenPreferences);
+    window.addEventListener(
+      "gg:open-cookie-preferences",
+      handleOpenPreferences,
+    );
+    return () =>
+      window.removeEventListener(
+        "gg:open-cookie-preferences",
+        handleOpenPreferences,
+      );
   }, []);
-
 
   const handleAcceptAll = useCallback(() => {
     saveConsent(ALL_ACCEPTED);
@@ -292,9 +296,7 @@ export default function CookieConsentBanner() {
                   title="Functional Cookies"
                   description="Remember your preferences and improve your experience."
                   checked={prefs.functional}
-                  onChange={(v) =>
-                    setPrefs((p) => ({ ...p, functional: v }))
-                  }
+                  onChange={(v) => setPrefs((p) => ({ ...p, functional: v }))}
                 />
 
                 {/* ── 3. Analytics ──────────────────────────────────────── */}
@@ -302,9 +304,7 @@ export default function CookieConsentBanner() {
                   title="Analytics Cookies"
                   description="Help us understand how visitors use our website so we can improve it."
                   checked={prefs.analytics}
-                  onChange={(v) =>
-                    setPrefs((p) => ({ ...p, analytics: v }))
-                  }
+                  onChange={(v) => setPrefs((p) => ({ ...p, analytics: v }))}
                 />
 
                 {/* ── 4. Marketing ──────────────────────────────────────── */}
@@ -312,9 +312,7 @@ export default function CookieConsentBanner() {
                   title="Marketing Cookies"
                   description="Used to measure marketing performance and, where applicable, provide more relevant content."
                   checked={prefs.marketing}
-                  onChange={(v) =>
-                    setPrefs((p) => ({ ...p, marketing: v }))
-                  }
+                  onChange={(v) => setPrefs((p) => ({ ...p, marketing: v }))}
                 />
               </div>
             </div>
@@ -390,9 +388,7 @@ function CookieCategory({
     <div className="rounded-xl bg-navy-950/50 border border-gold-muted/12 p-4 transition-colors duration-200 hover:border-gold-muted/20">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
-          <h3 className="text-sm font-semibold text-gold-100 mb-1">
-            {title}
-          </h3>
+          <h3 className="text-sm font-semibold text-gold-100 mb-1">{title}</h3>
           <p className="text-xs text-gold-200/50 leading-relaxed">
             {description}
           </p>
@@ -403,10 +399,7 @@ function CookieCategory({
               Always Active
             </span>
           ) : (
-            <Toggle
-              checked={checked}
-              onChange={(v) => onChange?.(v)}
-            />
+            <Toggle checked={checked} onChange={(v) => onChange?.(v)} />
           )}
         </div>
       </div>

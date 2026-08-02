@@ -88,7 +88,9 @@ export default function EmergencyCases({
                     Care Specifications
                   </p>
                   <p className="mt-1 text-xs text-gold-200 font-medium font-mono">
-                    {Array.isArray(req.careType) ? req.careType.join(", ") : req.careType}
+                    {Array.isArray(req.careType)
+                      ? req.careType.join(", ")
+                      : req.careType}
                   </p>
 
                   <p className="mt-3 text-xs text-gold-100/70 italic bg-navy-950/40 p-2.5 rounded-lg border border-gold-300/5 line-clamp-3">
@@ -147,7 +149,11 @@ export default function EmergencyCases({
                         {reqObj.clientName}
                       </p>
                       <p className="text-xs text-gold-100/40">
-                        Requires: {Array.isArray(reqObj.careType) ? reqObj.careType.join(", ") : reqObj.careType} in {reqObj.location}
+                        Requires:{" "}
+                        {Array.isArray(reqObj.careType)
+                          ? reqObj.careType.join(", ")
+                          : reqObj.careType}{" "}
+                        in {reqObj.location}
                       </p>
                     </div>
 

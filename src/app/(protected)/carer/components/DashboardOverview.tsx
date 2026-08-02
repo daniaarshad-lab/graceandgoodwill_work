@@ -53,10 +53,7 @@ export default function DashboardOverview({
             <StatusBadge status={applicationStatus} />
           </div>
         </div>
-
-
       </SectionCard>
-
 
       {/* Profile completeness Quick Stats widget */}
       <SectionCard className="space-y-4">
@@ -114,7 +111,9 @@ export default function DashboardOverview({
                       Rejected: {doc.name}
                     </p>
                     <p className="text-xs text-gold-100/70">
-                      Reason : {doc.rejectionReason || "Please upload a new version for verification."}
+                      Reason :{" "}
+                      {doc.rejectionReason ||
+                        "Please upload a new version for verification."}
                     </p>
                   </div>
                 </div>
@@ -129,7 +128,9 @@ export default function DashboardOverview({
           ) : (
             <div className="flex flex-col items-center justify-center p-8 rounded-xl border border-gold-300/10 bg-navy-950/20 text-center">
               <span className="h-2 w-2 rounded-full bg-emerald-400 mb-2" />
-              <p className="text-xs font-bold text-gold-200">No Action Required</p>
+              <p className="text-xs font-bold text-gold-200">
+                No Action Required
+              </p>
               <p className="text-[11px] text-gold-100/50 mt-1">
                 All compliance documents are current and in order.
               </p>

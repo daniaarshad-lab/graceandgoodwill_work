@@ -178,9 +178,7 @@ export default function AdminOverview({
       <div className="grid gap-8 lg:grid-cols-3 items-stretch">
         {/* Left 2 Columns: Live Activities Log */}
         <div className="lg:col-span-2">
-          <SectionCard
-            className="flex flex-col h-auto lg:h-[450px] lg:min-h-[450px] lg:max-h-[450px] overflow-hidden"
-          >
+          <SectionCard className="flex flex-col h-auto lg:h-[450px] lg:min-h-[450px] lg:max-h-[450px] overflow-hidden">
             {/* Fixed header */}
             <div className="mb-6 flex items-center justify-between flex-shrink-0">
               <div>
@@ -193,10 +191,11 @@ export default function AdminOverview({
               </div>
               <button
                 onClick={() => setIsLiveActive(!isLiveActive)}
-                className={`flex items-center space-x-2 rounded-full px-3 py-1 text-xs font-semibold border transition duration-300 cursor-pointer ${isLiveActive
-                  ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20"
-                  : "bg-amber-500/10 text-amber-500 border-amber-500/30 hover:bg-amber-500/20"
-                  }`}
+                className={`flex items-center space-x-2 rounded-full px-3 py-1 text-xs font-semibold border transition duration-300 cursor-pointer ${
+                  isLiveActive
+                    ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20"
+                    : "bg-amber-500/10 text-amber-500 border-amber-500/30 hover:bg-amber-500/20"
+                }`}
               >
                 <span className="relative flex h-2 w-2">
                   {isLiveActive && (
@@ -213,7 +212,10 @@ export default function AdminOverview({
             {/* Scrollable events list */}
             <div
               className="flex-1 min-h-0 overflow-y-auto pr-1"
-              style={{ scrollbarWidth: "thin", scrollbarColor: "rgba(160,128,84,0.18) transparent" }}
+              style={{
+                scrollbarWidth: "thin",
+                scrollbarColor: "rgba(160,128,84,0.18) transparent",
+              }}
             >
               <style>{`
                 .events-scroll::-webkit-scrollbar { width: 4px; }
@@ -263,9 +265,7 @@ export default function AdminOverview({
 
         {/* Right 1 Column: Direct Shortcuts */}
         <div>
-          <SectionCard
-            className="flex flex-col space-y-6 h-auto lg:h-[450px] lg:min-h-[450px] lg:max-h-[450px]"
-          >
+          <SectionCard className="flex flex-col space-y-6 h-auto lg:h-[450px] lg:min-h-[450px] lg:max-h-[450px]">
             <div>
               <h3 className="text-lg font-bold text-gold-200">
                 Placement Action Board

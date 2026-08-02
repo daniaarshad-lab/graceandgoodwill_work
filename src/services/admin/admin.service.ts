@@ -1,7 +1,6 @@
 import { apiFetch } from "@/lib/api";
 import { AdminDashboardStats } from "@/types/admin.types";
 import {
-  AdminActivity,
   InternalNote,
   CreateInternalNotePayload,
   UpdateInternalNotePayload,
@@ -29,8 +28,17 @@ export const adminService = {
     });
   },
 
-  async getInternalNotes(params: GetInternalNotesParams): Promise<{ items: InternalNote[]; total: number; page: number; limit: number; totalPages: number }> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+  async getInternalNotes(params: GetInternalNotesParams): Promise<{
+    items: InternalNote[];
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  }> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
 
     const queryParams = new URLSearchParams();
@@ -38,10 +46,14 @@ export const adminService = {
     if (params.status) queryParams.append("status", params.status);
     if (params.priority) queryParams.append("priority", params.priority);
     if (params.category) queryParams.append("category", params.category);
-    if (params.isPinned !== undefined) queryParams.append("isPinned", String(params.isPinned));
-    if (params.carerProfileId) queryParams.append("carerProfileId", params.carerProfileId);
-    if (params.clientProfileId) queryParams.append("clientProfileId", params.clientProfileId);
-    if (params.placementId) queryParams.append("placementId", params.placementId);
+    if (params.isPinned !== undefined)
+      queryParams.append("isPinned", String(params.isPinned));
+    if (params.carerProfileId)
+      queryParams.append("carerProfileId", params.carerProfileId);
+    if (params.clientProfileId)
+      queryParams.append("clientProfileId", params.clientProfileId);
+    if (params.placementId)
+      queryParams.append("placementId", params.placementId);
     if (params.page) queryParams.append("page", String(params.page));
     if (params.limit) queryParams.append("limit", String(params.limit));
 
@@ -54,7 +66,10 @@ export const adminService = {
   },
 
   async getInternalNote(id: string): Promise<InternalNote> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
     return apiFetch(`/admin/internal-notes/${id}`, {
       method: "GET",
@@ -62,8 +77,13 @@ export const adminService = {
     });
   },
 
-  async addInternalNote(payload: CreateInternalNotePayload): Promise<InternalNote> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+  async addInternalNote(
+    payload: CreateInternalNotePayload,
+  ): Promise<InternalNote> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
     return apiFetch(`/admin/internal-notes`, {
       method: "POST",
@@ -72,8 +92,14 @@ export const adminService = {
     });
   },
 
-  async updateInternalNote(id: string, payload: UpdateInternalNotePayload): Promise<InternalNote> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+  async updateInternalNote(
+    id: string,
+    payload: UpdateInternalNotePayload,
+  ): Promise<InternalNote> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
     return apiFetch(`/admin/internal-notes/${id}`, {
       method: "PATCH",
@@ -82,8 +108,14 @@ export const adminService = {
     });
   },
 
-  async addInternalNoteAttachment(id: string, file: File): Promise<InternalNote> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+  async addInternalNoteAttachment(
+    id: string,
+    file: File,
+  ): Promise<InternalNote> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
 
     const formData = new FormData();
@@ -99,7 +131,10 @@ export const adminService = {
   },
 
   async getInternalNoteHistory(id: string): Promise<InternalNoteHistory[]> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
     return apiFetch(`/admin/internal-notes/${id}/history`, {
       method: "GET",
@@ -109,7 +144,10 @@ export const adminService = {
 
   /** GET /admin/profile-updates — get all pending profile update requests */
   async getProfileUpdateRequests(): Promise<any[]> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
 
     return apiFetch("/admin/profile-updates", {
@@ -122,9 +160,12 @@ export const adminService = {
   async updateProfileUpdateRequestStatus(
     id: string,
     status: "APPROVED" | "REJECTED",
-    rejectionReason?: string
+    rejectionReason?: string,
   ): Promise<any> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
 
     const body: { status: string; rejectionReason?: string } = { status };
@@ -137,25 +178,6 @@ export const adminService = {
       headers: { Authorization: `Bearer ${token}` },
       body: JSON.stringify(body),
     });
-  },
-
-  async getEmergencyCareRequests(
-    page: number = 1,
-    limit: number = 10,
-    status: string = "ALL",
-  ): Promise<any> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
-    if (!token) throw new Error("No token found");
-
-    return apiFetch(
-      `/admin/emergency-care-requests?page=${page}&limit=${limit}&status=${status}`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      },
-    );
   },
 
   async getCarers(
@@ -250,18 +272,21 @@ export const adminService = {
       page: page.toString(),
       limit: limit.toString(),
     });
-    
+
     if (status && status !== "ALL") {
       query.append("status", status);
     }
 
-    const response = await apiFetch(`/admin/emergency-care-requests?${query.toString()}`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
+    const response = await apiFetch(
+      `/admin/emergency-care-requests?${query.toString()}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
-    });
-    
+    );
+
     // Backend returns a flat array for emergency care requests
     return {
       items: Array.isArray(response) ? response : [],
@@ -271,8 +296,14 @@ export const adminService = {
     };
   },
 
-  async updateEmergencyCareRequestStatus(id: string, status: string): Promise<any> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+  async updateEmergencyCareRequestStatus(
+    id: string,
+    status: string,
+  ): Promise<any> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
 
     return apiFetch(`/admin/emergency-care-requests/${id}/status`, {
@@ -285,7 +316,10 @@ export const adminService = {
   },
 
   async getCareRequestApplications(careRequestId: string): Promise<any[]> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
 
     return apiFetch(`/admin/care-requests/${careRequestId}/applications`, {
@@ -294,13 +328,22 @@ export const adminService = {
     });
   },
 
-  async reviewInterestList(payload: { careRequestId: string; clientId: string; carerId: string; status: "SELECTED" | "REJECTED" | "ASSIGNED"; adminNotes?: string }): Promise<any> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+  async reviewInterestList(payload: {
+    careRequestId: string;
+    clientId: string;
+    carerId: string;
+    status: "SELECTED" | "REJECTED" | "ASSIGNED";
+    adminNotes?: string;
+  }): Promise<any> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
 
     return apiFetch("/admin/interest-list/review", {
       method: "POST",
-      headers: { 
+      headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
@@ -386,7 +429,7 @@ export const adminService = {
   async updateCarerPaymentStatus(
     paymentId: string,
     statusOrFormData: string | FormData,
-    file?: File
+    file?: File,
   ): Promise<any> {
     const token =
       typeof window !== "undefined"
@@ -728,22 +771,33 @@ export const adminService = {
   },
 
   async getClientInterestList(clientId: string): Promise<any[]> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
 
     try {
-      const result = await apiFetch(`/admin/clients/${clientId}/interest-list`, {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      return Array.isArray(result) ? result : (result?.interestList || result?.data || []);
+      const result = await apiFetch(
+        `/admin/clients/${clientId}/interest-list`,
+        {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+      return Array.isArray(result)
+        ? result
+        : result?.interestList || result?.data || [];
     } catch (err: any) {
       throw err;
     }
   },
 
   /** PATCH /admin/care-requests/:id/status — update care request status */
-  async updateCareRequestStatus(careRequestId: string, status: string): Promise<any> {
+  async updateCareRequestStatus(
+    careRequestId: string,
+    status: string,
+  ): Promise<any> {
     const token =
       typeof window !== "undefined"
         ? localStorage.getItem("accessToken")
@@ -782,7 +836,10 @@ export const adminService = {
   },
 
   async getBillingSettings(): Promise<any> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
 
     return apiFetch("/admin/settings", {
@@ -792,7 +849,10 @@ export const adminService = {
   },
 
   async updateBillingSettings(settings: any): Promise<any> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
 
     return apiFetch("/admin/settings", {
@@ -806,7 +866,10 @@ export const adminService = {
   },
 
   async getPlacementBilling(id: string): Promise<any> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
 
     return apiFetch(`/admin/placements/${id}/billing`, {
@@ -816,7 +879,10 @@ export const adminService = {
   },
 
   async updatePlacementWeeklyFee(id: string, weeklyFee: number): Promise<any> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
 
     return apiFetch(`/admin/placements/${id}/weekly-fee`, {
@@ -830,7 +896,10 @@ export const adminService = {
   },
 
   async pausePlacementBilling(id: string): Promise<any> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
 
     return apiFetch(`/admin/placements/${id}/pause-billing`, {
@@ -840,7 +909,10 @@ export const adminService = {
   },
 
   async resumePlacementBilling(id: string): Promise<any> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
 
     return apiFetch(`/admin/placements/${id}/resume-billing`, {
@@ -850,7 +922,10 @@ export const adminService = {
   },
 
   async resendInvoice(id: string): Promise<any> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
 
     return apiFetch(`/admin/invoices/${id}/resend`, {
@@ -860,7 +935,10 @@ export const adminService = {
   },
 
   async refundPayment(id: string): Promise<any> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
 
     return apiFetch(`/admin/payments/${id}/refund`, {
@@ -870,7 +948,10 @@ export const adminService = {
   },
 
   async getAdminInvoices(status?: string): Promise<any[]> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
 
     const query = status ? `?status=${status}` : "";
@@ -881,7 +962,10 @@ export const adminService = {
   },
 
   async getAdminTransactions(): Promise<any[]> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
 
     return apiFetch("/admin/transactions", {
@@ -891,7 +975,10 @@ export const adminService = {
   },
 
   async getPlacementDetail(placementId: string): Promise<AdminPlacementDetail> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
 
     return apiFetch(`/admin/placements/${placementId}`, {
@@ -907,8 +994,17 @@ export const adminService = {
     action?: string;
     targetUserId?: string;
     targetEntityType?: string;
-  }): Promise<{ items: any[]; total: number; page: number; limit: number; totalPages: number }> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+  }): Promise<{
+    items: any[];
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  }> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
 
     const query = new URLSearchParams();
@@ -917,7 +1013,8 @@ export const adminService = {
     if (params?.event) query.append("event", params.event);
     if (params?.action) query.append("action", params.action);
     if (params?.targetUserId) query.append("targetUserId", params.targetUserId);
-    if (params?.targetEntityType) query.append("targetEntityType", params.targetEntityType);
+    if (params?.targetEntityType)
+      query.append("targetEntityType", params.targetEntityType);
 
     return apiFetch(`/admin/audit-logs?${query.toString()}`, {
       method: "GET",
@@ -929,14 +1026,26 @@ export const adminService = {
     userId: string,
     page: number = 1,
     limit: number = 25,
-  ): Promise<{ items: any[]; total: number; page: number; limit: number; totalPages: number }> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+  ): Promise<{
+    items: any[];
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  }> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
 
-    return apiFetch(`/admin/audit-logs/user/${userId}?page=${page}&limit=${limit}`, {
-      method: "GET",
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    return apiFetch(
+      `/admin/audit-logs/user/${userId}?page=${page}&limit=${limit}`,
+      {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    );
   },
 
   async getAuditLogsForEntity(
@@ -944,13 +1053,25 @@ export const adminService = {
     entityId: string,
     page: number = 1,
     limit: number = 25,
-  ): Promise<{ items: any[]; total: number; page: number; limit: number; totalPages: number }> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+  ): Promise<{
+    items: any[];
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  }> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
 
-    return apiFetch(`/admin/audit-logs/entity/${entityType}/${entityId}?page=${page}&limit=${limit}`, {
-      method: "GET",
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    return apiFetch(
+      `/admin/audit-logs/entity/${entityType}/${entityId}?page=${page}&limit=${limit}`,
+      {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    );
   },
 };

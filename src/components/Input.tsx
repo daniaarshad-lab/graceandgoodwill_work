@@ -61,7 +61,9 @@ export default function Input({
       {error ? (
         <p className="form-help text-red-500">{error}</p>
       ) : helperText ? (
-        <p className="form-help text-gold-200/50 text-[12px] pl-1">{helperText}</p>
+        <p className="form-help text-gold-200/50 text-[12px] pl-1">
+          {helperText}
+        </p>
       ) : null}
     </div>
   );

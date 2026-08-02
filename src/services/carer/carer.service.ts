@@ -45,7 +45,6 @@ export const carerService = {
     });
   },
 
-
   async uploadDocument(file: File, category: string, type: string) {
     const token =
       typeof window !== "undefined"
@@ -85,14 +84,18 @@ export const carerService = {
       let mappedKey = key;
       if (mappedKey === "national_insurance_proof") mappedKey = "ni_proof";
       if (mappedKey === "driving_licence") mappedKey = "drivers_license";
-      
+
       // Insurance documents mappings
-      if (mappedKey === "public_liability_insurance") mappedKey = "public_liability";
-      if (mappedKey === "professional_indemnity_insurance") mappedKey = "professional_indemnity";
-      
+      if (mappedKey === "public_liability_insurance")
+        mappedKey = "public_liability";
+      if (mappedKey === "professional_indemnity_insurance")
+        mappedKey = "professional_indemnity";
+
       // Training documents mappings
-      if (mappedKey === "basic_life_support_first_aid") mappedKey = "basic_life_support";
-      if (mappedKey === "infection_prevention_and_control") mappedKey = "infection_prevention";
+      if (mappedKey === "basic_life_support_first_aid")
+        mappedKey = "basic_life_support";
+      if (mappedKey === "infection_prevention_and_control")
+        mappedKey = "infection_prevention";
       if (mappedKey === "gdpr_data_protection") mappedKey = "gdpr";
 
       // Compliance documents mappings
@@ -113,7 +116,11 @@ export const carerService = {
     });
   },
 
-  async uploadStepDocuments(step: number, files: Record<string, File>, textFields?: Record<string, string>) {
+  async uploadStepDocuments(
+    step: number,
+    files: Record<string, File>,
+    textFields?: Record<string, string>,
+  ) {
     const token =
       typeof window !== "undefined"
         ? localStorage.getItem("accessToken")
@@ -128,7 +135,7 @@ export const carerService = {
       let mappedKey = key;
       if (mappedKey === "national_insurance_proof") mappedKey = "ni_proof";
       if (mappedKey === "driving_licence") mappedKey = "drivers_license";
-      
+
       // Insurance documents mappings
       if (mappedKey === "public_liability_insurance") {
         mappedKey = step === 2 ? "business_insurance" : "public_liability";
@@ -136,10 +143,12 @@ export const carerService = {
       if (mappedKey === "professional_indemnity_insurance") {
         mappedKey = "professional_indemnity";
       }
-      
+
       // Training documents mappings
-      if (mappedKey === "basic_life_support_first_aid") mappedKey = "basic_life_support";
-      if (mappedKey === "infection_prevention_and_control") mappedKey = "infection_prevention";
+      if (mappedKey === "basic_life_support_first_aid")
+        mappedKey = "basic_life_support";
+      if (mappedKey === "infection_prevention_and_control")
+        mappedKey = "infection_prevention";
       if (mappedKey === "gdpr_data_protection") mappedKey = "gdpr";
 
       // Compliance documents mappings
@@ -147,7 +156,6 @@ export const carerService = {
       if (mappedKey === "cv_resume") mappedKey = "cv";
       if (mappedKey === "professional_reference_1") mappedKey = "reference_1";
       if (mappedKey === "professional_reference_2") mappedKey = "reference_2";
-
 
       formData.append(mappedKey, file);
     });
@@ -248,10 +256,7 @@ export const carerService = {
     });
   },
 
-  async uploadProfileMedia(
-    photo?: File,
-    video?: File
-  ): Promise<CarerProfile> {
+  async uploadProfileMedia(photo?: File, video?: File): Promise<CarerProfile> {
     const formData = new FormData();
 
     if (photo) {
@@ -281,8 +286,15 @@ export const carerService = {
   },
 
   /** POST /carer/profile-updates — submit a profile picture / intro video update request */
-  async submitProfileUpdateRequest(photo?: File, video?: File, updateReason?: string): Promise<any> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+  async submitProfileUpdateRequest(
+    photo?: File,
+    video?: File,
+    updateReason?: string,
+  ): Promise<any> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
 
     const formData = new FormData();
@@ -299,7 +311,10 @@ export const carerService = {
 
   /** GET /carer/profile-updates — get all previous profile update requests */
   async getProfileUpdateRequests(): Promise<any[]> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
 
     return apiFetch("/carer/profile-updates", {
@@ -322,10 +337,16 @@ export const carerService = {
     if (payload.canDrive !== undefined && payload.canDrive !== "") {
       formData.append("canDrive", payload.canDrive);
     }
-    if (payload.hasBusinessInsurance !== undefined && payload.hasBusinessInsurance !== "") {
+    if (
+      payload.hasBusinessInsurance !== undefined &&
+      payload.hasBusinessInsurance !== ""
+    ) {
       formData.append("hasBusinessInsurance", payload.hasBusinessInsurance);
     }
-    if (payload.drivingPreferences && Array.isArray(payload.drivingPreferences)) {
+    if (
+      payload.drivingPreferences &&
+      Array.isArray(payload.drivingPreferences)
+    ) {
       payload.drivingPreferences.forEach((pref: string) => {
         // Append with [] so backend parses it as an array even if it has only one element
         formData.append("drivingPreferences[]", pref);
@@ -520,7 +541,10 @@ export const carerService = {
   },
 
   async getSubscriptionInfo(): Promise<any> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
     return apiFetch("/carer/subscription", {
       method: "GET",
@@ -528,8 +552,15 @@ export const carerService = {
     });
   },
 
-  async createCheckoutSession(tier: string, successUrl: string, cancelUrl: string): Promise<any> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+  async createCheckoutSession(
+    tier: string,
+    successUrl: string,
+    cancelUrl: string,
+  ): Promise<any> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
     return apiFetch("/carer/subscription/checkout", {
       method: "POST",
@@ -542,7 +573,10 @@ export const carerService = {
   },
 
   async createPortalSession(returnUrl: string): Promise<any> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
     return apiFetch("/carer/subscription/portal", {
       method: "POST",
@@ -555,7 +589,10 @@ export const carerService = {
   },
 
   async cancelSubscription(): Promise<any> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
     return apiFetch("/carer/subscription/cancel", {
       method: "POST",
@@ -564,7 +601,10 @@ export const carerService = {
   },
 
   async getSubscriptionInvoices(): Promise<any[]> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
     return apiFetch("/carer/subscription/invoices", {
       method: "GET",
@@ -573,7 +613,10 @@ export const carerService = {
   },
 
   async saveStep9Plan(tier: string): Promise<any> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
     return apiFetch("/carer/profile/step-9", {
       method: "POST",
@@ -586,7 +629,10 @@ export const carerService = {
   },
 
   async getPlacements(): Promise<any[]> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
     return apiFetch("/carer/placements", {
       method: "GET",
@@ -595,7 +641,10 @@ export const carerService = {
   },
 
   async getPlacementDetail(placementId: string): Promise<any> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
     return apiFetch(`/carer/placements/${placementId}`, {
       method: "GET",
@@ -604,7 +653,10 @@ export const carerService = {
   },
 
   async getPlacementPayments(placementId: string): Promise<any[]> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
     return apiFetch(`/carer/placements/${placementId}/payments`, {
       method: "GET",

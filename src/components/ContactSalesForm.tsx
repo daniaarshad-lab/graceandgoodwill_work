@@ -258,10 +258,18 @@ export default function ContactSalesForm() {
             <option value="" disabled className="bg-navy-900 text-gold-200/50">
               Select company size
             </option>
-            <option value="1-10" className="bg-navy-900">1 - 10</option>
-            <option value="11-50" className="bg-navy-900">11 - 50</option>
-            <option value="51-200" className="bg-navy-900">51 - 200</option>
-            <option value="201+" className="bg-navy-900">201+</option>
+            <option value="1-10" className="bg-navy-900">
+              1 - 10
+            </option>
+            <option value="11-50" className="bg-navy-900">
+              11 - 50
+            </option>
+            <option value="51-200" className="bg-navy-900">
+              51 - 200
+            </option>
+            <option value="201+" className="bg-navy-900">
+              201+
+            </option>
           </select>
           {errors.employees && (
             <p className="text-red-400 text-xs ml-1">{errors.employees}</p>
@@ -281,10 +289,18 @@ export default function ContactSalesForm() {
             <option value="" disabled className="bg-navy-900 text-gold-200/50">
               Select an option
             </option>
-            <option value="carer_management" className="bg-navy-900">Carer Management Platform</option>
-            <option value="agency_crm" className="bg-navy-900">Agency CRM</option>
-            <option value="white_label" className="bg-navy-900">White-label Solution</option>
-            <option value="other" className="bg-navy-900">Other</option>
+            <option value="carer_management" className="bg-navy-900">
+              Carer Management Platform
+            </option>
+            <option value="agency_crm" className="bg-navy-900">
+              Agency CRM
+            </option>
+            <option value="white_label" className="bg-navy-900">
+              White-label Solution
+            </option>
+            <option value="other" className="bg-navy-900">
+              Other
+            </option>
           </select>
           {errors.service && (
             <p className="text-red-400 text-xs ml-1">{errors.service}</p>

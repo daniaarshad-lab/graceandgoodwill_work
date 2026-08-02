@@ -64,14 +64,17 @@ export const DocumentFileTypeLabels: Record<string, string> = {
   [DocumentFileType.DRIVING_LICENCE]: "Driving Licence",
   [DocumentFileType.PROOF_OF_ADDRESS]: "Proof of Address",
   [DocumentFileType.RIGHT_TO_WORK]: "Right to Work in the UK",
-  [DocumentFileType.NATIONAL_INSURANCE_PROOF]: "Proof of National Insurance Number",
+  [DocumentFileType.NATIONAL_INSURANCE_PROOF]:
+    "Proof of National Insurance Number",
 
   // Mandatory Training
   [DocumentFileType.SAFEGUARDING_ADULTS]: "Safeguarding Adults",
   [DocumentFileType.MOVING_AND_HANDLING]: "Moving and Handling",
   [DocumentFileType.MEDICATION_ADMINISTRATION]: "Medication Administration",
-  [DocumentFileType.BASIC_LIFE_SUPPORT_FIRST_AID]: "Basic Life Support / First Aid",
-  [DocumentFileType.INFECTION_PREVENTION_AND_CONTROL]: "Infection Prevention and Control",
+  [DocumentFileType.BASIC_LIFE_SUPPORT_FIRST_AID]:
+    "Basic Life Support / First Aid",
+  [DocumentFileType.INFECTION_PREVENTION_AND_CONTROL]:
+    "Infection Prevention and Control",
   [DocumentFileType.HEALTH_AND_SAFETY]: "Health and Safety",
   [DocumentFileType.FIRE_SAFETY]: "Fire Safety",
   [DocumentFileType.FOOD_HYGIENE]: "Food Hygiene",
@@ -86,7 +89,8 @@ export const DocumentFileTypeLabels: Record<string, string> = {
 
   // Insurance
   [DocumentFileType.PUBLIC_LIABILITY_INSURANCE]: "Public Liability Insurance",
-  [DocumentFileType.PROFESSIONAL_INDEMNITY_INSURANCE]: "Professional Indemnity Insurance",
+  [DocumentFileType.PROFESSIONAL_INDEMNITY_INSURANCE]:
+    "Professional Indemnity Insurance",
   [DocumentFileType.BUSINESS_INSURANCE]: "Business Use Insurance Cover",
 
   // Additional Training (Step 8)
@@ -106,6 +110,8 @@ export const DocumentFileTypeLabels: Record<string, string> = {
   [DocumentFileType.OTHER]: "Other Certificate",
 };
 
-export const getDocumentFileLabel = (type: DocumentFileType | string): string => {
+export const getDocumentFileLabel = (
+  type: DocumentFileType | string,
+): string => {
   return DocumentFileTypeLabels[type as DocumentFileType] || type;
 };

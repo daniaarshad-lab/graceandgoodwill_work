@@ -1,7 +1,14 @@
 import EmergencyCareForm from "@/components/forms/EmergencyCareForm";
-import { Clock, ShieldCheck, Phone, MessageCircle, HeartPulse, AlertCircle, ArrowLeft } from "lucide-react";
+import {
+  Clock,
+  ShieldCheck,
+  Phone,
+  MessageCircle,
+  HeartPulse,
+  AlertCircle,
+  ArrowLeft,
+} from "lucide-react";
 import Link from "next/link";
-
 
 const WhatsAppIcon = ({ className }: { className?: string }) => (
   <svg
@@ -14,7 +21,11 @@ const WhatsAppIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-export function EmergencyCareContent({ showBackButton = false }: { showBackButton?: boolean }) {
+export function EmergencyCareContent({
+  showBackButton = false,
+}: {
+  showBackButton?: boolean;
+}) {
   return (
     <main className="bg-navy-950 text-gold-100 min-h-[calc(100vh-80px)] relative overflow-hidden">
       {/* Background ambiance */}
@@ -29,11 +40,13 @@ export function EmergencyCareContent({ showBackButton = false }: { showBackButto
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
               <div className="hidden sm:block h-px w-12 lg:w-16 bg-gradient-to-r from-transparent to-gold-400/50" />
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium text-gold-50 leading-[1.15] tracking-tight text-center max-w-2xl">
-                Urgent Live-in Care Matching <span className="text-gold-300 ml-1.5 font-light">When You Need It Most</span>
+                Urgent Live-in Care Matching{" "}
+                <span className="text-gold-300 ml-1.5 font-light">
+                  When You Need It Most
+                </span>
               </h1>
               <div className="hidden sm:block h-px w-12 lg:w-16 bg-gradient-to-l from-transparent to-gold-400/50" />
             </div>
-
           </div>
         </div>
       </section>
@@ -41,7 +54,6 @@ export function EmergencyCareContent({ showBackButton = false }: { showBackButto
       {/* ── MAIN CONTENT ─────────────────────────────────────────────── */}
       <section className="relative z-10 pb-16 md:pb-24">
         <div className="container-wrapper space-y-8">
-
           {/* ── FORM CARD (full width, centered) ───────────────────────── */}
           <div className="max-w-6xl mx-auto">
             <div className="rounded-2xl border border-gold-400/15 bg-navy-900/50 shadow-[0_8px_40px_rgba(0,0,0,0.25)] backdrop-blur-xl relative overflow-hidden">
@@ -59,7 +71,11 @@ export function EmergencyCareContent({ showBackButton = false }: { showBackButto
                         Urgent Care Matching Request
                       </h2>
                       <p className="text-sm text-gold-200/60 leading-relaxed font-light max-w-3xl">
-                        Complete this form and our Urgent Matching Team will review your requirements as quickly as possible. We will begin identifying suitable independent self-employed carers and contact you to discuss available introductions.
+                        Complete this form and our Urgent Matching Team will
+                        review your requirements as quickly as possible. We will
+                        begin identifying suitable independent self-employed
+                        carers and contact you to discuss available
+                        introductions.
                       </p>
                     </div>
                   </div>
@@ -84,7 +100,6 @@ export function EmergencyCareContent({ showBackButton = false }: { showBackButto
 
           {/* ── TWO CARDS SIDE BY SIDE below the form ──────────────────── */}
           <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
-
             {/* Priority Hotline */}
             <div className="rounded-2xl border border-gold-400/20 bg-gradient-to-b from-navy-900/70 to-navy-950/70 p-6 backdrop-blur-md relative overflow-hidden">
               <div className="absolute top-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-gold-400/40 to-transparent" />
@@ -95,8 +110,13 @@ export function EmergencyCareContent({ showBackButton = false }: { showBackButto
                     <Phone className="w-5 h-5" strokeWidth={1.5} />
                   </div>
                   <div>
-                    <h3 className="text-base font-semibold text-gold-50">Priority Hotline</h3>
-                    <p className="text-xs text-gold-200/50 font-light mt-0.5">Connect instantly with our Urgent Matching Team on call 24 hours a day</p>
+                    <h3 className="text-base font-semibold text-gold-50">
+                      Priority Hotline
+                    </h3>
+                    <p className="text-xs text-gold-200/50 font-light mt-0.5">
+                      Connect instantly with our Urgent Matching Team on call 24
+                      hours a day
+                    </p>
                   </div>
                 </div>
 
@@ -140,9 +160,13 @@ export function EmergencyCareContent({ showBackButton = false }: { showBackButto
                       1
                     </div>
                     <div className="pt-0.5">
-                      <p className="text-xs font-semibold text-gold-100/80">Urgent Matching Team</p>
+                      <p className="text-xs font-semibold text-gold-100/80">
+                        Urgent Matching Team
+                      </p>
                       <p className="text-xs text-gold-100/50 leading-relaxed mt-0.5 font-light">
-                        Our Urgent Matching Team reviews urgent enquiries, identifies suitable independent self-employed carers and facilitates introductions as quickly as possible.
+                        Our Urgent Matching Team reviews urgent enquiries,
+                        identifies suitable independent self-employed carers and
+                        facilitates introductions as quickly as possible.
                       </p>
                     </div>
                   </div>
@@ -152,16 +176,20 @@ export function EmergencyCareContent({ showBackButton = false }: { showBackButto
                       2
                     </div>
                     <div className="pt-0.5">
-                      <p className="text-xs font-semibold text-gold-100/80">24–48 Hour Matching</p>
+                      <p className="text-xs font-semibold text-gold-100/80">
+                        24–48 Hour Matching
+                      </p>
                       <p className="text-xs text-gold-100/50 leading-relaxed mt-0.5 font-light">
-                        Where suitable carers are available, we aim to introduce independent self-employed live-in carers within 24 to 48 hours across the UK. Times may vary depending on location, availability and individual requirements.
+                        Where suitable carers are available, we aim to introduce
+                        independent self-employed live-in carers within 24 to 48
+                        hours across the UK. Times may vary depending on
+                        location, availability and individual requirements.
                       </p>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-
           </div>
 
           {/* Trust indicators (moved from hero) */}
@@ -173,12 +201,18 @@ export function EmergencyCareContent({ showBackButton = false }: { showBackButto
               </div>
               <div className="hidden sm:block h-4 w-px bg-gold-400/20" />
               <div className="flex items-center gap-2.5">
-                <ShieldCheck className="w-4 h-4 text-gold-400/80" strokeWidth={1.5} />
+                <ShieldCheck
+                  className="w-4 h-4 text-gold-400/80"
+                  strokeWidth={1.5}
+                />
                 <span>Professional Handovers</span>
               </div>
               <div className="hidden sm:block h-4 w-px bg-gold-400/20" />
               <div className="flex items-center gap-2.5">
-                <HeartPulse className="w-4 h-4 text-gold-400/80" strokeWidth={1.5} />
+                <HeartPulse
+                  className="w-4 h-4 text-gold-400/80"
+                  strokeWidth={1.5}
+                />
                 <span>DBS-Checked Carers</span>
               </div>
             </div>

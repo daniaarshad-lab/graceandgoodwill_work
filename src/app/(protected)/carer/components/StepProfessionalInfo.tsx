@@ -34,13 +34,14 @@ export default function StepProfessionalInfo({
     .filter(Boolean);
 
   const predefinedSelected = rawSpecialties.filter((s) =>
-    PREDEFINED_SPECIALISMS.includes(s)
+    PREDEFINED_SPECIALISMS.includes(s),
   );
   let customSelected = rawSpecialties
     .filter((s) => !PREDEFINED_SPECIALISMS.includes(s))
     .join(", ");
 
-  const hasOther = customSelected.length > 0 || rawSpecialties.includes("Other");
+  const hasOther =
+    customSelected.length > 0 || rawSpecialties.includes("Other");
   if (customSelected === "Other") {
     customSelected = "";
   }
@@ -50,7 +51,10 @@ export default function StepProfessionalInfo({
     .join(", ");
 
   const handleDropdownChange = (valStr: string) => {
-    const selected = valStr.split(",").map((s) => s.trim()).filter(Boolean);
+    const selected = valStr
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
     const newHasOther = selected.includes("Other");
 
     const newPredefined = selected.filter((s) => s !== "Other");
@@ -85,11 +89,11 @@ export default function StepProfessionalInfo({
         : "",
     experience:
       experience === undefined ||
-        experience === null ||
-        experience === "" ||
-        isNaN(parsedExp) ||
-        parsedExp < 0 ||
-        parsedExp > 99
+      experience === null ||
+      experience === "" ||
+      isNaN(parsedExp) ||
+      parsedExp < 0 ||
+      parsedExp > 99
         ? "Years of Care Experience must be a number between 0 and 99."
         : "",
     specialtiesDropdown:
@@ -112,7 +116,7 @@ export default function StepProfessionalInfo({
       return;
     }
 
-    const syntheticEvent = { preventDefault: () => { } } as React.FormEvent;
+    const syntheticEvent = { preventDefault: () => {} } as React.FormEvent;
     const success = await portal.handleSaveProfile(syntheticEvent, 4);
     if (success) {
       onNext();
@@ -129,8 +133,7 @@ export default function StepProfessionalInfo({
         <div className="space-y-4">
           <div className="space-y-3">
             <label className="text-base font-bold text-gold-200 flex items-center gap-2">
-              Carer Professional Profile{" "}
-              <span className="text-red-400">*</span>
+              Carer Professional Profile <span className="text-red-400">*</span>
             </label>
 
             <div className="bg-navy-900/50 p-4 rounded-xl border border-gold-300/10 shadow-inner">
@@ -181,7 +184,9 @@ export default function StepProfessionalInfo({
                 selectedStr={dropdownStr}
                 onChange={handleDropdownChange}
                 error={
-                  submitted && errors.specialtiesDropdown ? errors.specialtiesDropdown : undefined
+                  submitted && errors.specialtiesDropdown
+                    ? errors.specialtiesDropdown
+                    : undefined
                 }
               />
               {hasOther && (
@@ -190,7 +195,11 @@ export default function StepProfessionalInfo({
                   value={customSelected}
                   onChange={handleOtherChange}
                   placeholder="Enter specialism"
-                  error={submitted && errors.specialtiesOther ? errors.specialtiesOther : undefined}
+                  error={
+                    submitted && errors.specialtiesOther
+                      ? errors.specialtiesOther
+                      : undefined
+                  }
                 />
               )}
             </div>

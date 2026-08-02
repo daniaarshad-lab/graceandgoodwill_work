@@ -39,7 +39,10 @@ interface CarerApplicationsProps {
 }
 
 const getMockDocDetails = (docName: string) => {
-  const types: Record<string, { type: string; uploadDate: string; expiryDate: string }> = {
+  const types: Record<
+    string,
+    { type: string; uploadDate: string; expiryDate: string }
+  > = {
     "DBS Certificate": {
       type: "Criminal Record Check",
       uploadDate: "2026-05-10",
@@ -66,11 +69,13 @@ const getMockDocDetails = (docName: string) => {
       expiryDate: "2027-03-31",
     },
   };
-  return types[docName] || {
-    type: "Verification Document",
-    uploadDate: "2026-05-16",
-    expiryDate: "N/A",
-  };
+  return (
+    types[docName] || {
+      type: "Verification Document",
+      uploadDate: "2026-05-16",
+      expiryDate: "N/A",
+    }
+  );
 };
 
 const getCarerExtendedDetails = (carerId: string) => {
@@ -82,7 +87,8 @@ const getCarerExtendedDetails = (carerId: string) => {
       availableUntil: "08:00 PM",
       consecutiveDays: "5 Days (Mon - Fri)",
       availabilityStatus: "Available",
-      biography: "Compassionate and dedicated carer with over 5 years of experience in elderly care, specialized in post-operative recovery, personal hygiene, and emotional support.",
+      biography:
+        "Compassionate and dedicated carer with over 5 years of experience in elderly care, specialized in post-operative recovery, personal hygiene, and emotional support.",
       placements: [
         {
           clientName: "Winston Churchill",
@@ -97,39 +103,43 @@ const getCarerExtendedDetails = (carerId: string) => {
           startDate: "2026-01-15",
           endDate: "2026-04-30",
           status: "Completed",
-        }
+        },
       ],
       notes: [
         {
           title: "Performance Review",
           timestamp: "24 Jun 2026 - 10:35 AM",
           content: "Client reported excellent communication.",
-          adminName: "Sarah Connor"
+          adminName: "Sarah Connor",
         },
         {
           title: "Initial Document Audit",
           timestamp: "04 Jun 2026 - 02:15 PM",
-          content: "DBS and professional licenses verified successfully during registry check.",
-          adminName: "James Bond"
-        }
+          content:
+            "DBS and professional licenses verified successfully during registry check.",
+          adminName: "James Bond",
+        },
       ],
       feedback: [
         {
           type: "Client Feedback",
           timestamp: "22 Jun 2026 - 04:30 PM",
-          content: "Helena was extremely patient and supportive during Churchill's morning session. Family expressed sincere gratitude."
+          content:
+            "Helena was extremely patient and supportive during Churchill's morning session. Family expressed sincere gratitude.",
         },
         {
           type: "Concerns Raised",
           timestamp: "10 Jun 2026 - 11:00 AM",
-          content: "Slight delay reported in arrival due to local transport strike. Issue resolved with prompt notification."
+          content:
+            "Slight delay reported in arrival due to local transport strike. Issue resolved with prompt notification.",
         },
         {
           type: "Follow-up Actions",
           timestamp: "05 Jun 2026 - 09:00 AM",
-          content: "Conducted onboarding telephone verification with the carer to review guidelines."
-        }
-      ]
+          content:
+            "Conducted onboarding telephone verification with the carer to review guidelines.",
+        },
+      ],
     },
     // Eleanor Vance
     "carer-2": {
@@ -138,7 +148,8 @@ const getCarerExtendedDetails = (carerId: string) => {
       availableUntil: "06:00 PM",
       consecutiveDays: "3 Days (Tue - Thu)",
       availabilityStatus: "Partially Available",
-      biography: "Specialist in dementia care and physical support, committed to promoting independence and dignity in comfortable residential environments.",
+      biography:
+        "Specialist in dementia care and physical support, committed to promoting independence and dignity in comfortable residential environments.",
       placements: [
         {
           clientName: "Arthur Pendelton",
@@ -146,44 +157,48 @@ const getCarerExtendedDetails = (carerId: string) => {
           startDate: "2026-06-01",
           endDate: "Ongoing",
           status: "Active",
-        }
+        },
       ],
       notes: [
         {
           title: "Dementia Cert Verification",
           timestamp: "18 May 2026 - 11:00 AM",
           content: "Verified dementia certificate from Alzheimer's Society.",
-          adminName: "Sarah Connor"
-        }
+          adminName: "Sarah Connor",
+        },
       ],
       feedback: [
         {
           type: "Client Feedback",
           timestamp: "15 Jun 2026 - 02:00 PM",
-          content: "Eleanor is fantastic. Arthur really connects with her and feels much more confident during walks."
-        }
-      ]
-    }
+          content:
+            "Eleanor is fantastic. Arthur really connects with her and feels much more confident during walks.",
+        },
+      ],
+    },
   };
 
-  return db[carerId] || {
-    registrationDate: "2026-06-10T12:00:00.000Z",
-    availableFrom: "09:00 AM",
-    availableUntil: "05:00 PM",
-    consecutiveDays: "4 Days (Mon - Thu)",
-    availabilityStatus: "Available",
-    biography: "Professional carer dedicated to providing exceptional support, daily assistance, and specialized therapeutic companionship.",
-    placements: [],
-    notes: [
-      {
-        title: "Profile Created",
-        timestamp: "10 Jun 2026 - 12:00 PM",
-        content: "Initial carer profile created and awaiting review.",
-        adminName: "James Bond"
-      }
-    ],
-    feedback: []
-  };
+  return (
+    db[carerId] || {
+      registrationDate: "2026-06-10T12:00:00.000Z",
+      availableFrom: "09:00 AM",
+      availableUntil: "05:00 PM",
+      consecutiveDays: "4 Days (Mon - Thu)",
+      availabilityStatus: "Available",
+      biography:
+        "Professional carer dedicated to providing exceptional support, daily assistance, and specialized therapeutic companionship.",
+      placements: [],
+      notes: [
+        {
+          title: "Profile Created",
+          timestamp: "10 Jun 2026 - 12:00 PM",
+          content: "Initial carer profile created and awaiting review.",
+          adminName: "James Bond",
+        },
+      ],
+      feedback: [],
+    }
+  );
 };
 
 export default function CarerApplications({
@@ -197,7 +212,6 @@ export default function CarerApplications({
   limit,
   onLimitChange,
 }: CarerApplicationsProps) {
-
   const columns: TableColumn<CarerApplication>[] = [
     {
       header: "Carer Name",
@@ -206,10 +220,16 @@ export default function CarerApplications({
       render: (carer) => (
         <div className="flex items-center gap-3">
           <div className="h-8 w-8 rounded-full bg-gold/10 flex items-center justify-center text-gold border border-gold/20 shrink-0 font-bold text-xs uppercase">
-            {carer.name.split(" ").map((n) => n[0]).join("")}
+            {carer.name
+              .split(" ")
+              .map((n) => n[0])
+              .join("")}
           </div>
           <div className="min-w-0">
-            <span className="font-bold text-gold-200 truncate max-w-[150px] block" title={carer.name}>
+            <span
+              className="font-bold text-gold-200 truncate max-w-[150px] block"
+              title={carer.name}
+            >
               {carer.name}
             </span>
             {carer.internalAccountNumber && (
@@ -299,7 +319,8 @@ export default function CarerApplications({
             Carer Applications Registry
           </h3>
           <p className="text-xs text-gold-100/50">
-            Review background checks, DBS status, and verify practitioner documentation
+            Review background checks, DBS status, and verify practitioner
+            documentation
           </p>
         </div>
 

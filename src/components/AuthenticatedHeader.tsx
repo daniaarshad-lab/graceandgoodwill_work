@@ -4,7 +4,14 @@ import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Bell, ChevronDown, User as UserIcon, Settings, Key, LogOut } from "lucide-react";
+import {
+  Bell,
+  ChevronDown,
+  User as UserIcon,
+  Settings,
+  Key,
+  LogOut,
+} from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAppDispatch } from "@/store/hooks";
 import { logout as logoutThunk } from "@/store/slices/authSlice";
@@ -14,14 +21,17 @@ export default function AuthenticatedHeader() {
   const pathname = usePathname();
   const dispatch = useAppDispatch();
   const router = useRouter();
-  
+
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setDropdownOpen(false);
       }
     }
@@ -37,7 +47,8 @@ export default function AuthenticatedHeader() {
 
   // Role formatting
   const rawRole = user?.role || "User";
-  const displayRole = rawRole.charAt(0).toUpperCase() + rawRole.slice(1).toLowerCase();
+  const displayRole =
+    rawRole.charAt(0).toUpperCase() + rawRole.slice(1).toLowerCase();
 
   const handleLogout = async () => {
     await dispatch(logoutThunk());
@@ -47,7 +58,6 @@ export default function AuthenticatedHeader() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-gold-300/10 bg-navy-950/95 backdrop-blur shadow-soft">
       <div className="container-wrapper py-4 flex items-center justify-between">
-        
         {/* Left Side: Branding */}
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
@@ -83,7 +93,7 @@ export default function AuthenticatedHeader() {
           </button>
 
           <div className="relative" ref={dropdownRef}>
-            <button 
+            <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
               className="flex items-center gap-3 p-1.5 pr-3 rounded-full border border-gold-300/10 hover:border-gold-300/30 hover:bg-gold-DEFAULT/5 transition-all focus:outline-none"
             >
@@ -105,26 +115,37 @@ export default function AuthenticatedHeader() {
             {dropdownOpen && (
               <div className="absolute right-0 mt-2 w-56 rounded-xl border border-gold-300/10 bg-navy-900 shadow-elegant overflow-hidden py-1 animate-in fade-in slide-in-from-top-2 duration-200">
                 <div className="px-4 py-3 border-b border-gold-300/10 sm:hidden">
-                  <p className="text-sm font-bold text-gold-100">{user?.firstName} {user?.lastName}</p>
+                  <p className="text-sm font-bold text-gold-100">
+                    {user?.firstName} {user?.lastName}
+                  </p>
                   <p className="text-xs text-gold-200/60">{displayRole}</p>
                 </div>
-                
-                <Link href={`/${pathname.split('/')[1]}?tab=profile`} className="flex items-center gap-3 px-4 py-2.5 text-sm text-gold-100/80 hover:text-gold-DEFAULT hover:bg-gold-DEFAULT/10 transition-colors">
+
+                <Link
+                  href={`/${pathname.split("/")[1]}?tab=profile`}
+                  className="flex items-center gap-3 px-4 py-2.5 text-sm text-gold-100/80 hover:text-gold-DEFAULT hover:bg-gold-DEFAULT/10 transition-colors"
+                >
                   <UserIcon className="w-4 h-4" />
                   My Profile
                 </Link>
-                <Link href={`/${pathname.split('/')[1]}?tab=settings`} className="flex items-center gap-3 px-4 py-2.5 text-sm text-gold-100/80 hover:text-gold-DEFAULT hover:bg-gold-DEFAULT/10 transition-colors">
+                <Link
+                  href={`/${pathname.split("/")[1]}?tab=settings`}
+                  className="flex items-center gap-3 px-4 py-2.5 text-sm text-gold-100/80 hover:text-gold-DEFAULT hover:bg-gold-DEFAULT/10 transition-colors"
+                >
                   <Settings className="w-4 h-4" />
                   Account Settings
                 </Link>
-                <Link href={`/${pathname.split('/')[1]}?tab=security`} className="flex items-center gap-3 px-4 py-2.5 text-sm text-gold-100/80 hover:text-gold-DEFAULT hover:bg-gold-DEFAULT/10 transition-colors">
+                <Link
+                  href={`/${pathname.split("/")[1]}?tab=security`}
+                  className="flex items-center gap-3 px-4 py-2.5 text-sm text-gold-100/80 hover:text-gold-DEFAULT hover:bg-gold-DEFAULT/10 transition-colors"
+                >
                   <Key className="w-4 h-4" />
                   Change Password
                 </Link>
-                
+
                 <div className="h-px bg-gold-300/10 my-1"></div>
-                
-                <button 
+
+                <button
                   onClick={handleLogout}
                   className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-400 hover:text-red-300 hover:bg-red-400/10 transition-colors text-left"
                 >
@@ -135,7 +156,6 @@ export default function AuthenticatedHeader() {
             )}
           </div>
         </div>
-        
       </div>
     </header>
   );

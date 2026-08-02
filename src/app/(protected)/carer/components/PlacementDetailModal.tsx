@@ -39,7 +39,7 @@ export default function PlacementDetailModal({
   };
 
   const formatPayRange = (
-    range?: string | { min: number; max: number } | null
+    range?: string | { min: number; max: number } | null,
   ) => {
     if (!range) return "Not specified";
     if (typeof range === "string") return range;
@@ -51,9 +51,7 @@ export default function PlacementDetailModal({
       <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl border border-gold-300/20 bg-navy-900 shadow-elegant">
         {/* Header */}
         <div className="sticky top-0 bg-navy-900 z-10 flex items-center justify-between p-6 border-b border-gold-300/10">
-          <h3 className="text-xl font-bold text-gold-50">
-            Placement Details
-          </h3>
+          <h3 className="text-xl font-bold text-gold-50">Placement Details</h3>
           <button
             onClick={onClose}
             className="text-gold-100/50 hover:text-gold-200 transition-colors"
@@ -81,7 +79,6 @@ export default function PlacementDetailModal({
                   Urgent
                 </span>
               )}
-
             </div>
 
             {/* Care Category */}

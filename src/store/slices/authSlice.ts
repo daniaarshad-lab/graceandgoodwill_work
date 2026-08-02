@@ -47,20 +47,17 @@ export const getProfile = createAsyncThunk<
   User,
   { skipGlobalToast?: boolean } | void,
   { rejectValue: string }
->(
-  "auth/getProfile",
-  async (_, { rejectWithValue }) => {
-    try {
-      const userData = await authService.getMe();
-      if (!userData) {
-        return rejectWithValue("No user session found");
-      }
-      return userData.user || userData;
-    } catch (error: any) {
-      return rejectWithValue(error?.message || "Failed to fetch profile");
+>("auth/getProfile", async (_, { rejectWithValue }) => {
+  try {
+    const userData = await authService.getMe();
+    if (!userData) {
+      return rejectWithValue("No user session found");
     }
-  },
-);
+    return userData.user || userData;
+  } catch (error: any) {
+    return rejectWithValue(error?.message || "Failed to fetch profile");
+  }
+});
 
 export const forgotPassword = createAsyncThunk<
   any,

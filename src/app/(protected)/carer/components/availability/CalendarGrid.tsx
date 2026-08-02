@@ -147,7 +147,11 @@ export default function CalendarGrid({
 
   // Compute range position for each cell
   const getRangePosition = useCallback(
-    (dateStr: string, isSelected: boolean, range: LocalRange | undefined): RangePosition => {
+    (
+      dateStr: string,
+      isSelected: boolean,
+      range: LocalRange | undefined,
+    ): RangePosition => {
       if (!isSelected || !range) return "none";
       if (dateStr === range.start && dateStr === range.end) return "single";
       if (dateStr === range.start) return "start";
@@ -155,10 +159,10 @@ export default function CalendarGrid({
       if (dateStr > range.start && dateStr < range.end) return "middle";
       return "none";
     },
-    []
+    [],
   );
 
-          // Compute preview range position for each cell
+  // Compute preview range position for each cell
   const getPreviewPosition = useCallback(
     (dateStr: string): RangePosition => {
       if (!rangeStart || !hoverDate) return "none";
@@ -170,7 +174,7 @@ export default function CalendarGrid({
       if (dateStr > lo && dateStr < hi) return "middle";
       return "none";
     },
-    [rangeStart, hoverDate]
+    [rangeStart, hoverDate],
   );
 
   const todayStr = useMemo(() => toISODateString(new Date()), []);
@@ -192,7 +196,13 @@ export default function CalendarGrid({
         }
       }
     },
-    [rangeStart, activeEditRangeId, onSetRangeStart, onAddRange, onUpdateActiveRange]
+    [
+      rangeStart,
+      activeEditRangeId,
+      onSetRangeStart,
+      onAddRange,
+      onUpdateActiveRange,
+    ],
   );
 
   const handleDateMouseUp = useCallback(
@@ -208,7 +218,7 @@ export default function CalendarGrid({
         }
       }
     },
-    [rangeStart, activeEditRangeId, onAddRange, onUpdateActiveRange]
+    [rangeStart, activeEditRangeId, onAddRange, onUpdateActiveRange],
   );
 
   const handleDateMouseEnter = useCallback(
@@ -217,7 +227,7 @@ export default function CalendarGrid({
         onSetHoverDate(dateStr);
       }
     },
-    [rangeStart, onSetHoverDate]
+    [rangeStart, onSetHoverDate],
   );
 
   return (
@@ -267,8 +277,6 @@ export default function CalendarGrid({
         </div>
       </div>
 
-
-
       {/* Range selection hint */}
       {rangeStart && (
         <div className="mb-3 px-3 py-2 rounded-xl bg-gold-DEFAULT/[0.06] border border-gold-DEFAULT/15 flex items-center justify-between gap-2">
@@ -309,17 +317,30 @@ export default function CalendarGrid({
           const isSelected = dateToRangeMap.has(cell.dateStr);
           const range = dateToRangeMap.get(cell.dateStr);
           const isPreview = previewSet.has(cell.dateStr);
-          
-          const rangePosition = isSelected 
+
+          const rangePosition = isSelected
             ? getRangePosition(cell.dateStr, isSelected, range)
-            : (isPreview ? getPreviewPosition(cell.dateStr) : "none");
+            : isPreview
+              ? getPreviewPosition(cell.dateStr)
+              : "none";
 
           // Dim other ranges if we are editing a specific range
-          const isEditingOthers = activeEditRangeId !== null && range && range.id !== activeEditRangeId;
-          const isEditingThis = activeEditRangeId !== null && range && range.id === activeEditRangeId;
+          const isEditingOthers =
+            activeEditRangeId !== null &&
+            range &&
+            range.id !== activeEditRangeId;
+          const isEditingThis =
+            activeEditRangeId !== null &&
+            range &&
+            range.id === activeEditRangeId;
 
           return (
-            <div key={cell.dateStr} className={isEditingOthers ? "opacity-30 pointer-events-none" : ""}>
+            <div
+              key={cell.dateStr}
+              className={
+                isEditingOthers ? "opacity-30 pointer-events-none" : ""
+              }
+            >
               <DateCell
                 dateStr={cell.dateStr}
                 dayNumber={cell.dayNumber}
@@ -350,7 +371,16 @@ export default function CalendarGrid({
 
 function ChevronLeft() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <polyline points="15 18 9 12 15 6" />
     </svg>
   );
@@ -358,7 +388,16 @@ function ChevronLeft() {
 
 function ChevronRight() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <polyline points="9 18 15 12 9 6" />
     </svg>
   );

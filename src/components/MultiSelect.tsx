@@ -29,7 +29,10 @@ export default function MultiSelect({
   // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     }
@@ -69,7 +72,9 @@ export default function MultiSelect({
       >
         <div className="flex-1 flex items-center px-4 h-full overflow-hidden">
           {value.length === 0 ? (
-            <span className="text-gold-100/40 select-none text-sm">{placeholder}</span>
+            <span className="text-gold-100/40 select-none text-sm">
+              {placeholder}
+            </span>
           ) : (
             <span className="text-gold-200 text-sm truncate">
               {value.map(getOptionLabel).join(", ")}
@@ -78,7 +83,9 @@ export default function MultiSelect({
         </div>
 
         <div className="pr-4 pl-2 flex items-center h-full">
-          <ChevronDown className={`w-5 h-5 text-gold-300/50 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+          <ChevronDown
+            className={`w-5 h-5 text-gold-300/50 transition-transform ${isOpen ? "rotate-180" : ""}`}
+          />
         </div>
       </div>
 
@@ -95,16 +102,32 @@ export default function MultiSelect({
                 }`}
                 onClick={() => toggleOption(option.value)}
               >
-                <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
-                  isSelected ? "bg-gold border-gold" : "border-gold-300/30 bg-navy-900"
-                }`}>
+                <div
+                  className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
+                    isSelected
+                      ? "bg-gold border-gold"
+                      : "border-gold-300/30 bg-navy-900"
+                  }`}
+                >
                   {isSelected && (
-                    <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                    <svg
+                      className="w-3 h-3 text-white"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={3}
+                        d="M5 13l4 4L19 7"
+                      />
                     </svg>
                   )}
                 </div>
-                <span className={`text-sm ${isSelected ? "font-bold text-gold-200" : "text-gold-100/70"}`}>
+                <span
+                  className={`text-sm ${isSelected ? "font-bold text-gold-200" : "text-gold-100/70"}`}
+                >
                   {option.label}
                 </span>
               </div>

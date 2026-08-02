@@ -17,9 +17,8 @@ import {
 
 export default function ApplicationHistory() {
   const dispatch = useAppDispatch();
-  const { applicationHistory, applicationHistoryLoading, error } = useAppSelector(
-    (state) => state.carer
-  );
+  const { applicationHistory, applicationHistoryLoading, error } =
+    useAppSelector((state) => state.carer);
 
   useEffect(() => {
     dispatch(fetchCarerApplicationHistory());
@@ -77,7 +76,9 @@ export default function ApplicationHistory() {
     return (
       <div className="flex flex-col items-center justify-center py-20 space-y-4">
         <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-gold-DEFAULT"></div>
-        <p className="text-sm text-gold-100/60">Loading application history...</p>
+        <p className="text-sm text-gold-100/60">
+          Loading application history...
+        </p>
       </div>
     );
   }
@@ -103,9 +104,12 @@ export default function ApplicationHistory() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gold-300/10 pb-4">
         <div>
-          <h3 className="text-xl font-bold text-gold-200">Application History</h3>
+          <h3 className="text-xl font-bold text-gold-200">
+            Application History
+          </h3>
           <p className="text-xs text-gold-100/50 mt-1">
-            View your past care request applications (Selected, Rejected, or Withdrawn).
+            View your past care request applications (Selected, Rejected, or
+            Withdrawn).
           </p>
         </div>
         <Button
@@ -121,8 +125,12 @@ export default function ApplicationHistory() {
       {!applicationHistory || applicationHistory.length === 0 ? (
         <div className="rounded-2xl border border-gold-300/10 p-12 text-center text-gold-100/50">
           <Archive className="w-12 h-12 mx-auto mb-4 opacity-40" />
-          <p className="text-sm font-medium">No application history available yet.</p>
-          <p className="text-xs mt-1 opacity-60">Past applications will appear here once they are reviewed.</p>
+          <p className="text-sm font-medium">
+            No application history available yet.
+          </p>
+          <p className="text-xs mt-1 opacity-60">
+            Past applications will appear here once they are reviewed.
+          </p>
         </div>
       ) : (
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
@@ -166,16 +174,20 @@ export default function ApplicationHistory() {
 
                     <div className="flex items-center gap-2 text-gold-100/80">
                       <Calendar className="h-4 w-4 shrink-0 opacity-60 text-gold-300" />
-                      <span className="text-sm">Starts: {formatDate(req.startDate)}</span>
+                      <span className="text-sm">
+                        Starts: {formatDate(req.startDate)}
+                      </span>
                     </div>
 
                     {req.shiftType && (
                       <div className="flex items-center gap-2 text-gold-100/80">
                         <Clock className="h-4 w-4 shrink-0 opacity-60 text-gold-300" />
-                        <span className="text-sm capitalize">{req.shiftType}</span>
+                        <span className="text-sm capitalize">
+                          {req.shiftType}
+                        </span>
                       </div>
                     )}
-                    
+
                     {req.weeklyPayRange && (
                       <div className="flex items-center gap-2 text-gold-100/80">
                         <Briefcase className="h-4 w-4 shrink-0 opacity-60 text-gold-300" />
@@ -186,14 +198,14 @@ export default function ApplicationHistory() {
                 </div>
 
                 <div className="mt-5 border-t border-gold-300/10 pt-4 flex justify-between">
-                   <p className="text-xs text-gold-100/40">
-                     Applied on: {formatDate(app.createdAt)}
-                   </p>
-                   {app.updatedAt && app.updatedAt !== app.createdAt && (
-                     <p className="text-xs text-gold-100/40">
-                       Updated: {formatDate(app.updatedAt)}
-                     </p>
-                   )}
+                  <p className="text-xs text-gold-100/40">
+                    Applied on: {formatDate(app.createdAt)}
+                  </p>
+                  {app.updatedAt && app.updatedAt !== app.createdAt && (
+                    <p className="text-xs text-gold-100/40">
+                      Updated: {formatDate(app.updatedAt)}
+                    </p>
+                  )}
                 </div>
               </div>
             );

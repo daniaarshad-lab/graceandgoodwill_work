@@ -66,36 +66,72 @@ export default function PortalTabs({
       el.scrollLeft = scrollLeftPos - walk;
     };
 
-    el.addEventListener('wheel', onWheel, { passive: false });
-    el.addEventListener('mousedown', onMouseDown);
-    el.addEventListener('mouseleave', onMouseLeave);
-    el.addEventListener('mouseup', onMouseUp);
-    el.addEventListener('mousemove', onMouseMove);
+    el.addEventListener("wheel", onWheel, { passive: false });
+    el.addEventListener("mousedown", onMouseDown);
+    el.addEventListener("mouseleave", onMouseLeave);
+    el.addEventListener("mouseup", onMouseUp);
+    el.addEventListener("mousemove", onMouseMove);
 
     return () => {
-      el.removeEventListener('wheel', onWheel);
-      el.removeEventListener('mousedown', onMouseDown);
-      el.removeEventListener('mouseleave', onMouseLeave);
-      el.removeEventListener('mouseup', onMouseUp);
-      el.removeEventListener('mousemove', onMouseMove);
+      el.removeEventListener("wheel", onWheel);
+      el.removeEventListener("mousedown", onMouseDown);
+      el.removeEventListener("mouseleave", onMouseLeave);
+      el.removeEventListener("mouseup", onMouseUp);
+      el.removeEventListener("mousemove", onMouseMove);
     };
   }, []);
 
   const tabs = [
-    { id: "request", label: "Submit Care Request", href: "/client?tab=request" },
-    { id: "overview", label: "Dashboard Overview", href: "/client?tab=overview" },
-    { id: "profile" as TabType, label: "Profile Management", href: "/client?tab=profile" },
-    { id: "carers" as TabType, label: "Carer Profiles", href: "/client?tab=carers" },
-    { id: "interest-list" as TabType, label: "Interest List ❤️", href: "/client?tab=interest-list" },
-    { id: "tracking" as TabType, label: "Placements", href: "/client?tab=tracking" },
-    { id: "applications" as TabType, label: "Care Requests", href: "/client?tab=applications" },
+    {
+      id: "request",
+      label: "Submit Care Request",
+      href: "/client?tab=request",
+    },
+    {
+      id: "overview",
+      label: "Dashboard Overview",
+      href: "/client?tab=overview",
+    },
+    {
+      id: "profile" as TabType,
+      label: "Profile Management",
+      href: "/client?tab=profile",
+    },
+    {
+      id: "carers" as TabType,
+      label: "Carer Profiles",
+      href: "/client?tab=carers",
+    },
+    {
+      id: "interest-list" as TabType,
+      label: "Interest List ❤️",
+      href: "/client?tab=interest-list",
+    },
+    {
+      id: "tracking" as TabType,
+      label: "Placements",
+      href: "/client?tab=tracking",
+    },
+    {
+      id: "applications" as TabType,
+      label: "Care Requests",
+      href: "/client?tab=applications",
+    },
     {
       id: "enquiry",
       label: "Support & Enquiries",
       href: "/client?tab=enquiry",
     },
-    { id: "billing" as TabType, label: "Billing & Payments", href: "/client?tab=billing" },
-    { id: "agreements" as TabType, label: "Legal Agreements", href: "/client?tab=agreements" },
+    {
+      id: "billing" as TabType,
+      label: "Billing & Payments",
+      href: "/client?tab=billing",
+    },
+    {
+      id: "agreements" as TabType,
+      label: "Legal Agreements",
+      href: "/client?tab=agreements",
+    },
     { id: "referrals", label: "Refer a Client", href: "/client/referrals" },
   ];
 
@@ -114,29 +150,32 @@ export default function PortalTabs({
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-navy-950/40 backdrop-blur-[2px]">
           <div className="bg-navy-900/90 p-4 rounded-2xl border border-navy-800 shadow-2xl flex flex-col items-center space-y-3">
             <Loader2 className="h-8 w-8 animate-spin text-gold-DEFAULT" />
-            <p className="text-xs font-medium text-gold-200 tracking-wider uppercase">Loading...</p>
+            <p className="text-xs font-medium text-gold-200 tracking-wider uppercase">
+              Loading...
+            </p>
           </div>
         </div>
       )}
       <div
-      ref={scrollRef}
-      className="flex flex-nowrap items-center border-b border-gold-300/10 pb-1 overflow-x-auto gap-1 client-tabs-nav"
-      style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-    >
-      <style>{`.client-tabs-nav::-webkit-scrollbar { display: none; }`}</style>
-      {tabs.map((tab) => (
-        <button
-          key={tab.id}
-          onClick={() => handleTabClick(tab.id as TabType, tab.href)}
-          className={`px-3 sm:px-5 py-3 min-h-[44px] text-xs sm:text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap flex-shrink-0 ${activeTab === tab.id
-              ? "border-b-2 border-gold-DEFAULT text-gold-DEFAULT bg-gold-DEFAULT/5"
-              : "text-gold-200/60 hover:text-gold-50"
+        ref={scrollRef}
+        className="flex flex-nowrap items-center border-b border-gold-300/10 pb-1 overflow-x-auto gap-1 client-tabs-nav"
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+      >
+        <style>{`.client-tabs-nav::-webkit-scrollbar { display: none; }`}</style>
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => handleTabClick(tab.id as TabType, tab.href)}
+            className={`px-3 sm:px-5 py-3 min-h-[44px] text-xs sm:text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap flex-shrink-0 ${
+              activeTab === tab.id
+                ? "border-b-2 border-gold-DEFAULT text-gold-DEFAULT bg-gold-DEFAULT/5"
+                : "text-gold-200/60 hover:text-gold-50"
             }`}
-        >
-          {tab.label}
-        </button>
-      ))}
-    </div>
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
     </>
   );
 }

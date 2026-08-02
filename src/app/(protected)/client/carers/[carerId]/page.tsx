@@ -5,9 +5,19 @@ import { useParams, useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchCarers } from "@/store/slices/clientSlice";
 import { Carer } from "../../types/client-ui.types";
-import { 
-  ArrowLeft, MapPin, Calendar, Mail, Phone, Heart, 
-  Award, ShieldCheck, Clock, Star, Info, User
+import {
+  ArrowLeft,
+  MapPin,
+  Calendar,
+  Mail,
+  Phone,
+  Heart,
+  Award,
+  ShieldCheck,
+  Clock,
+  Star,
+  Info,
+  User,
 } from "lucide-react";
 import ReadOnlyAvailabilityCalendar from "@/components/ReadOnlyAvailabilityCalendar";
 
@@ -51,7 +61,8 @@ export default function CarerDetailsPage() {
           <Info className="w-12 h-12 text-red-400 mx-auto mb-4" />
           <h2 className="text-xl font-bold text-red-300">Profile Not Found</h2>
           <p className="text-red-400/80 mt-2 text-sm">
-            We couldn't find the requested carer profile. It may have been removed or you don't have access.
+            We couldn't find the requested carer profile. It may have been
+            removed or you don't have access.
           </p>
           <button
             onClick={() => router.push("/client?tab=carers")}
@@ -70,15 +81,31 @@ export default function CarerDetailsPage() {
     const [error, setError] = useState(false);
     if (error) {
       return (
-        <div className={`w-full h-full flex items-center justify-center text-4xl font-bold ${carer.avatarBg}`}>
-          {carer.name.split(" ").map((n) => n.charAt(0)).join("")}
+        <div
+          className={`w-full h-full flex items-center justify-center text-4xl font-bold ${carer.avatarBg}`}
+        >
+          {carer.name
+            .split(" ")
+            .map((n) => n.charAt(0))
+            .join("")}
         </div>
       );
     }
-    return <img src={src} alt={alt} className="w-full h-full object-cover" onError={() => setError(true)} />;
+    return (
+      <img
+        src={src}
+        alt={alt}
+        className="w-full h-full object-cover"
+        onError={() => setError(true)}
+      />
+    );
   };
 
-  const getInitials = () => carer.name.split(" ").map((n) => n.charAt(0)).join("");
+  const getInitials = () =>
+    carer.name
+      .split(" ")
+      .map((n) => n.charAt(0))
+      .join("");
 
   return (
     <div className="min-h-screen bg-navy-950 text-slate-100 selection:bg-gold/30">
@@ -89,7 +116,6 @@ export default function CarerDetailsPage() {
       </div>
 
       <div className="container-wrapper py-8 relative z-10 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out">
-        
         {/* Navigation */}
         <button
           onClick={() => router.push("/client?tab=carers")}
@@ -101,12 +127,14 @@ export default function CarerDetailsPage() {
         {/* Hero Section */}
         <div className="relative rounded-3xl overflow-hidden bg-navy-900/50 backdrop-blur-xl border border-gold-300/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
           <div className="absolute inset-0 bg-gradient-to-r from-navy-900 via-navy-900/80 to-transparent z-0" />
-          
+
           <div className="relative z-10 p-6 sm:p-8 flex flex-col md:flex-row items-center md:items-center gap-6">
             {/* Avatar Profile */}
             <div className="shrink-0 relative group">
               <div className="absolute -inset-1 bg-gradient-to-tr from-gold-300 to-gold-600 rounded-full blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200" />
-              <div className={`relative h-24 w-24 sm:h-32 sm:w-32 rounded-full border-4 border-navy-950 overflow-hidden shadow-2xl bg-navy-800 ${!carer.profilePhotoUrl ? carer.avatarBg : ''}`}>
+              <div
+                className={`relative h-24 w-24 sm:h-32 sm:w-32 rounded-full border-4 border-navy-950 overflow-hidden shadow-2xl bg-navy-800 ${!carer.profilePhotoUrl ? carer.avatarBg : ""}`}
+              >
                 {carer.profilePhotoUrl ? (
                   <SafeImage src={carer.profilePhotoUrl} alt={carer.name} />
                 ) : (
@@ -132,36 +160,40 @@ export default function CarerDetailsPage() {
               </div>
 
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 pt-2">
-                <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border backdrop-blur-md shadow-sm
-                  ${carer.availability === "Available" 
-                    ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/20 shadow-emerald-500/10" 
-                    : "bg-amber-500/10 text-amber-300 border-amber-500/20 shadow-amber-500/10"
+                <span
+                  className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border backdrop-blur-md shadow-sm
+                  ${
+                    carer.availability === "Available"
+                      ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/20 shadow-emerald-500/10"
+                      : "bg-amber-500/10 text-amber-300 border-amber-500/20 shadow-amber-500/10"
                   }`}
                 >
-                  <span className={`w-1.5 h-1.5 rounded-full mr-2 ${carer.availability === "Available" ? "bg-emerald-400 animate-pulse" : "bg-amber-400"}`} />
+                  <span
+                    className={`w-1.5 h-1.5 rounded-full mr-2 ${carer.availability === "Available" ? "bg-emerald-400 animate-pulse" : "bg-amber-400"}`}
+                  />
                   {carer.availability}
                 </span>
               </div>
             </div>
-            
           </div>
         </div>
 
         {/* Two Column Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
-          
           {/* Main Content Column */}
           <div className="lg:col-span-2 flex flex-col gap-8 h-full">
-            
             {/* Biography */}
             <section className="bg-navy-900/40 backdrop-blur-md border border-gold-300/10 rounded-3xl p-8 shadow-xl relative overflow-hidden group hover:border-gold-300/20 transition-colors shrink-0">
               <div className="absolute top-0 right-0 w-64 h-64 bg-gold-300/5 rounded-full blur-[80px] -mr-32 -mt-32 pointer-events-none" />
               <h2 className="text-lg font-bold text-gold-100 flex items-center mb-6">
-                <User className="w-5 h-5 mr-3 text-gold-300" /> Professional Overview
+                <User className="w-5 h-5 mr-3 text-gold-300" /> Professional
+                Overview
               </h2>
               <div className="prose prose-invert prose-gold max-w-none">
                 <p className="text-slate-300 leading-relaxed whitespace-pre-line text-sm">
-                  {carer.fullBiography || carer.bio || "No professional overview provided."}
+                  {carer.fullBiography ||
+                    carer.bio ||
+                    "No professional overview provided."}
                 </p>
               </div>
             </section>
@@ -169,35 +201,48 @@ export default function CarerDetailsPage() {
             {/* Client Feedback */}
             <section className="flex-1 bg-navy-900/40 backdrop-blur-md border border-gold-300/10 rounded-3xl p-8 shadow-xl relative overflow-hidden group hover:border-gold-300/20 transition-colors">
               <h2 className="text-lg font-bold text-gold-100 flex items-center mb-6">
-                <Heart className="w-5 h-5 mr-3 text-gold-300" /> Client Feedback & Reviews
+                <Heart className="w-5 h-5 mr-3 text-gold-300" /> Client Feedback
+                & Reviews
               </h2>
-              
+
               {!carer.feedbacks || carer.feedbacks.length === 0 ? (
                 <div className="py-12 flex flex-col items-center justify-center text-center bg-navy-950/30 rounded-2xl border border-dashed border-gold-300/10">
                   <Heart className="w-10 h-10 text-gold-300/20 mb-3" />
-                  <p className="text-gold-100/50 font-medium">No feedback has been submitted for this carer yet.</p>
+                  <p className="text-gold-100/50 font-medium">
+                    No feedback has been submitted for this carer yet.
+                  </p>
                 </div>
               ) : (
                 <div className="grid gap-4">
                   {carer.feedbacks.map((fb, idx) => {
                     const clientName = `${fb.clientProfile?.user?.firstName || "Unknown"} ${fb.clientProfile?.user?.lastName || "Client"}`;
                     return (
-                      <div key={idx} className="bg-navy-950/50 rounded-2xl p-6 border border-gold-300/5 hover:border-gold-300/10 hover:bg-navy-900/50 transition-all duration-300 shadow-sm">
+                      <div
+                        key={idx}
+                        className="bg-navy-950/50 rounded-2xl p-6 border border-gold-300/5 hover:border-gold-300/10 hover:bg-navy-900/50 transition-all duration-300 shadow-sm"
+                      >
                         <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-4 gap-2">
                           <div className="flex items-center space-x-3">
                             <div className="w-8 h-8 rounded-full bg-navy-800 border border-gold-300/20 flex items-center justify-center text-xs font-bold text-gold-100">
-                              {clientName.split(" ").map(n => n[0]).join("")}
+                              {clientName
+                                .split(" ")
+                                .map((n) => n[0])
+                                .join("")}
                             </div>
-                            <span className="text-sm font-bold text-gold-50">{clientName}</span>
+                            <span className="text-sm font-bold text-gold-50">
+                              {clientName}
+                            </span>
                           </div>
                           <div className="flex items-center space-x-1 bg-navy-900 px-3 py-1 rounded-full border border-gold-300/10">
                             {Array.from({ length: 5 }).map((_, i) => (
-                              <Star 
-                                key={i} 
-                                className={`w-3.5 h-3.5 ${i < fb.rating ? "text-amber-400 fill-amber-400" : "text-gray-600 fill-gray-800"}`} 
+                              <Star
+                                key={i}
+                                className={`w-3.5 h-3.5 ${i < fb.rating ? "text-amber-400 fill-amber-400" : "text-gray-600 fill-gray-800"}`}
                               />
                             ))}
-                            <span className="text-xs font-bold text-gold-100/70 ml-1.5">{fb.rating}.0</span>
+                            <span className="text-xs font-bold text-gold-100/70 ml-1.5">
+                              {fb.rating}.0
+                            </span>
                           </div>
                         </div>
                         <p className="text-slate-300/90 italic leading-relaxed text-sm">
@@ -209,23 +254,25 @@ export default function CarerDetailsPage() {
                 </div>
               )}
             </section>
-
           </div>
 
           {/* Sidebar */}
           <div className="flex flex-col gap-8 h-full">
-            
             {/* Contact Card */}
             <div className="bg-navy-900/60 backdrop-blur-md border border-gold-300/10 rounded-3xl p-6 shadow-lg shrink-0">
-              <h3 className="text-xs uppercase tracking-widest font-bold text-gold-300/70 mb-6">Contact & Location</h3>
-              
+              <h3 className="text-xs uppercase tracking-widest font-bold text-gold-300/70 mb-6">
+                Contact & Location
+              </h3>
+
               <div className="space-y-5">
                 <div className="flex items-start space-x-4">
                   <div className="p-2.5 rounded-xl bg-navy-950 border border-gold-300/10 text-gold-300 shrink-0 shadow-inner">
                     <MapPin className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="text-xs font-semibold text-gold-100/50 uppercase tracking-wider mb-1">Location</p>
+                    <p className="text-xs font-semibold text-gold-100/50 uppercase tracking-wider mb-1">
+                      Location
+                    </p>
                     <p className="text-sm text-gold-50 font-medium leading-tight">
                       {carer.location || "Location hidden"}
                     </p>
@@ -239,7 +286,9 @@ export default function CarerDetailsPage() {
                     <Mail className="w-5 h-5" />
                   </div>
                   <div className="overflow-hidden">
-                    <p className="text-xs font-semibold text-gold-100/50 uppercase tracking-wider mb-1">Email</p>
+                    <p className="text-xs font-semibold text-gold-100/50 uppercase tracking-wider mb-1">
+                      Email
+                    </p>
                     <p className="text-sm text-gold-50 font-medium truncate">
                       {(carer as any).email || "Email hidden"}
                     </p>
@@ -251,7 +300,9 @@ export default function CarerDetailsPage() {
                     <Phone className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="text-xs font-semibold text-gold-100/50 uppercase tracking-wider mb-1">Phone</p>
+                    <p className="text-xs font-semibold text-gold-100/50 uppercase tracking-wider mb-1">
+                      Phone
+                    </p>
                     <p className="text-sm text-gold-50 font-medium leading-tight">
                       {(carer as any).phone || "Phone hidden"}
                     </p>
@@ -261,11 +312,11 @@ export default function CarerDetailsPage() {
             </div>
 
             {/* Schedule Card */}
-            <ReadOnlyAvailabilityCalendar availability={carer.rawAvailability} />
-            
+            <ReadOnlyAvailabilityCalendar
+              availability={carer.rawAvailability}
+            />
           </div>
         </div>
-
       </div>
     </div>
   );

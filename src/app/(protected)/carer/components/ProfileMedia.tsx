@@ -1,16 +1,34 @@
 import { useState, useEffect, useRef } from "react";
 import SectionCard from "./shared/SectionCard";
-import { Camera, Video, CheckCircle2, AlertCircle, X, Clock, Upload, XCircle, FileVideo, Image as ImageIcon } from "lucide-react";
+import {
+  Camera,
+  Video,
+  CheckCircle2,
+  AlertCircle,
+  X,
+  Clock,
+  Upload,
+  XCircle,
+  FileVideo,
+  Image as ImageIcon,
+} from "lucide-react";
 import Button from "@/components/Button";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 import { carerService } from "@/services/carer/carer.service";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
-const getFullMediaUrl = (path: string | null | undefined, updatedAt?: string) => {
+const getFullMediaUrl = (
+  path: string | null | undefined,
+  updatedAt?: string,
+) => {
   if (!path) return undefined;
   let finalUrl = path;
-  if (!path.startsWith("http://") && !path.startsWith("https://") && !path.startsWith("blob:")) {
+  if (
+    !path.startsWith("http://") &&
+    !path.startsWith("https://") &&
+    !path.startsWith("blob:")
+  ) {
     let baseUrl = API_BASE_URL;
     try {
       baseUrl = new URL(API_BASE_URL).origin;
@@ -20,7 +38,7 @@ const getFullMediaUrl = (path: string | null | undefined, updatedAt?: string) =>
     const cleanPath = path.startsWith("/") ? path : `/${path}`;
     finalUrl = `${baseUrl}${cleanPath}`;
   }
-  
+
   if (
     updatedAt &&
     !finalUrl.startsWith("blob:") &&
@@ -70,7 +88,10 @@ export default function ProfileMedia({
       setLoadingRequests(true);
       const data = await carerService.getProfileUpdateRequests();
       // Sort by newest first
-      const sorted = data.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      const sorted = data.sort(
+        (a: any, b: any) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      );
       setRequests(sorted);
     } catch (err: any) {
       console.error("Failed to fetch profile update requests:", err);
@@ -89,15 +110,25 @@ export default function ProfileMedia({
     }
 
     if (!photoFile && !videoFile) {
-      showErrorToast("Validation Error", "Please select at least a photo or video to update.");
+      showErrorToast(
+        "Validation Error",
+        "Please select at least a photo or video to update.",
+      );
       return;
     }
 
     setIsSubmitting(true);
     setUpdateReasonError("");
     try {
-      await carerService.submitProfileUpdateRequest(photoFile || undefined, videoFile || undefined, trimmedReason);
-      showSuccessToast("Request Submitted", "Your media update request has been submitted successfully.");
+      await carerService.submitProfileUpdateRequest(
+        photoFile || undefined,
+        videoFile || undefined,
+        trimmedReason,
+      );
+      showSuccessToast(
+        "Request Submitted",
+        "Your media update request has been submitted successfully.",
+      );
 
       setModalOpen(false);
       setPhotoFile(null);
@@ -106,7 +137,10 @@ export default function ProfileMedia({
 
       await fetchRequests();
     } catch (err: any) {
-      showErrorToast("Update Failed", err.message || "Failed to submit profile update request.");
+      showErrorToast(
+        "Update Failed",
+        err.message || "Failed to submit profile update request.",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -122,17 +156,23 @@ export default function ProfileMedia({
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "APPROVED": return "text-emerald-400 bg-emerald-400/10 border-emerald-400/20";
-      case "REJECTED": return "text-rose-400 bg-rose-400/10 border-rose-400/20";
-      default: return "text-amber-400 bg-amber-400/10 border-amber-400/20";
+      case "APPROVED":
+        return "text-emerald-400 bg-emerald-400/10 border-emerald-400/20";
+      case "REJECTED":
+        return "text-rose-400 bg-rose-400/10 border-rose-400/20";
+      default:
+        return "text-amber-400 bg-amber-400/10 border-amber-400/20";
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case "APPROVED": return <CheckCircle2 className="w-3.5 h-3.5" />;
-      case "REJECTED": return <XCircle className="w-3.5 h-3.5" />;
-      default: return <Clock className="w-3.5 h-3.5" />;
+      case "APPROVED":
+        return <CheckCircle2 className="w-3.5 h-3.5" />;
+      case "REJECTED":
+        return <XCircle className="w-3.5 h-3.5" />;
+      default:
+        return <Clock className="w-3.5 h-3.5" />;
     }
   };
 
@@ -166,7 +206,9 @@ export default function ProfileMedia({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Profile Picture Card */}
           <div className="bg-navy-900/40 p-6 rounded-2xl border border-gold-300/10 flex flex-col items-center text-center shadow-soft">
-            <h4 className="text-sm font-semibold text-gold-50 mb-6">Current Profile Picture</h4>
+            <h4 className="text-sm font-semibold text-gold-50 mb-6">
+              Current Profile Picture
+            </h4>
 
             <div className="relative w-32 h-32 mb-6">
               <div className="absolute inset-0 bg-gold-DEFAULT/10 rounded-full animate-pulse-slow"></div>
@@ -180,7 +222,9 @@ export default function ProfileMedia({
               ) : (
                 <div className="w-full h-full rounded-full bg-navy-950 flex flex-col items-center justify-center border-4 border-navy-950 shadow-xl z-10 relative">
                   <Camera className="w-8 h-8 text-gold-DEFAULT/40" />
-                  <span className="text-[10px] text-gold-DEFAULT/40 mt-2 font-medium tracking-wider">NO PHOTO</span>
+                  <span className="text-[10px] text-gold-DEFAULT/40 mt-2 font-medium tracking-wider">
+                    NO PHOTO
+                  </span>
                 </div>
               )}
             </div>
@@ -188,7 +232,9 @@ export default function ProfileMedia({
 
           {/* Introduction Video Card */}
           <div className="bg-navy-900/40 p-6 rounded-2xl border border-gold-300/10 flex flex-col items-center text-center shadow-soft">
-            <h4 className="text-sm font-semibold text-gold-50 mb-6">Current Introduction Video</h4>
+            <h4 className="text-sm font-semibold text-gold-50 mb-6">
+              Current Introduction Video
+            </h4>
 
             <div className="w-full max-w-[240px] h-32 mb-6 rounded-2xl border-2 border-dashed border-gold-DEFAULT/20 bg-navy-950/50 flex flex-col items-center justify-center relative overflow-hidden group-hover:border-gold-DEFAULT/40 transition-colors">
               {introVideoUrl ? (
@@ -201,7 +247,9 @@ export default function ProfileMedia({
               ) : (
                 <div className="flex flex-col items-center">
                   <Video className="w-8 h-8 text-gold-DEFAULT/40 mb-2" />
-                  <span className="text-[10px] text-gold-DEFAULT/40 font-medium tracking-wider">NO VIDEO</span>
+                  <span className="text-[10px] text-gold-DEFAULT/40 font-medium tracking-wider">
+                    NO VIDEO
+                  </span>
                 </div>
               )}
             </div>
@@ -211,55 +259,75 @@ export default function ProfileMedia({
         {/* Previous Requests Section */}
         {requests.length > 0 && (
           <div className="pt-6 border-t border-gold-300/10 space-y-4">
-            <h4 className="text-sm font-semibold text-gold-200">Request History</h4>
+            <h4 className="text-sm font-semibold text-gold-200">
+              Request History
+            </h4>
             <div className="grid grid-cols-1 gap-3 max-h-[450px] overflow-y-auto pr-2 custom-scrollbar">
               {requests.map((req) => {
                 const requestedPhoto = req.hasPhoto || req.isChangeProfilePic;
                 const requestedVideo = req.hasVideo || req.isChangeIntroVideo;
 
                 return (
-                  <div key={req.id} className="bg-navy-950/60 rounded-xl border border-gold-300/10 p-5 flex flex-col gap-5 hover:bg-navy-950/80 hover:border-gold-300/20 transition-all shadow-sm">
+                  <div
+                    key={req.id}
+                    className="bg-navy-950/60 rounded-xl border border-gold-300/10 p-5 flex flex-col gap-5 hover:bg-navy-950/80 hover:border-gold-300/20 transition-all shadow-sm"
+                  >
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full gap-4">
                       <div>
                         <p className="text-[15px] text-gold-50 font-semibold flex items-center gap-2">
                           Media Update Request
                         </p>
                         <p className="text-xs text-gold-100/50 mt-1.5">
-                          Submitted on {new Date(req.createdAt).toLocaleDateString()}
+                          Submitted on{" "}
+                          {new Date(req.createdAt).toLocaleDateString()}
                         </p>
                       </div>
-                      <div className={`flex items-center justify-center gap-1.5 font-semibold text-xs px-3.5 py-1.5 rounded-full border ${getStatusColor(req.status)} shrink-0 shadow-sm`}>
+                      <div
+                        className={`flex items-center justify-center gap-1.5 font-semibold text-xs px-3.5 py-1.5 rounded-full border ${getStatusColor(req.status)} shrink-0 shadow-sm`}
+                      >
                         {getStatusIcon(req.status)} {req.status}
                       </div>
                     </div>
-                    
+
                     {/* Pending Media Previews */}
                     <div className="flex flex-wrap gap-6 mt-1">
                       {requestedPhoto && req.pendingProfilePhotoUrl && (
                         <div className="flex flex-col gap-2">
                           <span className="text-[10px] font-semibold text-gold-200/70 flex items-center gap-1.5 uppercase tracking-wider">
-                            <ImageIcon className="w-3.5 h-3.5" /> Requested Photo
+                            <ImageIcon className="w-3.5 h-3.5" /> Requested
+                            Photo
                           </span>
-                          <a href={getFullMediaUrl(req.pendingProfilePhotoUrl)} target="_blank" rel="noreferrer" className="block w-24 h-24 rounded-xl overflow-hidden border border-navy-800 shadow-md hover:opacity-80 transition relative">
-                            <img 
-                              src={getFullMediaUrl(req.pendingProfilePhotoUrl)} 
-                              alt="Pending profile" 
-                              className="w-full h-full object-cover" 
+                          <a
+                            href={getFullMediaUrl(req.pendingProfilePhotoUrl)}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="block w-24 h-24 rounded-xl overflow-hidden border border-navy-800 shadow-md hover:opacity-80 transition relative"
+                          >
+                            <img
+                              src={getFullMediaUrl(req.pendingProfilePhotoUrl)}
+                              alt="Pending profile"
+                              className="w-full h-full object-cover"
                               onError={(e) => {
-                                e.currentTarget.style.display = 'none';
+                                e.currentTarget.style.display = "none";
                               }}
                             />
                           </a>
                         </div>
                       )}
-                      
+
                       {requestedVideo && req.pendingIntroVideoUrl && (
                         <div className="flex flex-col gap-2">
                           <span className="text-[10px] font-semibold text-gold-200/70 flex items-center gap-1.5 uppercase tracking-wider">
-                            <FileVideo className="w-3.5 h-3.5" /> Requested Video
+                            <FileVideo className="w-3.5 h-3.5" /> Requested
+                            Video
                           </span>
                           <div className="w-40 h-24 rounded-xl overflow-hidden border border-navy-800 bg-black shadow-md flex items-center justify-center">
-                            <video src={getFullMediaUrl(req.pendingIntroVideoUrl)} className="w-full h-full object-cover" controls controlsList="nodownload" />
+                            <video
+                              src={getFullMediaUrl(req.pendingIntroVideoUrl)}
+                              className="w-full h-full object-cover"
+                              controls
+                              controlsList="nodownload"
+                            />
                           </div>
                         </div>
                       )}
@@ -267,7 +335,10 @@ export default function ProfileMedia({
 
                     {req.status === "REJECTED" && req.rejectionReason && (
                       <div className="text-[11px] bg-rose-500/10 border border-rose-500/20 text-rose-200/90 rounded p-2 mt-1">
-                        <span className="font-semibold text-rose-300">Reason:</span> {req.rejectionReason}
+                        <span className="font-semibold text-rose-300">
+                          Reason:
+                        </span>{" "}
+                        {req.rejectionReason}
                       </div>
                     )}
                   </div>
@@ -297,14 +368,18 @@ export default function ProfileMedia({
                 Update Profile Media
               </h3>
               <p className="text-sm text-gold-100/70 leading-relaxed mb-6">
-                Please upload your new profile picture and/or introduction video. An admin will review and approve your request.
+                Please upload your new profile picture and/or introduction
+                video. An admin will review and approve your request.
               </p>
 
               <div className="w-full text-left space-y-6 mb-8">
                 {/* Photo Upload */}
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gold-200">
-                    New Profile Picture <span className="text-gold-100/50 text-[10px] font-normal">(Optional)</span>
+                    New Profile Picture{" "}
+                    <span className="text-gold-100/50 text-[10px] font-normal">
+                      (Optional)
+                    </span>
                   </label>
                   <div
                     onClick={() => photoInputRef.current?.click()}
@@ -315,11 +390,19 @@ export default function ProfileMedia({
                       accept="image/*"
                       className="hidden"
                       ref={photoInputRef}
-                      onChange={(e) => setPhotoFile(e.target.files?.[0] || null)}
+                      onChange={(e) =>
+                        setPhotoFile(e.target.files?.[0] || null)
+                      }
                     />
                     <ImageIcon className="w-6 h-6 text-gold-300/40" />
                     <p className="text-xs text-gold-100/60">
-                      {photoFile ? <span className="text-gold-200 font-medium">{photoFile.name}</span> : "Click to select a photo"}
+                      {photoFile ? (
+                        <span className="text-gold-200 font-medium">
+                          {photoFile.name}
+                        </span>
+                      ) : (
+                        "Click to select a photo"
+                      )}
                     </p>
                   </div>
                 </div>
@@ -327,7 +410,10 @@ export default function ProfileMedia({
                 {/* Video Upload */}
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gold-200">
-                    New Introduction Video <span className="text-gold-100/50 text-[10px] font-normal">(Optional)</span>
+                    New Introduction Video{" "}
+                    <span className="text-gold-100/50 text-[10px] font-normal">
+                      (Optional)
+                    </span>
                   </label>
                   <div
                     onClick={() => videoInputRef.current?.click()}
@@ -338,11 +424,19 @@ export default function ProfileMedia({
                       accept="video/*"
                       className="hidden"
                       ref={videoInputRef}
-                      onChange={(e) => setVideoFile(e.target.files?.[0] || null)}
+                      onChange={(e) =>
+                        setVideoFile(e.target.files?.[0] || null)
+                      }
                     />
                     <FileVideo className="w-6 h-6 text-gold-300/40" />
                     <p className="text-xs text-gold-100/60">
-                      {videoFile ? <span className="text-gold-200 font-medium">{videoFile.name}</span> : "Click to select a video"}
+                      {videoFile ? (
+                        <span className="text-gold-200 font-medium">
+                          {videoFile.name}
+                        </span>
+                      ) : (
+                        "Click to select a video"
+                      )}
                     </p>
                   </div>
                 </div>
@@ -361,11 +455,15 @@ export default function ProfileMedia({
                     }}
                     placeholder="Please explain why you are requesting this profile media update..."
                     className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 text-sm ${
-                      updateReasonError ? "border-red-500 focus:ring-red-500" : "border-gray-300/20"
+                      updateReasonError
+                        ? "border-red-500 focus:ring-red-500"
+                        : "border-gray-300/20"
                     }`}
                   ></textarea>
                   {updateReasonError && (
-                    <p className="text-xs text-red-500 font-medium">{updateReasonError}</p>
+                    <p className="text-xs text-red-500 font-medium">
+                      {updateReasonError}
+                    </p>
                   )}
                 </div>
               </div>

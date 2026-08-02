@@ -3,7 +3,11 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { agreementsService, LegalAgreement, SignedAgreement } from "@/services/agreements/agreements.service";
+import {
+  agreementsService,
+  LegalAgreement,
+  SignedAgreement,
+} from "@/services/agreements/agreements.service";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchClientProfile } from "@/store/slices/clientSlice";
 import { clientService } from "@/services/client/client.service";
@@ -23,7 +27,7 @@ export default function AgreementsPage() {
         pollCount++;
         await refreshUser();
         dispatch(fetchClientProfile());
-        
+
         if (pollCount >= 12) {
           clearInterval(interval);
         }
@@ -34,8 +38,9 @@ export default function AgreementsPage() {
   const [pending, setPending] = useState<LegalAgreement[]>([]);
   const [history, setHistory] = useState<SignedAgreement[]>([]);
   const [activeTab, setActiveTab] = useState<"pending" | "history">("pending");
-  
-  const [selectedAgreement, setSelectedAgreement] = useState<LegalAgreement | null>(null);
+
+  const [selectedAgreement, setSelectedAgreement] =
+    useState<LegalAgreement | null>(null);
   const [signatureName, setSignatureName] = useState("");
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -54,7 +59,7 @@ export default function AgreementsPage() {
       const historyData = await agreementsService.getSignedHistory();
       setPending(pendingData);
       setHistory(historyData);
-      
+
       if (pendingData.length > 0) {
         setSelectedAgreement(pendingData[0]);
       } else {
@@ -72,11 +77,14 @@ export default function AgreementsPage() {
     fetchAgreements();
   }, []);
 
-  const handlePrintAgreement = (agreement: LegalAgreement | null, signedRecord?: SignedAgreement) => {
+  const handlePrintAgreement = (
+    agreement: LegalAgreement | null,
+    signedRecord?: SignedAgreement,
+  ) => {
     if (!agreement) return;
     const printWindow = window.open("", "_blank");
     if (printWindow) {
-      const signatureBlock = signedRecord 
+      const signatureBlock = signedRecord
         ? `<div class="signature-section">
              <h3>Electronic Signature Audit Trail</h3>
              <p><strong>Signed Electronically By:</strong> "${signedRecord.signatureName}"</p>
@@ -110,7 +118,10 @@ export default function AgreementsPage() {
           <body>
             <h1>${agreement.title}</h1>
             <div class="meta">Document Version: ${agreement.version} | Target Role: ${agreement.targetRole} | Grace & Goodwill Care Management</div>
-            <div>${agreement.content.split("\n\n").map(para => `<p>${para.replace(/\n/g, "<br/>")}</p>`).join("")}</div>
+            <div>${agreement.content
+              .split("\n\n")
+              .map((para) => `<p>${para.replace(/\n/g, "<br/>")}</p>`)
+              .join("")}</div>
             ${signatureBlock}
             <script>
               setTimeout(function() {
@@ -124,14 +135,16 @@ export default function AgreementsPage() {
     }
   };
 
-
   const handlePayLifetimeFee = async () => {
     try {
       setPayingFee(true);
       const successUrl = `${window.location.origin}/client?payment=success`;
       const cancelUrl = `${window.location.origin}/client?payment=failed`;
-      
-      const { url } = await clientService.createLifetimeFeeCheckout(successUrl, cancelUrl);
+
+      const { url } = await clientService.createLifetimeFeeCheckout(
+        successUrl,
+        cancelUrl,
+      );
       if (url) {
         window.location.href = url;
       } else {
@@ -159,22 +172,27 @@ export default function AgreementsPage() {
     try {
       setIsSubmitting(true);
       setError(null);
-      await agreementsService.signAgreement(selectedAgreement.id, signatureName);
-      
+      await agreementsService.signAgreement(
+        selectedAgreement.id,
+        signatureName,
+      );
+
       // Reset signing state
       setSignatureName("");
       setAgreedToTerms(false);
-      
+
       // Refresh context profile
       await refreshUser();
-      
+
       // Reload lists manually to verify count before redirect
       const rawPendingData = await agreementsService.getPendingAgreements();
       const historyData = await agreementsService.getSignedHistory();
-      
+
       // Optimistically filter out the signed agreement in case of backend delay
-      const pendingData = rawPendingData.filter(doc => doc.id !== selectedAgreement.id);
-      
+      const pendingData = rawPendingData.filter(
+        (doc) => doc.id !== selectedAgreement.id,
+      );
+
       setPending(pendingData);
       setHistory(historyData);
 
@@ -207,7 +225,9 @@ export default function AgreementsPage() {
       <div className="flex items-center justify-center py-20 text-gold-100">
         <div className="flex flex-col items-center space-y-4">
           <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-gold-DEFAULT"></div>
-          <p className="text-sm tracking-wider text-gold-200">Loading agreements...</p>
+          <p className="text-sm tracking-wider text-gold-200">
+            Loading agreements...
+          </p>
         </div>
       </div>
     );
@@ -261,18 +281,38 @@ export default function AgreementsPage() {
         {activeTab === "pending" && (
           <div>
             {pending.length === 0 ? (
-              user?.role?.toUpperCase() === "CLIENT" && !profile?.isLifetimeFeePaid ? (
+              user?.role?.toUpperCase() === "CLIENT" &&
+              !profile?.isLifetimeFeePaid ? (
                 paymentStatus === "success" ? (
                   <div className="bg-navy-900/60 border border-navy-800 rounded-2xl p-12 text-center max-w-2xl mx-auto shadow-soft space-y-6">
                     <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gold-DEFAULT/10 border border-gold-DEFAULT/30 text-[#d4af37] animate-pulse">
-                      <svg className="animate-spin h-8 w-8 text-gold-DEFAULT" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      <svg
+                        className="animate-spin h-8 w-8 text-gold-DEFAULT"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        />
                       </svg>
                     </div>
-                    <h3 className="text-2xl font-serif font-bold text-white">Direct Debit Payment Authorizing...</h3>
+                    <h3 className="text-2xl font-serif font-bold text-white">
+                      Direct Debit Payment Authorizing...
+                    </h3>
                     <p className="text-slate-350 text-sm max-w-md mx-auto">
-                      We are setting up your GoCardless mandate. This may take a few moments as we verify details with Bacs. Please do not refresh or close this window.
+                      We are setting up your GoCardless mandate. This may take a
+                      few moments as we verify details with Bacs. Please do not
+                      refresh or close this window.
                     </p>
                   </div>
                 ) : (
@@ -280,19 +320,36 @@ export default function AgreementsPage() {
                     {paymentStatus === "failed" && (
                       <div className="mb-6 p-4 rounded-xl bg-red-950/40 border border-red-500/20 text-red-200 text-sm font-semibold flex items-center justify-center gap-2">
                         <span>⚠️</span>
-                        <span>Direct Debit mandate setup failed or was cancelled. Please try again.</span>
+                        <span>
+                          Direct Debit mandate setup failed or was cancelled.
+                          Please try again.
+                        </span>
                       </div>
                     )}
                     <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gold/10 border border-gold/30 text-[#d4af37] mb-6">
-                      <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                      <svg
+                        className="h-8 w-8"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                        />
                       </svg>
                     </div>
-                    <h3 className="text-2xl font-serif font-bold text-white">Activate Your Client Account</h3>
+                    <h3 className="text-2xl font-serif font-bold text-white">
+                      Activate Your Client Account
+                    </h3>
                     <p className="text-slate-300 text-sm leading-relaxed max-w-lg mx-auto">
-                      Agreements signed successfully! To unlock carer matching, search profiles, and submit introduction requests, please pay the one-off Lifetime Platform Fee.
+                      Agreements signed successfully! To unlock carer matching,
+                      search profiles, and submit introduction requests, please
+                      pay the one-off Lifetime Platform Fee.
                     </p>
-                    
+
                     <div className="p-4 rounded-xl bg-navy-950 border border-navy-850 max-w-md mx-auto text-left space-y-3">
                       <div className="flex justify-between items-center text-xs font-semibold text-slate-400 uppercase">
                         <span>Item</span>
@@ -319,9 +376,24 @@ export default function AgreementsPage() {
                     >
                       {payingFee ? (
                         <>
-                          <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-navy-950" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                          <svg
+                            className="animate-spin -ml-1 mr-3 h-5 w-5 text-navy-950"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            />
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            />
                           </svg>
                           Redirecting to Checkout...
                         </>
@@ -337,20 +409,34 @@ export default function AgreementsPage() {
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                     <div className="h-40 w-40 rounded-full bg-gold-DEFAULT/5 blur-[80px] group-hover:bg-gold-DEFAULT/10 transition-all duration-1000"></div>
                   </div>
-                  
+
                   <div className="relative z-10 flex flex-col items-center">
                     <div className="relative flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-full border border-gold-400/20 bg-gradient-to-b from-gold-400/10 to-transparent mb-5 shadow-[0_0_30px_rgba(181,148,105,0.15)]">
                       <div className="absolute inset-0 rounded-full border border-gold-400/30 animate-[spin_6s_linear_infinite] border-t-transparent border-l-transparent"></div>
                       <div className="absolute inset-2 rounded-full border border-gold-400/20 animate-[spin_4s_linear_infinite_reverse] border-b-transparent border-r-transparent"></div>
-                      <svg className="h-6 w-6 sm:h-8 sm:w-8 text-gold-400 drop-shadow-[0_0_10px_rgba(181,148,105,0.6)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      <svg
+                        className="h-6 w-6 sm:h-8 sm:w-8 text-gold-400 drop-shadow-[0_0_10px_rgba(181,148,105,0.6)]"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M5 13l4 4L19 7"
+                        />
                       </svg>
                     </div>
-                    
-                    <h3 className="text-xl sm:text-2xl font-semibold text-white tracking-wide mb-2 text-transparent bg-clip-text bg-gradient-to-b from-white to-gold-200">All Caught Up!</h3>
-                    
+
+                    <h3 className="text-xl sm:text-2xl font-semibold text-white tracking-wide mb-2 text-transparent bg-clip-text bg-gradient-to-b from-white to-gold-200">
+                      All Caught Up!
+                    </h3>
+
                     <p className="text-gold-100/60 text-sm sm:text-base leading-relaxed max-w-md mx-auto font-medium text-center">
-                      You have successfully signed all your required agreements! Sit back, relax, and enjoy exploring all the features the Grace & Goodwill care platform has to offer.
+                      You have successfully signed all your required agreements!
+                      Sit back, relax, and enjoy exploring all the features the
+                      Grace & Goodwill care platform has to offer.
                     </p>
                   </div>
                 </div>
@@ -359,7 +445,9 @@ export default function AgreementsPage() {
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* List of pending docs */}
                 <div className="space-y-3">
-                  <h3 className="text-sm font-semibold uppercase tracking-wider text-gold-400 mb-2">Required Documents</h3>
+                  <h3 className="text-sm font-semibold uppercase tracking-wider text-gold-400 mb-2">
+                    Required Documents
+                  </h3>
                   {pending.map((doc) => (
                     <button
                       key={doc.id}
@@ -375,7 +463,9 @@ export default function AgreementsPage() {
                     >
                       <div className="flex justify-between items-center">
                         <span className="font-semibold">{doc.title}</span>
-                        <span className="text-xs bg-navy-800 text-gold-DEFAULT px-2 py-1 rounded">v{doc.version}</span>
+                        <span className="text-xs bg-navy-800 text-gold-DEFAULT px-2 py-1 rounded">
+                          v{doc.version}
+                        </span>
                       </div>
                     </button>
                   ))}
@@ -386,11 +476,15 @@ export default function AgreementsPage() {
                   {selectedAgreement && (
                     <div className="bg-navy-900/60 border border-navy-800 rounded-2xl p-6 shadow-soft">
                       <div className="border-b border-navy-800 pb-4 mb-4 flex justify-between items-center">
-                        <h2 className="text-2xl font-bold text-white">{selectedAgreement.title}</h2>
+                        <h2 className="text-2xl font-bold text-white">
+                          {selectedAgreement.title}
+                        </h2>
                         <div className="flex items-center space-x-3">
                           <button
                             type="button"
-                            onClick={() => handlePrintAgreement(selectedAgreement)}
+                            onClick={() =>
+                              handlePrintAgreement(selectedAgreement)
+                            }
                             className="text-xs bg-navy-850 hover:bg-navy-800 text-gold-DEFAULT border border-gold-DEFAULT/20 px-3 py-1.5 rounded-lg transition font-semibold"
                           >
                             Print / Save PDF
@@ -403,13 +497,20 @@ export default function AgreementsPage() {
 
                       {/* Content Reader */}
                       <div className="bg-navy-950 border border-navy-850 rounded-xl p-5 h-96 overflow-y-auto mb-6 text-sm text-slate-300 leading-relaxed font-sans scrollbar-thin scrollbar-thumb-navy-800">
-                        {selectedAgreement.content.split("\n\n").map((para, idx) => (
-                          <p key={idx} className="mb-4">{para}</p>
-                        ))}
+                        {selectedAgreement.content
+                          .split("\n\n")
+                          .map((para, idx) => (
+                            <p key={idx} className="mb-4">
+                              {para}
+                            </p>
+                          ))}
                       </div>
 
                       {/* Signature Form */}
-                      <form onSubmit={handleSign} className="border-t border-navy-800 pt-6">
+                      <form
+                        onSubmit={handleSign}
+                        className="border-t border-navy-800 pt-6"
+                      >
                         <div className="mb-5 flex items-start">
                           <input
                             id="accept-terms"
@@ -418,15 +519,25 @@ export default function AgreementsPage() {
                             onChange={(e) => setAgreedToTerms(e.target.checked)}
                             className="h-5 w-5 rounded bg-navy-950 border-navy-800 text-gold-DEFAULT focus:ring-gold-DEFAULT focus:ring-offset-navy-900 mt-0.5"
                           />
-                          <label htmlFor="accept-terms" className="ml-3 text-sm text-slate-300 select-none">
-                            I confirm that I have read, understood, and accept the terms of the{" "}
-                            <span className="text-white font-medium">{selectedAgreement.title}</span>.
+                          <label
+                            htmlFor="accept-terms"
+                            className="ml-3 text-sm text-slate-300 select-none"
+                          >
+                            I confirm that I have read, understood, and accept
+                            the terms of the{" "}
+                            <span className="text-white font-medium">
+                              {selectedAgreement.title}
+                            </span>
+                            .
                           </label>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
                           <div>
-                            <label htmlFor="sig-name" className="block text-xs font-semibold text-slate-400 uppercase mb-2">
+                            <label
+                              htmlFor="sig-name"
+                              className="block text-xs font-semibold text-slate-400 uppercase mb-2"
+                            >
                               Full Name (Typed Signature)
                             </label>
                             <input
@@ -446,9 +557,24 @@ export default function AgreementsPage() {
                           >
                             {isSubmitting ? (
                               <>
-                                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-navy-950" fill="none" viewBox="0 0 24 24">
-                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                <svg
+                                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-navy-950"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <circle
+                                    className="opacity-25"
+                                    cx="12"
+                                    cy="12"
+                                    r="10"
+                                    stroke="currentColor"
+                                    strokeWidth="4"
+                                  />
+                                  <path
+                                    className="opacity-75"
+                                    fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                  />
                                 </svg>
                                 Sealing Agreement...
                               </>
@@ -469,9 +595,13 @@ export default function AgreementsPage() {
         {/* History Tab */}
         {activeTab === "history" && (
           <div className="bg-navy-900/60 border border-navy-800 rounded-2xl p-6 shadow-soft">
-            <h2 className="text-xl font-bold text-white mb-6">Signature Audit Trail</h2>
+            <h2 className="text-xl font-bold text-white mb-6">
+              Signature Audit Trail
+            </h2>
             {history.length === 0 ? (
-              <p className="text-slate-400 text-center py-8">No signed agreements found.</p>
+              <p className="text-slate-400 text-center py-8">
+                No signed agreements found.
+              </p>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse text-sm text-slate-300">
@@ -482,29 +612,53 @@ export default function AgreementsPage() {
                       <th className="py-3.5 px-4">Signatory Name</th>
                       <th className="py-3.5 px-4">Signed Date</th>
                       <th className="py-3.5 px-4">IP Address</th>
-                      <th className="py-3.5 px-4 hidden md:table-cell">User Agent</th>
+                      <th className="py-3.5 px-4 hidden md:table-cell">
+                        User Agent
+                      </th>
                       <th className="py-3.5 px-4 text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {history.map((record) => (
-                      <tr key={record.id} className="border-b border-navy-800/40 hover:bg-navy-850/30 transition-colors">
-                        <td className="py-4 px-4 font-semibold text-white">{record.agreement?.title || "Legal Agreement"}</td>
+                      <tr
+                        key={record.id}
+                        className="border-b border-navy-800/40 hover:bg-navy-850/30 transition-colors"
+                      >
+                        <td className="py-4 px-4 font-semibold text-white">
+                          {record.agreement?.title || "Legal Agreement"}
+                        </td>
                         <td className="py-4 px-4 text-center">
-                          <span className="bg-navy-800 text-gold-DEFAULT px-2 py-0.5 rounded text-xs">v{record.versionAccepted}</span>
+                          <span className="bg-navy-800 text-gold-DEFAULT px-2 py-0.5 rounded text-xs">
+                            v{record.versionAccepted}
+                          </span>
                         </td>
-                        <td className="py-4 px-4 font-medium italic text-gold-100">"{record.signatureName}"</td>
+                        <td className="py-4 px-4 font-medium italic text-gold-100">
+                          "{record.signatureName}"
+                        </td>
                         <td className="py-4 px-4 text-slate-450">
-                          {new Date(record.acceptedAt).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' })}
+                          {new Date(record.acceptedAt).toLocaleString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                            hour: "numeric",
+                            minute: "2-digit",
+                          })}
                         </td>
-                        <td className="py-4 px-4 font-mono text-xs">{record.ipAddress}</td>
-                        <td className="py-4 px-4 text-xs text-slate-500 max-w-xs truncate hidden md:table-cell" title={record.userAgent}>
+                        <td className="py-4 px-4 font-mono text-xs">
+                          {record.ipAddress}
+                        </td>
+                        <td
+                          className="py-4 px-4 text-xs text-slate-500 max-w-xs truncate hidden md:table-cell"
+                          title={record.userAgent}
+                        >
                           {record.userAgent}
                         </td>
                         <td className="py-4 px-4 text-right">
                           <button
                             type="button"
-                            onClick={() => handlePrintAgreement(record.agreement, record)}
+                            onClick={() =>
+                              handlePrintAgreement(record.agreement, record)
+                            }
                             className="text-xs text-gold-DEFAULT hover:underline font-semibold"
                           >
                             Print / Save PDF

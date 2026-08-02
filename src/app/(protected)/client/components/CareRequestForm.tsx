@@ -35,7 +35,13 @@ interface CareRequestFormProps {
   isSubmitting: boolean;
   onSubmit: (e: React.FormEvent) => void;
   setActiveTab: (
-    tab: "overview" | "request" | "carers" | "tracking" | "enquiry" | "applications",
+    tab:
+      | "overview"
+      | "request"
+      | "carers"
+      | "tracking"
+      | "enquiry"
+      | "applications",
   ) => void;
 }
 
@@ -74,7 +80,11 @@ export default function CareRequestForm({
           Submit Care Requirements
         </h3>
         <p className="text-xs text-gold-100/60 leading-relaxed mt-1">
-          Specify details about the care needed. Start browsing carer profiles, comparing qualifications, experience, specialist skills and availability before creating your own shortlist. Explore at your own pace while benefiting from verified profiles and the support of Grace & Goodwill whenever you need assistance.
+          Specify details about the care needed. Start browsing carer profiles,
+          comparing qualifications, experience, specialist skills and
+          availability before creating your own shortlist. Explore at your own
+          pace while benefiting from verified profiles and the support of Grace
+          & Goodwill whenever you need assistance.
         </p>
       </div>
 
@@ -160,11 +170,15 @@ export default function CareRequestForm({
               placeholder="Select end date"
               error={errors.duration}
               disabled={isOngoing}
-              min={startDate ? (() => {
-                const start = new Date(startDate);
-                start.setDate(start.getDate() + 2);
-                return start.toISOString().split('T')[0];
-              })() : undefined}
+              min={
+                startDate
+                  ? (() => {
+                      const start = new Date(startDate);
+                      start.setDate(start.getDate() + 2);
+                      return start.toISOString().split("T")[0];
+                    })()
+                  : undefined
+              }
             />
             <label className="flex items-center gap-2 text-sm text-gold-200 mt-2 cursor-pointer">
               <input
@@ -215,8 +229,9 @@ export default function CareRequestForm({
             value={support}
             onChange={(e) => setSupport(e.target.value)}
             placeholder="Describe specific client details, medication support, mobility support, and daily routines..."
-            className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 text-sm ${errors.support ? "border-red-500" : "border-gray-300/20"
-              }`}
+            className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 text-sm ${
+              errors.support ? "border-red-500" : "border-gray-300/20"
+            }`}
           ></textarea>
           {errors.support && (
             <p className="text-xs text-red-500 font-medium">{errors.support}</p>
@@ -265,8 +280,6 @@ export default function CareRequestForm({
           </Button>
         </div>
       </form>
-
-
     </SectionCard>
   );
 }

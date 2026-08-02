@@ -2,7 +2,16 @@ import React, { useRef, useState } from "react";
 import SectionCard from "./shared/SectionCard";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
-import { FileVideo, Video, Camera, Check, Info, Trash2, UploadCloud, AlertCircle } from "lucide-react";
+import {
+  FileVideo,
+  Video,
+  Camera,
+  Check,
+  Info,
+  Trash2,
+  UploadCloud,
+  AlertCircle,
+} from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { uploadProfileMedia } from "@/store/slices/carerSlice";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
@@ -24,10 +33,14 @@ export default function StepVideoIntro({
 
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
-  const [photoSelectionError, setPhotoSelectionError] = useState<string | null>(null);
+  const [photoSelectionError, setPhotoSelectionError] = useState<string | null>(
+    null,
+  );
 
   const [videoFile, setVideoFile] = useState<File | null>(null);
-  const [videoSelectionError, setVideoSelectionError] = useState<string | null>(null);
+  const [videoSelectionError, setVideoSelectionError] = useState<string | null>(
+    null,
+  );
 
   const [isSubmittingMedia, setIsSubmittingMedia] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -56,18 +69,28 @@ export default function StepVideoIntro({
     return finalUrl;
   };
 
-  const displayPhotoUrl = photoPreview || (existingPhotoUrl ? getFullPhotoUrl(existingPhotoUrl) : null);
+  const displayPhotoUrl =
+    photoPreview ||
+    (existingPhotoUrl ? getFullPhotoUrl(existingPhotoUrl) : null);
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"];
+    const validTypes = [
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "image/webp",
+      "image/gif",
+    ];
     const validExtensions = [".jpg", ".jpeg", ".png", ".webp", ".gif"];
     const ext = "." + file.name.split(".").pop()?.toLowerCase();
 
     if (!validTypes.includes(file.type) && !validExtensions.includes(ext)) {
-      setPhotoSelectionError("Only JPEG, PNG, WEBP and GIF images are allowed.");
+      setPhotoSelectionError(
+        "Only JPEG, PNG, WEBP and GIF images are allowed.",
+      );
       setPhotoFile(null);
       setPhotoPreview(null);
       e.target.value = "";
@@ -83,12 +106,19 @@ export default function StepVideoIntro({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const validTypes = ["video/mp4", "video/webm", "video/ogg", "video/quicktime"];
+    const validTypes = [
+      "video/mp4",
+      "video/webm",
+      "video/ogg",
+      "video/quicktime",
+    ];
     const validExtensions = [".mp4", ".webm", ".ogg", ".mov"];
     const ext = "." + file.name.split(".").pop()?.toLowerCase();
 
     if (!validTypes.includes(file.type) && !validExtensions.includes(ext)) {
-      setVideoSelectionError("Only MP4, WebM, OGG and QuickTime videos are allowed.");
+      setVideoSelectionError(
+        "Only MP4, WebM, OGG and QuickTime videos are allowed.",
+      );
       setVideoFile(null);
       e.target.value = "";
       return;
@@ -102,7 +132,7 @@ export default function StepVideoIntro({
 
       if (duration < 45 || duration > 60) {
         setVideoSelectionError(
-          `Your video duration is ${Math.round(duration)} seconds. It must be between 45 seconds and 60 seconds (1 minute) maximum.`
+          `Your video duration is ${Math.round(duration)} seconds. It must be between 45 seconds and 60 seconds (1 minute) maximum.`,
         );
         setVideoFile(null);
         if (videoInputRef.current) videoInputRef.current.value = "";
@@ -138,14 +168,14 @@ export default function StepVideoIntro({
         uploadProfileMedia({
           photo: photoFile || undefined,
           video: videoFile || undefined,
-        })
+        }),
       ).unwrap();
       showSuccessToast("Success", "Profile media uploaded successfully!");
       return true;
     } catch (err: unknown) {
       showErrorToast(
         "Upload Failed",
-        typeof err === "string" ? err : "Failed to upload media"
+        typeof err === "string" ? err : "Failed to upload media",
       );
       return false;
     } finally {
@@ -156,8 +186,12 @@ export default function StepVideoIntro({
   const hasPhoto = !!photoFile || !!existingPhotoUrl;
   const hasVideo = !!videoFile || !!existingVideoUrl;
 
-  const photoErrorMsg = photoSelectionError || (submitted && !hasPhoto ? "Please upload your profile picture." : "");
-  const videoErrorMsg = videoSelectionError || (submitted && !hasVideo ? "Please upload your introduction video." : "");
+  const photoErrorMsg =
+    photoSelectionError ||
+    (submitted && !hasPhoto ? "Please upload your profile picture." : "");
+  const videoErrorMsg =
+    videoSelectionError ||
+    (submitted && !hasVideo ? "Please upload your introduction video." : "");
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
@@ -169,7 +203,9 @@ export default function StepVideoIntro({
               <Info className="w-4 h-4 text-gold-200/50 hover:text-gold-200 cursor-help transition-colors" />
               <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-64 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10 pointer-events-none text-left">
                 <div className="bg-navy-950 text-gold-100 text-[11px] font-normal leading-relaxed p-3 rounded-lg border border-gold-300/10 shadow-xl relative whitespace-normal">
-                  Your profile picture and video will be reviewed by an administrator. Once accepted, if you wish to change them, please contact an administrator.
+                  Your profile picture and video will be reviewed by an
+                  administrator. Once accepted, if you wish to change them,
+                  please contact an administrator.
                   <div className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-transparent border-t-gold-300/10"></div>
                   <div className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-l-[5px] border-r-[5px] border-t-[5px] border-transparent border-t-navy-950 -mt-[1px]"></div>
                 </div>
@@ -177,7 +213,8 @@ export default function StepVideoIntro({
             </div>
           </h3>
           <p className="text-sm text-gold-100/60 leading-relaxed">
-            Provide a professional photo and a short introductory video. Both are required before continuing.
+            Provide a professional photo and a short introductory video. Both
+            are required before continuing.
           </p>
         </div>
 
@@ -185,19 +222,27 @@ export default function StepVideoIntro({
           {/* Photo Upload Card */}
           <div
             className={`flex flex-col items-center bg-navy-900/40 p-8 rounded-3xl border transition-all duration-300 ${
-              photoErrorMsg 
-                ? "border-red-500/50 shadow-[0_0_20px_rgba(239,68,68,0.1)]" 
+              photoErrorMsg
+                ? "border-red-500/50 shadow-[0_0_20px_rgba(239,68,68,0.1)]"
                 : "border-gold-300/10 hover:border-gold-300/20 shadow-soft"
             }`}
           >
             <div className="text-center mb-8 flex flex-col justify-end h-8">
-              <h4 className="text-sm font-semibold text-gold-50">Profile Picture *</h4>
+              <h4 className="text-sm font-semibold text-gold-50">
+                Profile Picture *
+              </h4>
             </div>
 
             <div
-              onClick={() => !isSubmittingMedia && photoInputRef.current?.click()}
+              onClick={() =>
+                !isSubmittingMedia && photoInputRef.current?.click()
+              }
               className={`relative h-40 w-40 shrink-0 overflow-hidden rounded-full border-[3px] bg-navy-950 flex flex-col items-center justify-center transition-transform duration-300 group cursor-pointer ${
-                photoErrorMsg ? "border-red-500/50" : displayPhotoUrl ? "border-emerald-500/50" : "border-gold-DEFAULT/40 hover:border-gold-DEFAULT group-hover:scale-[1.02]"
+                photoErrorMsg
+                  ? "border-red-500/50"
+                  : displayPhotoUrl
+                    ? "border-emerald-500/50"
+                    : "border-gold-DEFAULT/40 hover:border-gold-DEFAULT group-hover:scale-[1.02]"
               }`}
             >
               {displayPhotoUrl ? (
@@ -208,8 +253,12 @@ export default function StepVideoIntro({
                 />
               ) : (
                 <>
-                  <Camera className={`w-10 h-10 mb-2 ${photoErrorMsg ? "text-red-500/50" : "text-gold-DEFAULT/50"}`} />
-                  <span className="text-[10px] font-bold text-gold-DEFAULT/60 tracking-wider">BROWSE</span>
+                  <Camera
+                    className={`w-10 h-10 mb-2 ${photoErrorMsg ? "text-red-500/50" : "text-gold-DEFAULT/50"}`}
+                  />
+                  <span className="text-[10px] font-bold text-gold-DEFAULT/60 tracking-wider">
+                    BROWSE
+                  </span>
                 </>
               )}
 
@@ -219,7 +268,7 @@ export default function StepVideoIntro({
                 </div>
               )}
             </div>
-            
+
             <input
               type="file"
               accept="image/*"
@@ -231,7 +280,9 @@ export default function StepVideoIntro({
 
             <div className="mt-8 text-center min-h-[60px] flex flex-col items-center justify-start w-full">
               {photoErrorMsg ? (
-                <p className="text-sm text-red-500 font-semibold">{photoErrorMsg}</p>
+                <p className="text-sm text-red-500 font-semibold">
+                  {photoErrorMsg}
+                </p>
               ) : hasPhoto ? (
                 <div className="space-y-3 w-full">
                   <div className="flex items-center justify-center gap-1.5 text-emerald-400 font-medium text-sm">
@@ -240,7 +291,9 @@ export default function StepVideoIntro({
                   <div className="flex items-center justify-center gap-4 text-xs font-semibold">
                     <button
                       type="button"
-                      onClick={() => !isSubmittingMedia && photoInputRef.current?.click()}
+                      onClick={() =>
+                        !isSubmittingMedia && photoInputRef.current?.click()
+                      }
                       className="text-gold-DEFAULT hover:text-gold-300 transition-colors"
                       disabled={isSubmittingMedia}
                     >
@@ -267,24 +320,31 @@ export default function StepVideoIntro({
           {/* Video Upload Card */}
           <div
             className={`flex flex-col items-center bg-navy-900/40 p-8 rounded-3xl border transition-all duration-300 ${
-              videoErrorMsg 
-                ? "border-red-500/50 shadow-[0_0_20px_rgba(239,68,68,0.1)]" 
+              videoErrorMsg
+                ? "border-red-500/50 shadow-[0_0_20px_rgba(239,68,68,0.1)]"
                 : "border-gold-300/10 hover:border-gold-300/20 shadow-soft"
             }`}
           >
             <div className="text-center mb-8 flex flex-col justify-end">
-              <h4 className="text-sm font-semibold text-gold-50">Upload Video Introduction (Maximum 1 minute)*</h4>
-              <p className="text-xs text-gold-100/60 mt-2">Videos longer than 1 minute should not be accepted by the system.</p>
+              <h4 className="text-sm font-semibold text-gold-50">
+                Upload Video Introduction (Maximum 1 minute)*
+              </h4>
+              <p className="text-xs text-gold-100/60 mt-2">
+                Videos longer than 1 minute should not be accepted by the
+                system.
+              </p>
             </div>
 
             <div
-              onClick={() => !isSubmittingMedia && videoInputRef.current?.click()}
+              onClick={() =>
+                !isSubmittingMedia && videoInputRef.current?.click()
+              }
               className={`h-40 w-full max-w-[240px] border-2 border-dashed rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all duration-300 group ${
                 videoErrorMsg
                   ? "border-red-500/50 bg-red-950/10"
                   : hasVideo
-                  ? "border-emerald-500/50 bg-emerald-950/5"
-                  : "border-gold-DEFAULT/30 hover:border-gold-DEFAULT/60 bg-navy-950 group-hover:bg-navy-900/50"
+                    ? "border-emerald-500/50 bg-emerald-950/5"
+                    : "border-gold-DEFAULT/30 hover:border-gold-DEFAULT/60 bg-navy-950 group-hover:bg-navy-900/50"
               }`}
             >
               {hasVideo ? (
@@ -298,8 +358,12 @@ export default function StepVideoIntro({
                 </div>
               ) : (
                 <div className="flex flex-col items-center space-y-3">
-                  <Video className={`w-10 h-10 ${videoErrorMsg ? "text-red-500/50" : "text-gold-DEFAULT/50 group-hover:scale-110 transition-transform"}`} />
-                  <span className="text-[10px] font-bold text-gold-DEFAULT/60 tracking-wider">BROWSE VIDEO</span>
+                  <Video
+                    className={`w-10 h-10 ${videoErrorMsg ? "text-red-500/50" : "text-gold-DEFAULT/50 group-hover:scale-110 transition-transform"}`}
+                  />
+                  <span className="text-[10px] font-bold text-gold-DEFAULT/60 tracking-wider">
+                    BROWSE VIDEO
+                  </span>
                 </div>
               )}
             </div>
@@ -315,7 +379,9 @@ export default function StepVideoIntro({
 
             <div className="mt-8 text-center min-h-[60px] flex flex-col items-center justify-start w-full">
               {videoErrorMsg ? (
-                <p className="text-sm text-red-500 font-semibold">{videoErrorMsg}</p>
+                <p className="text-sm text-red-500 font-semibold">
+                  {videoErrorMsg}
+                </p>
               ) : hasVideo ? (
                 <div className="space-y-3 w-full">
                   <div className="flex items-center justify-center gap-1.5 text-emerald-400 font-medium text-sm">
@@ -324,7 +390,9 @@ export default function StepVideoIntro({
                   <div className="flex items-center justify-center gap-4 text-xs font-semibold">
                     <button
                       type="button"
-                      onClick={() => !isSubmittingMedia && videoInputRef.current?.click()}
+                      onClick={() =>
+                        !isSubmittingMedia && videoInputRef.current?.click()
+                      }
                       className="text-gold-DEFAULT hover:text-gold-300 transition-colors"
                       disabled={isSubmittingMedia}
                     >
@@ -357,7 +425,10 @@ export default function StepVideoIntro({
           <div className="space-y-4 pt-1 w-full">
             <div>
               <p className="text-[13px] text-gold-100/80 leading-relaxed font-medium">
-                Your profile picture will be visible to prospective clients and families. Please upload a clear, professional, and natural-looking photo with your face clearly visible. Avoid selfies, group photos, filters, or low-quality images.
+                Your profile picture will be visible to prospective clients and
+                families. Please upload a clear, professional, and
+                natural-looking photo with your face clearly visible. Avoid
+                selfies, group photos, filters, or low-quality images.
               </p>
               <p className="text-xs text-gold-100/60 leading-relaxed mt-2">
                 Upload a professional, friendly, high-resolution headshot.
@@ -370,10 +441,15 @@ export default function StepVideoIntro({
               <AlertCircle className="w-4 h-4 text-gold-DEFAULT shrink-0 mt-0.5" />
               <div className="space-y-4">
                 <p className="text-xs text-gold-100/60 leading-relaxed">
-                  Briefly introduce yourself, discuss your experience, personality, interests, and the type of people you enjoy supporting.
+                  Briefly introduce yourself, discuss your experience,
+                  personality, interests, and the type of people you enjoy
+                  supporting.
                 </p>
                 <p className="text-xs text-gold-100/60 leading-relaxed">
-                  This video will be visible to prospective clients and families as part of the matching process and help families get a better understanding of your communication style, personality, values, and experience before arranging an interview.
+                  This video will be visible to prospective clients and families
+                  as part of the matching process and help families get a better
+                  understanding of your communication style, personality,
+                  values, and experience before arranging an interview.
                 </p>
               </div>
             </div>
@@ -382,7 +458,7 @@ export default function StepVideoIntro({
       </SectionCard>
 
       <div className="bg-navy-900/40 border border-gold-300/10 rounded-2xl p-6 shadow-inner">
-        <div 
+        <div
           className="flex items-start gap-4 cursor-pointer group"
           onClick={() => setHasConsented(!hasConsented)}
         >
@@ -392,26 +468,30 @@ export default function StepVideoIntro({
                 hasConsented
                   ? "bg-gold border-gold"
                   : submitted && !hasConsented
-                  ? "border-red-500 bg-red-950/20 shadow-[0_0_8px_rgba(239,68,68,0.15)]"
-                  : "border-gold-300/30"
+                    ? "border-red-500 bg-red-950/20 shadow-[0_0_8px_rgba(239,68,68,0.15)]"
+                    : "border-gold-300/30"
               }`}
             />
-            <Check 
+            <Check
               className={`absolute w-3.5 h-3.5 text-navy-950 transition-opacity ${
                 hasConsented ? "opacity-100" : "opacity-0"
-              }`} 
+              }`}
             />
           </div>
           <div className="space-y-1">
             <p className="text-sm font-semibold text-gold-50 group-hover:text-gold-200 transition-colors">
-              I understand and consent that my profile media will be visible to clients and administrators.
+              I understand and consent that my profile media will be visible to
+              clients and administrators.
             </p>
             <p className="text-xs text-gold-100/60 leading-relaxed">
-              By checking this box, you agree that your photo and video introduction will be shared with families and care seekers on the platform to help them find the best match.
+              By checking this box, you agree that your photo and video
+              introduction will be shared with families and care seekers on the
+              platform to help them find the best match.
             </p>
             {submitted && !hasConsented && (
               <p className="text-xs font-bold text-red-400 pt-1 flex items-center gap-1.5">
-                <AlertCircle className="w-3.5 h-3.5" /> Your consent is important. You must agree to proceed.
+                <AlertCircle className="w-3.5 h-3.5" /> Your consent is
+                important. You must agree to proceed.
               </p>
             )}
           </div>
@@ -433,7 +513,13 @@ export default function StepVideoIntro({
           variant="primary"
           onClick={async () => {
             setSubmitted(true);
-            if (photoSelectionError || videoSelectionError || !hasPhoto || !hasVideo || !hasConsented) {
+            if (
+              photoSelectionError ||
+              videoSelectionError ||
+              !hasPhoto ||
+              !hasVideo ||
+              !hasConsented
+            ) {
               return;
             }
             if (photoFile || videoFile) {

@@ -97,7 +97,11 @@ export default function ServicesPage() {
           </div>
 
           <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-gold-200/80">
-            Grace & Goodwill is an introductory platform that connects families with carefully vetted, independent, self-employed live-in carers across the UK. Grace & Goodwill does not directly provide or manage care. Clients choose their preferred carer and enter into a separate agreement directly with that carer.
+            Grace & Goodwill is an introductory platform that connects families
+            with carefully vetted, independent, self-employed live-in carers
+            across the UK. Grace & Goodwill does not directly provide or manage
+            care. Clients choose their preferred carer and enter into a separate
+            agreement directly with that carer.
           </p>
         </section>
 
@@ -142,7 +146,11 @@ export default function ServicesPage() {
                   </div>
                 </div>
                 <p className="text-sm leading-relaxed text-gold-200/75 sm:text-base">
-                  If your chosen self-employed live-in carer becomes unavailable, Grace & Goodwill will make every reasonable effort to introduce suitable replacement carers from our nationwide network as quickly as possible. The client remains responsible for selecting and engaging their preferred carer
+                  If your chosen self-employed live-in carer becomes
+                  unavailable, Grace & Goodwill will make every reasonable
+                  effort to introduce suitable replacement carers from our
+                  nationwide network as quickly as possible. The client remains
+                  responsible for selecting and engaging their preferred carer
                 </p>
               </div>
 
@@ -165,7 +173,10 @@ export default function ServicesPage() {
             Let&apos;s discuss how we can support you.
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-gold-200/80 sm:text-base">
-            Speak with our care matching specialists to discuss your requirements. We’ll help you find and introduce suitable independent, self-employed carers based on your individual needs and preferences.
+            Speak with our care matching specialists to discuss your
+            requirements. We’ll help you find and introduce suitable
+            independent, self-employed carers based on your individual needs and
+            preferences.
           </p>
           <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
             <Button

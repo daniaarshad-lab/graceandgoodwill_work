@@ -1,7 +1,17 @@
 import SectionCard from "./shared/SectionCard";
 import { ComplianceDoc } from "../types/carer.types";
 import React, { useState, useRef } from "react";
-import { Upload, FileText, CheckCircle2, AlertCircle, Trash2, Eye, Loader2, ArrowLeft, ArrowRight } from "lucide-react";
+import {
+  Upload,
+  FileText,
+  CheckCircle2,
+  AlertCircle,
+  Trash2,
+  Eye,
+  Loader2,
+  ArrowLeft,
+  ArrowRight,
+} from "lucide-react";
 import Button from "@/components/Button";
 
 interface ComplianceVaultProps {
@@ -20,8 +30,6 @@ interface ComplianceVaultProps {
   onBack?: () => void;
 }
 
-
-
 export default function ComplianceVault({
   complianceDocs,
   documentsLoading,
@@ -33,7 +41,9 @@ export default function ComplianceVault({
   onNext,
   onBack,
 }: ComplianceVaultProps) {
-  const allVerified = complianceDocs.length > 0 && complianceDocs.every(doc => doc.status === "verified");
+  const allVerified =
+    complianceDocs.length > 0 &&
+    complianceDocs.every((doc) => doc.status === "verified");
 
   const sortedDocs = [...complianceDocs].sort((a, b) => {
     if (a.status === "failed" && b.status !== "failed") return -1;
@@ -54,7 +64,9 @@ export default function ComplianceVault({
               <ArrowLeft className="w-3.5 h-3.5" />
               Back
             </button>
-          ) : <div />}
+          ) : (
+            <div />
+          )}
 
           {onNext && (
             <button
@@ -90,9 +102,7 @@ export default function ComplianceVault({
                 <div className="mx-auto h-12 w-12 rounded-full border border-dashed border-gold-300/30 flex items-center justify-center text-gold-100/40">
                   <FileText className="w-5 h-5" />
                 </div>
-                <p className="text-xs text-gold-100/40">
-                  No documents found.
-                </p>
+                <p className="text-xs text-gold-100/40">No documents found.</p>
               </div>
             ) : (
               <div className="space-y-4">
@@ -101,8 +111,9 @@ export default function ComplianceVault({
                   return (
                     <div
                       key={doc.id}
-                      className={`p-4 rounded-xl border border-gold-300/10 bg-navy-950/40 flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-4 transition-opacity ${isDeleting ? "opacity-50 pointer-events-none" : ""
-                        }`}
+                      className={`p-4 rounded-xl border border-gold-300/10 bg-navy-950/40 flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-4 transition-opacity ${
+                        isDeleting ? "opacity-50 pointer-events-none" : ""
+                      }`}
                     >
                       <div className="flex items-center gap-3 overflow-hidden w-full sm:w-auto">
                         <div className="shrink-0 h-10 w-10 rounded-lg bg-gold-DEFAULT/10 border border-gold-DEFAULT/20 flex items-center justify-center text-gold-DEFAULT">
@@ -113,7 +124,17 @@ export default function ComplianceVault({
                             {doc.name}
                           </h4>
                           <p className="text-[9px] text-gold-100/40 mt-0.5 truncate">
-                            {doc.category ? doc.category.split("_").map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" ") : "Document"} • {doc.size}
+                            {doc.category
+                              ? doc.category
+                                  .split("_")
+                                  .map(
+                                    (w: string) =>
+                                      w.charAt(0).toUpperCase() +
+                                      w.slice(1).toLowerCase(),
+                                  )
+                                  .join(" ")
+                              : "Document"}{" "}
+                            • {doc.size}
                           </p>
                           {doc.status === "failed" && doc.rejectionReason && (
                             <p className="text-[10px] text-red-400 mt-1 font-medium break-words">
@@ -150,7 +171,9 @@ export default function ComplianceVault({
                               type="file"
                               accept=".pdf,.png,.jpg,.jpeg"
                               className="hidden"
-                              onChange={(e) => handleUpdateDoc(doc.id, doc.type, e)}
+                              onChange={(e) =>
+                                handleUpdateDoc(doc.id, doc.type, e)
+                              }
                             />
                           </label>
                         </Button>

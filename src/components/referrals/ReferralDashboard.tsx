@@ -1,5 +1,9 @@
 import React, { useState } from "react";
-import { Referral, ReferralStatus, ClientReferralResponse } from "@/types/referral";
+import {
+  Referral,
+  ReferralStatus,
+  ClientReferralResponse,
+} from "@/types/referral";
 
 interface ReferralDashboardProps {
   referrals: Array<Referral | ClientReferralResponse>;
@@ -19,7 +23,8 @@ export default function ReferralDashboard({
   const [searchQuery, setSearchQuery] = useState("");
   const [localStatusFilter, setLocalStatusFilter] = useState<string>("ALL");
 
-  const currentStatusFilter = statusFilter !== undefined ? statusFilter : localStatusFilter;
+  const currentStatusFilter =
+    statusFilter !== undefined ? statusFilter : localStatusFilter;
 
   const handleStatusFilterChange = (val: string) => {
     if (onStatusFilterChange) {
@@ -43,10 +48,7 @@ export default function ReferralDashboard({
   };
 
   const getStatusBadge = (status: string) => {
-    const statusMap: Record<
-      string,
-      { label: string; classes: string }
-    > = {
+    const statusMap: Record<string, { label: string; classes: string }> = {
       PENDING: {
         label: "Pending",
         classes:
@@ -105,7 +107,13 @@ export default function ReferralDashboard({
       list = list.filter((r) => r.status === currentStatusFilter);
     }
     return list;
-  }, [referrals, filterType, searchQuery, currentStatusFilter, onStatusFilterChange]);
+  }, [
+    referrals,
+    filterType,
+    searchQuery,
+    currentStatusFilter,
+    onStatusFilterChange,
+  ]);
 
   return (
     <div className="h-full flex flex-col justify-between space-y-5">
@@ -130,7 +138,11 @@ export default function ReferralDashboard({
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-gold-300/5 pb-3">
           <div>
             <h3 className="text-xl font-bold text-gold-200 tracking-tight">
-              {filterType === "CARER" ? "Carer Referral History" : filterType === "CLIENT" ? "Client Referral History" : "Referral History"}
+              {filterType === "CARER"
+                ? "Carer Referral History"
+                : filterType === "CLIENT"
+                  ? "Client Referral History"
+                  : "Referral History"}
             </h3>
             <p className="text-xs text-gold-100/50 mt-0.5">
               Review and track all your referred candidates.
@@ -206,7 +218,9 @@ export default function ReferralDashboard({
                   </thead>
                   <tbody className="divide-y divide-gold-300/5 text-[12.5px] text-gold-100/80">
                     {filteredReferrals.map((ref) => {
-                      const submittedDate = (ref as Referral).submittedDate || (ref as ClientReferralResponse).createdAt;
+                      const submittedDate =
+                        (ref as Referral).submittedDate ||
+                        (ref as ClientReferralResponse).createdAt;
                       return (
                         <tr
                           key={ref.id}
@@ -246,7 +260,9 @@ export default function ReferralDashboard({
             {/* Mobile Cards Container */}
             <div className="block md:hidden overflow-y-auto referral-scroll max-h-[440px] space-y-3 pr-1">
               {filteredReferrals.map((ref) => {
-                const submittedDate = (ref as Referral).submittedDate || (ref as ClientReferralResponse).createdAt;
+                const submittedDate =
+                  (ref as Referral).submittedDate ||
+                  (ref as ClientReferralResponse).createdAt;
                 return (
                   <div
                     key={ref.id}

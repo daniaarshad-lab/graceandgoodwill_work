@@ -21,7 +21,8 @@ export default function UploadDocumentModal({
   const [signedUrl, setSignedUrl] = useState<string>("");
 
   useEffect(() => {
-    const target = previewDoc?.fileKey || previewDoc?.previewUrl || previewDoc?.fileUrl;
+    const target =
+      previewDoc?.fileKey || previewDoc?.previewUrl || previewDoc?.fileUrl;
     if (target) {
       storageService.getPresignedUrl(target).then((url) => {
         setSignedUrl(url);
@@ -48,8 +49,8 @@ export default function UploadDocumentModal({
     return finalUrl;
   }
 
-  const fullPreviewUrl = signedUrl || (previewDoc ? getFullUrl(previewDoc.previewUrl) : "");
-
+  const fullPreviewUrl =
+    signedUrl || (previewDoc ? getFullUrl(previewDoc.previewUrl) : "");
 
   return (
     <>
@@ -113,11 +114,7 @@ export default function UploadDocumentModal({
                       <p className="text-xs text-gold-100/60">
                         Preview is not available for this file type.
                       </p>
-                      <Button
-                        asChild
-                        variant="ghost-gold"
-                        size="sm"
-                      >
+                      <Button asChild variant="ghost-gold" size="sm">
                         <a
                           href={fullPreviewUrl}
                           target="_blank"

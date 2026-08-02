@@ -12,7 +12,12 @@ interface FeedbackModalProps {
   onSuccess: () => void;
 }
 
-export default function FeedbackModal({ placementId, carerName, onClose, onSuccess }: FeedbackModalProps) {
+export default function FeedbackModal({
+  placementId,
+  carerName,
+  onClose,
+  onSuccess,
+}: FeedbackModalProps) {
   const dispatch = useAppDispatch();
   const [rating, setRating] = useState<number>(0);
   const [message, setMessage] = useState("");
@@ -44,7 +49,9 @@ export default function FeedbackModal({ placementId, carerName, onClose, onSucce
 
     setIsSubmitting(true);
     try {
-      await dispatch(submitFeedback({ placementId, payload: { rating, message } })).unwrap();
+      await dispatch(
+        submitFeedback({ placementId, payload: { rating, message } }),
+      ).unwrap();
       showSuccessToast("Feedback submitted successfully!");
       onSuccess();
       handleClose();
@@ -56,14 +63,16 @@ export default function FeedbackModal({ placementId, carerName, onClose, onSucce
   };
 
   return (
-    <div 
+    <div
       className={`fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/80 backdrop-blur-sm transition-opacity duration-200 ${
         isVisible && !isClosing ? "opacity-100" : "opacity-0"
       }`}
     >
-      <div 
+      <div
         className={`bg-navy-900 border border-gold-300/20 rounded-2xl w-full max-w-[860px] shadow-elegant overflow-y-auto custom-scrollbar max-h-[90vh] relative transition-all duration-200 transform flex flex-col ${
-          isVisible && !isClosing ? "scale-100 translate-y-0" : "scale-95 translate-y-4"
+          isVisible && !isClosing
+            ? "scale-100 translate-y-0"
+            : "scale-95 translate-y-4"
         }`}
       >
         <div className="flex justify-between items-start p-5 px-6 border-b border-gold-300/10">
@@ -73,7 +82,8 @@ export default function FeedbackModal({ placementId, carerName, onClose, onSucce
               Leave Feedback
             </h2>
             <p className="text-xs text-gold-100/60 mt-1">
-              Share your experience with this carer to help us maintain the highest quality of care.
+              Share your experience with this carer to help us maintain the
+              highest quality of care.
             </p>
           </div>
           <button
@@ -83,20 +93,20 @@ export default function FeedbackModal({ placementId, carerName, onClose, onSucce
             <X className="w-5 h-5" />
           </button>
         </div>
-        
+
         <div className="p-6 space-y-4">
           <div className="flex flex-col md:flex-row md:items-center gap-5">
             {/* Carer Information Card */}
             <div className="flex-1 flex items-center gap-3 p-3 rounded-xl bg-navy-950/50 border border-gold-300/10">
-            <div className="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center border border-gold/20 shrink-0">
-              <User className="w-6 h-6 text-gold" />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-gold-50">{carerName}</h3>
-              <p className="text-xs font-semibold text-emerald-400 mt-0.5">
-                ✓ Placement Completed
-              </p>
-            </div>
+              <div className="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center border border-gold/20 shrink-0">
+                <User className="w-6 h-6 text-gold" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-gold-50">{carerName}</h3>
+                <p className="text-xs font-semibold text-emerald-400 mt-0.5">
+                  ✓ Placement Completed
+                </p>
+              </div>
             </div>
 
             {/* Star Rating */}
@@ -124,7 +134,11 @@ export default function FeedbackModal({ placementId, carerName, onClose, onSucce
               <p className="text-xs font-medium text-gold-200/60 mt-1.5 h-4">
                 {rating > 0 || hoveredRating > 0 ? (
                   <span>
-                    {["Poor", "Fair", "Good", "Very Good", "Excellent"][(hoveredRating || rating) - 1]}
+                    {
+                      ["Poor", "Fair", "Good", "Very Good", "Excellent"][
+                        (hoveredRating || rating) - 1
+                      ]
+                    }
                   </span>
                 ) : (
                   "Tap to rate"

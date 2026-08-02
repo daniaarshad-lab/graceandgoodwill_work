@@ -31,7 +31,9 @@ export const clientService = {
     });
   },
 
-  async updateProfile(payload: UpdateClientProfilePayload): Promise<ClientProfile> {
+  async updateProfile(
+    payload: UpdateClientProfilePayload,
+  ): Promise<ClientProfile> {
     const token =
       typeof window !== "undefined"
         ? localStorage.getItem("accessToken")
@@ -51,7 +53,10 @@ export const clientService = {
   },
 
   /** POST /client/matches — create a match between a care request and a carer */
-  async createMatch(careRequestId: string, carerProfileId: string): Promise<any> {
+  async createMatch(
+    careRequestId: string,
+    carerProfileId: string,
+  ): Promise<any> {
     const token =
       typeof window !== "undefined"
         ? localStorage.getItem("accessToken")
@@ -146,8 +151,14 @@ export const clientService = {
     });
   },
 
-  async submitFeedback(placementId: string, payload: FeedbackPayload): Promise<ClientFeedback> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+  async submitFeedback(
+    placementId: string,
+    payload: FeedbackPayload,
+  ): Promise<ClientFeedback> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
 
     return apiFetch(`/client/placements/${placementId}/feedback`, {
@@ -160,7 +171,10 @@ export const clientService = {
   },
 
   async getClientFeedbacks(): Promise<ClientFeedback[]> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
 
     return apiFetch("/client/feedbacks", {
@@ -229,7 +243,9 @@ export const clientService = {
   },
 
   /** GET /client/care-requests/:id/applications — get applications for a care request */
-  async getCareRequestApplications(careRequestId: string): Promise<CareRequestApplication[]> {
+  async getCareRequestApplications(
+    careRequestId: string,
+  ): Promise<CareRequestApplication[]> {
     const token =
       typeof window !== "undefined"
         ? localStorage.getItem("accessToken")
@@ -285,7 +301,10 @@ export const clientService = {
   },
 
   async getPlacementDetail(placementId: string): Promise<ClientPlacement> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
 
     return apiFetch(`/client/placements/${placementId}`, {
@@ -297,7 +316,10 @@ export const clientService = {
   },
 
   async getInterestList() {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
 
     return apiFetch("/client/interest-list", {
@@ -307,7 +329,10 @@ export const clientService = {
   },
 
   async addToInterestList(carerProfileId: string) {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
 
     return apiFetch("/client/interest-list", {
@@ -318,7 +343,10 @@ export const clientService = {
   },
 
   async reorderInterestList(carerProfileIds: string[]) {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
 
     return apiFetch("/client/interest-list/reorder", {
@@ -329,7 +357,10 @@ export const clientService = {
   },
 
   async removeFromInterestList(carerProfileId: string) {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
 
     return apiFetch(`/client/interest-list/${carerProfileId}`, {
@@ -339,7 +370,10 @@ export const clientService = {
   },
 
   async getInvoices(): Promise<any[]> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
 
     return apiFetch("/client/invoices", {
@@ -348,8 +382,16 @@ export const clientService = {
     });
   },
 
-  async createLifetimeFeeCheckout(successUrl: string, cancelUrl: string, immediateServiceConsent?: boolean, lossOfRightToCancelConsent?: boolean): Promise<{ url: string }> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+  async createLifetimeFeeCheckout(
+    successUrl: string,
+    cancelUrl: string,
+    immediateServiceConsent?: boolean,
+    lossOfRightToCancelConsent?: boolean,
+  ): Promise<{ url: string }> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
 
     return apiFetch("/client/billing/lifetime-fee/checkout", {
@@ -358,12 +400,20 @@ export const clientService = {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ successUrl, cancelUrl, immediateServiceConsent, lossOfRightToCancelConsent }),
+      body: JSON.stringify({
+        successUrl,
+        cancelUrl,
+        immediateServiceConsent,
+        lossOfRightToCancelConsent,
+      }),
     });
   },
 
   async verifyLifetimeFee(billingRequestId: string): Promise<any> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
 
     return apiFetch("/client/billing/lifetime-fee/verify", {
@@ -376,8 +426,15 @@ export const clientService = {
     });
   },
 
-  async subscribeToPlacement(placementId: string, successUrl: string, cancelUrl: string): Promise<{ url: string }> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+  async subscribeToPlacement(
+    placementId: string,
+    successUrl: string,
+    cancelUrl: string,
+  ): Promise<{ url: string }> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
 
     return apiFetch(`/client/placements/${placementId}/subscribe`, {
@@ -391,7 +448,10 @@ export const clientService = {
   },
 
   async approveApplication(applicationId: string): Promise<any> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
 
     return apiFetch(`/client/applications/${applicationId}/approve`, {
@@ -404,7 +464,10 @@ export const clientService = {
   },
 
   async rejectApplication(applicationId: string, reason: string): Promise<any> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
     if (!token) throw new Error("No token found");
 
     return apiFetch(`/client/applications/${applicationId}/reject`, {

@@ -17,7 +17,14 @@ export function useClientPortal({ user }: UseClientPortalProps) {
   const dispatch = useAppDispatch();
 
   // --- CORE DATA STATES ---
-  const { profile, careRequests, carers, placements, placementsLoading, placementsError } = useAppSelector((state) => state.client);
+  const {
+    profile,
+    careRequests,
+    carers,
+    placements,
+    placementsLoading,
+    placementsError,
+  } = useAppSelector((state) => state.client);
 
   // --- FORM STATES: CARE REQUEST ---
   const [careFullName, setCareFullName] = useState(
@@ -32,7 +39,10 @@ export function useClientPortal({ user }: UseClientPortalProps) {
   const [careAddress, setCareAddress] = useState("");
   const [careNotes, setCareNotes] = useState("");
   const [isOngoing, setIsOngoing] = useState(false);
-  const [weeklyPayRange, setWeeklyPayRange] = useState<{ min: number; max: number } | null>(null);
+  const [weeklyPayRange, setWeeklyPayRange] = useState<{
+    min: number;
+    max: number;
+  } | null>(null);
 
   const [careErrors, setCareErrors] = useState<Record<string, string>>({});
   const [isCareSubmitting, setIsCareSubmitting] = useState(false);
@@ -100,7 +110,11 @@ export function useClientPortal({ user }: UseClientPortalProps) {
     const payload = {
       address: careAddress,
 
-      careCategory: Array.isArray(careType) ? careType : careType ? [careType] : [],
+      careCategory: Array.isArray(careType)
+        ? careType
+        : careType
+          ? [careType]
+          : [],
 
       requirements: careSupport,
 
@@ -110,12 +124,16 @@ export function useClientPortal({ user }: UseClientPortalProps) {
 
       startDate: careStartDate,
       endDate: isOngoing ? null : careDuration || null,
-      durationCategory: isOngoing ? "PERMANENT" as const : "SHORT_DURATION" as const,
+      durationCategory: isOngoing
+        ? ("PERMANENT" as const)
+        : ("SHORT_DURATION" as const),
 
       additionalNotes: careNotes,
 
       shiftType: "MORNING",
-      weeklyPayRange: weeklyPayRange ? `£${weeklyPayRange.min} - £${weeklyPayRange.max} per week` : undefined,
+      weeklyPayRange: weeklyPayRange
+        ? `£${weeklyPayRange.min} - £${weeklyPayRange.max} per week`
+        : undefined,
     };
 
     console.log("Submitting Care Request Payload:", payload);
@@ -145,8 +163,8 @@ export function useClientPortal({ user }: UseClientPortalProps) {
         typeof error === "string"
           ? error
           : error?.message || "Failed to submit care request.";
-      
-      const isValidationError = 
+
+      const isValidationError =
         errorMsg.toLowerCase().includes("validation") ||
         errorMsg.toLowerCase().includes("required") ||
         errorMsg.toLowerCase().includes("missing") ||
@@ -191,7 +209,6 @@ export function useClientPortal({ user }: UseClientPortalProps) {
     careErrors,
     isCareSubmitting,
     handleCareSubmit,
-
 
     isOngoing,
     setIsOngoing,

@@ -1,18 +1,23 @@
 "use client";
 
 import React, { useState } from "react";
+import Input from "@/components/Input";
+import TextArea from "@/components/TextArea";
 import PhoneInput from "@/components/PhoneInput";
 import Button from "@/components/Button";
-import { showSuccessToast } from "@/utils/toast";
+import { showSuccessToast, showErrorToast } from "@/utils/toast";
+import { publicService } from "@/services/public.service";
+import {
+  validateEmail,
+  validatePhone,
+  validateFullName,
+} from "@/lib/validation";
 
 export default function ContactForm() {
-  const [fullName, setFullName] = useState("");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [careFor, setCareFor] = useState("parent");
-  const [supportType, setSupportType] = useState("dementia");
-  const [location, setLocation] = useState("");
-  const [startDate, setStartDate] = useState("");
+  const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
 
   // UX & Validation State
@@ -21,210 +26,134 @@ export default function ContactForm() {
 
   const validate = () => {
     const tempErrors: Record<string, string> = {};
-    if (!fullName.trim()) tempErrors.fullName = "Full name is required";
 
-    if (!email.trim()) {
-      tempErrors.email = "Email address is required";
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      tempErrors.email = "Enter a valid email address";
-    }
+    const nameError = validateFullName(name);
+    if (nameError) tempErrors.name = nameError;
 
-    if (!phone.trim()) {
-      tempErrors.phone = "Phone number is required";
-    }
+    const emailError = validateEmail(email);
+    if (emailError) tempErrors.email = emailError;
 
-    if (!location.trim()) {
-      tempErrors.location = "Required (City or Postcode)";
-    }
+    const phoneError = validatePhone(phone);
+    if (phoneError) tempErrors.phone = phoneError;
 
-    if (!startDate) {
-      tempErrors.startDate = "Preferred start date is required";
-    } else {
-      const selectedDate = new Date(startDate);
-      selectedDate.setHours(0, 0, 0, 0);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      if (selectedDate < today) {
-        tempErrors.startDate = "Start date cannot be in the past";
-      }
+    if (!message.trim()) {
+      tempErrors.message = "Message is required";
     }
 
     setErrors(tempErrors);
     return Object.keys(tempErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
 
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      await publicService.submitContactForm({
+        name: name.trim(),
+        email: email.trim(),
+        phoneNumber: phone,
+        subject: subject.trim() || undefined,
+        message: message.trim(),
+      });
       showSuccessToast(
-        "Request Received",
-        "Thank you for reaching out. One of our consultants will contact you within the next two hours.",
+        "Message Sent",
+        "Your message has been sent successfully. Our team will contact you shortly.",
       );
       resetForm();
-    }, 1200);
+    } catch (err: any) {
+      showErrorToast(
+        "Submission Failed",
+        err.message || "Failed to submit your message. Please try again.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const resetForm = () => {
-    setFullName("");
+    setName("");
     setEmail("");
     setPhone("");
-    setCareFor("parent");
-    setSupportType("dementia");
-    setLocation("");
-    setStartDate("");
+    setSubject("");
     setMessage("");
     setErrors({});
   };
 
-  return (
-    <form onSubmit={handleSubmit} className="space-y-5">
-      {/* Full Name & Email Input Group */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-1.5">
-          <label className="text-[11px] font-semibold uppercase tracking-wider text-gold-200/90">
-            Full Name
-          </label>
-          <input
-            type="text"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            placeholder="Enter your full name"
-            className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 text-sm ${errors.fullName ? "border-red-500" : "border-gold-muted/20"
-              }`}
-          />
-          {errors.fullName && (
-            <p className="text-[10px] text-red-500 font-medium">
-              {errors.fullName}
-            </p>
-          )}
-        </div>
+  const fieldLabel = (text: string) => (
+    <span className="text-[11px] font-semibold uppercase tracking-wider text-gold-200/90">
+      {text}
+    </span>
+  );
 
-        <div className="space-y-1.5">
-          <label className="text-[11px] font-semibold uppercase tracking-wider text-gold-200/90">
-            Email Address
-          </label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="name@example.com"
-            className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 text-sm ${errors.email ? "border-red-500" : "border-gold-muted/20"
-              }`}
-          />
-          {errors.email && (
-            <p className="text-[10px] text-red-500 font-medium">
-              {errors.email}
-            </p>
-          )}
-        </div>
+  const darkInput =
+    "!bg-navy-950/50 !border-gold-400/20 !text-gold-100 focus:!border-gold-400/60 focus:!ring-gold-400/20 placeholder:!text-gold-100/30 !shadow-[inset_0_1px_2px_rgba(0,0,0,0.3)]";
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Input
+          label={fieldLabel("Name")}
+          type="text"
+          value={name}
+          onChange={(e) => {
+            setName(e.target.value);
+            if (errors.name) setErrors((prev) => ({ ...prev, name: "" }));
+          }}
+          placeholder="Enter your name"
+          error={errors.name}
+          className={darkInput}
+        />
+
+        <Input
+          label={fieldLabel("Email Address")}
+          type="email"
+          value={email}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            if (errors.email) setErrors((prev) => ({ ...prev, email: "" }));
+          }}
+          placeholder="name@example.com"
+          error={errors.email}
+          className={darkInput}
+        />
       </div>
 
-      <div className="space-y-1.5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <PhoneInput
-          label="Phone Number"
+          label={fieldLabel("Phone Number")}
           placeholder="Enter contact number"
           value={phone}
-          onChange={setPhone}
+          onChange={(val) => {
+            setPhone(val);
+            if (errors.phone) setErrors((prev) => ({ ...prev, phone: "" }));
+          }}
           error={errors.phone}
+          className={darkInput}
+        />
+
+        <Input
+          label={fieldLabel("Subject (Optional)")}
+          type="text"
+          value={subject}
+          onChange={(e) => setSubject(e.target.value)}
+          placeholder="General Enquiry"
+          className={darkInput}
         />
       </div>
 
-      {/* Care Needed For & Type of Support Group */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-1.5">
-          <label className="text-[11px] font-semibold uppercase tracking-wider text-gold-200/90">
-            Care Needed For
-          </label>
-          <select
-            value={careFor}
-            onChange={(e) => setCareFor(e.target.value)}
-            className="w-full rounded-xl border border-gold-muted/20 bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 text-sm"
-          >
-            <option value="myself">Myself</option>
-            <option value="parent">My Parent</option>
-            <option value="partner">My Partner</option>
-            <option value="child">My Child</option>
-            <option value="other">Other Relative</option>
-          </select>
-        </div>
-
-        <div className="space-y-1.5">
-          <label className="text-[11px] font-semibold uppercase tracking-wider text-gold-200/90">
-            Type of Support Required
-          </label>
-          <select
-            value={supportType}
-            onChange={(e) => setSupportType(e.target.value)}
-            className="w-full rounded-xl border border-gold-muted/20 bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 text-sm"
-          >
-            <option value="companion">General Companion Care</option>
-            <option value="dementia">Dementia & Complex Care</option>
-            <option value="palliative">Palliative Care</option>
-            <option value="rehab">Post-Operative / Rehab</option>
-            <option value="rehab">Couple Live-in Care </option>
-
-            <option value="other">Other Specialist Support</option>
-          </select>
-        </div>
-      </div>
-
-      {/* Location & Preferred Start Date */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-1.5">
-          <label className="text-[11px] font-semibold uppercase tracking-wider text-gold-200/90">
-            Location
-          </label>
-          <input
-            type="text"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            placeholder="e.g. London, Manchester"
-            className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 text-sm ${errors.location ? "border-red-500" : "border-gold-muted/20"
-              }`}
-          />
-          {errors.location && (
-            <p className="text-[10px] text-red-500 font-medium">
-              {errors.location}
-            </p>
-          )}
-        </div>
-
-        <div className="space-y-1.5">
-          <label className="text-[11px] font-semibold uppercase tracking-wider text-gold-200/90">
-            Preferred Start Date
-          </label>
-          <input
-            type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            min={new Date().toISOString().split("T")[0]}
-            className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 text-sm ${errors.startDate ? "border-red-500" : "border-gold-muted/20"
-              }`}
-          />
-          {errors.startDate && (
-            <p className="text-[10px] text-red-500 font-medium">
-              {errors.startDate}
-            </p>
-          )}
-        </div>
-      </div>
-
-      <div className="space-y-1.5">
-        <label className="text-[11px] font-semibold uppercase tracking-wider text-gold-200/90">
-          Additional Details / Message
-        </label>
-        <textarea
-          rows={5}
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder="Share details about the carer match requirements, daily routines, or expectations..."
-          className="w-full rounded-xl border border-gold-muted/20 bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 text-sm"
-        />
-      </div>
+      <TextArea
+        label={fieldLabel("Message")}
+        value={message}
+        onChange={(e) => {
+          setMessage(e.target.value);
+          if (errors.message) setErrors((prev) => ({ ...prev, message: "" }));
+        }}
+        placeholder="How can we help you?"
+        error={errors.message}
+        className={darkInput}
+      />
 
       <div className="pt-2">
         <Button
@@ -236,10 +165,10 @@ export default function ContactForm() {
           {isSubmitting ? (
             <div className="flex items-center justify-center gap-2">
               <div className="w-5 h-5 border-2 border-navy-950 border-t-transparent rounded-full animate-spin" />
-              <span>Submitting...</span>
+              <span>Sending...</span>
             </div>
           ) : (
-            <span>Submit Enquiry & Search Carers</span>
+            <span>Submit Message</span>
           )}
         </Button>
       </div>

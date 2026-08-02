@@ -1,7 +1,13 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { Search, ArrowUpDown, ChevronUp, ChevronDown, RefreshCw } from "lucide-react";
+import {
+  Search,
+  ArrowUpDown,
+  ChevronUp,
+  ChevronDown,
+  RefreshCw,
+} from "lucide-react";
 
 export interface TableColumn<T> {
   header: string;
@@ -17,7 +23,7 @@ interface TableProps<T> {
   searchPlaceholder?: string;
   searchKeys?: string[];
   isLoading?: boolean;
-  
+
   // External pagination (optional)
   pagination?: {
     page: number;
@@ -30,7 +36,7 @@ interface TableProps<T> {
 
   // Internal pagination (optional)
   pageSize?: number;
-  
+
   maxHeight?: string; // e.g. "500px"
   className?: string;
 }
@@ -52,15 +58,17 @@ export default function Table<T>({
     key: string;
     direction: "asc" | "desc";
   } | null>(null);
-  
+
   const [internalPage, setInternalPage] = useState(1);
-  const [internalPageSize, setInternalPageSize] = useState(initialPageSize || 10);
+  const [internalPageSize, setInternalPageSize] = useState(
+    initialPageSize || 10,
+  );
 
   // Search logic
   const searchedData = useMemo(() => {
     if (!searchable || !searchQuery.trim()) return data;
     const query = searchQuery.toLowerCase();
-    
+
     return data.filter((item: any) => {
       const keysToSearch = searchKeys || columns.map((col) => col.key);
       return keysToSearch.some((key) => {
@@ -74,9 +82,13 @@ export default function Table<T>({
   // Sort logic
   const handleSort = (key: string, sortable?: boolean) => {
     if (!sortable) return;
-    
+
     let direction: "asc" | "desc" = "asc";
-    if (sortConfig && sortConfig.key === key && sortConfig.direction === "asc") {
+    if (
+      sortConfig &&
+      sortConfig.key === key &&
+      sortConfig.direction === "asc"
+    ) {
       direction = "desc";
     }
     setSortConfig({ key, direction });
@@ -86,42 +98,48 @@ export default function Table<T>({
   const sortedData = useMemo(() => {
     const items = [...searchedData];
     if (!sortConfig) return items;
-    
+
     items.sort((a: any, b: any) => {
       let aVal = a[sortConfig.key];
       let bVal = b[sortConfig.key];
-      
+
       if (aVal === undefined || aVal === null) aVal = "";
       if (bVal === undefined || bVal === null) bVal = "";
-      
+
       if (typeof aVal === "string") {
         return sortConfig.direction === "asc"
           ? aVal.localeCompare(bVal)
           : bVal.localeCompare(aVal);
       } else {
         return sortConfig.direction === "asc"
-          ? (aVal > bVal ? 1 : -1)
-          : (bVal > aVal ? 1 : -1);
+          ? aVal > bVal
+            ? 1
+            : -1
+          : bVal > aVal
+            ? 1
+            : -1;
       }
     });
-    
+
     return items;
   }, [searchedData, sortConfig]);
 
   // Pagination configuration
   const isExternalPagination = !!pagination;
-  const isInternalPagination = !isExternalPagination && (!!initialPageSize);
-  const currentPageSize = isExternalPagination ? pagination.pageSize : internalPageSize;
+  const isInternalPagination = !isExternalPagination && !!initialPageSize;
+  const currentPageSize = isExternalPagination
+    ? pagination.pageSize
+    : internalPageSize;
 
   const paginatedData = useMemo(() => {
     if (!isInternalPagination) return sortedData;
-    
+
     const startIndex = (internalPage - 1) * currentPageSize;
     return sortedData.slice(startIndex, startIndex + currentPageSize);
   }, [sortedData, isInternalPagination, internalPage, currentPageSize]);
 
-  const totalPages = isExternalPagination 
-    ? pagination.totalPages 
+  const totalPages = isExternalPagination
+    ? pagination.totalPages
     : Math.ceil(sortedData.length / currentPageSize) || 1;
 
   const currentPage = isExternalPagination ? pagination.page : internalPage;
@@ -146,7 +164,9 @@ export default function Table<T>({
   const renderSortIcon = (column: TableColumn<T>) => {
     if (!column.sortable) return null;
     if (sortConfig?.key !== column.key) {
-      return <ArrowUpDown className="ml-1.5 h-3 w-3 opacity-40 hover:opacity-100 transition" />;
+      return (
+        <ArrowUpDown className="ml-1.5 h-3 w-3 opacity-40 hover:opacity-100 transition" />
+      );
     }
     return sortConfig.direction === "asc" ? (
       <ChevronUp className="ml-1.5 h-3.5 w-3.5 text-gold" />
@@ -180,12 +200,12 @@ export default function Table<T>({
 
       {/* Main Table container wrapper with fixed height and scrolls */}
       <div className="border border-gold-300/10 rounded-2xl bg-navy-900/60 shadow-soft overflow-hidden flex flex-col w-full">
-        <div 
-          className="overflow-x-auto overflow-y-auto" 
-          style={{ 
+        <div
+          className="overflow-x-auto overflow-y-auto"
+          style={{
             maxHeight,
-            scrollbarWidth: "thin", 
-            scrollbarColor: "rgba(160,128,84,0.18) transparent" 
+            scrollbarWidth: "thin",
+            scrollbarColor: "rgba(160,128,84,0.18) transparent",
           }}
         >
           <table className="w-full text-left text-xs text-gold-100/70 border-collapse table-auto min-w-[700px] md:min-w-full">
@@ -210,10 +230,15 @@ export default function Table<T>({
             <tbody className="divide-y divide-gold-300/5">
               {isLoading ? (
                 <tr>
-                  <td colSpan={columns.length} className="py-16 text-center text-gold-100/40">
+                  <td
+                    colSpan={columns.length}
+                    className="py-16 text-center text-gold-100/40"
+                  >
                     <div className="flex flex-col items-center justify-center space-y-3">
                       <RefreshCw className="h-6 w-6 text-gold animate-spin" />
-                      <span className="font-semibold text-xs animate-pulse">Loading records...</span>
+                      <span className="font-semibold text-xs animate-pulse">
+                        Loading records...
+                      </span>
                     </div>
                   </td>
                 </tr>
@@ -239,9 +264,13 @@ export default function Table<T>({
                           {col.render ? (
                             col.render(item)
                           ) : (
-                            <span 
+                            <span
                               className="block truncate max-w-[200px] text-gold-100/80"
-                              title={typeof val === "string" && val.length > 25 ? val : undefined}
+                              title={
+                                typeof val === "string" && val.length > 25
+                                  ? val
+                                  : undefined
+                              }
                             >
                               {String(val || "")}
                             </span>
@@ -263,15 +292,17 @@ export default function Table<T>({
           <div className="flex flex-col sm:flex-row items-center gap-4 text-xs text-gold-100/50">
             {isExternalPagination && pagination.totalItems !== undefined && (
               <span>
-                Showing page {currentPage} of {totalPages || 1} ({pagination.totalItems} total records)
+                Showing page {currentPage} of {totalPages || 1} (
+                {pagination.totalItems} total records)
               </span>
             )}
             {!isExternalPagination && (
               <span>
-                Showing page {currentPage} of {totalPages || 1} ({sortedData.length} filtered records)
+                Showing page {currentPage} of {totalPages || 1} (
+                {sortedData.length} filtered records)
               </span>
             )}
-            
+
             <div className="flex items-center gap-2">
               <span>Show:</span>
               <select
@@ -286,7 +317,7 @@ export default function Table<T>({
               </select>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-2">
             <button
               disabled={currentPage <= 1 || isLoading}

@@ -28,7 +28,6 @@ export interface CareRequest {
   duration: string;
   status: "Pending" | "Reviewing" | "Matched" | "Completed";
   progress: number;
-
 }
 
 // Enquiry statuses matching backend lifecycle

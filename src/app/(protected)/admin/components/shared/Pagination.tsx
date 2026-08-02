@@ -17,7 +17,8 @@ export default function Pagination({
     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 border-t border-gold-300/10 pt-4">
       {totalItems !== undefined && (
         <span className="text-xs text-gold-100/50">
-          Showing page {currentPage} of {totalPages || 1} ({totalItems} total records)
+          Showing page {currentPage} of {totalPages || 1} ({totalItems} total
+          records)
         </span>
       )}
       <div className="flex items-center gap-2">

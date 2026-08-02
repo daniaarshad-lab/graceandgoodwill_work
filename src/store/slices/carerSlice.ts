@@ -71,8 +71,8 @@ export const fetchCarerProfile = createAsyncThunk<
   } catch (error: any) {
     return rejectWithValue(
       error?.response?.data?.message ||
-      error?.message ||
-      "Failed to fetch carer profile",
+        error?.message ||
+        "Failed to fetch carer profile",
     );
   }
 });
@@ -97,7 +97,11 @@ export const updateCarerStep2 = createAsyncThunk<
   try {
     return await carerService.updateStep2(payload);
   } catch (error: any) {
-    return rejectWithValue(error?.response?.data?.message || error?.message || "Failed to update step 2 preferences");
+    return rejectWithValue(
+      error?.response?.data?.message ||
+        error?.message ||
+        "Failed to update step 2 preferences",
+    );
   }
 });
 
@@ -109,7 +113,11 @@ export const updateCarerStep3 = createAsyncThunk<
   try {
     return await carerService.updateStep3(payload);
   } catch (error: any) {
-    return rejectWithValue(error?.response?.data?.message || error?.message || "Failed to update professional information");
+    return rejectWithValue(
+      error?.response?.data?.message ||
+        error?.message ||
+        "Failed to update professional information",
+    );
   }
 });
 
@@ -121,7 +129,11 @@ export const updateCarerStep10 = createAsyncThunk<
   try {
     return await carerService.updateStep10(payload);
   } catch (error: any) {
-    return rejectWithValue(error?.response?.data?.message || error?.message || "Failed to update payment details");
+    return rejectWithValue(
+      error?.response?.data?.message ||
+        error?.message ||
+        "Failed to update payment details",
+    );
   }
 });
 
@@ -133,7 +145,11 @@ export const updateCarerStep11 = createAsyncThunk<
   try {
     return await carerService.updateStep11(payload);
   } catch (error: any) {
-    return rejectWithValue(error?.response?.data?.message || error?.message || "Failed to update declarations");
+    return rejectWithValue(
+      error?.response?.data?.message ||
+        error?.message ||
+        "Failed to update declarations",
+    );
   }
 });
 
@@ -145,7 +161,11 @@ export const submitCarerProfile = createAsyncThunk<
   try {
     return await carerService.submitProfile();
   } catch (error: any) {
-    return rejectWithValue(error?.response?.data?.message || error?.message || "Failed to submit profile");
+    return rejectWithValue(
+      error?.response?.data?.message ||
+        error?.message ||
+        "Failed to submit profile",
+    );
   }
 });
 
@@ -173,18 +193,20 @@ export const updateCarerAvailability = createAsyncThunk<
   }
 });
 
-
 export const uploadCarerDocument = createAsyncThunk<
   CarerDocument,
   { file: File; category: string; type: string },
   { rejectValue: string }
->("carer/uploadDocument", async ({ file, category, type }, { rejectWithValue }) => {
-  try {
-    return await carerService.uploadDocument(file, category, type);
-  } catch (error: any) {
-    return rejectWithValue(error?.message || "Failed to upload document");
-  }
-});
+>(
+  "carer/uploadDocument",
+  async ({ file, category, type }, { rejectWithValue }) => {
+    try {
+      return await carerService.uploadDocument(file, category, type);
+    } catch (error: any) {
+      return rejectWithValue(error?.message || "Failed to upload document");
+    }
+  },
+);
 
 export const uploadCarerDocuments = createAsyncThunk<
   CarerDocument[],
@@ -200,27 +222,39 @@ export const uploadCarerDocuments = createAsyncThunk<
 
 export const uploadCarerStepDocuments = createAsyncThunk<
   CarerDocument[],
-  { step: number; files: Record<string, File>; textFields?: Record<string, string> },
+  {
+    step: number;
+    files: Record<string, File>;
+    textFields?: Record<string, string>;
+  },
   { rejectValue: string }
->("carer/uploadStepDocuments", async ({ step, files, textFields }, { rejectWithValue }) => {
-  try {
-    return await carerService.uploadStepDocuments(step, files, textFields);
-  } catch (error: any) {
-    return rejectWithValue(error?.message || `Failed to upload documents for step ${step}`);
-  }
-});
+>(
+  "carer/uploadStepDocuments",
+  async ({ step, files, textFields }, { rejectWithValue }) => {
+    try {
+      return await carerService.uploadStepDocuments(step, files, textFields);
+    } catch (error: any) {
+      return rejectWithValue(
+        error?.message || `Failed to upload documents for step ${step}`,
+      );
+    }
+  },
+);
 
 export const updateCarerDocument = createAsyncThunk<
   CarerDocument,
   { id: string; file: File; category: string },
   { rejectValue: string }
->("carer/updateDocument", async ({ id, file, category }, { rejectWithValue }) => {
-  try {
-    return await carerService.updateDocument(id, file, category);
-  } catch (error: any) {
-    return rejectWithValue(error?.message || "Failed to update document");
-  }
-});
+>(
+  "carer/updateDocument",
+  async ({ id, file, category }, { rejectWithValue }) => {
+    try {
+      return await carerService.updateDocument(id, file, category);
+    } catch (error: any) {
+      return rejectWithValue(error?.message || "Failed to update document");
+    }
+  },
+);
 
 export const deleteCarerDocument = createAsyncThunk<
   string,
@@ -235,7 +269,6 @@ export const deleteCarerDocument = createAsyncThunk<
   }
 });
 
-
 export const uploadProfileMedia = createAsyncThunk<
   CarerProfile,
   {
@@ -245,20 +278,17 @@ export const uploadProfileMedia = createAsyncThunk<
   {
     rejectValue: string;
   }
->(
-  "carer/uploadProfileMedia",
-  async ({ photo, video }, { rejectWithValue }) => {
-    try {
-      return await carerService.uploadProfileMedia(photo, video);
-    } catch (error: any) {
-      return rejectWithValue(
-        error?.response?.data?.message ||
+>("carer/uploadProfileMedia", async ({ photo, video }, { rejectWithValue }) => {
+  try {
+    return await carerService.uploadProfileMedia(photo, video);
+  } catch (error: any) {
+    return rejectWithValue(
+      error?.response?.data?.message ||
         error?.message ||
-        "Failed to upload profile media"
-      );
-    }
+        "Failed to upload profile media",
+    );
   }
-);
+});
 
 // --- Placement Opportunities Thunks ---
 export const fetchCarerCareRequests = createAsyncThunk<
@@ -268,7 +298,7 @@ export const fetchCarerCareRequests = createAsyncThunk<
 >("carer/fetchCareRequests", async (_, { rejectWithValue }) => {
   try {
     const data = await carerService.getCareRequests();
-    
+
     // Safely extract the array whether it's wrapped in data, items, or returned directly
     if (Array.isArray(data)) {
       return data;
@@ -277,10 +307,12 @@ export const fetchCarerCareRequests = createAsyncThunk<
       const arrayValue = Object.values(data).find(Array.isArray);
       if (arrayValue) return arrayValue as CarerCareRequest[];
     }
-    
+
     return [];
   } catch (error: any) {
-    return rejectWithValue(error?.message || "Failed to fetch placement opportunities");
+    return rejectWithValue(
+      error?.message || "Failed to fetch placement opportunities",
+    );
   }
 });
 
@@ -292,7 +324,9 @@ export const fetchCarerCareRequestById = createAsyncThunk<
   try {
     return await carerService.getCareRequestById(id);
   } catch (error: any) {
-    return rejectWithValue(error?.message || "Failed to fetch placement details");
+    return rejectWithValue(
+      error?.message || "Failed to fetch placement details",
+    );
   }
 });
 
@@ -330,7 +364,9 @@ export const fetchCarerApplicationHistory = createAsyncThunk<
     const data = await carerService.getCarerApplicationHistory();
     return Array.isArray(data) ? data : [];
   } catch (error: any) {
-    return rejectWithValue(error?.message || "Failed to fetch application history");
+    return rejectWithValue(
+      error?.message || "Failed to fetch application history",
+    );
   }
 });
 
@@ -428,7 +464,6 @@ const carerSlice = createSlice({
         state.error = action.payload || "Failed to update declarations";
       })
 
-
       .addCase(fetchCarerDocuments.pending, (state) => {
         state.documentsLoading = true;
         state.error = null;
@@ -465,12 +500,9 @@ const carerSlice = createSlice({
         state.batchUploading = true;
         state.error = null;
       })
-      .addCase(
-        uploadCarerDocuments.fulfilled,
-        (state) => {
-          state.batchUploading = false;
-        },
-      )
+      .addCase(uploadCarerDocuments.fulfilled, (state) => {
+        state.batchUploading = false;
+      })
       .addCase(uploadCarerDocuments.rejected, (state, action) => {
         state.batchUploading = false;
         state.error = action.payload || "Failed to upload documents";
@@ -480,12 +512,9 @@ const carerSlice = createSlice({
         state.batchUploading = true;
         state.error = null;
       })
-      .addCase(
-        uploadCarerStepDocuments.fulfilled,
-        (state) => {
-          state.batchUploading = false;
-        },
-      )
+      .addCase(uploadCarerStepDocuments.fulfilled, (state) => {
+        state.batchUploading = false;
+      })
       .addCase(uploadCarerStepDocuments.rejected, (state, action) => {
         state.batchUploading = false;
         state.error = action.payload || "Failed to upload step documents";
@@ -554,7 +583,7 @@ const carerSlice = createSlice({
         (state, action: PayloadAction<CarerProfile>) => {
           state.loading = false;
           state.profile = action.payload;
-        }
+        },
       )
       .addCase(uploadProfileMedia.rejected, (state, action) => {
         state.loading = false;
@@ -566,22 +595,29 @@ const carerSlice = createSlice({
         state.careRequestsLoading = true;
         state.careRequestsError = null;
       })
-      .addCase(fetchCarerCareRequests.fulfilled, (state, action: PayloadAction<CarerCareRequest[]>) => {
-        state.careRequestsLoading = false;
-        state.careRequests = action.payload;
-      })
+      .addCase(
+        fetchCarerCareRequests.fulfilled,
+        (state, action: PayloadAction<CarerCareRequest[]>) => {
+          state.careRequestsLoading = false;
+          state.careRequests = action.payload;
+        },
+      )
       .addCase(fetchCarerCareRequests.rejected, (state, action) => {
         state.careRequestsLoading = false;
-        state.careRequestsError = action.payload || "Failed to fetch placement opportunities";
+        state.careRequestsError =
+          action.payload || "Failed to fetch placement opportunities";
       })
 
       .addCase(fetchCarerCareRequestById.pending, (state) => {
         state.selectedCareRequestLoading = true;
       })
-      .addCase(fetchCarerCareRequestById.fulfilled, (state, action: PayloadAction<CarerCareRequestDetail>) => {
-        state.selectedCareRequestLoading = false;
-        state.selectedCareRequest = action.payload;
-      })
+      .addCase(
+        fetchCarerCareRequestById.fulfilled,
+        (state, action: PayloadAction<CarerCareRequestDetail>) => {
+          state.selectedCareRequestLoading = false;
+          state.selectedCareRequest = action.payload;
+        },
+      )
       .addCase(fetchCarerCareRequestById.rejected, (state, action) => {
         state.selectedCareRequestLoading = false;
       })
@@ -599,28 +635,34 @@ const carerSlice = createSlice({
       .addCase(applyToCarerCareRequest.rejected, (state) => {
         state.applyingToCareRequest = false;
       })
-      
+
       .addCase(fetchCarerApplications.pending, (state) => {
         state.applicationsLoading = true;
         state.error = null;
       })
-      .addCase(fetchCarerApplications.fulfilled, (state, action: PayloadAction<any[]>) => {
-        state.applicationsLoading = false;
-        state.applications = action.payload;
-      })
+      .addCase(
+        fetchCarerApplications.fulfilled,
+        (state, action: PayloadAction<any[]>) => {
+          state.applicationsLoading = false;
+          state.applications = action.payload;
+        },
+      )
       .addCase(fetchCarerApplications.rejected, (state, action) => {
         state.applicationsLoading = false;
         state.error = action.payload || "Failed to fetch applications";
       })
-      
+
       .addCase(fetchCarerApplicationHistory.pending, (state) => {
         state.applicationHistoryLoading = true;
         state.error = null;
       })
-      .addCase(fetchCarerApplicationHistory.fulfilled, (state, action: PayloadAction<any[]>) => {
-        state.applicationHistoryLoading = false;
-        state.applicationHistory = action.payload;
-      })
+      .addCase(
+        fetchCarerApplicationHistory.fulfilled,
+        (state, action: PayloadAction<any[]>) => {
+          state.applicationHistoryLoading = false;
+          state.applicationHistory = action.payload;
+        },
+      )
       .addCase(fetchCarerApplicationHistory.rejected, (state, action) => {
         state.applicationHistoryLoading = false;
         state.error = action.payload || "Failed to fetch application history";
@@ -628,6 +670,7 @@ const carerSlice = createSlice({
   },
 });
 
-export const { clearCarerProfile, clearSelectedCareRequest } = carerSlice.actions;
+export const { clearCarerProfile, clearSelectedCareRequest } =
+  carerSlice.actions;
 
 export default carerSlice.reducer;

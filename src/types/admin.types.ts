@@ -53,11 +53,17 @@ export type CareRequestStatusValue =
   | "INFORM_CLIENT_TO_AVAILABLE_CARER"
   | "CARER_SELECTED";
 
-export const CARE_REQUEST_STATUS_OPTIONS: { value: CareRequestStatusValue; label: string }[] = [
+export const CARE_REQUEST_STATUS_OPTIONS: {
+  value: CareRequestStatusValue;
+  label: string;
+}[] = [
   { value: "NEW_ENQUIRY", label: "New Enquiry" },
   { value: "OPEN_FOR_APPLICATIONS", label: "Open for Carer Applicants" },
   { value: "UNDER_REVIEW", label: "Under Review" },
-  { value: "INFORM_CLIENT_TO_AVAILABLE_CARER", label: "Inform Client to Available Carer" },
+  {
+    value: "INFORM_CLIENT_TO_AVAILABLE_CARER",
+    label: "Inform Client to Available Carer",
+  },
   { value: "CARER_SELECTED", label: "Carer Selected" },
 ];
 
@@ -67,7 +73,10 @@ export type EmergencyCareRequestStatusValue =
   | "RESOLVED"
   | "CLOSED";
 
-export const EMERGENCY_CARE_REQUEST_STATUS_OPTIONS: { value: EmergencyCareRequestStatusValue; label: string }[] = [
+export const EMERGENCY_CARE_REQUEST_STATUS_OPTIONS: {
+  value: EmergencyCareRequestStatusValue;
+  label: string;
+}[] = [
   { value: "PENDING", label: "Pending" },
   { value: "IN_PROGRESS", label: "In Progress" },
   { value: "RESOLVED", label: "Resolved" },

@@ -95,7 +95,9 @@ function CarerCard({
         <div className="flex justify-between items-start">
           <div
             className={`relative h-16 w-16 rounded-full border-2 shrink-0 shadow overflow-hidden bg-navy-950 ${
-              !carer.profilePhotoUrl ? "border-gold-300/20" : "border-gold-300/20"
+              !carer.profilePhotoUrl
+                ? "border-gold-300/20"
+                : "border-gold-300/20"
             }`}
           >
             {carer.profilePhotoUrl ? (
@@ -124,8 +126,8 @@ function CarerCard({
               carer.availability === "Available"
                 ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
                 : carer.availability === "Unavailable"
-                ? "bg-red-500/10 text-red-400 border border-red-500/20"
-                : "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                  ? "bg-red-500/10 text-red-400 border border-red-500/20"
+                  : "bg-amber-500/10 text-amber-400 border border-amber-500/20"
             }`}
           >
             {carer.availability || "Unknown"}
@@ -171,21 +173,34 @@ function CarerCard({
               className="flex-1 flex items-center justify-center gap-1.5 rounded-xl border border-gold bg-gold text-navy-950 px-3 py-2.5 text-xs font-bold hover:bg-gold-200 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Check className="w-3.5 h-3.5" />
-              {assigningId === (carer.carerProfileId ?? carer.id) ? "..." : "Approve"}
+              {assigningId === (carer.carerProfileId ?? carer.id)
+                ? "..."
+                : "Approve"}
             </button>
             <button
               onClick={() => onAssign(carer.carerProfileId ?? carer.id)}
-              disabled={assigningId === (carer.carerProfileId ?? carer.id) || carer.isAssigned}
+              disabled={
+                assigningId === (carer.carerProfileId ?? carer.id) ||
+                carer.isAssigned
+              }
               className="flex-1 flex items-center justify-center gap-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2.5 text-xs font-semibold text-emerald-400 hover:bg-emerald-500/20 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <UserCheck className="w-3.5 h-3.5" />
-              {carer.isAssigned ? "Assigned" : (assigningId === (carer.carerProfileId ?? carer.id) ? "..." : "Assign")}
+              {carer.isAssigned
+                ? "Assigned"
+                : assigningId === (carer.carerProfileId ?? carer.id)
+                  ? "..."
+                  : "Assign"}
             </button>
           </div>
         )}
 
         <button
-          onClick={() => router.push(`/admin/carers/${routingId}?source=interest-list&clientId=${clientId}`)}
+          onClick={() =>
+            router.push(
+              `/admin/carers/${routingId}?source=interest-list&clientId=${clientId}`,
+            )
+          }
           className="w-full flex items-center justify-center gap-2 rounded-xl border border-gold-300/30 px-4 py-2.5 text-xs font-semibold text-gold-200 hover:bg-gold-300/10 transition-colors"
         >
           <User className="w-3 h-3" />
@@ -234,11 +249,14 @@ function AdminClientInterestListContent() {
       setError(null);
       try {
         // Fetch interest list, care requests, and client details in parallel
-        const [interestData, careRequestsData, clientDetails] = await Promise.all([
-          adminService.getClientInterestList(clientId),
-          adminService.getCareRequests(1, 100, "ALL").catch(() => ({ data: [] })),
-          adminService.getClientDetails(clientId).catch(() => null),
-        ]);
+        const [interestData, careRequestsData, clientDetails] =
+          await Promise.all([
+            adminService.getClientInterestList(clientId),
+            adminService
+              .getCareRequests(1, 100, "ALL")
+              .catch(() => ({ data: [] })),
+            adminService.getClientDetails(clientId).catch(() => null),
+          ]);
 
         const actualClientProfileId = clientDetails?.id;
         const actualUserId = clientDetails?.userId;
@@ -246,25 +264,39 @@ function AdminClientInterestListContent() {
         // Check if any care request for this client has the assign-eligible status
         const allRequests = Array.isArray(careRequestsData)
           ? careRequestsData
-          : careRequestsData?.items ?? careRequestsData?.data ?? careRequestsData?.careRequests ?? [];
-          
+          : (careRequestsData?.items ??
+            careRequestsData?.data ??
+            careRequestsData?.careRequests ??
+            []);
+
         console.log("[InterestList] All Requests:", allRequests);
-        console.log("[InterestList] Checking against clientId:", clientId, "actualClientProfileId:", actualClientProfileId, "actualUserId:", actualUserId);
+        console.log(
+          "[InterestList] Checking against clientId:",
+          clientId,
+          "actualClientProfileId:",
+          actualClientProfileId,
+          "actualUserId:",
+          actualUserId,
+        );
 
         const clientRequests = allRequests.filter(
-          (req: any) => 
-            req.clientProfileId === clientId || 
+          (req: any) =>
+            req.clientProfileId === clientId ||
             req.clientProfile?.id === clientId ||
             req.clientProfile?.userId === clientId ||
             req.clientId === clientId ||
-            (actualClientProfileId && req.clientProfileId === actualClientProfileId) ||
-            (actualClientProfileId && req.clientProfile?.id === actualClientProfileId) ||
-            (actualUserId && req.clientProfile?.userId === actualUserId)
+            (actualClientProfileId &&
+              req.clientProfileId === actualClientProfileId) ||
+            (actualClientProfileId &&
+              req.clientProfile?.id === actualClientProfileId) ||
+            (actualUserId && req.clientProfile?.userId === actualUserId),
         );
-        
+
         console.log("[InterestList] Filtered Client Requests:", clientRequests);
-        
-        const eligibleRequest = clientRequests.find((req: any) => req.status === ASSIGN_ELIGIBLE_STATUS);
+
+        const eligibleRequest = clientRequests.find(
+          (req: any) => req.status === ASSIGN_ELIGIBLE_STATUS,
+        );
 
         console.log("[InterestList] Eligible Request Found:", eligibleRequest);
 
@@ -277,40 +309,41 @@ function AdminClientInterestListContent() {
         }
 
         // Normalise the API response — handle both flat and nested shapes
-        const normalised: InterestListCarer[] = (Array.isArray(interestData) ? interestData : []).map(
-          (item: any, idx: number) => {
-            const profile = item.carerProfile ?? item;
-            
-            const firstName = profile.firstName || profile.user?.firstName;
-            const lastName = profile.lastName || profile.user?.lastName || "";
-            const carerProfileId = profile.id ?? item.carerProfileId;
-            
-            return {
-              id: profile.id ?? item.id,
-              carerProfileId: carerProfileId,
-              userId: profile.userId ?? item.userId,
-              name:
-                profile.fullName ??
-                (firstName ? `${firstName} ${lastName}`.trim() : profile.name ?? "Unknown"),
-              experience: profile.experienceYears
-                ? `${profile.experienceYears} years`
-                : profile.experience ?? "—",
-              specialties:
-                profile.careSpecialties ?? profile.specialties ?? "—",
-              availability: profile.availabilityStatus ?? profile.availability ?? "Unknown",
-              bio:
-                profile.summary ??
-                profile.bio ??
-                "No biography provided.",
-              profilePhotoUrl: profile.profilePhotoUrl ?? null,
-              avatarBg: getAvatarBg(idx),
-              isAssigned: !!(item.isAssigned || profile.isAssigned),
-            };
-          }
-        );
+        const normalised: InterestListCarer[] = (
+          Array.isArray(interestData) ? interestData : []
+        ).map((item: any, idx: number) => {
+          const profile = item.carerProfile ?? item;
+
+          const firstName = profile.firstName || profile.user?.firstName;
+          const lastName = profile.lastName || profile.user?.lastName || "";
+          const carerProfileId = profile.id ?? item.carerProfileId;
+
+          return {
+            id: profile.id ?? item.id,
+            carerProfileId: carerProfileId,
+            userId: profile.userId ?? item.userId,
+            name:
+              profile.fullName ??
+              (firstName
+                ? `${firstName} ${lastName}`.trim()
+                : (profile.name ?? "Unknown")),
+            experience: profile.experienceYears
+              ? `${profile.experienceYears} years`
+              : (profile.experience ?? "—"),
+            specialties: profile.careSpecialties ?? profile.specialties ?? "—",
+            availability:
+              profile.availabilityStatus ?? profile.availability ?? "Unknown",
+            bio: profile.summary ?? profile.bio ?? "No biography provided.",
+            profilePhotoUrl: profile.profilePhotoUrl ?? null,
+            avatarBg: getAvatarBg(idx),
+            isAssigned: !!(item.isAssigned || profile.isAssigned),
+          };
+        });
         setCarers(normalised);
       } catch (err: any) {
-        setError("Something went wrong while loading the Interest List. Please try again.");
+        setError(
+          "Something went wrong while loading the Interest List. Please try again.",
+        );
       } finally {
         setLoading(false);
       }
@@ -323,7 +356,10 @@ function AdminClientInterestListContent() {
    */
   const handleApprove = async (carerId: string) => {
     if (!careRequestId) {
-      showErrorToast("Approval Failed", "Could not identify the target Care Request.");
+      showErrorToast(
+        "Approval Failed",
+        "Could not identify the target Care Request.",
+      );
       return;
     }
 
@@ -333,14 +369,17 @@ function AdminClientInterestListContent() {
         careRequestId,
         clientId,
         carerId,
-        status: "SELECTED"
+        status: "SELECTED",
       });
       showSuccessToast("Approved", "Placement has been created successfully.");
-      
+
       // Refresh the page to reflect the new state
       window.location.reload();
     } catch (err: any) {
-      showErrorToast("Approval Failed", err?.message || "Failed to approve carer.");
+      showErrorToast(
+        "Approval Failed",
+        err?.message || "Failed to approve carer.",
+      );
     } finally {
       setAssigningId(null);
     }
@@ -351,7 +390,10 @@ function AdminClientInterestListContent() {
    */
   const handleAssign = async (carerId: string) => {
     if (!careRequestId) {
-      showErrorToast("Assignment Failed", "Could not identify the target Care Request.");
+      showErrorToast(
+        "Assignment Failed",
+        "Could not identify the target Care Request.",
+      );
       return;
     }
 
@@ -361,14 +403,20 @@ function AdminClientInterestListContent() {
         careRequestId,
         clientId,
         carerId,
-        status: "ASSIGNED"
+        status: "ASSIGNED",
       });
-      showSuccessToast("Assigned", "Carer has been assigned to the care request (awaiting client approval).");
-      
+      showSuccessToast(
+        "Assigned",
+        "Carer has been assigned to the care request (awaiting client approval).",
+      );
+
       // Refresh the page to reflect the new state
       window.location.reload();
     } catch (err: any) {
-      showErrorToast("Assignment Failed", err?.message || "Failed to assign carer.");
+      showErrorToast(
+        "Assignment Failed",
+        err?.message || "Failed to assign carer.",
+      );
     } finally {
       setAssigningId(null);
     }
@@ -398,7 +446,9 @@ function AdminClientInterestListContent() {
               </div>
               <p className="text-sm text-gold-100/60">
                 Shortlisted carers for{" "}
-                <span className="text-gold-200 font-semibold">{clientName}</span>
+                <span className="text-gold-200 font-semibold">
+                  {clientName}
+                </span>
               </p>
             </div>
 
@@ -423,7 +473,9 @@ function AdminClientInterestListContent() {
           </div>
         ) : error ? (
           <div className="rounded-2xl border border-red-500/20 bg-red-950/10 p-10 text-center space-y-3">
-            <p className="text-sm font-bold text-red-400">Failed to Load Interest List</p>
+            <p className="text-sm font-bold text-red-400">
+              Failed to Load Interest List
+            </p>
             <p className="text-xs text-red-400/70">{error}</p>
           </div>
         ) : carers.length === 0 ? (
@@ -441,7 +493,16 @@ function AdminClientInterestListContent() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {carers.map((carer, idx) => (
-              <CarerCard key={carer.id} carer={carer} index={idx} clientId={clientId} canAssign={canAssign} assigningId={assigningId} onAssign={handleAssign} onApprove={handleApprove} />
+              <CarerCard
+                key={carer.id}
+                carer={carer}
+                index={idx}
+                clientId={clientId}
+                canAssign={canAssign}
+                assigningId={assigningId}
+                onAssign={handleAssign}
+                onApprove={handleApprove}
+              />
             ))}
           </div>
         )}

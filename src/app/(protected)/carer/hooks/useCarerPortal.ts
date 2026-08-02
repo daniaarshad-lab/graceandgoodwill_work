@@ -1,12 +1,8 @@
 import { useEffect, useState } from "react";
 
-import {
-  ComplianceDoc,
-} from "../types/carer.types";
+import { ComplianceDoc } from "../types/carer.types";
 import { getDocumentFileLabel } from "@/types/document.types";
-import {
-  validateProfileForm,
-} from "../utils/validation";
+import { validateProfileForm } from "../utils/validation";
 import { useAppDispatch } from "@/store/hooks";
 import {
   updateCarerProfile,
@@ -22,9 +18,7 @@ import {
   uploadCarerStepDocuments,
   submitCarerProfile,
 } from "@/store/slices/carerSlice";
-import {
-  CarerProfile,
-} from "@/types/carer.types";
+import { CarerProfile } from "@/types/carer.types";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 
 interface UseCarerPortalProps {
@@ -48,14 +42,16 @@ export function useCarerPortal({
   const [address, setAddress] = useState("");
   const [postcode, setPostcode] = useState("");
   const [canDrive, setCanDrive] = useState<"yes" | "no" | "">("");
-  const [hasBusinessInsurance, setHasBusinessInsurance] = useState<"yes" | "no" | "">("");
+  const [hasBusinessInsurance, setHasBusinessInsurance] = useState<
+    "yes" | "no" | ""
+  >("");
 
   // New Fields
   const [dateOfBirth, setDateOfBirth] = useState(user?.dateOfBirth || "");
   const [emergencyContactName, setEmergencyContactName] = useState("");
   const [emergencyContactNumber, setEmergencyContactNumber] = useState("");
   const [emergencyContactRelation, setEmergencyContactRelation] = useState("");
-  
+
   const [bankName, setBankName] = useState("");
   const [accountName, setAccountName] = useState("");
   const [accountNumber, setAccountNumber] = useState("");
@@ -73,14 +69,18 @@ export function useCarerPortal({
 
   const [otherRelevantName, setOtherRelevantName] = useState("");
 
-
   useEffect(() => {
     if (profile) {
-      console.log("[Video Upload debug] loaded profile in useCarerPortal:", profile);
+      console.log(
+        "[Video Upload debug] loaded profile in useCarerPortal:",
+        profile,
+      );
       const p = profile as any;
       const actualProfile = p.carerProfile || p;
 
-      setBio(actualProfile.summary ?? actualProfile.bio ?? p.summary ?? p.bio ?? "");
+      setBio(
+        actualProfile.summary ?? actualProfile.bio ?? p.summary ?? p.bio ?? "",
+      );
 
       const spec = actualProfile.careSpecialties ?? p.careSpecialties;
       if (Array.isArray(spec)) {
@@ -89,40 +89,59 @@ export function useCarerPortal({
         setSpecialties(spec ?? "");
       }
 
-      setExperience(actualProfile.experienceYears?.toString() ?? actualProfile.experience ?? p.experienceYears?.toString() ?? p.experience ?? "");
+      setExperience(
+        actualProfile.experienceYears?.toString() ??
+          actualProfile.experience ??
+          p.experienceYears?.toString() ??
+          p.experience ??
+          "",
+      );
       setAddress(actualProfile.address ?? p.address ?? "");
       setPostcode(actualProfile.postcode ?? p.postcode ?? "");
-      
+
       const canDriveVal = actualProfile.canDrive ?? p.canDrive;
       setCanDrive(
-        canDriveVal === true || canDriveVal === "yes" || canDriveVal === "true" 
-          ? "yes" 
-          : canDriveVal === false || canDriveVal === "no" || canDriveVal === "false" 
-          ? "no" 
-          : ""
-      );
-      
-      const bizInsVal = actualProfile.hasBusinessInsurance ?? p.hasBusinessInsurance;
-      setHasBusinessInsurance(
-        bizInsVal === true || bizInsVal === "yes" || bizInsVal === "true" 
-          ? "yes" 
-          : bizInsVal === false || bizInsVal === "no" || bizInsVal === "false" 
-          ? "no" 
-          : ""
+        canDriveVal === true || canDriveVal === "yes" || canDriveVal === "true"
+          ? "yes"
+          : canDriveVal === false ||
+              canDriveVal === "no" ||
+              canDriveVal === "false"
+            ? "no"
+            : "",
       );
 
-      const emName = actualProfile.emergencyContactName ?? p.emergencyContactName;
-      const emNum = actualProfile.emergencyContactNumber ?? p.emergencyContactNumber;
-      const emRel = actualProfile.emergencyContactRelation ?? p.emergencyContactRelation;
+      const bizInsVal =
+        actualProfile.hasBusinessInsurance ?? p.hasBusinessInsurance;
+      setHasBusinessInsurance(
+        bizInsVal === true || bizInsVal === "yes" || bizInsVal === "true"
+          ? "yes"
+          : bizInsVal === false || bizInsVal === "no" || bizInsVal === "false"
+            ? "no"
+            : "",
+      );
+
+      const emName =
+        actualProfile.emergencyContactName ?? p.emergencyContactName;
+      const emNum =
+        actualProfile.emergencyContactNumber ?? p.emergencyContactNumber;
+      const emRel =
+        actualProfile.emergencyContactRelation ?? p.emergencyContactRelation;
       if (emName) setEmergencyContactName(emName);
       if (emNum) setEmergencyContactNumber(emNum);
       if (emRel) setEmergencyContactRelation(emRel);
 
-      if (actualProfile.bankName ?? p.bankName) setBankName(actualProfile.bankName ?? p.bankName);
-      if (actualProfile.accountName ?? p.accountName) setAccountName(actualProfile.accountName ?? p.accountName);
-      if (actualProfile.accountNumber ?? p.accountNumber) setAccountNumber(actualProfile.accountNumber ?? p.accountNumber);
-      if (actualProfile.sortCode ?? p.sortCode) setSortCode(actualProfile.sortCode ?? p.sortCode);
-      if (actualProfile.nationalInsuranceNumber ?? p.nationalInsuranceNumber) setNationalInsuranceNumber(actualProfile.nationalInsuranceNumber ?? p.nationalInsuranceNumber);
+      if (actualProfile.bankName ?? p.bankName)
+        setBankName(actualProfile.bankName ?? p.bankName);
+      if (actualProfile.accountName ?? p.accountName)
+        setAccountName(actualProfile.accountName ?? p.accountName);
+      if (actualProfile.accountNumber ?? p.accountNumber)
+        setAccountNumber(actualProfile.accountNumber ?? p.accountNumber);
+      if (actualProfile.sortCode ?? p.sortCode)
+        setSortCode(actualProfile.sortCode ?? p.sortCode);
+      if (actualProfile.nationalInsuranceNumber ?? p.nationalInsuranceNumber)
+        setNationalInsuranceNumber(
+          actualProfile.nationalInsuranceNumber ?? p.nationalInsuranceNumber,
+        );
 
       let dp = actualProfile.drivingPreferences ?? p.drivingPreferences;
       if (typeof dp === "string") {
@@ -136,7 +155,8 @@ export function useCarerPortal({
         setDrivingPreferences(dp);
       }
 
-      const dbs = actualProfile.dbsUpdateServiceNumber ?? p.dbsUpdateServiceNumber;
+      const dbs =
+        actualProfile.dbsUpdateServiceNumber ?? p.dbsUpdateServiceNumber;
       if (dbs) setDbsUpdateServiceNumber(dbs);
 
       const empHistory = actualProfile.employmentHistory ?? p.employmentHistory;
@@ -145,7 +165,7 @@ export function useCarerPortal({
       if (profile.user?.dateOfBirth) {
         setDateOfBirth(profile.user.dateOfBirth.split("T")[0]);
       }
-      
+
       if (profile.user?.phoneNumber) {
         setPhone(profile.user.phoneNumber);
       }
@@ -158,7 +178,6 @@ export function useCarerPortal({
       if (profile.user?.email) {
         setEmail(profile.user.email);
       }
-
     }
   }, [profile]);
 
@@ -170,9 +189,7 @@ export function useCarerPortal({
 
   // Application status dynamically derived from profile user status
   const applicationStatus: "pending" | "approved" | "rejected" =
-    profile?.user?.status === "APPROVED"
-      ? "approved"
-      : "pending";
+    profile?.user?.status === "APPROVED" ? "approved" : "pending";
   const [membershipActive] = useState(true);
   const [membershipExpiry] = useState("");
 
@@ -206,7 +223,10 @@ export function useCarerPortal({
 
   const dispatch = useAppDispatch();
 
-  const handleSaveProfile = async (e?: React.FormEvent, step?: number): Promise<boolean> => {
+  const handleSaveProfile = async (
+    e?: React.FormEvent,
+    step?: number,
+  ): Promise<boolean> => {
     if (e) e.preventDefault();
 
     setProfileErrors({});
@@ -222,7 +242,9 @@ export function useCarerPortal({
           emergencyContactNumber,
           emergencyContactRelation,
         };
-        await dispatch(updateCarerProfile(personalPayloadCheck(payload))).unwrap();
+        await dispatch(
+          updateCarerProfile(personalPayloadCheck(payload)),
+        ).unwrap();
       } else if (step === 3) {
         const payload = {
           drivingPreferences,
@@ -234,7 +256,10 @@ export function useCarerPortal({
         const payload = {
           summary: bio,
           experienceYears: parseInt(experience, 10) || 0,
-          careSpecialties: specialties.split(",").map((s) => s.trim()).filter(Boolean),
+          careSpecialties: specialties
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean),
         };
         await dispatch(updateCarerStep3(payload)).unwrap();
       } else if (step === 10) {
@@ -264,18 +289,33 @@ export function useCarerPortal({
           emergencyContactName,
           emergencyContactNumber,
           emergencyContactRelation,
-          canDrive: canDrive === "yes" ? "true" : canDrive === "no" ? "false" : undefined,
-          hasBusinessInsurance: hasBusinessInsurance === "yes" ? "true" : hasBusinessInsurance === "no" ? "false" : undefined,
+          canDrive:
+            canDrive === "yes"
+              ? "true"
+              : canDrive === "no"
+                ? "false"
+                : undefined,
+          hasBusinessInsurance:
+            hasBusinessInsurance === "yes"
+              ? "true"
+              : hasBusinessInsurance === "no"
+                ? "false"
+                : undefined,
           bankName,
           accountName,
           accountNumber,
           sortCode,
           summary: bio,
           experienceYears: parseInt(experience, 10) || 0,
-          careSpecialties: specialties.split(",").map((s) => s.trim()).filter(Boolean),
+          careSpecialties: specialties
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean),
         };
 
-        await dispatch(updateCarerProfile(personalPayloadCheck(personalPayload))).unwrap();
+        await dispatch(
+          updateCarerProfile(personalPayloadCheck(personalPayload)),
+        ).unwrap();
       }
 
       // showSuccessToast(
@@ -393,7 +433,9 @@ export function useCarerPortal({
       const category = categoryMap[type] || "MISC";
       const documentType = typeMap[type] || "OTHER_RELEVANT_CERTIFICATE";
 
-      await dispatch(uploadCarerDocument({ file, category, type: documentType })).unwrap();
+      await dispatch(
+        uploadCarerDocument({ file, category, type: documentType }),
+      ).unwrap();
 
       clearInterval(progressInterval);
       setUploadProgress(100);
@@ -478,7 +520,9 @@ export function useCarerPortal({
       }
 
       // @ts-ignore
-      await dispatch(uploadCarerStepDocuments({ step, files: selectedFiles, textFields })).unwrap();
+      await dispatch(
+        uploadCarerStepDocuments({ step, files: selectedFiles, textFields }),
+      ).unwrap();
       if (hasFiles) {
         showSuccessToast(
           "Documents Uploaded",
@@ -489,7 +533,10 @@ export function useCarerPortal({
       dispatch(fetchCarerDocuments());
       return true;
     } catch (error: any) {
-      showErrorToast("Upload Failed", error || "Failed to upload step documents.");
+      showErrorToast(
+        "Upload Failed",
+        error || "Failed to upload step documents.",
+      );
       return false;
     }
   };
@@ -662,7 +709,7 @@ export function useCarerPortal({
     setEmergencyContactNumber,
     emergencyContactRelation,
     setEmergencyContactRelation,
-    
+
     bankName,
     setBankName,
     accountName,

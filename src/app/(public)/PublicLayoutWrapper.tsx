@@ -9,7 +9,6 @@ export default function PublicLayoutWrapper({
 }: {
   children: React.ReactNode;
 }) {
-
   return (
     <>
       <StaticSiteHeader />

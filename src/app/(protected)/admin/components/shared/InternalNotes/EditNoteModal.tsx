@@ -2,7 +2,10 @@ import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { X, AlertCircle } from "lucide-react";
 import Button from "@/components/Button";
-import { UpdateInternalNotePayload, InternalNote } from "@/app/(protected)/admin/types/admin.types";
+import {
+  UpdateInternalNotePayload,
+  InternalNote,
+} from "@/app/(protected)/admin/types/admin.types";
 import { NOTE_CATEGORIES, ADMIN_USERS } from "./AddNoteModal";
 
 interface EditNoteModalProps {
@@ -12,7 +15,12 @@ interface EditNoteModalProps {
   onSave: (id: string, payload: UpdateInternalNotePayload) => Promise<void>;
 }
 
-export default function EditNoteModal({ isOpen, onClose, note, onSave }: EditNoteModalProps) {
+export default function EditNoteModal({
+  isOpen,
+  onClose,
+  note,
+  onSave,
+}: EditNoteModalProps) {
   const [mounted, setMounted] = useState(false);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -24,8 +32,17 @@ export default function EditNoteModal({ isOpen, onClose, note, onSave }: EditNot
   const [isPinned, setIsPinned] = useState(false);
 
   const [isSaving, setIsSaving] = useState(false);
-  const [errors, setErrors] = useState<{ title?: string, content?: string, category?: string, global?: string }>({});
-  const [touched, setTouched] = useState<{ title?: boolean, content?: boolean, category?: boolean }>({});
+  const [errors, setErrors] = useState<{
+    title?: string;
+    content?: string;
+    category?: string;
+    global?: string;
+  }>({});
+  const [touched, setTouched] = useState<{
+    title?: boolean;
+    content?: boolean;
+    category?: boolean;
+  }>({});
 
   useEffect(() => {
     setMounted(true);
@@ -38,7 +55,7 @@ export default function EditNoteModal({ isOpen, onClose, note, onSave }: EditNot
       setPriority(note.priority || "MEDIUM");
       setStatus(note.status || "ACTIVE");
       setCategory(note.category || "");
-      setFollowUpDate(note.followUpDate ? note.followUpDate.split('T')[0] : "");
+      setFollowUpDate(note.followUpDate ? note.followUpDate.split("T")[0] : "");
       setTaggedAdmins(note.taggedAdmins || []);
       setIsPinned(note.isPinned || false);
       setErrors({});
@@ -65,52 +82,55 @@ export default function EditNoteModal({ isOpen, onClose, note, onSave }: EditNot
 
   if (!isOpen || !note || !mounted) return null;
 
-  const validateTitle = (val: string) => val.trim() ? undefined : "Title is required.";
-  const validateCategory = (val: string) => val ? undefined : "Category is required.";
-  const validateContent = (val: string) => val.trim() ? undefined : "Note content is required.";
+  const validateTitle = (val: string) =>
+    val.trim() ? undefined : "Title is required.";
+  const validateCategory = (val: string) =>
+    val ? undefined : "Category is required.";
+  const validateContent = (val: string) =>
+    val.trim() ? undefined : "Note content is required.";
 
   const handleTitleChange = (val: string) => {
     setTitle(val);
     if (errors.title && val.trim()) {
-      setErrors(prev => ({ ...prev, title: undefined }));
+      setErrors((prev) => ({ ...prev, title: undefined }));
     }
   };
 
   const handleCategoryChange = (val: string) => {
     setCategory(val);
     if (errors.category && val) {
-      setErrors(prev => ({ ...prev, category: undefined }));
+      setErrors((prev) => ({ ...prev, category: undefined }));
     }
   };
 
   const handleContentChange = (val: string) => {
     setContent(val);
     if (errors.content && val.trim()) {
-      setErrors(prev => ({ ...prev, content: undefined }));
+      setErrors((prev) => ({ ...prev, content: undefined }));
     }
   };
 
-  const handleBlur = (field: 'title' | 'content' | 'category') => {
-    setTouched(prev => ({ ...prev, [field]: true }));
-    if (field === 'title') {
+  const handleBlur = (field: "title" | "content" | "category") => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    if (field === "title") {
       const error = validateTitle(title);
-      setErrors(prev => ({ ...prev, title: error }));
+      setErrors((prev) => ({ ...prev, title: error }));
     }
-    if (field === 'category') {
+    if (field === "category") {
       const error = validateCategory(category);
-      setErrors(prev => ({ ...prev, category: error }));
+      setErrors((prev) => ({ ...prev, category: error }));
     }
-    if (field === 'content') {
+    if (field === "content") {
       const error = validateContent(content);
-      setErrors(prev => ({ ...prev, content: error }));
+      setErrors((prev) => ({ ...prev, content: error }));
     }
   };
 
   const toggleTagAdmin = (adminName: string) => {
-    setTaggedAdmins(prev =>
+    setTaggedAdmins((prev) =>
       prev.includes(adminName)
-        ? prev.filter(name => name !== adminName)
-        : [...prev, adminName]
+        ? prev.filter((name) => name !== adminName)
+        : [...prev, adminName],
     );
   };
 
@@ -122,7 +142,11 @@ export default function EditNoteModal({ isOpen, onClose, note, onSave }: EditNot
     setTouched({ title: true, category: true, content: true });
 
     if (titleError || categoryError || contentError) {
-      setErrors({ title: titleError, category: categoryError, content: contentError });
+      setErrors({
+        title: titleError,
+        category: categoryError,
+        content: contentError,
+      });
       return;
     }
 
@@ -150,13 +174,18 @@ export default function EditNoteModal({ isOpen, onClose, note, onSave }: EditNot
   const modalContent = (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-navy-950/80 p-4 sm:p-6 backdrop-blur-sm">
       {/* Clickable backdrop that closes modal */}
-      <div className="absolute inset-0" onClick={!isSaving ? onClose : undefined} />
+      <div
+        className="absolute inset-0"
+        onClick={!isSaving ? onClose : undefined}
+      />
 
       {/* Modal Content */}
       <div className="relative z-10 w-full max-w-2xl rounded-2xl border border-gold-300/10 bg-navy-900 shadow-soft flex flex-col max-h-[90vh] overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-gold-300/10 px-6 py-4 bg-navy-900">
-          <h2 className="text-lg font-bold text-gold-200">Edit Internal Note</h2>
+          <h2 className="text-lg font-bold text-gold-200">
+            Edit Internal Note
+          </h2>
           <button
             onClick={onClose}
             disabled={isSaving}
@@ -175,16 +204,18 @@ export default function EditNoteModal({ isOpen, onClose, note, onSave }: EditNot
           )}
 
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-gold-100">Title <span className="text-rose-400">*</span></label>
+            <label className="text-sm font-semibold text-gold-100">
+              Title <span className="text-rose-400">*</span>
+            </label>
             <input
               type="text"
               value={title}
               onChange={(e) => handleTitleChange(e.target.value)}
-              onBlur={() => handleBlur('title')}
+              onBlur={() => handleBlur("title")}
               disabled={isSaving}
               autoFocus
               placeholder="e.g. Call with Carer"
-              className={`w-full rounded-xl border ${errors.title ? 'border-rose-500/50 focus:ring-rose-500/50' : 'border-gold-300/20 focus:ring-gold-DEFAULT'} bg-navy-950 px-4 py-3 text-sm text-gold-100 outline-none focus:ring-2 transition duration-300 shadow-inner`}
+              className={`w-full rounded-xl border ${errors.title ? "border-rose-500/50 focus:ring-rose-500/50" : "border-gold-300/20 focus:ring-gold-DEFAULT"} bg-navy-950 px-4 py-3 text-sm text-gold-100 outline-none focus:ring-2 transition duration-300 shadow-inner`}
             />
             {errors.title && (
               <p className="text-sm text-rose-400 flex items-center gap-1.5 mt-1.5">
@@ -195,17 +226,21 @@ export default function EditNoteModal({ isOpen, onClose, note, onSave }: EditNot
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-gold-100">Category <span className="text-rose-400">*</span></label>
+            <label className="text-sm font-semibold text-gold-100">
+              Category <span className="text-rose-400">*</span>
+            </label>
             <select
               value={category}
               onChange={(e) => handleCategoryChange(e.target.value)}
-              onBlur={() => handleBlur('category')}
+              onBlur={() => handleBlur("category")}
               disabled={isSaving}
-              className={`w-full rounded-xl border ${errors.category ? 'border-rose-500/50 focus:ring-rose-500/50' : 'border-gold-300/20 focus:ring-gold-DEFAULT'} bg-navy-950 px-4 py-3 text-sm text-gold-100 outline-none focus:ring-2 transition duration-300 shadow-inner`}
+              className={`w-full rounded-xl border ${errors.category ? "border-rose-500/50 focus:ring-rose-500/50" : "border-gold-300/20 focus:ring-gold-DEFAULT"} bg-navy-950 px-4 py-3 text-sm text-gold-100 outline-none focus:ring-2 transition duration-300 shadow-inner`}
             >
               <option value="">Select Category...</option>
-              {NOTE_CATEGORIES.map(cat => (
-                <option key={cat} value={cat}>{cat}</option>
+              {NOTE_CATEGORIES.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
               ))}
             </select>
             {errors.category && (
@@ -218,7 +253,9 @@ export default function EditNoteModal({ isOpen, onClose, note, onSave }: EditNot
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gold-100">Priority</label>
+              <label className="text-sm font-semibold text-gold-100">
+                Priority
+              </label>
               <select
                 value={priority}
                 onChange={(e) => setPriority(e.target.value)}
@@ -231,7 +268,9 @@ export default function EditNoteModal({ isOpen, onClose, note, onSave }: EditNot
               </select>
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gold-100">Status</label>
+              <label className="text-sm font-semibold text-gold-100">
+                Status
+              </label>
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
@@ -248,7 +287,9 @@ export default function EditNoteModal({ isOpen, onClose, note, onSave }: EditNot
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gold-100">Follow-up Date</label>
+              <label className="text-sm font-semibold text-gold-100">
+                Follow-up Date
+              </label>
               <input
                 type="date"
                 value={followUpDate}
@@ -259,16 +300,30 @@ export default function EditNoteModal({ isOpen, onClose, note, onSave }: EditNot
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gold-100">Notify Admin</label>
+              <label className="text-sm font-semibold text-gold-100">
+                Notify Admin
+              </label>
               <div className="relative">
-                <div className="min-h-[46px] w-full rounded-xl border border-gold-300/20 bg-navy-950 px-3 py-2 flex flex-wrap gap-1.5 shadow-inner cursor-pointer" tabIndex={0}>
+                <div
+                  className="min-h-[46px] w-full rounded-xl border border-gold-300/20 bg-navy-950 px-3 py-2 flex flex-wrap gap-1.5 shadow-inner cursor-pointer"
+                  tabIndex={0}
+                >
                   {taggedAdmins.length === 0 && (
-                    <span className="text-sm text-gold-100/40 p-1">Select admins...</span>
+                    <span className="text-sm text-gold-100/40 p-1">
+                      Select admins...
+                    </span>
                   )}
-                  {taggedAdmins.map(admin => (
-                    <span key={admin} className="inline-flex items-center gap-1 px-2 py-1 bg-gold/10 text-gold-200 text-xs rounded border border-gold/20">
+                  {taggedAdmins.map((admin) => (
+                    <span
+                      key={admin}
+                      className="inline-flex items-center gap-1 px-2 py-1 bg-gold/10 text-gold-200 text-xs rounded border border-gold/20"
+                    >
                       {admin}
-                      <button type="button" onClick={() => toggleTagAdmin(admin)} className="hover:text-gold transition">
+                      <button
+                        type="button"
+                        onClick={() => toggleTagAdmin(admin)}
+                        className="hover:text-gold transition"
+                      >
                         <X className="h-3 w-3" />
                       </button>
                     </span>
@@ -277,14 +332,18 @@ export default function EditNoteModal({ isOpen, onClose, note, onSave }: EditNot
                   {/* Dropdown menu overlay (simplified for UI demonstration) */}
                   <div className="absolute top-full left-0 right-0 mt-1 rounded-xl border border-gold-300/20 bg-navy-900 shadow-xl overflow-hidden opacity-0 invisible focus-within:opacity-100 focus-within:visible z-20">
                     <div className="max-h-40 overflow-y-auto p-1 text-sm text-gold-100">
-                      {ADMIN_USERS.map(admin => (
+                      {ADMIN_USERS.map((admin) => (
                         <div
                           key={admin.id}
                           className="px-3 py-2 hover:bg-navy-800 cursor-pointer flex items-center justify-between rounded"
                           onClick={() => toggleTagAdmin(admin.name)}
                         >
                           <span>{admin.name}</span>
-                          {taggedAdmins.includes(admin.name) && <span className="text-gold text-xs font-bold">✓</span>}
+                          {taggedAdmins.includes(admin.name) && (
+                            <span className="text-gold text-xs font-bold">
+                              ✓
+                            </span>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -296,16 +355,18 @@ export default function EditNoteModal({ isOpen, onClose, note, onSave }: EditNot
 
           <div className="space-y-2">
             <label className="text-sm font-semibold text-gold-100 flex items-center justify-between">
-              <span>Note Content <span className="text-rose-400">*</span></span>
+              <span>
+                Note Content <span className="text-rose-400">*</span>
+              </span>
             </label>
             <textarea
               value={content}
               onChange={(e) => handleContentChange(e.target.value)}
-              onBlur={() => handleBlur('content')}
+              onBlur={() => handleBlur("content")}
               disabled={isSaving}
               rows={8}
               placeholder="Enter your detailed note here..."
-              className={`w-full rounded-xl border ${errors.content ? 'border-rose-500/50 focus:ring-rose-500/50' : 'border-gold-300/20 focus:ring-gold-DEFAULT'} bg-navy-950 px-4 py-3 text-sm text-gold-100 outline-none focus:ring-2 transition duration-300 shadow-inner resize-none`}
+              className={`w-full rounded-xl border ${errors.content ? "border-rose-500/50 focus:ring-rose-500/50" : "border-gold-300/20 focus:ring-gold-DEFAULT"} bg-navy-950 px-4 py-3 text-sm text-gold-100 outline-none focus:ring-2 transition duration-300 shadow-inner resize-none`}
             />
             {errors.content && (
               <p className="text-sm text-rose-400 flex items-center gap-1.5 mt-1.5">
@@ -325,8 +386,18 @@ export default function EditNoteModal({ isOpen, onClose, note, onSave }: EditNot
                 className="peer sr-only"
               />
               <div className="h-5 w-5 rounded border border-gold-300/40 bg-navy-950 peer-checked:bg-gold peer-checked:border-gold transition-colors duration-200 shadow-sm"></div>
-              <svg className="absolute w-3.5 h-3.5 text-navy-950 opacity-0 peer-checked:opacity-100 transition-opacity duration-200 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              <svg
+                className="absolute w-3.5 h-3.5 text-navy-950 opacity-0 peer-checked:opacity-100 transition-opacity duration-200 pointer-events-none"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={3}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M5 13l4 4L19 7"
+                />
               </svg>
             </div>
             <span className="text-sm font-medium text-gold-100/90 group-hover:text-gold-200 transition-colors duration-200">

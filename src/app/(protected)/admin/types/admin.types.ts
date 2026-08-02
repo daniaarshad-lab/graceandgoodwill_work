@@ -37,12 +37,12 @@ export interface ClientRequest {
   startDate: string;
   notes: string;
   status:
-  | "NEW_ENQUIRY"
-  | "OPEN_FOR_APPLICATIONS"
-  | "UNDER_REVIEW"
-  | "INFORM_CLIENT_TO_AVAILABLE_CARER"
-  | "CARER_SELECTED"
-  | string;
+    | "NEW_ENQUIRY"
+    | "OPEN_FOR_APPLICATIONS"
+    | "UNDER_REVIEW"
+    | "INFORM_CLIENT_TO_AVAILABLE_CARER"
+    | "CARER_SELECTED"
+    | string;
   email: string;
   phone: string;
   interestListCount?: number;
@@ -66,12 +66,12 @@ export interface Placement {
   location: string;
   urgency: "Standard" | "High" | "Emergency";
   status:
-  | "PLACEMENT_CONFIRMED"
-  | "PLACEMENT_STARTED"
-  | "ONGOING"
-  | "COMPLETED"
-  | "CANCELLED"
-  | string;
+    | "PLACEMENT_CONFIRMED"
+    | "PLACEMENT_STARTED"
+    | "ONGOING"
+    | "COMPLETED"
+    | "CANCELLED"
+    | string;
   contactDetailsReleased: boolean;
   startDate: string;
   timeline: PlacementTimelineEvent[];
@@ -91,7 +91,6 @@ export interface InternalNoteAttachment {
   fileUrl: string;
   fileKey?: string;
 }
-
 
 export interface InternalNoteHistory {
   id: string;

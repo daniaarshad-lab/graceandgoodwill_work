@@ -13,9 +13,14 @@ interface ClientOnboardingProps {
 }
 
 // Reserved for future premium matching service
-export default function ClientOnboarding({ user, onComplete }: ClientOnboardingProps) {
+export default function ClientOnboarding({
+  user,
+  onComplete,
+}: ClientOnboardingProps) {
   const [step, setStep] = useState<1 | 2>(1);
-  const [selectedOption, setSelectedOption] = useState<"match" | "browse" | null>(null);
+  const [selectedOption, setSelectedOption] = useState<
+    "match" | "browse" | null
+  >(null);
   const [isUpdating, setIsUpdating] = useState(false);
   const dispatch = useAppDispatch();
 
@@ -45,7 +50,8 @@ export default function ClientOnboarding({ user, onComplete }: ClientOnboardingP
               Welcome to Grace & Goodwill
             </h2>
             <p className="text-gold-100/65 max-w-md mx-auto text-[13px] leading-relaxed font-light">
-              We are committed to providing premium, bespoke healthcare matching. Let's select your care journey to get started.
+              We are committed to providing premium, bespoke healthcare
+              matching. Let's select your care journey to get started.
             </p>
           </div>
 
@@ -65,18 +71,26 @@ export default function ClientOnboarding({ user, onComplete }: ClientOnboardingP
                 }`}
               >
                 {/* Select Indicator */}
-                <div className={`absolute top-4 right-4 w-5 h-5 rounded-full border flex items-center justify-center transition-all ${
-                  selectedOption === "match"
-                    ? "bg-gold border-gold text-navy-950"
-                    : "border-gold-300/20 group-hover:border-gold-300/40"
-                }`}>
-                  {selectedOption === "match" && <Check className="w-3.5 h-3.5 stroke-[3px]" />}
+                <div
+                  className={`absolute top-4 right-4 w-5 h-5 rounded-full border flex items-center justify-center transition-all ${
+                    selectedOption === "match"
+                      ? "bg-gold border-gold text-navy-950"
+                      : "border-gold-300/20 group-hover:border-gold-300/40"
+                  }`}
+                >
+                  {selectedOption === "match" && (
+                    <Check className="w-3.5 h-3.5 stroke-[3px]" />
+                  )}
                 </div>
 
                 <div className="flex-1 space-y-4">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all ${
-                    selectedOption === "match" ? "bg-gold/15 text-gold" : "bg-gold-DEFAULT/5 text-gold-DEFAULT/60 group-hover:text-gold"
-                  }`}>
+                  <div
+                    className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all ${
+                      selectedOption === "match"
+                        ? "bg-gold/15 text-gold"
+                        : "bg-gold-DEFAULT/5 text-gold-DEFAULT/60 group-hover:text-gold"
+                    }`}
+                  >
                     <HeartHandshake className="w-6 h-6" />
                   </div>
                   <div className="space-y-1.5">
@@ -84,7 +98,8 @@ export default function ClientOnboarding({ user, onComplete }: ClientOnboardingP
                       Let Grace & Goodwill Match Me With A Carer
                     </h4>
                     <p className="text-xs text-gold-100/50 leading-relaxed font-light">
-                      Our team will review your requirements and recommend suitable carers on your behalf.
+                      Our team will review your requirements and recommend
+                      suitable carers on your behalf.
                     </p>
                   </div>
                 </div>
@@ -100,18 +115,26 @@ export default function ClientOnboarding({ user, onComplete }: ClientOnboardingP
                 }`}
               >
                 {/* Select Indicator */}
-                <div className={`absolute top-4 right-4 w-5 h-5 rounded-full border flex items-center justify-center transition-all ${
-                  selectedOption === "browse"
-                    ? "bg-gold border-gold text-navy-950"
-                    : "border-gold-300/20 group-hover:border-gold-300/40"
-                }`}>
-                  {selectedOption === "browse" && <Check className="w-3.5 h-3.5 stroke-[3px]" />}
+                <div
+                  className={`absolute top-4 right-4 w-5 h-5 rounded-full border flex items-center justify-center transition-all ${
+                    selectedOption === "browse"
+                      ? "bg-gold border-gold text-navy-950"
+                      : "border-gold-300/20 group-hover:border-gold-300/40"
+                  }`}
+                >
+                  {selectedOption === "browse" && (
+                    <Check className="w-3.5 h-3.5 stroke-[3px]" />
+                  )}
                 </div>
 
                 <div className="flex-1 space-y-4">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all ${
-                    selectedOption === "browse" ? "bg-gold/15 text-gold" : "bg-gold-DEFAULT/5 text-gold-DEFAULT/60 group-hover:text-gold"
-                  }`}>
+                  <div
+                    className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all ${
+                      selectedOption === "browse"
+                        ? "bg-gold/15 text-gold"
+                        : "bg-gold-DEFAULT/5 text-gold-DEFAULT/60 group-hover:text-gold"
+                    }`}
+                  >
                     <Search className="w-6 h-6" />
                   </div>
                   <div className="space-y-1.5">
@@ -119,7 +142,8 @@ export default function ClientOnboarding({ user, onComplete }: ClientOnboardingP
                       Browse & Select Carers Myself
                     </h4>
                     <p className="text-xs text-gold-100/50 leading-relaxed font-light">
-                      I would like to browse available carers and create my own shortlist before proceeding.
+                      I would like to browse available carers and create my own
+                      shortlist before proceeding.
                     </p>
                   </div>
                 </div>
@@ -163,7 +187,9 @@ export default function ClientOnboarding({ user, onComplete }: ClientOnboardingP
                 Thank you for registering with Grace & Goodwill.
               </h3>
               <p className="text-xs text-gold-100/60 leading-relaxed font-light">
-                A member of our team will contact you as soon as possible, with a maximum response time of 24 hours, to discuss your care needs and next steps.
+                A member of our team will contact you as soon as possible, with
+                a maximum response time of 24 hours, to discuss your care needs
+                and next steps.
               </p>
             </div>
 

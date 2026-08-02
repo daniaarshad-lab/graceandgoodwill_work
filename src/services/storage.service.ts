@@ -39,7 +39,14 @@ export function extractS3Key(keyOrUrl: string): string {
     } catch {
       const parts = keyOrUrl.split("/");
       const uploadIdx = parts.findIndex((p) =>
-        ["carers", "clients", "internal-notes", "referrals", "documents", "uploads"].includes(p)
+        [
+          "carers",
+          "clients",
+          "internal-notes",
+          "referrals",
+          "documents",
+          "uploads",
+        ].includes(p),
       );
       if (uploadIdx !== -1) {
         return parts.slice(uploadIdx).join("/").split("?")[0];
@@ -91,12 +98,19 @@ export const storageService = {
         headers["Authorization"] = `Bearer ${token}`;
       }
 
-      const response = await apiFetch(`/storage/presigned-url?${queryParams.toString()}`, {
-        headers,
-      });
+      const response = await apiFetch(
+        `/storage/presigned-url?${queryParams.toString()}`,
+        {
+          headers,
+        },
+      );
       return response?.presignedUrl || keyOrUrl;
     } catch (error) {
-      console.error("[storageService] Error fetching presigned URL for key:", key, error);
+      console.error(
+        "[storageService] Error fetching presigned URL for key:",
+        key,
+        error,
+      );
       return keyOrUrl;
     }
   },

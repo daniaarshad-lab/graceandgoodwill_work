@@ -266,7 +266,7 @@ export default function PhoneInput({
           enableSearch={true}
           disableSearchIcon={true}
           autocompleteSearch={true}
-          containerClass={`phone-input-container ${error ? 'has-error' : ''}`}
+          containerClass={`phone-input-container ${error ? "has-error" : ""}`}
           inputClass="phone-input-field"
           buttonClass="phone-input-flag-button"
           dropdownClass="phone-input-dropdown"

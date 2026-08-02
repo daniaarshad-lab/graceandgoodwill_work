@@ -78,7 +78,15 @@ export interface ClientPlacement {
   clientProfileId: string;
   careRequestId: string | null;
   hourlyRate: string | number;
-  status: "ACTIVE" | "COMPLETED" | "TERMINATED" | "CANCELLED" | "PENDING" | "MATCHING" | "APPROVED" | "ONGOING";
+  status:
+    | "ACTIVE"
+    | "COMPLETED"
+    | "TERMINATED"
+    | "CANCELLED"
+    | "PENDING"
+    | "MATCHING"
+    | "APPROVED"
+    | "ONGOING";
   startDate: string;
   endDate: string | null;
   createdAt: string;
@@ -166,8 +174,6 @@ export interface ClientState {
   applicationsLoading: boolean;
   applicationsError: string | null;
 
-
-
   loading: boolean;
   error: string | null;
 
@@ -203,7 +209,6 @@ export interface CareRequest {
 
   status: string;
   isEmergency: boolean;
-
 
   /** Whether this care request is for ongoing/permanent care */
   isOngoing?: boolean;

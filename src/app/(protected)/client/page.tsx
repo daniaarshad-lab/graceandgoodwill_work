@@ -26,13 +26,16 @@ const ClientProfileManagement = dynamic(
   { ssr: false, loading: () => <LoadingFallback /> },
 );
 const CareRequestForm = dynamic(() => import("./components/CareRequestForm"), {
-  ssr: false, loading: () => <LoadingFallback />
+  ssr: false,
+  loading: () => <LoadingFallback />,
 });
 const CarerProfiles = dynamic(() => import("./components/CarerProfiles"), {
-  ssr: false, loading: () => <LoadingFallback />
+  ssr: false,
+  loading: () => <LoadingFallback />,
 });
 const RequestTracking = dynamic(() => import("./components/RequestTracking"), {
-  ssr: false, loading: () => <LoadingFallback />
+  ssr: false,
+  loading: () => <LoadingFallback />,
 });
 const SupportEnquiryPanel = dynamic(
   () => import("./components/enquiry/SupportEnquiryPanel"),
@@ -48,15 +51,15 @@ const ClientApplicationsPanel = dynamic(
   { ssr: false, loading: () => <LoadingFallback /> },
 );
 
-const AgreementsPanel = dynamic(
-  () => import("@/components/AgreementsPanel"),
-  { ssr: false, loading: () => <LoadingFallback /> },
-);
+const AgreementsPanel = dynamic(() => import("@/components/AgreementsPanel"), {
+  ssr: false,
+  loading: () => <LoadingFallback />,
+});
 
-const BillingPanel = dynamic(
-  () => import("./components/BillingPanel"),
-  { ssr: false, loading: () => <LoadingFallback /> },
-);
+const BillingPanel = dynamic(() => import("./components/BillingPanel"), {
+  ssr: false,
+  loading: () => <LoadingFallback />,
+});
 
 export default function ClientDashboard() {
   const { user } = useAuth();
@@ -125,17 +128,12 @@ export default function ClientDashboard() {
     }
   }, [activeTab, portal.fetchPlacements]);
 
-
-
   return (
     <main className="min-h-screen bg-navy-950 py-10 text-gold-100">
       <div className="container-wrapper space-y-8">
         <PortalHeader user={user} />
 
-        <PortalTabs
-          activeTab={activeTab}
-          setActiveTab={handleTabChange}
-        />
+        <PortalTabs activeTab={activeTab} setActiveTab={handleTabChange} />
 
         <div className="transition-all duration-300">
           {/* TAB 1: DASHBOARD OVERVIEW */}
@@ -189,25 +187,16 @@ export default function ClientDashboard() {
           )}
 
           {/* TAB 3: CARER PROFILES */}
-          {activeTab === "carers" && (
-            <CarerProfiles
-              carers={portal.carers}
-            />
-          )}
-
+          {activeTab === "carers" && <CarerProfiles carers={portal.carers} />}
 
           {/* TAB 5: SUPPORT & ENQUIRIES */}
           {activeTab === "enquiry" && <SupportEnquiryPanel />}
 
           {/* TAB 7: INTEREST LIST */}
-          {activeTab === "interest-list" && (
-            <InterestListPanel />
-          )}
+          {activeTab === "interest-list" && <InterestListPanel />}
 
           {/* TAB 8: APPLICATIONS (Offers received by client) */}
-          {activeTab === "applications" && (
-            <ClientApplicationsPanel />
-          )}
+          {activeTab === "applications" && <ClientApplicationsPanel />}
 
           {/* TAB 8.5: PLACEMENTS (TRACKING) */}
           {activeTab === "tracking" && (
@@ -227,7 +216,6 @@ export default function ClientDashboard() {
           {activeTab === "billing" && <BillingPanel />}
         </div>
       </div>
-
     </main>
   );
 }

@@ -2,7 +2,16 @@
 
 import { useEffect, useState } from "react";
 import { adminService } from "@/services/admin/admin.service";
-import { FileText, Shield, Calendar, User, Info, CheckCircle2, AlertTriangle, XCircle } from "lucide-react";
+import {
+  FileText,
+  Shield,
+  Calendar,
+  User,
+  Info,
+  CheckCircle2,
+  AlertTriangle,
+  XCircle,
+} from "lucide-react";
 
 interface UserAuditLogsProps {
   userId: string;
@@ -38,13 +47,22 @@ export default function UserAuditLogs({
   }, [userId]);
 
   const getEventBadge = (action: string | null, event: string) => {
-    if (action === "APPROVE" || event.includes("APPROVED") || event.includes("CREATED") || event.includes("VERIFIED")) {
+    if (
+      action === "APPROVE" ||
+      event.includes("APPROVED") ||
+      event.includes("CREATED") ||
+      event.includes("VERIFIED")
+    ) {
       return {
         icon: <CheckCircle2 className="h-4 w-4 text-emerald-400" />,
         badgeClass: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
       };
     }
-    if (action === "REJECT" || event.includes("REJECTED") || event.includes("SUSPENDED")) {
+    if (
+      action === "REJECT" ||
+      event.includes("REJECTED") ||
+      event.includes("SUSPENDED")
+    ) {
       return {
         icon: <XCircle className="h-4 w-4 text-rose-400" />,
         badgeClass: "bg-rose-500/10 text-rose-400 border-rose-500/20",
@@ -88,9 +106,12 @@ export default function UserAuditLogs({
       ) : logs.length === 0 ? (
         <div className="py-12 text-center text-gold-100/40 flex flex-col items-center gap-2">
           <FileText className="h-10 w-10 text-gold-300/20" />
-          <p className="text-sm font-semibold text-gold-200/60">No Audit Logs Found</p>
+          <p className="text-sm font-semibold text-gold-200/60">
+            No Audit Logs Found
+          </p>
           <p className="text-xs max-w-sm">
-            There are currently no logged governance or system events for this user.
+            There are currently no logged governance or system events for this
+            user.
           </p>
         </div>
       ) : (
@@ -118,7 +139,9 @@ export default function UserAuditLogs({
                 <div className="rounded-xl border border-gold-300/10 bg-navy-950/40 p-4 transition duration-200 hover:border-gold-300/30">
                   <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                     <div className="flex items-center gap-2">
-                      <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded border ${badgeClass}`}>
+                      <span
+                        className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded border ${badgeClass}`}
+                      >
                         {log.event}
                       </span>
                       {log.action && (
@@ -128,7 +151,8 @@ export default function UserAuditLogs({
                       )}
                     </div>
                     <span className="text-xs font-mono text-gold-100/40 flex items-center gap-1">
-                      <Calendar className="h-3 w-3 text-gold/50" /> {formattedDate}
+                      <Calendar className="h-3 w-3 text-gold/50" />{" "}
+                      {formattedDate}
                     </span>
                   </div>
 
@@ -141,7 +165,9 @@ export default function UserAuditLogs({
                       <User className="h-3 w-3 text-gold/60" /> Performed by:{" "}
                       {log.adminUser ? (
                         <span className="font-bold text-gold-200 bg-gold/10 px-2 py-0.5 rounded border border-gold/20 text-[11px]">
-                          {`${log.adminUser.firstName || ""} ${log.adminUser.lastName || ""}`.trim() || log.adminUser.email || "Admin"}
+                          {`${log.adminUser.firstName || ""} ${log.adminUser.lastName || ""}`.trim() ||
+                            log.adminUser.email ||
+                            "Admin"}
                         </span>
                       ) : (
                         <span className="text-gold-100/50 italic font-mono">

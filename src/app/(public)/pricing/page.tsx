@@ -405,7 +405,9 @@ export default function PricingPage() {
                       Contact Sales
                     </h2>
                     <p className="text-sm text-gold-200/60 leading-relaxed font-light max-w-3xl">
-                      Have questions about our pricing plans or want to discuss a custom arrangement? Leave your details and a member of our partnership team will reach out.
+                      Have questions about our pricing plans or want to discuss
+                      a custom arrangement? Leave your details and a member of
+                      our partnership team will reach out.
                     </p>
                   </div>
                 </div>

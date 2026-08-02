@@ -56,12 +56,16 @@ import EmergencyCareRequestsList from "./components/EmergencyCareRequestsList";
 
 export default function AdminDashboard() {
   return (
-    <Suspense fallback={
-      <main className="min-h-screen bg-navy-950 py-10 text-gold-100 flex flex-col items-center justify-center space-y-4">
-        <div className="w-12 h-12 border-4 border-gold border-t-transparent rounded-full animate-spin" />
-        <p className="text-sm text-gold-100/60 font-semibold">Loading admin console...</p>
-      </main>
-    }>
+    <Suspense
+      fallback={
+        <main className="min-h-screen bg-navy-950 py-10 text-gold-100 flex flex-col items-center justify-center space-y-4">
+          <div className="w-12 h-12 border-4 border-gold border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm text-gold-100/60 font-semibold">
+            Loading admin console...
+          </p>
+        </main>
+      }
+    >
       <AdminDashboardContent />
     </Suspense>
   );
@@ -107,18 +111,18 @@ function AdminDashboardContent() {
       el.scrollLeft = scrollLeftPos - walk;
     };
 
-    el.addEventListener('wheel', onWheel, { passive: false });
-    el.addEventListener('mousedown', onMouseDown);
-    el.addEventListener('mouseleave', onMouseLeave);
-    el.addEventListener('mouseup', onMouseUp);
-    el.addEventListener('mousemove', onMouseMove);
+    el.addEventListener("wheel", onWheel, { passive: false });
+    el.addEventListener("mousedown", onMouseDown);
+    el.addEventListener("mouseleave", onMouseLeave);
+    el.addEventListener("mouseup", onMouseUp);
+    el.addEventListener("mousemove", onMouseMove);
 
     return () => {
-      el.removeEventListener('wheel', onWheel);
-      el.removeEventListener('mousedown', onMouseDown);
-      el.removeEventListener('mouseleave', onMouseLeave);
-      el.removeEventListener('mouseup', onMouseUp);
-      el.removeEventListener('mousemove', onMouseMove);
+      el.removeEventListener("wheel", onWheel);
+      el.removeEventListener("mousedown", onMouseDown);
+      el.removeEventListener("mouseleave", onMouseLeave);
+      el.removeEventListener("mouseup", onMouseUp);
+      el.removeEventListener("mousemove", onMouseMove);
     };
   }, []);
 
@@ -143,7 +147,6 @@ function AdminDashboardContent() {
   return (
     <main className="min-h-screen bg-navy-950 py-10 text-gold-100">
       <div className="container-wrapper space-y-8">
-
         {/* --- NAVIGATION TABS BAR --- */}
         <nav
           ref={scrollRef}
@@ -157,10 +160,11 @@ function AdminDashboardContent() {
               <button
                 key={tab}
                 onClick={() => portal.setActiveTab(tab)}
-                className={`px-3 sm:px-5 py-3 min-h-[44px] text-xs sm:text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap flex-shrink-0 ${isActive
+                className={`px-3 sm:px-5 py-3 min-h-[44px] text-xs sm:text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap flex-shrink-0 ${
+                  isActive
                     ? "border-b-2 border-gold-DEFAULT text-gold-DEFAULT bg-gold-DEFAULT/5"
                     : "text-gold-200/60 hover:text-gold-50"
-                  }`}
+                }`}
               >
                 {tabLabels[tab]}
                 {tab === "emergency" && portal.stats.emergencyCases > 0 && (

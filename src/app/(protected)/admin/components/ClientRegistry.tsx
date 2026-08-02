@@ -54,10 +54,16 @@ export default function ClientRegistry({
       render: (client) => (
         <div className="flex items-center gap-3">
           <div className="h-8 w-8 rounded-full bg-gold/10 flex items-center justify-center text-gold border border-gold/20 shrink-0 font-bold text-xs uppercase">
-            {client.name.split(" ").map((n) => n[0]).join("")}
+            {client.name
+              .split(" ")
+              .map((n) => n[0])
+              .join("")}
           </div>
           <div className="min-w-0">
-            <span className="truncate max-w-[150px] font-bold text-gold-200 block" title={client.name}>
+            <span
+              className="truncate max-w-[150px] font-bold text-gold-200 block"
+              title={client.name}
+            >
               {client.name}
             </span>
             {client.internalAccountNumber && (
@@ -106,9 +112,7 @@ export default function ClientRegistry({
       header: "City",
       key: "city",
       sortable: true,
-      render: (client) => (
-        <span className="text-gold-200">{client.city}</span>
-      ),
+      render: (client) => <span className="text-gold-200">{client.city}</span>,
     },
     {
       header: "Weekly Fee",
@@ -138,11 +142,13 @@ export default function ClientRegistry({
         <div className="flex items-center gap-1.5 text-gold-100/60 font-mono">
           <Calendar className="h-3.5 w-3.5 text-gold/45" />
           <span>
-            {client.createdAt ? new Date(client.createdAt).toLocaleDateString("en-GB", {
-              day: "2-digit",
-              month: "short",
-              year: "numeric",
-            }) : "N/A"}
+            {client.createdAt
+              ? new Date(client.createdAt).toLocaleDateString("en-GB", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                })
+              : "N/A"}
           </span>
         </div>
       ),
@@ -181,7 +187,10 @@ export default function ClientRegistry({
             ))}
           </div>
           {[...Array(5)].map((_, idx) => (
-            <div key={idx} className="grid grid-cols-8 gap-4 py-3.5 border-b border-gold-300/5">
+            <div
+              key={idx}
+              className="grid grid-cols-8 gap-4 py-3.5 border-b border-gold-300/5"
+            >
               {[...Array(8)].map((_, i) => (
                 <div key={i} className="h-3 bg-gold/5 rounded animate-pulse" />
               ))}
@@ -217,7 +226,8 @@ export default function ClientRegistry({
             Client Registry & Management Console
           </h3>
           <p className="text-xs text-gold-100/50">
-            Audit and inspect registered platform clients, weekly fees, profiles, and registration records.
+            Audit and inspect registered platform clients, weekly fees,
+            profiles, and registration records.
           </p>
         </div>
 
@@ -245,7 +255,8 @@ export default function ClientRegistry({
           <User className="h-12 w-12 text-gold-100/20 mb-4 animate-pulse" />
           <h3 className="text-lg font-bold text-gold-200">No Clients Found</h3>
           <p className="text-xs max-w-sm mt-2">
-            There are currently no registered clients under the selected status filter.
+            There are currently no registered clients under the selected status
+            filter.
           </p>
         </div>
       ) : (

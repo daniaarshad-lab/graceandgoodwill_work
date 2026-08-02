@@ -63,4 +63,3 @@ export interface CarerDocument {
   createdAt: string;
   updatedAt: string;
 }
-

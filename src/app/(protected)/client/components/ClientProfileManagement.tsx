@@ -2,7 +2,10 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { updateClientProfile, fetchClientProfile } from "@/store/slices/clientSlice";
+import {
+  updateClientProfile,
+  fetchClientProfile,
+} from "@/store/slices/clientSlice";
 import SectionCard from "./shared/SectionCard";
 import Input from "@/components/Input";
 import PhoneInput from "@/components/PhoneInput";
@@ -12,7 +15,10 @@ import { showSuccessToast, showErrorToast } from "@/utils/toast";
 export default function ClientProfileManagement() {
   const dispatch = useAppDispatch();
   const { profile, loading } = useAppSelector((state) => {
-    console.log("[ClientProfileManagement] Redux profile state selector:", state.client.profile);
+    console.log(
+      "[ClientProfileManagement] Redux profile state selector:",
+      state.client.profile,
+    );
     return state.client;
   });
 
@@ -30,12 +36,17 @@ export default function ClientProfileManagement() {
 
   // Dispatch profile fetch on mount
   useEffect(() => {
-    console.log("[ClientProfileManagement] Component mounted, fetching profile...");
+    console.log(
+      "[ClientProfileManagement] Component mounted, fetching profile...",
+    );
     dispatch(fetchClientProfile());
   }, [dispatch]);
 
   useEffect(() => {
-    console.log("[ClientProfileManagement] useEffect triggered with profile:", profile);
+    console.log(
+      "[ClientProfileManagement] useEffect triggered with profile:",
+      profile,
+    );
     if (profile) {
       console.log("[ClientProfileManagement] Populating form default values:", {
         firstName: profile.user?.firstName,

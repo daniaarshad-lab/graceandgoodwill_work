@@ -64,18 +64,18 @@ export default function PortalTabs({
       el.scrollLeft = scrollLeftPos - walk;
     };
 
-    el.addEventListener('wheel', onWheel, { passive: false });
-    el.addEventListener('mousedown', onMouseDown);
-    el.addEventListener('mouseleave', onMouseLeave);
-    el.addEventListener('mouseup', onMouseUp);
-    el.addEventListener('mousemove', onMouseMove);
+    el.addEventListener("wheel", onWheel, { passive: false });
+    el.addEventListener("mousedown", onMouseDown);
+    el.addEventListener("mouseleave", onMouseLeave);
+    el.addEventListener("mouseup", onMouseUp);
+    el.addEventListener("mousemove", onMouseMove);
 
     return () => {
-      el.removeEventListener('wheel', onWheel);
-      el.removeEventListener('mousedown', onMouseDown);
-      el.removeEventListener('mouseleave', onMouseLeave);
-      el.removeEventListener('mouseup', onMouseUp);
-      el.removeEventListener('mousemove', onMouseMove);
+      el.removeEventListener("wheel", onWheel);
+      el.removeEventListener("mousedown", onMouseDown);
+      el.removeEventListener("mouseleave", onMouseLeave);
+      el.removeEventListener("mouseup", onMouseUp);
+      el.removeEventListener("mousemove", onMouseMove);
     };
   }, []);
 
@@ -113,7 +113,11 @@ export default function PortalTabs({
       label: "Placements",
       href: "/carer?tab=placements",
     },
-    { id: "agreements" as TabType, label: "Legal Agreements", href: "/carer?tab=agreements" },
+    {
+      id: "agreements" as TabType,
+      label: "Legal Agreements",
+      href: "/carer?tab=agreements",
+    },
     { id: "referrals", label: "Referral Program", href: "/carer/referrals" },
   ] as const;
 
@@ -143,31 +147,34 @@ export default function PortalTabs({
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-navy-950/40 backdrop-blur-[2px]">
           <div className="bg-navy-900/90 p-4 rounded-2xl border border-navy-800 shadow-2xl flex flex-col items-center space-y-3">
             <Loader2 className="h-8 w-8 animate-spin text-gold-DEFAULT" />
-            <p className="text-xs font-medium text-gold-200 tracking-wider uppercase">Loading...</p>
+            <p className="text-xs font-medium text-gold-200 tracking-wider uppercase">
+              Loading...
+            </p>
           </div>
         </div>
       )}
       <div className="relative">
-      <div
-        ref={scrollRef}
-        className="flex border-b border-gold-300/10 pb-1 overflow-x-auto gap-1 sm:gap-2 portal-tabs"
-        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-      >
-        <style>{`.portal-tabs::-webkit-scrollbar { display: none; }`}</style>
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => handleTabClick(tab.id as TabType, tab.href)}
-            className={`px-3 sm:px-5 py-3 min-h-[44px] text-xs sm:text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap flex-shrink-0 ${activeTab === tab.id
-                ? "border-b-2 border-gold-DEFAULT text-gold-DEFAULT bg-gold-DEFAULT/5"
-                : "text-gold-200/60 hover:text-gold-50"
+        <div
+          ref={scrollRef}
+          className="flex border-b border-gold-300/10 pb-1 overflow-x-auto gap-1 sm:gap-2 portal-tabs"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
+          <style>{`.portal-tabs::-webkit-scrollbar { display: none; }`}</style>
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => handleTabClick(tab.id as TabType, tab.href)}
+              className={`px-3 sm:px-5 py-3 min-h-[44px] text-xs sm:text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap flex-shrink-0 ${
+                activeTab === tab.id
+                  ? "border-b-2 border-gold-DEFAULT text-gold-DEFAULT bg-gold-DEFAULT/5"
+                  : "text-gold-200/60 hover:text-gold-50"
               }`}
-          >
-            {tab.label}
-          </button>
-        ))}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
       </div>
-    </div>
     </>
   );
 }

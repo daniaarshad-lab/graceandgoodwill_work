@@ -71,7 +71,9 @@ const mapBackendClients = (backendClients: any[]): any[] => {
       id: client.id,
       internalAccountNumber: client.internalAccountNumber || "",
       publicProfileId: client.publicProfileId || "",
-      name: `${client.firstName || ""} ${client.lastName || ""}`.trim() || "Registered Client",
+      name:
+        `${client.firstName || ""} ${client.lastName || ""}`.trim() ||
+        "Registered Client",
       email: client.email || "No email listed",
       phone: client.phoneNumber || "No phone listed",
       status: client.status || "PENDING",
@@ -101,7 +103,12 @@ const mapBackendCarers = (backendCarers: any[]): CarerApplication[] => {
     };
     const documents = rawDocs.map((doc: any) => {
       // Prioritize fileType for the document name, fallback to fileCategory or fileName
-      const name = doc.fileType ? getDocumentFileLabel(doc.fileType) : (categoryNames[doc.fileCategory] || doc.fileName || doc.fileCategory || "Unnamed Document");
+      const name = doc.fileType
+        ? getDocumentFileLabel(doc.fileType)
+        : categoryNames[doc.fileCategory] ||
+          doc.fileName ||
+          doc.fileCategory ||
+          "Unnamed Document";
       let status: "Uploaded" | "Missing" | "Verified" | "Rejected" = "Uploaded";
       if (doc.status === "VERIFIED") status = "Verified";
       else if (doc.status === "REJECTED") status = "Rejected";
@@ -158,9 +165,9 @@ const mapBackendCarers = (backendCarers: any[]): CarerApplication[] => {
         ? profile.careSpecialties
         : typeof profile.careSpecialties === "string"
           ? profile.careSpecialties
-            .split(",")
-            .map((s: string) => s.trim())
-            .filter(Boolean)
+              .split(",")
+              .map((s: string) => s.trim())
+              .filter(Boolean)
           : [];
     } else if (profile.careTypes && Array.isArray(profile.careTypes)) {
       specialtiesList = profile.careTypes;
@@ -302,9 +309,21 @@ export function useAdminPortal() {
   const searchParams = useSearchParams();
   const tabParam = searchParams.get("tab") as AdminTabType;
   const [activeTab, setActiveTab] = useState<AdminTabType>(
-    (tabParam && ["overview", "carers", "clients", "requests", "placements", "emergency", "emergency-requests", "billing", "enquiries", "profile-updates"].includes(tabParam))
+    tabParam &&
+      [
+        "overview",
+        "carers",
+        "clients",
+        "requests",
+        "placements",
+        "emergency",
+        "emergency-requests",
+        "billing",
+        "enquiries",
+        "profile-updates",
+      ].includes(tabParam)
       ? tabParam
-      : "overview"
+      : "overview",
   );
 
   const dispatch = useAppDispatch();
@@ -580,7 +599,7 @@ export function useAdminPortal() {
           toast.error(err || "Failed to update status");
         });
     },
-    [dispatch]
+    [dispatch],
   );
 
   // Load placements from backend API
@@ -615,11 +634,21 @@ export function useAdminPortal() {
       if (res && res.items && res.items.length > 0) {
         const mapped: AdminActivity[] = res.items.map((item: any) => {
           let type: "info" | "success" | "warning" | "error" = "info";
-          if (item.action === "APPROVE" || item.event?.includes("APPROVED") || item.event?.includes("CREATED")) {
+          if (
+            item.action === "APPROVE" ||
+            item.event?.includes("APPROVED") ||
+            item.event?.includes("CREATED")
+          ) {
             type = "success";
-          } else if (item.action === "REJECT" || item.event?.includes("REJECTED")) {
+          } else if (
+            item.action === "REJECT" ||
+            item.event?.includes("REJECTED")
+          ) {
             type = "warning";
-          } else if (item.event?.includes("CANCELLED") || item.event?.includes("FAILED")) {
+          } else if (
+            item.event?.includes("CANCELLED") ||
+            item.event?.includes("FAILED")
+          ) {
             type = "error";
           }
 
@@ -633,7 +662,10 @@ export function useAdminPortal() {
 
           let adminName = "System";
           if (item.adminUser) {
-            adminName = `${item.adminUser.firstName || ""} ${item.adminUser.lastName || ""}`.trim() || item.adminUser.email || "Admin";
+            adminName =
+              `${item.adminUser.firstName || ""} ${item.adminUser.lastName || ""}`.trim() ||
+              item.adminUser.email ||
+              "Admin";
           }
 
           return {
@@ -764,7 +796,6 @@ export function useAdminPortal() {
           "success",
         );
 
-
         setActiveTab("placements");
 
         loadRequests();
@@ -784,8 +815,6 @@ export function useAdminPortal() {
     ],
   );
 
-
-
   // Action: Toggle Contact Details Release
   const handleToggleContactRelease = useCallback(
     async (placementId: string) => {
@@ -795,13 +824,14 @@ export function useAdminPortal() {
       const released = !place.contactDetailsReleased;
 
       try {
-        // Backend now handles this boolean on the placement itself (or via direct API we'd add, 
+        // Backend now handles this boolean on the placement itself (or via direct API we'd add,
         // for now we simulate success or rely on future admin/placement status API).
         // Since updateIntroductionStatus is descoped, we'd need a PATCH /admin/placements/:id
         // which wasn't specified in the plan, but we can assume we'll just log and reload.
 
         logActivity(
-          `Contact details sharing for ${place.clientName} and ${place.carerName} has been ${released ? "Released / Enabled" : "Revoked / Disabled"
+          `Contact details sharing for ${place.clientName} and ${place.carerName} has been ${
+            released ? "Released / Enabled" : "Revoked / Disabled"
           }.`,
           released ? "success" : "warning",
         );
@@ -824,10 +854,7 @@ export function useAdminPortal() {
       if (!newCarer) return;
 
       try {
-        await adminService.replaceCarerInPlacement(
-          placementId,
-          newCarer.id,
-        );
+        await adminService.replaceCarerInPlacement(placementId, newCarer.id);
 
         toast.success(`Successfully reassigned carer to ${newCarer.name}`);
         logActivity(`Reassigned placement for ${newCarer.name}.`, "warning");
@@ -958,9 +985,12 @@ export function useAdminPortal() {
     setRequestsPage: (page: number) => dispatch(setCareRequestsPage(page)),
     setRequestsStatus: (s: string) => dispatch(setCareRequestsStatus(s)),
     setRequestsLimit: (l: number) => dispatch(setCareRequestsLimit(l)),
-    setEmergencyCareRequestsPage: (p: number) => dispatch(setEmergencyCareRequestsPage(p)),
-    setEmergencyCareRequestsStatus: (s: string) => dispatch(setEmergencyCareRequestsStatus(s)),
-    setEmergencyCareRequestsLimit: (l: number) => dispatch(setEmergencyCareRequestsLimit(l)),
+    setEmergencyCareRequestsPage: (p: number) =>
+      dispatch(setEmergencyCareRequestsPage(p)),
+    setEmergencyCareRequestsStatus: (s: string) =>
+      dispatch(setEmergencyCareRequestsStatus(s)),
+    setEmergencyCareRequestsLimit: (l: number) =>
+      dispatch(setEmergencyCareRequestsLimit(l)),
     setClientsPage: (page: number) => dispatch(setClientsPage(page)),
     setClientsStatus: (status: string) => dispatch(setClientsStatus(status)),
     setClientsLimit: (limit: number) => dispatch(setClientsLimit(limit)),

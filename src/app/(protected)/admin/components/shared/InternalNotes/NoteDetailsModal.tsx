@@ -2,10 +2,13 @@ import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { X, Paperclip, Clock, Upload, File as FileIcon } from "lucide-react";
 import Button from "@/components/Button";
-import { InternalNote, InternalNoteHistory, InternalNoteAttachment } from "@/app/(protected)/admin/types/admin.types";
+import {
+  InternalNote,
+  InternalNoteHistory,
+  InternalNoteAttachment,
+} from "@/app/(protected)/admin/types/admin.types";
 import { adminService } from "@/services/admin/admin.service";
 import { storageService } from "@/services/storage.service";
-
 
 interface NoteDetailsModalProps {
   isOpen: boolean;
@@ -14,13 +17,18 @@ interface NoteDetailsModalProps {
   onAttachmentUploaded?: () => void;
 }
 
-export default function NoteDetailsModal({ isOpen, onClose, note, onAttachmentUploaded }: NoteDetailsModalProps) {
+export default function NoteDetailsModal({
+  isOpen,
+  onClose,
+  note,
+  onAttachmentUploaded,
+}: NoteDetailsModalProps) {
   const [mounted, setMounted] = useState(false);
   const [history, setHistory] = useState<InternalNoteHistory[]>([]);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -95,8 +103,11 @@ export default function NoteDetailsModal({ isOpen, onClose, note, onAttachmentUp
   const modalContent = (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 bg-navy-950/80 backdrop-blur-sm">
       {/* Clickable backdrop that closes modal */}
-      <div className="absolute inset-0" onClick={!isUploading ? onClose : undefined} />
-      
+      <div
+        className="absolute inset-0"
+        onClick={!isUploading ? onClose : undefined}
+      />
+
       {/* Modal Content */}
       <div className="relative z-10 w-full max-w-2xl rounded-2xl border border-gold-300/10 bg-navy-900 shadow-soft flex flex-col max-h-[90vh] overflow-hidden">
         {/* Header */}
@@ -109,7 +120,7 @@ export default function NoteDetailsModal({ isOpen, onClose, note, onAttachmentUp
             <X className="h-5 w-5" />
           </button>
         </div>
-        
+
         <div className="flex-1 overflow-y-auto p-6 space-y-8">
           {error && (
             <div className="rounded-xl border border-rose-500/20 bg-rose-500/10 p-3 text-xs text-rose-500">
@@ -136,7 +147,9 @@ export default function NoteDetailsModal({ isOpen, onClose, note, onAttachmentUp
               </div>
             </div>
             <div className="rounded-xl border border-gold-300/10 bg-navy-950/50 p-4">
-              <p className="whitespace-pre-wrap text-sm text-gray-300">{note.content}</p>
+              <p className="whitespace-pre-wrap text-sm text-gray-300">
+                {note.content}
+              </p>
             </div>
           </div>
 
@@ -154,8 +167,8 @@ export default function NoteDetailsModal({ isOpen, onClose, note, onAttachmentUp
                   className="hidden"
                   onChange={handleFileUpload}
                 />
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   fullWidth={false}
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isUploading}
@@ -165,10 +178,12 @@ export default function NoteDetailsModal({ isOpen, onClose, note, onAttachmentUp
                   {isUploading ? "Uploading..." : "Upload"}
                 </Button>
               </div>
-              
+
               <div className="space-y-2">
                 {!note.attachments?.length ? (
-                  <p className="text-xs text-gray-500 italic">No attachments found.</p>
+                  <p className="text-xs text-gray-500 italic">
+                    No attachments found.
+                  </p>
                 ) : (
                   note.attachments.map((attachment: InternalNoteAttachment) => (
                     <a
@@ -178,8 +193,10 @@ export default function NoteDetailsModal({ isOpen, onClose, note, onAttachmentUp
                       rel="noopener noreferrer"
                       onClick={async (e) => {
                         e.preventDefault();
-                        const targetKey = attachment.fileKey || attachment.fileUrl;
-                        const signedUrl = await storageService.getPresignedUrl(targetKey);
+                        const targetKey =
+                          attachment.fileKey || attachment.fileUrl;
+                        const signedUrl =
+                          await storageService.getPresignedUrl(targetKey);
                         window.open(signedUrl, "_blank", "noopener,noreferrer");
                       }}
                       className="flex items-center gap-3 rounded-lg border border-gold-300/10 bg-navy-950 p-3 hover:border-gold-300/30 transition-colors"
@@ -192,7 +209,6 @@ export default function NoteDetailsModal({ isOpen, onClose, note, onAttachmentUp
                       </span>
                     </a>
                   ))
-
                 )}
               </div>
             </div>
@@ -207,70 +223,150 @@ export default function NoteDetailsModal({ isOpen, onClose, note, onAttachmentUp
                 {isLoadingHistory ? (
                   <p className="text-xs text-gray-500">Loading history...</p>
                 ) : !history.length ? (
-                  <p className="text-xs text-gray-500 italic">No edits have been made to this note.</p>
+                  <p className="text-xs text-gray-500 italic">
+                    No edits have been made to this note.
+                  </p>
                 ) : (
                   history.map((record, index) => {
                     const changes = [
-                      { label: "Title", oldVal: record.oldTitle, newVal: record.newTitle },
-                      { label: "Content", oldVal: record.oldContent, newVal: record.newContent },
-                      { label: "Priority", oldVal: record.oldPriority, newVal: record.newPriority },
-                      { label: "Status", oldVal: record.oldStatus, newVal: record.newStatus },
-                      { label: "Category", oldVal: record.oldCategory, newVal: record.newCategory },
-                      { label: "Follow-up Date", oldVal: record.oldFollowUpDate, newVal: record.newFollowUpDate },
-                      { label: "Pinned", oldVal: record.oldIsPinned, newVal: record.newIsPinned },
-                      { label: "Tagged Admin", oldVal: record.oldTaggedAdminName, newVal: record.newTaggedAdminName },
+                      {
+                        label: "Title",
+                        oldVal: record.oldTitle,
+                        newVal: record.newTitle,
+                      },
+                      {
+                        label: "Content",
+                        oldVal: record.oldContent,
+                        newVal: record.newContent,
+                      },
+                      {
+                        label: "Priority",
+                        oldVal: record.oldPriority,
+                        newVal: record.newPriority,
+                      },
+                      {
+                        label: "Status",
+                        oldVal: record.oldStatus,
+                        newVal: record.newStatus,
+                      },
+                      {
+                        label: "Category",
+                        oldVal: record.oldCategory,
+                        newVal: record.newCategory,
+                      },
+                      {
+                        label: "Follow-up Date",
+                        oldVal: record.oldFollowUpDate,
+                        newVal: record.newFollowUpDate,
+                      },
+                      {
+                        label: "Pinned",
+                        oldVal: record.oldIsPinned,
+                        newVal: record.newIsPinned,
+                      },
+                      {
+                        label: "Tagged Admin",
+                        oldVal: record.oldTaggedAdminName,
+                        newVal: record.newTaggedAdminName,
+                      },
                     ];
 
-                    const hasChanges = changes.some(c => c.oldVal !== undefined && c.newVal !== undefined && c.oldVal !== c.newVal);
-                    const editorName = record.editor ? `${record.editor.firstName} ${record.editor.lastName}` : 'Unknown Editor';
+                    const hasChanges = changes.some(
+                      (c) =>
+                        c.oldVal !== undefined &&
+                        c.newVal !== undefined &&
+                        c.oldVal !== c.newVal,
+                    );
+                    const editorName = record.editor
+                      ? `${record.editor.firstName} ${record.editor.lastName}`
+                      : "Unknown Editor";
 
                     return (
-                      <div key={record.id} className="relative pl-5 border-l-2 border-gold-300/20 pb-4 last:pb-0">
+                      <div
+                        key={record.id}
+                        className="relative pl-5 border-l-2 border-gold-300/20 pb-4 last:pb-0"
+                      >
                         <div className="absolute -left-[5px] top-1.5 h-2 w-2 rounded-full bg-gold shadow-[0_0_8px_rgba(255,215,0,0.6)]"></div>
                         <div className="bg-navy-950/60 rounded-lg border border-gold-300/10 p-3 shadow-sm">
                           <div className="flex items-center justify-between gap-4 mb-2">
                             <p className="text-[11px] text-gold-100/60 font-mono">
                               {(() => {
                                 const parsedDate = new Date(record.createdAt);
-                                return !isNaN(parsedDate.getTime()) 
-                                  ? parsedDate.toLocaleString('en-GB', {
-                                      day: '2-digit',
-                                      month: 'short',
-                                      year: 'numeric',
-                                      hour: '2-digit',
-                                      minute: '2-digit'
-                                    }).replace(',', ' •')
+                                return !isNaN(parsedDate.getTime())
+                                  ? parsedDate
+                                      .toLocaleString("en-GB", {
+                                        day: "2-digit",
+                                        month: "short",
+                                        year: "numeric",
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                      })
+                                      .replace(",", " •")
                                   : "Unknown Date";
                               })()}
                             </p>
                           </div>
                           <p className="text-xs text-gold-50 mb-2">
-                            <span className="text-gold-200/70">{index === history.length - 1 && !hasChanges ? 'Created by ' : 'Edited by '}</span>
+                            <span className="text-gold-200/70">
+                              {index === history.length - 1 && !hasChanges
+                                ? "Created by "
+                                : "Edited by "}
+                            </span>
                             <span className="font-semibold">{editorName}</span>
                           </p>
-                          
+
                           <div className="space-y-1">
-                            {changes.map(change => {
-                              if (change.oldVal === change.newVal && change.oldVal === undefined) return null;
+                            {changes.map((change) => {
+                              if (
+                                change.oldVal === change.newVal &&
+                                change.oldVal === undefined
+                              )
+                                return null;
                               if (change.oldVal === change.newVal) return null;
-                              
+
                               let oldDisplay = change.oldVal;
                               let newDisplay = change.newVal;
-                              
-                              if (typeof oldDisplay === "boolean") oldDisplay = oldDisplay ? "Yes" : "No";
-                              if (typeof newDisplay === "boolean") newDisplay = newDisplay ? "Yes" : "No";
-                              
-                              if (Array.isArray(oldDisplay)) oldDisplay = oldDisplay.length > 0 ? oldDisplay.join(", ") : "None";
-                              if (Array.isArray(newDisplay)) newDisplay = newDisplay.length > 0 ? newDisplay.join(", ") : "None";
-                              
+
+                              if (typeof oldDisplay === "boolean")
+                                oldDisplay = oldDisplay ? "Yes" : "No";
+                              if (typeof newDisplay === "boolean")
+                                newDisplay = newDisplay ? "Yes" : "No";
+
+                              if (Array.isArray(oldDisplay))
+                                oldDisplay =
+                                  oldDisplay.length > 0
+                                    ? oldDisplay.join(", ")
+                                    : "None";
+                              if (Array.isArray(newDisplay))
+                                newDisplay =
+                                  newDisplay.length > 0
+                                    ? newDisplay.join(", ")
+                                    : "None";
+
                               if (change.label === "Follow-up Date") {
-                                if (oldDisplay && typeof oldDisplay === "string") {
+                                if (
+                                  oldDisplay &&
+                                  typeof oldDisplay === "string"
+                                ) {
                                   const d = new Date(oldDisplay);
-                                  if (!isNaN(d.getTime())) oldDisplay = d.toLocaleDateString("en-GB", { day: '2-digit', month: 'short', year: 'numeric' });
+                                  if (!isNaN(d.getTime()))
+                                    oldDisplay = d.toLocaleDateString("en-GB", {
+                                      day: "2-digit",
+                                      month: "short",
+                                      year: "numeric",
+                                    });
                                 }
-                                if (newDisplay && typeof newDisplay === "string") {
+                                if (
+                                  newDisplay &&
+                                  typeof newDisplay === "string"
+                                ) {
                                   const d = new Date(newDisplay);
-                                  if (!isNaN(d.getTime())) newDisplay = d.toLocaleDateString("en-GB", { day: '2-digit', month: 'short', year: 'numeric' });
+                                  if (!isNaN(d.getTime()))
+                                    newDisplay = d.toLocaleDateString("en-GB", {
+                                      day: "2-digit",
+                                      month: "short",
+                                      year: "numeric",
+                                    });
                                 }
                               }
 
@@ -278,18 +374,33 @@ export default function NoteDetailsModal({ isOpen, onClose, note, onAttachmentUp
                               newDisplay = newDisplay || "None";
 
                               return (
-                                <div key={change.label} className="text-[11px] bg-navy-900/50 rounded px-2 py-1.5 border border-gold-300/5 text-gray-400">
-                                  <span className="text-[10px] uppercase font-semibold text-gold-200/50 mr-2">{change.label}:</span>
+                                <div
+                                  key={change.label}
+                                  className="text-[11px] bg-navy-900/50 rounded px-2 py-1.5 border border-gold-300/5 text-gray-400"
+                                >
+                                  <span className="text-[10px] uppercase font-semibold text-gold-200/50 mr-2">
+                                    {change.label}:
+                                  </span>
                                   {change.label === "Content" ? (
                                     <div className="mt-1 pl-2 border-l border-gold-300/20 text-xs">
-                                      <span className="line-through opacity-70 block mb-1 whitespace-pre-wrap">{oldDisplay}</span>
-                                      <span className="text-gold-100 block whitespace-pre-wrap">{newDisplay}</span>
+                                      <span className="line-through opacity-70 block mb-1 whitespace-pre-wrap">
+                                        {oldDisplay}
+                                      </span>
+                                      <span className="text-gold-100 block whitespace-pre-wrap">
+                                        {newDisplay}
+                                      </span>
                                     </div>
                                   ) : (
                                     <>
-                                      <span className="line-through opacity-70">{oldDisplay}</span>
-                                      <span className="mx-2 text-gold-500">→</span>
-                                      <span className="text-gold-100">{newDisplay}</span>
+                                      <span className="line-through opacity-70">
+                                        {oldDisplay}
+                                      </span>
+                                      <span className="mx-2 text-gold-500">
+                                        →
+                                      </span>
+                                      <span className="text-gold-100">
+                                        {newDisplay}
+                                      </span>
                                     </>
                                   )}
                                 </div>
@@ -307,11 +418,7 @@ export default function NoteDetailsModal({ isOpen, onClose, note, onAttachmentUp
         </div>
 
         <div className="flex flex-shrink-0 items-center justify-end gap-3 border-t border-gold-300/10 bg-navy-950/50 px-6 py-4">
-          <Button
-            variant="outline"
-            onClick={onClose}
-            fullWidth={false}
-          >
+          <Button variant="outline" onClick={onClose} fullWidth={false}>
             Close
           </Button>
         </div>

@@ -21,15 +21,33 @@ export default function StepTrainingCertificates({
   const [submitted, setSubmitted] = useState(false);
 
   const trainingDocs = [
-    { type: DocumentFileType.SAFEGUARDING_ADULTS, label: "Safeguarding Adults" },
-    { type: DocumentFileType.MOVING_AND_HANDLING, label: "Moving and Handling" },
-    { type: DocumentFileType.MEDICATION_ADMINISTRATION, label: "Medication Administration" },
-    { type: DocumentFileType.BASIC_LIFE_SUPPORT_FIRST_AID, label: "Basic Life Support / First Aid" },
-    { type: DocumentFileType.INFECTION_PREVENTION_AND_CONTROL, label: "Infection Prevention and Control" },
+    {
+      type: DocumentFileType.SAFEGUARDING_ADULTS,
+      label: "Safeguarding Adults",
+    },
+    {
+      type: DocumentFileType.MOVING_AND_HANDLING,
+      label: "Moving and Handling",
+    },
+    {
+      type: DocumentFileType.MEDICATION_ADMINISTRATION,
+      label: "Medication Administration",
+    },
+    {
+      type: DocumentFileType.BASIC_LIFE_SUPPORT_FIRST_AID,
+      label: "Basic Life Support / First Aid",
+    },
+    {
+      type: DocumentFileType.INFECTION_PREVENTION_AND_CONTROL,
+      label: "Infection Prevention and Control",
+    },
     { type: DocumentFileType.HEALTH_AND_SAFETY, label: "Health and Safety" },
     { type: DocumentFileType.FIRE_SAFETY, label: "Fire Safety" },
     { type: DocumentFileType.FOOD_HYGIENE, label: "Food Hygiene" },
-    { type: DocumentFileType.GDPR_DATA_PROTECTION, label: "GDPR / Data Protection" },
+    {
+      type: DocumentFileType.GDPR_DATA_PROTECTION,
+      label: "GDPR / Data Protection",
+    },
   ];
 
   const missingDocs = trainingDocs.filter((docItem) => {
@@ -91,10 +109,11 @@ export default function StepTrainingCertificates({
             return (
               <div
                 key={docItem.type}
-                className={`p-4 rounded-xl border flex flex-col gap-2 transition-all ${submitted && isMissing
+                className={`p-4 rounded-xl border flex flex-col gap-2 transition-all ${
+                  submitted && isMissing
                     ? "border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)] bg-red-950/5"
                     : "border-gold-300/10 bg-navy-950/40"
-                  }`}
+                }`}
               >
                 <div className="flex justify-between items-start">
                   <span className="text-xs font-medium text-gold-50">

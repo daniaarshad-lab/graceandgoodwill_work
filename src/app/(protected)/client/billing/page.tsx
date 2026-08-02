@@ -9,11 +9,11 @@ export default function ClientBillingRedirectPage() {
   useEffect(() => {
     // Preserve any query parameters like ?session=success or ?billing_request_id
     const search = typeof window !== "undefined" ? window.location.search : "";
-    
+
     // Parse existing search params and append/override tab parameter to 'billing'
     const params = new URLSearchParams(search);
     params.set("tab", "billing");
-    
+
     router.replace(`/client?${params.toString()}`);
   }, [router]);
 

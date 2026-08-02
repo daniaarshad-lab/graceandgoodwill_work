@@ -3,7 +3,11 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { agreementsService, LegalAgreement, SignedAgreement } from "@/services/agreements/agreements.service";
+import {
+  agreementsService,
+  LegalAgreement,
+  SignedAgreement,
+} from "@/services/agreements/agreements.service";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchClientProfile } from "@/store/slices/clientSlice";
 import { clientService } from "@/services/client/client.service";
@@ -15,7 +19,11 @@ interface LegalAgreementsFeatureProps {
   onBack?: () => void;
 }
 
-export default function LegalAgreementsFeature({ isOnboardingMode, onAllSigned, onBack }: LegalAgreementsFeatureProps) {
+export default function LegalAgreementsFeature({
+  isOnboardingMode,
+  onAllSigned,
+  onBack,
+}: LegalAgreementsFeatureProps) {
   const { user, refreshUser } = useAuth();
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -24,16 +32,21 @@ export default function LegalAgreementsFeature({ isOnboardingMode, onAllSigned, 
   const [history, setHistory] = useState<SignedAgreement[]>([]);
   const [activeTab, setActiveTab] = useState<"pending" | "history">("pending");
 
-  const [selectedAgreement, setSelectedAgreement] = useState<LegalAgreement | null>(null);
+  const [selectedAgreement, setSelectedAgreement] =
+    useState<LegalAgreement | null>(null);
   const [signatureName, setSignatureName] = useState("");
   const [agreedToTerms, setAgreedToTerms] = useState(false);
-  const [validationErrors, setValidationErrors] = useState<{ terms?: string, signature?: string }>({});
+  const [validationErrors, setValidationErrors] = useState<{
+    terms?: string;
+    signature?: string;
+  }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [payingFee, setPayingFee] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [immediateServiceConsent, setImmediateServiceConsent] = useState(false);
-  const [lossOfRightToCancelConsent, setLossOfRightToCancelConsent] = useState(false);
+  const [lossOfRightToCancelConsent, setLossOfRightToCancelConsent] =
+    useState(false);
 
   const fetchAgreements = async () => {
     try {
@@ -64,7 +77,10 @@ export default function LegalAgreementsFeature({ isOnboardingMode, onAllSigned, 
     fetchAgreements();
   }, []);
 
-  const handlePrintAgreement = (agreement: LegalAgreement | null, signedRecord?: SignedAgreement) => {
+  const handlePrintAgreement = (
+    agreement: LegalAgreement | null,
+    signedRecord?: SignedAgreement,
+  ) => {
     if (!agreement) return;
     const printWindow = window.open("", "_blank");
     if (printWindow) {
@@ -102,7 +118,10 @@ export default function LegalAgreementsFeature({ isOnboardingMode, onAllSigned, 
           <body>
             <h1>${agreement.title}</h1>
             <div class="meta">Document Version: ${agreement.version} | Target Role: ${agreement.targetRole} | Grace & Goodwill Care Management</div>
-            <div>${agreement.content.split("\n\n").map((para: string) => `<p>${para.replace(/\n/g, "<br/>")}</p>`).join("")}</div>
+            <div>${agreement.content
+              .split("\n\n")
+              .map((para: string) => `<p>${para.replace(/\n/g, "<br/>")}</p>`)
+              .join("")}</div>
             ${signatureBlock}
             <script>
               setTimeout(function() {
@@ -131,17 +150,24 @@ export default function LegalAgreementsFeature({ isOnboardingMode, onAllSigned, 
 
   const handlePayLifetimeFee = async () => {
     if (!immediateServiceConsent || !lossOfRightToCancelConsent) {
-      setError("You must consent to the immediate commencement of the service before proceeding with payment.");
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setError(
+        "You must consent to the immediate commencement of the service before proceeding with payment.",
+      );
+      window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
-    
+
     try {
       setPayingFee(true);
       const successUrl = `${window.location.origin}/client?payment=success`;
       const cancelUrl = `${window.location.origin}/client?payment=failed`;
 
-      const { url } = await clientService.createLifetimeFeeCheckout(successUrl, cancelUrl, immediateServiceConsent, lossOfRightToCancelConsent);
+      const { url } = await clientService.createLifetimeFeeCheckout(
+        successUrl,
+        cancelUrl,
+        immediateServiceConsent,
+        lossOfRightToCancelConsent,
+      );
       if (url) {
         window.location.href = url;
       } else {
@@ -158,12 +184,13 @@ export default function LegalAgreementsFeature({ isOnboardingMode, onAllSigned, 
     e.preventDefault();
     if (!selectedAgreement) return;
 
-    const errors: { terms?: string, signature?: string } = {};
+    const errors: { terms?: string; signature?: string } = {};
     if (!agreedToTerms) {
       errors.terms = "You must accept this agreement before signing.";
     }
     if (!signatureName.trim()) {
-      errors.signature = "Full Name is required to electronically sign this agreement.";
+      errors.signature =
+        "Full Name is required to electronically sign this agreement.";
     }
 
     if (Object.keys(errors).length > 0) {
@@ -176,7 +203,10 @@ export default function LegalAgreementsFeature({ isOnboardingMode, onAllSigned, 
     try {
       setIsSubmitting(true);
       setError(null);
-      await agreementsService.signAgreement(selectedAgreement.id, signatureName);
+      await agreementsService.signAgreement(
+        selectedAgreement.id,
+        signatureName,
+      );
 
       // Reset signing state
       setSignatureName("");
@@ -188,16 +218,18 @@ export default function LegalAgreementsFeature({ isOnboardingMode, onAllSigned, 
       // Reload lists manually to verify count before redirect
       const rawPendingData = await agreementsService.getPendingAgreements();
       const historyData = await agreementsService.getSignedHistory();
-      
+
       // Optimistically filter out the signed agreement in case of backend delay
-      const pendingData = rawPendingData.filter(doc => doc.id !== selectedAgreement.id);
-      
+      const pendingData = rawPendingData.filter(
+        (doc) => doc.id !== selectedAgreement.id,
+      );
+
       setPending(pendingData);
       setHistory(historyData);
 
       if (pendingData.length === 0) {
         const role = user?.role?.toUpperCase();
-        
+
         // Prevent auto-redirect for unpaid clients so they can see the payment UI
         if (role === "CLIENT" && !profile?.isLifetimeFeePaid) {
           // Do nothing, let the component render the payment UI
@@ -229,17 +261,23 @@ export default function LegalAgreementsFeature({ isOnboardingMode, onAllSigned, 
 
   if (loading) {
     return (
-      <div className={`${isOnboardingMode ? 'min-h-[400px]' : 'min-h-screen'} flex items-center justify-center bg-navy-950 text-gold-100 rounded-2xl`}>
+      <div
+        className={`${isOnboardingMode ? "min-h-[400px]" : "min-h-screen"} flex items-center justify-center bg-navy-950 text-gold-100 rounded-2xl`}
+      >
         <div className="flex flex-col items-center space-y-4">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold-DEFAULT"></div>
-          <p className="text-sm tracking-wider text-gold-200">Loading agreements...</p>
+          <p className="text-sm tracking-wider text-gold-200">
+            Loading agreements...
+          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={`${isOnboardingMode ? '' : 'min-h-screen py-12 px-4 sm:px-6 lg:px-8'} bg-navy-950 text-slate-100`}>
+    <div
+      className={`${isOnboardingMode ? "" : "min-h-screen py-12 px-4 sm:px-6 lg:px-8"} bg-navy-950 text-slate-100`}
+    >
       <div className="max-w-6xl mx-auto">
         {/* Page Header */}
         {!isOnboardingMode && (
@@ -264,19 +302,21 @@ export default function LegalAgreementsFeature({ isOnboardingMode, onAllSigned, 
           <div className="flex w-full max-w-lg rounded-xl shadow-sm bg-navy-900/60 p-1.5 border border-navy-800">
             <button
               onClick={() => setActiveTab("pending")}
-              className={`flex-1 py-3 px-4 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${activeTab === "pending"
+              className={`flex-1 py-3 px-4 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${
+                activeTab === "pending"
                   ? "bg-[#b59469] text-navy-950 shadow-[0_8px_30px_rgba(160,128,84,0.24)]"
                   : "text-slate-400 hover:text-white hover:bg-navy-800/50"
-                }`}
+              }`}
             >
               Pending ({pending.length})
             </button>
             <button
               onClick={() => setActiveTab("history")}
-              className={`flex-1 py-3 px-4 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${activeTab === "history"
+              className={`flex-1 py-3 px-4 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${
+                activeTab === "history"
                   ? "bg-[#b59469] text-navy-950 shadow-[0_8px_30px_rgba(160,128,84,0.24)]"
                   : "text-slate-400 hover:text-white hover:bg-navy-800/50"
-                }`}
+              }`}
             >
               History ({history.length})
             </button>
@@ -286,300 +326,480 @@ export default function LegalAgreementsFeature({ isOnboardingMode, onAllSigned, 
         {activeTab === "pending" && (
           <>
             {pending.length === 0 ? (
-          <div className="animate-fade-in">
-            {user?.role?.toUpperCase() === "CLIENT" && !profile?.isLifetimeFeePaid ? (
-              <div className="bg-gradient-to-b from-navy-900/80 to-navy-900/40 border border-navy-800 rounded-2xl p-6 sm:p-8 text-center w-full max-w-5xl mx-auto shadow-xl mt-4">
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-tr from-[#b59469]/20 to-[#d4af37]/10 border border-[#b59469]/30 text-[#b59469] mb-4 shadow-inner">
-                  <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                  </svg>
-                </div>
-
-                <h3 className="text-2xl font-bold text-white mb-2">Activate Your Client Account</h3>
-                <p className="text-slate-300 text-sm leading-relaxed max-w-2xl mx-auto mb-6">
-                  Agreements signed successfully! To unlock carer matching, search profiles, and submit care requests, please pay the one-off Lifetime Platform Fee.
-                </p>
-
-                <div className="bg-navy-950/50 border border-navy-800/80 rounded-xl p-5 w-full max-w-2xl mx-auto text-left mb-6 shadow-inner">
-                  <div className="flex justify-between items-center text-xs font-bold text-slate-500 uppercase tracking-wider mb-5">
-                    <span>Item</span>
-                    <span>Price</span>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center text-sm font-medium text-slate-200">
-                      <span>Lifetime Registration Fee</span>
-                      <span>£299.00</span>
-                    </div>
-                    <div className="flex justify-between items-center text-sm text-slate-400">
-                      <span>VAT (20%)</span>
-                      <span>£59.80</span>
-                    </div>
-                  </div>
-
-                  <div className="border-t border-navy-800 mt-5 pt-5 flex justify-between items-center">
-                    <span className="text-base font-semibold text-slate-300">Total Due</span>
-                    <span className="text-2xl font-bold text-[#b59469]">£358.80</span>
-                  </div>
-                </div>
-
-                <div className="w-full max-w-4xl mx-auto mb-6 text-left bg-navy-950/30 border border-navy-800/60 rounded-xl p-5 shadow-inner">
-                  <div className="space-y-4">
-                    <label className="flex items-start gap-3 cursor-pointer group">
-                      <div className="mt-0.5 relative flex items-center justify-center shrink-0">
-                        <input
-                          type="checkbox"
-                          checked={immediateServiceConsent}
-                          onChange={(e) => setImmediateServiceConsent(e.target.checked)}
-                          className="peer appearance-none w-5 h-5 border-2 border-navy-700 rounded bg-navy-900/50 checked:bg-[#b59469] checked:border-[#b59469] focus:outline-none focus:ring-2 focus:ring-[#b59469]/30 transition-all cursor-pointer shadow-inner"
+              <div className="animate-fade-in">
+                {user?.role?.toUpperCase() === "CLIENT" &&
+                !profile?.isLifetimeFeePaid ? (
+                  <div className="bg-gradient-to-b from-navy-900/80 to-navy-900/40 border border-navy-800 rounded-2xl p-6 sm:p-8 text-center w-full max-w-5xl mx-auto shadow-xl mt-4">
+                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-tr from-[#b59469]/20 to-[#d4af37]/10 border border-[#b59469]/30 text-[#b59469] mb-4 shadow-inner">
+                      <svg
+                        className="h-7 w-7"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="1.5"
+                          d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
                         />
-                        <svg className="absolute w-3.5 h-3.5 text-navy-950 opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                        </svg>
-                      </div>
-                      <span className="text-sm text-slate-300 leading-relaxed group-hover:text-slate-200 transition-colors">
-                        I expressly request Grace & Goodwill to begin providing the introductory and matching service immediately after my payment is made, without waiting until the end of the 14-day cancellation period.
-                      </span>
-                    </label>
-
-                    <label className="flex items-start gap-3 cursor-pointer group">
-                      <div className="mt-0.5 relative flex items-center justify-center shrink-0">
-                        <input
-                          type="checkbox"
-                          checked={lossOfRightToCancelConsent}
-                          onChange={(e) => setLossOfRightToCancelConsent(e.target.checked)}
-                          className="peer appearance-none w-5 h-5 border-2 border-navy-700 rounded bg-navy-900/50 checked:bg-[#b59469] checked:border-[#b59469] focus:outline-none focus:ring-2 focus:ring-[#b59469]/30 transition-all cursor-pointer shadow-inner"
-                        />
-                        <svg className="absolute w-3.5 h-3.5 text-navy-950 opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                        </svg>
-                      </div>
-                      <span className="text-sm text-slate-300 leading-relaxed group-hover:text-slate-200 transition-colors">
-                        I understand that by requesting the service to begin immediately, if Grace & Goodwill starts providing the service (including reviewing my requirements, searching for suitable carers, contacting carers, or commencing the matching process), I may lose my right to cancel or receive a refund in accordance with the Consumer Contracts Regulations 2013.
-                      </span>
-                    </label>
-                  </div>
-                </div>
-
-                <div className="w-full max-w-4xl mx-auto mb-6 text-xs text-slate-400/80 italic leading-relaxed px-2">
-                  By clicking 'Pay £358.80 & Start Matching Immediately', you confirm that you have read and accepted the Client Agreement, Privacy Policy and Terms & Conditions, and have made the express request above for the service to begin immediately.
-                </div>
-
-                <Button
-                  onClick={handlePayLifetimeFee}
-                  disabled={payingFee || !immediateServiceConsent || !lossOfRightToCancelConsent}
-                  variant="primary"
-                  size="lg"
-                  className="mx-auto min-w-[280px] shadow-[0_0_20px_rgba(181,148,105,0.3)] hover:shadow-[0_0_25px_rgba(181,148,105,0.5)] disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {payingFee ? (
-                    <>
-                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-navy-950" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                       </svg>
-                      Redirecting to GoCardless...
-                    </>
-                  ) : (
-                    "Pay £358.80 & Start Matching Immediately"
-                  )}
-                </Button>
-              </div>
-            ) : (
-              <div className="bg-navy-900/60 border border-navy-800 rounded-2xl p-12 text-center max-w-xl mx-auto shadow-soft mt-8">
-                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-950/50 border border-emerald-500/30 text-emerald-400 mb-6">
-                  <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold text-white mb-2">All Caught Up!</h3>
-                <p className="text-slate-400 mb-6">
-                  You have signed all required agreements.
-                  {!isOnboardingMode && " You can now access full features of the Grace & Goodwill care platform."}
-                </p>
+                    </div>
 
-                {isOnboardingMode ? (
-                  <Button
-                    onClick={onAllSigned}
-                    variant="primary"
-                  >
-                    Continue Onboarding
-                  </Button>
+                    <h3 className="text-2xl font-bold text-white mb-2">
+                      Activate Your Client Account
+                    </h3>
+                    <p className="text-slate-300 text-sm leading-relaxed max-w-2xl mx-auto mb-6">
+                      Agreements signed successfully! To unlock carer matching,
+                      search profiles, and submit care requests, please pay the
+                      one-off Lifetime Platform Fee.
+                    </p>
+
+                    <div className="bg-navy-950/50 border border-navy-800/80 rounded-xl p-5 w-full max-w-2xl mx-auto text-left mb-6 shadow-inner">
+                      <div className="flex justify-between items-center text-xs font-bold text-slate-500 uppercase tracking-wider mb-5">
+                        <span>Item</span>
+                        <span>Price</span>
+                      </div>
+
+                      <div className="space-y-4">
+                        <div className="flex justify-between items-center text-sm font-medium text-slate-200">
+                          <span>Lifetime Registration Fee</span>
+                          <span>£299.00</span>
+                        </div>
+                        <div className="flex justify-between items-center text-sm text-slate-400">
+                          <span>VAT (20%)</span>
+                          <span>£59.80</span>
+                        </div>
+                      </div>
+
+                      <div className="border-t border-navy-800 mt-5 pt-5 flex justify-between items-center">
+                        <span className="text-base font-semibold text-slate-300">
+                          Total Due
+                        </span>
+                        <span className="text-2xl font-bold text-[#b59469]">
+                          £358.80
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="w-full max-w-4xl mx-auto mb-6 text-left bg-navy-950/30 border border-navy-800/60 rounded-xl p-5 shadow-inner">
+                      <div className="space-y-4">
+                        <label className="flex items-start gap-3 cursor-pointer group">
+                          <div className="mt-0.5 relative flex items-center justify-center shrink-0">
+                            <input
+                              type="checkbox"
+                              checked={immediateServiceConsent}
+                              onChange={(e) =>
+                                setImmediateServiceConsent(e.target.checked)
+                              }
+                              className="peer appearance-none w-5 h-5 border-2 border-navy-700 rounded bg-navy-900/50 checked:bg-[#b59469] checked:border-[#b59469] focus:outline-none focus:ring-2 focus:ring-[#b59469]/30 transition-all cursor-pointer shadow-inner"
+                            />
+                            <svg
+                              className="absolute w-3.5 h-3.5 text-navy-950 opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              strokeWidth="3"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M5 13l4 4L19 7"
+                              />
+                            </svg>
+                          </div>
+                          <span className="text-sm text-slate-300 leading-relaxed group-hover:text-slate-200 transition-colors">
+                            I expressly request Grace & Goodwill to begin
+                            providing the introductory and matching service
+                            immediately after my payment is made, without
+                            waiting until the end of the 14-day cancellation
+                            period.
+                          </span>
+                        </label>
+
+                        <label className="flex items-start gap-3 cursor-pointer group">
+                          <div className="mt-0.5 relative flex items-center justify-center shrink-0">
+                            <input
+                              type="checkbox"
+                              checked={lossOfRightToCancelConsent}
+                              onChange={(e) =>
+                                setLossOfRightToCancelConsent(e.target.checked)
+                              }
+                              className="peer appearance-none w-5 h-5 border-2 border-navy-700 rounded bg-navy-900/50 checked:bg-[#b59469] checked:border-[#b59469] focus:outline-none focus:ring-2 focus:ring-[#b59469]/30 transition-all cursor-pointer shadow-inner"
+                            />
+                            <svg
+                              className="absolute w-3.5 h-3.5 text-navy-950 opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              strokeWidth="3"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M5 13l4 4L19 7"
+                              />
+                            </svg>
+                          </div>
+                          <span className="text-sm text-slate-300 leading-relaxed group-hover:text-slate-200 transition-colors">
+                            I understand that by requesting the service to begin
+                            immediately, if Grace & Goodwill starts providing
+                            the service (including reviewing my requirements,
+                            searching for suitable carers, contacting carers, or
+                            commencing the matching process), I may lose my
+                            right to cancel or receive a refund in accordance
+                            with the Consumer Contracts Regulations 2013.
+                          </span>
+                        </label>
+                      </div>
+                    </div>
+
+                    <div className="w-full max-w-4xl mx-auto mb-6 text-xs text-slate-400/80 italic leading-relaxed px-2">
+                      By clicking 'Pay £358.80 & Start Matching Immediately',
+                      you confirm that you have read and accepted the Client
+                      Agreement, Privacy Policy and Terms & Conditions, and have
+                      made the express request above for the service to begin
+                      immediately.
+                    </div>
+
+                    <Button
+                      onClick={handlePayLifetimeFee}
+                      disabled={
+                        payingFee ||
+                        !immediateServiceConsent ||
+                        !lossOfRightToCancelConsent
+                      }
+                      variant="primary"
+                      size="lg"
+                      className="mx-auto min-w-[280px] shadow-[0_0_20px_rgba(181,148,105,0.3)] hover:shadow-[0_0_25px_rgba(181,148,105,0.5)] disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {payingFee ? (
+                        <>
+                          <svg
+                            className="animate-spin -ml-1 mr-3 h-5 w-5 text-navy-950"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            />
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            />
+                          </svg>
+                          Redirecting to GoCardless...
+                        </>
+                      ) : (
+                        "Pay £358.80 & Start Matching Immediately"
+                      )}
+                    </Button>
+                  </div>
                 ) : (
-                  <Button
-                    onClick={handleDashboardRedirect}
-                    variant="primary"
-                  >
-                    Go to Dashboard
-                  </Button>
+                  <div className="bg-navy-900/60 border border-navy-800 rounded-2xl p-12 text-center max-w-xl mx-auto shadow-soft mt-8">
+                    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-950/50 border border-emerald-500/30 text-emerald-400 mb-6">
+                      <svg
+                        className="h-8 w-8"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    </div>
+                    <h3 className="text-xl font-bold text-white mb-2">
+                      All Caught Up!
+                    </h3>
+                    <p className="text-slate-400 mb-6">
+                      You have signed all required agreements.
+                      {!isOnboardingMode &&
+                        " You can now access full features of the Grace & Goodwill care platform."}
+                    </p>
+
+                    {isOnboardingMode ? (
+                      <Button onClick={onAllSigned} variant="primary">
+                        Continue Onboarding
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={handleDashboardRedirect}
+                        variant="primary"
+                      >
+                        Go to Dashboard
+                      </Button>
+                    )}
+                  </div>
                 )}
               </div>
-            )}
-          </div>
-        ) : (
-          <div className="w-full border border-white/10 rounded-2xl p-6 sm:p-8 bg-navy-950/50 animate-fade-in">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-6xl mx-auto">
-                {/* List of pending docs */}
-                <div className="lg:col-span-5 space-y-4">
-
-
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-[#b59469] pt-2 mb-4">Required Documents</h3>
-                  {pending.map((doc) => (
-                    <button
-                      key={doc.id}
-                      onClick={() => {
-                        setSelectedAgreement(doc);
-                        setError(null);
-                        setValidationErrors({});
-                        setAgreedToTerms(false);
-                        setSignatureName("");
-                      }}
-                      className={`w-full text-left p-4 rounded-xl border transition-all duration-300 relative group ${selectedAgreement?.id === doc.id
-                          ? "bg-emerald-500/20 border-emerald-500/30 shadow-md scale-[1.02]"
-                          : "bg-navy-900/30 border-navy-800 text-slate-300 hover:bg-navy-900/60 hover:border-navy-700"
+            ) : (
+              <div className="w-full border border-white/10 rounded-2xl p-6 sm:p-8 bg-navy-950/50 animate-fade-in">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-6xl mx-auto">
+                  {/* List of pending docs */}
+                  <div className="lg:col-span-5 space-y-4">
+                    <h3 className="text-xs font-bold uppercase tracking-widest text-[#b59469] pt-2 mb-4">
+                      Required Documents
+                    </h3>
+                    {pending.map((doc) => (
+                      <button
+                        key={doc.id}
+                        onClick={() => {
+                          setSelectedAgreement(doc);
+                          setError(null);
+                          setValidationErrors({});
+                          setAgreedToTerms(false);
+                          setSignatureName("");
+                        }}
+                        className={`w-full text-left p-4 rounded-xl border transition-all duration-300 relative group ${
+                          selectedAgreement?.id === doc.id
+                            ? "bg-emerald-500/20 border-emerald-500/30 shadow-md scale-[1.02]"
+                            : "bg-navy-900/30 border-navy-800 text-slate-300 hover:bg-navy-900/60 hover:border-navy-700"
                         }`}
-                    >
-                      <div className="flex flex-col gap-2 relative z-10">
-                        <div className="flex items-center gap-3">
-                          {selectedAgreement?.id === doc.id && (
-                            <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)] shrink-0 animate-pulse" />
-                          )}
-                          <span className={`font-semibold text-lg leading-snug transition-colors duration-300 ${selectedAgreement?.id === doc.id ? 'text-emerald-100' : 'text-slate-200 group-hover:text-white'
-                            }`}>
-                            {doc.title}
-                          </span>
-                        </div>
-                        <div className={`flex items-center space-x-3 ${selectedAgreement?.id === doc.id ? 'pl-[22px]' : ''}`}>
-                          <span className={`text-[10px] uppercase tracking-wider px-2 py-1 rounded-md font-bold transition-colors ${selectedAgreement?.id === doc.id ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30" : "bg-navy-800 text-slate-300 border border-transparent"
-                            }`}>
-                            v{doc.version}
-                          </span>
-                          <span className={`text-xs flex items-center font-medium transition-colors ${selectedAgreement?.id === doc.id ? "text-emerald-300/80" : "text-slate-400"
-                            }`}>
-                            <svg className={`w-3.5 h-3.5 mr-1.5 ${selectedAgreement?.id === doc.id ? 'text-emerald-400' : 'text-[#b59469]'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            Signature Required
-                          </span>
-                        </div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-
-                {/* Doc Reader and Sign panel */}
-                <div className="lg:col-span-7">
-                  {selectedAgreement && (
-                    <div className="bg-navy-900/40 border border-navy-800 rounded-2xl p-6 shadow-sm">
-                      <div className="border-b border-navy-800 pb-5 mb-5 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4">
-                        <h2 className="text-2xl font-bold text-white leading-tight">{selectedAgreement.title}</h2>
-                        <div className="flex items-center space-x-2 shrink-0">
-                          <button
-                            type="button"
-                            onClick={() => handlePrintAgreement(selectedAgreement)}
-                            className="text-xs bg-navy-950 hover:bg-navy-800 text-slate-200 border border-navy-700 px-3 py-1.5 rounded-lg transition-colors font-medium flex items-center space-x-1.5"
-                          >
-                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                            <span>Save PDF</span>
-                          </button>
-                          <span className="text-xs bg-navy-950 text-slate-300 border border-navy-700 px-2.5 py-1.5 rounded-lg font-medium">
-                            v{selectedAgreement.version}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Content Reader */}
-                      <div className="bg-navy-950 border border-navy-800 rounded-xl p-5 min-h-[160px] max-h-[250px] overflow-y-auto mb-6 text-sm text-slate-300 leading-relaxed font-sans scrollbar-thin scrollbar-thumb-navy-700 shadow-inner">
-                        {selectedAgreement.content.split("\n\n").map((para, idx) => (
-                          <p key={idx} className="mb-4">{para}</p>
-                        ))}
-                      </div>
-
-                      {/* Signature Form */}
-                      <form onSubmit={handleSign} className="space-y-5">
-                        <div className="flex flex-col gap-1.5">
-                          <div className={`flex items-start bg-navy-900/30 p-4 rounded-xl border transition-colors ${validationErrors.terms ? 'border-red-500/50' : 'border-navy-800/60'}`}>
-                            <input
-                              id="accept-terms"
-                              type="checkbox"
-                              checked={agreedToTerms}
-                              onChange={(e) => {
-                                setAgreedToTerms(e.target.checked);
-                                if (e.target.checked) setValidationErrors(prev => ({ ...prev, terms: undefined }));
-                              }}
-                              className="mt-0.5 h-4 w-4 rounded border-navy-700 bg-navy-950 text-[#b59469] focus:ring-[#b59469] focus:ring-offset-navy-900 cursor-pointer"
-                            />
-                            <label htmlFor="accept-terms" className="ml-3.5 text-sm text-slate-300 select-none cursor-pointer leading-tight">
-                              I confirm that I have read, understood, and accept the terms of the{" "}
-                              <span className="text-white font-bold">{selectedAgreement.title}</span>.
-                            </label>
-                          </div>
-                          {validationErrors.terms && (
-                            <p className="text-red-400 text-xs ml-1 font-medium">{validationErrors.terms}</p>
-                          )}
-                        </div>
-
-                        <div className="flex flex-col gap-1.5">
-                          <div className="flex flex-col sm:flex-row gap-4 items-end">
-                            <div className="flex-grow w-full">
-                              <label htmlFor="sig-name" className="block text-xs font-semibold text-slate-400 mb-2">
-                                Full Name (Typed Signature)
-                              </label>
-                              <input
-                                id="sig-name"
-                                type="text"
-                                value={signatureName}
-                                onChange={(e) => {
-                                  setSignatureName(e.target.value);
-                                  if (e.target.value.trim()) setValidationErrors(prev => ({ ...prev, signature: undefined }));
-                                }}
-                                placeholder="Type your official name to sign"
-                                className={`w-full bg-navy-950 border rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none transition shadow-inner ${validationErrors.signature
-                                    ? 'border-red-500/50 focus:border-red-500 focus:ring-1 focus:ring-red-500'
-                                    : 'border-navy-800 focus:border-[#b59469] focus:ring-1 focus:ring-[#b59469]'
-                                  }`}
-                              />
-                            </div>
-
-                            <Button
-                              type="submit"
-                              disabled={isSubmitting}
-                              variant="primary"
-                              className="w-full sm:w-auto whitespace-nowrap"
+                      >
+                        <div className="flex flex-col gap-2 relative z-10">
+                          <div className="flex items-center gap-3">
+                            {selectedAgreement?.id === doc.id && (
+                              <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)] shrink-0 animate-pulse" />
+                            )}
+                            <span
+                              className={`font-semibold text-lg leading-snug transition-colors duration-300 ${
+                                selectedAgreement?.id === doc.id
+                                  ? "text-emerald-100"
+                                  : "text-slate-200 group-hover:text-white"
+                              }`}
                             >
-                              {isSubmitting ? (
-                                <>
-                                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-navy-950" fill="none" viewBox="0 0 24 24">
-                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                  </svg>
-                                  Sealing Agreement...
-                                </>
-                              ) : (
-                                "Electronically Sign"
-                              )}
-                            </Button>
+                              {doc.title}
+                            </span>
                           </div>
-                          {validationErrors.signature && (
-                            <p className="text-red-400 text-xs ml-1 font-medium">{validationErrors.signature}</p>
-                          )}
+                          <div
+                            className={`flex items-center space-x-3 ${selectedAgreement?.id === doc.id ? "pl-[22px]" : ""}`}
+                          >
+                            <span
+                              className={`text-[10px] uppercase tracking-wider px-2 py-1 rounded-md font-bold transition-colors ${
+                                selectedAgreement?.id === doc.id
+                                  ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                                  : "bg-navy-800 text-slate-300 border border-transparent"
+                              }`}
+                            >
+                              v{doc.version}
+                            </span>
+                            <span
+                              className={`text-xs flex items-center font-medium transition-colors ${
+                                selectedAgreement?.id === doc.id
+                                  ? "text-emerald-300/80"
+                                  : "text-slate-400"
+                              }`}
+                            >
+                              <svg
+                                className={`w-3.5 h-3.5 mr-1.5 ${selectedAgreement?.id === doc.id ? "text-emerald-400" : "text-[#b59469]"}`}
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                                ></path>
+                              </svg>
+                              Signature Required
+                            </span>
+                          </div>
                         </div>
-                      </form>
-                    </div>
-                  )}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Doc Reader and Sign panel */}
+                  <div className="lg:col-span-7">
+                    {selectedAgreement && (
+                      <div className="bg-navy-900/40 border border-navy-800 rounded-2xl p-6 shadow-sm">
+                        <div className="border-b border-navy-800 pb-5 mb-5 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4">
+                          <h2 className="text-2xl font-bold text-white leading-tight">
+                            {selectedAgreement.title}
+                          </h2>
+                          <div className="flex items-center space-x-2 shrink-0">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handlePrintAgreement(selectedAgreement)
+                              }
+                              className="text-xs bg-navy-950 hover:bg-navy-800 text-slate-200 border border-navy-700 px-3 py-1.5 rounded-lg transition-colors font-medium flex items-center space-x-1.5"
+                            >
+                              <svg
+                                className="w-3.5 h-3.5"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+                                ></path>
+                              </svg>
+                              <span>Save PDF</span>
+                            </button>
+                            <span className="text-xs bg-navy-950 text-slate-300 border border-navy-700 px-2.5 py-1.5 rounded-lg font-medium">
+                              v{selectedAgreement.version}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Content Reader */}
+                        <div className="bg-navy-950 border border-navy-800 rounded-xl p-5 min-h-[160px] max-h-[250px] overflow-y-auto mb-6 text-sm text-slate-300 leading-relaxed font-sans scrollbar-thin scrollbar-thumb-navy-700 shadow-inner">
+                          {selectedAgreement.content
+                            .split("\n\n")
+                            .map((para, idx) => (
+                              <p key={idx} className="mb-4">
+                                {para}
+                              </p>
+                            ))}
+                        </div>
+
+                        {/* Signature Form */}
+                        <form onSubmit={handleSign} className="space-y-5">
+                          <div className="flex flex-col gap-1.5">
+                            <div
+                              className={`flex items-start bg-navy-900/30 p-4 rounded-xl border transition-colors ${validationErrors.terms ? "border-red-500/50" : "border-navy-800/60"}`}
+                            >
+                              <input
+                                id="accept-terms"
+                                type="checkbox"
+                                checked={agreedToTerms}
+                                onChange={(e) => {
+                                  setAgreedToTerms(e.target.checked);
+                                  if (e.target.checked)
+                                    setValidationErrors((prev) => ({
+                                      ...prev,
+                                      terms: undefined,
+                                    }));
+                                }}
+                                className="mt-0.5 h-4 w-4 rounded border-navy-700 bg-navy-950 text-[#b59469] focus:ring-[#b59469] focus:ring-offset-navy-900 cursor-pointer"
+                              />
+                              <label
+                                htmlFor="accept-terms"
+                                className="ml-3.5 text-sm text-slate-300 select-none cursor-pointer leading-tight"
+                              >
+                                I confirm that I have read, understood, and
+                                accept the terms of the{" "}
+                                <span className="text-white font-bold">
+                                  {selectedAgreement.title}
+                                </span>
+                                .
+                              </label>
+                            </div>
+                            {validationErrors.terms && (
+                              <p className="text-red-400 text-xs ml-1 font-medium">
+                                {validationErrors.terms}
+                              </p>
+                            )}
+                          </div>
+
+                          <div className="flex flex-col gap-1.5">
+                            <div className="flex flex-col sm:flex-row gap-4 items-end">
+                              <div className="flex-grow w-full">
+                                <label
+                                  htmlFor="sig-name"
+                                  className="block text-xs font-semibold text-slate-400 mb-2"
+                                >
+                                  Full Name (Typed Signature)
+                                </label>
+                                <input
+                                  id="sig-name"
+                                  type="text"
+                                  value={signatureName}
+                                  onChange={(e) => {
+                                    setSignatureName(e.target.value);
+                                    if (e.target.value.trim())
+                                      setValidationErrors((prev) => ({
+                                        ...prev,
+                                        signature: undefined,
+                                      }));
+                                  }}
+                                  placeholder="Type your official name to sign"
+                                  className={`w-full bg-navy-950 border rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none transition shadow-inner ${
+                                    validationErrors.signature
+                                      ? "border-red-500/50 focus:border-red-500 focus:ring-1 focus:ring-red-500"
+                                      : "border-navy-800 focus:border-[#b59469] focus:ring-1 focus:ring-[#b59469]"
+                                  }`}
+                                />
+                              </div>
+
+                              <Button
+                                type="submit"
+                                disabled={isSubmitting}
+                                variant="primary"
+                                className="w-full sm:w-auto whitespace-nowrap"
+                              >
+                                {isSubmitting ? (
+                                  <>
+                                    <svg
+                                      className="animate-spin -ml-1 mr-2 h-4 w-4 text-navy-950"
+                                      fill="none"
+                                      viewBox="0 0 24 24"
+                                    >
+                                      <circle
+                                        className="opacity-25"
+                                        cx="12"
+                                        cy="12"
+                                        r="10"
+                                        stroke="currentColor"
+                                        strokeWidth="4"
+                                      ></circle>
+                                      <path
+                                        className="opacity-75"
+                                        fill="currentColor"
+                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                      ></path>
+                                    </svg>
+                                    Sealing Agreement...
+                                  </>
+                                ) : (
+                                  "Electronically Sign"
+                                )}
+                              </Button>
+                            </div>
+                            {validationErrors.signature && (
+                              <p className="text-red-400 text-xs ml-1 font-medium">
+                                {validationErrors.signature}
+                              </p>
+                            )}
+                          </div>
+                        </form>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
-        </>
-      )}
+            )}
+          </>
+        )}
 
         {/* History Tab */}
         {activeTab === "history" && (
           <div className="bg-navy-900/60 border border-navy-800 rounded-2xl p-6 shadow-soft animate-fade-in">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-              <h2 className="text-xl font-bold text-white">Signature Audit Trail</h2>
+              <h2 className="text-xl font-bold text-white">
+                Signature Audit Trail
+              </h2>
             </div>
             {history.length === 0 ? (
-              <p className="text-slate-400 text-center py-8">No signed agreements found.</p>
+              <p className="text-slate-400 text-center py-8">
+                No signed agreements found.
+              </p>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse text-sm text-slate-300">
@@ -590,29 +810,53 @@ export default function LegalAgreementsFeature({ isOnboardingMode, onAllSigned, 
                       <th className="py-3.5 px-4">Signatory Name</th>
                       <th className="py-3.5 px-4">Signed Date</th>
                       <th className="py-3.5 px-4">IP Address</th>
-                      <th className="py-3.5 px-4 hidden md:table-cell">User Agent</th>
+                      <th className="py-3.5 px-4 hidden md:table-cell">
+                        User Agent
+                      </th>
                       <th className="py-3.5 px-4 text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {history.map((record) => (
-                      <tr key={record.id} className="border-b border-navy-800/40 hover:bg-navy-850/30 transition-colors">
-                        <td className="py-4 px-4 font-semibold text-white">{record.agreement?.title || "Legal Agreement"}</td>
+                      <tr
+                        key={record.id}
+                        className="border-b border-navy-800/40 hover:bg-navy-850/30 transition-colors"
+                      >
+                        <td className="py-4 px-4 font-semibold text-white">
+                          {record.agreement?.title || "Legal Agreement"}
+                        </td>
                         <td className="py-4 px-4 text-center">
-                          <span className="bg-navy-800 text-gold-DEFAULT px-2 py-0.5 rounded text-xs">v{record.versionAccepted}</span>
+                          <span className="bg-navy-800 text-gold-DEFAULT px-2 py-0.5 rounded text-xs">
+                            v{record.versionAccepted}
+                          </span>
                         </td>
-                        <td className="py-4 px-4 font-medium italic text-gold-100">"{record.signatureName}"</td>
+                        <td className="py-4 px-4 font-medium italic text-gold-100">
+                          "{record.signatureName}"
+                        </td>
                         <td className="py-4 px-4 text-slate-450">
-                          {new Date(record.acceptedAt).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' })}
+                          {new Date(record.acceptedAt).toLocaleString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                            hour: "numeric",
+                            minute: "2-digit",
+                          })}
                         </td>
-                        <td className="py-4 px-4 font-mono text-xs">{record.ipAddress}</td>
-                        <td className="py-4 px-4 text-xs text-slate-500 max-w-xs truncate hidden md:table-cell" title={record.userAgent}>
+                        <td className="py-4 px-4 font-mono text-xs">
+                          {record.ipAddress}
+                        </td>
+                        <td
+                          className="py-4 px-4 text-xs text-slate-500 max-w-xs truncate hidden md:table-cell"
+                          title={record.userAgent}
+                        >
                           {record.userAgent}
                         </td>
                         <td className="py-4 px-4 text-right">
                           <button
                             type="button"
-                            onClick={() => handlePrintAgreement(record.agreement, record)}
+                            onClick={() =>
+                              handlePrintAgreement(record.agreement, record)
+                            }
                             className="text-xs text-gold-DEFAULT hover:underline font-semibold"
                           >
                             Print & Save PDF

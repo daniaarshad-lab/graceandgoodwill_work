@@ -33,8 +33,6 @@ const initialState: ClientState = {
   applicationsLoading: false,
   applicationsError: null,
 
-
-
   feedbacks: [],
   feedbacksLoading: false,
   feedbacksError: null,
@@ -102,40 +100,55 @@ export const addToInterestList = createAsyncThunk<
   void,
   string,
   { rejectValue: string }
->("client/addToInterestList", async (carerProfileId, { dispatch, rejectWithValue }) => {
-  try {
-    await clientService.addToInterestList(carerProfileId);
-    dispatch(fetchInterestList()); // Refresh interest list
-  } catch (error: any) {
-    return rejectWithValue(error?.message || "Failed to add to interest list");
-  }
-});
+>(
+  "client/addToInterestList",
+  async (carerProfileId, { dispatch, rejectWithValue }) => {
+    try {
+      await clientService.addToInterestList(carerProfileId);
+      dispatch(fetchInterestList()); // Refresh interest list
+    } catch (error: any) {
+      return rejectWithValue(
+        error?.message || "Failed to add to interest list",
+      );
+    }
+  },
+);
 
 export const reorderInterestListAction = createAsyncThunk<
   void,
-  { carerProfileIds: string[], originalOrder: Carer[] },
+  { carerProfileIds: string[]; originalOrder: Carer[] },
   { rejectValue: string }
->("client/reorderInterestList", async ({ carerProfileIds }, { rejectWithValue }) => {
-  try {
-    await clientService.reorderInterestList(carerProfileIds);
-  } catch (error: any) {
-    return rejectWithValue(error?.message || "Failed to reorder interest list");
-  }
-});
+>(
+  "client/reorderInterestList",
+  async ({ carerProfileIds }, { rejectWithValue }) => {
+    try {
+      await clientService.reorderInterestList(carerProfileIds);
+    } catch (error: any) {
+      return rejectWithValue(
+        error?.message || "Failed to reorder interest list",
+      );
+    }
+  },
+);
 
 export const removeFromInterestList = createAsyncThunk<
   string,
   string,
   { rejectValue: string }
->("client/removeFromInterestList", async (carerProfileId, { dispatch, rejectWithValue }) => {
-  try {
-    await clientService.removeFromInterestList(carerProfileId);
-    dispatch(fetchInterestList()); // Refresh interest list
-    return carerProfileId;
-  } catch (error: any) {
-    return rejectWithValue(error?.message || "Failed to remove from interest list");
-  }
-});
+>(
+  "client/removeFromInterestList",
+  async (carerProfileId, { dispatch, rejectWithValue }) => {
+    try {
+      await clientService.removeFromInterestList(carerProfileId);
+      dispatch(fetchInterestList()); // Refresh interest list
+      return carerProfileId;
+    } catch (error: any) {
+      return rejectWithValue(
+        error?.message || "Failed to remove from interest list",
+      );
+    }
+  },
+);
 
 export const updateClientProfile = createAsyncThunk<
   ClientProfile,
@@ -162,7 +175,7 @@ export const createClientMatch = createAsyncThunk<
     } catch (error: any) {
       return rejectWithValue(error.message || "Failed to create match");
     }
-  }
+  },
 );
 
 export const uploadClientProfilePhoto = createAsyncThunk<
@@ -220,16 +233,22 @@ export const fetchClientCareRequestApplications = createAsyncThunk<
   { careRequestId: string; data: CareRequestApplication[] },
   string,
   { rejectValue: string }
->("client/fetchCareRequestApplications", async (careRequestId, { rejectWithValue }) => {
-  try {
-    const data = await clientService.getCareRequestApplications(careRequestId);
-    return { careRequestId, data: Array.isArray(data) ? data : [] };
-  } catch (error: any) {
-    console.error(`[fetchClientCareRequestApplications] Error fetching applications for ${careRequestId}:`, error);
-    return rejectWithValue(error?.message || "Failed to fetch applications");
-  }
-});
-
+>(
+  "client/fetchCareRequestApplications",
+  async (careRequestId, { rejectWithValue }) => {
+    try {
+      const data =
+        await clientService.getCareRequestApplications(careRequestId);
+      return { careRequestId, data: Array.isArray(data) ? data : [] };
+    } catch (error: any) {
+      console.error(
+        `[fetchClientCareRequestApplications] Error fetching applications for ${careRequestId}:`,
+        error,
+      );
+      return rejectWithValue(error?.message || "Failed to fetch applications");
+    }
+  },
+);
 
 export const approveApplication = createAsyncThunk<
   any,
@@ -247,13 +266,16 @@ export const rejectApplication = createAsyncThunk<
   any,
   { applicationId: string; reason: string },
   { rejectValue: string }
->("client/rejectApplication", async ({ applicationId, reason }, { rejectWithValue }) => {
-  try {
-    return await clientService.rejectApplication(applicationId, reason);
-  } catch (error: any) {
-    return rejectWithValue(error?.message || "Failed to reject application");
-  }
-});
+>(
+  "client/rejectApplication",
+  async ({ applicationId, reason }, { rejectWithValue }) => {
+    try {
+      return await clientService.rejectApplication(applicationId, reason);
+    } catch (error: any) {
+      return rejectWithValue(error?.message || "Failed to reject application");
+    }
+  },
+);
 
 export const fetchCarers = createAsyncThunk<
   Carer[],
@@ -277,13 +299,16 @@ export const submitFeedback = createAsyncThunk<
   ClientFeedback,
   { placementId: string; payload: FeedbackPayload },
   { rejectValue: string }
->("client/submitFeedback", async ({ placementId, payload }, { rejectWithValue }) => {
-  try {
-    return await clientService.submitFeedback(placementId, payload);
-  } catch (error: any) {
-    return rejectWithValue(error?.message || "Failed to submit feedback");
-  }
-});
+>(
+  "client/submitFeedback",
+  async ({ placementId, payload }, { rejectWithValue }) => {
+    try {
+      return await clientService.submitFeedback(placementId, payload);
+    } catch (error: any) {
+      return rejectWithValue(error?.message || "Failed to submit feedback");
+    }
+  },
+);
 
 export const fetchClientFeedbacks = createAsyncThunk<
   ClientFeedback[],
@@ -364,7 +389,6 @@ const clientSlice = createSlice({
       state.loading = false;
       state.error = action.payload || "Failed to update client profile";
     });
-
 
     // Upload Profile Photo
     builder.addCase(uploadClientProfilePhoto.pending, (state) => {
@@ -525,12 +549,12 @@ const clientSlice = createSlice({
       // However, we need originalOrder for rollback if it fails.
       const { carerProfileIds } = action.meta.arg;
       const newOrder: Carer[] = [];
-      carerProfileIds.forEach(id => {
-        const found = state.interestList.find(c => c.id === id);
+      carerProfileIds.forEach((id) => {
+        const found = state.interestList.find((c) => c.id === id);
         if (found) newOrder.push(found);
       });
       if (newOrder.length === state.interestList.length) {
-         state.interestList = newOrder;
+        state.interestList = newOrder;
       }
     });
 
@@ -546,21 +570,30 @@ const clientSlice = createSlice({
       state.applicationsLoading = true;
       state.applicationsError = null;
     });
-    builder.addCase(fetchClientCareRequestApplications.fulfilled, (state, action) => {
-      state.applicationsLoading = false;
-      state.applications[action.payload.careRequestId] = action.payload.data;
-    });
-    builder.addCase(fetchClientCareRequestApplications.rejected, (state, action) => {
-      state.applicationsLoading = false;
-      state.applicationsError = action.payload || "Failed to fetch applications";
-    });
+    builder.addCase(
+      fetchClientCareRequestApplications.fulfilled,
+      (state, action) => {
+        state.applicationsLoading = false;
+        state.applications[action.payload.careRequestId] = action.payload.data;
+      },
+    );
+    builder.addCase(
+      fetchClientCareRequestApplications.rejected,
+      (state, action) => {
+        state.applicationsLoading = false;
+        state.applicationsError =
+          action.payload || "Failed to fetch applications";
+      },
+    );
 
     builder.addCase(approveApplication.fulfilled, (state, action) => {
       // Find the application and update its status
       for (const careRequestId in state.applications) {
-        const idx = state.applications[careRequestId].findIndex(app => app.id === action.meta.arg);
+        const idx = state.applications[careRequestId].findIndex(
+          (app) => app.id === action.meta.arg,
+        );
         if (idx !== -1) {
-          state.applications[careRequestId][idx].status = 'APPROVED';
+          state.applications[careRequestId][idx].status = "APPROVED";
           break;
         }
       }
@@ -568,9 +601,11 @@ const clientSlice = createSlice({
 
     builder.addCase(rejectApplication.fulfilled, (state, action) => {
       for (const careRequestId in state.applications) {
-        const idx = state.applications[careRequestId].findIndex(app => app.id === action.meta.arg.applicationId);
+        const idx = state.applications[careRequestId].findIndex(
+          (app) => app.id === action.meta.arg.applicationId,
+        );
         if (idx !== -1) {
-          state.applications[careRequestId][idx].status = 'REJECTED';
+          state.applications[careRequestId][idx].status = "REJECTED";
           break;
         }
       }
@@ -578,9 +613,10 @@ const clientSlice = createSlice({
 
     // Feedback
     builder.addCase(submitFeedback.fulfilled, (state, action) => {
-      const placementId = action.payload.placement?.id || action.meta.arg.placementId;
+      const placementId =
+        action.payload.placement?.id || action.meta.arg.placementId;
       if (placementId) {
-        const placement = state.placements.find(p => p.id === placementId);
+        const placement = state.placements.find((p) => p.id === placementId);
         if (placement) {
           placement.hasSubmittedFeedback = true;
         }
@@ -592,10 +628,13 @@ const clientSlice = createSlice({
       state.feedbacksLoading = true;
       state.feedbacksError = null;
     });
-    builder.addCase(fetchClientFeedbacks.fulfilled, (state, action: PayloadAction<ClientFeedback[]>) => {
-      state.feedbacksLoading = false;
-      state.feedbacks = action.payload;
-    });
+    builder.addCase(
+      fetchClientFeedbacks.fulfilled,
+      (state, action: PayloadAction<ClientFeedback[]>) => {
+        state.feedbacksLoading = false;
+        state.feedbacks = action.payload;
+      },
+    );
     builder.addCase(fetchClientFeedbacks.rejected, (state, action) => {
       state.feedbacksLoading = false;
       state.feedbacksError = action.payload || "Failed to fetch feedbacks";
@@ -658,7 +697,9 @@ export const getClientPlacements = createAsyncThunk<
     return await clientService.getPlacements();
   } catch (error: any) {
     console.error("[Thunk: getClientPlacements] Error:", error);
-    return rejectWithValue(error?.message || "Failed to fetch client placements");
+    return rejectWithValue(
+      error?.message || "Failed to fetch client placements",
+    );
   }
 });
 

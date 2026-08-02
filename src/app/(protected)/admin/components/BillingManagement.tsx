@@ -34,8 +34,8 @@ export default function BillingManagement({
   // Platform pricing and placement registry settings
   const [settings, setSettings] = useState<any>({
     id: "default",
-    lifetimePlatformFee: 299.00,
-    vatRate: 20.00,
+    lifetimePlatformFee: 299.0,
+    vatRate: 20.0,
     companyName: "Grace & Goodwill",
     companyAddress: "123 Care Street, London",
     invoicePrefix: "REG-",
@@ -56,17 +56,23 @@ export default function BillingManagement({
       const invoicesData = await adminService.getAdminInvoices();
       const mapped = invoicesData.map((inv: any) => ({
         id: inv.invoiceNumber || inv.id,
-        clientName: inv.clientProfile?.user 
-          ? `${inv.clientProfile.user.firstName} ${inv.clientProfile.user.lastName}` 
+        clientName: inv.clientProfile?.user
+          ? `${inv.clientProfile.user.firstName} ${inv.clientProfile.user.lastName}`
           : "Client Registration",
-        carerName: inv.carerProfile?.user 
-          ? `${inv.carerProfile.user.firstName} ${inv.carerProfile.user.lastName}` 
+        carerName: inv.carerProfile?.user
+          ? `${inv.carerProfile.user.firstName} ${inv.carerProfile.user.lastName}`
           : "Platform Fee",
         hours: inv.hoursLogged || 0,
         rate: Number(inv.dailyRate || 0),
         amount: Number(inv.total || inv.amount || 0),
-        status: (inv.status === "PAID" ? "Paid" : (inv.status === "PENDING" ? "Pending" : "Overdue")) as "Paid" | "Pending" | "Overdue",
-        dueDate: inv.invoiceDate ? new Date(inv.invoiceDate).toLocaleDateString() : "",
+        status: (inv.status === "PAID"
+          ? "Paid"
+          : inv.status === "PENDING"
+            ? "Pending"
+            : "Overdue") as "Paid" | "Pending" | "Overdue",
+        dueDate: inv.invoiceDate
+          ? new Date(inv.invoiceDate).toLocaleDateString()
+          : "",
         rawStatus: inv.status,
         billingPeriodStart: inv.billingPeriodStart,
         billingPeriodEnd: inv.billingPeriodEnd,
@@ -97,7 +103,10 @@ export default function BillingManagement({
           const detail = await adminService.getPlacementBilling(p.id);
           detailed.push(detail);
         } catch (e) {
-          console.error(`Failed to load billing details for placement ${p.id}`, e);
+          console.error(
+            `Failed to load billing details for placement ${p.id}`,
+            e,
+          );
         }
       }
       setDetailedPlacements(detailed);
@@ -121,24 +130,40 @@ export default function BillingManagement({
       setErrorMessage(null);
       await adminService.updateBillingSettings(settings);
       setSuccessMessage("Platform settings updated successfully!");
-      showSuccessToast("Settings Saved", "Platform settings updated successfully.");
+      showSuccessToast(
+        "Settings Saved",
+        "Platform settings updated successfully.",
+      );
     } catch (err: any) {
       setErrorMessage(err?.message || "Failed to update platform settings.");
-      showErrorToast("Error", err?.message || "Failed to update platform settings.");
+      showErrorToast(
+        "Error",
+        err?.message || "Failed to update platform settings.",
+      );
     } finally {
       setActionLoading(null);
     }
   };
 
   const handleTriggerBillingRun = async () => {
-    if (!confirm("Are you sure you want to trigger the weekly billing run? This will calculate and issue invoices for all active placements.")) return;
+    if (
+      !confirm(
+        "Are you sure you want to trigger the weekly billing run? This will calculate and issue invoices for all active placements.",
+      )
+    )
+      return;
     try {
       setTriggeringBilling(true);
       setSuccessMessage(null);
       setErrorMessage(null);
       await adminService.triggerBillingRun();
-      setSuccessMessage("Weekly billing run completed successfully! Invoices generated.");
-      showSuccessToast("Billing Run Completed", "Weekly billing run completed successfully.");
+      setSuccessMessage(
+        "Weekly billing run completed successfully! Invoices generated.",
+      );
+      showSuccessToast(
+        "Billing Run Completed",
+        "Weekly billing run completed successfully.",
+      );
       await loadBillingDashboardData();
     } catch (err: any) {
       setErrorMessage(err?.message || "Billing run execution failed.");
@@ -155,9 +180,17 @@ export default function BillingManagement({
       setActionLoading(`weekly-fee-${selectedPlacement.placementId}`);
       setErrorMessage(null);
       setSuccessMessage(null);
-      await adminService.updatePlacementWeeklyFee(selectedPlacement.placementId, newWeeklyFee);
-      setSuccessMessage(`Agreed weekly fee successfully overridden to £${newWeeklyFee} for future cycles.`);
-      showSuccessToast("Fee Overridden", "Agreed weekly fee successfully overridden.");
+      await adminService.updatePlacementWeeklyFee(
+        selectedPlacement.placementId,
+        newWeeklyFee,
+      );
+      setSuccessMessage(
+        `Agreed weekly fee successfully overridden to £${newWeeklyFee} for future cycles.`,
+      );
+      showSuccessToast(
+        "Fee Overridden",
+        "Agreed weekly fee successfully overridden.",
+      );
       setSelectedPlacement(null);
       await loadBillingDashboardData();
     } catch (err: any) {
@@ -169,14 +202,22 @@ export default function BillingManagement({
   };
 
   const handlePauseBilling = async (placementId: string) => {
-    if (!confirm("Are you sure you want to pause subscription billing collection for this placement?")) return;
+    if (
+      !confirm(
+        "Are you sure you want to pause subscription billing collection for this placement?",
+      )
+    )
+      return;
     try {
       setActionLoading(`pause-${placementId}`);
       setErrorMessage(null);
       setSuccessMessage(null);
       await adminService.pausePlacementBilling(placementId);
       setSuccessMessage("Recurring weekly billing collection paused.");
-      showSuccessToast("Billing Paused", "Recurring weekly billing collection paused.");
+      showSuccessToast(
+        "Billing Paused",
+        "Recurring weekly billing collection paused.",
+      );
       await loadBillingDashboardData();
     } catch (err: any) {
       setErrorMessage(err?.message || "Failed to pause billing.");
@@ -193,7 +234,10 @@ export default function BillingManagement({
       setSuccessMessage(null);
       await adminService.resumePlacementBilling(placementId);
       setSuccessMessage("Recurring weekly billing collection resumed.");
-      showSuccessToast("Billing Resumed", "Recurring weekly billing collection resumed.");
+      showSuccessToast(
+        "Billing Resumed",
+        "Recurring weekly billing collection resumed.",
+      );
       await loadBillingDashboardData();
     } catch (err: any) {
       setErrorMessage(err?.message || "Failed to resume billing.");
@@ -207,7 +251,7 @@ export default function BillingManagement({
     setInvoices((prev) =>
       prev.map((inv) =>
         inv.id === id ? { ...inv, status: "Paid" as const } : inv,
-      )
+      ),
     );
     showSuccessToast("Invoice Paid", "Invoice marked as paid successfully.");
   };
@@ -222,7 +266,10 @@ export default function BillingManagement({
       showSuccessToast("Reminder Sent", "Payment reminder notification sent.");
     } catch (err: any) {
       setErrorMessage(err?.message || "Failed to send payment reminder.");
-      showErrorToast("Error", err?.message || "Failed to send payment reminder.");
+      showErrorToast(
+        "Error",
+        err?.message || "Failed to send payment reminder.",
+      );
     } finally {
       setActionLoading(null);
     }
@@ -231,11 +278,13 @@ export default function BillingManagement({
   const getStatusBadge = (status: string) => {
     const statusMap: Record<string, string> = {
       ACTIVE: "bg-emerald-950/60 border border-emerald-500/30 text-emerald-400",
-      PAUSED: "bg-amber-950/60 border border-amber-500/30 text-amber-400 animate-pulse",
+      PAUSED:
+        "bg-amber-950/60 border border-amber-500/30 text-amber-400 animate-pulse",
       CANCELLED: "bg-red-950/60 border border-red-500/30 text-red-400",
       PAID: "bg-emerald-950/60 border border-emerald-500/30 text-emerald-400",
       PENDING: "bg-amber-950/60 border border-amber-500/30 text-amber-400",
-      FAILED: "bg-red-950/60 border border-red-500/30 text-red-400 animate-pulse",
+      FAILED:
+        "bg-red-950/60 border border-red-500/30 text-red-400 animate-pulse",
       OVERDUE: "bg-rose-950/60 border border-rose-500/30 text-rose-400",
       REFUNDED: "bg-slate-900 border border-slate-700 text-slate-400",
     };
@@ -258,7 +307,9 @@ export default function BillingManagement({
     return (
       <div className="flex flex-col items-center justify-center p-20 space-y-4">
         <div className="w-12 h-12 border-4 border-gold border-t-transparent rounded-full animate-spin" />
-        <p className="text-sm text-gold-100/60 font-semibold">Loading billing configuration data...</p>
+        <p className="text-sm text-gold-100/60 font-semibold">
+          Loading billing configuration data...
+        </p>
       </div>
     );
   }
@@ -272,7 +323,8 @@ export default function BillingManagement({
             Billing & Invoices Management
           </h2>
           <p className="text-sm text-gold-100/50">
-            Configure global pricing parameters, monitor client invoicing, and oversee subscription overrides.
+            Configure global pricing parameters, monitor client invoicing, and
+            oversee subscription overrides.
           </p>
         </div>
         <button
@@ -304,7 +356,10 @@ export default function BillingManagement({
             Total Invoiced
           </span>
           <div className="mt-2 text-2xl font-black text-gold">
-            £{totalInvoiced.toLocaleString("en-GB", { minimumFractionDigits: 2 })}
+            £
+            {totalInvoiced.toLocaleString("en-GB", {
+              minimumFractionDigits: 2,
+            })}
           </div>
         </div>
 
@@ -324,7 +379,8 @@ export default function BillingManagement({
             Total Pending
           </span>
           <div className="mt-2 text-2xl font-black text-amber-400">
-            £{totalPending.toLocaleString("en-GB", { minimumFractionDigits: 2 })}
+            £
+            {totalPending.toLocaleString("en-GB", { minimumFractionDigits: 2 })}
           </div>
         </div>
 
@@ -334,7 +390,8 @@ export default function BillingManagement({
             Total Overdue
           </span>
           <div className="mt-2 text-2xl font-black text-rose-400">
-            £{totalOverdue.toLocaleString("en-GB", { minimumFractionDigits: 2 })}
+            £
+            {totalOverdue.toLocaleString("en-GB", { minimumFractionDigits: 2 })}
           </div>
         </div>
       </div>
@@ -445,12 +502,19 @@ export default function BillingManagement({
               {/* Mobile Card List */}
               <div className="block md:hidden space-y-4">
                 {invoices.length === 0 ? (
-                  <p className="py-8 text-center text-gold-100/30 text-xs">No invoice records found.</p>
+                  <p className="py-8 text-center text-gold-100/30 text-xs">
+                    No invoice records found.
+                  </p>
                 ) : (
                   invoices.map((inv) => (
-                    <div key={inv.id} className="p-4 rounded-xl border border-gold-300/10 bg-navy-950/40 space-y-3">
+                    <div
+                      key={inv.id}
+                      className="p-4 rounded-xl border border-gold-300/10 bg-navy-950/40 space-y-3"
+                    >
                       <div className="flex justify-between items-center">
-                        <span className="font-mono font-bold text-gold text-xs">{inv.id}</span>
+                        <span className="font-mono font-bold text-gold text-xs">
+                          {inv.id}
+                        </span>
                         <span
                           className={`inline-flex rounded-full px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider ${
                             inv.status === "Paid"
@@ -466,19 +530,33 @@ export default function BillingManagement({
 
                       <div className="space-y-1.5 text-xs">
                         <div className="flex justify-between">
-                          <span className="text-gold-100/40 font-semibold">Client:</span>
-                          <span className="text-gold-100 font-semibold">{inv.clientName}</span>
+                          <span className="text-gold-100/40 font-semibold">
+                            Client:
+                          </span>
+                          <span className="text-gold-100 font-semibold">
+                            {inv.clientName}
+                          </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gold-100/40 font-semibold">Carer:</span>
-                          <span className="text-gold-100/70">{inv.carerName}</span>
+                          <span className="text-gold-100/40 font-semibold">
+                            Carer:
+                          </span>
+                          <span className="text-gold-100/70">
+                            {inv.carerName}
+                          </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gold-100/40 font-semibold">Hours:</span>
-                          <span>{inv.hours} hrs @ £{inv.rate}/hr</span>
+                          <span className="text-gold-100/40 font-semibold">
+                            Hours:
+                          </span>
+                          <span>
+                            {inv.hours} hrs @ £{inv.rate}/hr
+                          </span>
                         </div>
                         <div className="flex justify-between border-t border-gold-300/5 pt-1.5 mt-1.5">
-                          <span className="text-gold-100/40 font-semibold">Due Date:</span>
+                          <span className="text-gold-100/40 font-semibold">
+                            Due Date:
+                          </span>
                           <span>{inv.dueDate}</span>
                         </div>
                         <div className="flex justify-between items-center text-sm font-bold text-gold-200 pt-1">
@@ -525,24 +603,35 @@ export default function BillingManagement({
               Real-Time Transaction Audit
             </h3>
             <p className="text-xs text-gold-100/50 mb-4 leading-relaxed">
-              Every card payment, platform registration fee, and carer subscription renewal processed via GoCardless/Direct Debit is recorded below for administrative auditing.
+              Every card payment, platform registration fee, and carer
+              subscription renewal processed via GoCardless/Direct Debit is
+              recorded below for administrative auditing.
             </p>
 
             <div className="space-y-3 max-h-96 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-navy-800">
               {transactions.length === 0 ? (
-                <p className="text-xs text-gold-100/30 text-center py-6">No transaction logs captured yet.</p>
+                <p className="text-xs text-gold-100/30 text-center py-6">
+                  No transaction logs captured yet.
+                </p>
               ) : (
                 transactions.map((tx) => (
-                  <div key={tx.id} className="p-3.5 rounded-xl border border-gold-300/5 bg-navy-950/60 text-xs space-y-2">
+                  <div
+                    key={tx.id}
+                    className="p-3.5 rounded-xl border border-gold-300/5 bg-navy-950/60 text-xs space-y-2"
+                  >
                     <div className="flex justify-between items-center">
                       <span className="font-semibold text-gold-100">
-                        {tx.user ? `${tx.user.firstName} ${tx.user.lastName}` : "User"}
+                        {tx.user
+                          ? `${tx.user.firstName} ${tx.user.lastName}`
+                          : "User"}
                       </span>
-                      <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase ${
-                        tx.status === "SUCCESS" 
-                          ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                          : "bg-amber-500/10 text-amber-400 border border-amber-500/20"
-                      }`}>
+                      <span
+                        className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase ${
+                          tx.status === "SUCCESS"
+                            ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                            : "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                        }`}
+                      >
                         {tx.status}
                       </span>
                     </div>
@@ -550,11 +639,15 @@ export default function BillingManagement({
                     <div className="space-y-1 text-[11px] text-gold-100/60">
                       <div className="flex justify-between">
                         <span>Type:</span>
-                        <span className="font-semibold text-white">{tx.type}</span>
+                        <span className="font-semibold text-white">
+                          {tx.type}
+                        </span>
                       </div>
                       <div className="flex justify-between">
                         <span>Amount:</span>
-                        <span className="font-bold text-gold">£{Number(tx.amount).toFixed(2)}</span>
+                        <span className="font-bold text-gold">
+                          £{Number(tx.amount).toFixed(2)}
+                        </span>
                       </div>
                       <div className="flex justify-between">
                         <span>Date:</span>
@@ -572,25 +665,41 @@ export default function BillingManagement({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Global Pricing Settings form */}
         <div className="bg-navy-900/60 border border-gold-300/10 rounded-2xl p-6 shadow-soft lg:col-span-2 backdrop-blur-md">
-          <h3 className="text-lg font-bold text-gold-200 mb-6 uppercase tracking-wider">Global Pricing Settings</h3>
-          
+          <h3 className="text-lg font-bold text-gold-200 mb-6 uppercase tracking-wider">
+            Global Pricing Settings
+          </h3>
+
           <form onSubmit={handleUpdateSettings} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-gold-100/50 uppercase mb-2">Lifetime Platform Fee (£)</label>
+                <label className="block text-xs font-semibold text-gold-100/50 uppercase mb-2">
+                  Lifetime Platform Fee (£)
+                </label>
                 <input
                   type="number"
                   value={settings.lifetimePlatformFee}
-                  onChange={(e) => setSettings({ ...settings, lifetimePlatformFee: Number(e.target.value) })}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      lifetimePlatformFee: Number(e.target.value),
+                    })
+                  }
                   className="w-full bg-navy-950 border border-gold-300/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-gold-DEFAULT"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-gold-100/50 uppercase mb-2">VAT Rate (%)</label>
+                <label className="block text-xs font-semibold text-gold-100/50 uppercase mb-2">
+                  VAT Rate (%)
+                </label>
                 <input
                   type="number"
                   value={settings.vatRate}
-                  onChange={(e) => setSettings({ ...settings, vatRate: Number(e.target.value) })}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      vatRate: Number(e.target.value),
+                    })
+                  }
                   className="w-full bg-navy-950 border border-gold-300/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-gold-DEFAULT"
                 />
               </div>
@@ -598,20 +707,28 @@ export default function BillingManagement({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-gold-100/50 uppercase mb-2">Invoice Prefix</label>
+                <label className="block text-xs font-semibold text-gold-100/50 uppercase mb-2">
+                  Invoice Prefix
+                </label>
                 <input
                   type="text"
                   value={settings.invoicePrefix}
-                  onChange={(e) => setSettings({ ...settings, invoicePrefix: e.target.value })}
+                  onChange={(e) =>
+                    setSettings({ ...settings, invoicePrefix: e.target.value })
+                  }
                   className="w-full bg-navy-950 border border-gold-300/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-gold-DEFAULT"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-gold-100/50 uppercase mb-2">Company Name</label>
+                <label className="block text-xs font-semibold text-gold-100/50 uppercase mb-2">
+                  Company Name
+                </label>
                 <input
                   type="text"
                   value={settings.companyName}
-                  onChange={(e) => setSettings({ ...settings, companyName: e.target.value })}
+                  onChange={(e) =>
+                    setSettings({ ...settings, companyName: e.target.value })
+                  }
                   className="w-full bg-navy-950 border border-gold-300/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-gold-DEFAULT"
                 />
               </div>
@@ -632,22 +749,33 @@ export default function BillingManagement({
         {/* Quick Metrics / Status */}
         <div className="bg-navy-900/60 border border-gold-300/10 rounded-2xl p-6 shadow-soft flex flex-col justify-between backdrop-blur-md">
           <div>
-            <h3 className="text-lg font-bold text-gold-200 mb-6 uppercase tracking-wider">Placement Stats</h3>
+            <h3 className="text-lg font-bold text-gold-200 mb-6 uppercase tracking-wider">
+              Placement Stats
+            </h3>
             <div className="space-y-4">
               <div className="flex justify-between items-center py-2 border-b border-gold-300/5">
                 <span className="text-slate-400">Total Active Contracts</span>
-                <span className="text-white font-bold text-lg">{detailedPlacements.length}</span>
+                <span className="text-white font-bold text-lg">
+                  {detailedPlacements.length}
+                </span>
               </div>
               <div className="flex justify-between items-center py-2 border-b border-gold-300/5">
-                <span className="text-slate-400">Failed / Overdue Invoices</span>
+                <span className="text-slate-400">
+                  Failed / Overdue Invoices
+                </span>
                 <span className="text-rose-400 font-bold text-lg">
-                  {invoices.filter(inv => inv.rawStatus === "FAILED" || inv.status === "Overdue").length}
+                  {
+                    invoices.filter(
+                      (inv) =>
+                        inv.rawStatus === "FAILED" || inv.status === "Overdue",
+                    ).length
+                  }
                 </span>
               </div>
               <div className="flex justify-between items-center py-2">
                 <span className="text-slate-400">Pending Approvals</span>
                 <span className="text-amber-400 font-bold text-lg">
-                  {invoices.filter(inv => inv.status === "Pending").length}
+                  {invoices.filter((inv) => inv.status === "Pending").length}
                 </span>
               </div>
             </div>
@@ -657,9 +785,13 @@ export default function BillingManagement({
 
       {/* Placement Billing Registry */}
       <div className="bg-navy-900/60 border border-gold-300/10 rounded-2xl p-6 shadow-soft backdrop-blur-md">
-        <h3 className="text-lg font-bold text-gold-200 mb-6 uppercase tracking-wider">Placement Billing Registry</h3>
+        <h3 className="text-lg font-bold text-gold-200 mb-6 uppercase tracking-wider">
+          Placement Billing Registry
+        </h3>
         {detailedPlacements.length === 0 ? (
-          <p className="text-slate-400 text-center py-8">No active placements registered.</p>
+          <p className="text-slate-400 text-center py-8">
+            No active placements registered.
+          </p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-sm text-slate-350">
@@ -676,21 +808,32 @@ export default function BillingManagement({
               </thead>
               <tbody>
                 {detailedPlacements.map((p) => (
-                  <tr key={p.placementId} className="border-b border-gold-300/5 hover:bg-navy-850/20 transition-colors">
+                  <tr
+                    key={p.placementId}
+                    className="border-b border-gold-300/5 hover:bg-navy-850/20 transition-colors"
+                  >
                     <td className="py-4 px-4 font-semibold text-white">
-                      {p.client.user ? `${p.client.user.firstName} ${p.client.user.lastName}` : "Client Profile"}
+                      {p.client.user
+                        ? `${p.client.user.firstName} ${p.client.user.lastName}`
+                        : "Client Profile"}
                     </td>
                     <td className="py-4 px-4">
-                      {p.carer.user ? `${p.carer.user.firstName} ${p.carer.user.lastName}` : "Carer Profile"}
+                      {p.carer.user
+                        ? `${p.carer.user.firstName} ${p.carer.user.lastName}`
+                        : "Carer Profile"}
                     </td>
                     <td className="py-4 px-4 text-right font-mono text-gold-100">
                       £{Number(p.weeklyFee).toFixed(2)}
                     </td>
                     <td className="py-4 px-4 text-center text-xs font-mono text-slate-400">
-                      {p.stripeSubscriptionId ? p.stripeSubscriptionId.slice(0, 14) + "..." : "Unsubscribed"}
+                      {p.stripeSubscriptionId
+                        ? p.stripeSubscriptionId.slice(0, 14) + "..."
+                        : "Unsubscribed"}
                     </td>
                     <td className="py-4 px-4 text-center">
-                      <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${getStatusBadge(p.billingStatus)}`}>
+                      <span
+                        className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${getStatusBadge(p.billingStatus)}`}
+                      >
                         {p.billingStatus}
                       </span>
                     </td>
@@ -737,12 +880,18 @@ export default function BillingManagement({
         <div className="fixed inset-0 bg-navy-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-navy-900 border border-gold-300/10 w-full max-w-md rounded-2xl p-6 shadow-soft space-y-6">
             <div>
-              <h3 className="text-xl font-bold text-white">Override Weekly Care Fee</h3>
-              <p className="text-xs text-slate-400 mt-1">Placement ID: {selectedPlacement.placementId}</p>
+              <h3 className="text-xl font-bold text-white">
+                Override Weekly Care Fee
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">
+                Placement ID: {selectedPlacement.placementId}
+              </p>
             </div>
             <form onSubmit={handleWeeklyFeeOverride} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-gold-100/50 uppercase mb-2">New Weekly Fee (£)</label>
+                <label className="block text-xs font-semibold text-gold-100/50 uppercase mb-2">
+                  New Weekly Fee (£)
+                </label>
                 <input
                   type="number"
                   required
@@ -750,7 +899,10 @@ export default function BillingManagement({
                   onChange={(e) => setNewWeeklyFee(Number(e.target.value))}
                   className="w-full bg-navy-950 border border-gold-300/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-gold-DEFAULT"
                 />
-                <p className="text-xs text-slate-500 mt-1">Modifies future invoice cycles only. Subscription updates automatically.</p>
+                <p className="text-xs text-slate-500 mt-1">
+                  Modifies future invoice cycles only. Subscription updates
+                  automatically.
+                </p>
               </div>
               <div className="flex space-x-3 justify-end pt-2">
                 <button

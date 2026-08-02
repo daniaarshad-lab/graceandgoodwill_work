@@ -2,10 +2,25 @@ import { useEffect, useState } from "react";
 import { carerService } from "@/services/carer/carer.service";
 import { CarerPlacement } from "@/types/carer.types";
 import SectionCard from "./shared/SectionCard";
-import { User, Calendar, MapPin, FileText, AlertTriangle, RefreshCw, X, Download } from "lucide-react";
+import {
+  User,
+  Calendar,
+  MapPin,
+  FileText,
+  AlertTriangle,
+  RefreshCw,
+  X,
+  Download,
+} from "lucide-react";
 import Button from "@/components/Button";
 
-function PlacementDetailModal({ placementId, onClose }: { placementId: string, onClose: () => void }) {
+function PlacementDetailModal({
+  placementId,
+  onClose,
+}: {
+  placementId: string;
+  onClose: () => void;
+}) {
   const [placement, setPlacement] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -48,9 +63,13 @@ function PlacementDetailModal({ placementId, onClose }: { placementId: string, o
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-navy-950/80 p-4 backdrop-blur-sm">
         <div className="w-full max-w-lg rounded-2xl border border-gold-300/20 bg-navy-900 shadow-2xl p-6 text-center space-y-4">
           <AlertTriangle className="h-10 w-10 text-rose-400 mx-auto" />
-          <h3 className="text-xl font-bold text-rose-400">Error Loading Details</h3>
+          <h3 className="text-xl font-bold text-rose-400">
+            Error Loading Details
+          </h3>
           <p className="text-sm text-gold-100/60">{error}</p>
-          <Button variant="outline" onClick={onClose} className="mt-4">Close</Button>
+          <Button variant="outline" onClick={onClose} className="mt-4">
+            Close
+          </Button>
         </div>
       </div>
     );
@@ -70,7 +89,9 @@ function PlacementDetailModal({ placementId, onClose }: { placementId: string, o
           <div className="border-b border-gold-300/10 pb-4">
             <h2 className="text-2xl font-bold text-gold-200 flex items-center gap-2">
               Placement Details
-              <span className={`text-xs px-2 py-1 rounded uppercase tracking-wider ${placement.status === 'ACTIVE' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-gold-300/10 text-gold-200 border border-gold-300/20'}`}>
+              <span
+                className={`text-xs px-2 py-1 rounded uppercase tracking-wider ${placement.status === "ACTIVE" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-gold-300/10 text-gold-200 border border-gold-300/20"}`}
+              >
                 {placement.status}
               </span>
             </h2>
@@ -83,13 +104,21 @@ function PlacementDetailModal({ placementId, onClose }: { placementId: string, o
               </h3>
               <div className="space-y-3 text-sm">
                 <div>
-                  <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1 text-[10px]">Name</span>
-                  <span className="text-gold-100 font-bold">{placement.clientProfile?.user?.firstName} {placement.clientProfile?.user?.lastName}</span>
+                  <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1 text-[10px]">
+                    Name
+                  </span>
+                  <span className="text-gold-100 font-bold">
+                    {placement.clientProfile?.user?.firstName}{" "}
+                    {placement.clientProfile?.user?.lastName}
+                  </span>
                 </div>
                 <div>
-                  <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1 text-[10px]">Contact</span>
+                  <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1 text-[10px]">
+                    Contact
+                  </span>
                   <span className="text-gold-100">
-                    {placement.clientProfile?.user?.email} <br /> {placement.clientProfile?.user?.phoneNumber}
+                    {placement.clientProfile?.user?.email} <br />{" "}
+                    {placement.clientProfile?.user?.phoneNumber}
                   </span>
                 </div>
               </div>
@@ -101,27 +130,49 @@ function PlacementDetailModal({ placementId, onClose }: { placementId: string, o
               </h3>
               <div className="space-y-3 text-sm">
                 <div>
-                  <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1 text-[10px]">Category</span>
-                  <span className="text-gold-100">{placement.careRequest?.careCategory || "N/A"}</span>
-                </div>
-                <div>
-                  <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1 text-[10px]">Location</span>
+                  <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1 text-[10px]">
+                    Category
+                  </span>
                   <span className="text-gold-100">
-                    {placement.careRequest?.address}<br/>
-                    {placement.careRequest?.city} {placement.careRequest?.postcode}
+                    {placement.careRequest?.careCategory || "N/A"}
                   </span>
                 </div>
                 <div>
-                  <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1 text-[10px]">Schedule</span>
+                  <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1 text-[10px]">
+                    Location
+                  </span>
                   <span className="text-gold-100">
-                    {placement.careRequest?.startDate ? new Date(placement.careRequest.startDate).toLocaleDateString() : "N/A"}
-                    {placement.careRequest?.endDate ? ` - ${new Date(placement.careRequest.endDate).toLocaleDateString()}` : placement.careRequest?.isOngoing ? " (Ongoing)" : ""}
+                    {placement.careRequest?.address}
+                    <br />
+                    {placement.careRequest?.city}{" "}
+                    {placement.careRequest?.postcode}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1 text-[10px]">
+                    Schedule
+                  </span>
+                  <span className="text-gold-100">
+                    {placement.careRequest?.startDate
+                      ? new Date(
+                          placement.careRequest.startDate,
+                        ).toLocaleDateString()
+                      : "N/A"}
+                    {placement.careRequest?.endDate
+                      ? ` - ${new Date(placement.careRequest.endDate).toLocaleDateString()}`
+                      : placement.careRequest?.isOngoing
+                        ? " (Ongoing)"
+                        : ""}
                   </span>
                 </div>
                 {placement.careRequest?.additionalNotes && (
                   <div>
-                    <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1 text-[10px]">Notes</span>
-                    <span className="text-gold-100">{placement.careRequest.additionalNotes}</span>
+                    <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1 text-[10px]">
+                      Notes
+                    </span>
+                    <span className="text-gold-100">
+                      {placement.careRequest.additionalNotes}
+                    </span>
                   </div>
                 )}
               </div>
@@ -143,7 +194,9 @@ function PlacementDetailModal({ placementId, onClose }: { placementId: string, o
               </div>
             ) : payments.length === 0 ? (
               <div className="text-center py-6 border border-gold-300/5 rounded-xl bg-navy-950/20">
-                <p className="text-sm text-gold-100/60">No payment history available.</p>
+                <p className="text-sm text-gold-100/60">
+                  No payment history available.
+                </p>
               </div>
             ) : (
               <div className="overflow-x-auto rounded-xl border border-gold-300/5 bg-navy-950/20">
@@ -158,35 +211,53 @@ function PlacementDetailModal({ placementId, onClose }: { placementId: string, o
                   </thead>
                   <tbody>
                     {payments.map((payment) => (
-                      <tr key={payment.id} className="border-b border-gold-300/5 hover:bg-navy-900/20 transition-colors">
+                      <tr
+                        key={payment.id}
+                        className="border-b border-gold-300/5 hover:bg-navy-900/20 transition-colors"
+                      >
                         <td className="py-3 px-3 text-slate-400">
-                          {payment.periodStartDate ? `${new Date(payment.periodStartDate).toLocaleDateString()} - ${new Date(payment.periodEndDate).toLocaleDateString()}` : "N/A"}
+                          {payment.periodStartDate
+                            ? `${new Date(payment.periodStartDate).toLocaleDateString()} - ${new Date(payment.periodEndDate).toLocaleDateString()}`
+                            : "N/A"}
                         </td>
-                        <td className="py-3 px-3 font-mono font-semibold text-gold-DEFAULT">£{Number(payment.amount).toFixed(2)}</td>
+                        <td className="py-3 px-3 font-mono font-semibold text-gold-DEFAULT">
+                          £{Number(payment.amount).toFixed(2)}
+                        </td>
                         <td className="py-3 px-3 text-center">
-                          <span className={`inline-flex px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${
-                            payment.status === "PAID" 
-                              ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                              : payment.status === "UNPAID"
-                                ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
-                                : "bg-rose-500/10 text-rose-400 border border-rose-500/20"
-                          }`}>
+                          <span
+                            className={`inline-flex px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${
+                              payment.status === "PAID"
+                                ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                                : payment.status === "UNPAID"
+                                  ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                                  : "bg-rose-500/10 text-rose-400 border border-rose-500/20"
+                            }`}
+                          >
                             {payment.status}
                           </span>
                         </td>
                         <td className="py-3 px-3 text-right">
                           {payment.transactionProofUrl ? (
-                            <a href={
-                              (() => {
+                            <a
+                              href={(() => {
                                 const url = payment.transactionProofUrl;
                                 if (url.startsWith("http")) return url;
-                                const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+                                const apiUrl =
+                                  process.env.NEXT_PUBLIC_API_URL ||
+                                  "http://localhost:3000";
                                 let baseUrl = apiUrl;
-                                try { baseUrl = new URL(apiUrl).origin; } catch (e) { baseUrl = apiUrl.replace(/\/api\/?$/, ""); }
+                                try {
+                                  baseUrl = new URL(apiUrl).origin;
+                                } catch (e) {
+                                  baseUrl = apiUrl.replace(/\/api\/?$/, "");
+                                }
                                 return `${baseUrl}${url.startsWith("/") ? url : `/${url}`}`;
-                              })()
-                            } target="_blank" rel="noreferrer" className="text-gold-DEFAULT hover:underline font-bold text-[10px] inline-flex items-center gap-1">
-                              <Download className="h-3 w-3"/>
+                              })()}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-gold-DEFAULT hover:underline font-bold text-[10px] inline-flex items-center gap-1"
+                            >
+                              <Download className="h-3 w-3" />
                             </a>
                           ) : (
                             <span className="text-slate-500">-</span>
@@ -199,7 +270,6 @@ function PlacementDetailModal({ placementId, onClose }: { placementId: string, o
               </div>
             )}
           </div>
-
         </div>
       </div>
     </div>
@@ -210,7 +280,9 @@ export default function CarerPlacements() {
   const [placements, setPlacements] = useState<CarerPlacement[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedPlacementId, setSelectedPlacementId] = useState<string | null>(null);
+  const [selectedPlacementId, setSelectedPlacementId] = useState<string | null>(
+    null,
+  );
 
   const fetchPlacements = async () => {
     try {
@@ -252,7 +324,9 @@ export default function CarerPlacements() {
         </div>
       ) : placements.length === 0 ? (
         <div className="text-center p-12 rounded-2xl border border-gold-300/10 bg-navy-900/60">
-          <p className="text-sm text-gold-100/60">You do not have any active placements at this time.</p>
+          <p className="text-sm text-gold-100/60">
+            You do not have any active placements at this time.
+          </p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -264,13 +338,17 @@ export default function CarerPlacements() {
                     {place.careRequest?.careCategory || "General Care"}
                   </h4>
                   <p className="text-xs text-gold-100/60 mt-0.5">
-                    Client: {place.clientProfile?.user?.firstName} {place.clientProfile?.user?.lastName}
+                    Client: {place.clientProfile?.user?.firstName}{" "}
+                    {place.clientProfile?.user?.lastName}
                   </p>
                 </div>
-                <span className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider ${
-                  place.status === 'ACTIVE' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 
-                  'bg-gold-300/10 text-gold-200 border border-gold-300/20'
-                }`}>
+                <span
+                  className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider ${
+                    place.status === "ACTIVE"
+                      ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                      : "bg-gold-300/10 text-gold-200 border border-gold-300/20"
+                  }`}
+                >
                   {place.status}
                 </span>
               </div>
@@ -291,7 +369,11 @@ export default function CarerPlacements() {
               </div>
 
               <div className="pt-4 flex justify-end">
-                <Button variant="outline" size="sm" onClick={() => setSelectedPlacementId(place.id)}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSelectedPlacementId(place.id)}
+                >
                   View Details
                 </Button>
               </div>
@@ -301,9 +383,9 @@ export default function CarerPlacements() {
       )}
 
       {selectedPlacementId && (
-        <PlacementDetailModal 
-          placementId={selectedPlacementId} 
-          onClose={() => setSelectedPlacementId(null)} 
+        <PlacementDetailModal
+          placementId={selectedPlacementId}
+          onClose={() => setSelectedPlacementId(null)}
         />
       )}
     </div>

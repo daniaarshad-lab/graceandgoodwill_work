@@ -36,13 +36,13 @@ const PREDEFINED_RELATIONSHIPS = [
   "Next of Kin",
   "Friend",
   "Neighbour",
-  "Carer"
+  "Carer",
 ];
 
 const RELATIONSHIP_OPTIONS = [
   { value: "", label: "Select relationship" },
-  ...PREDEFINED_RELATIONSHIPS.map(r => ({ value: r, label: r })),
-  { value: "Other", label: "Other" }
+  ...PREDEFINED_RELATIONSHIPS.map((r) => ({ value: r, label: r })),
+  { value: "Other", label: "Other" },
 ];
 
 export default function StepIdentityVerification({
@@ -84,11 +84,14 @@ export default function StepIdentityVerification({
   const [postcodeSuggestions, setPostcodeSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [activeTab, setActiveTab] = useState<'personal' | 'documents'>('personal');
+  const [activeTab, setActiveTab] = useState<"personal" | "documents">(
+    "personal",
+  );
 
   const [dropdownRel, setDropdownRel] = useState<string>(() => {
     if (!emergencyContactRelation) return "";
-    if (PREDEFINED_RELATIONSHIPS.includes(emergencyContactRelation)) return emergencyContactRelation;
+    if (PREDEFINED_RELATIONSHIPS.includes(emergencyContactRelation))
+      return emergencyContactRelation;
     return emergencyContactRelation ? "Other" : "";
   });
 
@@ -101,21 +104,28 @@ export default function StepIdentityVerification({
   const hasOwnVehiclePref = safePreferences.includes(drivingOptions[0]);
 
   const hasPassport =
-    complianceDocs.some((d: ComplianceDoc) => d.type === DocumentFileType.PASSPORT) ||
-    !!selectedFiles[DocumentFileType.PASSPORT.toLowerCase()];
+    complianceDocs.some(
+      (d: ComplianceDoc) => d.type === DocumentFileType.PASSPORT,
+    ) || !!selectedFiles[DocumentFileType.PASSPORT.toLowerCase()];
   const hasDL =
-    complianceDocs.some((d: ComplianceDoc) => d.type === DocumentFileType.DRIVING_LICENCE) ||
-    !!selectedFiles[DocumentFileType.DRIVING_LICENCE.toLowerCase()];
+    complianceDocs.some(
+      (d: ComplianceDoc) => d.type === DocumentFileType.DRIVING_LICENCE,
+    ) || !!selectedFiles[DocumentFileType.DRIVING_LICENCE.toLowerCase()];
   const hasPassportOrDL = hasPassport || hasDL;
 
   const hasProofOfAddress =
-    complianceDocs.some((d: ComplianceDoc) => d.type === DocumentFileType.PROOF_OF_ADDRESS) ||
-    !!selectedFiles[DocumentFileType.PROOF_OF_ADDRESS.toLowerCase()];
+    complianceDocs.some(
+      (d: ComplianceDoc) => d.type === DocumentFileType.PROOF_OF_ADDRESS,
+    ) || !!selectedFiles[DocumentFileType.PROOF_OF_ADDRESS.toLowerCase()];
   const hasRightToWork =
-    complianceDocs.some((d: ComplianceDoc) => d.type === DocumentFileType.RIGHT_TO_WORK) ||
-    !!selectedFiles[DocumentFileType.RIGHT_TO_WORK.toLowerCase()];
+    complianceDocs.some(
+      (d: ComplianceDoc) => d.type === DocumentFileType.RIGHT_TO_WORK,
+    ) || !!selectedFiles[DocumentFileType.RIGHT_TO_WORK.toLowerCase()];
   const hasNiProof =
-    complianceDocs.some((d: ComplianceDoc) => d.type === DocumentFileType.NATIONAL_INSURANCE_PROOF) ||
+    complianceDocs.some(
+      (d: ComplianceDoc) =>
+        d.type === DocumentFileType.NATIONAL_INSURANCE_PROOF,
+    ) ||
     !!selectedFiles[DocumentFileType.NATIONAL_INSURANCE_PROOF.toLowerCase()];
   const hasBusinessInsuranceDoc =
     complianceDocs.some(
@@ -146,7 +156,11 @@ export default function StepIdentityVerification({
   const handlePostcodeChange = async (
     e: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    let val = e.target.value.toUpperCase().replace(/[^A-Z0-9 ]/g, '').replace(/\s+/g, ' ').trimStart();
+    let val = e.target.value
+      .toUpperCase()
+      .replace(/[^A-Z0-9 ]/g, "")
+      .replace(/\s+/g, " ")
+      .trimStart();
     if (val.length > 8) val = val.slice(0, 8);
     setPostcode(val);
 
@@ -215,7 +229,8 @@ export default function StepIdentityVerification({
     } else if (rawPostcode.length > 8) {
       newErrors.postcode = "UK postcodes cannot be longer than 8 characters.";
     } else if (/[^A-Z0-9 ]/i.test(rawPostcode)) {
-      newErrors.postcode = "Postcode can only contain letters, numbers, and a single space.";
+      newErrors.postcode =
+        "Postcode can only contain letters, numbers, and a single space.";
     } else if (!/^[A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}$/i.test(postcodeTrimmed)) {
       newErrors.postcode = "Enter a valid UK postcode (e.g. SW1A 1AA).";
     }
@@ -249,7 +264,7 @@ export default function StepIdentityVerification({
     setErrors({});
 
     // Save Personal Information (backend step 2)
-    const syntheticEvent = { preventDefault: () => { } } as React.FormEvent;
+    const syntheticEvent = { preventDefault: () => {} } as React.FormEvent;
     let success = await portal.handleSaveProfile(syntheticEvent, 2);
     if (!success) return;
 
@@ -273,8 +288,9 @@ export default function StepIdentityVerification({
   };
 
   const hasDrivingLicence =
-    complianceDocs.some((d: ComplianceDoc) => d.type === DocumentFileType.DRIVING_LICENCE) ||
-    !!selectedFiles[DocumentFileType.DRIVING_LICENCE.toLowerCase()];
+    complianceDocs.some(
+      (d: ComplianceDoc) => d.type === DocumentFileType.DRIVING_LICENCE,
+    ) || !!selectedFiles[DocumentFileType.DRIVING_LICENCE.toLowerCase()];
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
@@ -307,413 +323,421 @@ export default function StepIdentityVerification({
       </div>
 
       <div className={activeTab === "personal" ? "block" : "hidden"}>
-      {/* Part 1: Personal Information Card */}
-      <SectionCard className="space-y-6 p-6 md:p-8">
-        <h3 className="text-xl font-bold text-gold-200 border-b border-gold-300/10 pb-4">
-          Personal Information
-        </h3>
-        <p className="text-sm text-gold-100/60 mb-4">
-          All items marked with * are compulsory.
-        </p>
+        {/* Part 1: Personal Information Card */}
+        <SectionCard className="space-y-6 p-6 md:p-8">
+          <h3 className="text-xl font-bold text-gold-200 border-b border-gold-300/10 pb-4">
+            Personal Information
+          </h3>
+          <p className="text-sm text-gold-100/60 mb-4">
+            All items marked with * are compulsory.
+          </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Input
-            label="Full Name *"
-            value={`${firstName || ""} ${lastName || ""}`.trim()}
-            onChange={(e) => {
-              const val = e.target.value;
-              const parts = val.split(" ");
-              setFirstName(parts[0] || "");
-              setLastName(parts.slice(1).join(" ") || "");
-              if (parts[0]?.trim() && parts.slice(1).join(" ")?.trim()) {
-                setErrors((prev) => {
-                  const copy = { ...prev };
-                  delete copy.fullName;
-                  return copy;
-                });
-              }
-            }}
-            placeholder="Full Name"
-            error={errors.fullName}
-          />
-          <Input
-            label="Date of Birth *"
-            type="date"
-            value={dateOfBirth ? dateOfBirth.split("T")[0] : ""}
-            onChange={(e) => {
-              const val = e.target.value;
-              if (val && val > maxDate) {
-                showErrorToast(
-                  "Validation Error",
-                  "You must be at least 18 years old.",
-                );
-                return;
-              }
-              setDateOfBirth(val);
-              if (val) {
-                setErrors((prev) => {
-                  const copy = { ...prev };
-                  delete copy.dateOfBirth;
-                  return copy;
-                });
-              }
-            }}
-            placeholder="DD/MM/YYYY"
-            max={maxDate}
-            error={errors.dateOfBirth}
-          />
-          <Input
-            label="Address *"
-            value={address}
-            onChange={(e) => {
-              const val = e.target.value;
-              setAddress(val);
-              if (val.trim()) {
-                setErrors((prev) => {
-                  const copy = { ...prev };
-                  delete copy.address;
-                  return copy;
-                });
-              }
-            }}
-            placeholder="Full Address"
-            error={errors.address}
-          />
-          <div className="relative">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Input
-              label="Postcode *"
-              value={postcode}
-              onChange={handlePostcodeChange}
-              placeholder="Postcode"
-              error={errors.postcode}
-              maxLength={8}
-            />
-            {showSuggestions && postcodeSuggestions.length > 0 && (
-              <ul className="absolute z-50 w-full mt-1 bg-navy-900 border border-gold-300/20 rounded-md shadow-[0_8px_30px_rgba(0,0,0,0.5)] max-h-48 overflow-y-auto">
-                {postcodeSuggestions.map((p) => (
-                  <li
-                    key={p}
-                    className="px-4 py-2 text-sm text-gold-100 hover:bg-gold-DEFAULT/10 cursor-pointer"
-                    onClick={() => {
-                      setPostcode(p);
-                      setShowSuggestions(false);
-                      setErrors((prev) => {
-                        const copy = { ...prev };
-                        delete copy.postcode;
-                        return copy;
-                      });
-                    }}
-                  >
-                    {p}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-          <Input
-            label="Email Address *"
-            type="email"
-            value={email}
-            onChange={(e) => {
-              const val = e.target.value;
-              setEmail(val);
-              if (val.trim()) {
-                setErrors((prev) => {
-                  const copy = { ...prev };
-                  delete copy.email;
-                  return copy;
-                });
-              }
-            }}
-            placeholder="Email"
-            error={errors.email}
-          />
-          <PhoneInput
-            label="Mobile Number *"
-            value={phone}
-            onChange={(val) => {
-              setPhone(val);
-              if (val.trim()) {
-                setErrors((prev) => {
-                  const copy = { ...prev };
-                  delete copy.phone;
-                  return copy;
-                });
-              }
-            }}
-            placeholder="Mobile Number"
-            error={errors.phone}
-          />
-        </div>
-
-        <div className="pt-6 mt-6 border-t border-gold-300/10">
-          <h4 className="text-lg font-semibold text-gold-200 mb-4">
-            Emergency Contact Details *
-          </h4>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Input
-              label="Contact Name *"
-              value={emergencyContactName}
+              label="Full Name *"
+              value={`${firstName || ""} ${lastName || ""}`.trim()}
               onChange={(e) => {
                 const val = e.target.value;
-                setEmergencyContactName(val);
-                if (val.trim()) {
+                const parts = val.split(" ");
+                setFirstName(parts[0] || "");
+                setLastName(parts.slice(1).join(" ") || "");
+                if (parts[0]?.trim() && parts.slice(1).join(" ")?.trim()) {
                   setErrors((prev) => {
                     const copy = { ...prev };
-                    delete copy.emergencyContactName;
+                    delete copy.fullName;
                     return copy;
                   });
                 }
               }}
-              placeholder="Name"
-              error={errors.emergencyContactName}
+              placeholder="Full Name"
+              error={errors.fullName}
             />
-            <PhoneInput
-              label="Contact Number *"
-              value={emergencyContactNumber}
-              onChange={(val) => {
-                setEmergencyContactNumber(val);
-                if (val.trim()) {
+            <Input
+              label="Date of Birth *"
+              type="date"
+              value={dateOfBirth ? dateOfBirth.split("T")[0] : ""}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val && val > maxDate) {
+                  showErrorToast(
+                    "Validation Error",
+                    "You must be at least 18 years old.",
+                  );
+                  return;
+                }
+                setDateOfBirth(val);
+                if (val) {
                   setErrors((prev) => {
                     const copy = { ...prev };
-                    delete copy.emergencyContactNumber;
+                    delete copy.dateOfBirth;
                     return copy;
                   });
                 }
               }}
-              placeholder="Phone"
-              error={errors.emergencyContactNumber}
+              placeholder="DD/MM/YYYY"
+              max={maxDate}
+              error={errors.dateOfBirth}
             />
-            <div className="flex flex-col gap-4">
-              <Select
-                label="Relationship *"
-                value={dropdownRel}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setDropdownRel(val);
-                  if (val === "Other") {
-                    setEmergencyContactRelation("");
-                  } else {
-                    setEmergencyContactRelation(val);
-                    if (val.trim()) {
-                      setErrors((prev) => {
-                        const copy = { ...prev };
-                        delete copy.emergencyContactRelation;
-                        return copy;
-                      });
-                    }
-                  }
-                }}
-                options={RELATIONSHIP_OPTIONS}
-                error={dropdownRel !== "Other" ? errors.emergencyContactRelation : undefined}
+            <Input
+              label="Address *"
+              value={address}
+              onChange={(e) => {
+                const val = e.target.value;
+                setAddress(val);
+                if (val.trim()) {
+                  setErrors((prev) => {
+                    const copy = { ...prev };
+                    delete copy.address;
+                    return copy;
+                  });
+                }
+              }}
+              placeholder="Full Address"
+              error={errors.address}
+            />
+            <div className="relative">
+              <Input
+                label="Postcode *"
+                value={postcode}
+                onChange={handlePostcodeChange}
+                placeholder="Postcode"
+                error={errors.postcode}
+                maxLength={8}
               />
-
-              {dropdownRel === "Other" && (
-                <Input
-                  label="Specify Relationship *"
-                  value={emergencyContactRelation}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    setEmergencyContactRelation(val);
-                    if (val.trim()) {
-                      setErrors((prev) => {
-                        const copy = { ...prev };
-                        delete copy.emergencyContactRelation;
-                        return copy;
-                      });
-                    }
-                  }}
-                  placeholder="Enter relationship"
-                  error={errors.emergencyContactRelation}
-                />
+              {showSuggestions && postcodeSuggestions.length > 0 && (
+                <ul className="absolute z-50 w-full mt-1 bg-navy-900 border border-gold-300/20 rounded-md shadow-[0_8px_30px_rgba(0,0,0,0.5)] max-h-48 overflow-y-auto">
+                  {postcodeSuggestions.map((p) => (
+                    <li
+                      key={p}
+                      className="px-4 py-2 text-sm text-gold-100 hover:bg-gold-DEFAULT/10 cursor-pointer"
+                      onClick={() => {
+                        setPostcode(p);
+                        setShowSuggestions(false);
+                        setErrors((prev) => {
+                          const copy = { ...prev };
+                          delete copy.postcode;
+                          return copy;
+                        });
+                      }}
+                    >
+                      {p}
+                    </li>
+                  ))}
+                </ul>
               )}
             </div>
+            <Input
+              label="Email Address *"
+              type="email"
+              value={email}
+              onChange={(e) => {
+                const val = e.target.value;
+                setEmail(val);
+                if (val.trim()) {
+                  setErrors((prev) => {
+                    const copy = { ...prev };
+                    delete copy.email;
+                    return copy;
+                  });
+                }
+              }}
+              placeholder="Email"
+              error={errors.email}
+            />
+            <PhoneInput
+              label="Mobile Number *"
+              value={phone}
+              onChange={(val) => {
+                setPhone(val);
+                if (val.trim()) {
+                  setErrors((prev) => {
+                    const copy = { ...prev };
+                    delete copy.phone;
+                    return copy;
+                  });
+                }
+              }}
+              placeholder="Mobile Number"
+              error={errors.phone}
+            />
           </div>
-        </div>
-      </SectionCard>
+
+          <div className="pt-6 mt-6 border-t border-gold-300/10">
+            <h4 className="text-lg font-semibold text-gold-200 mb-4">
+              Emergency Contact Details *
+            </h4>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Input
+                label="Contact Name *"
+                value={emergencyContactName}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setEmergencyContactName(val);
+                  if (val.trim()) {
+                    setErrors((prev) => {
+                      const copy = { ...prev };
+                      delete copy.emergencyContactName;
+                      return copy;
+                    });
+                  }
+                }}
+                placeholder="Name"
+                error={errors.emergencyContactName}
+              />
+              <PhoneInput
+                label="Contact Number *"
+                value={emergencyContactNumber}
+                onChange={(val) => {
+                  setEmergencyContactNumber(val);
+                  if (val.trim()) {
+                    setErrors((prev) => {
+                      const copy = { ...prev };
+                      delete copy.emergencyContactNumber;
+                      return copy;
+                    });
+                  }
+                }}
+                placeholder="Phone"
+                error={errors.emergencyContactNumber}
+              />
+              <div className="flex flex-col gap-4">
+                <Select
+                  label="Relationship *"
+                  value={dropdownRel}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setDropdownRel(val);
+                    if (val === "Other") {
+                      setEmergencyContactRelation("");
+                    } else {
+                      setEmergencyContactRelation(val);
+                      if (val.trim()) {
+                        setErrors((prev) => {
+                          const copy = { ...prev };
+                          delete copy.emergencyContactRelation;
+                          return copy;
+                        });
+                      }
+                    }
+                  }}
+                  options={RELATIONSHIP_OPTIONS}
+                  error={
+                    dropdownRel !== "Other"
+                      ? errors.emergencyContactRelation
+                      : undefined
+                  }
+                />
+
+                {dropdownRel === "Other" && (
+                  <Input
+                    label="Specify Relationship *"
+                    value={emergencyContactRelation}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setEmergencyContactRelation(val);
+                      if (val.trim()) {
+                        setErrors((prev) => {
+                          const copy = { ...prev };
+                          delete copy.emergencyContactRelation;
+                          return copy;
+                        });
+                      }
+                    }}
+                    placeholder="Enter relationship"
+                    error={errors.emergencyContactRelation}
+                  />
+                )}
+              </div>
+            </div>
+          </div>
+        </SectionCard>
       </div>
 
       <div className={activeTab === "documents" ? "block" : "hidden"}>
-      {/* Part 2: Identity Documents Card */}
-      <SectionCard className="space-y-6 p-6 md:p-8">
-        <h3 className="text-xl font-bold text-gold-200 border-b border-gold-300/10 pb-4">
-          Identity Documents
-        </h3>
+        {/* Part 2: Identity Documents Card */}
+        <SectionCard className="space-y-6 p-6 md:p-8">
+          <h3 className="text-xl font-bold text-gold-200 border-b border-gold-300/10 pb-4">
+            Identity Documents
+          </h3>
 
-        <div className="space-y-6">
-          <div
-            className={`p-5 rounded-xl border bg-navy-900/30 space-y-4 transition-all ${submitted && docErrors.passportOrDL ? "border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]" : "border-gold-300/10"}`}
-          >
-            <div>
-              <h4 className="text-sm font-semibold text-gold-50">
-                Passport or Driving Licence *
-              </h4>
-              <p className="text-xs text-gold-100/60 mt-1">
-                Please upload EITHER your Passport OR your Driving Licence.
-              </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <DocUploadRow label="Passport" type={DocumentFileType.PASSPORT} portal={portal} />
-              <DocUploadRow
-                label="Driving Licence"
-                type={DocumentFileType.DRIVING_LICENCE}
-                portal={portal}
-              />
-            </div>
-            {submitted && docErrors.passportOrDL && (
-              <p className="text-xs text-red-500 font-semibold">
-                {docErrors.passportOrDL}
-              </p>
-            )}
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <div
-                className={`transition-all rounded-xl border ${submitted && docErrors.proofOfAddress ? "border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]" : "border-transparent"}`}
-              >
-                <DocUploadRow
-                  label="Proof of Address (issued within last 3 months) *"
-                  type={DocumentFileType.PROOF_OF_ADDRESS}
-                  portal={portal}
-                >
-                  <div className="mt-2">
-                    <p className="text-gold-100/80 mb-1.5 font-medium">
-                      Accepted Proof of Address Documents:
-                    </p>
-                    <ul className="list-disc pl-4 space-y-1 text-gold-100/60">
-                      <li>Utility Bill (Gas, Electricity or Water)</li>
-                      <li>Council Tax Bill</li>
-                      <li>Bank Statement</li>
-                      <li>Credit Card Statement</li>
-                      <li>HMRC Letter</li>
-                      <li>Tenancy Agreement</li>
-                      <li>Mortgage Statement</li>
-                    </ul>
-                  </div>
-                </DocUploadRow>
+          <div className="space-y-6">
+            <div
+              className={`p-5 rounded-xl border bg-navy-900/30 space-y-4 transition-all ${submitted && docErrors.passportOrDL ? "border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]" : "border-gold-300/10"}`}
+            >
+              <div>
+                <h4 className="text-sm font-semibold text-gold-50">
+                  Passport or Driving Licence *
+                </h4>
+                <p className="text-xs text-gold-100/60 mt-1">
+                  Please upload EITHER your Passport OR your Driving Licence.
+                </p>
               </div>
-              {submitted && docErrors.proofOfAddress && (
-                <p className="text-xs text-red-500 font-semibold px-1">
-                  {docErrors.proofOfAddress}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <DocUploadRow
+                  label="Passport"
+                  type={DocumentFileType.PASSPORT}
+                  portal={portal}
+                />
+                <DocUploadRow
+                  label="Driving Licence"
+                  type={DocumentFileType.DRIVING_LICENCE}
+                  portal={portal}
+                />
+              </div>
+              {submitted && docErrors.passportOrDL && (
+                <p className="text-xs text-red-500 font-semibold">
+                  {docErrors.passportOrDL}
                 </p>
               )}
             </div>
 
-            <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <div
-                  className={`transition-all rounded-xl border ${submitted && docErrors.rightToWork ? "border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]" : "border-transparent"}`}
+                  className={`transition-all rounded-xl border ${submitted && docErrors.proofOfAddress ? "border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]" : "border-transparent"}`}
                 >
                   <DocUploadRow
-                    label="Right to Work in the UK *"
-                    type={DocumentFileType.RIGHT_TO_WORK}
-                    portal={portal}
-                  />
-                </div>
-                {submitted && docErrors.rightToWork && (
-                  <p className="text-xs text-red-500 font-semibold px-1">
-                    {docErrors.rightToWork}
-                  </p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <div
-                  className={`transition-all rounded-xl border ${submitted && docErrors.niProof ? "border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]" : "border-transparent"}`}
-                >
-                  <DocUploadRow
-                    label="Proof of National Insurance Number *"
-                    type={DocumentFileType.NATIONAL_INSURANCE_PROOF}
+                    label="Proof of Address (issued within last 3 months) *"
+                    type={DocumentFileType.PROOF_OF_ADDRESS}
                     portal={portal}
                   >
                     <div className="mt-2">
                       <p className="text-gold-100/80 mb-1.5 font-medium">
-                        Accepted Documents:
+                        Accepted Proof of Address Documents:
                       </p>
                       <ul className="list-disc pl-4 space-y-1 text-gold-100/60">
+                        <li>Utility Bill (Gas, Electricity or Water)</li>
+                        <li>Council Tax Bill</li>
+                        <li>Bank Statement</li>
+                        <li>Credit Card Statement</li>
                         <li>HMRC Letter</li>
-                        <li>Payslip</li>
-                        <li>P60</li>
-                        <li>National Insurance Confirmation Letter</li>
+                        <li>Tenancy Agreement</li>
+                        <li>Mortgage Statement</li>
                       </ul>
                     </div>
                   </DocUploadRow>
                 </div>
-                {submitted && docErrors.niProof && (
+                {submitted && docErrors.proofOfAddress && (
                   <p className="text-xs text-red-500 font-semibold px-1">
-                    {docErrors.niProof}
+                    {docErrors.proofOfAddress}
                   </p>
                 )}
               </div>
-            </div>
-          </div>
 
-          {hasDrivingLicence && (
-            <div className="mt-6 p-5 rounded-xl border border-gold-300/20 bg-navy-900/50">
-              <h4 className="text-md font-semibold text-gold-100 mb-2">
-                Driving Preferences
-              </h4>
-              <p className="text-xs text-gold-100/60 mb-4">
-                You can select either option or both options.
-              </p>
-              <div className="space-y-3">
-                {drivingOptions.map((opt) => (
+              <div className="space-y-6">
+                <div className="space-y-2">
                   <div
-                    key={opt}
-                    className="flex items-start gap-3 cursor-pointer group"
-                    onClick={() => handlePreferenceToggle(opt)}
-                  >
-                    <div className="relative flex items-center justify-center mt-0.5">
-                      <div
-                        className={`w-5 h-5 border-2 rounded transition-all ${safePreferences.includes(opt) ? "bg-gold border-gold" : "border-gold-300/30"}`}
-                      />
-                      <Check
-                        className={`absolute w-3.5 h-3.5 text-navy-950 transition-opacity ${safePreferences.includes(opt) ? "opacity-100" : "opacity-0"}`}
-                      />
-                    </div>
-                    <span className="text-sm text-gold-100/80 group-hover:text-gold-50">
-                      {opt}
-                    </span>
-                  </div>
-                ))}
-              </div>
-              {submitted && docErrors.drivingPreferences && (
-                <p className="text-xs text-red-500 font-semibold mt-3">
-                  {docErrors.drivingPreferences}
-                </p>
-              )}
-
-              {hasOwnVehiclePref && (
-                <div className="mt-5 pt-5 border-t border-gold-300/10">
-                  <h5 className="text-sm font-medium text-gold-200 mb-2">
-                    Business Use Insurance Cover *
-                  </h5>
-                  <div
-                    className={`bg-navy-950/40 p-4 rounded-xl border space-y-2 transition-all ${submitted && docErrors.businessInsurance ? "border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]" : "border-gold-300/10"}`}
+                    className={`transition-all rounded-xl border ${submitted && docErrors.rightToWork ? "border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]" : "border-transparent"}`}
                   >
                     <DocUploadRow
-                      label="Upload Certificate"
-                      type={DocumentFileType.BUSINESS_INSURANCE}
+                      label="Right to Work in the UK *"
+                      type={DocumentFileType.RIGHT_TO_WORK}
                       portal={portal}
                     />
-                    {submitted && docErrors.businessInsurance && (
-                      <p className="text-xs text-red-500 font-semibold">
-                        {docErrors.businessInsurance}
-                      </p>
-                    )}
-                    <p className="text-xs text-red-400 mt-3 leading-relaxed bg-red-950/20 p-2 rounded border border-red-900/30">
-                      Social, Domestic & Pleasure insurance alone is not
-                      accepted where a carer intends to transport clients in
-                      their own vehicle.
-                    </p>
                   </div>
+                  {submitted && docErrors.rightToWork && (
+                    <p className="text-xs text-red-500 font-semibold px-1">
+                      {docErrors.rightToWork}
+                    </p>
+                  )}
                 </div>
-              )}
+
+                <div className="space-y-2">
+                  <div
+                    className={`transition-all rounded-xl border ${submitted && docErrors.niProof ? "border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]" : "border-transparent"}`}
+                  >
+                    <DocUploadRow
+                      label="Proof of National Insurance Number *"
+                      type={DocumentFileType.NATIONAL_INSURANCE_PROOF}
+                      portal={portal}
+                    >
+                      <div className="mt-2">
+                        <p className="text-gold-100/80 mb-1.5 font-medium">
+                          Accepted Documents:
+                        </p>
+                        <ul className="list-disc pl-4 space-y-1 text-gold-100/60">
+                          <li>HMRC Letter</li>
+                          <li>Payslip</li>
+                          <li>P60</li>
+                          <li>National Insurance Confirmation Letter</li>
+                        </ul>
+                      </div>
+                    </DocUploadRow>
+                  </div>
+                  {submitted && docErrors.niProof && (
+                    <p className="text-xs text-red-500 font-semibold px-1">
+                      {docErrors.niProof}
+                    </p>
+                  )}
+                </div>
+              </div>
             </div>
-          )}
-        </div>
-      </SectionCard>
+
+            {hasDrivingLicence && (
+              <div className="mt-6 p-5 rounded-xl border border-gold-300/20 bg-navy-900/50">
+                <h4 className="text-md font-semibold text-gold-100 mb-2">
+                  Driving Preferences
+                </h4>
+                <p className="text-xs text-gold-100/60 mb-4">
+                  You can select either option or both options.
+                </p>
+                <div className="space-y-3">
+                  {drivingOptions.map((opt) => (
+                    <div
+                      key={opt}
+                      className="flex items-start gap-3 cursor-pointer group"
+                      onClick={() => handlePreferenceToggle(opt)}
+                    >
+                      <div className="relative flex items-center justify-center mt-0.5">
+                        <div
+                          className={`w-5 h-5 border-2 rounded transition-all ${safePreferences.includes(opt) ? "bg-gold border-gold" : "border-gold-300/30"}`}
+                        />
+                        <Check
+                          className={`absolute w-3.5 h-3.5 text-navy-950 transition-opacity ${safePreferences.includes(opt) ? "opacity-100" : "opacity-0"}`}
+                        />
+                      </div>
+                      <span className="text-sm text-gold-100/80 group-hover:text-gold-50">
+                        {opt}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                {submitted && docErrors.drivingPreferences && (
+                  <p className="text-xs text-red-500 font-semibold mt-3">
+                    {docErrors.drivingPreferences}
+                  </p>
+                )}
+
+                {hasOwnVehiclePref && (
+                  <div className="mt-5 pt-5 border-t border-gold-300/10">
+                    <h5 className="text-sm font-medium text-gold-200 mb-2">
+                      Business Use Insurance Cover *
+                    </h5>
+                    <div
+                      className={`bg-navy-950/40 p-4 rounded-xl border space-y-2 transition-all ${submitted && docErrors.businessInsurance ? "border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]" : "border-gold-300/10"}`}
+                    >
+                      <DocUploadRow
+                        label="Upload Certificate"
+                        type={DocumentFileType.BUSINESS_INSURANCE}
+                        portal={portal}
+                      />
+                      {submitted && docErrors.businessInsurance && (
+                        <p className="text-xs text-red-500 font-semibold">
+                          {docErrors.businessInsurance}
+                        </p>
+                      )}
+                      <p className="text-xs text-red-400 mt-3 leading-relaxed bg-red-950/20 p-2 rounded border border-red-900/30">
+                        Social, Domestic & Pleasure insurance alone is not
+                        accepted where a carer intends to transport clients in
+                        their own vehicle.
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </SectionCard>
       </div>
 
       <div className="flex justify-between items-center pt-4 gap-4">

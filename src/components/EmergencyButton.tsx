@@ -1,10 +1,12 @@
-import React from 'react';
-import Link from 'next/link';
-import { ChevronRight } from 'lucide-react';
+import React from "react";
+import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 
 interface EmergencyButtonProps {
   href?: string;
-  onClick?: (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => void;
+  onClick?: (
+    e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>,
+  ) => void;
   className?: string;
 }
 
@@ -13,8 +15,9 @@ export default function EmergencyButton({
   onClick,
   className = "",
 }: EmergencyButtonProps) {
-  const commonClasses = `group relative flex items-center justify-between h-14 px-6 rounded-full border-2 border-[#F7D774] bg-gradient-to-r from-[#593905] to-[#825708] shrink-0 shadow-[0_0_25px_rgba(247,215,116,0.65)] transition-all duration-300 hover:shadow-[0_0_35px_rgba(247,215,116,0.85)] ${className || "w-full sm:w-max"
-    }`;
+  const commonClasses = `group relative flex items-center justify-between h-14 px-6 rounded-full border-2 border-[#F7D774] bg-gradient-to-r from-[#593905] to-[#825708] shrink-0 shadow-[0_0_25px_rgba(247,215,116,0.65)] transition-all duration-300 hover:shadow-[0_0_35px_rgba(247,215,116,0.85)] ${
+    className || "w-full sm:w-max"
+  }`;
 
   const content = (
     <>
@@ -39,7 +42,9 @@ export default function EmergencyButton({
         {/* Animated Icon with vibrant radial glow */}
         <div className="relative flex items-center justify-center w-12 h-12">
           <div className="absolute inset-0 scale-125 rounded-full bg-[radial-gradient(circle,_rgba(255,135,3,0.9)_0%,_rgba(255,135,3,0.5)_50%,_transparent_75%)] blur-sm"></div>
-          <span className="text-[28px] leading-none emergency-icon-animate relative z-10 drop-shadow-md">🚨</span>
+          <span className="text-[28px] leading-none emergency-icon-animate relative z-10 drop-shadow-md">
+            🚨
+          </span>
         </div>
 
         <div className="flex flex-col justify-center">
@@ -51,27 +56,23 @@ export default function EmergencyButton({
           </span>
         </div>
       </div>
-      <ChevronRight strokeWidth={3} className="text-[#F7D774] w-5 h-5 ml-4 transition-transform duration-300 group-hover:translate-x-1 z-10 drop-shadow-sm" />
+      <ChevronRight
+        strokeWidth={3}
+        className="text-[#F7D774] w-5 h-5 ml-4 transition-transform duration-300 group-hover:translate-x-1 z-10 drop-shadow-sm"
+      />
     </>
   );
 
   if (onClick) {
     return (
-      <button
-        type="button"
-        onClick={onClick}
-        className={commonClasses}
-      >
+      <button type="button" onClick={onClick} className={commonClasses}>
         {content}
       </button>
     );
   }
 
   return (
-    <Link
-      href={href}
-      className={commonClasses}
-    >
+    <Link href={href} className={commonClasses}>
       {content}
     </Link>
   );

@@ -50,7 +50,9 @@ export default function StepPaymentDetails({ portal, onNext, onBack }: Props) {
     }
   };
 
-  const handleAccountNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAccountNumberChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const val = e.target.value.replace(/\D/g, "").slice(0, 8);
     setAccountNumber(val);
     if (errors.accountNumber) {
@@ -70,7 +72,7 @@ export default function StepPaymentDetails({ portal, onNext, onBack }: Props) {
 
   const handleNiNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value.toUpperCase();
-    
+
     // Filter input character by character based on expected positions
     let filtered = "";
     for (const char of raw) {
@@ -82,9 +84,9 @@ export default function StepPaymentDetails({ portal, onNext, onBack }: Props) {
         if (/[A-Z]/.test(char)) filtered += char;
       }
     }
-    
+
     setNationalInsuranceNumber(filtered);
-    
+
     if (errors.nationalInsuranceNumber) {
       // Clear error immediately if it becomes valid
       const errorMsg = validateNiNumber(filtered);
@@ -117,7 +119,8 @@ export default function StepPaymentDetails({ portal, onNext, onBack }: Props) {
     const newErrors: Record<string, string> = {};
 
     if (!bankName?.trim()) newErrors.bankName = "Bank Name is required";
-    if (!accountName?.trim()) newErrors.accountName = "Name on the Account is required";
+    if (!accountName?.trim())
+      newErrors.accountName = "Name on the Account is required";
 
     if (!accountNumber?.trim()) {
       newErrors.accountNumber = "Account Number is required";
@@ -155,7 +158,8 @@ export default function StepPaymentDetails({ portal, onNext, onBack }: Props) {
           Supplemental Details
         </h3>
         <p className="text-sm text-gold-100/60 mb-4">
-          Please provide your bank details. These will be used for your future payments. All items marked with * are compulsory.
+          Please provide your bank details. These will be used for your future
+          payments. All items marked with * are compulsory.
         </p>
 
         <div className="space-y-6">
@@ -165,7 +169,8 @@ export default function StepPaymentDetails({ portal, onNext, onBack }: Props) {
               value={bankName}
               onChange={(e) => {
                 setBankName(e.target.value);
-                if (errors.bankName) setErrors((prev) => ({ ...prev, bankName: "" }));
+                if (errors.bankName)
+                  setErrors((prev) => ({ ...prev, bankName: "" }));
               }}
               placeholder="e.g. Barclays, HSBC"
               error={errors.bankName}
@@ -176,7 +181,8 @@ export default function StepPaymentDetails({ portal, onNext, onBack }: Props) {
               value={accountName}
               onChange={(e) => {
                 setAccountName(e.target.value);
-                if (errors.accountName) setErrors((prev) => ({ ...prev, accountName: "" }));
+                if (errors.accountName)
+                  setErrors((prev) => ({ ...prev, accountName: "" }));
               }}
               placeholder="e.g. John Smith"
               error={errors.accountName}
@@ -207,7 +213,9 @@ export default function StepPaymentDetails({ portal, onNext, onBack }: Props) {
                       <Info className="w-3.5 h-3.5 text-gold-200/50 hover:text-gold-200 cursor-help transition-colors" />
                       <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-64 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10 pointer-events-none">
                         <div className="bg-navy-950 text-gold-100 text-[11px] font-normal leading-relaxed p-3 rounded-lg border border-gold-300/10 shadow-xl relative whitespace-normal">
-                          This would be reviewed by admin first, and after it's accepted, if you want to change it, please contact an administrator.
+                          This would be reviewed by admin first, and after it's
+                          accepted, if you want to change it, please contact an
+                          administrator.
                           <div className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-transparent border-t-gold-300/10"></div>
                           <div className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-l-[5px] border-r-[5px] border-t-[5px] border-transparent border-t-navy-950 -mt-[1px]"></div>
                         </div>
@@ -225,7 +233,6 @@ export default function StepPaymentDetails({ portal, onNext, onBack }: Props) {
               />
             </div>
           </div>
-
         </div>
       </SectionCard>
 
@@ -238,7 +245,12 @@ export default function StepPaymentDetails({ portal, onNext, onBack }: Props) {
           <div />
         )}
 
-        <Button type="button" variant="primary" onClick={handleNext} disabled={portal.isProfileSaving}>
+        <Button
+          type="button"
+          variant="primary"
+          onClick={handleNext}
+          disabled={portal.isProfileSaving}
+        >
           {portal.isProfileSaving ? "Saving..." : "Save & Continue"}
         </Button>
       </div>

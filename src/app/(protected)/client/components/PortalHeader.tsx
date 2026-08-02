@@ -20,9 +20,7 @@ export default function PortalHeader({ user }: PortalHeaderProps) {
 
   const displayUser = profile?.user ?? user;
   const profilePhotoUrl =
-    profile?.profilePhotoUrl ||
-    user?.clientProfile?.profilePhotoUrl ||
-    "";
+    profile?.profilePhotoUrl || user?.clientProfile?.profilePhotoUrl || "";
 
   const getPhotoUrl = (url: string | null | undefined, updatedAt?: string) => {
     if (!url) return "";
@@ -76,11 +74,14 @@ export default function PortalHeader({ user }: PortalHeaderProps) {
 
   const WHATSAPP_NUMBER = "4402045781269";
   const WHATSAPP_MESSAGE = encodeURIComponent(
-    "Hello, I need emergency care support within the next 24 hours."
+    "Hello, I need emergency care support within the next 24 hours.",
   );
 
   const handleWhatsAppRedirect = () => {
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MESSAGE}`, "_blank");
+    window.open(
+      `https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MESSAGE}`,
+      "_blank",
+    );
   };
 
   const initials = `${displayUser?.firstName?.charAt(0) || "C"}${displayUser?.lastName?.charAt(0) || "P"}`;
@@ -143,11 +144,15 @@ export default function PortalHeader({ user }: PortalHeaderProps) {
 
         <div className="min-w-0 flex-1">
           <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.3em] text-gold-300 truncate">
-            {displayUser?.firstName ? `${displayUser.firstName} ${displayUser.lastName || ""}` : "Client Portal"}
+            {displayUser?.firstName
+              ? `${displayUser.firstName} ${displayUser.lastName || ""}`
+              : "Client Portal"}
           </p>
           {(displayUser?.publicProfileId || user?.publicProfileId) && (
             <div className="mt-1 flex items-center gap-1.5">
-              <span className="text-[10px] uppercase font-bold tracking-wider text-gold-300/70">Public Profile ID:</span>
+              <span className="text-[10px] uppercase font-bold tracking-wider text-gold-300/70">
+                Public Profile ID:
+              </span>
               <span className="text-xs font-mono font-bold text-gold-DEFAULT bg-gold/10 px-2.5 py-0.5 rounded border border-gold/20">
                 {displayUser?.publicProfileId || user?.publicProfileId}
               </span>

@@ -31,7 +31,13 @@ function SiteFooter() {
   return (
     <footer className="relative bg-navy-950">
       {/* Top gold accent line */}
-      <div className="h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(212,175,55,0.4) 30%, rgba(212,175,55,0.55) 50%, rgba(212,175,55,0.4) 70%, transparent)" }} />
+      <div
+        className="h-px"
+        style={{
+          background:
+            "linear-gradient(90deg, transparent, rgba(212,175,55,0.4) 30%, rgba(212,175,55,0.55) 50%, rgba(212,175,55,0.4) 70%, transparent)",
+        }}
+      />
 
       {/* ── Values Row ─────────────────────────────────────────────────── */}
       <div className="container-wrapper py-7 sm:py-8">
@@ -46,12 +52,16 @@ function SiteFooter() {
                     width={44}
                     height={44}
                     className="w-9 h-9 sm:w-10 sm:h-10 object-contain"
-                    style={{ filter: "drop-shadow(0 2px 8px rgba(212,175,55,0.12))" }}
+                    style={{
+                      filter: "drop-shadow(0 2px 8px rgba(212,175,55,0.12))",
+                    }}
                   />
                 ) : (
                   <HeartHandshake
                     className="w-9 h-9 sm:w-10 sm:h-10 text-gold-DEFAULT"
-                    style={{ filter: "drop-shadow(0 2px 8px rgba(212,175,55,0.12))" }}
+                    style={{
+                      filter: "drop-shadow(0 2px 8px rgba(212,175,55,0.12))",
+                    }}
                   />
                 )}
               </div>
@@ -69,13 +79,25 @@ function SiteFooter() {
       {/* ── Divider ────────────────────────────────────────────────────── */}
       <div className="container-wrapper">
         <div className="flex items-center gap-3">
-          <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(160,128,84,0.18))" }} />
+          <div
+            className="flex-1 h-px"
+            style={{
+              background:
+                "linear-gradient(90deg, transparent, rgba(160,128,84,0.18))",
+            }}
+          />
           <div className="flex items-center gap-1">
             <div className="w-[3px] h-[3px] rounded-full bg-gold-400/25" />
             <div className="w-1 h-1 rounded-full bg-gold-400/40" />
             <div className="w-[3px] h-[3px] rounded-full bg-gold-400/25" />
           </div>
-          <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, rgba(160,128,84,0.18), transparent)" }} />
+          <div
+            className="flex-1 h-px"
+            style={{
+              background:
+                "linear-gradient(90deg, rgba(160,128,84,0.18), transparent)",
+            }}
+          />
         </div>
       </div>
 
@@ -94,7 +116,8 @@ function SiteFooter() {
               Copyright
             </p>
             <p className="text-[10px] sm:text-[11px] text-gold-100/38 font-light leading-relaxed">
-              &copy; Grace &amp; Goodwill Ltd 2026.<br />
+              &copy; Grace &amp; Goodwill Ltd 2026.
+              <br />
               All rights reserved.
             </p>
           </div>
@@ -115,9 +138,12 @@ function SiteFooter() {
               Registered Office
             </p>
             <address className="text-[10px] sm:text-[11px] text-gold-100/38 font-light leading-[1.6] not-italic">
-              Hypoint,<br />
-              Saltmeadows Road,<br />
-              Gateshead, NE8 3AH,<br />
+              Hypoint,
+              <br />
+              Saltmeadows Road,
+              <br />
+              Gateshead, NE8 3AH,
+              <br />
               United Kingdom
             </address>
           </div>
@@ -140,13 +166,20 @@ function SiteFooter() {
         {/* Disclaimer */}
         <div className="mt-6 text-center max-w-3xl mx-auto px-4">
           <p className="text-[10px] sm:text-[11px] text-gold-100/30 font-light leading-relaxed">
-            Grace &amp; Goodwill is an introductory agency for independent live-in carers and does not provide regulated care services.
+            Grace &amp; Goodwill is an introductory agency for independent
+            live-in carers and does not provide regulated care services.
           </p>
         </div>
       </div>
 
       {/* Bottom accent */}
-      <div className="h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(212,175,55,0.12) 30%, rgba(212,175,55,0.2) 50%, rgba(212,175,55,0.12) 70%, transparent)" }} />
+      <div
+        className="h-px"
+        style={{
+          background:
+            "linear-gradient(90deg, transparent, rgba(212,175,55,0.12) 30%, rgba(212,175,55,0.2) 50%, rgba(212,175,55,0.12) 70%, transparent)",
+        }}
+      />
     </footer>
   );
 }

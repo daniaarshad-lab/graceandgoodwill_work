@@ -1,7 +1,16 @@
 import { useState } from "react";
 import SectionCard from "./shared/SectionCard";
 import Button from "@/components/Button";
-import { Check, Star, Shield, Award, ShieldCheck, X, Sparkles, Medal } from "lucide-react";
+import {
+  Check,
+  Star,
+  Shield,
+  Award,
+  ShieldCheck,
+  X,
+  Sparkles,
+  Medal,
+} from "lucide-react";
 import { carerService } from "@/services/carer/carer.service";
 import { showErrorToast } from "@/utils/toast";
 
@@ -34,7 +43,11 @@ export default function OnboardingMembership({
         const successUrl = `${window.location.origin}/carer?onboarding=true&step=10`;
         const cancelUrl = `${window.location.origin}/carer?onboarding=true&step=9`;
 
-        const session = await carerService.createCheckoutSession("GOLD_ELITE", successUrl, cancelUrl);
+        const session = await carerService.createCheckoutSession(
+          "GOLD_ELITE",
+          successUrl,
+          cancelUrl,
+        );
         if (session && session.url) {
           window.location.href = session.url;
         } else {
@@ -46,7 +59,10 @@ export default function OnboardingMembership({
         onNext();
       }
     } catch (err: any) {
-      showErrorToast("Error", err.message || "Failed to process membership selection");
+      showErrorToast(
+        "Error",
+        err.message || "Failed to process membership selection",
+      );
       setLoading(false);
     }
   };
@@ -57,7 +73,8 @@ export default function OnboardingMembership({
       price: "£0",
       period: "Forever",
       icon: Shield,
-      tagline: "Join the Grace & Goodwill network and apply for placements without any charges.",
+      tagline:
+        "Join the Grace & Goodwill network and apply for placements without any charges.",
       features: [
         "Placement alerts by email",
         "Basic carer profile",
@@ -73,14 +90,16 @@ export default function OnboardingMembership({
       buttonText: "Create Free Profile",
       badge: "RECOMMENDED ENTRY",
       isFree: true,
-      footerText: "No bank details are needed and you will never be charged for this membership.\nYour profile and compliance will be reviewed before approval."
+      footerText:
+        "No bank details are needed and you will never be charged for this membership.\nYour profile and compliance will be reviewed before approval.",
     },
     {
       name: "Gold Elite Membership",
       price: "£29.99",
       period: "month",
       icon: Star,
-      tagline: "Premium tier for active professionals seeking first access to placements.",
+      tagline:
+        "Premium tier for active professionals seeking first access to placements.",
       features: [
         "Priority placement alerts",
         "First access to premium placements",
@@ -107,7 +126,8 @@ export default function OnboardingMembership({
       icon: Award,
       tagline: "Requires Gold Elite Membership",
       isVerifiedProfessional: true,
-      description: "An earned mark of trust, professionalism and reliability reserved for carers who consistently demonstrate the values of Grace & Goodwill.",
+      description:
+        "An earned mark of trust, professionalism and reliability reserved for carers who consistently demonstrate the values of Grace & Goodwill.",
       eligibility: [
         "Active Gold Elite Membership",
         "Minimum 3 consecutive months of active Gold Elite Membership",
@@ -162,7 +182,8 @@ export default function OnboardingMembership({
             <div className="h-px w-8 bg-gradient-to-l from-transparent to-gold-400/50" />
           </div>
           <p className="text-xs text-gold-100/60 leading-relaxed font-light">
-            Select the professional path that fits your career goals. You can upgrade, downgrade, or cancel at any time.
+            Select the professional path that fits your career goals. You can
+            upgrade, downgrade, or cancel at any time.
           </p>
         </div>
 
@@ -217,8 +238,9 @@ export default function OnboardingMembership({
                   if (plan.isPremium) return; // Do not allow selecting Verified Professional during onboarding
                   setSelectedPlan(plan.name);
                 }}
-                className={`relative flex flex-col justify-between rounded-3xl p-6 sm:p-8 border transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group ${plan.isPremium ? "cursor-default" : "cursor-pointer"
-                  } ${getCardStyles()}`}
+                className={`relative flex flex-col justify-between rounded-3xl p-6 sm:p-8 border transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group ${
+                  plan.isPremium ? "cursor-default" : "cursor-pointer"
+                } ${getCardStyles()}`}
                 style={{ background: getCardBg() }}
               >
                 {/* Radial Glow on Gold / Premium Cards */}
@@ -226,7 +248,8 @@ export default function OnboardingMembership({
                   <div
                     className="absolute inset-0 rounded-3xl pointer-events-none opacity-40 transition-opacity duration-700 group-hover:opacity-60"
                     style={{
-                      background: "radial-gradient(circle at top right, rgba(212,175,55,0.08) 0%, transparent 60%)",
+                      background:
+                        "radial-gradient(circle at top right, rgba(212,175,55,0.08) 0%, transparent 60%)",
                     }}
                   />
                 )}
@@ -235,12 +258,14 @@ export default function OnboardingMembership({
                 {plan.badge && (
                   <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20 whitespace-nowrap">
                     <span
-                      className={`inline-flex items-center rounded-full px-5 py-1 text-[10px] font-bold uppercase tracking-widest shadow-md text-navy-950 border ${plan.isPremium
-                        ? "border-gold-300/40 shadow-[0_0_15px_rgba(212,175,55,0.25)] text-navy-950"
-                        : "border-gold-300/30"
-                        }`}
+                      className={`inline-flex items-center rounded-full px-5 py-1 text-[10px] font-bold uppercase tracking-widest shadow-md text-navy-950 border ${
+                        plan.isPremium
+                          ? "border-gold-300/40 shadow-[0_0_15px_rgba(212,175,55,0.25)] text-navy-950"
+                          : "border-gold-300/30"
+                      }`}
                       style={{
-                        background: "linear-gradient(135deg, #e8ba7a 0%, #d4af37 100%)",
+                        background:
+                          "linear-gradient(135deg, #e8ba7a 0%, #d4af37 100%)",
                       }}
                     >
                       {plan.badge}
@@ -308,7 +333,8 @@ export default function OnboardingMembership({
                           Notice:
                         </span>
                         <span className="text-[11px] text-gold-100/80 font-light block leading-snug">
-                          Available to eligible Gold Elite members after meeting Grace & Goodwill's verification requirements.
+                          Available to eligible Gold Elite members after meeting
+                          Grace & Goodwill's verification requirements.
                         </span>
                       </div>
                     )}
@@ -319,18 +345,32 @@ export default function OnboardingMembership({
                         {plan.isFree ? (
                           <>
                             {plan.highlights?.map((highlight) => (
-                              <li key={highlight} className="flex items-start gap-3.5 text-xs text-gold-100/85 leading-relaxed font-light">
+                              <li
+                                key={highlight}
+                                className="flex items-start gap-3.5 text-xs text-gold-100/85 leading-relaxed font-light"
+                              >
                                 <span className="mt-0.5 flex h-4.5 w-4.5 flex-shrink-0 items-center justify-center rounded-full bg-gold-DEFAULT/15">
-                                  <Check className="h-3 w-3 text-gold-DEFAULT" strokeWidth={2.5} />
+                                  <Check
+                                    className="h-3 w-3 text-gold-DEFAULT"
+                                    strokeWidth={2.5}
+                                  />
                                 </span>
-                                <span className="font-semibold text-gold-200">{highlight}</span>
+                                <span className="font-semibold text-gold-200">
+                                  {highlight}
+                                </span>
                               </li>
                             ))}
                             <div className="h-px bg-gold-300/5 my-2" />
                             {plan.features?.map((feature) => (
-                              <li key={feature} className="flex items-start gap-3.5 text-xs text-gold-100/85 leading-relaxed font-light">
+                              <li
+                                key={feature}
+                                className="flex items-start gap-3.5 text-xs text-gold-100/85 leading-relaxed font-light"
+                              >
                                 <span className="mt-0.5 flex h-4.5 w-4.5 flex-shrink-0 items-center justify-center rounded-full bg-gold-DEFAULT/10">
-                                  <Check className="h-2.5 w-2.5 text-gold-DEFAULT/70" strokeWidth={2.5} />
+                                  <Check
+                                    className="h-2.5 w-2.5 text-gold-DEFAULT/70"
+                                    strokeWidth={2.5}
+                                  />
                                 </span>
                                 <span>{feature}</span>
                               </li>
@@ -342,9 +382,15 @@ export default function OnboardingMembership({
                               Requires active history and verification.
                             </p>
                             {plan.benefits?.map((feature) => (
-                              <li key={feature} className="flex items-start gap-3.5 text-xs text-gold-100/85 leading-relaxed font-light">
+                              <li
+                                key={feature}
+                                className="flex items-start gap-3.5 text-xs text-gold-100/85 leading-relaxed font-light"
+                              >
                                 <span className="mt-0.5 flex h-4.5 w-4.5 flex-shrink-0 items-center justify-center rounded-full bg-gold-DEFAULT/15">
-                                  <Check className="h-3 w-3 text-gold-DEFAULT" strokeWidth={2.5} />
+                                  <Check
+                                    className="h-3 w-3 text-gold-DEFAULT"
+                                    strokeWidth={2.5}
+                                  />
                                 </span>
                                 <span>{feature}</span>
                               </li>
@@ -352,9 +398,15 @@ export default function OnboardingMembership({
                           </div>
                         ) : (
                           plan.features?.map((feature) => (
-                            <li key={feature} className="flex items-start gap-3.5 text-xs text-gold-100/85 leading-relaxed font-light">
+                            <li
+                              key={feature}
+                              className="flex items-start gap-3.5 text-xs text-gold-100/85 leading-relaxed font-light"
+                            >
                               <span className="mt-0.5 flex h-4.5 w-4.5 flex-shrink-0 items-center justify-center rounded-full bg-gold-DEFAULT/15">
-                                <Check className="h-3 w-3 text-gold-DEFAULT" strokeWidth={2.5} />
+                                <Check
+                                  className="h-3 w-3 text-gold-DEFAULT"
+                                  strokeWidth={2.5}
+                                />
                               </span>
                               <span>{feature}</span>
                             </li>
@@ -468,7 +520,13 @@ export default function OnboardingMembership({
         <Button
           type="button"
           variant="primary"
-          text={loading ? (selectedPlan === "Gold Elite Membership" ? "Redirecting to Checkout..." : "Saving Selection...") : "Continue to Declaration"}
+          text={
+            loading
+              ? selectedPlan === "Gold Elite Membership"
+                ? "Redirecting to Checkout..."
+                : "Saving Selection..."
+              : "Continue to Declaration"
+          }
           onClick={handleContinue}
           disabled={isSubmitting || loading || !selectedPlan}
         />
@@ -497,7 +555,8 @@ export default function OnboardingMembership({
                   Verified Professional™ Details
                 </h4>
                 <p className="text-xs text-gold-100/60 leading-relaxed font-light max-w-md mx-auto">
-                  Review requirements, benefits, and instructions on how to attain this earned trust badge status.
+                  Review requirements, benefits, and instructions on how to
+                  attain this earned trust badge status.
                 </p>
               </div>
 
@@ -509,24 +568,50 @@ export default function OnboardingMembership({
                   </h5>
                   <ol className="space-y-2.5 text-xs text-gold-100/80 font-light">
                     <li className="flex items-start gap-2.5 leading-relaxed">
-                      <span className="flex items-center justify-center w-5 h-5 rounded-full bg-gold-200 text-navy-950 font-bold shrink-0 text-[10px]">1</span>
-                      <span>Join <strong>Gold Elite Membership</strong> during checkout or from your dashboard.</span>
+                      <span className="flex items-center justify-center w-5 h-5 rounded-full bg-gold-200 text-navy-950 font-bold shrink-0 text-[10px]">
+                        1
+                      </span>
+                      <span>
+                        Join <strong>Gold Elite Membership</strong> during
+                        checkout or from your dashboard.
+                      </span>
                     </li>
                     <li className="flex items-start gap-2.5 leading-relaxed">
-                      <span className="flex items-center justify-center w-5 h-5 rounded-full bg-gold-200 text-navy-950 font-bold shrink-0 text-[10px]">2</span>
-                      <span>Maintain an active membership status for a minimum of <strong>3 consecutive months</strong>.</span>
+                      <span className="flex items-center justify-center w-5 h-5 rounded-full bg-gold-200 text-navy-950 font-bold shrink-0 text-[10px]">
+                        2
+                      </span>
+                      <span>
+                        Maintain an active membership status for a minimum of{" "}
+                        <strong>3 consecutive months</strong>.
+                      </span>
                     </li>
                     <li className="flex items-start gap-2.5 leading-relaxed">
-                      <span className="flex items-center justify-center w-5 h-5 rounded-full bg-gold-200 text-navy-950 font-bold shrink-0 text-[10px]">3</span>
-                      <span>Complete full <strong>compliance verification</strong> (DBS, references, Right to Work, training).</span>
+                      <span className="flex items-center justify-center w-5 h-5 rounded-full bg-gold-200 text-navy-950 font-bold shrink-0 text-[10px]">
+                        3
+                      </span>
+                      <span>
+                        Complete full <strong>compliance verification</strong>{" "}
+                        (DBS, references, Right to Work, training).
+                      </span>
                     </li>
                     <li className="flex items-start gap-2.5 leading-relaxed">
-                      <span className="flex items-center justify-center w-5 h-5 rounded-full bg-gold-200 text-navy-950 font-bold shrink-0 text-[10px]">4</span>
-                      <span>Complete a minimum of <strong>3 successful placements</strong> through Grace & Goodwill.</span>
+                      <span className="flex items-center justify-center w-5 h-5 rounded-full bg-gold-200 text-navy-950 font-bold shrink-0 text-[10px]">
+                        4
+                      </span>
+                      <span>
+                        Complete a minimum of{" "}
+                        <strong>3 successful placements</strong> through Grace &
+                        Goodwill.
+                      </span>
                     </li>
                     <li className="flex items-start gap-2.5 leading-relaxed">
-                      <span className="flex items-center justify-center w-5 h-5 rounded-full bg-gold-200 text-navy-950 font-bold shrink-0 text-[10px]">5</span>
-                      <span>Pass a virtual interview and achieve your **Verified Professional™ status**.</span>
+                      <span className="flex items-center justify-center w-5 h-5 rounded-full bg-gold-200 text-navy-950 font-bold shrink-0 text-[10px]">
+                        5
+                      </span>
+                      <span>
+                        Pass a virtual interview and achieve your **Verified
+                        Professional™ status**.
+                      </span>
                     </li>
                   </ol>
                 </div>
@@ -540,9 +625,15 @@ export default function OnboardingMembership({
                     </h5>
                     <ul className="space-y-2">
                       {plans[2].eligibility?.map((item) => (
-                        <li key={item} className="flex items-start gap-2 text-[11px] text-gold-100/80 leading-relaxed font-light">
+                        <li
+                          key={item}
+                          className="flex items-start gap-2 text-[11px] text-gold-100/80 leading-relaxed font-light"
+                        >
                           <span className="mt-0.5 flex h-3.5 w-3.5 flex-shrink-0 items-center justify-center rounded-full bg-gold-DEFAULT/15">
-                            <Check className="h-2 w-2 text-gold-DEFAULT" strokeWidth={3} />
+                            <Check
+                              className="h-2 w-2 text-gold-DEFAULT"
+                              strokeWidth={3}
+                            />
                           </span>
                           <span>{item}</span>
                         </li>
@@ -557,9 +648,15 @@ export default function OnboardingMembership({
                     </h5>
                     <ul className="space-y-2">
                       {plans[2].benefits?.map((item) => (
-                        <li key={item} className="flex items-start gap-2 text-[11px] text-gold-100/90 leading-relaxed font-light">
+                        <li
+                          key={item}
+                          className="flex items-start gap-2 text-[11px] text-gold-100/90 leading-relaxed font-light"
+                        >
                           <span className="mt-0.5 flex h-3.5 w-3.5 flex-shrink-0 items-center justify-center rounded-full bg-gold-DEFAULT/15">
-                            <Check className="h-2 w-2 text-gold-DEFAULT" strokeWidth={3} />
+                            <Check
+                              className="h-2 w-2 text-gold-DEFAULT"
+                              strokeWidth={3}
+                            />
                           </span>
                           <span>{item}</span>
                         </li>

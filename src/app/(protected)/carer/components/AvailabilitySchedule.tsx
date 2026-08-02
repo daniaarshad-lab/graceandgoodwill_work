@@ -42,7 +42,9 @@ export default function AvailabilitySchedule({
 
   // Local working copy
   const [ranges, setRanges] = useState<LocalRange[]>([]);
-  const [activeEditRangeId, setActiveEditRangeId] = useState<string | null>(null);
+  const [activeEditRangeId, setActiveEditRangeId] = useState<string | null>(
+    null,
+  );
   const [isSaving, setIsSaving] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
   const [rangeStart, setRangeStart] = useState<string | null>(null);
@@ -65,7 +67,7 @@ export default function AvailabilitySchedule({
           start: r.start,
           end: r.end,
           colorIndex: i,
-        }))
+        })),
       );
       setIsHydrated(true);
     }
@@ -106,14 +108,14 @@ export default function AvailabilitySchedule({
     (start: string, end: string) => {
       setRanges((prev) =>
         prev.map((r) =>
-          r.id === activeEditRangeId ? { ...r, start, end } : r
-        )
+          r.id === activeEditRangeId ? { ...r, start, end } : r,
+        ),
       );
       setActiveEditRangeId(null);
       setRangeStart(null);
       setHoverDate(null);
     },
-    [activeEditRangeId]
+    [activeEditRangeId],
   );
 
   const handleEditRange = useCallback((id: string) => {
@@ -122,12 +124,15 @@ export default function AvailabilitySchedule({
     setHoverDate(null);
   }, []);
 
-  const handleRemoveRange = useCallback((id: string) => {
-    setRanges((prev) => prev.filter((r) => r.id !== id));
-    if (activeEditRangeId === id) {
-      setActiveEditRangeId(null);
-    }
-  }, [activeEditRangeId]);
+  const handleRemoveRange = useCallback(
+    (id: string) => {
+      setRanges((prev) => prev.filter((r) => r.id !== id));
+      if (activeEditRangeId === id) {
+        setActiveEditRangeId(null);
+      }
+    },
+    [activeEditRangeId],
+  );
 
   const handleQuickAction = useCallback(
     (action: "next2" | "next7" | "next30" | "clear") => {
@@ -141,21 +146,42 @@ export default function AvailabilitySchedule({
         case "next2": {
           const end = new Date(today);
           end.setDate(end.getDate() + 1);
-          setRanges([{ id: generateId(), start: todayStr, end: toISODateString(end), colorIndex: 0 }]);
+          setRanges([
+            {
+              id: generateId(),
+              start: todayStr,
+              end: toISODateString(end),
+              colorIndex: 0,
+            },
+          ]);
           break;
         }
 
         case "next7": {
           const end = new Date(today);
           end.setDate(end.getDate() + 6);
-          setRanges([{ id: generateId(), start: todayStr, end: toISODateString(end), colorIndex: 0 }]);
+          setRanges([
+            {
+              id: generateId(),
+              start: todayStr,
+              end: toISODateString(end),
+              colorIndex: 0,
+            },
+          ]);
           break;
         }
 
         case "next30": {
           const end = new Date(today);
           end.setDate(end.getDate() + 29);
-          setRanges([{ id: generateId(), start: todayStr, end: toISODateString(end), colorIndex: 0 }]);
+          setRanges([
+            {
+              id: generateId(),
+              start: todayStr,
+              end: toISODateString(end),
+              colorIndex: 0,
+            },
+          ]);
           break;
         }
 
@@ -223,7 +249,9 @@ export default function AvailabilitySchedule({
                 Please provide a minimum of 2 consecutive available days.
               </p>
               <p className="text-xs text-gold-100/60 leading-relaxed font-light">
-                We recommend adding as much future availability as possible, ideally several months in advance, so families can plan care well ahead of time and view your future availability.
+                We recommend adding as much future availability as possible,
+                ideally several months in advance, so families can plan care
+                well ahead of time and view your future availability.
               </p>
             </div>
           </div>

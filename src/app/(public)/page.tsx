@@ -1,4 +1,11 @@
-import { Newspaper, ExternalLink, MessageCircle, MessageCircleMore, HandHeart, ChevronRight } from "lucide-react";
+import {
+  Newspaper,
+  ExternalLink,
+  MessageCircle,
+  MessageCircleMore,
+  HandHeart,
+  ChevronRight,
+} from "lucide-react";
 import happySeniorCouple from "@/assets/open/happy_senior_couple.png";
 import bbcImage2 from "@/assets/open/bbc-image2.jpg";
 import bbcImage3 from "@/assets/open/bbc-image3.jpg";
@@ -14,7 +21,6 @@ export default function HomePage() {
   return (
     <main className="overflow-x-hidden min-h-[calc(100vh-80px)] bg-navy-950 pt-6 md:pt-10 lg:pt-20 pb-16 md:pb-24 text-gold-100">
       <section className="container-wrapper relative flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between pb-16">
-
         {/* As Seen In Media Badge (Top Right) */}
         <div className="relative lg:absolute lg:-top-8 lg:right-[calc(-50vw+50%+2rem)] 2xl:-top-16 2xl:right-[calc(-50vw+50%+4rem)] z-30 inline-flex self-start lg:self-auto items-center gap-3 bg-navy-900 border border-gold-muted/30 px-4 py-2 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.3)] backdrop-blur-md hover:border-gold-400/50 hover:shadow-[0_0_15px_rgba(247,215,116,0.15)] transition-all cursor-default">
           <span className="text-[10px] sm:text-xs font-semibold text-gold-200 uppercase tracking-widest inline-block">
@@ -23,9 +29,15 @@ export default function HomePage() {
           <div className="flex items-center gap-1.5">
             {/* BBC Logo Blocks */}
             <div className="flex gap-0.5">
-              <span className="bg-white text-black text-[10px] sm:text-[11px] font-bold px-1 py-0.5 rounded-sm leading-none">B</span>
-              <span className="bg-white text-black text-[10px] sm:text-[11px] font-bold px-1 py-0.5 rounded-sm leading-none">B</span>
-              <span className="bg-white text-black text-[10px] sm:text-[11px] font-bold px-1 py-0.5 rounded-sm leading-none">C</span>
+              <span className="bg-white text-black text-[10px] sm:text-[11px] font-bold px-1 py-0.5 rounded-sm leading-none">
+                B
+              </span>
+              <span className="bg-white text-black text-[10px] sm:text-[11px] font-bold px-1 py-0.5 rounded-sm leading-none">
+                B
+              </span>
+              <span className="bg-white text-black text-[10px] sm:text-[11px] font-bold px-1 py-0.5 rounded-sm leading-none">
+                C
+              </span>
             </div>
             <span className="text-white font-bold tracking-[0.2em] text-xs sm:text-sm">
               RADIO
@@ -34,12 +46,11 @@ export default function HomePage() {
         </div>
 
         <div className="max-w-2xl lg:flex-1 xl:flex-none space-y-6 -mt-4 lg:mt-0">
-
-
           <h1 className="font-serif font-medium leading-[1.2] tracking-tight drop-shadow-md">
             <span className="text-3xl sm:text-4xl lg:text-[2.5rem] text-white">
               Live-in Care Introduction & Matching
-            </span><br />
+            </span>
+            <br />
             <span className="font-sans text-lg sm:text-xl lg:text-2xl font-semibold tracking-wide text-[rgb(245,212,160)] inline-block mt-2">
               Across The UK
             </span>
@@ -47,16 +58,18 @@ export default function HomePage() {
 
           <div className="max-w-xl text-gold-100/80 space-y-4 text-lg sm:text-xl leading-relaxed font-light">
             <p>
-              Helping families across the UK find trusted independent live-in carers with
-              compassion, continuity, and genuine human support.
+              Helping families across the UK find trusted independent live-in
+              carers with compassion, continuity, and genuine human support.
             </p>
             <p className="text-base sm:text-lg opacity-80">
-              At Grace & Goodwill, we introduce families to independent, self-employed carers 
-              who can support individuals safely and dependably at home.
+              At Grace & Goodwill, we introduce families to independent,
+              self-employed carers who can support individuals safely and
+              dependably at home.
             </p>
             <p className="text-base sm:text-lg opacity-80">
-              From everyday support to urgent carer requirements, we facilitate introductions 
-              to guide families with integrity, reassurance, and a truly personal approach.
+              From everyday support to urgent carer requirements, we facilitate
+              introductions to guide families with integrity, reassurance, and a
+              truly personal approach.
             </p>
           </div>
 
@@ -65,25 +78,31 @@ export default function HomePage() {
           </p>
 
           <div className="flex flex-col xl:flex-row items-start xl:items-center gap-4 flex-wrap xl:flex-nowrap w-full max-w-[100%] overflow-visible">
-            <Link 
-              href="/contact" 
+            <Link
+              href="/contact"
               prefetch={false}
               className="group relative flex items-center justify-between h-14 px-4 sm:px-5 rounded-2xl bg-[#5C441D] shrink-0 shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 hover:shadow-[0_0_25px_rgba(212,175,55,0.25)] hover:bg-[#6E5223] w-full xl:w-max"
             >
               <div className="flex items-center gap-2 sm:gap-3 text-left z-10">
                 <div className="relative flex items-center justify-center w-10 h-10">
                   <div className="absolute inset-0 scale-125 rounded-full bg-[radial-gradient(circle,_rgba(247,215,116,0.15)_0%,_transparent_70%)] blur-sm"></div>
-                  <HandHeart className="w-8 h-8 text-[#F7D774] relative z-10 drop-shadow-sm" strokeWidth={1.5} />
+                  <HandHeart
+                    className="w-8 h-8 text-[#F7D774] relative z-10 drop-shadow-sm"
+                    strokeWidth={1.5}
+                  />
                 </div>
                 <span className="text-[#FDF2D5] font-semibold text-[14px] leading-snug tracking-wide drop-shadow-sm">
                   Find a Live-in Carer
                 </span>
               </div>
-              <ChevronRight strokeWidth={3} className="text-[#FDF2D5]/70 w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1 z-10" />
+              <ChevronRight
+                strokeWidth={3}
+                className="text-[#FDF2D5]/70 w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1 z-10"
+              />
             </Link>
-            
+
             <EmergencyButton className="w-full xl:w-max" />
-            
+
             <a
               href="https://wa.me/4402045781269?text=Hello%2C%20I'd%20like%20to%20enquire%20about%20live%20in%20care%20services%20from%20Grace%20%26%20Goodwill."
               target="_blank"
@@ -93,7 +112,11 @@ export default function HomePage() {
               <div className="flex items-center gap-2 sm:gap-3 text-left z-10">
                 <div className="relative flex items-center justify-center w-10 h-10">
                   <div className="absolute inset-0 scale-125 rounded-full bg-[radial-gradient(circle,_rgba(0,198,83,0.15)_0%,_transparent_70%)] blur-sm"></div>
-                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 text-[#00C653] relative z-10 drop-shadow-sm">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    className="w-6 h-6 text-[#00C653] relative z-10 drop-shadow-sm"
+                  >
                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.888-.788-1.487-1.761-1.66-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
                   </svg>
                 </div>
@@ -101,7 +124,10 @@ export default function HomePage() {
                   Chat To Our Team
                 </span>
               </div>
-              <ChevronRight strokeWidth={3} className="text-[#00C653]/70 w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1 z-10" />
+              <ChevronRight
+                strokeWidth={3}
+                className="text-[#00C653]/70 w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1 z-10"
+              />
             </a>
           </div>
         </div>
@@ -190,8 +216,8 @@ export default function HomePage() {
                 </h3>
                 <p className="text-xs text-gold-100/80 leading-relaxed drop-shadow-md">
                   Read how Grace & Goodwill expands its impact by drawing on
-                  personal, lived experiences to introduce families to high-quality,
-                  compassionate independent live-in carers.
+                  personal, lived experiences to introduce families to
+                  high-quality, compassionate independent live-in carers.
                 </p>
               </div>
             </div>

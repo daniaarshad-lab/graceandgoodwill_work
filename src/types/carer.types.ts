@@ -44,7 +44,7 @@ export interface CarerProfile {
   emergencyContactName?: string | null;
   emergencyContactNumber?: string | null;
   emergencyContactRelation?: string | null;
-  
+
   bankName?: string | null;
   accountName?: string | null;
   accountNumber?: string | null;
@@ -89,7 +89,7 @@ export interface UpdateCarerProfilePayload {
   emergencyContactName?: string;
   emergencyContactNumber?: string;
   emergencyContactRelation?: string;
-  
+
   bankName?: string;
   accountName?: string;
   accountNumber?: string;
@@ -152,7 +152,15 @@ export interface CarerPlacement {
   carerProfileId: string;
   clientProfileId: string;
   careRequestId: string | null;
-  status: "ACTIVE" | "COMPLETED" | "TERMINATED" | "CANCELLED" | "PENDING" | "MATCHING" | "APPROVED" | "ONGOING";
+  status:
+    | "ACTIVE"
+    | "COMPLETED"
+    | "TERMINATED"
+    | "CANCELLED"
+    | "PENDING"
+    | "MATCHING"
+    | "APPROVED"
+    | "ONGOING";
   startDate: string;
   endDate: string | null;
   createdAt: string;

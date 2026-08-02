@@ -15,29 +15,55 @@ interface Props {
 export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
   const [additionalRefsCount, setAdditionalRefsCount] = useState(3);
   const {
-    employmentHistory, setEmploymentHistory,
-    dbsUpdateServiceNumber, setDbsUpdateServiceNumber,
-    complianceDocs, handleUpdateDoc, selectedFiles
+    employmentHistory,
+    setEmploymentHistory,
+    dbsUpdateServiceNumber,
+    setDbsUpdateServiceNumber,
+    complianceDocs,
+    handleUpdateDoc,
+    selectedFiles,
   } = portal;
 
   const [submitted, setSubmitted] = useState(false);
 
   const requiredDocs = [
-    { type: DocumentFileType.ENHANCED_DBS_CERTIFICATE, label: "Enhanced DBS Certificate *" },
-    { type: DocumentFileType.PROFESSIONAL_REFERENCE_1, label: "Professional Reference 1 *" },
-    { type: DocumentFileType.PROFESSIONAL_REFERENCE_2, label: "Professional Reference 2 *" },
+    {
+      type: DocumentFileType.ENHANCED_DBS_CERTIFICATE,
+      label: "Enhanced DBS Certificate *",
+    },
+    {
+      type: DocumentFileType.PROFESSIONAL_REFERENCE_1,
+      label: "Professional Reference 1 *",
+    },
+    {
+      type: DocumentFileType.PROFESSIONAL_REFERENCE_2,
+      label: "Professional Reference 2 *",
+    },
   ];
 
-  const missingDocs = requiredDocs.filter(docItem => {
-    const doc = complianceDocs.find((d: ComplianceDoc) => d.type === docItem.type);
+  const missingDocs = requiredDocs.filter((docItem) => {
+    const doc = complianceDocs.find(
+      (d: ComplianceDoc) => d.type === docItem.type,
+    );
     const isStaged = !!selectedFiles[docItem.type.toLowerCase()];
     return !doc && !isStaged;
   });
 
   const errors = {
-    missingDocs: missingDocs.length > 0 ? `Please upload: ${missingDocs.map(d => d.label.replace(" *", "")).join(", ")}` : "",
-    employmentHistory: (!employmentHistory || employmentHistory.trim().length < 20) ? "Please provide your employment history details (minimum 20 characters)." : "",
-    dbsNumber: dbsUpdateServiceNumber && dbsUpdateServiceNumber.length > 0 && dbsUpdateServiceNumber.length < 12 ? "DBS Update Service Number must be exactly 12 digits." : ""
+    missingDocs:
+      missingDocs.length > 0
+        ? `Please upload: ${missingDocs.map((d) => d.label.replace(" *", "")).join(", ")}`
+        : "",
+    employmentHistory:
+      !employmentHistory || employmentHistory.trim().length < 20
+        ? "Please provide your employment history details (minimum 20 characters)."
+        : "",
+    dbsNumber:
+      dbsUpdateServiceNumber &&
+      dbsUpdateServiceNumber.length > 0 &&
+      dbsUpdateServiceNumber.length < 12
+        ? "DBS Update Service Number must be exactly 12 digits."
+        : "",
   };
 
   const hasErrors = Object.values(errors).some(Boolean);
@@ -65,7 +91,9 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
 
         <div className="bg-red-950/20 p-3 rounded-lg border border-red-900/30">
           <p className="text-xs text-red-400 leading-relaxed font-medium">
-            * Important: Please ensure all uploaded documents (like your DBS certificate) are in-date and have not expired. Out-of-date documents will not be accepted.
+            * Important: Please ensure all uploaded documents (like your DBS
+            certificate) are in-date and have not expired. Out-of-date documents
+            will not be accepted.
           </p>
         </div>
 
@@ -81,20 +109,30 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
             description="Please upload a clear, full-page scan or photo of your official certificate."
             type={DocumentFileType.ENHANCED_DBS_CERTIFICATE}
             portal={portal}
-            isMissing={submitted && (() => {
-              const doc = complianceDocs.find((d: ComplianceDoc) => d.type === DocumentFileType.ENHANCED_DBS_CERTIFICATE);
-              const isStaged = !!selectedFiles[DocumentFileType.ENHANCED_DBS_CERTIFICATE.toLowerCase()];
-              return !doc && !isStaged;
-            })()}
+            isMissing={
+              submitted &&
+              (() => {
+                const doc = complianceDocs.find(
+                  (d: ComplianceDoc) =>
+                    d.type === DocumentFileType.ENHANCED_DBS_CERTIFICATE,
+                );
+                const isStaged =
+                  !!selectedFiles[
+                    DocumentFileType.ENHANCED_DBS_CERTIFICATE.toLowerCase()
+                  ];
+                return !doc && !isStaged;
+              })()
+            }
           />
-          
+
           <div className="p-4 rounded-xl border border-gold-300/10 bg-navy-950/40 flex flex-col justify-between transition-all">
             <div>
               <label className="text-sm font-medium text-gold-50 block mb-1">
                 DBS Update Service Number (if subscribed)
               </label>
               <p className="text-[11px] text-gold-100/50 mb-3 leading-snug">
-                Ensure this number corresponds to your uploaded Enhanced DBS Certificate.
+                Ensure this number corresponds to your uploaded Enhanced DBS
+                Certificate.
               </p>
             </div>
             <div>
@@ -107,10 +145,12 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
                 }}
                 placeholder="Enter DBS Update Service Number"
                 maxLength={12}
-                className={`w-full rounded-lg border bg-navy-950 px-3 py-2 text-gold-100 outline-none focus:ring-1 focus:ring-gold-DEFAULT transition duration-300 text-sm ${submitted && errors.dbsNumber ? 'border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]' : 'border-gold-300/20'}`}
+                className={`w-full rounded-lg border bg-navy-950 px-3 py-2 text-gold-100 outline-none focus:ring-1 focus:ring-gold-DEFAULT transition duration-300 text-sm ${submitted && errors.dbsNumber ? "border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]" : "border-gold-300/20"}`}
               />
               {submitted && errors.dbsNumber && (
-                <p className="text-[10px] text-red-500 font-semibold mt-1.5">{errors.dbsNumber}</p>
+                <p className="text-[10px] text-red-500 font-semibold mt-1.5">
+                  {errors.dbsNumber}
+                </p>
               )}
             </div>
           </div>
@@ -121,26 +161,46 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
             label="Professional Reference 1 *"
             type={DocumentFileType.PROFESSIONAL_REFERENCE_1}
             portal={portal}
-            isMissing={submitted && (() => {
-              const doc = complianceDocs.find((d: ComplianceDoc) => d.type === DocumentFileType.PROFESSIONAL_REFERENCE_1);
-              const isStaged = !!selectedFiles[DocumentFileType.PROFESSIONAL_REFERENCE_1.toLowerCase()];
-              return !doc && !isStaged;
-            })()}
+            isMissing={
+              submitted &&
+              (() => {
+                const doc = complianceDocs.find(
+                  (d: ComplianceDoc) =>
+                    d.type === DocumentFileType.PROFESSIONAL_REFERENCE_1,
+                );
+                const isStaged =
+                  !!selectedFiles[
+                    DocumentFileType.PROFESSIONAL_REFERENCE_1.toLowerCase()
+                  ];
+                return !doc && !isStaged;
+              })()
+            }
           />
           <DocUploadRow
             label="Professional Reference 2 *"
             type={DocumentFileType.PROFESSIONAL_REFERENCE_2}
             portal={portal}
-            isMissing={submitted && (() => {
-              const doc = complianceDocs.find((d: ComplianceDoc) => d.type === DocumentFileType.PROFESSIONAL_REFERENCE_2);
-              const isStaged = !!selectedFiles[DocumentFileType.PROFESSIONAL_REFERENCE_2.toLowerCase()];
-              return !doc && !isStaged;
-            })()}
+            isMissing={
+              submitted &&
+              (() => {
+                const doc = complianceDocs.find(
+                  (d: ComplianceDoc) =>
+                    d.type === DocumentFileType.PROFESSIONAL_REFERENCE_2,
+                );
+                const isStaged =
+                  !!selectedFiles[
+                    DocumentFileType.PROFESSIONAL_REFERENCE_2.toLowerCase()
+                  ];
+                return !doc && !isStaged;
+              })()
+            }
           />
         </div>
 
         <div className="pt-6 pb-2">
-          <h4 className="text-lg font-semibold text-gold-200 mb-4">Additional References (Optional)</h4>
+          <h4 className="text-lg font-semibold text-gold-200 mb-4">
+            Additional References (Optional)
+          </h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {Array.from({ length: additionalRefsCount }).map((_, index) => {
               const stageKey = `${DocumentFileType.ADDITIONAL_REFERENCE}_${index + 1}`;
@@ -158,7 +218,7 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
           </div>
           <button
             type="button"
-            onClick={() => setAdditionalRefsCount(prev => prev + 1)}
+            onClick={() => setAdditionalRefsCount((prev) => prev + 1)}
             className="mt-4 text-sm font-semibold text-gold-DEFAULT hover:text-gold-200 transition-colors inline-block"
           >
             + Add Another Reference
@@ -171,37 +231,63 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
               Employment History (Last 5 Years) *
             </label>
             <p className="text-xs text-gold-100/60 mb-2">
-              Please provide your employment history covering the last 5 years, including an explanation for any employment gaps.
+              Please provide your employment history covering the last 5 years,
+              including an explanation for any employment gaps.
             </p>
             <textarea
               rows={6}
               value={employmentHistory}
               onChange={(e) => setEmploymentHistory(e.target.value)}
               placeholder="e.g. 2020-2023: Care Assistant at ABC Care Home. 2023-Present: Independent Carer. Gap in 2019 due to travel..."
-              className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 text-sm ${submitted && errors.employmentHistory ? 'border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]' : 'border-gray-300/20'}`}
+              className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 text-sm ${submitted && errors.employmentHistory ? "border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]" : "border-gray-300/20"}`}
             />
             {submitted && errors.employmentHistory && (
-              <p className="text-xs text-red-500 font-semibold mt-1">{errors.employmentHistory}</p>
+              <p className="text-xs text-red-500 font-semibold mt-1">
+                {errors.employmentHistory}
+              </p>
             )}
           </div>
         </div>
       </SectionCard>
 
       <div className="flex justify-between items-center pt-4 gap-4">
-        <Button type="button" variant="ghost-gold" onClick={onBack}>Back</Button>
-        <Button type="button" variant="primary" onClick={handleNext}>Save & Continue</Button>
+        <Button type="button" variant="ghost-gold" onClick={onBack}>
+          Back
+        </Button>
+        <Button type="button" variant="primary" onClick={handleNext}>
+          Save & Continue
+        </Button>
       </div>
     </div>
   );
 }
 
-function DocUploadRow({ label, description, type, portal, isMissing, stageKey, index }: { label: string, description?: string, type: string, portal: any, isMissing?: boolean, stageKey?: string, index?: number }) {
-  const { complianceDocs, stageDocUpload, handleUpdateDoc, selectedFiles } = portal;
-  
+function DocUploadRow({
+  label,
+  description,
+  type,
+  portal,
+  isMissing,
+  stageKey,
+  index,
+}: {
+  label: string;
+  description?: string;
+  type: string;
+  portal: any;
+  isMissing?: boolean;
+  stageKey?: string;
+  index?: number;
+}) {
+  const { complianceDocs, stageDocUpload, handleUpdateDoc, selectedFiles } =
+    portal;
+
   // For multiple documents of the same type (like ADDITIONAL_REFERENCE)
   let doc;
   if (index !== undefined) {
-    const docsOfType = complianceDocs.filter((d: ComplianceDoc) => d.type === type);
+    const docsOfType = complianceDocs.filter(
+      (d: ComplianceDoc) => d.type === type,
+    );
     doc = docsOfType[index];
   } else {
     doc = complianceDocs.find((d: ComplianceDoc) => d.type === type);
@@ -211,7 +297,9 @@ function DocUploadRow({ label, description, type, portal, isMissing, stageKey, i
   const isStaged = !!selectedFiles[sKey];
 
   return (
-    <div className={`p-4 rounded-xl border flex flex-col gap-2 transition-all ${isMissing ? 'border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)] bg-red-950/5' : 'border-gold-300/10 bg-navy-950/40'}`}>
+    <div
+      className={`p-4 rounded-xl border flex flex-col gap-2 transition-all ${isMissing ? "border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)] bg-red-950/5" : "border-gold-300/10 bg-navy-950/40"}`}
+    >
       <div className="flex justify-between items-start">
         <span className="text-sm font-medium text-gold-50">{label}</span>
         {doc ? (
@@ -224,7 +312,11 @@ function DocUploadRow({ label, description, type, portal, isMissing, stageKey, i
           </span>
         ) : null}
       </div>
-      {description && <p className="text-[11px] text-gold-100/50 leading-snug">{description}</p>}
+      {description && (
+        <p className="text-[11px] text-gold-100/50 leading-snug">
+          {description}
+        </p>
+      )}
       <label className="cursor-pointer text-xs font-semibold text-gold-DEFAULT hover:text-gold-200 inline-block mt-1">
         {doc ? "Update File" : isStaged ? "Change Selected" : "Choose File"}
         <input

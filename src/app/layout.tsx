@@ -27,7 +27,10 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head suppressHydrationWarning />
-      <body suppressHydrationWarning className={`bg-navy-950 text-gold-100 flex flex-col min-h-screen font-sans ${poppins.variable}`}>
+      <body
+        suppressHydrationWarning
+        className={`bg-navy-950 text-gold-100 flex flex-col min-h-screen font-sans ${poppins.variable}`}
+      >
         <ReduxProvider>
           <AuthProvider>
             {children}

@@ -53,15 +53,21 @@ export default function AdminApplicationsModal({
           clientId: clientProfileId,
           careRequestId,
           status: status as "SELECTED" | "REJECTED",
-        })
+        }),
       ).unwrap();
-      showSuccessToast("Status Updated", `Application has been ${status.toLowerCase()}.`);
+      showSuccessToast(
+        "Status Updated",
+        `Application has been ${status.toLowerCase()}.`,
+      );
       loadApplications();
       if (onStatusUpdated) {
         onStatusUpdated();
       }
     } catch (err: any) {
-      showErrorToast("Update Failed", err.message || "Failed to update status.");
+      showErrorToast(
+        "Update Failed",
+        err.message || "Failed to update status.",
+      );
     } finally {
       setUpdatingId(null);
     }
@@ -104,7 +110,10 @@ export default function AdminApplicationsModal({
             </div>
           ) : (
             applications.map((app) => (
-              <div key={app.id} className="p-4 rounded-xl border border-gold-300/10 bg-navy-950/50 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+              <div
+                key={app.id}
+                className="p-4 rounded-xl border border-gold-300/10 bg-navy-950/50 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between"
+              >
                 <div className="flex items-center gap-3">
                   {app.carerProfile?.profilePhotoUrl ? (
                     <img
@@ -119,7 +128,8 @@ export default function AdminApplicationsModal({
                   )}
                   <div>
                     <h5 className="font-bold text-gold-100">
-                      {app.carerProfile?.user?.firstName} {app.carerProfile?.user?.lastName}
+                      {app.carerProfile?.user?.firstName}{" "}
+                      {app.carerProfile?.user?.lastName}
                     </h5>
                     {app.isAssignedByAdmin && (
                       <div className="mt-1 text-[9px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded w-fit uppercase tracking-wider">
@@ -127,10 +137,15 @@ export default function AdminApplicationsModal({
                       </div>
                     )}
                     <div className="flex gap-2 items-center mt-1">
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${app.status === "PENDING" ? "bg-amber-500/10 text-amber-400 border border-amber-500/20" :
-                          app.status === "SELECTED" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" :
-                            "bg-rose-500/10 text-rose-400 border border-rose-500/20"
-                        }`}>
+                      <span
+                        className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
+                          app.status === "PENDING"
+                            ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                            : app.status === "SELECTED"
+                              ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                              : "bg-rose-500/10 text-rose-400 border border-rose-500/20"
+                        }`}
+                      >
                         {app.status}
                       </span>
                       <span className="text-xs text-gold-100/50">
@@ -148,7 +163,9 @@ export default function AdminApplicationsModal({
                         size="sm"
                         fullWidth={false}
                         disabled={updatingId === app.carerProfileId}
-                        onClick={() => handleUpdateStatus(app.carerProfileId, "REJECTED")}
+                        onClick={() =>
+                          handleUpdateStatus(app.carerProfileId, "REJECTED")
+                        }
                         className="!border-rose-500/30 !text-rose-400 hover:!bg-rose-500/10"
                       >
                         Reject
@@ -158,14 +175,25 @@ export default function AdminApplicationsModal({
                         size="sm"
                         fullWidth={false}
                         disabled={updatingId === app.carerProfileId}
-                        onClick={() => handleUpdateStatus(app.carerProfileId, "SELECTED")}
+                        onClick={() =>
+                          handleUpdateStatus(app.carerProfileId, "SELECTED")
+                        }
                         className="!border-emerald-500/30 !text-emerald-400 hover:!bg-emerald-500/10"
                       >
                         Approve
                       </Button>
                     </>
                   )}
-                  <Button variant="ghost-gold" size="sm" fullWidth={false} onClick={() => router.push(`/admin/carers/${app.carerProfile?.user?.id}?source=client-care-requests`)}>
+                  <Button
+                    variant="ghost-gold"
+                    size="sm"
+                    fullWidth={false}
+                    onClick={() =>
+                      router.push(
+                        `/admin/carers/${app.carerProfile?.user?.id}?source=client-care-requests`,
+                      )
+                    }
+                  >
                     View Carer
                   </Button>
                 </div>

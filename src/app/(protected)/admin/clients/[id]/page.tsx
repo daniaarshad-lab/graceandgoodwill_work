@@ -90,11 +90,13 @@ function ClientDetailsContent() {
         const firstName = userObj.firstName || res.firstName || "";
         const lastName = userObj.lastName || res.lastName || "";
         const email = userObj.email || res.email || "No email listed";
-        const phoneNumber = userObj.phoneNumber || res.phoneNumber || "No phone listed";
+        const phoneNumber =
+          userObj.phoneNumber || res.phoneNumber || "No phone listed";
 
         const history = (res.placements || []).map((p: any) => {
           const carerUser = p.carerProfile?.user || {};
-          const carerName = p.carerName ||
+          const carerName =
+            p.carerName ||
             `${carerUser.firstName || "Unknown"} ${carerUser.lastName || "Carer"}`.trim() ||
             "Assigned Carer";
 
@@ -106,12 +108,13 @@ function ClientDetailsContent() {
         });
 
         // Compute total paid from invoices if available
-        const totalPaidSoFar = (res.invoices || []).reduce((acc: number, inv: any) => {
-          if (inv.status?.toUpperCase() === "PAID") {
-            return acc + (parseFloat(inv.amount) || 0);
-          }
-          return acc;
-        }, 0) || 0.0;
+        const totalPaidSoFar =
+          (res.invoices || []).reduce((acc: number, inv: any) => {
+            if (inv.status?.toUpperCase() === "PAID") {
+              return acc + (parseFloat(inv.amount) || 0);
+            }
+            return acc;
+          }, 0) || 0.0;
 
         let agreedWeeklyFee = 0.0;
         if (res.weeklyFee !== undefined && res.weeklyFee !== null) {
@@ -132,13 +135,13 @@ function ClientDetailsContent() {
         setClient({
           id: res.id || id,
           userId: userObj.id || res.userId || id,
-          internalAccountNumber: userObj.internalAccountNumber || res.internalAccountNumber || "",
+          internalAccountNumber:
+            userObj.internalAccountNumber || res.internalAccountNumber || "",
           publicProfileId: userObj.publicProfileId || res.publicProfileId || "",
           name: `${firstName} ${lastName}`.trim() || "Registered Client",
           email: email,
           phone: phoneNumber,
-          address:
-            res.address || "No address listed",
+          address: res.address || "No address listed",
           clientSince: res.createdAt || new Date().toISOString(),
           status: res.status || "PENDING",
           agreedWeeklyFee: agreedWeeklyFee,
@@ -149,14 +152,17 @@ function ClientDetailsContent() {
 
         // Set initial weekly fee input values
         setWeeklyFeeInput(agreedWeeklyFee > 0 ? String(agreedWeeklyFee) : "");
-        setCarerWeeklyPayInput(carerWeeklyPay > 0 ? String(carerWeeklyPay) : "");
+        setCarerWeeklyPayInput(
+          carerWeeklyPay > 0 ? String(carerWeeklyPay) : "",
+        );
       } else {
         setError("Requested client profile could not be found.");
       }
     } catch (err: any) {
       console.error("Failed to load client details:", err);
       setError(
-        err.message || "An unexpected error occurred while loading client details.",
+        err.message ||
+          "An unexpected error occurred while loading client details.",
       );
     } finally {
       setLoading(false);
@@ -185,7 +191,10 @@ function ClientDetailsContent() {
     setSavingFee(true);
     try {
       await adminService.updateClientWeeklyFee(id, feeVal);
-      showSuccessToast("Weekly Fee Saved", "The weekly fee has been successfully updated.");
+      showSuccessToast(
+        "Weekly Fee Saved",
+        "The weekly fee has been successfully updated.",
+      );
       await loadClientData();
     } catch (err: any) {
       console.error(err);
@@ -209,7 +218,10 @@ function ClientDetailsContent() {
     setSavingCarerPay(true);
     try {
       await adminService.updateCarerWeeklyPay(id, payVal);
-      showSuccessToast("Carer Weekly Pay Saved", "The carer weekly pay has been successfully updated.");
+      showSuccessToast(
+        "Carer Weekly Pay Saved",
+        "The carer weekly pay has been successfully updated.",
+      );
       await loadClientData();
     } catch (err: any) {
       console.error(err);
@@ -223,13 +235,18 @@ function ClientDetailsContent() {
   const handleApproveClient = async () => {
     setValidationError(null);
     if (!client || client.agreedWeeklyFee <= 0) {
-      setValidationError("Weekly fee must be set and saved before approving the client.");
+      setValidationError(
+        "Weekly fee must be set and saved before approving the client.",
+      );
       return;
     }
     setApprovingClient(true);
     try {
       await adminService.approveClient(id);
-      showSuccessToast("Client Approved", "The client account has been successfully approved.");
+      showSuccessToast(
+        "Client Approved",
+        "The client account has been successfully approved.",
+      );
       await loadClientData();
     } catch (err: any) {
       console.error(err);
@@ -284,11 +301,17 @@ function ClientDetailsContent() {
     }
   };
 
-  const getCurrentPlacementStatus = (history: ClientDetail["placementHistory"]) => {
+  const getCurrentPlacementStatus = (
+    history: ClientDetail["placementHistory"],
+  ) => {
     if (history.length === 0) return "NEW_ENQUIRY";
-    const activePlacement = history.find((p) => p.status === "PLACEMENT_STARTED" || p.status === "ONGOING");
+    const activePlacement = history.find(
+      (p) => p.status === "PLACEMENT_STARTED" || p.status === "ONGOING",
+    );
     if (activePlacement) return activePlacement.status;
-    const matchedPlacement = history.find((p) => p.status === "PLACEMENT_CONFIRMED");
+    const matchedPlacement = history.find(
+      (p) => p.status === "PLACEMENT_CONFIRMED",
+    );
     if (matchedPlacement) return "PLACEMENT_CONFIRMED";
     return "COMPLETED";
   };
@@ -342,7 +365,9 @@ function ClientDetailsContent() {
     );
   }
 
-  const currentPlacementStatus = getCurrentPlacementStatus(client.placementHistory);
+  const currentPlacementStatus = getCurrentPlacementStatus(
+    client.placementHistory,
+  );
 
   return (
     <main className="min-h-screen bg-navy-950 py-10 text-gold-100">
@@ -351,23 +376,33 @@ function ClientDetailsContent() {
         <header className="rounded-2xl border border-gold-300/10 bg-gradient-to-r from-navy-900 via-navy-950 to-navy-900 p-6 shadow-soft backdrop-blur-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <Link
-              href={fromTab === "registry" ? "/admin?tab=clients" : "/admin?tab=requests"}
+              href={
+                fromTab === "registry"
+                  ? "/admin?tab=clients"
+                  : "/admin?tab=requests"
+              }
               className="inline-flex items-center gap-1 text-xs font-semibold text-gold/60 hover:text-gold transition duration-200 mb-2 cursor-pointer"
             >
-              <ArrowLeft className="h-3.5 w-3.5" /> 
-              {fromTab === "registry" ? "Welcome to Client Registry" : "Back to Client Requests"}
+              <ArrowLeft className="h-3.5 w-3.5" />
+              {fromTab === "registry"
+                ? "Welcome to Client Registry"
+                : "Back to Client Requests"}
             </Link>
             <h1 className="text-xl tracking-tight text-gold-200 sm:text-2xl font-bold flex items-center gap-2">
               <ShieldCheck className="h-6 w-6 text-gold" /> Client Details
             </h1>
             <p className="text-xs text-gold-100/50">
-              View and audit client records, weekly fees, registration status, and care placements
+              View and audit client records, weekly fees, registration status,
+              and care placements
             </p>
           </div>
 
           <div className="flex items-center gap-4 bg-navy-900/40 px-4 py-3 rounded-xl border border-gold-300/5">
             <div className="h-10 w-10 rounded-full bg-gold/10 flex items-center justify-center text-gold border border-gold/20 font-bold uppercase">
-              {client.name.split(" ").map((n) => n[0]).join("")}
+              {client.name
+                .split(" ")
+                .map((n) => n[0])
+                .join("")}
             </div>
             <div>
               <p className="text-sm font-bold text-gold-200">{client.name}</p>
@@ -377,7 +412,11 @@ function ClientDetailsContent() {
                     client.status,
                   )}`}
                 >
-                  {client.status === "PLACEMENT_STARTED" ? "Active" : client.status === "PLACEMENT_CONFIRMED" ? "Matched" : client.status}
+                  {client.status === "PLACEMENT_STARTED"
+                    ? "Active"
+                    : client.status === "PLACEMENT_CONFIRMED"
+                      ? "Matched"
+                      : client.status}
                 </span>
                 {client.internalAccountNumber && (
                   <span className="text-[8px] font-bold font-mono text-gold-200 bg-gold/10 px-1.5 py-0.5 rounded border border-gold/20">
@@ -408,7 +447,8 @@ function ClientDetailsContent() {
                 {client.internalAccountNumber && (
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-gold-100/40 font-semibold flex items-center gap-1.5">
-                      <ShieldCheck className="h-4 w-4 text-gold/60" /> Account Number:
+                      <ShieldCheck className="h-4 w-4 text-gold/60" /> Account
+                      Number:
                     </span>
                     <span className="text-gold-200 font-bold font-mono">
                       {client.internalAccountNumber}
@@ -419,7 +459,8 @@ function ClientDetailsContent() {
                 {client.publicProfileId && (
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-gold-100/40 font-semibold flex items-center gap-1.5">
-                      <User className="h-4 w-4 text-gold/60" /> Public Profile ID:
+                      <User className="h-4 w-4 text-gold/60" /> Public Profile
+                      ID:
                     </span>
                     <span className="text-gold-200 font-bold font-mono">
                       {client.publicProfileId}
@@ -427,10 +468,10 @@ function ClientDetailsContent() {
                   </div>
                 )}
 
-
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-gold-100/40 font-semibold flex items-center gap-1.5">
-                    <Calendar className="h-4 w-4 text-gold/60" /> Registered Since:
+                    <Calendar className="h-4 w-4 text-gold/60" /> Registered
+                    Since:
                   </span>
                   <span className="text-gold-200 font-bold font-mono">
                     {new Date(client.clientSince).toLocaleDateString("en-GB", {
@@ -443,7 +484,8 @@ function ClientDetailsContent() {
 
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-gold-100/40 font-semibold flex items-center gap-1.5">
-                    <Clock className="h-4 w-4 text-gold/60" /> Duration With Grace & Goodwill:
+                    <Clock className="h-4 w-4 text-gold/60" /> Duration With
+                    Grace & Goodwill:
                   </span>
                   <span className="text-gold-200 font-bold italic">
                     {getDurationWithUs(client.clientSince)}
@@ -452,14 +494,19 @@ function ClientDetailsContent() {
 
                 <div className="flex items-center justify-between text-xs border-t border-gold-300/5 pt-4">
                   <span className="text-gold-100/40 font-semibold flex items-center gap-1.5">
-                    <History className="h-4 w-4 text-gold/60" /> Placement Status:
+                    <History className="h-4 w-4 text-gold/60" /> Placement
+                    Status:
                   </span>
                   <span
                     className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${getPlacementStatusBadgeStyles(
                       currentPlacementStatus,
                     )}`}
                   >
-                    {currentPlacementStatus === "PLACEMENT_STARTED" ? "ACTIVE" : currentPlacementStatus === "PLACEMENT_CONFIRMED" ? "MATCHED" : currentPlacementStatus}
+                    {currentPlacementStatus === "PLACEMENT_STARTED"
+                      ? "ACTIVE"
+                      : currentPlacementStatus === "PLACEMENT_CONFIRMED"
+                        ? "MATCHED"
+                        : currentPlacementStatus}
                   </span>
                 </div>
 
@@ -467,7 +514,11 @@ function ClientDetailsContent() {
                 {client.status !== "APPROVED" && (
                   <button
                     onClick={handleApproveClient}
-                    disabled={approvingClient || !client.agreedWeeklyFee || client.agreedWeeklyFee <= 0}
+                    disabled={
+                      approvingClient ||
+                      !client.agreedWeeklyFee ||
+                      client.agreedWeeklyFee <= 0
+                    }
                     className="w-full mt-4 px-4 py-2.5 text-xs font-bold text-navy-950 bg-gold hover:bg-gold-200 disabled:opacity-40 rounded-xl transition duration-300 flex items-center justify-center gap-1.5 cursor-pointer disabled:cursor-not-allowed"
                   >
                     {approvingClient ? (
@@ -624,7 +675,8 @@ function ClientDetailsContent() {
 
                 <div className="rounded-xl bg-navy-950/50 p-3 border border-gold-300/5">
                   <p className="text-[10px] text-gold-100/40 italic leading-relaxed">
-                    Fees are calculated according to care service category contracts and billing cycle updates.
+                    Fees are calculated according to care service category
+                    contracts and billing cycle updates.
                   </p>
                 </div>
               </div>
@@ -729,7 +781,9 @@ function ClientDetailsContent() {
                     <tr className="border-b border-gold-300/10 text-[10px] font-bold uppercase tracking-wider text-gold-100/40">
                       <th className="py-2.5 px-2">Placement Date</th>
                       <th className="py-2.5 px-2">Carer Name</th>
-                      <th className="py-2.5 px-2 text-right">Placement Status</th>
+                      <th className="py-2.5 px-2 text-right">
+                        Placement Status
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gold-300/5">
@@ -749,11 +803,16 @@ function ClientDetailsContent() {
                           className="hover:bg-navy-900/20 transition duration-150"
                         >
                           <td className="py-3 px-2 font-mono font-semibold text-gold-200">
-                            {hist.startDate !== "Pending" ? new Date(hist.startDate).toLocaleDateString("en-GB", {
-                              day: "2-digit",
-                              month: "short",
-                              year: "numeric",
-                            }) : "Pending"}
+                            {hist.startDate !== "Pending"
+                              ? new Date(hist.startDate).toLocaleDateString(
+                                  "en-GB",
+                                  {
+                                    day: "2-digit",
+                                    month: "short",
+                                    year: "numeric",
+                                  },
+                                )
+                              : "Pending"}
                           </td>
                           <td className="py-3 px-2 font-semibold text-gold-100">
                             {hist.carerName}
@@ -775,15 +834,16 @@ function ClientDetailsContent() {
               </div>
             </div>
           </section>
-
         </div>
-        
+
         {/* INTERNAL NOTES MODULE */}
         <section className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md">
           {client?.id ? (
             <InternalNotes entityId={client.id} entityType="CLIENT" />
           ) : (
-            <p className="text-sm text-gold-100/50">Client profile ID not found for notes.</p>
+            <p className="text-sm text-gold-100/50">
+              Client profile ID not found for notes.
+            </p>
           )}
         </section>
 

@@ -30,8 +30,8 @@ export default function AboutPage() {
               understand families are not simply searching for availability they
               are searching for somebody they can trust and a process that feels
               calm, personal, and dependable. Our role is to connect people with
-              carefully selected support while maintaining clear
-              communication, and meaningful human connection.
+              carefully selected support while maintaining clear communication,
+              and meaningful human connection.
             </p>
           </div>
         </div>
@@ -57,7 +57,11 @@ export default function AboutPage() {
                   width={400}
                   height={500}
                   className="w-full aspect-[4/5] object-cover filter contrast-[1.02] transition-transform duration-1000 group-hover:scale-105"
-                  style={{ color: "transparent", objectPosition: "19% 35%", objectFit: "cover" }}
+                  style={{
+                    color: "transparent",
+                    objectPosition: "19% 35%",
+                    objectFit: "cover",
+                  }}
                 />
                 <div className="absolute inset-0 ring-1 ring-inset ring-gold-400/10 rounded-t-[3.5rem] rounded-b-lg pointer-events-none" />
               </div>
@@ -82,20 +86,22 @@ export default function AboutPage() {
 
           <div className="space-y-8 text-sm sm:text-base text-gold-100/90 leading-relaxed font-light">
             <p>
-              Throughout my life, I have been drawn to helping others, whether through
-              supporting vulnerable people professionally, caring for family members, or
-              standing alongside those facing difficult moments in life. I have always
-              believed that every person deserves to be treated with dignity, kindness,
-              compassion, and genuine respect.
+              Throughout my life, I have been drawn to helping others, whether
+              through supporting vulnerable people professionally, caring for
+              family members, or standing alongside those facing difficult
+              moments in life. I have always believed that every person deserves
+              to be treated with dignity, kindness, compassion, and genuine
+              respect.
             </p>
 
             <p>
-              After spending years working within the National Probation Service, I realised that
-              my purpose was not simply to work within a system, but to create something
-              that could make a lasting difference in people&apos;s lives. Grace &amp;
-              Goodwill was founded on the belief that families deserve honesty, carers
-              deserve respect, and those receiving support deserve a trusted match, and
-              meaningful human connection.
+              After spending years working within the National Probation
+              Service, I realised that my purpose was not simply to work within
+              a system, but to create something that could make a lasting
+              difference in people&apos;s lives. Grace &amp; Goodwill was
+              founded on the belief that families deserve honesty, carers
+              deserve respect, and those receiving support deserve a trusted
+              match, and meaningful human connection.
             </p>
 
             <div className="relative mx-auto w-full max-w-2xl my-8 sm:my-12">
@@ -112,16 +118,16 @@ export default function AboutPage() {
             </div>
 
             <p>
-              My sister Erica has been one of my greatest teachers in life. Supporting
-              and caring for her over the years gave me first-hand insight into how
-              important dignity, patience, consistency, and genuine human connection are
-              to a person&apos;s wellbeing. She showed me the difference that the right
-              support can make, not only for the individual receiving care, but also for
-              the people who love them. This experience, together with my professional background supporting
-              vulnerable people, continues to shape every decision we make at Grace &amp;
-              Goodwill.
+              My sister Erica has been one of my greatest teachers in life.
+              Supporting and caring for her over the years gave me first-hand
+              insight into how important dignity, patience, consistency, and
+              genuine human connection are to a person&apos;s wellbeing. She
+              showed me the difference that the right support can make, not only
+              for the individual receiving care, but also for the people who
+              love them. This experience, together with my professional
+              background supporting vulnerable people, continues to shape every
+              decision we make at Grace &amp; Goodwill.
             </p>
-
 
             <div className="relative mx-auto w-full max-w-2xl my-8 sm:my-12">
               <div className="relative rounded-2xl overflow-hidden border border-gold-400/20 shadow-2xl bg-navy-950 p-2 sm:p-3 group">
@@ -137,7 +143,11 @@ export default function AboutPage() {
             </div>
 
             <p className="italic text-lg sm:text-xl text-gold-300/90 font-serif leading-relaxed text-center">
-              At the heart of Grace &amp; Goodwill is a simple belief: when people feel seen, valued, respected and genuinely cared for, lives change. Our mission is to build trusted relationships and leave the world a little better than we found it, one person, one family and one home at a time.
+              At the heart of Grace &amp; Goodwill is a simple belief: when
+              people feel seen, valued, respected and genuinely cared for, lives
+              change. Our mission is to build trusted relationships and leave
+              the world a little better than we found it, one person, one family
+              and one home at a time.
             </p>
           </div>
         </div>
@@ -184,16 +194,33 @@ export default function AboutPage() {
             {/* Right Column: Text */}
             <div className="space-y-6 text-base text-gold-100/80 leading-relaxed font-light">
               <p>
-                Grace &amp; Goodwill was created because too many families are left feeling overwhelmed when trying to find care they can genuinely trust, while many exceptional carers struggle to find ethical opportunities where they are respected, valued and treated fairly.
+                Grace &amp; Goodwill was created because too many families are
+                left feeling overwhelmed when trying to find care they can
+                genuinely trust, while many exceptional carers struggle to find
+                ethical opportunities where they are respected, valued and
+                treated fairly.
               </p>
               <p>
-                We believe outstanding care starts with people. Skills and experience matter, but kindness, trust and genuine human connection matter just as much. Every family has a unique story, every carer brings something valuable, and every care journey deserves to be met with dignity, compassion and respect.
+                We believe outstanding care starts with people. Skills and
+                experience matter, but kindness, trust and genuine human
+                connection matter just as much. Every family has a unique story,
+                every carer brings something valuable, and every care journey
+                deserves to be met with dignity, compassion and respect.
               </p>
               <p>
-                For me, care has never been just a profession. My sister, Erica, has been one of my greatest teachers. Through supporting and advocating for her, I learned that dignity, patience, consistency and genuine human connection aren&apos;t just ideals—they are the foundation of exceptional care. It showed me the profound difference the right support can make, not only for the person receiving care, but for the family who loves them.
+                For me, care has never been just a profession. My sister, Erica,
+                has been one of my greatest teachers. Through supporting and
+                advocating for her, I learned that dignity, patience,
+                consistency and genuine human connection aren&apos;t just
+                ideals—they are the foundation of exceptional care. It showed me
+                the profound difference the right support can make, not only for
+                the person receiving care, but for the family who loves them.
               </p>
               <p>
-                Combined with my years of professionally supporting vulnerable people, those experiences continue to shape every decision we make at Grace &amp; Goodwill and the standards we expect from every carer we introduce.
+                Combined with my years of professionally supporting vulnerable
+                people, those experiences continue to shape every decision we
+                make at Grace &amp; Goodwill and the standards we expect from
+                every carer we introduce.
               </p>
             </div>
           </div>
@@ -360,7 +387,6 @@ export default function AboutPage() {
         </div>
       </section>
       */}
-
     </main>
   );
 }

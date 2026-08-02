@@ -143,10 +143,7 @@ export default function ReferralFormClient({
 
   return (
     <div className="h-full flex flex-col rounded-3xl border border-gold-300/10 bg-navy-900/40 p-4 sm:p-6 lg:p-8 shadow-[0_0_30px_rgba(212,175,122,0.03)] backdrop-blur-md">
-      <form
-        onSubmit={handleSubmit}
-        className="space-y-6 flex flex-col"
-      >
+      <form onSubmit={handleSubmit} className="space-y-6 flex flex-col">
         <div className="space-y-6">
           {/* Top Intro Section */}
           <div className="flex items-start gap-4 pb-4 border-b border-gold-300/5">
@@ -158,8 +155,8 @@ export default function ReferralFormClient({
                 Refer a Friend
               </h3>
               <p className="text-xs text-gold-100/50 mt-0.5 leading-relaxed">
-                Help families discover trusted independent carers through Grace &
-                Goodwill.
+                Help families discover trusted independent carers through Grace
+                & Goodwill.
               </p>
             </div>
           </div>

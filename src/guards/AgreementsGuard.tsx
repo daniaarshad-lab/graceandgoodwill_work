@@ -29,14 +29,21 @@ export default function AgreementsGuard({ children }: AgreementsGuardProps) {
       return;
     }
 
-    // Bypass redirect for Carers during onboarding, because the /carer route 
+    // Bypass redirect for Carers during onboarding, because the /carer route
     // natively handles Legal Agreements as Step 2 of the onboarding stepper.
-    const normalizedPath = pathname.endsWith("/") ? pathname.slice(0, -1) : pathname;
+    const normalizedPath = pathname.endsWith("/")
+      ? pathname.slice(0, -1)
+      : pathname;
 
     if (user.role?.toUpperCase() === "CARER" && normalizedPath === "/carer") {
-      const isOnboardingParam = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get("onboarding") === "true";
-      const isDone = typeof window !== 'undefined' && localStorage.getItem(`carer_onboarding_done_${user.id}`) === "true";
-      
+      const isOnboardingParam =
+        typeof window !== "undefined" &&
+        new URLSearchParams(window.location.search).get("onboarding") ===
+          "true";
+      const isDone =
+        typeof window !== "undefined" &&
+        localStorage.getItem(`carer_onboarding_done_${user.id}`) === "true";
+
       if (!isDone || isOnboardingParam) {
         setHasPending(false);
         return;
@@ -54,13 +61,13 @@ export default function AgreementsGuard({ children }: AgreementsGuardProps) {
       return;
     }
 
-
     const checkAgreements = async () => {
       try {
         const pending = await agreementsService.getPendingAgreements();
         if (pending && pending.length > 0) {
           setHasPending(true);
-          const search = typeof window !== "undefined" ? window.location.search : "";
+          const search =
+            typeof window !== "undefined" ? window.location.search : "";
           router.replace(`/agreements${search}`);
         } else {
           setHasPending(false);

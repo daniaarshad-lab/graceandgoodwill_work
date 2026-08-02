@@ -5,45 +5,72 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useAuth } from "@/contexts/AuthContext";
-import { fetchCarers, fetchCareRequests, fetchInterestList, addToInterestList, removeFromInterestList, createClientMatch } from "@/store/slices/clientSlice";
+import {
+  fetchCarers,
+  fetchCareRequests,
+  fetchInterestList,
+  addToInterestList,
+  removeFromInterestList,
+  createClientMatch,
+} from "@/store/slices/clientSlice";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 import { Carer } from "../types/client-ui.types";
 
 import Button from "@/components/Button";
-import { 
-  ArrowLeft, 
-  MapPin, 
-  Clock, 
-  Award, 
-  Search, 
-  X, 
-  Play, 
+import {
+  ArrowLeft,
+  MapPin,
+  Clock,
+  Award,
+  Search,
+  X,
+  Play,
   Video,
-  User, 
+  User,
   Calendar,
   Sparkles,
   Check,
-  Heart
+  Heart,
 } from "lucide-react";
 
-const SafeImage = ({ src, alt, fallback, className }: { src: string, alt: string, fallback: React.ReactNode, className?: string }) => {
+const SafeImage = ({
+  src,
+  alt,
+  fallback,
+  className,
+}: {
+  src: string;
+  alt: string;
+  fallback: React.ReactNode;
+  className?: string;
+}) => {
   const [error, setError] = useState(false);
   if (error) return <>{fallback}</>;
-  return <img src={src} alt={alt} className={`w-full h-full object-cover ${className || ""}`} onError={() => setError(true)} />;
+  return (
+    <img
+      src={src}
+      alt={alt}
+      className={`w-full h-full object-cover ${className || ""}`}
+      onError={() => setError(true)}
+    />
+  );
 };
 
 export default function BrowseCarersPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { user } = useAuth();
-  
-  const { carers, careRequests, interestList, loading, profile, error } = useAppSelector((state) => state.client);
-  
+
+  const { carers, careRequests, interestList, loading, profile, error } =
+    useAppSelector((state) => state.client);
+
   // Local UI States
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSpecialty, setSelectedSpecialty] = useState<string>("All");
   const [selectedCarer, setSelectedCarer] = useState<Carer | null>(null);
-  const [activeModalTab, setActiveModalTab] = useState<"bio" | "experience" | "qualifications">("bio");
+  const [activeModalTab, setActiveModalTab] = useState<
+    "bio" | "experience" | "qualifications"
+  >("bio");
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [processingId, setProcessingId] = useState<string | null>(null);
 
@@ -52,8 +79,6 @@ export default function BrowseCarersPage() {
     dispatch(fetchCareRequests());
     dispatch(fetchInterestList());
   }, [dispatch]);
-
-
 
   // Extract all unique specialties for filter chips
   const allSpecialties = useMemo(() => {
@@ -69,22 +94,30 @@ export default function BrowseCarersPage() {
   // Filtered carers list
   const filteredCarers = useMemo(() => {
     return carers.filter((carer) => {
-      const matchesSearch = carer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      const matchesSearch =
+        carer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         carer.specialties.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (carer.location && carer.location.toLowerCase().includes(searchTerm.toLowerCase()));
-      
-      const matchesSpecialty = selectedSpecialty === "All" || 
-        carer.specialties.toLowerCase().includes(selectedSpecialty.toLowerCase());
-      
+        (carer.location &&
+          carer.location.toLowerCase().includes(searchTerm.toLowerCase()));
+
+      const matchesSpecialty =
+        selectedSpecialty === "All" ||
+        carer.specialties
+          .toLowerCase()
+          .includes(selectedSpecialty.toLowerCase());
+
       return matchesSearch && matchesSpecialty;
     });
   }, [carers, searchTerm, selectedSpecialty]);
 
   const handleWishlistToggle = async (carer: Carer) => {
     const isWishlisted = interestList.some((w: Carer) => w.id === carer.id);
-    
+
     if (!isWishlisted && interestList.length >= 8) {
-      showErrorToast("Limit Reached", "Maximum 8 carers allowed in Interest List.");
+      showErrorToast(
+        "Limit Reached",
+        "Maximum 8 carers allowed in Interest List.",
+      );
       return;
     }
 
@@ -107,8 +140,13 @@ export default function BrowseCarersPage() {
   const handleCreateMatch = async (carerId: string, careRequestId: string) => {
     setProcessingId(carerId);
     try {
-      await dispatch(createClientMatch({ careRequestId, carerProfileId: carerId })).unwrap();
-      showSuccessToast("Match Requested", "Your request to match with this carer has been sent successfully.");
+      await dispatch(
+        createClientMatch({ careRequestId, carerProfileId: carerId }),
+      ).unwrap();
+      showSuccessToast(
+        "Match Requested",
+        "Your request to match with this carer has been sent successfully.",
+      );
       setSelectedCarer(null);
     } catch (error: any) {
       showErrorToast("Match Failed", error);
@@ -125,7 +163,9 @@ export default function BrowseCarersPage() {
       .slice(0, 2)
       .toUpperCase();
     return (
-      <div className={`h-full w-full rounded-full flex items-center justify-center font-bold ${bg}`}>
+      <div
+        className={`h-full w-full rounded-full flex items-center justify-center font-bold ${bg}`}
+      >
         {initials}
       </div>
     );
@@ -134,7 +174,6 @@ export default function BrowseCarersPage() {
   return (
     <main className="min-h-screen bg-navy-950 py-10 text-gold-100 font-sans">
       <div className="container-wrapper max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        
         {/* Navigation / Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-gold-300/10 pb-6">
           <div className="space-y-2">
@@ -149,13 +188,17 @@ export default function BrowseCarersPage() {
               Browse Professional Carers
             </h1>
             <p className="text-sm text-gold-100/60 font-light">
-              Select and review profiles of our pre-screened healthcare specialists.
+              Select and review profiles of our pre-screened healthcare
+              specialists.
             </p>
           </div>
-          
+
           <div className="flex items-center gap-3">
             <div className="bg-navy-900/40 border border-gold-300/10 px-4 py-2.5 rounded-2xl backdrop-blur-sm text-[11px] font-medium tracking-wide uppercase text-gold-300">
-              Active Care Requests: <span className="text-white font-bold">{careRequests?.length || 0}</span>
+              Active Care Requests:{" "}
+              <span className="text-white font-bold">
+                {careRequests?.length || 0}
+              </span>
             </div>
           </div>
         </div>
@@ -205,36 +248,61 @@ export default function BrowseCarersPage() {
         </div>
 
         {/* Loading / Results display */}
-        {error && (error.includes("Platform Fee") || error.includes("agreements")) ? (
+        {error &&
+        (error.includes("Platform Fee") || error.includes("agreements")) ? (
           <div className="bg-navy-900/60 border border-gold-DEFAULT/20 rounded-3xl p-12 text-center max-w-xl mx-auto shadow-elegant">
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gold-DEFAULT/10 border border-gold-DEFAULT/20 text-gold-DEFAULT mb-6 animate-pulse">
-              <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m0-6h.01M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+              <svg
+                className="h-8 w-8"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 15v2m0-6h.01M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+                />
               </svg>
             </div>
             <h3 className="text-xl font-bold text-white mb-2">
-              {error.includes("agreements") ? "Agreements Signature Required" : "Lifetime Platform Fee Required"}
+              {error.includes("agreements")
+                ? "Agreements Signature Required"
+                : "Lifetime Platform Fee Required"}
             </h3>
             <p className="text-slate-400 mb-6 text-sm">
-              {error.includes("agreements") 
+              {error.includes("agreements")
                 ? "You must sign all required legal agreements before browsing carers. Please navigate to the agreements screen."
                 : "You must pay the Lifetime Platform Fee before browsing carers or creating care requests. Please visit the Billing dashboard to proceed."}
             </p>
             <Button
-              onClick={() => router.push(error.includes("agreements") ? "/agreements" : "/client/billing")}
+              onClick={() =>
+                router.push(
+                  error.includes("agreements")
+                    ? "/agreements"
+                    : "/client/billing",
+                )
+              }
               className="bg-[#d4af37] text-navy-950 font-bold px-6 py-3 rounded-xl shadow-elegant"
             >
-              {error.includes("agreements") ? "Go to Agreements" : "Go to Billing & Payments"}
+              {error.includes("agreements")
+                ? "Go to Agreements"
+                : "Go to Billing & Payments"}
             </Button>
           </div>
         ) : loading ? (
           <div className="flex flex-col items-center justify-center py-20 space-y-4">
             <div className="w-10 h-10 border-2 border-gold-DEFAULT border-t-transparent rounded-full animate-spin"></div>
-            <p className="text-xs text-gold-100/50">Fetching available carer profiles...</p>
+            <p className="text-xs text-gold-100/50">
+              Fetching available carer profiles...
+            </p>
           </div>
         ) : filteredCarers.length === 0 ? (
           <div className="text-center py-20 bg-navy-900/10 border border-dashed border-gold-300/10 rounded-3xl space-y-4">
-            <p className="text-sm text-gold-100/50">No carers match your current search criteria.</p>
+            <p className="text-sm text-gold-100/50">
+              No carers match your current search criteria.
+            </p>
             <Button
               onClick={() => {
                 setSearchTerm("");
@@ -250,119 +318,129 @@ export default function BrowseCarersPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredCarers.map((carer) => {
-              const isWishlisted = interestList.some((w: Carer) => w.id === carer.id);
+              const isWishlisted = interestList.some(
+                (w: Carer) => w.id === carer.id,
+              );
               const isMaxReached = interestList.length >= 8;
               const isProcessing = processingId === carer.id;
 
               return (
-              <div
-                key={carer.id}
-                className="group relative flex flex-col justify-between rounded-3xl border border-gold-300/10 bg-navy-900/30 p-5 hover:border-gold-DEFAULT/30 hover:bg-navy-900/55 transition-all duration-300 shadow-soft backdrop-blur-sm"
-              >
-                <div className="space-y-4">
-                  {/* Top: Avatar/Image & Status */}
-                  <div className="flex justify-between items-start">
-                    <div className="relative w-16 h-16 rounded-full overflow-hidden border border-gold-300/20 shadow-inner shrink-0 bg-navy-950">
-                      {carer.profilePhotoUrl ? (
-                        <SafeImage
-                          src={carer.profilePhotoUrl}
-                          alt={carer.name}
-                          fallback={renderFallbackAvatar(carer.name, carer.avatarBg)}
-                          className="object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                      ) : (
-                        renderFallbackAvatar(carer.name, carer.avatarBg)
-                      )}
-                    </div>
-
-                    <span
-                      className={`rounded-full px-2.5 py-0.5 text-[8px] font-bold uppercase tracking-wider ${
-                        carer.availability === "Available"
-                          ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                          : "bg-amber-500/10 text-amber-400 border border-amber-500/20"
-                      }`}
-                    >
-                      {carer.availability}
-                    </span>
-                  </div>
-
-                  {/* Name and Basic Info */}
-                  <div className="space-y-1">
-                    <h3 className="text-lg font-bold text-gold-50 tracking-tight group-hover:text-white transition-colors">
-                      {carer.name}
-                    </h3>
-                    
-                    {carer.location && (
-                      <div className="flex items-center gap-1 text-[11px] text-gold-100/50">
-                        <MapPin className="w-3.5 h-3.5 text-gold-DEFAULT/60" />
-                        <span>{carer.location}</span>
+                <div
+                  key={carer.id}
+                  className="group relative flex flex-col justify-between rounded-3xl border border-gold-300/10 bg-navy-900/30 p-5 hover:border-gold-DEFAULT/30 hover:bg-navy-900/55 transition-all duration-300 shadow-soft backdrop-blur-sm"
+                >
+                  <div className="space-y-4">
+                    {/* Top: Avatar/Image & Status */}
+                    <div className="flex justify-between items-start">
+                      <div className="relative w-16 h-16 rounded-full overflow-hidden border border-gold-300/20 shadow-inner shrink-0 bg-navy-950">
+                        {carer.profilePhotoUrl ? (
+                          <SafeImage
+                            src={carer.profilePhotoUrl}
+                            alt={carer.name}
+                            fallback={renderFallbackAvatar(
+                              carer.name,
+                              carer.avatarBg,
+                            )}
+                            className="object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                        ) : (
+                          renderFallbackAvatar(carer.name, carer.avatarBg)
+                        )}
                       </div>
-                    )}
-                    
-                    <p className="text-xs text-gold-300/80 font-medium">
-                      Experience: {carer.experience}
-                    </p>
-                  </div>
 
-                  {/* Summary / Bio */}
-                  <p className="text-xs text-gold-100/60 leading-relaxed line-clamp-3 pt-2 border-t border-gold-300/5 font-light">
-                    {carer.bio}
-                  </p>
+                      <span
+                        className={`rounded-full px-2.5 py-0.5 text-[8px] font-bold uppercase tracking-wider ${
+                          carer.availability === "Available"
+                            ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                            : "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                        }`}
+                      >
+                        {carer.availability}
+                      </span>
+                    </div>
 
-                  {/* Specialties List */}
-                  <div className="space-y-1">
-                    <p className="text-[9px] uppercase font-bold tracking-wider text-gold-300/60">
-                      Core Specialties
+                    {/* Name and Basic Info */}
+                    <div className="space-y-1">
+                      <h3 className="text-lg font-bold text-gold-50 tracking-tight group-hover:text-white transition-colors">
+                        {carer.name}
+                      </h3>
+
+                      {carer.location && (
+                        <div className="flex items-center gap-1 text-[11px] text-gold-100/50">
+                          <MapPin className="w-3.5 h-3.5 text-gold-DEFAULT/60" />
+                          <span>{carer.location}</span>
+                        </div>
+                      )}
+
+                      <p className="text-xs text-gold-300/80 font-medium">
+                        Experience: {carer.experience}
+                      </p>
+                    </div>
+
+                    {/* Summary / Bio */}
+                    <p className="text-xs text-gold-100/60 leading-relaxed line-clamp-3 pt-2 border-t border-gold-300/5 font-light">
+                      {carer.bio}
                     </p>
-                    <div className="flex flex-wrap gap-1">
-                      {carer.specialties.split(",").slice(0, 3).map((spec) => (
-                        <span 
-                          key={spec} 
-                          className="text-[9px] font-medium bg-gold-DEFAULT/5 text-gold-200 px-2 py-0.5 rounded border border-gold-300/5"
-                        >
-                          {spec.trim()}
-                        </span>
-                      ))}
+
+                    {/* Specialties List */}
+                    <div className="space-y-1">
+                      <p className="text-[9px] uppercase font-bold tracking-wider text-gold-300/60">
+                        Core Specialties
+                      </p>
+                      <div className="flex flex-wrap gap-1">
+                        {carer.specialties
+                          .split(",")
+                          .slice(0, 3)
+                          .map((spec) => (
+                            <span
+                              key={spec}
+                              className="text-[9px] font-medium bg-gold-DEFAULT/5 text-gold-200 px-2 py-0.5 rounded border border-gold-300/5"
+                            >
+                              {spec.trim()}
+                            </span>
+                          ))}
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* CTAs */}
-                <div className="flex flex-col gap-2.5 pt-5 mt-4 border-t border-gold-300/5">
-                  <div className="flex gap-2.5">
+                  {/* CTAs */}
+                  <div className="flex flex-col gap-2.5 pt-5 mt-4 border-t border-gold-300/5">
+                    <div className="flex gap-2.5">
+                      <button
+                        onClick={() => {
+                          setSelectedCarer(carer);
+                          setActiveModalTab("bio");
+                          setIsVideoPlaying(false);
+                        }}
+                        className="flex-1 px-4 py-2 bg-navy-950/50 hover:bg-navy-950/80 border border-gold-300/10 hover:border-gold-300/20 text-gold-100 hover:text-white rounded-xl text-xs font-semibold tracking-wide transition-all text-center cursor-pointer"
+                      >
+                        View Profile
+                      </button>
+                    </div>
                     <button
-                      onClick={() => {
-                        setSelectedCarer(carer);
-                        setActiveModalTab("bio");
-                        setIsVideoPlaying(false);
-                      }}
-                      className="flex-1 px-4 py-2 bg-navy-950/50 hover:bg-navy-950/80 border border-gold-300/10 hover:border-gold-300/20 text-gold-100 hover:text-white rounded-xl text-xs font-semibold tracking-wide transition-all text-center cursor-pointer"
+                      onClick={() => handleWishlistToggle(carer)}
+                      disabled={isProcessing || (!isWishlisted && isMaxReached)}
+                      className={`w-full px-4 py-2 rounded-xl text-xs font-semibold tracking-wide transition-all flex items-center justify-center gap-2 ${
+                        isWishlisted
+                          ? "bg-transparent border border-gold-300/30 text-gold-200 hover:bg-gold-300/10"
+                          : "bg-navy-950/50 border border-gold-300/10 text-gold-100 hover:text-white hover:bg-navy-950/80 hover:border-gold-300/20"
+                      } ${isProcessing || (!isWishlisted && isMaxReached) ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                     >
-                      View Profile
+                      <Heart
+                        className={`w-3.5 h-3.5 ${isWishlisted ? "fill-gold-200" : ""}`}
+                      />
+                      {isProcessing
+                        ? "Updating..."
+                        : isWishlisted
+                          ? "Remove from Interest List"
+                          : isMaxReached
+                            ? "Maximum 8 allowed"
+                            : "Add to Interest List"}
                     </button>
                   </div>
-                  <button
-                    onClick={() => handleWishlistToggle(carer)}
-                    disabled={isProcessing || (!isWishlisted && isMaxReached)}
-                    className={`w-full px-4 py-2 rounded-xl text-xs font-semibold tracking-wide transition-all flex items-center justify-center gap-2 ${
-                      isWishlisted 
-                        ? "bg-transparent border border-gold-300/30 text-gold-200 hover:bg-gold-300/10" 
-                        : "bg-navy-950/50 border border-gold-300/10 text-gold-100 hover:text-white hover:bg-navy-950/80 hover:border-gold-300/20"
-                    } ${isProcessing || (!isWishlisted && isMaxReached) ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
-                  >
-                    <Heart className={`w-3.5 h-3.5 ${isWishlisted ? "fill-gold-200" : ""}`} />
-                    {isProcessing 
-                      ? "Updating..." 
-                      : isWishlisted 
-                        ? "Remove from Interest List" 
-                        : isMaxReached 
-                          ? "Maximum 8 allowed" 
-                          : "Add to Interest List"}
-                  </button>
                 </div>
-
-              </div>
-            )})}
+              );
+            })}
           </div>
         )}
 
@@ -370,7 +448,6 @@ export default function BrowseCarersPage() {
         {selectedCarer && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 px-4 py-6 backdrop-blur-sm animate-fadeIn overflow-y-auto">
             <div className="relative w-full max-w-3xl rounded-3xl border border-gold-300/20 bg-navy-900 shadow-elegant overflow-hidden my-auto max-h-[90vh] flex flex-col">
-              
               {/* Close Button */}
               <button
                 onClick={() => {
@@ -384,7 +461,6 @@ export default function BrowseCarersPage() {
 
               {/* Modal Content Container (Scrollable) */}
               <div className="overflow-y-auto flex-1 p-6 md:p-8 space-y-6">
-                
                 {/* Header section inside modal */}
                 <div className="flex flex-col sm:flex-row gap-5 items-start sm:items-center border-b border-gold-300/10 pb-5">
                   <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-gold-DEFAULT shadow-soft shrink-0 bg-navy-950">
@@ -392,14 +468,20 @@ export default function BrowseCarersPage() {
                       <SafeImage
                         src={selectedCarer.profilePhotoUrl}
                         alt={selectedCarer.name}
-                        fallback={renderFallbackAvatar(selectedCarer.name, selectedCarer.avatarBg)}
+                        fallback={renderFallbackAvatar(
+                          selectedCarer.name,
+                          selectedCarer.avatarBg,
+                        )}
                         className="object-cover"
                       />
                     ) : (
-                      renderFallbackAvatar(selectedCarer.name, selectedCarer.avatarBg)
+                      renderFallbackAvatar(
+                        selectedCarer.name,
+                        selectedCarer.avatarBg,
+                      )
                     )}
                   </div>
-                  
+
                   <div className="space-y-1">
                     <div className="flex flex-wrap items-center gap-2.5">
                       <h2 className="text-2xl font-bold text-gold-50 tracking-tight">
@@ -433,14 +515,13 @@ export default function BrowseCarersPage() {
 
                 {/* Grid Layout containing Profile fields */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  
                   {/* Left Column (Biography, Experience Summary, Credentials) */}
                   <div className="md:col-span-2 space-y-6">
                     {/* Biography */}
                     <div className="space-y-2">
                       <h3 className="text-xs uppercase font-bold tracking-wider text-gold-300">
                         Biography & Summary
-      </h3>
+                      </h3>
                       <p className="text-xs leading-relaxed text-gold-100/80 font-light whitespace-pre-line">
                         {selectedCarer.fullBiography || selectedCarer.bio}
                       </p>
@@ -453,7 +534,10 @@ export default function BrowseCarersPage() {
                       </h3>
                       <div className="flex flex-wrap gap-1.5">
                         {selectedCarer.specialties.split(",").map((s) => (
-                          <span key={s} className="px-2.5 py-1 bg-gold-DEFAULT/5 text-gold-200 rounded border border-gold-300/10 text-[10px] font-medium">
+                          <span
+                            key={s}
+                            className="px-2.5 py-1 bg-gold-DEFAULT/5 text-gold-200 rounded border border-gold-300/10 text-[10px] font-medium"
+                          >
                             {s.trim()}
                           </span>
                         ))}
@@ -466,7 +550,8 @@ export default function BrowseCarersPage() {
                         Experience Summary
                       </h3>
                       <div className="whitespace-pre-line text-xs text-gold-100/80 leading-relaxed font-light">
-                        {selectedCarer.experienceDetails || "• Over 5 years of verified healthcare and client support history.\n• Experience in personal home care and medical companion support."}
+                        {selectedCarer.experienceDetails ||
+                          "• Over 5 years of verified healthcare and client support history.\n• Experience in personal home care and medical companion support."}
                       </div>
                     </div>
 
@@ -478,8 +563,12 @@ export default function BrowseCarersPage() {
                       <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-navy-950/40 border border-gold-300/10">
                         <Award className="w-5 h-5 text-gold-DEFAULT shrink-0 mt-0.5" />
                         <div>
-                          <h4 className="font-bold text-gold-100 text-xs mb-1">Certifications & Training</h4>
-                          <p className="text-gold-100/70 text-xs leading-relaxed">{selectedCarer.qualifications}</p>
+                          <h4 className="font-bold text-gold-100 text-xs mb-1">
+                            Certifications & Training
+                          </h4>
+                          <p className="text-gold-100/70 text-xs leading-relaxed">
+                            {selectedCarer.qualifications}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -520,9 +609,12 @@ export default function BrowseCarersPage() {
                         <div className="aspect-video w-full rounded-2xl border border-dashed border-gold-300/20 bg-navy-950/40 flex flex-col items-center justify-center p-4 text-center space-y-2">
                           <Video className="w-7 h-7 text-gold-300/30 animate-pulse" />
                           <div>
-                            <p className="text-[11px] font-semibold text-gold-200">Video Preview Pending</p>
+                            <p className="text-[11px] font-semibold text-gold-200">
+                              Video Preview Pending
+                            </p>
                             <p className="text-[9px] text-gold-100/40 max-w-[160px] mx-auto leading-relaxed mt-0.5">
-                              The carer is finalizing their video upload. It will become active once complete.
+                              The carer is finalizing their video upload. It
+                              will become active once complete.
                             </p>
                           </div>
                         </div>
@@ -535,10 +627,14 @@ export default function BrowseCarersPage() {
                         <Calendar className="w-4 h-4 text-gold-DEFAULT" />
                         Availability Details
                       </h3>
-                      {selectedCarer.availabilityDetails && selectedCarer.availabilityDetails.length > 0 ? (
+                      {selectedCarer.availabilityDetails &&
+                      selectedCarer.availabilityDetails.length > 0 ? (
                         <div className="grid grid-cols-1 gap-2">
                           {selectedCarer.availabilityDetails.map((slot, i) => (
-                            <div key={i} className="flex items-center gap-2 p-2.5 rounded-xl bg-navy-950/40 border border-gold-300/10 text-gold-100 text-xs">
+                            <div
+                              key={i}
+                              className="flex items-center gap-2 p-2.5 rounded-xl bg-navy-950/40 border border-gold-300/10 text-gold-100 text-xs"
+                            >
                               <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
                               <span>{slot}</span>
                             </div>
@@ -551,33 +647,43 @@ export default function BrowseCarersPage() {
                             <span>Standard Shifts</span>
                           </div>
                           <div className="grid grid-cols-1 gap-1.5 text-[10px] text-gold-100/50">
-                            <div className="p-2 rounded-lg bg-navy-950/20 border border-gold-300/5">Weekdays: morning / day coverage</div>
-                            <div className="p-2 rounded-lg bg-navy-950/20 border border-gold-300/5">Weekends: night / call coverage</div>
+                            <div className="p-2 rounded-lg bg-navy-950/20 border border-gold-300/5">
+                              Weekdays: morning / day coverage
+                            </div>
+                            <div className="p-2 rounded-lg bg-navy-950/20 border border-gold-300/5">
+                              Weekends: night / call coverage
+                            </div>
                           </div>
                           <p className="text-[9px] text-gold-100/30 leading-relaxed italic">
-                            * Schedule configuration is pending real-time connection.
+                            * Schedule configuration is pending real-time
+                            connection.
                           </p>
                         </div>
                       )}
                     </div>
                   </div>
-
                 </div>
-
               </div>
 
               {/* Modal Footer / CTA */}
               <div className="bg-navy-950 border-t border-gold-300/10 p-5 flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div className="text-left hidden sm:block">
-                  <p className="text-[10px] uppercase font-bold tracking-wider text-gold-300/70">Matching Assessment</p>
-                  <p className="text-xs text-gold-100/90 font-medium">Verify compatibility & proceed to intro call.</p>
+                  <p className="text-[10px] uppercase font-bold tracking-wider text-gold-300/70">
+                    Matching Assessment
+                  </p>
+                  <p className="text-xs text-gold-100/90 font-medium">
+                    Verify compatibility & proceed to intro call.
+                  </p>
                 </div>
-                
+
                 <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                   <Button
                     onClick={() => {
                       if (!careRequests || careRequests.length === 0) {
-                        showErrorToast("No Care Requests", "You must create a care request before matching with a carer.");
+                        showErrorToast(
+                          "No Care Requests",
+                          "You must create a care request before matching with a carer.",
+                        );
                         return;
                       }
                       if (careRequests.length === 1) {
@@ -593,31 +699,45 @@ export default function BrowseCarersPage() {
                     size="sm"
                     className="flex-1 sm:flex-none font-semibold flex items-center justify-center gap-2 bg-[#d4af37] text-navy-950"
                   >
-                    {processingId === selectedCarer.id ? "Processing..." : "Request Match"}
+                    {processingId === selectedCarer.id
+                      ? "Processing..."
+                      : "Request Match"}
                   </Button>
                   <Button
                     onClick={() => handleWishlistToggle(selectedCarer)}
-                    disabled={processingId === selectedCarer.id || (!interestList.some((w: Carer) => w.id === selectedCarer.id) && interestList.length >= 8)}
-                    variant={interestList.some((w: Carer) => w.id === selectedCarer.id) ? "outline" : "secondary"}
+                    disabled={
+                      processingId === selectedCarer.id ||
+                      (!interestList.some(
+                        (w: Carer) => w.id === selectedCarer.id,
+                      ) &&
+                        interestList.length >= 8)
+                    }
+                    variant={
+                      interestList.some((w: Carer) => w.id === selectedCarer.id)
+                        ? "outline"
+                        : "secondary"
+                    }
                     size="sm"
                     className="flex-1 sm:flex-none font-semibold flex items-center justify-center gap-2"
                   >
-                    <Heart className={`w-4 h-4 ${interestList.some((w: Carer) => w.id === selectedCarer.id) ? "fill-gold-200" : ""}`} />
-                    {processingId === selectedCarer.id 
-                      ? "Updating..." 
-                      : interestList.some((w: Carer) => w.id === selectedCarer.id) 
-                        ? "Remove from List" 
-                        : interestList.length >= 8 
-                          ? "Maximum 8 allowed" 
+                    <Heart
+                      className={`w-4 h-4 ${interestList.some((w: Carer) => w.id === selectedCarer.id) ? "fill-gold-200" : ""}`}
+                    />
+                    {processingId === selectedCarer.id
+                      ? "Updating..."
+                      : interestList.some(
+                            (w: Carer) => w.id === selectedCarer.id,
+                          )
+                        ? "Remove from List"
+                        : interestList.length >= 8
+                          ? "Maximum 8 allowed"
                           : "Interest List"}
                   </Button>
                 </div>
               </div>
-
             </div>
           </div>
         )}
-
       </div>
     </main>
   );

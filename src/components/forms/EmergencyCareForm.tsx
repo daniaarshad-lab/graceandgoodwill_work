@@ -10,7 +10,11 @@ import Button from "@/components/Button";
 import { Check, AlertCircle } from "lucide-react";
 import { clientService } from "@/services/client/client.service";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
-import { validateFullName, validateEmail, validatePhone } from "@/lib/validation";
+import {
+  validateFullName,
+  validateEmail,
+  validatePhone,
+} from "@/lib/validation";
 
 interface EmergencyCareFormProps {
   /** When true, shows toasts alongside inline feedback (client portal context) */
@@ -21,11 +25,13 @@ export default function EmergencyCareForm({
   isAuthenticated = false,
 }: EmergencyCareFormProps) {
   const { user: authUser, isAuthenticated: isContextAuth } = useAuth();
-  const { user: reduxUser, isAuthenticated: isReduxAuthenticated } = useAppSelector((state) => state.auth);
-  
+  const { user: reduxUser, isAuthenticated: isReduxAuthenticated } =
+    useAppSelector((state) => state.auth);
+
   // Use context auth preferably, fallback to redux if needed
   const user = authUser || reduxUser;
-  const effectiveIsAuthenticated = isAuthenticated || isContextAuth || isReduxAuthenticated;
+  const effectiveIsAuthenticated =
+    isAuthenticated || isContextAuth || isReduxAuthenticated;
 
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
@@ -43,7 +49,8 @@ export default function EmergencyCareForm({
       // Only prefill for clients
       if (user.role === "client" || user.role === "CLIENT") {
         if (user.email && !email) setEmail(user.email);
-        if (user.firstName && user.lastName && !fullName) setFullName(`${user.firstName} ${user.lastName}`);
+        if (user.firstName && user.lastName && !fullName)
+          setFullName(`${user.firstName} ${user.lastName}`);
         if (user.phone && !phone) setPhone(user.phone);
       }
       setHasPrefilled(true);
@@ -184,7 +191,8 @@ export default function EmergencyCareForm({
           value={fullName}
           onChange={(e) => {
             setFullName(e.target.value);
-            if (errors.fullName) setErrors(prev => ({ ...prev, fullName: "" }));
+            if (errors.fullName)
+              setErrors((prev) => ({ ...prev, fullName: "" }));
           }}
           placeholder="Enter your full name"
           error={errors.fullName}
@@ -196,7 +204,7 @@ export default function EmergencyCareForm({
           value={email}
           onChange={(e) => {
             setEmail(e.target.value);
-            if (errors.email) setErrors(prev => ({ ...prev, email: "" }));
+            if (errors.email) setErrors((prev) => ({ ...prev, email: "" }));
           }}
           placeholder="name@example.com"
           error={errors.email}
@@ -211,7 +219,7 @@ export default function EmergencyCareForm({
           value={phone}
           onChange={(val) => {
             setPhone(val);
-            if (errors.phone) setErrors(prev => ({ ...prev, phone: "" }));
+            if (errors.phone) setErrors((prev) => ({ ...prev, phone: "" }));
           }}
           error={errors.phone}
           className={darkInput}
@@ -237,7 +245,8 @@ export default function EmergencyCareForm({
           value={location}
           onChange={(e) => {
             setLocation(e.target.value);
-            if (errors.location) setErrors(prev => ({ ...prev, location: "" }));
+            if (errors.location)
+              setErrors((prev) => ({ ...prev, location: "" }));
           }}
           placeholder="e.g. City or Postcode"
           error={errors.location}

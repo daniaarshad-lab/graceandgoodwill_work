@@ -56,12 +56,12 @@ export default function PlacementOpportunities() {
       await dispatch(applyToCarerCareRequest(careRequestId)).unwrap();
       showSuccessToast(
         "Application Submitted",
-        "Your application has been submitted. You will be notified when there is an update."
+        "Your application has been submitted. You will be notified when there is an update.",
       );
     } catch (err: any) {
       showErrorToast(
         "Application Failed",
-        err?.message || "Failed to submit application."
+        err?.message || "Failed to submit application.",
       );
     }
   };
@@ -76,7 +76,7 @@ export default function PlacementOpportunities() {
   };
 
   const formatPayRange = (
-    range?: string | { min: number; max: number } | null
+    range?: string | { min: number; max: number } | null,
   ) => {
     if (!range) return "Not specified";
     if (typeof range === "string") return range;
@@ -146,7 +146,9 @@ export default function PlacementOpportunities() {
       ) : (
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
           {careRequests.map((req) => {
-            const hasApplied = applications?.some((app: any) => app.careRequestId === req.id) || false;
+            const hasApplied =
+              applications?.some((app: any) => app.careRequestId === req.id) ||
+              false;
 
             return (
               <div
@@ -176,7 +178,6 @@ export default function PlacementOpportunities() {
                         Urgent
                       </span>
                     )}
-
                   </div>
                 </div>
 
@@ -277,7 +278,9 @@ export default function PlacementOpportunities() {
           careRequest={selectedCareRequest}
           loading={selectedCareRequestLoading}
           applying={applyingToCareRequest}
-          hasApplied={applications.some(app => app.careRequestId === viewingDetailId)}
+          hasApplied={applications.some(
+            (app) => app.careRequestId === viewingDetailId,
+          )}
           onClose={handleCloseDetail}
           onApply={() => handleApply(viewingDetailId)}
         />

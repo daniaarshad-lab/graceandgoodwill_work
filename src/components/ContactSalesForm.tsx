@@ -340,7 +340,7 @@ export default function ContactSalesForm() {
               <span>Submitting...</span>
             </div>
           ) : (
-            "Contact Sales Team"
+            "Contact Support Team"
           )}
         </Button>
       </div>

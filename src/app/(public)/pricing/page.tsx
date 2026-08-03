@@ -194,13 +194,11 @@ export default function PricingPage() {
         <div className="pointer-events-none absolute left-1/4 bottom-0 h-[350px] w-[500px] rounded-full bg-gold-500/3 blur-[120px]" />
 
         <div className="container-wrapper max-w-4xl mx-auto relative z-10">
-          <div className="rounded-[1.75rem] border border-gold-400/12 bg-navy-900/40 shadow-[0_8px_40px_rgba(0,0,0,0.25)] backdrop-blur-xl relative overflow-hidden">
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-gold-400/[0.03] via-transparent to-transparent pointer-events-none" />
-
+          <div className="rounded-[2rem] border border-gold-muted/20 bg-navy-900/50 p-8 sm:p-10 shadow-elegant backdrop-blur-xl">
             {/* Card header */}
-            <div className="relative z-10 px-6 sm:px-8 lg:px-10 pt-7 sm:pt-9 pb-6 border-b border-gold-400/8">
+            <div className="relative z-10 pb-8 border-b border-gold-muted/10">
               <div className="flex flex-col sm:flex-row sm:items-start gap-4">
-                <div className="flex items-center justify-center w-11 h-11 rounded-2xl bg-gradient-to-br from-gold-400/20 to-gold-400/5 text-gold-300 ring-1 ring-gold-400/15 flex-shrink-0 mt-0.5">
+                <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-gold-muted/5 text-gold-300 border border-gold-muted/10 flex-shrink-0">
                   <MessageCircle className="w-5 h-5" strokeWidth={1.5} />
                 </div>
                 <div className="space-y-3">
@@ -223,7 +221,7 @@ export default function PricingPage() {
             </div>
 
             {/* Form body */}
-            <div className="relative z-10 px-6 sm:px-8 lg:px-10 py-6 sm:py-8 lg:py-9">
+            <div className="relative z-10 pt-8">
               <ContactSalesForm />
             </div>
           </div>

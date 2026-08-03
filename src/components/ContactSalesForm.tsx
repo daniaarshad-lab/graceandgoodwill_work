@@ -159,10 +159,10 @@ export default function ContactSalesForm() {
 
   // ── Input overrides for dark theme ────────────────────────────────────
   const darkInput = (hasError: boolean) =>
-    `w-full bg-navy-950/50 border rounded-xl px-4 py-3 text-gold-100 outline-none transition duration-300 text-sm placeholder:text-gold-100/30 shadow-[inset_0_1px_2px_rgba(0,0,0,0.3)] ${
+    `w-full bg-navy-950/50 border rounded-xl px-4 py-3 text-gold-100 outline-none transition duration-300 text-sm placeholder:text-gold-100/20 shadow-none ${
       hasError
-        ? "border-red-500/50 focus:border-red-500/50 focus:ring-2 focus:ring-red-500/20"
-        : "border-gold-400/20 focus:border-gold-400/60 focus:ring-2 focus:ring-gold-400/20"
+        ? "border-red-500/50 focus:border-red-500/50 focus:ring-1 focus:ring-red-500/20"
+        : "border-gold-muted/10 focus:border-gold-muted/30 focus:ring-1 focus:ring-gold-muted/10"
     }`;
 
   const darkSelect = (hasError: boolean) => darkInput(hasError);
@@ -171,9 +171,7 @@ export default function ContactSalesForm() {
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="grid md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <label htmlFor="name" className="text-sm text-gold-200/80 ml-1">
-            Full Name *
-          </label>
+          {fieldLabel("Full Name *")}
           <input
             type="text"
             id="name"
@@ -187,9 +185,7 @@ export default function ContactSalesForm() {
           )}
         </div>
         <div className="space-y-2">
-          <label htmlFor="company" className="text-sm text-gold-200/80 ml-1">
-            Company Name *
-          </label>
+          {fieldLabel("Company Name *")}
           <input
             type="text"
             id="company"

@@ -663,7 +663,7 @@ export default function LegalAgreementsFeature({
                           {selectedAgreement.content
                             .split("\n\n")
                             .map((para, idx) => (
-                              <p key={idx} className="mb-4">
+                              <p key={idx} className="mb-4 whitespace-pre-line">
                                 {para}
                               </p>
                             ))}

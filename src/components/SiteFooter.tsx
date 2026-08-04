@@ -2,6 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { HeartHandshake } from "lucide-react";
 
 const values = [
@@ -149,15 +150,36 @@ function SiteFooter() {
           </div>
         </div>
 
-        {/* Cookie Preferences */}
-        <div className="mt-7 sm:mt-8 flex justify-center">
+        {/* Legal Links & Cookie Preferences */}
+        <div className="mt-7 sm:mt-8 flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-[10px] sm:text-[11px]">
+          <Link
+            href="/privacy"
+            className="text-gold-100/40 hover:text-gold-100/90 transition-colors font-light hover:underline underline-offset-4 decoration-gold-100/20"
+          >
+            Privacy Policy
+          </Link>
+          <span className="text-gold-100/20">•</span>
+          <Link
+            href="/terms"
+            className="text-gold-100/40 hover:text-gold-100/90 transition-colors font-light hover:underline underline-offset-4 decoration-gold-100/20"
+          >
+            Website &amp; Platform Terms
+          </Link>
+          <span className="text-gold-100/20">•</span>
+          <Link
+            href="/agency-introduction-terms"
+            className="text-gold-100/40 hover:text-gold-100/90 transition-colors font-light hover:underline underline-offset-4 decoration-gold-100/20"
+          >
+            Agency Introduction Terms
+          </Link>
+          <span className="text-gold-100/20">•</span>
           <button
             type="button"
             onClick={(e) => {
               e.preventDefault();
               window.dispatchEvent(new Event("gg:open-cookie-preferences"));
             }}
-            className="text-[10px] sm:text-[11px] text-gold-100/30 hover:text-gold-100/70 transition-colors duration-300 font-light cursor-pointer hover:underline underline-offset-4 decoration-gold-100/20"
+            className="text-gold-100/40 hover:text-gold-100/90 transition-colors font-light cursor-pointer hover:underline underline-offset-4 decoration-gold-100/20"
           >
             Cookie Preferences
           </button>

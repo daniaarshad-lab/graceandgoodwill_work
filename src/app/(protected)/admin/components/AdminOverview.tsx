@@ -354,13 +354,7 @@ export default function AdminOverview({
               Active Clients
             </p>
             <p className="mt-2 text-2xl font-bold text-gold-200">
-              {stats.activeClients !== undefined ? (
-                stats.activeClients
-              ) : (
-                <span className="text-xs text-gold-100/40 italic">
-                  TODO: Backend support required
-                </span>
-              )}
+              {stats.activeClients ?? 0}
             </p>
           </div>
 
@@ -370,13 +364,7 @@ export default function AdminOverview({
               Active Carers
             </p>
             <p className="mt-2 text-2xl font-bold text-gold-200">
-              {stats.activeCarers !== undefined ? (
-                stats.activeCarers
-              ) : (
-                <span className="text-xs text-gold-100/40 italic">
-                  TODO: Backend support required
-                </span>
-              )}
+              {stats.activeCarers ?? 0}
             </p>
           </div>
 
@@ -386,13 +374,7 @@ export default function AdminOverview({
               Total Referral Partners
             </p>
             <p className="mt-2 text-2xl font-bold text-gold-200">
-              {stats.totalReferralPartners !== undefined ? (
-                stats.totalReferralPartners
-              ) : (
-                <span className="text-xs text-gold-100/40 italic">
-                  TODO: Backend support required
-                </span>
-              )}
+              {stats.totalReferralPartners ?? 0}
             </p>
           </div>
 
@@ -402,20 +384,14 @@ export default function AdminOverview({
               Lifetime Members
             </p>
             <p className="mt-2 text-2xl font-bold text-gold-200">
-              {stats.lifetimePlatformMembers !== undefined ? (
-                stats.lifetimePlatformMembers
-              ) : (
-                <span className="text-xs text-gold-100/40 italic">
-                  TODO: Backend support required
-                </span>
-              )}
+              {stats.lifetimePlatformMembers ?? 0}
             </p>
           </div>
         </div>
 
-        <div className="grid gap-6 mt-6 md:grid-cols-3">
+        <div className="grid gap-6 mt-6 md:grid-cols-1">
           {/* Registrations This Year */}
-          <div className="rounded-xl bg-navy-950 p-4 border border-gold-300/10 col-span-1 md:col-span-2">
+          <div className="rounded-xl bg-navy-950 p-4 border border-gold-300/10 col-span-1">
             <h4 className="text-sm font-semibold text-gold-200 mb-4">
               Registrations This Year
             </h4>
@@ -425,13 +401,7 @@ export default function AdminOverview({
                   Clients Registered This Year
                 </span>
                 <span className="font-bold text-gold-200">
-                  {stats.clientsRegisteredThisYear !== undefined ? (
-                    stats.clientsRegisteredThisYear
-                  ) : (
-                    <span className="text-gold-100/40 italic">
-                      TODO: Backend support required
-                    </span>
-                  )}
+                  {stats.clientsRegisteredThisYear ?? 0}
                 </span>
               </div>
               <div className="flex justify-between items-center text-xs border-t border-gold-300/5 pt-2">
@@ -439,13 +409,7 @@ export default function AdminOverview({
                   Carers Registered This Year
                 </span>
                 <span className="font-bold text-gold-200">
-                  {stats.carersRegisteredThisYear !== undefined ? (
-                    stats.carersRegisteredThisYear
-                  ) : (
-                    <span className="text-gold-100/40 italic">
-                      TODO: Backend support required
-                    </span>
-                  )}
+                  {stats.carersRegisteredThisYear ?? 0}
                 </span>
               </div>
               <div className="flex justify-between items-center text-xs border-t border-gold-300/5 pt-2">
@@ -453,42 +417,10 @@ export default function AdminOverview({
                   Referral Partners Registered This Year
                 </span>
                 <span className="font-bold text-gold-200">
-                  {stats.referralPartnersRegisteredThisYear !== undefined ? (
-                    stats.referralPartnersRegisteredThisYear
-                  ) : (
-                    <span className="text-gold-100/40 italic">
-                      TODO: Backend support required
-                    </span>
-                  )}
+                  {stats.referralPartnersRegisteredThisYear ?? 0}
                 </span>
               </div>
             </div>
-          </div>
-
-          {/* Membership Breakdown by Type */}
-          <div className="rounded-xl bg-navy-950 p-4 border border-gold-300/10">
-            <h4 className="text-sm font-semibold text-gold-200 mb-4">
-              Membership Breakdown
-            </h4>
-            {stats.membershipBreakdown ? (
-              <div className="space-y-2">
-                {Object.entries(stats.membershipBreakdown).map(
-                  ([type, count]) => (
-                    <div
-                      key={type}
-                      className="flex justify-between items-center text-xs"
-                    >
-                      <span className="text-gold-100/70 uppercase">{type}</span>
-                      <span className="font-bold text-gold-200">{count}</span>
-                    </div>
-                  ),
-                )}
-              </div>
-            ) : (
-              <div className="text-xs text-gold-100/40 italic text-center py-4">
-                TODO: Backend support required for membership breakdown
-              </div>
-            )}
           </div>
         </div>
       </SectionCard>

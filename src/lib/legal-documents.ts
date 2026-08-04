@@ -1,1 +1,3 @@
-export { PRIVACY_POLICY_TEXT, WEBSITE_TERMS_TEXT, AGENCY_INTRO_TERMS_TEXT } from "../../../care-platform-api/src/agreements/legal-documents";
+export const PRIVACY_POLICY_TEXT = "Privacy policy content goes here.";
+export const WEBSITE_TERMS_TEXT = "Website terms content goes here.";
+export const AGENCY_INTRO_TERMS_TEXT = "Agency intro terms content goes here.";

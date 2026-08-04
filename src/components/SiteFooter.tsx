@@ -5,26 +5,31 @@ import Image from "next/image";
 import Link from "next/link";
 import { HeartHandshake } from "lucide-react";
 
+import integrityImg from "@/assets/open/integrity.jpeg";
+import compassionImg from "@/assets/open/compassion.jpeg";
+import purposeImg from "@/assets/open/purpose.jpeg";
+import trustImg from "@/assets/open/trust.jpeg";
+
 const values = [
   {
     title: "INTEGRITY",
     text: "Morally and \n ethically guided.",
-    icon: "/Integrity.png",
+    icon: integrityImg,
   },
   {
     title: "COMPASSION",
     text: "A duty to care,\na promise to serve.",
-    icon: "/Compassion.png",
-  },
-  {
-    title: "TRUST",
-    text: "Built on honesty,\nstrengthened by reliability.",
-    icon: "/Trust.png",
+    icon: compassionImg,
   },
   {
     title: "PURPOSE",
     text: "Care with meaning,\nimpact that lasts.",
-    icon: "/Purpose.png",
+    icon: purposeImg,
+  },
+  {
+    title: "TRUST",
+    text: "Built on honesty,\nstrengthened by reliability.",
+    icon: trustImg,
   },
 ];
 
@@ -44,35 +49,22 @@ function SiteFooter() {
       <div className="container-wrapper py-7 sm:py-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-5 md:gap-6">
           {values.map((val, idx) => (
-            <div key={idx} className="flex flex-col items-center text-center">
-              <div className="mb-2.5">
+              <div key={idx} className="relative w-full max-w-[300px] aspect-[2.5/1] mx-auto rounded-xl overflow-hidden shadow-[0_4px_12px_rgba(0,0,0,0.15)]">
                 {val.icon ? (
                   <Image
                     src={val.icon}
-                    alt={`${val.title} icon`}
-                    width={44}
-                    height={44}
-                    className="w-9 h-9 sm:w-10 sm:h-10 object-contain"
-                    style={{
-                      filter: "drop-shadow(0 2px 8px rgba(212,175,55,0.12))",
-                    }}
+                    alt={`${val.title} image`}
+                    fill
+                    quality={100}
+                    unoptimized={true}
+                    className="object-cover object-center"
                   />
                 ) : (
-                  <HeartHandshake
-                    className="w-9 h-9 sm:w-10 sm:h-10 text-gold-DEFAULT"
-                    style={{
-                      filter: "drop-shadow(0 2px 8px rgba(212,175,55,0.12))",
-                    }}
-                  />
+                  <div className="flex items-center justify-center py-6">
+                    <HeartHandshake className="w-10 h-10 text-gold-DEFAULT" />
+                  </div>
                 )}
               </div>
-              <h3 className="text-[10px] sm:text-[11px] font-semibold text-gold-100/80 tracking-[0.18em] mb-1">
-                {val.title}
-              </h3>
-              <p className="text-[10px] sm:text-[11px] text-gold-200/35 font-light leading-[1.55] whitespace-pre-line">
-                {val.text}
-              </p>
-            </div>
           ))}
         </div>
       </div>

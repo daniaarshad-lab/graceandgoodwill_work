@@ -4,8 +4,10 @@ import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { Play, Pause, ListMusic } from "lucide-react";
 
-const INTERVIEWS = [
-  { id: 1, title: "Interview Part 1", src: "/audio/bbc-audio-1.mp3" },
+type Interview = { id: number; title: string; src: string; maxDuration?: number };
+
+const INTERVIEWS: Interview[] = [
+  { id: 1, title: "Interview Part 1", src: "/audio/bbc-audio-1.mp3", maxDuration: 389 },
   { id: 2, title: "Interview Part 2", src: "/audio/bbc-audio-2.mp4" },
 ];
 
@@ -48,23 +50,33 @@ export default function BBCAudioCard() {
 
   const handleTimeUpdate = () => {
     if (audioRef.current) {
-      setCurrentTime(audioRef.current.currentTime);
-      setProgress(
-        (audioRef.current.currentTime / audioRef.current.duration) * 100,
-      );
+      const maxTime = activeInterview.maxDuration || audioRef.current.duration;
+      const current = audioRef.current.currentTime;
+
+      if (activeInterview.maxDuration && current >= activeInterview.maxDuration) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = activeInterview.maxDuration;
+        setIsPlaying(false);
+        setCurrentTime(activeInterview.maxDuration);
+        setProgress(100);
+      } else {
+        setCurrentTime(current);
+        setProgress((current / maxTime) * 100);
+      }
     }
   };
 
   const handleLoadedMetadata = () => {
     if (audioRef.current) {
-      setDuration(audioRef.current.duration);
+      setDuration(activeInterview.maxDuration || audioRef.current.duration);
     }
   };
 
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
     const seekTo = Number(e.target.value);
     if (audioRef.current) {
-      const newTime = (seekTo / 100) * audioRef.current.duration;
+      const maxTime = activeInterview.maxDuration || audioRef.current.duration;
+      const newTime = (seekTo / 100) * maxTime;
       audioRef.current.currentTime = newTime;
       setProgress(seekTo);
     }

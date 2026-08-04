@@ -518,7 +518,6 @@ export function useCarerPortal({
         };
       }
 
-      // @ts-expect-error - Redux thunk action type mismatch that needs to be addressed in the slice definition
       await dispatch(
         uploadCarerStepDocuments({ step, files: selectedFiles, textFields }),
       ).unwrap();

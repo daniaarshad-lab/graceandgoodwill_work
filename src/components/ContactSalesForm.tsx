@@ -3,6 +3,8 @@
 import { useState, FormEvent, useEffect } from "react";
 import Button from "@/components/Button";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
+import { apiFetch } from "@/lib/api";
+import { validateEmail, validatePhone } from "@/lib/validation";
 
 interface FormData {
   name: string;
@@ -37,24 +39,33 @@ export default function ContactSalesForm() {
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleChange = (field: keyof FormData, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
+    }
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    if (val === "" || /^[\d\s\-\+\(\)]+$/.test(val)) {
+      handleChange("phone", val);
+    }
+  };
+
   useEffect(() => {
     const checkValidity = () => {
       if (!formData.name.trim()) return false;
       if (!formData.company.trim()) return false;
-      if (
-        !formData.email.trim() ||
-        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())
-      )
-        return false;
-      if (
-        !formData.phone.trim() ||
-        !/^[\d\s\-\+\(\)]+$/.test(formData.phone.trim())
-      )
-        return false;
+      if (validateEmail(formData.email)) return false;
+      if (validatePhone(formData.phone)) return false;
       if (!formData.employees.trim()) return false;
       if (!formData.service.trim()) return false;
-      if (!formData.message.trim() || formData.message.trim().length < 10)
-        return false;
+      
+      const wordCount = formData.message.trim().split(/\s+/).filter(w => w.length > 0).length;
+      if (wordCount < 10) return false;
+      
       return true;
     };
     checkValidity();
@@ -74,22 +85,15 @@ export default function ContactSalesForm() {
       formIsValid = false;
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!formData.email.trim()) {
-      newErrors.email = "Email Address is required.";
-      formIsValid = false;
-    } else if (!emailRegex.test(formData.email.trim())) {
-      newErrors.email = "Please enter a valid email address.";
+    const emailError = validateEmail(formData.email);
+    if (emailError) {
+      newErrors.email = emailError;
       formIsValid = false;
     }
 
-    // Basic phone validation allowing UK formats (+44, 07, etc.)
-    const phoneRegex = /^[\d\s\-\+\(\)]+$/;
-    if (!formData.phone.trim()) {
-      newErrors.phone = "Phone Number is required.";
-      formIsValid = false;
-    } else if (!phoneRegex.test(formData.phone.trim())) {
-      newErrors.phone = "Please enter a valid phone number.";
+    const phoneError = validatePhone(formData.phone);
+    if (phoneError) {
+      newErrors.phone = phoneError;
       formIsValid = false;
     }
 
@@ -103,11 +107,12 @@ export default function ContactSalesForm() {
       formIsValid = false;
     }
 
-    if (!formData.message.trim()) {
+    const wordCount = formData.message.trim().split(/\s+/).filter(w => w.length > 0).length;
+    if (wordCount === 0) {
       newErrors.message = "Message / Requirements is required.";
       formIsValid = false;
-    } else if (formData.message.trim().length < 10) {
-      newErrors.message = "Message must be at least 10 characters.";
+    } else if (wordCount < 10) {
+      newErrors.message = "Message must be at least 10 words.";
       formIsValid = false;
     }
 
@@ -121,8 +126,26 @@ export default function ContactSalesForm() {
     if (validate()) {
       setIsSubmitting(true);
       try {
-        // Placeholder for API integration
-        await new Promise((resolve) => setTimeout(resolve, 1500));
+        const payload = {
+          fullName: formData.name.trim(),
+          company: formData.company.trim(),
+          companyName: formData.company.trim(),
+          email: formData.email.trim(),
+          phone: formData.phone.trim(),
+          phoneNumber: formData.phone.trim(),
+          employees: formData.employees,
+          numberOfEmployees: formData.employees,
+          service: formData.service,
+          serviceOfInterest: formData.service,
+          primaryService: formData.service,
+          message: formData.message.trim(),
+          businessRequirements: formData.message.trim(),
+        };
+
+        await apiFetch("/quote-enquiry", {
+          method: "POST",
+          body: JSON.stringify(payload),
+        });
 
         showSuccessToast(
           "Inquiry Received",
@@ -139,10 +162,10 @@ export default function ContactSalesForm() {
           message: "",
         });
         setErrors({});
-      } catch (error) {
+      } catch (error: any) {
         showErrorToast(
           "Submission Failed",
-          "Something went wrong. Please try again later.",
+          error.message || "Something went wrong. Please try again later.",
         );
       } finally {
         setIsSubmitting(false);
@@ -168,15 +191,15 @@ export default function ContactSalesForm() {
   const darkSelect = (hasError: boolean) => darkInput(hasError);
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
-      <div className="grid md:grid-cols-2 gap-4">
+    <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
         <div className="space-y-2">
           {fieldLabel("Full Name *")}
           <input
             type="text"
             id="name"
             value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            onChange={(e) => handleChange("name", e.target.value)}
             className={darkInput(!!errors.name)}
             disabled={isSubmitting}
           />
@@ -184,15 +207,14 @@ export default function ContactSalesForm() {
             <p className="text-red-400 text-xs ml-1">{errors.name}</p>
           )}
         </div>
+        
         <div className="space-y-2">
           {fieldLabel("Company Name *")}
           <input
             type="text"
             id="company"
             value={formData.company}
-            onChange={(e) =>
-              setFormData({ ...formData, company: e.target.value })
-            }
+            onChange={(e) => handleChange("company", e.target.value)}
             className={darkInput(!!errors.company)}
             disabled={isSubmitting}
           />
@@ -200,18 +222,14 @@ export default function ContactSalesForm() {
             <p className="text-red-400 text-xs ml-1">{errors.company}</p>
           )}
         </div>
-      </div>
 
-      <div className="grid md:grid-cols-2 gap-4">
         <div className="space-y-2">
           {fieldLabel("Email Address")}
           <input
             type="email"
             id="email"
             value={formData.email}
-            onChange={(e) =>
-              setFormData({ ...formData, email: e.target.value })
-            }
+            onChange={(e) => handleChange("email", e.target.value)}
             className={darkInput(!!errors.email)}
             disabled={isSubmitting}
             placeholder="name@example.com"
@@ -220,15 +238,14 @@ export default function ContactSalesForm() {
             <p className="text-red-400 text-xs ml-1">{errors.email}</p>
           )}
         </div>
+        
         <div className="space-y-2">
           {fieldLabel("Phone Number")}
           <input
             type="tel"
             id="phone"
             value={formData.phone}
-            onChange={(e) =>
-              setFormData({ ...formData, phone: e.target.value })
-            }
+            onChange={handlePhoneChange}
             className={darkInput(!!errors.phone)}
             disabled={isSubmitting}
             placeholder="Enter contact number"
@@ -237,17 +254,13 @@ export default function ContactSalesForm() {
             <p className="text-red-400 text-xs ml-1">{errors.phone}</p>
           )}
         </div>
-      </div>
 
-      <div className="grid md:grid-cols-2 gap-4">
         <div className="space-y-2">
           {fieldLabel("Number of Employees")}
           <select
             id="employees"
             value={formData.employees}
-            onChange={(e) =>
-              setFormData({ ...formData, employees: e.target.value })
-            }
+            onChange={(e) => handleChange("employees", e.target.value)}
             className={darkSelect(!!errors.employees)}
             disabled={isSubmitting}
           >
@@ -271,14 +284,13 @@ export default function ContactSalesForm() {
             <p className="text-red-400 text-xs ml-1">{errors.employees}</p>
           )}
         </div>
+        
         <div className="space-y-2">
           {fieldLabel("Primary Service of Interest")}
           <select
             id="service"
             value={formData.service}
-            onChange={(e) =>
-              setFormData({ ...formData, service: e.target.value })
-            }
+            onChange={(e) => handleChange("service", e.target.value)}
             className={darkSelect(!!errors.service)}
             disabled={isSubmitting}
           >
@@ -310,9 +322,7 @@ export default function ContactSalesForm() {
           id="message"
           rows={4}
           value={formData.message}
-          onChange={(e) =>
-            setFormData({ ...formData, message: e.target.value })
-          }
+          onChange={(e) => handleChange("message", e.target.value)}
           className={`${darkInput(!!errors.message)} resize-none`}
           disabled={isSubmitting}
           placeholder="Please share details about your business requirements..."
@@ -322,12 +332,12 @@ export default function ContactSalesForm() {
         )}
       </div>
 
-      <div className="pt-2">
+      <div className="pt-4 flex justify-center">
         <Button
           type="submit"
           variant="primary"
-          size="lg"
-          fullWidth
+          size="md"
+          className="w-full md:w-1/2 lg:w-1/3"
           disabled={isSubmitting}
         >
           {isSubmitting ? (

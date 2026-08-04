@@ -4,7 +4,6 @@ import {
   Users,
   ClipboardList,
   Calendar,
-  AlertTriangle,
   MessageSquare,
   UserCheck,
 } from "lucide-react";
@@ -335,6 +334,164 @@ export default function AdminOverview({
           </SectionCard>
         </div>
       </div>
+
+      {/* Extended Platform Statistics Section */}
+      <SectionCard>
+        <div className="mb-6">
+          <h3 className="text-lg font-bold text-gold-200">
+            Extended Platform Statistics
+          </h3>
+          <p className="text-xs text-gold-100/50">
+            Real-time tracking of registration metrics, user counts, and
+            membership breakdown
+          </p>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {/* Active Clients */}
+          <div className="rounded-xl bg-navy-950 p-4 border border-gold-300/10">
+            <p className="text-xs font-medium text-gold-200/60 uppercase tracking-wider">
+              Active Clients
+            </p>
+            <p className="mt-2 text-2xl font-bold text-gold-200">
+              {stats.activeClients !== undefined ? (
+                stats.activeClients
+              ) : (
+                <span className="text-xs text-gold-100/40 italic">
+                  TODO: Backend support required
+                </span>
+              )}
+            </p>
+          </div>
+
+          {/* Active Carers */}
+          <div className="rounded-xl bg-navy-950 p-4 border border-gold-300/10">
+            <p className="text-xs font-medium text-gold-200/60 uppercase tracking-wider">
+              Active Carers
+            </p>
+            <p className="mt-2 text-2xl font-bold text-gold-200">
+              {stats.activeCarers !== undefined ? (
+                stats.activeCarers
+              ) : (
+                <span className="text-xs text-gold-100/40 italic">
+                  TODO: Backend support required
+                </span>
+              )}
+            </p>
+          </div>
+
+          {/* Total Referral Partners */}
+          <div className="rounded-xl bg-navy-950 p-4 border border-gold-300/10">
+            <p className="text-xs font-medium text-gold-200/60 uppercase tracking-wider">
+              Total Referral Partners
+            </p>
+            <p className="mt-2 text-2xl font-bold text-gold-200">
+              {stats.totalReferralPartners !== undefined ? (
+                stats.totalReferralPartners
+              ) : (
+                <span className="text-xs text-gold-100/40 italic">
+                  TODO: Backend support required
+                </span>
+              )}
+            </p>
+          </div>
+
+          {/* Lifetime Platform Members */}
+          <div className="rounded-xl bg-navy-950 p-4 border border-gold-300/10">
+            <p className="text-xs font-medium text-gold-200/60 uppercase tracking-wider">
+              Lifetime Members
+            </p>
+            <p className="mt-2 text-2xl font-bold text-gold-200">
+              {stats.lifetimePlatformMembers !== undefined ? (
+                stats.lifetimePlatformMembers
+              ) : (
+                <span className="text-xs text-gold-100/40 italic">
+                  TODO: Backend support required
+                </span>
+              )}
+            </p>
+          </div>
+        </div>
+
+        <div className="grid gap-6 mt-6 md:grid-cols-3">
+          {/* Registrations This Year */}
+          <div className="rounded-xl bg-navy-950 p-4 border border-gold-300/10 col-span-1 md:col-span-2">
+            <h4 className="text-sm font-semibold text-gold-200 mb-4">
+              Registrations This Year
+            </h4>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-gold-100/70">
+                  Clients Registered This Year
+                </span>
+                <span className="font-bold text-gold-200">
+                  {stats.clientsRegisteredThisYear !== undefined ? (
+                    stats.clientsRegisteredThisYear
+                  ) : (
+                    <span className="text-gold-100/40 italic">
+                      TODO: Backend support required
+                    </span>
+                  )}
+                </span>
+              </div>
+              <div className="flex justify-between items-center text-xs border-t border-gold-300/5 pt-2">
+                <span className="text-gold-100/70">
+                  Carers Registered This Year
+                </span>
+                <span className="font-bold text-gold-200">
+                  {stats.carersRegisteredThisYear !== undefined ? (
+                    stats.carersRegisteredThisYear
+                  ) : (
+                    <span className="text-gold-100/40 italic">
+                      TODO: Backend support required
+                    </span>
+                  )}
+                </span>
+              </div>
+              <div className="flex justify-between items-center text-xs border-t border-gold-300/5 pt-2">
+                <span className="text-gold-100/70">
+                  Referral Partners Registered This Year
+                </span>
+                <span className="font-bold text-gold-200">
+                  {stats.referralPartnersRegisteredThisYear !== undefined ? (
+                    stats.referralPartnersRegisteredThisYear
+                  ) : (
+                    <span className="text-gold-100/40 italic">
+                      TODO: Backend support required
+                    </span>
+                  )}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Membership Breakdown by Type */}
+          <div className="rounded-xl bg-navy-950 p-4 border border-gold-300/10">
+            <h4 className="text-sm font-semibold text-gold-200 mb-4">
+              Membership Breakdown
+            </h4>
+            {stats.membershipBreakdown ? (
+              <div className="space-y-2">
+                {Object.entries(stats.membershipBreakdown).map(
+                  ([type, count]) => (
+                    <div
+                      key={type}
+                      className="flex justify-between items-center text-xs"
+                    >
+                      <span className="text-gold-100/70 uppercase">{type}</span>
+                      <span className="font-bold text-gold-200">{count}</span>
+                    </div>
+                  ),
+                )}
+              </div>
+            ) : (
+              <div className="text-xs text-gold-100/40 italic text-center py-4">
+                TODO: Backend support required for membership breakdown
+              </div>
+            )}
+          </div>
+        </div>
+      </SectionCard>
     </div>
   );
 }

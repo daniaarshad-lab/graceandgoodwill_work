@@ -1,11 +1,8 @@
 import { useState, useEffect } from "react";
 import {
   X,
-  Calendar,
   User,
   FileText,
-  CheckCircle,
-  Clock,
   AlertTriangle,
   Download,
   DollarSign,

@@ -10,11 +10,7 @@ import {
 } from "@/store/slices/adminSlice";
 import { adminService } from "@/services/admin/admin.service";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
-import {
-  DocumentFileType,
-  FileCategory,
-  getDocumentFileLabel,
-} from "@/types/document.types";
+import { DocumentFileType, getDocumentFileLabel } from "@/types/document.types";
 import { formatDateArrayToRanges } from "@/utils/dateRangeFormatter";
 import ReadOnlyAvailabilityCalendar from "@/components/ReadOnlyAvailabilityCalendar";
 import {
@@ -32,14 +28,10 @@ import {
   ShieldCheck,
   AlertTriangle,
   FileText,
-  DollarSign,
-  MessageSquare,
-  MessageCircle,
   CheckCircle2,
   Camera,
   Video,
   Info,
-  History,
 } from "lucide-react";
 import InternalNotes from "../../components/shared/InternalNotes/InternalNotes";
 import UserAuditLogs from "../../components/shared/UserAuditLogs";
@@ -284,7 +276,7 @@ function CarerDetailsContent() {
   let availabilityStr = "No availability configured";
   let availabilityStatus = "Not configured";
   let consecutiveDays = "0 Days";
-  let availableHours = "[Backend Required]";
+  const availableHours = "[Backend Required]";
 
   if (availSource && Array.isArray(availSource)) {
     if (availSource.length > 0 && typeof availSource[0] === "string") {

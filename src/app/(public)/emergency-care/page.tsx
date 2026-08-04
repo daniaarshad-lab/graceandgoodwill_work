@@ -1,4 +1,3 @@
-import { EmergencyCareContent } from "@/components/emergency/EmergencyCareContent";
 import EmergencyCareForm from "@/components/forms/EmergencyCareForm";
 import {
   AlertCircle,

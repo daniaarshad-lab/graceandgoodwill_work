@@ -1,16 +1,7 @@
 import { useState } from "react";
 import SectionCard from "./shared/SectionCard";
 import Button from "@/components/Button";
-import {
-  Check,
-  Star,
-  Shield,
-  Award,
-  ShieldCheck,
-  X,
-  Sparkles,
-  Medal,
-} from "lucide-react";
+import { Check, Star, Shield, Award, X, Sparkles } from "lucide-react";
 import { carerService } from "@/services/carer/carer.service";
 import { showErrorToast } from "@/utils/toast";
 

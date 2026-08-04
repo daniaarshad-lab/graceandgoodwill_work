@@ -1,5 +1,4 @@
 import { ChangeEvent } from "react";
-import Image from "next/image";
 
 interface UploadPhotoSectionProps {
   profilePhoto: string | null;

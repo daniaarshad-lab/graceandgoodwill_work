@@ -11,6 +11,12 @@ const initialState: AdminState = {
   stats: null,
   loading: false,
   error: null,
+  activeTab: "overview",
+  isSearchModalOpen: false,
+  globalSearchQuery: "",
+  globalSearchResults: null,
+  isSearchingGlobal: false,
+  globalSearchError: null,
   carers: {
     items: [],
     page: 1,
@@ -292,10 +298,47 @@ export const triggerAdminBillingRun = createAsyncThunk<
   }
 });
 
+export const fetchGlobalSearchResults = createAsyncThunk<
+  any[],
+  string,
+  { rejectValue: string }
+>("admin/fetchGlobalSearchResults", async (query, { rejectWithValue }) => {
+  try {
+    const response: any = await adminService.searchUsers({ query });
+
+    // Safely unwrap the response if it's nested inside an object
+    let resultsArray: any[] = [];
+    if (Array.isArray(response)) {
+      resultsArray = response;
+    } else if (response) {
+      resultsArray =
+        response.data ||
+        response.content ||
+        response.items ||
+        response.results ||
+        response.users ||
+        [];
+    }
+
+    return resultsArray;
+  } catch (error: any) {
+    return rejectWithValue(error?.message || "Failed to search users");
+  }
+});
+
 const adminSlice = createSlice({
   name: "admin",
   initialState,
   reducers: {
+    setActiveTab(state, action: PayloadAction<string>) {
+      state.activeTab = action.payload;
+    },
+    setSearchModalOpen(state, action: PayloadAction<boolean>) {
+      state.isSearchModalOpen = action.payload;
+    },
+    setGlobalSearchQuery(state, action: PayloadAction<string>) {
+      state.globalSearchQuery = action.payload;
+    },
     clearAdminStats(state) {
       state.stats = null;
       state.error = null;
@@ -538,18 +581,32 @@ const adminSlice = createSlice({
         state.selectedCareRequestApplications = action.payload;
       },
     );
-    builder.addCase(
-      fetchAdminCareRequestApplications.rejected,
-      (state, action) => {
+    builder
+      .addCase(fetchAdminCareRequestApplications.rejected, (state, action) => {
         state.applicationsLoading = false;
-        state.applicationsError =
-          action.payload || "Failed to fetch applications";
-      },
-    );
+        state.applicationsError = action.payload as string;
+      })
+
+      // Fetch Global Search Results
+      .addCase(fetchGlobalSearchResults.pending, (state) => {
+        state.isSearchingGlobal = true;
+        state.globalSearchError = null;
+      })
+      .addCase(fetchGlobalSearchResults.fulfilled, (state, action) => {
+        state.isSearchingGlobal = false;
+        state.globalSearchResults = action.payload;
+      })
+      .addCase(fetchGlobalSearchResults.rejected, (state, action) => {
+        state.isSearchingGlobal = false;
+        state.globalSearchError = action.payload as string;
+      });
   },
 });
 
 export const {
+  setActiveTab,
+  setSearchModalOpen,
+  setGlobalSearchQuery,
   clearAdminStats,
   setCarersPage,
   setCarersStatus,

@@ -1,4 +1,3 @@
-import { CarerProfile } from "@/types/client.types";
 import { Carer } from "@/app/(protected)/client/types/client-ui.types";
 import { formatDateArrayToRanges } from "@/utils/dateRangeFormatter";
 

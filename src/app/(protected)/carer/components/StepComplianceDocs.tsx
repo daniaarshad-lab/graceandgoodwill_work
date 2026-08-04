@@ -1,10 +1,8 @@
 import React, { useState } from "react";
 import SectionCard from "./shared/SectionCard";
-import Input from "@/components/Input";
 import Button from "@/components/Button";
 import { ComplianceDoc } from "../types/carer.types";
 import { DocumentFileType } from "@/types/document.types";
-import { showErrorToast } from "@/utils/toast";
 
 interface Props {
   portal: any;

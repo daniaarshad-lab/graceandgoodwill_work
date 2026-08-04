@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from "react";
 import SectionCard from "./shared/SectionCard";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
-import { showErrorToast } from "@/utils/toast";
 import { Check, ChevronDown } from "lucide-react";
 
 interface Props {

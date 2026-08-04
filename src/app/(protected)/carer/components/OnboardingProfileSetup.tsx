@@ -1,13 +1,9 @@
 import { useState, useRef } from "react";
-import Image from "next/image";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { uploadProfileMedia } from "@/store/slices/carerSlice";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 import SectionCard from "./shared/SectionCard";
-import Button from "@/components/Button";
 import {
-  Upload,
-  X,
   Check,
   AlertCircle,
   ArrowLeft,

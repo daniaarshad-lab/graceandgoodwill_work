@@ -19,8 +19,6 @@ import {
   FileText,
   Image as ImageIcon,
   Calendar,
-  User,
-  ExternalLink,
   Eye,
   CheckCircle2,
   AlertTriangle,

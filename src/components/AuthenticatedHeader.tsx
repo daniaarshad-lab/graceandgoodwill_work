@@ -15,6 +15,7 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { useAppDispatch } from "@/store/hooks";
 import { logout as logoutThunk } from "@/store/slices/authSlice";
+import HeaderSearch from "./HeaderSearch";
 
 export default function AuthenticatedHeader() {
   const { user } = useAuth();
@@ -56,8 +57,8 @@ export default function AuthenticatedHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-gold-300/10 bg-navy-950/95 backdrop-blur shadow-soft">
-      <div className="container-wrapper py-4 flex items-center justify-between">
+    <header className="fixed top-0 left-0 right-0 z-50 w-full border-b border-gold-300/10 bg-navy-950/95 backdrop-blur shadow-soft">
+      <div className="container-wrapper py-4 flex items-center justify-between h-[72px]">
         {/* Left Side: Branding */}
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
@@ -87,6 +88,9 @@ export default function AuthenticatedHeader() {
 
         {/* Right Side: Notifications & Profile */}
         <div className="flex items-center gap-4 sm:gap-6">
+          {/* Header Search (Desktop & Mobile) */}
+          <HeaderSearch />
+
           <button className="relative p-2 text-gold-200/60 hover:text-gold-DEFAULT transition-colors rounded-full hover:bg-gold-DEFAULT/10 focus:outline-none">
             <Bell className="w-5 h-5" />
             <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-navy-950"></span>

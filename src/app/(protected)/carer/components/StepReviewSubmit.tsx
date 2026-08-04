@@ -8,9 +8,7 @@ import {
   FileText,
   User,
   Briefcase,
-  Shield,
   Video,
-  Heart,
 } from "lucide-react";
 
 interface Props {

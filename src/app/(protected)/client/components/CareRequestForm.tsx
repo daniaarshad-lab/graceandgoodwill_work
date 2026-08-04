@@ -1,12 +1,8 @@
-import { useState } from "react";
-import { ChevronDown } from "lucide-react";
 import SectionCard from "./shared/SectionCard";
 import Input from "@/components/Input";
-import Select from "@/components/Select";
 import MultiSelect from "@/components/MultiSelect";
 import PhoneInput from "@/components/PhoneInput";
 import Button from "@/components/Button";
-import EmergencyButton from "@/components/EmergencyButton";
 
 interface CareRequestFormProps {
   fullName: string;

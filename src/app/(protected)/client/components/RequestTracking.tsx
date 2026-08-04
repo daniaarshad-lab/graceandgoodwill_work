@@ -1,14 +1,11 @@
 import { useEffect, useState } from "react";
-import SectionCard from "./shared/SectionCard";
 import { ClientPlacement } from "@/types/client.types";
 import {
   User,
-  Calendar,
   AlertTriangle,
   RefreshCw,
   PlusCircle,
   Shield,
-  Award,
   CheckCircle2,
 } from "lucide-react";
 import FeedbackModal from "./FeedbackModal";

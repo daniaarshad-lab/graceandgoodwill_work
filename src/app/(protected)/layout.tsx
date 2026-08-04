@@ -9,7 +9,7 @@ export default function ProtectedLayout({
   return (
     <AgreementsGuard>
       <AuthenticatedHeader />
-      <div className="flex-grow">{children}</div>
+      <div className="flex-grow pt-[72px]">{children}</div>
     </AgreementsGuard>
   );
 }

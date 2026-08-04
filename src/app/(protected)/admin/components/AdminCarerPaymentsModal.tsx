@@ -1,12 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  X,
-  CheckCircle,
-  Upload,
-  Calendar,
-  DollarSign,
-  Clock,
-} from "lucide-react";
+import { X, CheckCircle, Upload, Calendar, DollarSign } from "lucide-react";
 import { adminService } from "../../../../services/admin/admin.service";
 import { storageService } from "@/services/storage.service";
 

@@ -1,11 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
-import {
-  DateRange,
-  groupDatesIntoRanges,
-  formatRangeDisplay,
-} from "../../utils/date.utils";
+import { formatRangeDisplay } from "../../utils/date.utils";
 import { LocalRange } from "./types";
 import { getRangeColor } from "./colors";
 import { Pencil } from "lucide-react";

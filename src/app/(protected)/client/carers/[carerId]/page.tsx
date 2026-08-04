@@ -8,13 +8,10 @@ import { Carer } from "../../types/client-ui.types";
 import {
   ArrowLeft,
   MapPin,
-  Calendar,
   Mail,
   Phone,
   Heart,
-  Award,
   ShieldCheck,
-  Clock,
   Star,
   Info,
   User,

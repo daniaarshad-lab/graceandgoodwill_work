@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { adminService } from "@/services/admin/admin.service";
-import { User, Check, X, Loader2, AlertCircle } from "lucide-react";
+import { User, Loader2, AlertCircle } from "lucide-react";
 import Button from "@/components/Button";
 import { useRouter } from "next/navigation";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";

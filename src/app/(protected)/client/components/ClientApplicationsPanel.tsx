@@ -11,8 +11,6 @@ import {
   rejectApplication,
   fetchInterestList,
 } from "@/store/slices/clientSlice";
-import { clientService } from "@/services/client/client.service";
-import { CareRequest, CareRequestApplication } from "@/types/client.types";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 import SectionCard from "./shared/SectionCard";
 import Button from "@/components/Button";
@@ -23,7 +21,6 @@ import {
   Calendar,
   Clock,
   Briefcase,
-  FileText,
   ChevronDown,
   ChevronRight,
   UserCircle,

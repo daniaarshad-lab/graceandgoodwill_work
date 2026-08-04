@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   fetchCarers,
@@ -10,7 +9,7 @@ import SectionCard from "./shared/SectionCard";
 import { Carer } from "../types/client-ui.types";
 import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
-import { Video, Heart, User } from "lucide-react";
+import { Heart, User } from "lucide-react";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 
 const SafeImage = ({

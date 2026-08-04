@@ -1,11 +1,8 @@
 import SectionCard from "./shared/SectionCard";
 import { ComplianceDoc } from "../types/carer.types";
-import React, { useState, useRef } from "react";
+import React from "react";
 import {
-  Upload,
   FileText,
-  CheckCircle2,
-  AlertCircle,
   Trash2,
   Eye,
   Loader2,

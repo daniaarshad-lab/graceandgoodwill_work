@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { uploadClientProfilePhoto } from "@/store/slices/clientSlice";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";

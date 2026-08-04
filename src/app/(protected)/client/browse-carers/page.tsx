@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -26,10 +25,7 @@ import {
   X,
   Play,
   Video,
-  User,
   Calendar,
-  Sparkles,
-  Check,
   Heart,
 } from "lucide-react";
 

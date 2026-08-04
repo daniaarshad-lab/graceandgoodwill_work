@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import Input from "@/components/Input";
 import PhoneInput from "@/components/PhoneInput";
 import Button from "@/components/Button";
-import { toast } from "sonner";
 
 interface ReferralFormCarerProps {
   onSubmit: (formData: FormData) => Promise<boolean>;

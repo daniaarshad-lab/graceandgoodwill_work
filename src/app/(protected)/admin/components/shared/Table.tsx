@@ -61,18 +61,32 @@ export default function Table<T>({
 
   const [internalPage, setInternalPage] = useState(1);
   const [internalPageSize, setInternalPageSize] = useState(
-    initialPageSize || 10,
+    pagination?.pageSize || initialPageSize || 10,
   );
 
-  // Search logic
+  // Search logic (Only used for local table search if searchable=true)
   const searchedData = useMemo(() => {
-    if (!searchable || !searchQuery.trim()) return data;
-    const query = searchQuery.toLowerCase();
+    const queryToUse = searchable ? searchQuery.trim() : "";
+    if (!queryToUse) return data;
+
+    const query = queryToUse.toLowerCase();
 
     return data.filter((item: any) => {
       const keysToSearch = searchKeys || columns.map((col) => col.key);
-      return keysToSearch.some((key) => {
-        const val = item[key];
+      const extendedKeys = [
+        ...new Set([
+          ...keysToSearch,
+          "email",
+          "phone",
+          "phoneNumber",
+          "internalAccountNumber",
+          "publicProfileId",
+          "name",
+        ]),
+      ];
+
+      return extendedKeys.some((key) => {
+        const val = item[key] || (item.user ? item.user[key] : undefined);
         if (val === null || val === undefined) return false;
         return String(val).toLowerCase().includes(query);
       });
@@ -244,11 +258,29 @@ export default function Table<T>({
                 </tr>
               ) : paginatedData.length === 0 ? (
                 <tr>
-                  <td
-                    colSpan={columns.length}
-                    className="py-16 text-center text-gold-100/30 font-semibold"
-                  >
-                    No matching records found
+                  <td colSpan={columns.length} className="py-16">
+                    <div className="flex flex-col items-center justify-center gap-3 text-gold-100/40">
+                      <Search className="w-8 h-8 opacity-40 mb-2" />
+                      <div className="text-center">
+                        <p className="text-sm italic font-bold text-gold-100/60">
+                          No matching records found.
+                        </p>
+                        <p className="text-xs mt-2 max-w-sm mx-auto leading-relaxed">
+                          We couldn't find any records matching your search. Try
+                          another keyword or clear the filters.
+                        </p>
+                      </div>
+                      {searchQuery && (
+                        <button
+                          onClick={() => {
+                            setSearchQuery("");
+                          }}
+                          className="mt-4 px-5 py-2 bg-gold-300/10 hover:bg-gold-300/20 text-gold-DEFAULT rounded-xl text-xs font-bold transition-all border border-gold-300/20"
+                        >
+                          Clear Filters
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ) : (

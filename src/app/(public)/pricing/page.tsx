@@ -1,4 +1,4 @@
-import { Check, Phone, MessageCircle, Shield, Heart, ArrowDown } from "lucide-react";
+import { Check, Phone, MessageCircle, Shield, Heart } from "lucide-react";
 import dynamic from "next/dynamic";
 import Button from "@/components/Button";
 
@@ -67,10 +67,14 @@ export default function PricingPage() {
 
                 <div className="max-w-2xl mx-auto space-y-3">
                   <p className="text-sm sm:text-[15px] text-gold-200/75 leading-relaxed font-light">
-                    Sometimes it&rsquo;s easier to speak with someone than complete an online form, especially when you&rsquo;re looking for support during a difficult or uncertain time.
+                    Sometimes it&rsquo;s easier to speak with someone than
+                    complete an online form, especially when you&rsquo;re
+                    looking for support during a difficult or uncertain time.
                   </p>
                   <p className="text-sm sm:text-[15px] text-gold-200/75 leading-relaxed font-light">
-                    Our experienced Family Support Advisors are here to answer your questions, explain how our introduction service works and help you understand the next steps.
+                    Our experienced Family Support Advisors are here to answer
+                    your questions, explain how our introduction service works
+                    and help you understand the next steps.
                   </p>
                 </div>
 
@@ -97,7 +101,9 @@ export default function PricingPage() {
                 </div>
 
                 <p className="text-xs sm:text-sm text-gold-200/50 leading-relaxed font-light pt-1">
-                  Prefer to send an enquiry instead? Simply complete the form below and a member of our Support Team will get back to you as soon as possible.
+                  Prefer to send an enquiry instead? Simply complete the form
+                  below and a member of our Support Team will get back to you as
+                  soon as possible.
                 </p>
               </div>
             </div>
@@ -123,10 +129,15 @@ export default function PricingPage() {
                   Every family&rsquo;s circumstances are different.
                 </p>
                 <p className="text-sm sm:text-[15px] text-gold-200/75 leading-[1.8] font-light">
-                  The cost of introducing a live-in carer depends on the level of support required, the complexity of your circumstances, mobility needs and the experience required from the carer.
+                  The cost of introducing a live-in carer depends on the level
+                  of support required, the complexity of your circumstances,
+                  mobility needs and the experience required from the carer.
                 </p>
                 <p className="text-sm sm:text-[15px] text-gold-200/75 leading-[1.8] font-light">
-                  Rather than offering one-size-fits-all pricing, we take the time to understand your situation first. This allows us to provide a clear, fair quotation, ensuring you only pay for the support you genuinely need, never more and never less.
+                  Rather than offering one-size-fits-all pricing, we take the
+                  time to understand your situation first. This allows us to
+                  provide a clear, fair quotation, ensuring you only pay for the
+                  support you genuinely need, never more and never less.
                 </p>
               </div>
 
@@ -143,7 +154,12 @@ export default function PricingPage() {
                   Live-in care is never a one-size-fits-all service.
                 </p>
                 <p className="text-sm sm:text-[15px] text-gold-200/75 leading-[1.8] font-light">
-                  Before providing a quotation, we take the time to understand your individual circumstances, daily routine, support requirements and preferences. This allows us to introduce you to the most suitable independent live-in carer while ensuring our pricing remains fair, transparent and appropriate to your needs.
+                  Before providing a quotation, we take the time to understand
+                  your individual circumstances, daily routine, support
+                  requirements and preferences. This allows us to introduce you
+                  to the most suitable independent live-in carer while ensuring
+                  our pricing remains fair, transparent and appropriate to your
+                  needs.
                 </p>
               </div>
             </div>
@@ -207,10 +223,14 @@ export default function PricingPage() {
                   </h2>
                   <div className="space-y-1.5 max-w-2xl">
                     <p className="text-xs sm:text-sm text-gold-200/60 leading-relaxed font-light">
-                      Finding the right live-in carer starts with understanding your individual needs.
+                      Finding the right live-in carer starts with understanding
+                      your individual needs.
                     </p>
                     <p className="text-xs sm:text-sm text-gold-200/60 leading-relaxed font-light">
-                      Complete the short enquiry form below and a member of our Support Team will contact you to discuss your circumstances, answer any questions and provide a personalised quotation.
+                      Complete the short enquiry form below and a member of our
+                      Support Team will contact you to discuss your
+                      circumstances, answer any questions and provide a
+                      personalised quotation.
                     </p>
                     <p className="text-xs sm:text-sm text-gold-200/60 leading-relaxed font-light">
                       There is absolutely no obligation to proceed.

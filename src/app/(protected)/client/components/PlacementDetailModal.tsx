@@ -4,8 +4,6 @@ import {
   Calendar,
   User,
   FileText,
-  CheckCircle,
-  Clock,
   AlertTriangle,
   Download,
 } from "lucide-react";

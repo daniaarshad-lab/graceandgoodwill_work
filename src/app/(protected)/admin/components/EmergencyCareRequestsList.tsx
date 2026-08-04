@@ -1,7 +1,6 @@
 "use client";
 
-import { AlertCircle, Calendar, Mail, MapPin, Phone, User } from "lucide-react";
-import StatusBadge from "./shared/StatusBadge";
+import { AlertCircle, Calendar, Mail, MapPin, Phone } from "lucide-react";
 import Table, { TableColumn } from "./shared/Table";
 import { EmergencyCareRequest } from "@/types/admin.types";
 

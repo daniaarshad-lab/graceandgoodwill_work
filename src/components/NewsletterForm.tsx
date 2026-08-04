@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent, useEffect } from "react";
+import { useState, FormEvent } from "react";
 import Button from "@/components/Button";
 import { Mail } from "lucide-react";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";

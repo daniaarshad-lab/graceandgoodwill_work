@@ -10,8 +10,6 @@ import {
 import {
   fetchCarerReferralsThunk,
   submitCarerReferralThunk,
-  submitClientReferralThunk,
-  fetchClientReferralsThunk,
   resetReferralStatus,
 } from "@/store/slices/referralSlice";
 import { useCarerPortal } from "../hooks/useCarerPortal";

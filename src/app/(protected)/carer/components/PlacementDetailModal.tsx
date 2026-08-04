@@ -2,15 +2,7 @@
 
 import { CarerCareRequestDetail } from "@/types/carer.types";
 import Button from "@/components/Button";
-import {
-  X,
-  MapPin,
-  Calendar,
-  Clock,
-  Banknote,
-  FileText,
-  AlertCircle,
-} from "lucide-react";
+import { X, MapPin, Calendar, Clock, Banknote, FileText } from "lucide-react";
 
 interface PlacementDetailModalProps {
   careRequest: CarerCareRequestDetail | null;

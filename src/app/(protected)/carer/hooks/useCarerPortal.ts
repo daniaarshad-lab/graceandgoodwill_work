@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 
 import { ComplianceDoc } from "../types/carer.types";
 import { getDocumentFileLabel } from "@/types/document.types";
-import { validateProfileForm } from "../utils/validation";
 import { useAppDispatch } from "@/store/hooks";
 import {
   updateCarerProfile,
@@ -519,7 +518,7 @@ export function useCarerPortal({
         };
       }
 
-      // @ts-ignore
+      // @ts-expect-error - Redux thunk action type mismatch that needs to be addressed in the slice definition
       await dispatch(
         uploadCarerStepDocuments({ step, files: selectedFiles, textFields }),
       ).unwrap();

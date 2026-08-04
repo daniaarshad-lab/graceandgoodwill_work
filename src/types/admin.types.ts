@@ -4,6 +4,28 @@ export interface AdminDashboardStats {
   totalClients: number;
   activePlacements: number;
   pendingVerifications: number;
+
+  // Extended statistics fields
+  activeClients?: number;
+  activeCarers?: number;
+  totalReferralPartners?: number;
+  clientsRegisteredThisYear?: number;
+  carersRegisteredThisYear?: number;
+  referralPartnersRegisteredThisYear?: number;
+  lifetimePlatformMembers?: number;
+  membershipBreakdown?: {
+    [key: string]: number;
+  };
+}
+
+export interface AdminSearchResultItem {
+  fullName: string;
+  userType: string;
+  internalAccountNumber?: string;
+  publicProfileId?: string;
+  membershipStatus?: string;
+  active?: boolean;
+  createdAt: string;
 }
 
 export interface PaginationData<T> {
@@ -101,6 +123,12 @@ export interface AdminState {
   stats: AdminDashboardStats | null;
   loading: boolean;
   error: string | null;
+  activeTab: string;
+  isSearchModalOpen: boolean;
+  globalSearchQuery: string;
+  globalSearchResults: AdminSearchResultItem[] | null;
+  isSearchingGlobal: boolean;
+  globalSearchError: string | null;
   carers: PaginationData<any>;
   careRequests: PaginationData<any>;
   emergencyCareRequests: PaginationData<EmergencyCareRequest>;

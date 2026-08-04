@@ -3,7 +3,6 @@ import {
   Clock,
   ShieldCheck,
   Phone,
-  MessageCircle,
   HeartPulse,
   AlertCircle,
   ArrowLeft,

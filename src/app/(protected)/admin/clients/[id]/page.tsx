@@ -14,12 +14,11 @@ import {
   History,
   ShieldCheck,
   AlertTriangle,
-  DollarSign,
   CheckCircle,
   Heart,
 } from "lucide-react";
 import { adminService } from "@/services/admin/admin.service";
-import { showSuccessToast, showErrorToast } from "@/utils/toast";
+import { showSuccessToast } from "@/utils/toast";
 import InternalNotes from "../../components/shared/InternalNotes/InternalNotes";
 import UserAuditLogs from "../../components/shared/UserAuditLogs";
 

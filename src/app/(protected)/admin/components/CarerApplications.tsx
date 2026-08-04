@@ -1,23 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import {
-  FileText,
-  User,
-  Mail,
-  Phone,
-  MapPin,
-  Calendar,
-  Clock,
-  Briefcase,
-  Award,
-  Heart,
-  ChevronRight,
-  ShieldAlert,
-} from "lucide-react";
 import Link from "next/link";
 import { CarerApplication } from "../types/admin.types";
-import Button from "@/components/Button";
 import StatusBadge from "./shared/StatusBadge";
 import Table, { TableColumn } from "./shared/Table";
 

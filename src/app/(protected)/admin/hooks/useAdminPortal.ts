@@ -14,7 +14,9 @@ import {
   fetchAdminCarers,
   fetchAdminCareRequests,
   fetchAdminClients,
+  fetchAdminDashboardStats,
   fetchAdminEmergencyCareRequests,
+  fetchGlobalSearchResults,
   setCarersPage,
   setCarersStatus,
   setCarersLimit,
@@ -28,6 +30,7 @@ import {
   setClientsStatus,
   setClientsLimit,
   updateAdminEmergencyCareRequestStatus,
+  setActiveTab as setActiveTabAction,
 } from "@/store/slices/adminSlice";
 
 // Helper to map backend document category to frontend status with file URLs and IDs
@@ -66,6 +69,27 @@ import {
 // Helper to map backend client structures to ClientRegistry format
 const mapBackendClients = (backendClients: any[]): any[] => {
   return backendClients.map((client: any) => {
+    // Handle search result objects gracefully
+    if (client.fullName && !client.clientProfile && !client.firstName) {
+      return {
+        id: client.id || client.publicProfileId || `search-${Math.random()}`,
+        internalAccountNumber: client.internalAccountNumber || "",
+        publicProfileId: client.publicProfileId || "",
+        name: client.fullName,
+        email: client.email || "No email listed",
+        phone: client.phoneNumber || "No phone listed",
+        status:
+          client.membershipStatus || (client.active ? "ACTIVE" : "PENDING"),
+        createdAt: client.createdAt || new Date().toISOString(),
+        address: "N/A",
+        city: "Unknown",
+        postcode: "",
+        weeklyFee: 0,
+        profileStatus: client.membershipStatus || "PENDING",
+        profileCreatedAt: client.createdAt || new Date().toISOString(),
+      };
+    }
+
     const profile = client.clientProfile || {};
     return {
       id: client.id,
@@ -173,6 +197,27 @@ const mapBackendCarers = (backendCarers: any[]): CarerApplication[] => {
       specialtiesList = profile.careTypes;
     }
 
+    // Handle search result objects gracefully
+    if (carer.fullName && !carer.carerProfile && !carer.firstName) {
+      return {
+        id: carer.id || carer.publicProfileId || `search-${Math.random()}`,
+        carerProfileId: carer.carerProfileId || "",
+        internalAccountNumber: carer.internalAccountNumber || "",
+        publicProfileId: carer.publicProfileId || "",
+        name: carer.fullName,
+        experience: "N/A (Search Result)",
+        city: "Unknown",
+        dbsStatus: "Pending",
+        specialties: [],
+        documents: [],
+        availability: "N/A",
+        status:
+          carer.membershipStatus || (carer.active ? "Approved" : "Pending"),
+        email: carer.email || "No email",
+        phone: carer.phoneNumber || "No phone listed",
+      };
+    }
+
     return {
       id: carer.id,
       carerProfileId: profile.id,
@@ -196,13 +241,33 @@ const mapBackendCarers = (backendCarers: any[]): CarerApplication[] => {
   });
 };
 
-// Helper to map backend direct careRequest structures to frontend ClientRequest format
 const mapBackendCareRequests = (careRequests: any[]): ClientRequest[] => {
   return careRequests.map((req: any) => {
+    // Handle search result objects gracefully (if a user is returned in the requests tab)
+    if (req.fullName && !req.clientProfile && !req.firstName) {
+      return {
+        id: req.id || req.publicProfileId || `search-${Math.random()}`,
+        clientProfileId: req.publicProfileId || "",
+        clientId: req.publicProfileId || "",
+        clientName: req.fullName,
+        careType: "N/A (Search Result)",
+        location: "Unknown",
+        urgency: "Standard",
+        startDate: req.createdAt
+          ? new Date(req.createdAt).toISOString().split("T")[0]
+          : "As soon as possible",
+        notes: "No additional notes provided.",
+        status: req.membershipStatus || "NEW_ENQUIRY",
+        email: req.email || "No email",
+        phone: req.phoneNumber || "No phone listed",
+        clientStatus: req.membershipStatus || "PENDING",
+      };
+    }
+
     const profile = req.clientProfile || {};
     const clientUser = profile.user || {};
 
-    let status = req.status || "NEW_ENQUIRY";
+    const status = req.status || "NEW_ENQUIRY";
 
     let urgency: "Standard" | "High" | "Emergency" = "Standard";
     if (req.isEmergency) {
@@ -251,7 +316,7 @@ const mapBackendPlacements = (backendPlacements: any[]): Placement[] => {
 
     const contactDetailsReleased = p.contactDetailsReleased || false;
 
-    let status = p.status || "PLACEMENT_CONFIRMED";
+    const status = p.status || "PLACEMENT_CONFIRMED";
 
     const timeline = [];
     timeline.push({
@@ -303,7 +368,8 @@ export type AdminTabType =
   | "emergency-requests"
   | "billing"
   | "enquiries"
-  | "profile-updates";
+  | "profile-updates"
+  | "search";
 
 export function useAdminPortal() {
   const searchParams = useSearchParams();
@@ -321,25 +387,115 @@ export function useAdminPortal() {
         "billing",
         "enquiries",
         "profile-updates",
+        "search",
       ].includes(tabParam)
       ? tabParam
       : "overview",
   );
 
   const dispatch = useAppDispatch();
-  const carersPagination = useAppSelector((state) => state.admin.carers);
-  const requestsPagination = useAppSelector(
+  const carersPaginationState = useAppSelector((state) => state.admin.carers);
+  const requestsPaginationState = useAppSelector(
     (state) => state.admin.careRequests,
   );
-  const emergencyRequestsPagination = useAppSelector(
+  const emergencyRequestsPaginationState = useAppSelector(
     (state) => state.admin.emergencyCareRequests,
   );
-  const clientsPagination = useAppSelector((state) => state.admin.clients);
+  const clientsPaginationState = useAppSelector((state) => state.admin.clients);
+  const statsFromState = useAppSelector((state) => state.admin.stats);
 
-  const carers = mapBackendCarers(carersPagination.items);
-  const requests = mapBackendCareRequests(requestsPagination.items);
-  const emergencyCareRequests = emergencyRequestsPagination.items;
-  const clients = mapBackendClients(clientsPagination.items);
+  const globalSearchQuery = useAppSelector(
+    (state) => state.admin.globalSearchQuery,
+  );
+  const globalSearchResults = useAppSelector(
+    (state) => state.admin.globalSearchResults,
+  );
+
+  useEffect(() => {
+    dispatch(setActiveTabAction(activeTab));
+  }, [activeTab, dispatch]);
+
+  useEffect(() => {
+    if (globalSearchQuery.trim()) {
+      dispatch(fetchGlobalSearchResults(globalSearchQuery));
+    }
+  }, [globalSearchQuery, dispatch]);
+
+  const applySearch = (
+    basePagination: any,
+    filterFn: (item: any) => boolean,
+    mapFn: (items: any[]) => any[],
+  ) => {
+    if (globalSearchQuery.trim() && globalSearchResults) {
+      // 1. Filter by active module
+      const matchedItems = globalSearchResults.filter(filterFn);
+      // 2. Map to frontend format
+      const mappedItems = mapFn(matchedItems);
+      // 3. Paginate
+      const { page, limit, status } = basePagination;
+      const totalPages = Math.ceil(mappedItems.length / limit) || 1;
+      const totalItems = mappedItems.length;
+
+      // Ensure current page isn't out of bounds for the search results
+      const safePage = Math.min(page, totalPages);
+      const start = (safePage - 1) * limit;
+      const paginatedItems = mappedItems.slice(start, start + limit);
+
+      return {
+        items: paginatedItems,
+        page: safePage,
+        limit,
+        totalPages,
+        totalItems,
+        status,
+        loading: false,
+        error: null,
+      };
+    }
+    // Fallback to normal Redux state
+    return {
+      ...basePagination,
+      items: mapFn(basePagination.items),
+    };
+  };
+
+  const carersData = applySearch(
+    carersPaginationState,
+    (u) =>
+      u.userType === "CARER" ||
+      u.role === "CARER" ||
+      u.userType?.includes("APPLICANT"),
+    mapBackendCarers,
+  );
+
+  const clientsData = applySearch(
+    clientsPaginationState,
+    (u) => u.userType === "CLIENT" || u.role === "CLIENT",
+    mapBackendClients,
+  );
+
+  const requestsData = applySearch(
+    requestsPaginationState,
+    (u) => true, // Fallback if userType not explicitly typed for requests
+    mapBackendCareRequests,
+  );
+
+  const emergencyRequestsData = applySearch(
+    emergencyRequestsPaginationState,
+    (u) => true,
+    (items) => items, // Identity map
+  );
+
+  // Expose these paginated states to the components
+  const carersPagination = carersData;
+  const requestsPagination = requestsData;
+  const emergencyRequestsPagination = emergencyRequestsData;
+  const clientsPagination = clientsData;
+
+  const carers = carersData.items;
+  const requests = requestsData.items;
+  const emergencyCareRequests = emergencyRequestsData.items;
+  const clients = clientsData.items;
 
   const [placements, setPlacements] = useState<Placement[]>([]);
   const [enquiries, setEnquiries] = useState<any[]>([]);
@@ -527,10 +683,13 @@ export function useAdminPortal() {
       setPendingCarersCount(pendingCarersRes.total || 0);
       setEmergencyCasesCount(emergencyRequestsRes.total || 0);
       setTotalClientsCount(clientsRes.total || 0);
+
+      // Fetch dashboard stats from backend
+      await dispatch(fetchAdminDashboardStats()).unwrap();
     } catch (err) {
       console.error("Failed to load stats counts:", err);
     }
-  }, []);
+  }, [dispatch]);
 
   // Load carers from backend API (paginated)
   const loadCarers = useCallback(() => {
@@ -777,8 +936,8 @@ export function useAdminPortal() {
 
   const handleCreatePlacement = useCallback(
     async (requestId: string, carerId: string) => {
-      const clientReq = requests.find((r) => r.id === requestId);
-      const carerObj = carers.find((c) => c.id === carerId);
+      const clientReq = requests.find((r: any) => r.id === requestId);
+      const carerObj = carers.find((c: any) => c.id === carerId);
 
       if (!clientReq || !carerObj) return;
 
@@ -850,7 +1009,9 @@ export function useAdminPortal() {
   // Action: Override or Reassign Carer manually
   const handleOverridePlacementCarer = useCallback(
     async (placementId: string, newCarerId: string) => {
-      const newCarer = carers.find((c) => c.id === newCarerId);
+      const newCarer = carers.find(
+        (c: CarerApplication) => c.id === newCarerId,
+      );
       if (!newCarer) return;
 
       try {
@@ -940,6 +1101,17 @@ export function useAdminPortal() {
     ).length,
     emergencyCases: emergencyCasesCount,
     unreadEnquiries: enquiries.filter((e) => !e.isRead).length,
+
+    // Extended statistics from backend API
+    activeClients: statsFromState?.activeClients,
+    activeCarers: statsFromState?.activeCarers,
+    totalReferralPartners: statsFromState?.totalReferralPartners,
+    clientsRegisteredThisYear: statsFromState?.clientsRegisteredThisYear,
+    carersRegisteredThisYear: statsFromState?.carersRegisteredThisYear,
+    referralPartnersRegisteredThisYear:
+      statsFromState?.referralPartnersRegisteredThisYear,
+    lifetimePlatformMembers: statsFromState?.lifetimePlatformMembers,
+    membershipBreakdown: statsFromState?.membershipBreakdown,
   };
 
   return {

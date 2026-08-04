@@ -142,6 +142,7 @@ function AdminDashboardContent() {
     billing: "Billing & Invoices",
     enquiries: "Support & Enquiries",
     "profile-updates": "Profile Updates",
+    search: "Global Search",
   };
 
   return (

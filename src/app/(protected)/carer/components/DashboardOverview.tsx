@@ -1,7 +1,6 @@
 import SectionCard from "./shared/SectionCard";
 import StatusBadge from "./shared/StatusBadge";
 import { ComplianceDoc } from "../types/carer.types";
-import Button from "@/components/Button";
 import { groupDatesIntoRanges, formatRangeDisplay } from "../utils/date.utils";
 import { useAppSelector } from "@/store/hooks";
 

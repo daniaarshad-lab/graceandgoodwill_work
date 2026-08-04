@@ -8,7 +8,6 @@ import {
   sanitizeDateArray,
   expandRange,
   toISODateString,
-  DateRange,
   groupDatesIntoRanges,
   rangeDayCount,
 } from "../utils/date.utils";

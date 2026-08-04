@@ -4,7 +4,6 @@ import {
   Camera,
   Video,
   CheckCircle2,
-  AlertCircle,
   X,
   Clock,
   Upload,

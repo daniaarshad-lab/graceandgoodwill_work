@@ -1,6 +1,6 @@
 "use client";
 
-import { Toaster, toast } from "sonner";
+import { Toaster } from "sonner";
 
 export default function ToastProvider() {
   return (

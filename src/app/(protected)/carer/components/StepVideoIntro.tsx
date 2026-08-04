@@ -1,6 +1,5 @@
 import React, { useRef, useState } from "react";
 import SectionCard from "./shared/SectionCard";
-import Input from "@/components/Input";
 import Button from "@/components/Button";
 import {
   FileVideo,
@@ -15,7 +14,6 @@ import {
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { uploadProfileMedia } from "@/store/slices/carerSlice";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
-import Image from "next/image";
 
 interface Props {
   portal: any;

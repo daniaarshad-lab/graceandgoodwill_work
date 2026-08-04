@@ -1,9 +1,5 @@
 import React, { useState } from "react";
-import {
-  Referral,
-  ReferralStatus,
-  ClientReferralResponse,
-} from "@/types/referral";
+import { Referral, ClientReferralResponse } from "@/types/referral";
 
 interface ReferralDashboardProps {
   referrals: Array<Referral | ClientReferralResponse>;

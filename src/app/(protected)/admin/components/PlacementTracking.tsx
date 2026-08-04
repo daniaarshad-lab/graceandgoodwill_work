@@ -1,7 +1,5 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { ArrowRight } from "lucide-react";
-import SectionCard from "./shared/SectionCard";
-import StatusBadge from "./shared/StatusBadge";
 import { Placement, CarerApplication } from "../types/admin.types";
 import { UseAdminPortalReturn } from "../hooks/useAdminPortal";
 import Button from "@/components/Button";

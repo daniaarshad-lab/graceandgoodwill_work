@@ -4,8 +4,6 @@ import { useState } from "react";
 import Button from "@/components/Button";
 import { Check, Compass, Search, HeartHandshake } from "lucide-react";
 import { useAppDispatch } from "@/store/hooks";
-import { fetchClientProfile } from "@/store/slices/clientSlice";
-import { showSuccessToast, showErrorToast } from "@/utils/toast";
 
 interface ClientOnboardingProps {
   user: any;

@@ -1074,4 +1074,36 @@ export const adminService = {
       },
     );
   },
+
+  async searchUsers(params: {
+    internalAccountNumber?: string;
+    publicProfileId?: string;
+    fullName?: string;
+    email?: string;
+    phoneNumber?: string;
+    query?: string;
+  }): Promise<any> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+    if (!token) throw new Error("No token found");
+
+    const queryParams = new URLSearchParams();
+    if (params.internalAccountNumber)
+      queryParams.append("internalAccountNumber", params.internalAccountNumber);
+    if (params.publicProfileId)
+      queryParams.append("publicProfileId", params.publicProfileId);
+    if (params.fullName) queryParams.append("fullName", params.fullName);
+    if (params.email) queryParams.append("email", params.email);
+    if (params.phoneNumber)
+      queryParams.append("phoneNumber", params.phoneNumber);
+    if (params.query) queryParams.append("query", params.query);
+
+    // TODO: Confirm backend URL mapping. This uses '/admin/search' as described in requirements.
+    return apiFetch(`/admin/search?${queryParams.toString()}`, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  },
 };

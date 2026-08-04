@@ -8,8 +8,6 @@ import {
   getFirstDayOfMonth,
   getMonthName,
   buildDateString,
-  isToday,
-  isPastDate,
   expandRange,
   toISODateString,
 } from "../../utils/date.utils";

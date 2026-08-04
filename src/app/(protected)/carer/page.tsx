@@ -30,27 +30,13 @@ import StepInsuranceDocs from "./components/StepInsuranceDocs";
 import StepAdditionalQuals from "./components/StepAdditionalQuals";
 import StepVideoIntro from "./components/StepVideoIntro";
 import StepDeclaration from "./components/StepDeclaration";
-import OnboardingMembership from "./components/OnboardingMembership";
 import StepPaymentDetails from "./components/StepPaymentDetails";
 import StepReviewSubmit from "./components/StepReviewSubmit";
 import PlacementOpportunities from "./components/PlacementOpportunities";
 import MyApplications from "./components/MyApplications";
 import ApplicationHistory from "./components/ApplicationHistory";
 import CarerPlacements from "./components/CarerPlacements";
-import MembershipManagement from "./components/MembershipManagement";
-import Button from "@/components/Button";
-import {
-  Shield,
-  Clock,
-  Heart,
-  TrendingUp,
-  MapPin,
-  Calendar,
-  Briefcase,
-  Star,
-  ArrowLeft,
-  ArrowRight,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { DocumentFileType } from "@/types/document.types";
 import { agreementsService } from "@/services/agreements/agreements.service";
 

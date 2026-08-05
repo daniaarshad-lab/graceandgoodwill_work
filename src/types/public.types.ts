@@ -14,3 +14,15 @@ export interface ContactResponse {
   subject?: string | null;
   message: string;
 }
+
+export interface PublicLegalAgreement {
+  id: string;
+  title: string;
+  type: string;
+  content: string;
+  version: string;
+  isActive: boolean;
+  targetRole: string;
+  createdAt: string;
+  updatedAt: string;
+}

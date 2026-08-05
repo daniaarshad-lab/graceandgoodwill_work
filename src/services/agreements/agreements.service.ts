@@ -64,4 +64,4 @@ export const agreementsService = {
       headers: this.getHeaders(),
     });
   },
-};
+};

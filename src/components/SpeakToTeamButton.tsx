@@ -1,5 +1,6 @@
 import React from "react";
-import { ChevronRight, MessageCircle } from "lucide-react";
+import { ChevronRight } from "lucide-react";
+import WhatsAppIcon from "@/components/WhatsAppIcon";
 
 interface SpeakToTeamButtonProps {
   href?: string;
@@ -10,7 +11,7 @@ interface SpeakToTeamButtonProps {
 }
 
 export default function SpeakToTeamButton({
-  href = "https://wa.me/4402045781269?text=Hello%2C%20I'd%20like%20to%20enquire%20about%20live%20in%20care%20services%20from%20Grace%20%26%20Goodwill.",
+  href = "https://wa.me/447462931949?text=Hello%2C%20I'd%20like%20to%20enquire%20about%20live%20in%20care%20services%20from%20Grace%20%26%20Goodwill.",
   onClick,
   className = "",
 }: SpeakToTeamButtonProps) {
@@ -22,7 +23,7 @@ export default function SpeakToTeamButton({
       <div className="flex items-center gap-4 text-left z-10">
         <div className="relative flex items-center justify-center w-10 h-10">
           <div className="absolute inset-0 scale-125 rounded-full bg-[radial-gradient(circle,_rgba(52,211,153,0.15)_0%,_transparent_70%)] blur-sm"></div>
-          <MessageCircle className="w-5 h-5 text-emerald-400 fill-emerald-400 relative z-10 drop-shadow-sm" />
+          <WhatsAppIcon className="w-6 h-6 text-emerald-400 relative z-10 drop-shadow-sm" />
         </div>
 
         <div className="flex flex-col justify-center">

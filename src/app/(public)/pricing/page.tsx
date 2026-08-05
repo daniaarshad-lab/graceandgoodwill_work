@@ -1,6 +1,7 @@
-import { Check, Phone, MessageCircle, Shield, Heart } from "lucide-react";
+import { Check, Phone, Shield, Heart, MessageCircle } from "lucide-react";
 import dynamic from "next/dynamic";
 import Button from "@/components/Button";
+import WhatsAppIcon from "@/components/WhatsAppIcon";
 
 const ContactSalesForm = dynamic(() => import("@/components/ContactSalesForm"));
 const NewsletterForm = dynamic(() => import("@/components/NewsletterForm"));
@@ -82,7 +83,7 @@ export default function PricingPage() {
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-3">
                   <Button asChild variant="primary" size="lg">
                     <a href="tel:02045781269" className="gap-2.5">
-                      <Phone className="w-4.5 h-4.5" strokeWidth={2} />
+                      <Phone className="w-5 h-5" strokeWidth={2} />
                       Call us: 020 4578 1269
                     </a>
                   </Button>
@@ -94,7 +95,7 @@ export default function PricingPage() {
                       rel="noopener noreferrer"
                       className="gap-2.5"
                     >
-                      <MessageCircle className="w-4.5 h-4.5" strokeWidth={2} />
+                      <WhatsAppIcon className="w-5 h-5" />
                       WhatsApp us: +44 7462 931949
                     </a>
                   </Button>

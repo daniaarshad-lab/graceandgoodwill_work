@@ -97,7 +97,7 @@ export default function HomePage() {
             <EmergencyButton className="w-full xl:w-max" />
 
             <a
-              href="https://wa.me/4402045781269?text=Hello%2C%20I'd%20like%20to%20enquire%20about%20live%20in%20care%20services%20from%20Grace%20%26%20Goodwill."
+              href="https://wa.me/447462931949?text=Hello%2C%20I'd%20like%20to%20enquire%20about%20live%20in%20care%20services%20from%20Grace%20%26%20Goodwill."
               target="_blank"
               rel="noopener noreferrer"
               className="group relative flex items-center justify-between h-14 px-4 sm:px-5 rounded-2xl bg-[#063D24] shrink-0 shadow-[0_0_15px_rgba(0,198,83,0.1)] transition-all duration-300 hover:shadow-[0_0_25px_rgba(0,198,83,0.2)] hover:bg-[#085230] w-full xl:w-max"

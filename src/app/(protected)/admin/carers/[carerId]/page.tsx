@@ -153,9 +153,8 @@ function CarerDetailsContent() {
       return `${months} Month${months === 1 ? "" : "s"}`;
     }
 
-    return `${years} Year${years === 1 ? "" : "s"}${
-      months > 0 ? ` ${months} Month${months === 1 ? "" : "s"}` : ""
-    }`;
+    return `${years} Year${years === 1 ? "" : "s"}${months > 0 ? ` ${months} Month${months === 1 ? "" : "s"}` : ""
+      }`;
   };
 
   const getStatusBadgeStyles = (status: string) => {
@@ -262,9 +261,9 @@ function CarerDetailsContent() {
       ? careSpecSource
       : typeof careSpecSource === "string"
         ? careSpecSource
-            .split(",")
-            .map((s: string) => s.trim())
-            .filter(Boolean)
+          .split(",")
+          .map((s: string) => s.trim())
+          .filter(Boolean)
         : [];
   } else if (profile.careTypes && Array.isArray(profile.careTypes)) {
     specialtiesList = profile.careTypes;
@@ -549,11 +548,10 @@ function CarerDetailsContent() {
                 <button
                   onClick={handleApproveCarer}
                   disabled={!canApproveCarer || approvingCarer}
-                  className={`flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-300 w-full md:w-auto ${
-                    canApproveCarer && !approvingCarer
+                  className={`flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-300 w-full md:w-auto ${canApproveCarer && !approvingCarer
                       ? "bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-900/30 cursor-pointer"
                       : "bg-navy-800/60 text-gold-100/30 border border-gold-300/10 cursor-not-allowed"
-                  }`}
+                    }`}
                 >
                   {approvingCarer ? (
                     <>
@@ -582,41 +580,37 @@ function CarerDetailsContent() {
         <nav className="flex items-center gap-1 border-b border-gold-300/10 pb-1 overflow-x-auto">
           <button
             onClick={() => setActiveTab("profile")}
-            className={`px-5 py-3 text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap cursor-pointer ${
-              activeTab === "profile"
+            className={`px-5 py-3 text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap cursor-pointer ${activeTab === "profile"
                 ? "border-b-2 border-gold text-gold bg-gold/5"
                 : "text-gold-200/60 hover:text-gold-50"
-            }`}
+              }`}
           >
             Profile Dossier
           </button>
           <button
             onClick={() => setActiveTab("documents")}
-            className={`px-5 py-3 text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap cursor-pointer ${
-              activeTab === "documents"
+            className={`px-5 py-3 text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap cursor-pointer ${activeTab === "documents"
                 ? "border-b-2 border-gold text-gold bg-gold/5"
                 : "text-gold-200/60 hover:text-gold-50"
-            }`}
+              }`}
           >
             Compliance Documents ({rawDocs.length})
           </button>
           <button
             onClick={() => setActiveTab("media")}
-            className={`px-5 py-3 text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap cursor-pointer ${
-              activeTab === "media"
+            className={`px-5 py-3 text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap cursor-pointer ${activeTab === "media"
                 ? "border-b-2 border-gold text-gold bg-gold/5"
                 : "text-gold-200/60 hover:text-gold-50"
-            }`}
+              }`}
           >
             Media
           </button>
           <button
             onClick={() => setActiveTab("audit")}
-            className={`px-5 py-3 text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap cursor-pointer ${
-              activeTab === "audit"
+            className={`px-5 py-3 text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap cursor-pointer ${activeTab === "audit"
                 ? "border-b-2 border-gold text-gold bg-gold/5"
                 : "text-gold-200/60 hover:text-gold-50"
-            }`}
+              }`}
           >
             Audit Logs
           </button>
@@ -914,25 +908,25 @@ function CarerDetailsContent() {
                                     <td className="py-3 px-2 font-mono font-semibold text-gold-100/50">
                                       {startDate
                                         ? new Date(
-                                            startDate,
-                                          ).toLocaleDateString("en-GB", {
-                                            day: "2-digit",
-                                            month: "short",
-                                            year: "numeric",
-                                          })
+                                          startDate,
+                                        ).toLocaleDateString("en-GB", {
+                                          day: "2-digit",
+                                          month: "short",
+                                          year: "numeric",
+                                        })
                                         : "Pending"}
                                     </td>
                                     <td className="py-3 px-2 font-mono font-semibold text-gold-100/50">
                                       {!endDate || status === "ACTIVE"
                                         ? "Ongoing"
                                         : new Date(endDate).toLocaleDateString(
-                                            "en-GB",
-                                            {
-                                              day: "2-digit",
-                                              month: "short",
-                                              year: "numeric",
-                                            },
-                                          )}
+                                          "en-GB",
+                                          {
+                                            day: "2-digit",
+                                            month: "short",
+                                            year: "numeric",
+                                          },
+                                        )}
                                     </td>
                                     <td className="py-3 px-2 text-right">
                                       <span
@@ -981,8 +975,8 @@ function CarerDetailsContent() {
                           : "Client";
                         const startDate = fb.placement?.startDate
                           ? new Date(
-                              fb.placement.startDate,
-                            ).toLocaleDateString()
+                            fb.placement.startDate,
+                          ).toLocaleDateString()
                           : "";
                         const endDate = fb.placement?.endDate
                           ? new Date(fb.placement.endDate).toLocaleDateString()
@@ -1087,13 +1081,13 @@ function CarerDetailsContent() {
 
                         let fileCategoryClean = catSource
                           ? catSource
-                              .split("_")
-                              .map(
-                                (w: string) =>
-                                  w.charAt(0).toUpperCase() +
-                                  w.slice(1).toLowerCase(),
-                              )
-                              .join(" ")
+                            .split("_")
+                            .map(
+                              (w: string) =>
+                                w.charAt(0).toUpperCase() +
+                                w.slice(1).toLowerCase(),
+                            )
+                            .join(" ")
                           : "Document";
 
                         let displayName =
@@ -1113,8 +1107,8 @@ function CarerDetailsContent() {
 
                         const finalUploadDate = uploaded.createdAt
                           ? new Date(uploaded.createdAt)
-                              .toISOString()
-                              .split("T")[0]
+                            .toISOString()
+                            .split("T")[0]
                           : "Unknown";
 
                         const finalExpiryDate = "N/A";

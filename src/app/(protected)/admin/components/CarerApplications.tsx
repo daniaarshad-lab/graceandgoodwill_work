@@ -295,9 +295,9 @@ export default function CarerApplications({
   ];
 
   return (
-    <div className="space-y-6 w-full min-w-0">
+    <div className="h-full flex flex-col min-h-0 space-y-6 w-full">
       {/* Table Header Controls */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gold-300/10 pb-4">
+      <div className="shrink-0 flex flex-wrap items-center justify-between gap-4 border-b border-gold-300/10 pb-4">
         <div>
           <h3 className="text-xl font-bold text-gold-200">
             Carer Applications Registry
@@ -329,6 +329,7 @@ export default function CarerApplications({
 
       {/* Main reusable table displaying the listing */}
       <Table
+        className="flex-1 flex flex-col min-h-0"
         columns={columns}
         data={carers}
         pagination={{

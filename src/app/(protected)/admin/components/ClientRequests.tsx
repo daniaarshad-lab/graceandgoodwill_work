@@ -72,8 +72,8 @@ export default function ClientRequests({
   };
 
   return (
-    <div className="space-y-6 w-full min-w-0">
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gold-300/10 pb-4">
+    <div className="h-full flex flex-col min-h-0 space-y-6 w-full">
+      <div className="shrink-0 flex flex-wrap items-center justify-between gap-4 border-b border-gold-300/10 pb-4">
         <div>
           <h3 className="text-lg md:text-xl font-bold text-gold-200 mb-1.5">
             Client Care Requests

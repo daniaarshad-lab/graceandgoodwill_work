@@ -142,54 +142,54 @@ function AdminDashboardContent() {
     billing: "Billing & Invoices",
     enquiries: "Support & Enquiries",
     "profile-updates": "Profile Updates",
-    search: "Global Search",
   };
 
   return (
-    <main className="min-h-screen bg-navy-950 py-10 text-gold-100">
-      <div className="container-wrapper space-y-8">
+    <main className="h-[calc(100vh-72px)] bg-navy-950 pt-4 pb-6 text-gold-100 flex flex-col">
+      <div className="container-wrapper flex-1 flex flex-col min-h-0">
         {/* --- NAVIGATION TABS BAR --- */}
-        <nav
-          ref={scrollRef}
-          className="flex flex-nowrap items-center gap-1 border-b border-gold-300/10 pb-1 overflow-x-auto overflow-y-hidden admin-tabs-nav"
-          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-        >
-          <style>{`.admin-tabs-nav::-webkit-scrollbar { display: none; }`}</style>
-          {(Object.keys(tabLabels) as AdminTabType[]).map((tab) => {
-            const isActive = portal.activeTab === tab;
-            return (
-              <button
-                key={tab}
-                onClick={() => portal.setActiveTab(tab)}
-                className={`px-3 sm:px-5 py-3 min-h-[44px] text-xs sm:text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap flex-shrink-0 ${
-                  isActive
-                    ? "border-b-2 border-gold-DEFAULT text-gold-DEFAULT bg-gold-DEFAULT/5"
-                    : "text-gold-200/60 hover:text-gold-50"
-                }`}
-              >
-                {tabLabels[tab]}
-                {tab === "emergency" && portal.stats.emergencyCases > 0 && (
-                  <span className="ml-1.5 inline-flex items-center justify-center rounded-full bg-rose-500 px-1.5 py-0.5 text-[9px] font-black text-white animate-pulse">
-                    {portal.stats.emergencyCases}
-                  </span>
-                )}
-                {tab === "carers" && portal.stats.pendingCarers > 0 && (
-                  <span className="ml-1.5 inline-flex items-center justify-center rounded-full bg-gold-600 px-1.5 py-0.5 text-[9px] font-black text-navy-950">
-                    {portal.stats.pendingCarers}
-                  </span>
-                )}
-                {tab === "enquiries" && portal.stats.unreadEnquiries > 0 && (
-                  <span className="ml-1.5 inline-flex items-center justify-center rounded-full bg-amber-500 px-1.5 py-0.5 text-[9px] font-black text-navy-950 animate-pulse">
-                    {portal.stats.unreadEnquiries}
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </nav>
+        <div className="shrink-0 z-40 border-b border-gold-300/10 mb-6 pt-2">
+          <nav
+            ref={scrollRef}
+            className="flex flex-nowrap items-center gap-1 pb-1 overflow-x-auto overflow-y-hidden admin-tabs-nav"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          >
+            <style>{`.admin-tabs-nav::-webkit-scrollbar { display: none; }`}</style>
+            {(Object.keys(tabLabels) as AdminTabType[]).map((tab) => {
+              const isActive = portal.activeTab === tab;
+              return (
+                <button
+                  key={tab}
+                  onClick={() => portal.setActiveTab(tab)}
+                  className={`px-3 sm:px-5 py-3 min-h-[44px] text-xs sm:text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap flex-shrink-0 ${isActive
+                      ? "border-b-2 border-gold-DEFAULT text-gold-DEFAULT bg-gold-DEFAULT/5"
+                      : "text-gold-200/60 hover:text-gold-50"
+                    }`}
+                >
+                  {tabLabels[tab]}
+                  {tab === "emergency" && portal.stats.emergencyCases > 0 && (
+                    <span className="ml-1.5 inline-flex items-center justify-center rounded-full bg-rose-500 px-1.5 py-0.5 text-[9px] font-black text-white animate-pulse">
+                      {portal.stats.emergencyCases}
+                    </span>
+                  )}
+                  {tab === "carers" && portal.stats.pendingCarers > 0 && (
+                    <span className="ml-1.5 inline-flex items-center justify-center rounded-full bg-gold-600 px-1.5 py-0.5 text-[9px] font-black text-navy-950">
+                      {portal.stats.pendingCarers}
+                    </span>
+                  )}
+                  {tab === "enquiries" && portal.stats.unreadEnquiries > 0 && (
+                    <span className="ml-1.5 inline-flex items-center justify-center rounded-full bg-amber-500 px-1.5 py-0.5 text-[9px] font-black text-navy-950 animate-pulse">
+                      {portal.stats.unreadEnquiries}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </nav>
+        </div>
 
         {/* --- MAIN OPERATIONAL CONSOLES --- */}
-        <div className="transition-all duration-300">
+        <div className="flex-1 min-h-0 overflow-y-auto transition-all duration-300">
           {portal.loading ? (
             <div className="flex flex-col items-center justify-center p-20 space-y-4">
               <div className="w-12 h-12 border-4 border-gold border-t-transparent rounded-full animate-spin" />

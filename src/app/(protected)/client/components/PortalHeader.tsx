@@ -71,7 +71,7 @@ export default function PortalHeader({ user }: PortalHeaderProps) {
     }
   };
 
-  const WHATSAPP_NUMBER = "4402045781269";
+  const WHATSAPP_NUMBER = "447462931949";
   const WHATSAPP_MESSAGE = encodeURIComponent(
     "Hello, I need emergency care support within the next 24 hours.",
   );

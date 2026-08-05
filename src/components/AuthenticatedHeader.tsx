@@ -57,37 +57,32 @@ export default function AuthenticatedHeader() {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 w-full border-b border-gold-300/10 bg-navy-950/95 backdrop-blur shadow-soft">
-      <div className="container-wrapper py-4 flex items-center justify-between h-[72px]">
+    <header className="fixed top-0 left-0 right-0 z-50 w-full shrink-0 min-h-[72px] border-b border-gold-300/10 bg-navy-950/95 backdrop-blur shadow-soft">
+      <div className="container-wrapper py-4 flex items-center justify-between h-[72px] min-h-[72px] shrink-0">
         {/* Left Side: Branding */}
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-            <Image
-              src="/website_logo.png"
-              alt="Grace & Goodwill logo"
-              width={48}
-              height={48}
-              className="h-8 w-8 sm:h-10 sm:w-10 object-contain drop-shadow-elegant"
-            />
-            <div className="flex flex-col justify-center">
-              <span
-                className="font-['Cinzel'] text-[14px] sm:text-[18px] font-medium tracking-[0.15em] uppercase text-[#D4AF7A]"
-                style={{ textShadow: "0 1px 2px rgba(0,0,0,0.4)" }}
-              >
-                GRACE & GOODWILL
-              </span>
-              <span className="text-[9px] sm:text-[10px] font-medium text-gold-200/60 font-sans tracking-[0.15em] sm:tracking-[0.2em] uppercase mt-0.5">
-                {portalName}
-              </span>
-            </div>
+        <Link href={`/${pathname.split("/")[1]}`} className="flex items-center gap-2 sm:gap-3 flex-shrink-0 hover:opacity-90 transition-opacity">
+          <Image
+            src="/website_logo.png"
+            alt="Grace & Goodwill logo"
+            width={48}
+            height={48}
+            className="h-8 w-8 sm:h-10 sm:w-10 object-contain drop-shadow-elegant"
+          />
+          <div className="flex flex-col justify-center">
+            <span
+              className="font-['Cinzel'] text-[14px] sm:text-[18px] font-medium tracking-[0.15em] uppercase text-[#D4AF7A]"
+              style={{ textShadow: "0 1px 2px rgba(0,0,0,0.4)" }}
+            >
+              GRACE & GOODWILL
+            </span>
+            <span className="text-[9px] sm:text-[10px] font-medium text-gold-200/60 font-sans tracking-[0.15em] sm:tracking-[0.2em] uppercase mt-0.5">
+              {portalName}
+            </span>
           </div>
-          <h2 className="text-sm sm:text-base text-gold-100/80 font-normal tracking-wide pl-1">
-            Welcome, {displayRole} {user?.firstName || ""}
-          </h2>
-        </div>
+        </Link>
 
         {/* Right Side: Notifications & Profile */}
-        <div className="flex items-center gap-4 sm:gap-6">
+        <div className="flex items-center gap-4 sm:gap-6 shrink-0">
           {/* Header Search (Desktop & Mobile) */}
           <HeaderSearch />
 

@@ -213,7 +213,7 @@ export default function Table<T>({
       )}
 
       {/* Main Table container wrapper with fixed height and scrolls */}
-      <div className="border border-gold-300/10 rounded-2xl bg-navy-900/60 shadow-soft overflow-hidden flex flex-col w-full">
+      <div className="border border-gold-300/10 rounded-2xl bg-navy-900/60 shadow-soft overflow-hidden flex flex-col w-full flex-1 min-h-0">
         <div
           className="overflow-x-auto overflow-y-auto"
           style={{

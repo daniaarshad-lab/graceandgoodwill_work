@@ -76,7 +76,7 @@ function SiteHeader() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full h-20 border-b border-navy-800 bg-navy-950/95 backdrop-blur flex items-center">
+      <header className="sticky top-0 z-50 w-full h-20 bg-navy-950/95 backdrop-blur flex items-center">
         <div className="container-wrapper flex items-center justify-between py-4">
           <Link
             href="/"

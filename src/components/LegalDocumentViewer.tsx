@@ -37,39 +37,61 @@ export default function LegalDocumentViewer({
   return (
     <div className="min-h-screen bg-navy-950 text-slate-200">
       {/* ── Top Hero Header ────────────────────────────────────────────── */}
-      <div className="relative border-b border-gold-400/15 bg-gradient-to-b from-navy-900/80 to-navy-950 py-12 md:py-16">
-        <div className="container-wrapper max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="mb-6 flex items-center justify-between">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2 text-xs font-medium text-gold-200/70 hover:text-gold-200 transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back to Home
-            </Link>
+      <div className="relative bg-navy-950 py-5 md:py-6 overflow-hidden">
+        {/* Ambient glow */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 flex items-start justify-center"
+        >
+          <div
+            className="h-[400px] w-[800px] rounded-full opacity-[0.06] blur-[120px]"
+            style={{
+              background: "radial-gradient(ellipse, #d4af37 0%, transparent 70%)",
+            }}
+          />
+        </div>
 
-            <button
-              onClick={handlePrint}
-              type="button"
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-navy-900 border border-gold-400/20 text-xs font-medium text-gold-100 hover:bg-gold-500/10 transition-colors"
-            >
-              <Printer className="w-3.5 h-3.5" />
-              Print Document
-            </button>
-          </div>
+        <div className="absolute top-6 left-0 z-20 w-full px-4 sm:px-8 md:px-12 lg:px-16 flex items-center justify-between">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-sm font-medium text-gold-200/70 hover:text-gold-200 hover:underline underline-offset-4 transition-all"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Home
+          </Link>
 
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold-400/10 border border-gold-400/20 text-gold-300 text-xs font-semibold uppercase tracking-wider mb-4">
-              <ShieldCheck className="w-3.5 h-3.5" />
-              Official Legal Policy
+          <button
+            onClick={handlePrint}
+            type="button"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-navy-900 border border-gold-400/20 text-sm font-medium text-gold-100 hover:bg-gold-500/10 transition-colors shadow-elegant"
+          >
+            <Printer className="w-4 h-4" />
+            Print Document
+          </button>
+        </div>
+
+        <div className="container-wrapper relative z-10 max-w-7xl mx-auto px-4 sm:px-6 mt-4 sm:mt-0">
+          <div className="max-w-4xl text-center mx-auto space-y-4 pt-8 sm:pt-4">
+            <div className="flex items-center justify-center gap-4">
+              <div className="h-px w-8 sm:w-16 bg-gradient-to-r from-transparent to-gold-400/40" />
+              <div className="inline-flex items-center gap-2 text-gold-400/80 text-xs font-semibold uppercase tracking-widest">
+                <ShieldCheck className="w-4 h-4" />
+                Official Legal Policy
+              </div>
+              <div className="h-px w-8 sm:w-16 bg-gradient-to-l from-transparent to-gold-400/40" />
             </div>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-slate-100 mb-3">
+
+            <h1 className="text-[13px] sm:text-sm lg:text-[15px] font-medium tracking-wide text-gold-200 uppercase max-w-4xl mx-auto px-4">
               {documentTitle}
             </h1>
-            <p className="text-base sm:text-lg text-slate-400 leading-relaxed font-light mb-4">
-              {documentSubtitle}
-            </p>
-            <div className="flex flex-wrap items-center gap-4 text-xs text-gold-200/50 pt-2 border-t border-gold-400/10">
+            
+            {documentSubtitle && (
+              <p className="text-xs sm:text-sm text-gold-200/80 max-w-2xl mx-auto uppercase tracking-wider font-medium">
+                {documentSubtitle}
+              </p>
+            )}
+            
+            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-xs font-medium text-gold-200/50 mt-2">
               <span>{companyName}</span>
               <span>•</span>
               <span>Company No. 16011465</span>
@@ -81,7 +103,7 @@ export default function LegalDocumentViewer({
       </div>
 
       {/* ── Main Layout ─────────────────────────────────────────────────── */}
-      <div className="container-wrapper max-w-6xl mx-auto px-4 sm:px-6 py-10 md:py-16">
+      <div className="container-wrapper max-w-6xl mx-auto px-4 sm:px-6 pt-6 pb-10 md:pt-8 md:pb-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
           {/* Table of Contents Sidebar */}
           {sections.length > 0 && (
@@ -114,7 +136,7 @@ export default function LegalDocumentViewer({
 
           {/* Main Document Content */}
           <main className={sections.length > 0 ? "lg:col-span-8 xl:col-span-9" : "lg:col-span-12"}>
-            <div className="prose prose-invert max-w-none prose-headings:text-slate-100 prose-headings:font-bold prose-h2:border-b prose-h2:border-navy-800 prose-h2:pb-3 prose-h2:mt-10 prose-h2:text-xl sm:prose-h2:text-2xl prose-h3:text-lg prose-h3:text-gold-200 prose-p:text-slate-300 prose-p:leading-relaxed prose-li:text-slate-300 prose-strong:text-slate-100">
+            <div className="prose prose-sm md:prose-base prose-invert max-w-none prose-headings:text-slate-100 prose-h2:font-sans prose-h2:font-medium prose-h2:border-b prose-h2:border-navy-800 prose-h2:pb-2 prose-h2:mt-8 prose-h2:text-base prose-h3:font-sans prose-h3:font-medium prose-h3:text-sm prose-h3:text-gold-200 prose-p:text-slate-300 prose-p:leading-relaxed prose-li:text-slate-300 prose-strong:text-slate-100">
               {children}
             </div>
 

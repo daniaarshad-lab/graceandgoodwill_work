@@ -107,6 +107,21 @@ export default function ContactPage() {
             </Button>
           </div>
         </div>
+
+        {/* 4. Registered Office */}
+        <div className="mt-8 p-6 rounded-[1.75rem] border border-gold-300/10 bg-navy-900/40 text-center space-y-4 max-w-2xl mx-auto w-full">
+          <div>
+            <h3 className="text-base font-semibold text-gold-100">
+              Registered Office
+            </h3>
+            <address className="text-sm text-gold-100/60 leading-relaxed mt-2 not-italic">
+              Hypoint,<br />
+              Saltmeadows Road,<br />
+              Gateshead, NE8 3AH,<br />
+              United Kingdom
+            </address>
+          </div>
+        </div>
       </div>
     </main>
   );

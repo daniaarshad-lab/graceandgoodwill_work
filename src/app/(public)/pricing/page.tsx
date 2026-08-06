@@ -80,23 +80,16 @@ export default function PricingPage() {
                 </div>
 
                 {/* CTA Buttons */}
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-3">
-                  <Button asChild variant="primary" size="lg">
-                    <a href="tel:02045781269" className="gap-2.5">
-                      <Phone className="w-5 h-5" strokeWidth={2} />
-                      Call us: 020 4578 1269
-                    </a>
-                  </Button>
-
-                  <Button asChild variant="whatsapp" size="lg">
+                <div className="flex justify-center pt-3 w-full">
+                  <Button asChild variant="whatsapp" size="md" className="w-full md:w-1/2 lg:w-1/3">
                     <a
                       href="https://wa.me/447462931949"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="gap-2.5"
+                      className="gap-2.5 justify-center"
                     >
                       <WhatsAppIcon className="w-5 h-5" />
-                      WhatsApp us: +44 7462 931949
+                      WhatsApp us
                     </a>
                   </Button>
                 </div>

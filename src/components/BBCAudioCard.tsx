@@ -2,7 +2,8 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import { Play, Pause, ListMusic } from "lucide-react";
+import { Play, Pause, ListMusic, ExternalLink } from "lucide-react";
+import Button from "@/components/Button";
 
 type Interview = { id: number; title: string; src: string; maxDuration?: number };
 
@@ -175,6 +176,20 @@ export default function BBCAudioCard() {
               />
             </div>
           </div>
+        </div>
+
+        <div className="mt-4">
+          <Button asChild variant="secondary" size="sm" fullWidth>
+            <a 
+              href="https://www.bbc.co.uk/programmes/p0m85mv7" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="gap-2"
+            >
+              <ExternalLink className="w-4 h-4" />
+              View Full Story on BBC
+            </a>
+          </Button>
         </div>
       </div>
     </div>

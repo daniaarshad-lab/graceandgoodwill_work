@@ -15,7 +15,12 @@ export default function HomePage() {
     <main className="overflow-x-hidden min-h-[calc(100vh-80px)] bg-navy-950 pt-6 md:pt-10 lg:pt-20 pb-16 md:pb-24 text-gold-100">
       <section className="container-wrapper relative flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between pb-16">
         {/* As Seen In Media Badge (Top Right) */}
-        <div className="relative lg:absolute lg:-top-8 lg:right-[calc(-50vw+50%+2rem)] 2xl:-top-16 2xl:right-[calc(-50vw+50%+4rem)] z-30 inline-flex self-start lg:self-auto items-center gap-3 bg-navy-900 border border-gold-muted/30 px-4 py-2 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.3)] backdrop-blur-md hover:border-gold-400/50 hover:shadow-[0_0_15px_rgba(247,215,116,0.15)] transition-all cursor-default">
+        <a 
+          href="https://www.bbc.co.uk/programmes/p0m85mv7" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="relative lg:absolute lg:-top-8 lg:right-[calc(-50vw+50%+2rem)] 2xl:-top-16 2xl:right-[calc(-50vw+50%+4rem)] z-30 inline-flex self-start lg:self-auto items-center gap-3 bg-navy-900 border border-gold-muted/30 px-4 py-2 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.3)] backdrop-blur-md hover:border-gold-400/50 hover:shadow-[0_0_15px_rgba(247,215,116,0.15)] hover:scale-[1.02] transition-all cursor-pointer"
+        >
           <span className="text-[10px] sm:text-xs font-semibold text-gold-200 uppercase tracking-widest inline-block">
             As Featured on
           </span>
@@ -36,7 +41,7 @@ export default function HomePage() {
               RADIO
             </span>
           </div>
-        </div>
+        </a>
 
         <div className="max-w-2xl lg:flex-1 xl:flex-none space-y-6 -mt-4 lg:mt-0">
           <h1 className="font-serif font-medium leading-[1.2] tracking-tight drop-shadow-md">

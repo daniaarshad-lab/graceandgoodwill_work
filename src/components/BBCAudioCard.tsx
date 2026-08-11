@@ -5,11 +5,11 @@ import Image from "next/image";
 import { Play, Pause, ListMusic, ExternalLink } from "lucide-react";
 import Button from "@/components/Button";
 
-type Interview = { id: number; title: string; src: string; maxDuration?: number };
+type Interview = { id: number; title: string; src: string; maxDuration?: number; startTime?: number };
 
 const INTERVIEWS: Interview[] = [
   { id: 1, title: "Interview Part 1", src: "/audio/bbc-audio-1.mp3", maxDuration: 389 },
-  { id: 2, title: "Interview Part 2", src: "/audio/bbc-audio-2.mp4" },
+  { id: 2, title: "Interview Part 2", src: "/audio/bbc-audio-2.mp4", startTime: 325 },
 ];
 
 const formatTime = (time: number): string => {
@@ -51,35 +51,61 @@ export default function BBCAudioCard() {
 
   const handleTimeUpdate = () => {
     if (audioRef.current) {
-      const maxTime = activeInterview.maxDuration || audioRef.current.duration;
+      const start = activeInterview.startTime || 0;
+      const rawDuration = audioRef.current.duration;
+      const maxTime = activeInterview.maxDuration || rawDuration;
       const current = audioRef.current.currentTime;
 
       if (activeInterview.maxDuration && current >= activeInterview.maxDuration) {
         audioRef.current.pause();
         audioRef.current.currentTime = activeInterview.maxDuration;
         setIsPlaying(false);
-        setCurrentTime(activeInterview.maxDuration);
+        setCurrentTime(activeInterview.maxDuration - start);
         setProgress(100);
       } else {
-        setCurrentTime(current);
-        setProgress((current / maxTime) * 100);
+        if (current < start) {
+          // If the player somehow ends up before the start time, seek to start
+          audioRef.current.currentTime = start;
+          return;
+        }
+        
+        const effectiveCurrent = current - start;
+        const effectiveDuration = maxTime - start;
+        
+        setCurrentTime(effectiveCurrent);
+        setProgress((effectiveCurrent / effectiveDuration) * 100);
       }
     }
   };
 
   const handleLoadedMetadata = () => {
     if (audioRef.current) {
-      setDuration(activeInterview.maxDuration || audioRef.current.duration);
+      const start = activeInterview.startTime || 0;
+      const rawDuration = audioRef.current.duration;
+      const maxTime = activeInterview.maxDuration || rawDuration;
+      
+      setDuration(maxTime - start);
+      
+      // If there's an offset and we are at 0, skip to the offset
+      if (start > 0 && audioRef.current.currentTime < start) {
+        audioRef.current.currentTime = start;
+      }
     }
   };
 
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
     const seekTo = Number(e.target.value);
     if (audioRef.current) {
-      const maxTime = activeInterview.maxDuration || audioRef.current.duration;
-      const newTime = (seekTo / 100) * maxTime;
-      audioRef.current.currentTime = newTime;
+      const start = activeInterview.startTime || 0;
+      const rawDuration = audioRef.current.duration;
+      const maxTime = activeInterview.maxDuration || rawDuration;
+      const effectiveDuration = maxTime - start;
+      
+      const newEffectiveTime = (seekTo / 100) * effectiveDuration;
+      audioRef.current.currentTime = start + newEffectiveTime;
+      
       setProgress(seekTo);
+      setCurrentTime(newEffectiveTime);
     }
   };
 
@@ -124,11 +150,10 @@ export default function BBCAudioCard() {
               <button
                 key={interview.id}
                 onClick={() => setActiveInterview(interview)}
-                className={`flex-1 text-[10px] sm:text-[11px] font-medium tracking-wide uppercase py-2 px-2 rounded-xl border transition-all duration-300 flex items-center justify-center gap-1.5 ${
-                  activeInterview.id === interview.id
+                className={`flex-1 text-[10px] sm:text-[11px] font-medium tracking-wide uppercase py-2 px-2 rounded-xl border transition-all duration-300 flex items-center justify-center gap-1.5 ${activeInterview.id === interview.id
                     ? "bg-gold-400/25 border-gold-400/40 text-gold-100 shadow-[0_0_15px_rgba(232,186,122,0.2)] backdrop-blur-md"
                     : "bg-navy-950/60 border-gold-300/10 text-gold-100/60 hover:bg-gold-400/15 hover:text-gold-100 hover:border-gold-300/30 backdrop-blur-sm"
-                }`}
+                  }`}
               >
                 {activeInterview.id === interview.id && (
                   <ListMusic className="w-3.5 h-3.5" />
@@ -180,9 +205,9 @@ export default function BBCAudioCard() {
 
         <div className="mt-4">
           <Button asChild variant="secondary" size="sm" fullWidth>
-            <a 
-              href="https://www.bbc.co.uk/programmes/p0m85mv7" 
-              target="_blank" 
+            <a
+              href="https://www.bbc.co.uk/programmes/p0m85mv7"
+              target="_blank"
               rel="noopener noreferrer"
               className="gap-2"
             >

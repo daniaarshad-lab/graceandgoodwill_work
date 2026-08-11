@@ -133,11 +133,9 @@ function CarerDashboardContent() {
 
     if (profile && !loading && !documentsLoading && !initialStepSet) {
       const urlStep = searchParams.get("step");
-      const savedStep = localStorage.getItem(
-        `carer_onboarding_step_${user.id}`,
-      );
       if (urlStep) {
         setOnboardingStep(parseInt(urlStep, 10));
+        setInitialStepSet(true);
       } else {
         // Evaluate the backend persisted data to determine the current incomplete step
         const initialize = async () => {
@@ -294,7 +292,14 @@ function CarerDashboardContent() {
             return 12; // Final Review
           };
 
-          const initialStep = await determineInitialStep();
+          const p = profileUser || {};
+          const ap = actualProfile || {};
+          
+          let initialStep = ap.onboardingStep;
+          if (!initialStep) {
+            initialStep = await determineInitialStep();
+          }
+          
           setOnboardingStep(initialStep);
           setInitialStepSet(true);
         };
@@ -312,14 +317,7 @@ function CarerDashboardContent() {
     user?.id,
   ]);
 
-  useEffect(() => {
-    if (initialStepSet && user?.id) {
-      localStorage.setItem(
-        `carer_onboarding_step_${user.id}`,
-        onboardingStep.toString(),
-      );
-    }
-  }, [onboardingStep, initialStepSet, user?.id]);
+  // Optional: We no longer sync `onboardingStep` to localStorage since it's saved to the DB on Continue clicks.
 
   const showOnboarding =
     isClient && !onboardingDone && portal.applicationStatus !== "approved";
@@ -470,7 +468,10 @@ function CarerDashboardContent() {
           <div className="transition-all duration-500">
             {onboardingStep === 2 && (
               <StepLegalAgreements
-                onNext={() => setOnboardingStep(3)}
+                onNext={() => {
+                  portal.updateOnboardingStep(3);
+                  setOnboardingStep(3);
+                }}
                 onBack={() => router.push("/register")}
               />
             )}
@@ -478,7 +479,10 @@ function CarerDashboardContent() {
             {onboardingStep === 3 && (
               <StepIdentityVerification
                 portal={portal}
-                onNext={() => setOnboardingStep(4)}
+                onNext={() => {
+                  portal.updateOnboardingStep(4);
+                  setOnboardingStep(4);
+                }}
                 onBack={() => setOnboardingStep(2)}
               />
             )}
@@ -486,7 +490,10 @@ function CarerDashboardContent() {
             {onboardingStep === 4 && (
               <StepProfessionalInfo
                 portal={portal}
-                onNext={() => setOnboardingStep(5)}
+                onNext={() => {
+                  portal.updateOnboardingStep(5);
+                  setOnboardingStep(5);
+                }}
                 onBack={() => setOnboardingStep(3)}
               />
             )}
@@ -494,7 +501,10 @@ function CarerDashboardContent() {
             {onboardingStep === 5 && (
               <StepTrainingCertificates
                 portal={portal}
-                onNext={() => setOnboardingStep(6)}
+                onNext={() => {
+                  portal.updateOnboardingStep(6);
+                  setOnboardingStep(6);
+                }}
                 onBack={() => setOnboardingStep(4)}
               />
             )}
@@ -502,7 +512,10 @@ function CarerDashboardContent() {
             {onboardingStep === 6 && (
               <StepComplianceDocs
                 portal={portal}
-                onNext={() => setOnboardingStep(7)}
+                onNext={() => {
+                  portal.updateOnboardingStep(7);
+                  setOnboardingStep(7);
+                }}
                 onBack={() => setOnboardingStep(5)}
               />
             )}
@@ -510,7 +523,10 @@ function CarerDashboardContent() {
             {onboardingStep === 7 && (
               <StepInsuranceDocs
                 portal={portal}
-                onNext={() => setOnboardingStep(8)}
+                onNext={() => {
+                  portal.updateOnboardingStep(8);
+                  setOnboardingStep(8);
+                }}
                 onBack={() => setOnboardingStep(6)}
               />
             )}
@@ -518,7 +534,10 @@ function CarerDashboardContent() {
             {onboardingStep === 8 && (
               <StepPaymentDetails
                 portal={portal}
-                onNext={() => setOnboardingStep(9)}
+                onNext={() => {
+                  portal.updateOnboardingStep(9);
+                  setOnboardingStep(9);
+                }}
                 onBack={() => setOnboardingStep(7)}
               />
             )}
@@ -526,7 +545,10 @@ function CarerDashboardContent() {
             {onboardingStep === 9 && (
               <StepAdditionalQuals
                 portal={portal}
-                onNext={() => setOnboardingStep(10)}
+                onNext={() => {
+                  portal.updateOnboardingStep(10);
+                  setOnboardingStep(10);
+                }}
                 onBack={() => setOnboardingStep(8)}
               />
             )}
@@ -534,7 +556,10 @@ function CarerDashboardContent() {
             {onboardingStep === 10 && (
               <StepVideoIntro
                 portal={portal}
-                onNext={() => setOnboardingStep(11)}
+                onNext={() => {
+                  portal.updateOnboardingStep(11);
+                  setOnboardingStep(11);
+                }}
                 onBack={() => setOnboardingStep(9)}
               />
             )}
@@ -542,7 +567,10 @@ function CarerDashboardContent() {
             {onboardingStep === 11 && (
               <StepDeclaration
                 portal={portal}
-                onNext={() => setOnboardingStep(12)}
+                onNext={() => {
+                  portal.updateOnboardingStep(12);
+                  setOnboardingStep(12);
+                }}
                 onBack={() => setOnboardingStep(10)}
               />
             )}

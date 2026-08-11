@@ -1,3 +1,4 @@
+import FullScreenLoader from "@/components/FullScreenLoader";
 import React, { useState } from "react";
 import SectionCard from "./shared/SectionCard";
 import Input from "@/components/Input";
@@ -43,6 +44,8 @@ const RELATIONSHIP_OPTIONS = [
 ];
 
 export default function StepPersonalInfo({ portal, onNext, onBack }: Props) {
+  const [isLocalSaving, setIsLocalSaving] = useState(false);
+
   const {
     firstName,
     setFirstName,
@@ -155,7 +158,9 @@ export default function StepPersonalInfo({ portal, onNext, onBack }: Props) {
     setErrors({});
 
     const syntheticEvent = { preventDefault: () => {} } as React.FormEvent;
+    setIsLocalSaving(true);
     const success = await portal.handleSaveProfile(syntheticEvent, 2);
+    setIsLocalSaving(false);
     if (success) {
       onNext();
     }
@@ -172,8 +177,16 @@ export default function StepPersonalInfo({ portal, onNext, onBack }: Props) {
 
   const maxDate = getMinAgeDate();
 
+  if (isLocalSaving) {
+    return (
+      <div className="space-y-6 max-w-7xl mx-auto w-full">
+        <FullScreenLoader isVisible={true} />
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6 max-w-7xl mx-auto">
       <SectionCard className="space-y-6 p-6 md:p-8">
         <h3 className="text-xl font-bold text-gold-200 border-b border-gold-300/10 pb-4">
           Personal Information
@@ -403,16 +416,21 @@ export default function StepPersonalInfo({ portal, onNext, onBack }: Props) {
 
       <div className="flex justify-between items-center pt-4 gap-4">
         {onBack ? (
-          <Button type="button" variant="ghost-gold" onClick={onBack}>
+          <Button type="button" variant="ghost-gold" onClick={onBack} disabled={isLocalSaving || portal.isProfileSaving}>
             Back
           </Button>
         ) : (
           <div />
         )}
-        <Button type="button" variant="primary" onClick={handleNext}>
-          Save & Continue
+        <Button
+          type="button"
+          variant="primary"
+          onClick={handleNext}
+          disabled={isLocalSaving || portal.isProfileSaving}
+        >
+          "Save & Continue"
         </Button>
       </div>
-    </div>
+      </div>
   );
 }

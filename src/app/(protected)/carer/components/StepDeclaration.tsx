@@ -1,3 +1,4 @@
+import FullScreenLoader from "@/components/FullScreenLoader";
 import React, { useState } from "react";
 import SectionCard from "./shared/SectionCard";
 import Button from "@/components/Button";
@@ -10,6 +11,8 @@ interface Props {
 }
 
 export default function StepDeclaration({ portal, onNext, onBack }: Props) {
+  const [isLocalSaving, setIsLocalSaving] = useState(false);
+
   const { declarations, setDeclarations, handleSaveProfile, isProfileSaving } =
     portal;
 
@@ -40,14 +43,24 @@ export default function StepDeclaration({ portal, onNext, onBack }: Props) {
     }
 
     const syntheticEvent = { preventDefault: () => {} } as React.FormEvent;
+    setIsLocalSaving(true);
     const success = await handleSaveProfile(syntheticEvent, 11);
+    setIsLocalSaving(false);
     if (success) {
       onNext();
     }
   };
 
+  if (isLocalSaving) {
+    return (
+      <div className="space-y-6 max-w-7xl mx-auto w-full">
+        <FullScreenLoader isVisible={true} />
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6 max-w-7xl mx-auto">
       <SectionCard className="space-y-6 p-6 md:p-8">
         <h3 className="text-xl font-bold text-gold-200 border-b border-gold-300/10 pb-4">
           Declaration
@@ -159,7 +172,7 @@ export default function StepDeclaration({ portal, onNext, onBack }: Props) {
           type="button"
           variant="ghost-gold"
           onClick={onBack}
-          disabled={isProfileSaving}
+          disabled={isLocalSaving || isProfileSaving}
         >
           Back
         </Button>
@@ -167,11 +180,11 @@ export default function StepDeclaration({ portal, onNext, onBack }: Props) {
           type="button"
           variant="primary"
           onClick={handleNext}
-          disabled={isProfileSaving}
+          disabled={isLocalSaving || isProfileSaving}
         >
-          Save & Continue
+          "Save & Continue"
         </Button>
       </div>
-    </div>
+      </div>
   );
 }

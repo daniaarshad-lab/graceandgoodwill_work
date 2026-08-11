@@ -1,3 +1,4 @@
+import FullScreenLoader from "@/components/FullScreenLoader";
 import React, { useState } from "react";
 import SectionCard from "./shared/SectionCard";
 import Button from "@/components/Button";
@@ -50,6 +51,8 @@ export default function StepIdentityVerification({
   onNext,
   onBack,
 }: Props) {
+  const [isLocalSaving, setIsLocalSaving] = useState(false);
+
   const {
     firstName,
     setFirstName,
@@ -262,17 +265,23 @@ export default function StepIdentityVerification({
     }
 
     setErrors({});
+    setIsLocalSaving(true);
 
     // Save Personal Information (backend step 2)
     const syntheticEvent = { preventDefault: () => {} } as React.FormEvent;
     let success = await portal.handleSaveProfile(syntheticEvent, 2);
-    if (!success) return;
+    if (!success) {
+      setIsLocalSaving(false);
+      return;
+    }
 
     // Save Driving Preferences / vehicle info (backend step 3)
     await portal.handleSaveProfile(syntheticEvent, 3);
 
     // Upload identity documents (backend step 2)
     success = await portal.handleStepBatchUpload(2);
+    setIsLocalSaving(false);
+    
     if (success) {
       onNext();
     }
@@ -292,8 +301,16 @@ export default function StepIdentityVerification({
       (d: ComplianceDoc) => d.type === DocumentFileType.DRIVING_LICENCE,
     ) || !!selectedFiles[DocumentFileType.DRIVING_LICENCE.toLowerCase()];
 
+  if (isLocalSaving) {
+    return (
+      <div className="space-y-6 max-w-7xl mx-auto w-full">
+        <FullScreenLoader isVisible={true} />
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6 max-w-7xl mx-auto">
       {/* Internal Tabs */}
       <div className="flex justify-center mb-8 px-4">
         <div className="flex w-full max-w-lg rounded-xl shadow-sm bg-navy-900/60 p-1.5 border border-navy-800">
@@ -741,14 +758,19 @@ export default function StepIdentityVerification({
       </div>
 
       <div className="flex justify-between items-center pt-4 gap-4">
-        <Button type="button" variant="ghost-gold" onClick={onBack}>
+        <Button type="button" variant="ghost-gold" onClick={onBack} disabled={isLocalSaving || portal.isProfileSaving}>
           Back
         </Button>
-        <Button type="button" variant="primary" onClick={handleNext}>
-          Save & Continue
+        <Button
+          type="button"
+          variant="primary"
+          onClick={handleNext}
+          disabled={isLocalSaving || portal.isProfileSaving}
+        >
+          "Save & Continue"
         </Button>
       </div>
-    </div>
+      </div>
   );
 }
 

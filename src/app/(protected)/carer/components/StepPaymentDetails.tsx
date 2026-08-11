@@ -1,3 +1,4 @@
+import FullScreenLoader from "@/components/FullScreenLoader";
 import React, { useState } from "react";
 import SectionCard from "./shared/SectionCard";
 import Input from "@/components/Input";
@@ -12,6 +13,8 @@ interface Props {
 }
 
 export default function StepPaymentDetails({ portal, onNext, onBack }: Props) {
+  const [isLocalSaving, setIsLocalSaving] = useState(false);
+
   const {
     bankName,
     setBankName,
@@ -145,14 +148,24 @@ export default function StepPaymentDetails({ portal, onNext, onBack }: Props) {
     }
 
     // Submit payload via handleSaveProfile
+    setIsLocalSaving(true);
     const success = await portal.handleSaveProfile(undefined, 10);
+    setIsLocalSaving(false);
     if (success) {
       onNext();
     }
   };
 
+  if (isLocalSaving) {
+    return (
+      <div className="space-y-6 max-w-7xl mx-auto w-full">
+        <FullScreenLoader isVisible={true} />
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6 max-w-7xl mx-auto">
       <SectionCard className="space-y-6 p-6 md:p-8">
         <h3 className="text-xl font-bold text-gold-200 border-b border-gold-300/10 pb-4">
           Supplemental Details
@@ -238,7 +251,7 @@ export default function StepPaymentDetails({ portal, onNext, onBack }: Props) {
 
       <div className="flex justify-between items-center pt-4 gap-4">
         {onBack ? (
-          <Button type="button" variant="ghost-gold" onClick={onBack}>
+          <Button type="button" variant="ghost-gold" onClick={onBack} disabled={isLocalSaving || portal.isProfileSaving}>
             Back
           </Button>
         ) : (
@@ -249,11 +262,11 @@ export default function StepPaymentDetails({ portal, onNext, onBack }: Props) {
           type="button"
           variant="primary"
           onClick={handleNext}
-          disabled={portal.isProfileSaving}
+          disabled={isLocalSaving || portal.isProfileSaving}
         >
-          {portal.isProfileSaving ? "Saving..." : "Save & Continue"}
+          "Save & Continue"
         </Button>
       </div>
-    </div>
+      </div>
   );
 }

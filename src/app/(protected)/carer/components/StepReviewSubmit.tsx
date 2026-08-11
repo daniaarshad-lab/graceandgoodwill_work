@@ -171,7 +171,7 @@ export default function StepReviewSubmit({
   const isFormValid = missingItems.length === 0;
 
   return (
-    <div className="space-y-8 max-w-5xl mx-auto">
+    <div className="space-y-8 max-w-7xl mx-auto">
       {/* Validation Alert Banner */}
       {missingItems.length > 0 ? (
         <div className="p-5 rounded-2xl bg-red-950/20 border border-red-500/30 flex items-start gap-4">
@@ -529,7 +529,7 @@ export default function StepReviewSubmit({
       </div>
 
       {/* Navigation & Submit controls */}
-      <div className="flex justify-between items-center pt-4 gap-4 max-w-5xl mx-auto w-full">
+      <div className="flex justify-between items-center pt-4 gap-4 max-w-7xl mx-auto w-full">
         <Button
           type="button"
           variant="ghost-gold"

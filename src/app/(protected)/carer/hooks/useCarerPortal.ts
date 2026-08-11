@@ -334,6 +334,16 @@ export function useCarerPortal({
     }
   };
 
+  const updateOnboardingStep = async (step: number) => {
+    try {
+      await dispatch(updateCarerProfile({ onboardingStep: step })).unwrap();
+      return true;
+    } catch (e) {
+      console.error("Failed to update onboarding step:", e);
+      return false;
+    }
+  };
+
   // Helper to filter out undefined personal payload fields to avoid schema mismatch
   const personalPayloadCheck = (payload: any) => {
     const clean: any = {};
@@ -731,6 +741,7 @@ export function useCarerPortal({
     profileErrors,
     isProfileSaving,
     handleSaveProfile,
+    updateOnboardingStep,
 
     applicationStatus,
     membershipActive,

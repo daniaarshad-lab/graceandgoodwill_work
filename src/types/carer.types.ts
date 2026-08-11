@@ -55,6 +55,7 @@ export interface CarerProfile {
   dbsUpdateServiceNumber?: string | null;
   employmentHistory?: any;
   declarations?: any;
+  onboardingStep?: number;
 
   createdAt: string;
   updatedAt: string;
@@ -100,6 +101,7 @@ export interface UpdateCarerProfilePayload {
   dbsUpdateServiceNumber?: string;
   employmentHistory?: any;
   declarations?: any;
+  onboardingStep?: number;
 }
 
 /** Array of ISO date strings sent to PUT /carer/profile/availability */

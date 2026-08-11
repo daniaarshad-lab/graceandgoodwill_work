@@ -194,7 +194,7 @@ export default function StepVideoIntro({
     (submitted && !hasVideo ? "Please upload your introduction video." : "");
 
   return (
-    <div className="space-y-8 max-w-5xl mx-auto">
+    <div className="space-y-8 max-w-7xl mx-auto">
       <SectionCard className="p-8 md:p-10 space-y-10">
         <div className="text-center space-y-3 max-w-2xl mx-auto border-b border-gold-300/10 pb-6 relative">
           <h3 className="text-xl font-bold text-gold-200 tracking-tight flex items-center justify-center gap-2">
@@ -339,7 +339,7 @@ export default function StepVideoIntro({
               onClick={() =>
                 !isSubmittingMedia && videoInputRef.current?.click()
               }
-              className={`h-40 w-full max-w-[240px] border-2 border-dashed rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all duration-300 group ${
+              className={`h-40 w-full max-w-[200px] border-2 border-dashed rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all duration-300 group ${
                 videoErrorMsg
                   ? "border-red-500/50 bg-red-950/10"
                   : hasVideo

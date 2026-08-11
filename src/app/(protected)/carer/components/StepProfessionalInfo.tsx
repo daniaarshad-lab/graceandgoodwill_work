@@ -1,3 +1,4 @@
+import FullScreenLoader from "@/components/FullScreenLoader";
 import React, { useState, useRef, useEffect } from "react";
 import SectionCard from "./shared/SectionCard";
 import Input from "@/components/Input";
@@ -15,6 +16,8 @@ export default function StepProfessionalInfo({
   onNext,
   onBack,
 }: Props) {
+  const [isLocalSaving, setIsLocalSaving] = useState(false);
+
   const {
     bio,
     setBio,
@@ -116,14 +119,24 @@ export default function StepProfessionalInfo({
     }
 
     const syntheticEvent = { preventDefault: () => {} } as React.FormEvent;
+    setIsLocalSaving(true);
     const success = await portal.handleSaveProfile(syntheticEvent, 4);
+    setIsLocalSaving(false);
     if (success) {
       onNext();
     }
   };
 
+  if (isLocalSaving) {
+    return (
+      <div className="space-y-6 max-w-7xl mx-auto w-full">
+        <FullScreenLoader isVisible={true} />
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6 max-w-7xl mx-auto">
       <SectionCard className="space-y-6 p-6 md:p-8">
         <h3 className="text-xl font-bold text-gold-200 border-b border-gold-300/10 pb-4">
           Professional Information
@@ -207,14 +220,19 @@ export default function StepProfessionalInfo({
       </SectionCard>
 
       <div className="flex justify-between items-center pt-4 gap-4">
-        <Button type="button" variant="ghost-gold" onClick={onBack}>
+        <Button type="button" variant="ghost-gold" onClick={onBack} disabled={isLocalSaving || portal.isProfileSaving}>
           Back
         </Button>
-        <Button type="button" variant="primary" onClick={handleNext}>
-          Save & Continue
+        <Button
+          type="button"
+          variant="primary"
+          onClick={handleNext}
+          disabled={isLocalSaving || portal.isProfileSaving}
+        >
+          "Save & Continue"
         </Button>
       </div>
-    </div>
+      </div>
   );
 }
 

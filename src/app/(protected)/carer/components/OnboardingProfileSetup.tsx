@@ -1,3 +1,4 @@
+import FullScreenLoader from "@/components/FullScreenLoader";
 import { useState, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { uploadProfileMedia } from "@/store/slices/carerSlice";
@@ -176,13 +177,22 @@ export default function OnboardingProfileSetup({
   const isFormValid =
     (!!photoFile || !!existingPhotoUrl) && (!!videoFile || !!existingVideoUrl);
 
+  if (isSubmitting) {
+    return (
+      <div className="space-y-6 max-w-4xl mx-auto w-full">
+        <FullScreenLoader isVisible={true} />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Navigation Row */}
       <div className="flex justify-between items-center w-full max-w-3xl mx-auto pb-4">
         <button
           onClick={onBack}
-          className="flex items-center gap-1.5 px-5 py-2 rounded-lg border border-gold-300/10 bg-navy-900/30 backdrop-blur-md text-gold-200/80 text-[12.5px] font-medium tracking-wide hover:bg-navy-800/40 hover:border-gold-300/20 hover:text-gold-50 hover:-translate-y-[1px] hover:shadow-[0_2px_10px_rgba(212,175,55,0.05)] transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-gold-DEFAULT/30"
+          disabled={isSubmitting}
+          className="flex items-center gap-1.5 px-5 py-2 rounded-lg border border-gold-300/10 bg-navy-900/30 backdrop-blur-md text-gold-200/80 text-[12.5px] font-medium tracking-wide hover:bg-navy-800/40 hover:border-gold-300/20 hover:text-gold-50 hover:-translate-y-[1px] hover:shadow-[0_2px_10px_rgba(212,175,55,0.05)] transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-gold-DEFAULT/30 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           Back
@@ -192,17 +202,10 @@ export default function OnboardingProfileSetup({
           disabled={!isFormValid || isSubmitting}
           className="flex items-center gap-1.5 px-6 py-2 rounded-lg bg-gradient-to-b from-gold-200 to-gold-200/80 border border-gold-200/20 text-navy-950 text-[12.5px] font-semibold tracking-wide shadow-[0_2px_8px_rgba(245,212,160,0.15)] hover:shadow-[0_4px_12px_rgba(245,212,160,0.25)] hover:-translate-y-[1px] transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-gold-200/50 disabled:opacity-50 disabled:hover:transform-none disabled:hover:shadow-none ml-auto"
         >
-          {isSubmitting ? (
-            <span className="flex items-center gap-2">
-              <div className="w-4 h-4 border-2 border-navy-900 border-t-transparent rounded-full animate-spin"></div>
-              Uploading...
-            </span>
-          ) : (
-            <>
+          <>
               Continue
               <ArrowRight className="w-3.5 h-3.5" />
             </>
-          )}
         </button>
       </div>
 

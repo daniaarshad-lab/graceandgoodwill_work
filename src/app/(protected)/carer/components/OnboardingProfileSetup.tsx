@@ -126,21 +126,20 @@ export default function OnboardingProfileSetup({
     video.preload = "metadata";
     video.onloadedmetadata = () => {
       window.URL.revokeObjectURL(video.src);
-      const duration = video.duration;
+      const exactDuration = video.duration;
+      const duration = Math.round(exactDuration);
 
       if (duration < 45 || duration > 60) {
         showErrorToast(
           "Invalid Video Duration",
-          `Your video duration is ${Math.round(
-            duration,
-          )} seconds. It must be between 45 seconds and 60 seconds (1 minute) maximum.`,
+          `Your video duration is ${duration} seconds. It must be between 45 seconds and 60 seconds (1 minute) maximum.`,
         );
         if (videoInputRef.current) videoInputRef.current.value = "";
         return;
       }
 
       setVideoFile(file);
-      setVideoDuration(duration);
+      setVideoDuration(exactDuration);
       setVideoUploaded(true);
     };
     video.src = URL.createObjectURL(file);
@@ -273,11 +272,10 @@ export default function OnboardingProfileSetup({
 
             <div
               onClick={() => !isSubmitting && videoInputRef.current?.click()}
-              className={`h-32 w-full max-w-[200px] border border-dashed rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all duration-300 ${
-                videoUploaded || existingVideoUrl
-                  ? "bg-gold-DEFAULT/5 border-gold-DEFAULT text-gold-DEFAULT"
-                  : "border-gold-muted/20 hover:border-gold-DEFAULT/50 text-gold-muted/40"
-              }`}
+              className={`h-32 w-full max-w-[200px] border border-dashed rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all duration-300 ${videoUploaded || existingVideoUrl
+                ? "bg-gold-DEFAULT/5 border-gold-DEFAULT text-gold-DEFAULT"
+                : "border-gold-muted/20 hover:border-gold-DEFAULT/50 text-gold-muted/40"
+                }`}
             >
               {videoUploaded ? (
                 <div className="flex flex-col items-center space-y-2">

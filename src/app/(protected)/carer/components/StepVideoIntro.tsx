@@ -126,11 +126,12 @@ export default function StepVideoIntro({
     video.preload = "metadata";
     video.onloadedmetadata = () => {
       window.URL.revokeObjectURL(video.src);
-      const duration = video.duration;
+      const exactDuration = video.duration;
+      const duration = Math.round(exactDuration);
 
       if (duration < 45 || duration > 60) {
         setVideoSelectionError(
-          `Your video duration is ${Math.round(duration)} seconds. It must be between 45 seconds and 60 seconds (1 minute) maximum.`,
+          `Your video duration is ${duration} seconds. It must be between 45 seconds and 60 seconds (1 minute) maximum.`,
         );
         setVideoFile(null);
         if (videoInputRef.current) videoInputRef.current.value = "";
@@ -138,6 +139,7 @@ export default function StepVideoIntro({
       }
 
       setVideoSelectionError(null);
+
       setVideoFile(file);
     };
     video.src = URL.createObjectURL(file);

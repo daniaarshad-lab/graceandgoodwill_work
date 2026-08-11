@@ -57,7 +57,7 @@ export default function StepInsuranceDocs({ portal, onNext, onBack }: Props) {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6">
           <div className="space-y-2">
             <div
               className={`transition-all rounded-xl border ${
@@ -79,15 +79,6 @@ export default function StepInsuranceDocs({ portal, onNext, onBack }: Props) {
             )}
           </div>
 
-          <div className="space-y-2">
-            <div className="transition-all rounded-xl border border-transparent">
-              <DocUploadRow
-                label="Professional Indemnity Insurance"
-                type={DocumentFileType.PROFESSIONAL_INDEMNITY_INSURANCE}
-                portal={portal}
-              />
-            </div>
-          </div>
         </div>
       </SectionCard>
 

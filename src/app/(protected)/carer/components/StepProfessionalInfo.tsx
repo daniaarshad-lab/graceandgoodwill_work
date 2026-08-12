@@ -92,11 +92,11 @@ export default function StepProfessionalInfo({
         : "",
     experience:
       experience === undefined ||
-      experience === null ||
-      experience === "" ||
-      isNaN(parsedExp) ||
-      parsedExp < 0 ||
-      parsedExp > 99
+        experience === null ||
+        experience === "" ||
+        isNaN(parsedExp) ||
+        parsedExp < 0 ||
+        parsedExp > 99
         ? "Years of Care Experience must be a number between 0 and 99."
         : "",
     specialtiesDropdown:
@@ -119,7 +119,7 @@ export default function StepProfessionalInfo({
       return;
     }
 
-    const syntheticEvent = { preventDefault: () => {} } as React.FormEvent;
+    const syntheticEvent = { preventDefault: () => { } } as React.FormEvent;
     setIsLocalSaving(true);
     const success = await portal.handleSaveProfile(syntheticEvent, 4);
     setIsLocalSaving(false);
@@ -230,10 +230,10 @@ export default function StepProfessionalInfo({
           onClick={handleNext}
           disabled={isLocalSaving || portal.isProfileSaving}
         >
-          "Save & Continue"
+          Save & Continue
         </Button>
       </div>
-      </div>
+    </div>
   );
 }
 
@@ -295,14 +295,14 @@ function MultiSelectDropdown({
     const triggerEl = dropdownRef.current.querySelector(".dropdown-trigger");
     if (!triggerEl) return;
     const rect = triggerEl.getBoundingClientRect();
-    
+
     const desiredHeight = 240; // equivalent to max-h-60
     const spaceBelow = window.innerHeight - rect.bottom;
     const spaceAbove = rect.top;
-    
+
     let top = 0;
     let maxH = desiredHeight;
-    
+
     if (spaceBelow >= desiredHeight || spaceBelow >= spaceAbove) {
       // Open downward
       top = rect.bottom + 8;
@@ -316,7 +316,7 @@ function MultiSelectDropdown({
       }
       top = rect.top - maxH - 8;
     }
-    
+
     setMenuStyle({
       position: "fixed",
       top: `${top}px`,
@@ -373,7 +373,7 @@ function MultiSelectDropdown({
 
       {isOpen && typeof document !== 'undefined' &&
         createPortal(
-          <div 
+          <div
             ref={menuRef}
             className="rounded-xl border border-gold-300/20 bg-navy-900 shadow-xl overflow-y-auto"
             style={menuStyle}

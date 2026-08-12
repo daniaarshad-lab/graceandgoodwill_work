@@ -157,7 +157,7 @@ export default function StepPersonalInfo({ portal, onNext, onBack }: Props) {
 
     setErrors({});
 
-    const syntheticEvent = { preventDefault: () => {} } as React.FormEvent;
+    const syntheticEvent = { preventDefault: () => { } } as React.FormEvent;
     setIsLocalSaving(true);
     const success = await portal.handleSaveProfile(syntheticEvent, 2);
     setIsLocalSaving(false);
@@ -428,9 +428,9 @@ export default function StepPersonalInfo({ portal, onNext, onBack }: Props) {
           onClick={handleNext}
           disabled={isLocalSaving || portal.isProfileSaving}
         >
-          "Save & Continue"
+          Save & Continue
         </Button>
       </div>
-      </div>
+    </div>
   );
 }

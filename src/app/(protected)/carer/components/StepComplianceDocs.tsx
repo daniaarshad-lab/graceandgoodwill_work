@@ -61,8 +61,8 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
         : "",
     dbsNumber:
       dbsUpdateServiceNumber &&
-      dbsUpdateServiceNumber.length > 0 &&
-      dbsUpdateServiceNumber.length < 12
+        dbsUpdateServiceNumber.length > 0 &&
+        dbsUpdateServiceNumber.length < 12
         ? "DBS Update Service Number must be exactly 12 digits."
         : "",
   };
@@ -129,7 +129,7 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
                 );
                 const isStaged =
                   !!selectedFiles[
-                    DocumentFileType.ENHANCED_DBS_CERTIFICATE.toLowerCase()
+                  DocumentFileType.ENHANCED_DBS_CERTIFICATE.toLowerCase()
                   ];
                 return !doc && !isStaged;
               })()
@@ -181,7 +181,7 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
                 );
                 const isStaged =
                   !!selectedFiles[
-                    DocumentFileType.PROFESSIONAL_REFERENCE_1.toLowerCase()
+                  DocumentFileType.PROFESSIONAL_REFERENCE_1.toLowerCase()
                   ];
                 return !doc && !isStaged;
               })()
@@ -200,7 +200,7 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
                 );
                 const isStaged =
                   !!selectedFiles[
-                    DocumentFileType.PROFESSIONAL_REFERENCE_2.toLowerCase()
+                  DocumentFileType.PROFESSIONAL_REFERENCE_2.toLowerCase()
                   ];
                 return !doc && !isStaged;
               })()
@@ -271,10 +271,10 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
           onClick={handleNext}
           disabled={isLocalSaving || portal.isProfileSaving}
         >
-          "Save & Continue"
+          Save & Continue
         </Button>
       </div>
-      </div>
+    </div>
   );
 }
 

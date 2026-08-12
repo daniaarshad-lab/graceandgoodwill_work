@@ -268,7 +268,7 @@ export default function StepIdentityVerification({
     setIsLocalSaving(true);
 
     // Save Personal Information (backend step 2)
-    const syntheticEvent = { preventDefault: () => {} } as React.FormEvent;
+    const syntheticEvent = { preventDefault: () => { } } as React.FormEvent;
     let success = await portal.handleSaveProfile(syntheticEvent, 2);
     if (!success) {
       setIsLocalSaving(false);
@@ -281,7 +281,7 @@ export default function StepIdentityVerification({
     // Upload identity documents (backend step 2)
     success = await portal.handleStepBatchUpload(2);
     setIsLocalSaving(false);
-    
+
     if (success) {
       onNext();
     }
@@ -317,22 +317,20 @@ export default function StepIdentityVerification({
           <button
             type="button"
             onClick={() => setActiveTab("personal")}
-            className={`flex-1 py-3 px-4 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${
-              activeTab === "personal"
+            className={`flex-1 py-3 px-4 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${activeTab === "personal"
                 ? "bg-[#b59469] text-navy-950 shadow-[0_8px_30px_rgba(160,128,84,0.24)]"
                 : "text-slate-400 hover:text-white hover:bg-navy-800/50"
-            }`}
+              }`}
           >
             Personal Information
           </button>
           <button
             type="button"
             onClick={() => setActiveTab("documents")}
-            className={`flex-1 py-3 px-4 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${
-              activeTab === "documents"
+            className={`flex-1 py-3 px-4 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${activeTab === "documents"
                 ? "bg-[#b59469] text-navy-950 shadow-[0_8px_30px_rgba(160,128,84,0.24)]"
                 : "text-slate-400 hover:text-white hover:bg-navy-800/50"
-            }`}
+              }`}
           >
             Identity Documents
           </button>
@@ -767,10 +765,10 @@ export default function StepIdentityVerification({
           onClick={handleNext}
           disabled={isLocalSaving || portal.isProfileSaving}
         >
-          "Save & Continue"
+          Save & Continue
         </Button>
       </div>
-      </div>
+    </div>
   );
 }
 

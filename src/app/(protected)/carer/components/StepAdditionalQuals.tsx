@@ -124,10 +124,10 @@ export default function StepAdditionalQuals({ portal, onNext, onBack }: Props) {
           onClick={handleNext}
           disabled={isLocalSaving || portal.isProfileSaving}
         >
-          "Save & Continue"
+          Save & Continue
         </Button>
       </div>
-      </div>
+    </div>
   );
 }
 
@@ -205,6 +205,6 @@ function DocUploadRow({
       {isOther && error && (
         <p className="text-[11px] text-red-400 mt-2 font-medium">{error}</p>
       )}
-      </div>
+    </div>
   );
 }

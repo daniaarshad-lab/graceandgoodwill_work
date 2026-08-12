@@ -875,7 +875,13 @@ export default function LegalAgreementsFeature({
       {/* Onboarding Footer */}
       {isOnboardingMode && onBack && (
         <div className="flex justify-start pt-4 mt-2">
-          <Button type="button" variant="ghost-gold" onClick={onBack}>
+          <Button
+            type="button"
+            variant="ghost-gold"
+            onClick={onBack}
+            fullWidth={false}
+            className="px-8"
+          >
             Back
           </Button>
         </div>

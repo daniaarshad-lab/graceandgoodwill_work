@@ -264,9 +264,9 @@ export default function StepPaymentDetails({ portal, onNext, onBack }: Props) {
           onClick={handleNext}
           disabled={isLocalSaving || portal.isProfileSaving}
         >
-          "Save & Continue"
+          Save & Continue
         </Button>
       </div>
-      </div>
+    </div>
   );
 }

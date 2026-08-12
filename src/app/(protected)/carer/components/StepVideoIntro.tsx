@@ -227,11 +227,10 @@ export default function StepVideoIntro({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Photo Upload Card */}
           <div
-            className={`flex flex-col items-center bg-navy-900/40 p-8 rounded-3xl border transition-all duration-300 ${
-              photoErrorMsg
-                ? "border-red-500/50 shadow-[0_0_20px_rgba(239,68,68,0.1)]"
-                : "border-gold-300/10 hover:border-gold-300/20 shadow-soft"
-            }`}
+            className={`flex flex-col items-center bg-navy-900/40 p-8 rounded-3xl border transition-all duration-300 ${photoErrorMsg
+              ? "border-red-500/50 shadow-[0_0_20px_rgba(239,68,68,0.1)]"
+              : "border-gold-300/10 hover:border-gold-300/20 shadow-soft"
+              }`}
           >
             <div className="text-center mb-8 flex flex-col justify-end h-8">
               <h4 className="text-sm font-semibold text-gold-50">
@@ -243,13 +242,12 @@ export default function StepVideoIntro({
               onClick={() =>
                 !isSubmittingMedia && photoInputRef.current?.click()
               }
-              className={`relative h-40 w-40 shrink-0 overflow-hidden rounded-full border-[3px] bg-navy-950 flex flex-col items-center justify-center transition-transform duration-300 group cursor-pointer ${
-                photoErrorMsg
-                  ? "border-red-500/50"
-                  : displayPhotoUrl
-                    ? "border-emerald-500/50"
-                    : "border-gold-DEFAULT/40 hover:border-gold-DEFAULT group-hover:scale-[1.02]"
-              }`}
+              className={`relative h-40 w-40 shrink-0 overflow-hidden rounded-full border-[3px] bg-navy-950 flex flex-col items-center justify-center transition-transform duration-300 group cursor-pointer ${photoErrorMsg
+                ? "border-red-500/50"
+                : displayPhotoUrl
+                  ? "border-emerald-500/50"
+                  : "border-gold-DEFAULT/40 hover:border-gold-DEFAULT group-hover:scale-[1.02]"
+                }`}
             >
               {displayPhotoUrl ? (
                 <img
@@ -325,11 +323,10 @@ export default function StepVideoIntro({
 
           {/* Video Upload Card */}
           <div
-            className={`flex flex-col items-center bg-navy-900/40 p-8 rounded-3xl border transition-all duration-300 ${
-              videoErrorMsg
-                ? "border-red-500/50 shadow-[0_0_20px_rgba(239,68,68,0.1)]"
-                : "border-gold-300/10 hover:border-gold-300/20 shadow-soft"
-            }`}
+            className={`flex flex-col items-center bg-navy-900/40 p-8 rounded-3xl border transition-all duration-300 ${videoErrorMsg
+              ? "border-red-500/50 shadow-[0_0_20px_rgba(239,68,68,0.1)]"
+              : "border-gold-300/10 hover:border-gold-300/20 shadow-soft"
+              }`}
           >
             <div className="text-center mb-8 flex flex-col justify-end">
               <h4 className="text-sm font-semibold text-gold-50">
@@ -345,13 +342,12 @@ export default function StepVideoIntro({
               onClick={() =>
                 !isSubmittingMedia && videoInputRef.current?.click()
               }
-              className={`h-40 w-full max-w-[200px] border-2 border-dashed rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all duration-300 group ${
-                videoErrorMsg
-                  ? "border-red-500/50 bg-red-950/10"
-                  : hasVideo
-                    ? "border-emerald-500/50 bg-emerald-950/5"
-                    : "border-gold-DEFAULT/30 hover:border-gold-DEFAULT/60 bg-navy-950 group-hover:bg-navy-900/50"
-              }`}
+              className={`h-40 w-full max-w-[200px] border-2 border-dashed rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all duration-300 group ${videoErrorMsg
+                ? "border-red-500/50 bg-red-950/10"
+                : hasVideo
+                  ? "border-emerald-500/50 bg-emerald-950/5"
+                  : "border-gold-DEFAULT/30 hover:border-gold-DEFAULT/60 bg-navy-950 group-hover:bg-navy-900/50"
+                }`}
             >
               {hasVideo ? (
                 <div className="flex flex-col items-center space-y-3 px-4">
@@ -470,18 +466,16 @@ export default function StepVideoIntro({
         >
           <div className="relative flex items-center justify-center mt-0.5 shrink-0">
             <div
-              className={`w-5 h-5 border-2 rounded transition-all ${
-                hasConsented
-                  ? "bg-gold border-gold"
-                  : submitted && !hasConsented
-                    ? "border-red-500 bg-red-950/20 shadow-[0_0_8px_rgba(239,68,68,0.15)]"
-                    : "border-gold-300/30"
-              }`}
+              className={`w-5 h-5 border-2 rounded transition-all ${hasConsented
+                ? "bg-gold border-gold"
+                : submitted && !hasConsented
+                  ? "border-red-500 bg-red-950/20 shadow-[0_0_8px_rgba(239,68,68,0.15)]"
+                  : "border-gold-300/30"
+                }`}
             />
             <Check
-              className={`absolute w-3.5 h-3.5 text-navy-950 transition-opacity ${
-                hasConsented ? "opacity-100" : "opacity-0"
-              }`}
+              className={`absolute w-3.5 h-3.5 text-navy-950 transition-opacity ${hasConsented ? "opacity-100" : "opacity-0"
+                }`}
             />
           </div>
           <div className="space-y-1">
@@ -529,7 +523,7 @@ export default function StepVideoIntro({
               return;
             }
             setIsSubmittingMedia(true);
-            
+
             if (photoFile || videoFile || hasConsented !== initialConsent) {
               const success = await uploadMedia();
               if (!success) {

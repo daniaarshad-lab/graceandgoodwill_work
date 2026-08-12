@@ -42,7 +42,7 @@ export default function StepDeclaration({ portal, onNext, onBack }: Props) {
       return;
     }
 
-    const syntheticEvent = { preventDefault: () => {} } as React.FormEvent;
+    const syntheticEvent = { preventDefault: () => { } } as React.FormEvent;
     setIsLocalSaving(true);
     const success = await handleSaveProfile(syntheticEvent, 11);
     setIsLocalSaving(false);
@@ -74,18 +74,16 @@ export default function StepDeclaration({ portal, onNext, onBack }: Props) {
             >
               <div className="relative flex items-center justify-center mt-0.5">
                 <div
-                  className={`w-5 h-5 border-2 rounded transition-all ${
-                    declarations.accuracy
+                  className={`w-5 h-5 border-2 rounded transition-all ${declarations.accuracy
                       ? "bg-gold border-gold"
                       : submitted && errors.accuracy
                         ? "border-red-500 bg-red-950/20 shadow-[0_0_8px_rgba(239,68,68,0.15)]"
                         : "border-gold-300/30"
-                  }`}
+                    }`}
                 />
                 <Check
-                  className={`absolute w-3.5 h-3.5 text-navy-950 transition-opacity ${
-                    declarations.accuracy ? "opacity-100" : "opacity-0"
-                  }`}
+                  className={`absolute w-3.5 h-3.5 text-navy-950 transition-opacity ${declarations.accuracy ? "opacity-100" : "opacity-0"
+                    }`}
                 />
               </div>
               <span className="text-sm text-gold-100/80 group-hover:text-gold-50 select-none">
@@ -107,18 +105,16 @@ export default function StepDeclaration({ portal, onNext, onBack }: Props) {
             >
               <div className="relative flex items-center justify-center mt-0.5">
                 <div
-                  className={`w-5 h-5 border-2 rounded transition-all ${
-                    declarations.checks
+                  className={`w-5 h-5 border-2 rounded transition-all ${declarations.checks
                       ? "bg-gold border-gold"
                       : submitted && errors.checks
                         ? "border-red-500 bg-red-950/20 shadow-[0_0_8px_rgba(239,68,68,0.15)]"
                         : "border-gold-300/30"
-                  }`}
+                    }`}
                 />
                 <Check
-                  className={`absolute w-3.5 h-3.5 text-navy-950 transition-opacity ${
-                    declarations.checks ? "opacity-100" : "opacity-0"
-                  }`}
+                  className={`absolute w-3.5 h-3.5 text-navy-950 transition-opacity ${declarations.checks ? "opacity-100" : "opacity-0"
+                    }`}
                 />
               </div>
               <span className="text-sm text-gold-100/80 group-hover:text-gold-50 select-none">
@@ -139,18 +135,16 @@ export default function StepDeclaration({ portal, onNext, onBack }: Props) {
             >
               <div className="relative flex items-center justify-center mt-0.5">
                 <div
-                  className={`w-5 h-5 border-2 rounded transition-all ${
-                    declarations.share
+                  className={`w-5 h-5 border-2 rounded transition-all ${declarations.share
                       ? "bg-gold border-gold"
                       : submitted && errors.share
                         ? "border-red-500 bg-red-950/20 shadow-[0_0_8px_rgba(239,68,68,0.15)]"
                         : "border-gold-300/30"
-                  }`}
+                    }`}
                 />
                 <Check
-                  className={`absolute w-3.5 h-3.5 text-navy-950 transition-opacity ${
-                    declarations.share ? "opacity-100" : "opacity-0"
-                  }`}
+                  className={`absolute w-3.5 h-3.5 text-navy-950 transition-opacity ${declarations.share ? "opacity-100" : "opacity-0"
+                    }`}
                 />
               </div>
               <span className="text-sm text-gold-100/80 group-hover:text-gold-50 select-none">
@@ -182,9 +176,9 @@ export default function StepDeclaration({ portal, onNext, onBack }: Props) {
           onClick={handleNext}
           disabled={isLocalSaving || isProfileSaving}
         >
-          "Save & Continue"
+          Save & Continue
         </Button>
       </div>
-      </div>
+    </div>
   );
 }

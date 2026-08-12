@@ -56,6 +56,7 @@ export interface CarerProfile {
   employmentHistory?: any;
   declarations?: any;
   onboardingStep?: number;
+  hasMediaConsent?: boolean;
 
   createdAt: string;
   updatedAt: string;
@@ -102,6 +103,7 @@ export interface UpdateCarerProfilePayload {
   employmentHistory?: any;
   declarations?: any;
   onboardingStep?: number;
+  hasMediaConsent?: boolean;
 }
 
 /** Array of ISO date strings sent to PUT /carer/profile/availability */

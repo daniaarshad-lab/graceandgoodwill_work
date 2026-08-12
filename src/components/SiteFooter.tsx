@@ -5,15 +5,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { HeartHandshake } from "lucide-react";
 
-import integrityImg from "@/assets/open/integrity.jpeg";
-import compassionImg from "@/assets/open/compassion.jpeg";
-import purposeImg from "@/assets/open/purpose.jpeg";
-import trustImg from "@/assets/open/trust.jpeg";
+import integrityImg from "@/assets/open/integrity.png";
+import compassionImg from "@/assets/open/compassion.png";
+import purposeImg from "@/assets/open/purpose.png";
+import trustImg from "@/assets/open/trust.png";
 
 const values = [
   {
     title: "INTEGRITY",
-    text: "Morally and \n ethically guided.",
+    text: "Rooted in law,\nguided by ethics.",
     icon: integrityImg,
   },
   {
@@ -47,9 +47,9 @@ function SiteFooter() {
 
       {/* ── Values Row ─────────────────────────────────────────────────── */}
       <div className="container-wrapper mb-8 sm:mb-10 pt-8">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-5 md:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 md:gap-6">
           {values.map((val, idx) => (
-              <div key={idx} className="relative w-full max-w-[300px] aspect-[2.5/1] mx-auto rounded-xl overflow-hidden shadow-[0_4px_12px_rgba(0,0,0,0.15)]">
+              <div key={idx} className="relative w-full h-[150px] sm:h-[200px] mx-auto flex items-center justify-center">
                 {val.icon ? (
                   <Image
                     src={val.icon}
@@ -57,10 +57,10 @@ function SiteFooter() {
                     fill
                     quality={100}
                     unoptimized={true}
-                    className="object-cover object-center"
+                    className="object-contain object-center scale-110 sm:scale-125"
                   />
                 ) : (
-                  <div className="flex items-center justify-center py-6">
+                  <div className="flex items-center justify-center">
                     <HeartHandshake className="w-10 h-10 text-gold-DEFAULT" />
                   </div>
                 )}
@@ -96,33 +96,8 @@ function SiteFooter() {
 
       {/* ── Company Info ───────────────────────────────────────────────── */}
       <div className="w-full px-4 sm:px-8 md:px-12 lg:px-16 pb-6">
-        {/* Two columns */}
-        <div className="flex flex-col sm:flex-row items-center justify-between w-full">
-          {/* Copyright */}
-          <div className="text-center sm:text-left">
-            <p className="text-[9px] sm:text-[10px] text-gold-200/22 uppercase tracking-[0.14em] font-medium mb-1">
-              Copyright
-            </p>
-            <p className="text-[10px] sm:text-[11px] text-gold-100/38 font-light leading-relaxed">
-              &copy; Grace &amp; Goodwill Ltd 2026.
-              <br />
-              All rights reserved.
-            </p>
-          </div>
-
-          {/* Registration */}
-          <div className="text-center sm:text-right mt-4 sm:mt-0">
-            <p className="text-[9px] sm:text-[10px] text-gold-200/22 uppercase tracking-[0.14em] font-medium mb-1">
-              Company Registration
-            </p>
-            <p className="text-[10px] sm:text-[11px] text-gold-100/38 font-light">
-              Company No. 16011465
-            </p>
-          </div>
-        </div>
-
         {/* Legal Links & Cookie Preferences */}
-        <div className="mt-5 flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-[10px] sm:text-[11px]">
+        <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-[10px] sm:text-[11px] mb-4">
           <Link
             href="/privacy"
             className="text-gold-100/40 hover:text-gold-100/90 transition-colors font-light hover:underline underline-offset-4 decoration-gold-100/20"
@@ -156,11 +131,23 @@ function SiteFooter() {
           </button>
         </div>
 
-        {/* Disclaimer */}
-        <div className="mt-6 text-center max-w-3xl mx-auto px-4">
-          <p className="text-[10px] sm:text-[11px] text-gold-100/30 font-light leading-relaxed">
-            Grace &amp; Goodwill is an introductory agency for independent
-            live-in carers and does not provide regulated care services.
+        {/* Copyright | Disclaimer | Registration — all one row */}
+        <div className="flex flex-col sm:flex-row items-center justify-between w-full gap-2 sm:gap-4">
+          {/* Copyright */}
+          <p className="text-[10px] sm:text-[11px] text-gold-100/38 font-light whitespace-nowrap">
+            <span className="text-[9px] sm:text-[10px] text-gold-200/22 uppercase tracking-[0.14em] font-medium mr-1.5">Copyright</span>
+            &copy; Grace &amp; Goodwill Ltd 2026. All rights reserved.
+          </p>
+
+          {/* Disclaimer — centre */}
+          <p className="text-[10px] sm:text-[11px] text-gold-100/30 font-light whitespace-nowrap text-center">
+            Grace &amp; Goodwill is an introductory agency for independent live-in carers and does not provide regulated care services.
+          </p>
+
+          {/* Registration */}
+          <p className="text-[10px] sm:text-[11px] text-gold-100/38 font-light whitespace-nowrap">
+            <span className="text-[9px] sm:text-[10px] text-gold-200/22 uppercase tracking-[0.14em] font-medium mr-1.5">Company Registration</span>
+            Company No. 16011465
           </p>
         </div>
       </div>

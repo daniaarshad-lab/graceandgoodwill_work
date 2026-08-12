@@ -4,6 +4,7 @@ import SectionCard from "./shared/SectionCard";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import { Check, ChevronDown } from "lucide-react";
+import { createPortal } from "react-dom";
 
 interface Props {
   portal: any;
@@ -271,6 +272,8 @@ function MultiSelectDropdown({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const [menuStyle, setMenuStyle] = useState<React.CSSProperties>({});
 
   const selectedArray = selectedStr
     .split(",")
@@ -287,18 +290,69 @@ function MultiSelectDropdown({
     onChange(newArr.join(", "));
   };
 
+  const updatePosition = () => {
+    if (!isOpen || !dropdownRef.current) return;
+    const triggerEl = dropdownRef.current.querySelector(".dropdown-trigger");
+    if (!triggerEl) return;
+    const rect = triggerEl.getBoundingClientRect();
+    
+    const desiredHeight = 240; // equivalent to max-h-60
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const spaceAbove = rect.top;
+    
+    let top = 0;
+    let maxH = desiredHeight;
+    
+    if (spaceBelow >= desiredHeight || spaceBelow >= spaceAbove) {
+      // Open downward
+      top = rect.bottom + 8;
+      if (spaceBelow < desiredHeight) {
+        maxH = Math.max(spaceBelow - 16, 100); // Leave 16px buffer
+      }
+    } else {
+      // Open upward
+      if (spaceAbove < desiredHeight) {
+        maxH = Math.max(spaceAbove - 16, 100);
+      }
+      top = rect.top - maxH - 8;
+    }
+    
+    setMenuStyle({
+      position: "fixed",
+      top: `${top}px`,
+      left: `${rect.left}px`,
+      width: `${rect.width}px`,
+      maxHeight: `${maxH}px`,
+      zIndex: 9999,
+    });
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      updatePosition();
+      window.addEventListener("scroll", updatePosition, true);
+      window.addEventListener("resize", updatePosition);
+    }
+    return () => {
+      window.removeEventListener("scroll", updatePosition, true);
+      window.removeEventListener("resize", updatePosition);
+    };
+  }, [isOpen]);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
+      const target = event.target as Node;
+      const isOutsideTrigger = dropdownRef.current && !dropdownRef.current.contains(target);
+      const isOutsideMenu = menuRef.current && !menuRef.current.contains(target);
+      if (isOutsideTrigger && isOutsideMenu) {
         setIsOpen(false);
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [isOpen]);
 
   return (
     <div className="relative space-y-2 w-full" ref={dropdownRef}>
@@ -306,7 +360,7 @@ function MultiSelectDropdown({
         Care Specialisms *
       </label>
       <div
-        className={`w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus-within:ring-2 focus-within:ring-gold-DEFAULT transition duration-300 text-sm cursor-pointer flex justify-between items-center ${error ? "border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]" : "border-gray-300/20"}`}
+        className={`dropdown-trigger w-full rounded-xl border bg-navy-950 px-4 py-3 text-gold-100 outline-none focus-within:ring-2 focus-within:ring-gold-DEFAULT transition duration-300 text-sm cursor-pointer flex justify-between items-center ${error ? "border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]" : "border-gray-300/20"}`}
         onClick={() => setIsOpen(!isOpen)}
       >
         <span className="truncate pr-4 text-gold-100/80">
@@ -317,32 +371,38 @@ function MultiSelectDropdown({
         <ChevronDown className="w-4 h-4 text-gold-100/60 flex-shrink-0" />
       </div>
 
-      {isOpen && (
-        <div className="absolute z-50 w-full mt-2 rounded-xl border border-gold-300/20 bg-navy-900 shadow-xl max-h-60 overflow-y-auto">
-          <div className="p-2 space-y-1">
-            {specialismOptions.map((opt) => {
-              const isSelected = selectedArray.includes(opt);
-              return (
-                <div
-                  key={opt}
-                  className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-navy-800 cursor-pointer transition-colors"
-                  onClick={() => toggleOption(opt)}
-                >
-                  <div className="relative flex items-center justify-center mt-0.5">
-                    <div
-                      className={`w-4 h-4 border rounded transition-all ${isSelected ? "bg-gold border-gold" : "border-gold-300/30"}`}
-                    />
-                    <Check
-                      className={`absolute w-3.5 h-3.5 text-navy-950 transition-opacity ${isSelected ? "opacity-100" : "opacity-0"}`}
-                    />
+      {isOpen && typeof document !== 'undefined' &&
+        createPortal(
+          <div 
+            ref={menuRef}
+            className="rounded-xl border border-gold-300/20 bg-navy-900 shadow-xl overflow-y-auto"
+            style={menuStyle}
+          >
+            <div className="p-2 space-y-1">
+              {specialismOptions.map((opt) => {
+                const isSelected = selectedArray.includes(opt);
+                return (
+                  <div
+                    key={opt}
+                    className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-navy-800 cursor-pointer transition-colors"
+                    onClick={() => toggleOption(opt)}
+                  >
+                    <div className="relative flex items-center justify-center mt-0.5">
+                      <div
+                        className={`w-4 h-4 border rounded transition-all ${isSelected ? "bg-gold border-gold" : "border-gold-300/30"}`}
+                      />
+                      <Check
+                        className={`absolute w-3.5 h-3.5 text-navy-950 transition-opacity ${isSelected ? "opacity-100" : "opacity-0"}`}
+                      />
+                    </div>
+                    <span className="text-sm text-gold-50">{opt}</span>
                   </div>
-                  <span className="text-sm text-gold-50">{opt}</span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
+                );
+              })}
+            </div>
+          </div>,
+          document.body
+        )}
       {error && <p className="text-xs text-red-500 font-semibold">{error}</p>}
     </div>
   );

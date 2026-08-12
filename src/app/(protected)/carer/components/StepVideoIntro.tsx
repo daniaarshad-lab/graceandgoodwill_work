@@ -12,7 +12,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { uploadProfileMedia } from "@/store/slices/carerSlice";
+import { uploadProfileMedia, updateCarerProfile } from "@/store/slices/carerSlice";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 
 interface Props {
@@ -42,7 +42,13 @@ export default function StepVideoIntro({
 
   const [isSubmittingMedia, setIsSubmittingMedia] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [hasConsented, setHasConsented] = useState(false);
+  const [hasConsented, setHasConsented] = useState(profile?.hasMediaConsent || false);
+
+  React.useEffect(() => {
+    if (profile?.hasMediaConsent !== undefined) {
+      setHasConsented(profile.hasMediaConsent);
+    }
+  }, [profile?.hasMediaConsent]);
 
   const photoInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
@@ -525,6 +531,14 @@ export default function StepVideoIntro({
             if (photoFile || videoFile) {
               const success = await uploadMedia();
               if (!success) return;
+            }
+            if (hasConsented !== profile?.hasMediaConsent) {
+              try {
+                await dispatch(updateCarerProfile({ hasMediaConsent: hasConsented })).unwrap();
+              } catch (err) {
+                console.error("Failed to save media consent:", err);
+                return;
+              }
             }
             onNext();
           }}

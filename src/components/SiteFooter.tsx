@@ -1,36 +1,48 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
+import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 
-import integrityImg from "@/assets/open/integrity.jpeg";
-import compassionImg from "@/assets/open/compassion.jpeg";
-import purposeImg from "@/assets/open/purpose.jpeg";
-import trustImg from "@/assets/open/trust.jpeg";
+import integrityIcon from "@/assets/open/value-icon-integrity.png";
+import compassionIcon from "@/assets/open/value-icon-compassion.png";
+import purposeIcon from "@/assets/open/value-icon-purpose.png";
+import trustIcon from "@/assets/open/value-icon-trust.png";
 
-/* Artwork is square with the icon + wording sitting in a centred horizontal
-   band, so each tile crops the empty top/bottom rather than letterboxing it. */
-const values = [
+type ValueItem = {
+  title: string;
+  text: string;
+  icon: StaticImageData;
+  /* Optical size correction. The icons share one CSS box, but an open, thin
+     glyph reads smaller than a solid one at the same measured size, so it is
+     nudged up here rather than by giving it a different box. */
+  iconScale?: string;
+};
+
+/* Each icon is the supplied glyph cropped out of its source artwork, squared
+   with matching padding so all four read at the same optical size. The icons
+   carry no alt text — the adjacent heading already names the value. */
+const values: ValueItem[] = [
   {
-    title: "Integrity",
-    alt: "Integrity — morally and ethically guided",
-    image: integrityImg,
+    title: "INTEGRITY",
+    text: "Morally and ethically guided.",
+    icon: integrityIcon,
   },
   {
-    title: "Compassion",
-    alt: "Compassion — a duty to care, a promise to serve",
-    image: compassionImg,
+    title: "COMPASSION",
+    text: "A duty to care, a promise to serve.",
+    icon: compassionIcon,
   },
   {
-    title: "Purpose",
-    alt: "Purpose — care with meaning, impact that lasts",
-    image: purposeImg,
+    title: "PURPOSE",
+    text: "Care with meaning, impact that lasts.",
+    icon: purposeIcon,
+    iconScale: "scale-[1.12]",
   },
   {
-    title: "Trust",
-    alt: "Trust — built on honesty, strengthened by reliability",
-    image: trustImg,
+    title: "TRUST",
+    text: "Built on honesty, strengthened by reliability.",
+    icon: trustIcon,
   },
 ];
 
@@ -47,31 +59,41 @@ function SiteFooter() {
       />
 
       {/* ── Values Row ─────────────────────────────────────────────────── */}
-      <div className="container-wrapper mb-6 sm:mb-8 pt-6 sm:pt-8">
-        {/* Width is capped per breakpoint so the tiles stay modest on wide
-            screens — the wording is part of the artwork, so tile width is the
-            only thing controlling how large it reads. */}
-        <div className="mx-auto grid max-w-[18rem] grid-cols-1 gap-2.5 sm:max-w-xl sm:grid-cols-2 sm:gap-4 lg:max-w-6xl lg:grid-cols-4">
+      <div className="container-wrapper pt-8 pb-7 sm:pt-10 sm:pb-9">
+        {/* One integrated strip rather than four blocks: hairline rules divide
+            the columns on desktop, plain spacing carries the stacked layouts. */}
+        <ul className="mx-auto grid grid-cols-2 gap-x-5 gap-y-7 sm:max-w-2xl sm:gap-x-10 sm:gap-y-8 lg:max-w-7xl lg:grid-cols-4 lg:gap-x-0">
           {values.map((val) => (
-            <div
+            <li
               key={val.title}
-              className="group relative w-full aspect-[7/3] overflow-hidden rounded-lg sm:rounded-xl ring-1 ring-gold-400/10 transition-all duration-300 hover:ring-gold-400/25"
+              /* Narrow columns stack the icon over its text and centre it —
+                 matching the footer's other mobile content — then switch to
+                 icon-beside-text once there is room for it. */
+              className="flex flex-col items-center gap-2.5 text-center sm:flex-row sm:items-start sm:gap-4 sm:text-left lg:border-l lg:border-gold-400/[0.09] lg:px-7 lg:first:border-l-0 lg:first:pl-0"
             >
               <Image
-                src={val.image}
-                alt={val.alt}
-                fill
-                quality={90}
-                sizes="(min-width: 1024px) 280px, (min-width: 640px) 290px, 288px"
-                className="object-cover object-center transition-transform duration-500 group-hover:scale-[1.04]"
+                src={val.icon}
+                alt=""
+                aria-hidden="true"
+                width={96}
+                height={96}
+                className={`h-10 w-10 shrink-0 object-contain sm:mt-0.5 sm:h-11 sm:w-11 ${val.iconScale ?? ""}`}
               />
-            </div>
+              <div className="min-w-0">
+                <h3 className="text-[13px] sm:text-sm font-medium uppercase tracking-[0.18em] text-gold-muted">
+                  {val.title}
+                </h3>
+                <p className="mt-1.5 text-[13px] sm:text-sm font-light leading-relaxed text-gold-200/70">
+                  {val.text}
+                </p>
+              </div>
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
 
       {/* ── Divider ────────────────────────────────────────────────────── */}
-      <div className="w-full flex justify-center mb-6 sm:mb-8 sm:px-6 mt-6 sm:mt-0">
+      <div className="w-full flex justify-center mb-6 sm:mb-8 sm:px-6">
         <div className="w-full max-w-4xl flex items-center gap-3 px-4 ">
           <div
             className="flex-1 h-px"

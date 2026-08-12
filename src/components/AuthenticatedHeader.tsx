@@ -5,7 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  Bell,
   ChevronDown,
   User as UserIcon,
   Settings,
@@ -81,15 +80,10 @@ export default function AuthenticatedHeader() {
           </div>
         </Link>
 
-        {/* Right Side: Notifications & Profile */}
+        {/* Right Side: Profile */}
         <div className="flex items-center gap-4 sm:gap-6 shrink-0">
           {/* Header Search (Desktop & Mobile) */}
           <HeaderSearch />
-
-          <button className="relative p-2 text-gold-200/60 hover:text-gold-DEFAULT transition-colors rounded-full hover:bg-gold-DEFAULT/10 focus:outline-none">
-            <Bell className="w-5 h-5" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-navy-950"></span>
-          </button>
 
           <div className="relative" ref={dropdownRef}>
             <button

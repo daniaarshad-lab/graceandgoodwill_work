@@ -71,8 +71,8 @@ function SiteFooter() {
       </div>
 
       {/* ── Divider ────────────────────────────────────────────────────── */}
-      <div className="w-full flex justify-center mb-6 sm:mb-8">
-        <div className="w-full max-w-4xl flex items-center gap-3 px-4 sm:px-6">
+      <div className="w-full flex justify-center mb-6 sm:mb-8 sm:px-6 mt-6 sm:mt-0">
+        <div className="w-full max-w-4xl flex items-center gap-3 px-4 ">
           <div
             className="flex-1 h-px"
             style={{

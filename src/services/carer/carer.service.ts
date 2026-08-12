@@ -256,7 +256,11 @@ export const carerService = {
     });
   },
 
-  async uploadProfileMedia(photo?: File, video?: File): Promise<CarerProfile> {
+  async uploadProfileMedia(
+    photo?: File,
+    video?: File,
+    hasConsented?: boolean,
+  ): Promise<CarerProfile> {
     const formData = new FormData();
 
     if (photo) {
@@ -265,6 +269,10 @@ export const carerService = {
 
     if (video) {
       formData.append("video", video);
+    }
+
+    if (hasConsented !== undefined) {
+      formData.append("hasConsented", String(hasConsented));
     }
 
     const token =

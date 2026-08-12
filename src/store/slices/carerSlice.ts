@@ -271,16 +271,11 @@ export const deleteCarerDocument = createAsyncThunk<
 
 export const uploadProfileMedia = createAsyncThunk<
   CarerProfile,
-  {
-    photo?: File;
-    video?: File;
-  },
-  {
-    rejectValue: string;
-  }
->("carer/uploadProfileMedia", async ({ photo, video }, { rejectWithValue }) => {
+  { photo?: File; video?: File; hasConsented?: boolean },
+  { rejectValue: string }
+>("carer/uploadProfileMedia", async ({ photo, video, hasConsented }, { rejectWithValue }) => {
   try {
-    return await carerService.uploadProfileMedia(photo, video);
+    return await carerService.uploadProfileMedia(photo, video, hasConsented);
   } catch (error: any) {
     return rejectWithValue(
       error?.response?.data?.message ||

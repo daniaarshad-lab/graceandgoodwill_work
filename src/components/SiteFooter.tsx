@@ -3,33 +3,34 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { HeartHandshake } from "lucide-react";
 
-import integrityImg from "@/assets/open/integrity.png";
-import compassionImg from "@/assets/open/compassion.png";
-import purposeImg from "@/assets/open/purpose.png";
-import trustImg from "@/assets/open/trust.png";
+import integrityImg from "@/assets/open/integrity.jpeg";
+import compassionImg from "@/assets/open/compassion.jpeg";
+import purposeImg from "@/assets/open/purpose.jpeg";
+import trustImg from "@/assets/open/trust.jpeg";
 
+/* Artwork is square with the icon + wording sitting in a centred horizontal
+   band, so each tile crops the empty top/bottom rather than letterboxing it. */
 const values = [
   {
-    title: "INTEGRITY",
-    text: "Rooted in law,\nguided by ethics.",
-    icon: integrityImg,
+    title: "Integrity",
+    alt: "Integrity — morally and ethically guided",
+    image: integrityImg,
   },
   {
-    title: "COMPASSION",
-    text: "A duty to care,\na promise to serve.",
-    icon: compassionImg,
+    title: "Compassion",
+    alt: "Compassion — a duty to care, a promise to serve",
+    image: compassionImg,
   },
   {
-    title: "PURPOSE",
-    text: "Care with meaning,\nimpact that lasts.",
-    icon: purposeImg,
+    title: "Purpose",
+    alt: "Purpose — care with meaning, impact that lasts",
+    image: purposeImg,
   },
   {
-    title: "TRUST",
-    text: "Built on honesty,\nstrengthened by reliability.",
-    icon: trustImg,
+    title: "Trust",
+    alt: "Trust — built on honesty, strengthened by reliability",
+    image: trustImg,
   },
 ];
 
@@ -46,25 +47,25 @@ function SiteFooter() {
       />
 
       {/* ── Values Row ─────────────────────────────────────────────────── */}
-      <div className="container-wrapper mb-8 sm:mb-10 pt-8">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 md:gap-6">
-          {values.map((val, idx) => (
-              <div key={idx} className="relative w-full h-[150px] sm:h-[200px] mx-auto flex items-center justify-center">
-                {val.icon ? (
-                  <Image
-                    src={val.icon}
-                    alt={`${val.title} image`}
-                    fill
-                    quality={100}
-                    unoptimized={true}
-                    className="object-contain object-center scale-110 sm:scale-125"
-                  />
-                ) : (
-                  <div className="flex items-center justify-center">
-                    <HeartHandshake className="w-10 h-10 text-gold-DEFAULT" />
-                  </div>
-                )}
-              </div>
+      <div className="container-wrapper mb-6 sm:mb-8 pt-6 sm:pt-8">
+        {/* Width is capped per breakpoint so the tiles stay modest on wide
+            screens — the wording is part of the artwork, so tile width is the
+            only thing controlling how large it reads. */}
+        <div className="mx-auto grid max-w-[18rem] grid-cols-1 gap-2.5 sm:max-w-xl sm:grid-cols-2 sm:gap-4 lg:max-w-6xl lg:grid-cols-4">
+          {values.map((val) => (
+            <div
+              key={val.title}
+              className="group relative w-full aspect-[7/3] overflow-hidden rounded-lg sm:rounded-xl ring-1 ring-gold-400/10 transition-all duration-300 hover:ring-gold-400/25"
+            >
+              <Image
+                src={val.image}
+                alt={val.alt}
+                fill
+                quality={90}
+                sizes="(min-width: 1024px) 280px, (min-width: 640px) 290px, 288px"
+                className="object-cover object-center transition-transform duration-500 group-hover:scale-[1.04]"
+              />
+            </div>
           ))}
         </div>
       </div>
@@ -131,22 +132,29 @@ function SiteFooter() {
           </button>
         </div>
 
-        {/* Copyright | Disclaimer | Registration — all one row */}
-        <div className="flex flex-col sm:flex-row items-center justify-between w-full gap-2 sm:gap-4">
+        {/* Copyright | Disclaimer | Registration — stacked until there is
+            genuinely room for three columns. Only the two short lines may
+            hold nowrap; the disclaimer always wraps. */}
+        <div className="flex flex-col xl:flex-row items-center xl:justify-between w-full gap-2 xl:gap-6 text-center xl:text-left">
           {/* Copyright */}
-          <p className="text-[10px] sm:text-[11px] text-gold-100/38 font-light whitespace-nowrap">
-            <span className="text-[9px] sm:text-[10px] text-gold-200/22 uppercase tracking-[0.14em] font-medium mr-1.5">Copyright</span>
+          <p className="text-[10px] sm:text-[11px] text-gold-100/38 font-light xl:whitespace-nowrap">
+            <span className="text-[9px] sm:text-[10px] text-gold-200/22 uppercase tracking-[0.14em] font-medium mr-1.5">
+              Copyright
+            </span>
             &copy; Grace &amp; Goodwill Ltd 2026. All rights reserved.
           </p>
 
           {/* Disclaimer — centre */}
-          <p className="text-[10px] sm:text-[11px] text-gold-100/30 font-light whitespace-nowrap text-center">
-            Grace &amp; Goodwill is an introductory agency for independent live-in carers and does not provide regulated care services.
+          <p className="max-w-prose xl:max-w-none text-[10px] sm:text-[11px] text-gold-100/30 font-light text-balance text-center">
+            Grace &amp; Goodwill is an introductory agency for independent
+            live-in carers and does not provide regulated care services.
           </p>
 
           {/* Registration */}
-          <p className="text-[10px] sm:text-[11px] text-gold-100/38 font-light whitespace-nowrap">
-            <span className="text-[9px] sm:text-[10px] text-gold-200/22 uppercase tracking-[0.14em] font-medium mr-1.5">Company Registration</span>
+          <p className="text-[10px] sm:text-[11px] text-gold-100/38 font-light xl:whitespace-nowrap xl:text-right">
+            <span className="text-[9px] sm:text-[10px] text-gold-200/22 uppercase tracking-[0.14em] font-medium mr-1.5">
+              Company Registration
+            </span>
             Company No. 16011465
           </p>
         </div>

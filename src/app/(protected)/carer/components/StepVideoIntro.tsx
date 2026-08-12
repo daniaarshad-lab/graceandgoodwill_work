@@ -42,13 +42,14 @@ export default function StepVideoIntro({
 
   const [isSubmittingMedia, setIsSubmittingMedia] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [hasConsented, setHasConsented] = useState(profile?.hasMediaConsent || false);
+  const initialConsent = profile?.declarations?.mediaVisibilityConsent ?? false;
+  const [hasConsented, setHasConsented] = useState(initialConsent);
 
   React.useEffect(() => {
-    if (profile?.hasMediaConsent !== undefined) {
-      setHasConsented(profile.hasMediaConsent);
+    if (profile?.declarations?.mediaVisibilityConsent !== undefined) {
+      setHasConsented(profile.declarations.mediaVisibilityConsent);
     }
-  }, [profile?.hasMediaConsent]);
+  }, [profile?.declarations?.mediaVisibilityConsent]);
 
   const photoInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
@@ -167,25 +168,24 @@ export default function StepVideoIntro({
   };
 
   const uploadMedia = async (): Promise<boolean> => {
-    if (!photoFile && !videoFile) return true;
     setIsSubmittingMedia(true);
     try {
       await dispatch(
         uploadProfileMedia({
           photo: photoFile || undefined,
           video: videoFile || undefined,
+          hasConsented: hasConsented,
         }),
       ).unwrap();
-      showSuccessToast("Success", "Profile media uploaded successfully!");
+      showSuccessToast("Success", "Profile media saved successfully!");
       return true;
     } catch (err: unknown) {
       showErrorToast(
         "Upload Failed",
         typeof err === "string" ? err : "Failed to upload media",
       );
-      return false;
-    } finally {
       setIsSubmittingMedia(false);
+      return false;
     }
   };
 
@@ -528,17 +528,17 @@ export default function StepVideoIntro({
             ) {
               return;
             }
-            if (photoFile || videoFile) {
+            setIsSubmittingMedia(true);
+            
+            if (photoFile || videoFile || hasConsented !== initialConsent) {
               const success = await uploadMedia();
-              if (!success) return;
-            }
-            if (hasConsented !== profile?.hasMediaConsent) {
-              try {
-                await dispatch(updateCarerProfile({ hasMediaConsent: hasConsented })).unwrap();
-              } catch (err) {
-                console.error("Failed to save media consent:", err);
+              if (!success) {
+                setIsSubmittingMedia(false);
                 return;
               }
+            } else {
+              // Small delay for smooth UI feedback if no changes were made
+              await new Promise((resolve) => setTimeout(resolve, 600));
             }
             onNext();
           }}

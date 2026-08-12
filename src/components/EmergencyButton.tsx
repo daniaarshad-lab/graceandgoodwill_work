@@ -15,9 +15,8 @@ export default function EmergencyButton({
   onClick,
   className = "",
 }: EmergencyButtonProps) {
-  const commonClasses = `group relative flex items-center justify-between h-14 px-6 rounded-full border-2 border-[#F7D774] bg-gradient-to-r from-[#593905] to-[#825708] shrink-0 shadow-[0_0_25px_rgba(247,215,116,0.65)] transition-all duration-300 hover:shadow-[0_0_35px_rgba(247,215,116,0.85)] ${
-    className || "w-full sm:w-max"
-  }`;
+  const commonClasses = `group relative flex items-center justify-between h-14 px-6 rounded-full border-2 border-[#F7D774] bg-gradient-to-r from-[#593905] to-[#825708] shrink-0 shadow-[0_0_25px_rgba(247,215,116,0.65)] transition-all duration-300 hover:shadow-[0_0_35px_rgba(247,215,116,0.85)] ${className || "w-full sm:w-max"
+    }`;
 
   const content = (
     <>
@@ -48,7 +47,7 @@ export default function EmergencyButton({
         </div>
 
         <div className="flex flex-col justify-center">
-          <span className="text-[#FDF2D5] font-bold text-[15px] leading-snug tracking-wide drop-shadow-md">
+          <span className="text-[#FDF2D5] font-bold text-xs sm:text-[15px] leading-snug tracking-wide drop-shadow-md">
             EMERGENCY LIVE-IN CARE 24/7
           </span>
           <span className="text-[#FDF2D5]/80 font-medium text-[11px] leading-snug">

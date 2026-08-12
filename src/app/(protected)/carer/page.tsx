@@ -39,6 +39,7 @@ import CarerPlacements from "./components/CarerPlacements";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { DocumentFileType } from "@/types/document.types";
 import { agreementsService } from "@/services/agreements/agreements.service";
+import FullScreenLoader from "@/components/FullScreenLoader";
 
 function CarerDashboardContent() {
   const { user } = useAuth();
@@ -294,13 +295,13 @@ function CarerDashboardContent() {
           };
 
           const ap = actualProfile || {};
-          
+
           let initialStep = ap.onboardingStep;
           if (!initialStep) {
             const step = await determineInitialStep();
             initialStep = step;
           }
-          
+
           setOnboardingStep(initialStep);
           setInitialStepSet(true);
           setIsDeterminingStep(false);
@@ -467,7 +468,7 @@ function CarerDashboardContent() {
         </main>
       );
     }
-    
+
     return (
       <main className="min-h-screen bg-navy-950 py-10 text-gold-100">
         <div className="container-wrapper space-y-8">

@@ -517,6 +517,12 @@ export default function ClientBillingPage() {
                       ? new Date(placement.endDate).toLocaleDateString()
                       : "Ongoing";
                     const isSubscribed = !!placement.gocardlessMandateId;
+                    const isFutureStart =
+                      placement.startDate &&
+                      new Date(placement.startDate) > new Date();
+                    const buttonLabel = isFutureStart
+                      ? `Setup Autopay for Placement (Starts ${startDateStr})`
+                      : "Setup Autopay for Placement";
 
                     return (
                       <div
@@ -594,7 +600,7 @@ export default function ClientBillingPage() {
                                   Redirecting...
                                 </>
                               ) : (
-                                "Authorize Direct Debit"
+                                buttonLabel
                               )}
                             </button>
                           )}

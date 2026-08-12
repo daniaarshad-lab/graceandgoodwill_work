@@ -447,6 +447,26 @@ export const clientService = {
     });
   },
 
+  async verifyPlacementMandate(
+    placementId: string,
+    billingRequestId: string,
+  ): Promise<any> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+    if (!token) throw new Error("No token found");
+
+    return apiFetch(`/client/placements/${placementId}/verify-mandate`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ billingRequestId }),
+    });
+  },
+
   async approveApplication(applicationId: string): Promise<any> {
     const token =
       typeof window !== "undefined"

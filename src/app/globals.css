@@ -794,3 +794,82 @@
   z-index: 0;
   pointer-events: none;
 }
+
+/* ────────────────────────────────────────────────────────────────────────── */
+/*  Rich text editor content (admin blog editor)                             */
+/*  Tailwind preflight strips heading/list styling, so the contentEditable   */
+/*  surface needs its own rules or formatted text looks identical to plain   */
+/*  paragraphs while the author is writing.                                  */
+/* ────────────────────────────────────────────────────────────────────────── */
+.gg-editor > * + * {
+  margin-top: 0.85em;
+}
+.gg-editor h2 {
+  font-family: var(--font-family-cinzel), serif;
+  font-size: 1.35rem;
+  font-weight: 500;
+  line-height: 1.3;
+  color: #fde6c4;
+}
+.gg-editor h3 {
+  font-family: var(--font-family-cinzel), serif;
+  font-size: 1.1rem;
+  font-weight: 500;
+  line-height: 1.35;
+  color: #fde6c4;
+}
+.gg-editor h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #f5d4a0;
+}
+.gg-editor p {
+  line-height: 1.7;
+}
+.gg-editor strong,
+.gg-editor b {
+  font-weight: 600;
+  color: #f5d4a0;
+}
+.gg-editor em,
+.gg-editor i {
+  font-style: italic;
+}
+.gg-editor ul,
+.gg-editor ol {
+  padding-left: 1.5rem;
+}
+.gg-editor ul {
+  list-style: disc;
+}
+.gg-editor ol {
+  list-style: decimal;
+}
+.gg-editor li {
+  margin-top: 0.35em;
+  line-height: 1.65;
+}
+.gg-editor li::marker {
+  color: rgba(212, 160, 71, 0.55);
+}
+.gg-editor blockquote {
+  border-left: 2px solid rgba(212, 175, 55, 0.4);
+  padding-left: 1rem;
+  font-style: italic;
+  color: #f5d4a0;
+}
+.gg-editor a {
+  color: #d4af37;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.gg-editor code {
+  font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  font-size: 0.875em;
+  background: rgba(10, 17, 40, 0.8);
+  border-radius: 3px;
+  padding: 0.1em 0.35em;
+}
+.gg-editor hr {
+  border-color: rgba(232, 186, 122, 0.15);
+}

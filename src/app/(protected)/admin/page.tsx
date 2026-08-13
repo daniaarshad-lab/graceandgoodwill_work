@@ -50,6 +50,9 @@ const ProfileUpdateRequests = dynamic(
   () => import("./components/ProfileUpdateRequests"),
   { ssr: false },
 );
+const BlogPostsTab = dynamic(() => import("./components/blog/BlogPostsTab"), {
+  ssr: false,
+});
 
 import { Suspense } from "react";
 import EmergencyCareRequestsList from "./components/EmergencyCareRequestsList";
@@ -142,6 +145,7 @@ function AdminDashboardContent() {
     billing: "Billing & Invoices",
     enquiries: "Support & Enquiries",
     "profile-updates": "Profile Updates",
+    blog: "Blog Posts",
   };
 
   return (
@@ -337,6 +341,7 @@ function AdminDashboardContent() {
               {portal.activeTab === "profile-updates" && (
                 <ProfileUpdateRequests />
               )}
+              {portal.activeTab === "blog" && <BlogPostsTab />}
             </>
           )}
         </div>

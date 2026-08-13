@@ -25,23 +25,23 @@ type ValueItem = {
 const values: ValueItem[] = [
   {
     title: "INTEGRITY",
-    text: "Morally and ethically guided.",
+    text: "Morally and ethically\nguided.",
     icon: integrityIcon,
   },
   {
     title: "COMPASSION",
-    text: "A duty to care, a promise to serve.",
+    text: "A duty to care,\na promise to serve.",
     icon: compassionIcon,
   },
   {
     title: "PURPOSE",
-    text: "Care with meaning, impact that lasts.",
+    text: "Care with meaning,\nimpact that lasts.",
     icon: purposeIcon,
     iconScale: "scale-[1.12]",
   },
   {
     title: "TRUST",
-    text: "Built on honesty, strengthened by reliability.",
+    text: "Built on honesty,\nstrengthened by reliability.",
     icon: trustIcon,
   },
 ];
@@ -69,7 +69,7 @@ function SiteFooter() {
               /* Narrow columns stack the icon over its text and centre it —
                  matching the footer's other mobile content — then switch to
                  icon-beside-text once there is room for it. */
-              className="flex flex-col items-center gap-2.5 text-center sm:flex-row sm:items-start sm:gap-4 sm:text-left lg:border-l lg:border-gold-400/[0.09] lg:px-7 lg:first:border-l-0 lg:first:pl-0"
+              className="flex flex-col items-center gap-3 text-center sm:flex-row sm:items-center sm:gap-5 sm:text-left lg:border-l lg:border-gold-400/[0.09] lg:px-7 lg:first:border-l-0 lg:first:pl-0"
             >
               <Image
                 src={val.icon}
@@ -77,13 +77,13 @@ function SiteFooter() {
                 aria-hidden="true"
                 width={96}
                 height={96}
-                className={`h-10 w-10 shrink-0 object-contain sm:mt-0.5 sm:h-11 sm:w-11 ${val.iconScale ?? ""}`}
+                className={`h-14 w-14 shrink-0 object-contain sm:mt-0.5 sm:h-16 sm:w-16 ${val.iconScale ?? ""}`}
               />
               <div className="min-w-0">
-                <h3 className="text-[13px] sm:text-sm font-medium uppercase tracking-[0.18em] text-gold-muted">
+                <h3 className="text-[17px] sm:text-[22px] font-playfair font-semibold uppercase tracking-normal text-[#917559] leading-none mb-2">
                   {val.title}
                 </h3>
-                <p className="mt-1.5 text-[13px] sm:text-sm font-light leading-relaxed text-gold-200/70">
+                <p className="text-[14px] sm:text-[15px] font-jost font-medium leading-[1.32] text-[#C0A381] whitespace-pre-line">
                   {val.text}
                 </p>
               </div>

@@ -6,6 +6,9 @@ const config: Config = {
     extend: {
       fontFamily: {
         sans: ['var(--font-family-poppins)', 'sans-serif'],
+        serif: ['var(--font-family-cinzel)', 'serif'],
+        playfair: ['var(--font-family-playfair)', 'Bodoni Moda', 'Georgia', 'serif'],
+        jost: ['var(--font-family-jost)', 'Futura PT', 'Century Gothic', 'sans-serif'],
       },
       fontSize: {
         'h1': ['var(--size-h1)', { lineHeight: 'var(--lh-h1)', fontWeight: 'var(--weight-bold)' }],

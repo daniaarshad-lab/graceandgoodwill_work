@@ -4,44 +4,15 @@ import React, { useState, useEffect, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import { Shield, X, Settings } from "lucide-react";
 import Toggle from "@/components/Toggle";
-
-interface CookiePreferences {
-  strictlyNecessary: true; // always true
-  functional: boolean;
-  analytics: boolean;
-  marketing: boolean;
-}
-const STORAGE_KEY = "gg_cookie_consent_v2";
-
-const DEFAULT_PREFERENCES: CookiePreferences = {
-  strictlyNecessary: true,
-  functional: false,
-  analytics: false,
-  marketing: false,
-};
-
-const ALL_ACCEPTED: CookiePreferences = {
-  strictlyNecessary: true,
-  functional: true,
-  analytics: true,
-  marketing: true,
-};
-
-function loadConsent(): CookiePreferences | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    return JSON.parse(raw) as CookiePreferences;
-  } catch {
-    return null;
-  }
-}
-
-function saveConsent(prefs: CookiePreferences) {
-  if (typeof window === "undefined") return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
-}
+/* Storage and preference handling live in the shared module so that consumers
+   of consent (Google Analytics) read exactly what this banner writes. */
+import {
+  ALL_ACCEPTED,
+  DEFAULT_PREFERENCES,
+  loadConsent,
+  saveConsent,
+  type CookiePreferences,
+} from "@/lib/cookie-consent";
 
 export default function CookieConsentBanner() {
   const pathname = usePathname();

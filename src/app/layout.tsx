@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Poppins, Cinzel, Playfair_Display, Jost } from "next/font/google";
+import { Poppins, Playfair_Display, Jost } from "next/font/google";
 import ToastProvider from "@/components/Providers/ToastProvider";
 import CookieConsentBanner from "@/components/CookieConsentBanner";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
@@ -14,14 +14,8 @@ const poppins = Poppins({
   display: "swap",
 });
 
-const cinzel = Cinzel({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-family-cinzel",
-  display: "swap",
-});
-
-/* Footer value titles and taglines — matches the supplied artwork. */
+/* Footer value titles and taglines only — matches the supplied artwork.
+   Nothing else in the app uses these two families. */
 const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
   weight: ["500", "600", "700"],
@@ -61,7 +55,7 @@ export default function RootLayout({
       <head suppressHydrationWarning />
       <body
         suppressHydrationWarning
-        className={`bg-navy-950 text-gold-100 flex flex-col min-h-screen font-sans ${poppins.variable} ${cinzel.variable} ${playfairDisplay.variable} ${jost.variable}`}
+        className={`bg-navy-950 text-gold-100 flex flex-col min-h-screen font-sans ${poppins.variable} ${playfairDisplay.variable} ${jost.variable}`}
       >
         <ReduxProvider>
           <AuthProvider>

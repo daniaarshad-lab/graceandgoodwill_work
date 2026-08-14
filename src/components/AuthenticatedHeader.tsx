@@ -114,29 +114,6 @@ export default function AuthenticatedHeader() {
                   <p className="text-xs text-gold-200/60">{displayRole}</p>
                 </div>
 
-                <Link
-                  href={`/${pathname.split("/")[1]}?tab=profile`}
-                  className="flex items-center gap-3 px-4 py-2.5 text-sm text-gold-100/80 hover:text-gold-DEFAULT hover:bg-gold-DEFAULT/10 transition-colors"
-                >
-                  <UserIcon className="w-4 h-4" />
-                  My Profile
-                </Link>
-                <Link
-                  href={`/${pathname.split("/")[1]}?tab=settings`}
-                  className="flex items-center gap-3 px-4 py-2.5 text-sm text-gold-100/80 hover:text-gold-DEFAULT hover:bg-gold-DEFAULT/10 transition-colors"
-                >
-                  <Settings className="w-4 h-4" />
-                  Account Settings
-                </Link>
-                <Link
-                  href={`/${pathname.split("/")[1]}?tab=security`}
-                  className="flex items-center gap-3 px-4 py-2.5 text-sm text-gold-100/80 hover:text-gold-DEFAULT hover:bg-gold-DEFAULT/10 transition-colors"
-                >
-                  <Key className="w-4 h-4" />
-                  Change Password
-                </Link>
-
-                <div className="h-px bg-gold-300/10 my-1"></div>
 
                 <button
                   onClick={handleLogout}

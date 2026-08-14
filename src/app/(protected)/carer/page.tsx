@@ -63,6 +63,7 @@ function CarerDashboardContent() {
         "placements",
         "membership",
         "agreements",
+        "media",
       ].includes(tabParam)
     ) {
       setActiveTab(tabParam);

@@ -414,6 +414,27 @@ export function useAdminPortal() {
   }, [activeTab, dispatch]);
 
   useEffect(() => {
+    if (tabParam && tabParam !== activeTab) {
+      if (
+        [
+          "overview",
+          "carers",
+          "clients",
+          "requests",
+          "placements",
+          "emergency",
+          "emergency-requests",
+          "billing",
+          "enquiries",
+          "profile-updates",
+        ].includes(tabParam)
+      ) {
+        setActiveTab(tabParam);
+      }
+    }
+  }, [tabParam, activeTab]);
+
+  useEffect(() => {
     if (globalSearchQuery.trim()) {
       dispatch(fetchGlobalSearchResults(globalSearchQuery));
     }

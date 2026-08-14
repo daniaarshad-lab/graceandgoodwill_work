@@ -128,15 +128,8 @@ export default function PortalTabs({
       } else {
         if (setActiveTab) {
           setActiveTab(tabId);
-          if (
-            typeof window !== "undefined" &&
-            window.location.pathname.includes("/referrals")
-          ) {
-            router.push(href);
-          }
-        } else {
-          router.push(href);
         }
+        router.push(href, { scroll: false });
       }
     });
   };

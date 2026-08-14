@@ -36,10 +36,10 @@ export default function EmergencyCareForm({
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
-  const [whoNeedsSupport, setWhoNeedsSupport] = useState("parent");
+  const [whoNeedsSupport, setWhoNeedsSupport] = useState("");
   const [immediateSupport, setImmediateSupport] = useState("yes");
   const [location, setLocation] = useState("");
-  const [contactMethod, setContactMethod] = useState("phone");
+  const [contactMethod, setContactMethod] = useState("");
   const [message, setMessage] = useState("");
 
   const [hasPrefilled, setHasPrefilled] = useState(false);
@@ -75,8 +75,16 @@ export default function EmergencyCareForm({
     const emailError = validateEmail(email);
     if (emailError) tempErrors.email = emailError;
 
+    if (!whoNeedsSupport) {
+      tempErrors.whoNeedsSupport = "Required";
+    }
+
     if (!location.trim()) {
       tempErrors.location = "Required (City or Postcode)";
+    }
+
+    if (!contactMethod) {
+      tempErrors.contactMethod = "Required";
     }
 
     setErrors(tempErrors);
@@ -126,10 +134,10 @@ export default function EmergencyCareForm({
     setFullName("");
     setPhone("");
     setEmail("");
-    setWhoNeedsSupport("parent");
+    setWhoNeedsSupport("");
     setImmediateSupport("yes");
     setLocation("");
-    setContactMethod("phone");
+    setContactMethod("");
     setMessage("");
     setErrors({});
     setSubmitError(null);
@@ -227,14 +235,20 @@ export default function EmergencyCareForm({
         <Select
           label={fieldLabel("Who Needs Support?")}
           value={whoNeedsSupport}
-          onChange={(e) => setWhoNeedsSupport(e.target.value)}
+          onChange={(e) => {
+            setWhoNeedsSupport(e.target.value);
+            if (errors.whoNeedsSupport)
+              setErrors((prev) => ({ ...prev, whoNeedsSupport: "" }));
+          }}
           options={[
+            { value: "", label: "Select an option..." },
             { value: "myself", label: "Myself" },
             { value: "parent", label: "My Parent" },
             { value: "partner", label: "My Partner" },
             { value: "child", label: "My Child" },
             { value: "other", label: "Other Relative" },
           ]}
+          error={errors.whoNeedsSupport}
           className={darkSelect}
         />
       </div>
@@ -255,12 +269,18 @@ export default function EmergencyCareForm({
         <Select
           label={fieldLabel("Preferred Contact Method")}
           value={contactMethod}
-          onChange={(e) => setContactMethod(e.target.value)}
+          onChange={(e) => {
+            setContactMethod(e.target.value);
+            if (errors.contactMethod)
+              setErrors((prev) => ({ ...prev, contactMethod: "" }));
+          }}
           options={[
+            { value: "", label: "Select an option..." },
             { value: "phone", label: "Phone Call (Highest Priority)" },
             { value: "whatsapp", label: "WhatsApp Message" },
             { value: "email", label: "Email Response" },
           ]}
+          error={errors.contactMethod}
           className={darkSelect}
         />
       </div>

@@ -691,22 +691,34 @@ export function useAdminPortal() {
   // Load total stats counters
   const loadStatsCounts = useCallback(async () => {
     try {
-      const [allCarersRes, pendingCarersRes, emergencyRequestsRes, clientsRes] =
-        await Promise.all([
-          adminService.getCarers(1, 1, "ALL"),
-          adminService.getCarers(1, 1, "PENDING"),
-          adminService.getCareRequests(1, 1, "EMERGENCY"),
-          adminService.getClients(1, 1, "ALL"),
-        ]);
-      setTotalCarersCount(allCarersRes.total || 0);
-      setPendingCarersCount(pendingCarersRes.total || 0);
-      setEmergencyCasesCount(emergencyRequestsRes.total || 0);
-      setTotalClientsCount(clientsRes.total || 0);
-
-      // Fetch dashboard stats from backend
-      await dispatch(fetchAdminDashboardStats()).unwrap();
+      // Fetch dashboard stats from backend API
+      const res = await dispatch(fetchAdminDashboardStats()).unwrap();
+      if (res) {
+        if (res.totalCarers !== undefined) setTotalCarersCount(res.totalCarers);
+        if (res.pendingApprovals !== undefined || res.pendingCarers !== undefined) {
+          setPendingCarersCount(res.pendingApprovals ?? res.pendingCarers ?? 0);
+        }
+        if (res.emergencyCases !== undefined) setEmergencyCasesCount(res.emergencyCases);
+        if (res.totalClients !== undefined) setTotalClientsCount(res.totalClients);
+      }
     } catch (err) {
       console.error("Failed to load stats counts:", err);
+      // Fallback
+      try {
+        const [allCarersRes, pendingCarersRes, emergencyRequestsRes, clientsRes] =
+          await Promise.all([
+            adminService.getCarers(1, 1, "ALL"),
+            adminService.getCarers(1, 1, "PENDING"),
+            adminService.getCareRequests(1, 1, "EMERGENCY"),
+            adminService.getClients(1, 1, "ALL"),
+          ]);
+        setTotalCarersCount(allCarersRes.total || 0);
+        setPendingCarersCount(pendingCarersRes.total || 0);
+        setEmergencyCasesCount(emergencyRequestsRes.total || 0);
+        setTotalClientsCount(clientsRes.total || 0);
+      } catch (fallbackErr) {
+        console.error("Fallback stats counts failed:", fallbackErr);
+      }
     }
   }, [dispatch]);
 
@@ -1112,14 +1124,16 @@ export function useAdminPortal() {
   );
 
   const stats = {
-    totalCarers: totalCarersCount,
-    pendingCarers: pendingCarersCount,
-    totalClients: totalClientsCount,
-    activePlacements: placements.filter(
-      (p) => p.status === "Active" || p.status === "Matched",
+    totalCarers: statsFromState?.totalCarers ?? totalCarersCount,
+    pendingCarers: statsFromState?.pendingApprovals ?? statsFromState?.pendingCarers ?? pendingCarersCount,
+    pendingApprovals: statsFromState?.pendingApprovals ?? statsFromState?.pendingCarers ?? pendingCarersCount,
+    totalClients: statsFromState?.totalClients ?? totalClientsCount,
+    activePlacements: statsFromState?.activePlacements ?? placements.filter(
+      (p) => p.status === "PLACEMENT_CONFIRMED" || p.status === "PLACEMENT_STARTED" || p.status === "ONGOING" || p.status === "Active" || p.status === "Matched",
     ).length,
-    emergencyCases: emergencyCasesCount,
-    unreadEnquiries: enquiries.filter((e) => !e.isRead).length,
+    emergencyCases: statsFromState?.emergencyCases ?? emergencyCasesCount,
+    unreadEnquiries: statsFromState?.openSupportEnquiries ?? statsFromState?.unreadEnquiries ?? enquiries.filter((e) => !e.isRead).length,
+    openSupportEnquiries: statsFromState?.openSupportEnquiries ?? statsFromState?.unreadEnquiries ?? enquiries.filter((e) => !e.isRead).length,
 
     // Extended statistics from backend API
     activeClients: statsFromState?.activeClients,

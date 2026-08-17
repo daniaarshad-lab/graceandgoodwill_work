@@ -139,26 +139,13 @@ export default function ContactSalesForm() {
           fullName: formData.name.trim(),
           email: formData.email.trim(),
           phone: formData.phone.trim(),
-          phoneNumber: formData.phone.trim(),
-          
           whoRequiresSupport: formData.whoRequiresSupport,
           whenIsSupportRequired: formData.whenIsSupportRequired,
           location: formData.location.trim(),
-          postcode: formData.location.trim(),
+          postcode: formData.location.trim(), // Mapped from the combined UI field
           typeOfSupport: formData.typeOfSupport,
-          
-          message: formData.message.trim(),
           careRequirements: formData.message.trim(),
-
-          // Keeping legacy fields empty to prevent breaking strictly-typed older endpoints
-          company: "",
-          companyName: "",
-          employees: "",
-          numberOfEmployees: "",
-          service: formData.typeOfSupport,
-          serviceOfInterest: formData.typeOfSupport,
-          primaryService: formData.typeOfSupport,
-          businessRequirements: formData.message.trim(),
+          message: formData.message.trim(),
         };
 
         await apiFetch("/quote-enquiry", {

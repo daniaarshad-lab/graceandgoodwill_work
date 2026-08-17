@@ -96,7 +96,7 @@ export default function PricingPage() {
                       className="gap-2.5 w-auto px-6"
                     >
                       <WhatsAppIcon className="w-5 h-5" />
-                      WhatsApp us
+                      WhatsApp Our Team
                     </a>
                   </Button>
                 </div>
@@ -246,8 +246,7 @@ export default function PricingPage() {
             Stay Connected
           </h2>
           <p className="text-sm leading-relaxed text-gold-200/80 sm:text-base mb-8">
-            Receive care advice, family resources, training opportunities,
-            events and updates from Grace & Goodwill.
+            Receive our latest care articles, family resources, information on specific conditions, events and updates from Grace & Goodwill.
           </p>
 
           <NewsletterForm />

@@ -45,6 +45,8 @@ export default function AuthenticatedHeader() {
   else if (pathname.startsWith("/client")) portalName = "Client Portal";
   else if (pathname.startsWith("/carer")) portalName = "Carer Portal";
 
+  const isAdmin = pathname.startsWith("/admin") || user?.role === "ADMIN" || user?.role === "SUPER_ADMIN";
+
   // Role formatting
   const rawRole = user?.role || "User";
   const displayRole =
@@ -113,16 +115,20 @@ export default function AuthenticatedHeader() {
                   </p>
                   <p className="text-xs text-gold-200/60">{displayRole}</p>
                 </div>
-                <Link
-                  href={`/${pathname.split("/")[1]}?tab=profile`}
-                  onClick={() => setDropdownOpen(false)}
-                  className="flex items-center gap-3 px-4 py-2.5 text-sm text-gold-100/80 hover:text-gold-DEFAULT hover:bg-gold-DEFAULT/10 transition-colors"
-                >
-                  <UserIcon className="w-4 h-4" />
-                  My Profile
-                </Link>
+                {!isAdmin && (
+                  <>
+                    <Link
+                      href={`/${pathname.split("/")[1]}?tab=profile`}
+                      onClick={() => setDropdownOpen(false)}
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-gold-100/80 hover:text-gold-DEFAULT hover:bg-gold-DEFAULT/10 transition-colors"
+                    >
+                      <UserIcon className="w-4 h-4" />
+                      My Profile
+                    </Link>
 
-                <div className="h-px bg-gold-300/10 my-1"></div>
+                    <div className="h-px bg-gold-300/10 my-1"></div>
+                  </>
+                )}
 
                 <button
                   onClick={handleLogout}

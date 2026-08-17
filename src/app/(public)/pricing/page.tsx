@@ -246,8 +246,7 @@ export default function PricingPage() {
             Stay Connected
           </h2>
           <p className="text-sm leading-relaxed text-gold-200/80 sm:text-base mb-8">
-            Receive care advice, family resources, training opportunities,
-            events and updates from Grace & Goodwill.
+            Receive our latest care articles, family resources, information on specific conditions, events and updates from Grace & Goodwill.
           </p>
 
           <NewsletterForm />

@@ -6,15 +6,27 @@ import Input from "@/components/Input";
 import Button from "@/components/Button";
 import PhoneInput from "@/components/PhoneInput";
 import { validateRegisterForm, RegisterFormErrors } from "@/lib/validation";
+import { AUTH_ROUTES } from "@/lib/auth-routes";
 import { useAuth } from "@/contexts/AuthContext";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 import { useRouter } from "next/navigation";
 
-export default function RegisterForm() {
+type RegisterRole = "CLIENT" | "CARER";
+
+interface RegisterFormProps {
+  /**
+   * Which account type the form opens on. Driven by ?role= on the register
+   * page so "Register as a Carer" lands on the carer option rather than
+   * defaulting to client — the cause of carers registering as clients.
+   */
+  initialRole?: RegisterRole;
+}
+
+export default function RegisterForm({
+  initialRole = "CLIENT",
+}: RegisterFormProps) {
   const { register, logout } = useAuth();
-  const [selectedRole, setSelectedRole] = useState<"CLIENT" | "CARER" | string>(
-    "CLIENT",
-  );
+  const [selectedRole, setSelectedRole] = useState<RegisterRole>(initialRole);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -63,7 +75,9 @@ export default function RegisterForm() {
       setEmail("");
       setPhone("");
       setPassword("");
-      setSelectedRole("CLIENT");
+      /* Reset to whichever journey the user entered through, not hard-coded
+         CLIENT — otherwise a failed-then-retried carer signup silently flips. */
+      setSelectedRole(initialRole);
       setErrors({});
 
       showSuccessToast(
@@ -173,7 +187,12 @@ export default function RegisterForm() {
       <p className="text-center text-sm">
         Already have an account?{" "}
         <Link
-          href="/login"
+          /* Carry the journey through so a carer stays framed as a carer. */
+          href={
+            selectedRole === "CARER"
+              ? AUTH_ROUTES.login.carer
+              : AUTH_ROUTES.login.client
+          }
           className="text-gold-muted font-medium hover:text-[#b8915e] hover:underline"
         >
           Login

@@ -96,7 +96,7 @@ export default function PricingPage() {
                       className="gap-2.5 w-auto px-6"
                     >
                       <WhatsAppIcon className="w-5 h-5" />
-                      WhatsApp us
+                      WhatsApp Our Team
                     </a>
                   </Button>
                 </div>

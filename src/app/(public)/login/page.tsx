@@ -128,19 +128,6 @@ export default function LoginPage() {
 
       <div className="mt-12 flex flex-col items-center justify-center text-center select-none">
         <img src="/website_logo.png" alt="Logo" className="h-16 w-auto mb-2" />
-
-        <div className="flex items-center w-full justify-center mt-2">
-          <div className="h-px w-4 sm:w-11 bg-gradient-to-r from-transparent to-[#b8915e]/60" />
-
-          <p
-            className="mx-2 text-base font-medium  text-gold-muted tracking-wide"
-            style={{ letterSpacing: "-0.01em" }}
-          >
-            Care Defined By Integrity
-          </p>
-
-          <div className="h-px w-4 sm:w-11 bg-gradient-to-l from-transparent to-[#b8915e]/60" />
-        </div>
       </div>
     </AuthSplitLayout>
   );

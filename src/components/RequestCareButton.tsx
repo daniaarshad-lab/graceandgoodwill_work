@@ -58,7 +58,9 @@ export default function RequestCareButton({
         </div>
 
         <div className="flex flex-col justify-center">
-          <span className="text-[#FDF2D5] font-semibold text-[15px] leading-snug tracking-wide drop-shadow-sm whitespace-nowrap">
+          {/* Font matches EmergencyButton's primary label exactly (weight, size
+              and responsive step) so the three CTAs read as one set. */}
+          <span className="text-[#FDF2D5] font-bold text-xs sm:text-[15px] leading-snug tracking-wide drop-shadow-sm whitespace-nowrap">
             Request Care
           </span>
           <span className="text-[#FDF2D5]/70 font-medium text-[11px] leading-snug whitespace-nowrap">

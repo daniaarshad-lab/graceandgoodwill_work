@@ -46,7 +46,7 @@ export default function HomePage() {
         <div className="max-w-2xl lg:flex-1 xl:flex-none space-y-6 -mt-4 lg:mt-0">
           <h1 className="font-serif font-medium leading-[1.2] tracking-tight drop-shadow-md">
             <span className="text-3xl sm:text-4xl lg:text-[2.5rem] text-white">
-              Live-in Care Introduction & Matching
+              Live-in Care Matching
             </span>
             <br />
             <span className="font-sans text-lg sm:text-xl lg:text-2xl font-semibold tracking-wide text-[rgb(245,212,160)] inline-block mt-2">
@@ -56,18 +56,25 @@ export default function HomePage() {
 
           <div className="max-w-xl text-gold-100/80 space-y-4 text-lg sm:text-xl leading-relaxed font-light">
             <p>
-              Helping families across the UK find trusted independent live-in
-              carers with compassion, continuity, and genuine human support.
+              Finding someone to support you or a loved one at home is a deeply
+              personal decision. At Grace & Goodwill, you remain in control of
+              your choices and care arrangements. We believe the right match
+              should bring confidence, reassurance and peace of mind when
+              welcoming someone into your home.
             </p>
             <p className="text-base sm:text-lg opacity-80">
-              At Grace & Goodwill, we introduce families to independent,
-              self-employed carers who can support individuals safely and
-              dependably at home.
+              Grace & Goodwill brings families and carefully vetted live-in
+              carers together through our online matching platform, where you
+              can explore carer profiles featuring their experience, skills,
+              interests, availability, photo, introductory video and more,
+              helping you find the right live-in carer to match your needs,
+              routines and preferences.
             </p>
             <p className="text-base sm:text-lg opacity-80">
-              From everyday support to urgent carer requirements, we facilitate
-              introductions to guide families with integrity, reassurance, and a
-              truly personal approach.
+              Whether care is being planned ahead or needed urgently, we make
+              the matching process simpler and more personal, with ongoing
+              platform support to help maintain continuity when circumstances or
+              care arrangements change.
             </p>
           </div>
 
@@ -89,8 +96,8 @@ export default function HomePage() {
                     strokeWidth={1.5}
                   />
                 </div>
-                <span className="text-[#FDF2D5] font-semibold text-[14px] leading-snug tracking-wide drop-shadow-sm">
-                  Find a Live-in Carer
+                <span className="text-[#FDF2D5] font-bold text-[13px] sm:text-[14px] leading-tight tracking-[0.02em] uppercase drop-shadow-sm line-clamp-1">
+                  FIND A LIVE-IN CARER
                 </span>
               </div>
               <ChevronRight
@@ -118,8 +125,8 @@ export default function HomePage() {
                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.888-.788-1.487-1.761-1.66-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
                   </svg>
                 </div>
-                <span className="text-[#E0F8EA] font-semibold text-[14px] leading-snug tracking-wide drop-shadow-sm">
-                  Chat To Our Team
+                <span className="text-[#E0F8EA] font-bold text-[13px] sm:text-[14px] leading-tight tracking-[0.02em] uppercase drop-shadow-sm line-clamp-1">
+                  CHAT TO OUR TEAM
                 </span>
               </div>
               <ChevronRight

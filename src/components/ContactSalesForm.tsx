@@ -8,32 +8,35 @@ import { validateEmail, validatePhone } from "@/lib/validation";
 
 interface FormData {
   name: string;
-  company: string;
   email: string;
   phone: string;
-  employees: string;
-  service: string;
+  whoRequiresSupport: string;
+  whenIsSupportRequired: string;
+  location: string;
+  typeOfSupport: string;
   message: string;
 }
 
 interface FormErrors {
   name?: string;
-  company?: string;
   email?: string;
   phone?: string;
-  employees?: string;
-  service?: string;
+  whoRequiresSupport?: string;
+  whenIsSupportRequired?: string;
+  location?: string;
+  typeOfSupport?: string;
   message?: string;
 }
 
 export default function ContactSalesForm() {
   const [formData, setFormData] = useState<FormData>({
     name: "",
-    company: "",
     email: "",
     phone: "",
-    employees: "",
-    service: "",
+    whoRequiresSupport: "",
+    whenIsSupportRequired: "",
+    location: "",
+    typeOfSupport: "",
     message: "",
   });
 
@@ -57,11 +60,12 @@ export default function ContactSalesForm() {
   useEffect(() => {
     const checkValidity = () => {
       if (!formData.name.trim()) return false;
-      if (!formData.company.trim()) return false;
       if (validateEmail(formData.email)) return false;
       if (validatePhone(formData.phone)) return false;
-      if (!formData.employees.trim()) return false;
-      if (!formData.service.trim()) return false;
+      if (!formData.whoRequiresSupport) return false;
+      if (!formData.whenIsSupportRequired) return false;
+      if (!formData.location.trim()) return false;
+      if (!formData.typeOfSupport) return false;
       
       const wordCount = formData.message.trim().split(/\s+/).filter(w => w.length > 0).length;
       if (wordCount < 10) return false;
@@ -80,11 +84,6 @@ export default function ContactSalesForm() {
       formIsValid = false;
     }
 
-    if (!formData.company.trim()) {
-      newErrors.company = "Company Name is required.";
-      formIsValid = false;
-    }
-
     const emailError = validateEmail(formData.email);
     if (emailError) {
       newErrors.email = emailError;
@@ -97,19 +96,29 @@ export default function ContactSalesForm() {
       formIsValid = false;
     }
 
-    if (!formData.employees.trim()) {
-      newErrors.employees = "Number of Employees is required.";
+    if (!formData.whoRequiresSupport) {
+      newErrors.whoRequiresSupport = "Please select who requires support.";
       formIsValid = false;
     }
 
-    if (!formData.service.trim()) {
-      newErrors.service = "Service Interest is required.";
+    if (!formData.whenIsSupportRequired) {
+      newErrors.whenIsSupportRequired = "Please select when support is required.";
+      formIsValid = false;
+    }
+
+    if (!formData.location.trim()) {
+      newErrors.location = "Location/Postcode is required.";
+      formIsValid = false;
+    }
+
+    if (!formData.typeOfSupport) {
+      newErrors.typeOfSupport = "Please select the type of support.";
       formIsValid = false;
     }
 
     const wordCount = formData.message.trim().split(/\s+/).filter(w => w.length > 0).length;
     if (wordCount === 0) {
-      newErrors.message = "Message / Requirements is required.";
+      newErrors.message = "Care requirements are required.";
       formIsValid = false;
     } else if (wordCount < 10) {
       newErrors.message = "Message must be at least 10 words.";
@@ -128,17 +137,27 @@ export default function ContactSalesForm() {
       try {
         const payload = {
           fullName: formData.name.trim(),
-          company: formData.company.trim(),
-          companyName: formData.company.trim(),
           email: formData.email.trim(),
           phone: formData.phone.trim(),
           phoneNumber: formData.phone.trim(),
-          employees: formData.employees,
-          numberOfEmployees: formData.employees,
-          service: formData.service,
-          serviceOfInterest: formData.service,
-          primaryService: formData.service,
+          
+          whoRequiresSupport: formData.whoRequiresSupport,
+          whenIsSupportRequired: formData.whenIsSupportRequired,
+          location: formData.location.trim(),
+          postcode: formData.location.trim(),
+          typeOfSupport: formData.typeOfSupport,
+          
           message: formData.message.trim(),
+          careRequirements: formData.message.trim(),
+
+          // Keeping legacy fields empty to prevent breaking strictly-typed older endpoints
+          company: "",
+          companyName: "",
+          employees: "",
+          numberOfEmployees: "",
+          service: formData.typeOfSupport,
+          serviceOfInterest: formData.typeOfSupport,
+          primaryService: formData.typeOfSupport,
           businessRequirements: formData.message.trim(),
         };
 
@@ -154,11 +173,12 @@ export default function ContactSalesForm() {
 
         setFormData({
           name: "",
-          company: "",
           email: "",
           phone: "",
-          employees: "",
-          service: "",
+          whoRequiresSupport: "",
+          whenIsSupportRequired: "",
+          location: "",
+          typeOfSupport: "",
           message: "",
         });
         setErrors({});
@@ -202,6 +222,7 @@ export default function ContactSalesForm() {
             onChange={(e) => handleChange("name", e.target.value)}
             className={darkInput(!!errors.name)}
             disabled={isSubmitting}
+            placeholder="John Doe"
           />
           {errors.name && (
             <p className="text-red-400 text-xs ml-1">{errors.name}</p>
@@ -209,22 +230,7 @@ export default function ContactSalesForm() {
         </div>
         
         <div className="space-y-2">
-          {fieldLabel("Company Name *")}
-          <input
-            type="text"
-            id="company"
-            value={formData.company}
-            onChange={(e) => handleChange("company", e.target.value)}
-            className={darkInput(!!errors.company)}
-            disabled={isSubmitting}
-          />
-          {errors.company && (
-            <p className="text-red-400 text-xs ml-1">{errors.company}</p>
-          )}
-        </div>
-
-        <div className="space-y-2">
-          {fieldLabel("Email Address")}
+          {fieldLabel("Email Address *")}
           <input
             type="email"
             id="email"
@@ -240,7 +246,7 @@ export default function ContactSalesForm() {
         </div>
         
         <div className="space-y-2">
-          {fieldLabel("Phone Number")}
+          {fieldLabel("Phone Number *")}
           <input
             type="tel"
             id="phone"
@@ -256,68 +262,93 @@ export default function ContactSalesForm() {
         </div>
 
         <div className="space-y-2">
-          {fieldLabel("Number of Employees")}
+          {fieldLabel("Who requires support? *")}
           <select
-            id="employees"
-            value={formData.employees}
-            onChange={(e) => handleChange("employees", e.target.value)}
-            className={darkSelect(!!errors.employees)}
-            disabled={isSubmitting}
-          >
-            <option value="" disabled className="bg-navy-900 text-gold-200/50">
-              Select company size
-            </option>
-            <option value="1-10" className="bg-navy-900">
-              1 - 10
-            </option>
-            <option value="11-50" className="bg-navy-900">
-              11 - 50
-            </option>
-            <option value="51-200" className="bg-navy-900">
-              51 - 200
-            </option>
-            <option value="201+" className="bg-navy-900">
-              201+
-            </option>
-          </select>
-          {errors.employees && (
-            <p className="text-red-400 text-xs ml-1">{errors.employees}</p>
-          )}
-        </div>
-        
-        <div className="space-y-2">
-          {fieldLabel("Primary Service of Interest")}
-          <select
-            id="service"
-            value={formData.service}
-            onChange={(e) => handleChange("service", e.target.value)}
-            className={darkSelect(!!errors.service)}
+            id="whoRequiresSupport"
+            value={formData.whoRequiresSupport}
+            onChange={(e) => handleChange("whoRequiresSupport", e.target.value)}
+            className={darkSelect(!!errors.whoRequiresSupport)}
             disabled={isSubmitting}
           >
             <option value="" disabled className="bg-navy-900 text-gold-200/50">
               Select an option
             </option>
-            <option value="carer_management" className="bg-navy-900">
-              Carer Management Platform
-            </option>
-            <option value="agency_crm" className="bg-navy-900">
-              Agency CRM
-            </option>
-            <option value="white_label" className="bg-navy-900">
-              White-label Solution
-            </option>
-            <option value="other" className="bg-navy-900">
-              Other
-            </option>
+            <option value="Myself" className="bg-navy-900">Myself</option>
+            <option value="My Partner" className="bg-navy-900">My Partner</option>
+            <option value="My Parent" className="bg-navy-900">My Parent</option>
+            <option value="A Relative" className="bg-navy-900">A Relative</option>
+            <option value="A Friend" className="bg-navy-900">A Friend</option>
+            <option value="Other" className="bg-navy-900">Other</option>
           </select>
-          {errors.service && (
-            <p className="text-red-400 text-xs ml-1">{errors.service}</p>
+          {errors.whoRequiresSupport && (
+            <p className="text-red-400 text-xs ml-1">{errors.whoRequiresSupport}</p>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          {fieldLabel("When is support required? *")}
+          <select
+            id="whenIsSupportRequired"
+            value={formData.whenIsSupportRequired}
+            onChange={(e) => handleChange("whenIsSupportRequired", e.target.value)}
+            className={darkSelect(!!errors.whenIsSupportRequired)}
+            disabled={isSubmitting}
+          >
+            <option value="" disabled className="bg-navy-900 text-gold-200/50">
+              Select an option
+            </option>
+            <option value="Immediately" className="bg-navy-900">Immediately</option>
+            <option value="Within 1-2 weeks" className="bg-navy-900">Within 1-2 weeks</option>
+            <option value="Within 1 month" className="bg-navy-900">Within 1 month</option>
+            <option value="Researching for the future" className="bg-navy-900">Researching for the future</option>
+          </select>
+          {errors.whenIsSupportRequired && (
+            <p className="text-red-400 text-xs ml-1">{errors.whenIsSupportRequired}</p>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          {fieldLabel("Location / Postcode *")}
+          <input
+            type="text"
+            id="location"
+            value={formData.location}
+            onChange={(e) => handleChange("location", e.target.value)}
+            className={darkInput(!!errors.location)}
+            disabled={isSubmitting}
+            placeholder="e.g. London, SW1A 1AA"
+          />
+          {errors.location && (
+            <p className="text-red-400 text-xs ml-1">{errors.location}</p>
+          )}
+        </div>
+
+        <div className="space-y-2 lg:col-span-3">
+          {fieldLabel("Type of support required *")}
+          <select
+            id="typeOfSupport"
+            value={formData.typeOfSupport}
+            onChange={(e) => handleChange("typeOfSupport", e.target.value)}
+            className={darkSelect(!!errors.typeOfSupport)}
+            disabled={isSubmitting}
+          >
+            <option value="" disabled className="bg-navy-900 text-gold-200/50">
+              Select an option
+            </option>
+            <option value="Live-in Care" className="bg-navy-900">Live-in Care</option>
+            <option value="Respite Care" className="bg-navy-900">Respite Care</option>
+            <option value="Dementia Care" className="bg-navy-900">Dementia Care</option>
+            <option value="Companionship" className="bg-navy-900">Companionship</option>
+            <option value="Other" className="bg-navy-900">Other</option>
+          </select>
+          {errors.typeOfSupport && (
+            <p className="text-red-400 text-xs ml-1">{errors.typeOfSupport}</p>
           )}
         </div>
       </div>
 
       <div className="space-y-2">
-        {fieldLabel("How can we help?")}
+        {fieldLabel("Tell us a little about your care requirements *")}
         <textarea
           id="message"
           rows={4}
@@ -325,7 +356,7 @@ export default function ContactSalesForm() {
           onChange={(e) => handleChange("message", e.target.value)}
           className={`${darkInput(!!errors.message)} resize-none`}
           disabled={isSubmitting}
-          placeholder="Please share details about your business requirements..."
+          placeholder="Please share any relevant details about the care needed..."
         />
         {errors.message && (
           <p className="text-red-400 text-xs ml-1">{errors.message}</p>

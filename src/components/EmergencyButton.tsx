@@ -47,7 +47,7 @@ export default function EmergencyButton({
         </div>
 
         <div className="flex flex-col justify-center">
-          <span className="text-[#FDF2D5] font-bold text-xs sm:text-[15px] leading-snug tracking-wide drop-shadow-md">
+          <span className="text-[#FDF2D5] font-bold text-[13px] sm:text-[14px] leading-tight tracking-[0.02em] drop-shadow-md">
             EMERGENCY LIVE-IN CARE 24/7
           </span>
           <span className="text-[#FDF2D5]/80 font-medium text-[11px] leading-snug">

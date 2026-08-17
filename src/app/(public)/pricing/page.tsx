@@ -22,7 +22,7 @@ export default function PricingPage() {
       {/* ─────────────────────────────────────────────────────────────── */}
       {/* HERO: Heading + CTA Buttons                                   */}
       {/* ─────────────────────────────────────────────────────────────── */}
-      <section className="relative pt-16 sm:pt-20 pb-14 sm:pb-16">
+      <section className="relative pt-16 sm:pt-20 pb-6 sm:pb-8">
         {/* Ambient glow */}
         <div
           aria-hidden
@@ -82,9 +82,9 @@ export default function PricingPage() {
                 {/* CTA Buttons */}
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-3">
                   <Button asChild variant="primary" size="lg">
-                    <a href="tel:02045781269" className="gap-2.5 w-auto px-6">
+                    <a href="tel:020 4524 0108" className="gap-2.5 w-auto px-6">
                       <Phone className="w-5 h-5" />
-                      020 4578 1269
+                      020 4524 0108
                     </a>
                   </Button>
 
@@ -115,7 +115,7 @@ export default function PricingPage() {
       {/* ─────────────────────────────────────────────────────────────── */}
       {/* CONTENT: Introduction + Unique + Included — Compact Layout     */}
       {/* ─────────────────────────────────────────────────────────────── */}
-      <section className="relative pt-14 sm:pt-16 pb-6 sm:pb-8">
+      <section className="relative pt-6 sm:pt-8 pb-6 sm:pb-8">
         {/* Subtle ambient */}
         <div className="pointer-events-none absolute right-0 top-0 h-[400px] w-[400px] rounded-full bg-gold-500/3 blur-[120px]" />
 
@@ -124,27 +124,6 @@ export default function PricingPage() {
           <div className="grid lg:grid-cols-5 gap-10 lg:gap-14">
             {/* Left Column — Introduction + Every Care Arrangement (3/5) */}
             <div className="lg:col-span-3 space-y-10">
-              {/* Introduction */}
-              <div className="space-y-4">
-                <p className="text-base sm:text-lg text-gold-100 leading-relaxed font-light">
-                  Every family&rsquo;s circumstances are different.
-                </p>
-                <p className="text-sm sm:text-[15px] text-gold-200/75 leading-[1.8] font-light">
-                  The cost of introducing a live-in carer depends on the level
-                  of support required, the complexity of your circumstances,
-                  mobility needs and the experience required from the carer.
-                </p>
-                <p className="text-sm sm:text-[15px] text-gold-200/75 leading-[1.8] font-light">
-                  Rather than offering one-size-fits-all pricing, we take the
-                  time to understand your situation first. This allows us to
-                  provide a clear, fair quotation, ensuring you only pay for the
-                  support you genuinely need, never more and never less.
-                </p>
-              </div>
-
-              {/* Divider */}
-              <div className="h-px w-full bg-gradient-to-r from-gold-400/15 via-gold-400/8 to-transparent" />
-
               {/* Every Care Arrangement is Unique */}
               <div className="space-y-4">
                 <h2 className="text-lg sm:text-xl font-serif text-gold-50 tracking-wide flex items-center gap-3">

@@ -45,24 +45,22 @@ export default function HomePage() {
 
         <div className="max-w-2xl lg:flex-1 xl:flex-none space-y-6 -mt-4 lg:mt-0">
           <h1 className="main-page-heading drop-shadow-md">
-            <span className="text-3xl sm:text-4xl lg:text-[2.5rem] text-white">
-              Live-in Care Matching
-            </span>
+            Live-in Care Matching
             <br />
-            <span className="font-sans text-lg sm:text-xl lg:text-2xl font-semibold tracking-wide text-[rgb(245,212,160)] inline-block mt-2">
+            <span className="inline-block mt-2 text-2xl font-light text-gold-300">
               Across The UK
             </span>
           </h1>
 
-          <div className="max-w-xl text-gold-100/80 space-y-4 text-lg sm:text-xl leading-relaxed font-light">
-            <p>
+          <div className="max-w-xl space-y-4">
+            <p className="page-supporting-text">
               Finding someone to support you or a loved one at home is a deeply
               personal decision. At Grace & Goodwill, you remain in control of
               your choices and care arrangements. We believe the right match
               should bring confidence, reassurance and peace of mind when
               welcoming someone into your home.
             </p>
-            <p className="text-base sm:text-lg opacity-80">
+            <p className="page-supporting-text">
               Grace & Goodwill brings families and carefully vetted live-in
               carers together through our online matching platform, where you
               can explore carer profiles featuring their experience, skills,
@@ -70,7 +68,7 @@ export default function HomePage() {
               helping you find the right live-in carer to match your needs,
               routines and preferences.
             </p>
-            <p className="text-base sm:text-lg opacity-80">
+            <p className="page-supporting-text">
               Whether care is being planned ahead or needed urgently, we make
               the matching process simpler and more personal, with ongoing
               platform support to help maintain continuity when circumstances or
@@ -78,9 +76,9 @@ export default function HomePage() {
             </p>
           </div>
 
-          <p className="text-base sm:text-lg text-gold-100/90 font-medium pt-2 pb-2">
+          <h2 className="rule-heading pt-2 pb-2">
             Choose the option below that best matches your current needs.
-          </p>
+          </h2>
 
           <div className="flex flex-col xl:flex-row items-start xl:items-center gap-4 flex-wrap xl:flex-nowrap w-full max-w-[100%] overflow-visible">
             <Link
@@ -179,10 +177,7 @@ export default function HomePage() {
       <section className="container-wrapper border-t border-gold-300/10 mt-24 pt-10">
         <div className="text-center max-w-3xl mx-auto space-y-3 mb-16">
           <div className="text-center mb-10 space-y-5">
-            <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide">
-              Media presence
-            </h2>
-            <div className="h-px w-24 bg-gradient-to-r from-transparent via-gold-400/50 to-transparent mx-auto" />
+            <h2 className="section-heading">Media presence</h2>
           </div>
           <p className="page-supporting-text mx-auto mt-4 max-w-xl">
             Our mission to bring integrity, continuity, and human-first
@@ -216,7 +211,7 @@ export default function HomePage() {
               </div>
 
               <div className="relative z-20 flex flex-col space-y-2 mt-auto mb-0 pt-16">
-                <h3 className="text-lg font-bold text-gold-100 group-hover:text-gold-50 transition-colors drop-shadow-md leading-tight">
+                <h3 className="card-heading drop-shadow-md leading-tight">
                   Gateshead Care Firm Grows From Lived Experience
                 </h3>
                 <p className="page-supporting-text drop-shadow-md">
@@ -264,7 +259,7 @@ export default function HomePage() {
               </div>
 
               <div className="relative z-20 flex flex-col space-y-2 mt-auto mb-0 pt-16">
-                <h3 className="text-lg font-bold text-gold-100 group-hover:text-gold-50 transition-colors drop-shadow-md leading-tight">
+                <h3 className="card-heading drop-shadow-md leading-tight">
                   Redefining Care Standards
                 </h3>
                 <p className="page-supporting-text drop-shadow-md">

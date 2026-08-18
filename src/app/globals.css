@@ -176,6 +176,29 @@
   .page-strapline::after {
     @apply bg-gradient-to-l from-transparent to-gold-400/40;
   }
+
+  /* Section heading sitting between the main page heading and body copy.
+     Values taken from the Pricing page section heading — the visual reference. */
+  .section-heading {
+    @apply text-xl sm:text-2xl lg:text-3xl font-serif text-gold-50 tracking-wide;
+  }
+
+  /* Heading inside a card / grid tile. Values taken from the Pricing card heading. */
+  .card-heading {
+    @apply text-base sm:text-lg font-serif text-gold-50;
+  }
+
+  /* Heading that labels the block directly beneath it (a button group, a list).
+     Short gold rule, then the heading text:  ──  Heading
+     Values taken from the Pricing "Every Care Arrangement is Unique" heading. */
+  .rule-heading {
+    @apply flex items-center gap-3 text-lg sm:text-xl font-serif text-gold-50 tracking-wide;
+  }
+
+  .rule-heading::before {
+    content: "";
+    @apply block h-px w-7 shrink-0 bg-gold-400/40;
+  }
 }
 
 @layer utilities {
@@ -807,4 +830,46 @@
   background-color: var(--range-bg, rgba(212, 175, 55, 0.12));
   z-index: 0;
   pointer-events: none;
+}
+
+/* ── LOGO STRAPLINE ───────────────────────────────────────────────────────────
+   Single source of truth for the "CARE DEFINED BY INTEGRITY" logo strapline.
+   Typography is the logo designer original treatment — do not restyle per page.
+
+   Sizes scale against the WIDTH OF THE CONTAINER (cqi), not the viewport, so the
+   same class holds its proportions in a narrow auth column and at full width.
+   Put .tagline-scope on the wrapper to establish that container. */
+.tagline-scope {
+  container-type: inline-size;
+  width: 100%;
+}
+
+.tagline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-family: var(--font-family-montserrat), "Helvetica Neue", Arial, sans-serif;
+  font-weight: 300;
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  color: #a79068;
+  white-space: nowrap;
+
+  /* Fallback for browsers without container queries. */
+  font-size: 13px;
+  gap: 16px;
+
+  /* Reaches the reference 19px / 28px once the container has room for it. */
+  font-size: clamp(9px, 2.6cqi, 19px);
+  gap: clamp(10px, 1.8cqi, 28px);
+}
+
+.tagline::before,
+.tagline::after {
+  content: "";
+  height: 1px;
+  background-color: #775f2d;
+  /* 130px as drawn; shrinks first when the container is tight. */
+  flex: 0 1 130px;
 }

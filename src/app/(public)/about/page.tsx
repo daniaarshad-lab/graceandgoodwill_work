@@ -17,10 +17,10 @@ export default function AboutPage() {
         <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center text-center">
           <div className="page-strapline">About Us</div>
 
-          <h1 className="main-page-heading mb-8">About Grace &amp; Goodwill</h1>
+          <h1 className="main-page-heading">About Grace &amp; Goodwill</h1>
 
-          <div className="space-y-5 text-base sm:text-lg text-gold-200/90 leading-relaxed max-w-3xl">
-            <p className="text-sm sm:text-base text-gold-200/70">
+          <div className="mx-auto mt-6 max-w-2xl">
+            <p className="page-supporting-text">
               Grace &amp; Goodwill was created from real experience and a belief
               that support should feel reassuring from the very beginning. We
               understand families are not simply searching for availability they
@@ -37,10 +37,9 @@ export default function AboutPage() {
       <section className="w-full text-gold-50">
         <div className="max-w-[1400px] mx-auto pt-16 pb-20 px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10 space-y-5">
-            <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide">
+            <h2 className="section-heading">
               Meet Aurea Neto, Our Founder
             </h2>
-            <div className="h-px w-24 bg-gradient-to-r from-transparent via-gold-400/50 to-transparent mx-auto" />
           </div>
 
           {/* Photo — Centered Portrait */}
@@ -74,14 +73,14 @@ export default function AboutPage() {
             >
               &ldquo;
             </span>
-            <p className="page-supporting-text relative text-xl sm:text-2xl italic text-gold-200 font-serif">
+            <p className="relative font-serif font-light italic leading-relaxed text-xl sm:text-2xl text-gold-200">
               I founded Grace &amp; Goodwill because I believe care should never
               feel like a transaction. It should feel human.
             </p>
           </div>
 
-          <div className="space-y-8 text-sm sm:text-base text-gold-100/90 leading-relaxed font-light">
-            <p>
+          <div className="space-y-8">
+            <p className="page-supporting-text">
               Throughout my life, I have been drawn to helping others, whether
               through supporting vulnerable people professionally, caring for
               family members, or standing alongside those facing difficult
@@ -90,7 +89,7 @@ export default function AboutPage() {
               respect.
             </p>
 
-            <p>
+            <p className="page-supporting-text">
               After spending years working within the National Probation
               Service, I realised that my purpose was not simply to work within
               a system, but to create something that could make a lasting
@@ -113,7 +112,7 @@ export default function AboutPage() {
               </div>
             </div>
 
-            <p>
+            <p className="page-supporting-text">
               My sister Erica has been one of my greatest teachers in life.
               Supporting and caring for her over the years gave me first-hand
               insight into how important dignity, patience, consistency, and
@@ -138,7 +137,7 @@ export default function AboutPage() {
               </div>
             </div>
 
-            <p className="page-supporting-text italic text-gold-300/90 font-serif text-center">
+            <p className="page-supporting-text italic text-gold-300/90 text-center">
               At the heart of Grace &amp; Goodwill is a simple belief: when
               people feel seen, valued, respected and genuinely cared for, lives
               change. Our mission is to build trusted relationships and leave
@@ -160,9 +159,7 @@ export default function AboutPage() {
         <div className="relative z-10 w-full max-w-6xl mx-auto">
           {/* Header */}
           <div className="mb-12 md:mb-16 text-center">
-            <h2 className="text-3xl sm:text-4xl font-serif text-gold-50 tracking-wide">
-              Our Story
-            </h2>
+            <h2 className="section-heading">Our Story</h2>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
@@ -184,22 +181,22 @@ export default function AboutPage() {
             </div>
 
             {/* Right Column: Text */}
-            <div className="space-y-6 text-base text-gold-100/80 leading-relaxed font-light">
-              <p>
+            <div className="space-y-6">
+              <p className="page-supporting-text">
                 Grace &amp; Goodwill was created because too many families are
                 left feeling overwhelmed when trying to find care they can
                 genuinely trust, while many exceptional carers struggle to find
                 ethical opportunities where they are respected, valued and
                 treated fairly.
               </p>
-              <p>
+              <p className="page-supporting-text">
                 We believe outstanding care starts with people. Skills and
                 experience matter, but kindness, trust and genuine human
                 connection matter just as much. Every family has a unique story,
                 every carer brings something valuable, and every care journey
                 deserves to be met with dignity, compassion and respect.
               </p>
-              <p>
+              <p className="page-supporting-text">
                 For me, care has never been just a profession. My sister, Erica,
                 has been one of my greatest teachers. Through supporting and
                 advocating for her, I learned that dignity, patience,
@@ -208,7 +205,7 @@ export default function AboutPage() {
                 the profound difference the right support can make, not only for
                 the person receiving care, but for the family who loves them.
               </p>
-              <p>
+              <p className="page-supporting-text">
                 Combined with my years of professionally supporting vulnerable
                 people, those experiences continue to shape every decision we
                 make at Grace &amp; Goodwill and the standards we expect from

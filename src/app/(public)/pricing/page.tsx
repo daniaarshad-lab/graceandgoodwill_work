@@ -122,8 +122,7 @@ export default function PricingPage() {
             <div className="lg:col-span-3 space-y-10">
               {/* Every Care Arrangement is Unique */}
               <div className="space-y-4">
-                <h2 className="text-lg sm:text-xl font-serif text-gold-50 tracking-wide flex items-center gap-3">
-                  <span className="w-7 h-px bg-gold-400/40" />
+                <h2 className="rule-heading">
                   Every Care Arrangement is Unique
                 </h2>
                 <p className="page-supporting-text">

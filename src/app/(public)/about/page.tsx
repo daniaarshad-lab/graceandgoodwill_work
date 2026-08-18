@@ -15,13 +15,9 @@ export default function AboutPage() {
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-navy-800/30 rounded-full blur-[100px] pointer-events-none" />
 
         <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center text-center">
-          <div className="flex items-center gap-4 mb-8">
-            <div className="h-px w-10 bg-gradient-to-r from-transparent to-gold-400/50" />
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight text-gold-100">
-              About Grace &amp; Goodwill
-            </h1>
-            <div className="h-px w-10 bg-gradient-to-l from-transparent to-gold-400/50" />
-          </div>
+          <div className="page-strapline">About Us</div>
+
+          <h1 className="main-page-heading mb-8">About Grace &amp; Goodwill</h1>
 
           <div className="space-y-5 text-base sm:text-lg text-gold-200/90 leading-relaxed max-w-3xl">
             <p className="text-sm sm:text-base text-gold-200/70">
@@ -78,7 +74,7 @@ export default function AboutPage() {
             >
               &ldquo;
             </span>
-            <p className="relative text-xl sm:text-2xl italic text-gold-200 leading-relaxed font-serif">
+            <p className="page-supporting-text relative text-xl sm:text-2xl italic text-gold-200 font-serif">
               I founded Grace &amp; Goodwill because I believe care should never
               feel like a transaction. It should feel human.
             </p>
@@ -142,7 +138,7 @@ export default function AboutPage() {
               </div>
             </div>
 
-            <p className="italic text-lg sm:text-xl text-gold-300/90 font-serif leading-relaxed text-center">
+            <p className="page-supporting-text italic text-gold-300/90 font-serif text-center">
               At the heart of Grace &amp; Goodwill is a simple belief: when
               people feel seen, valued, respected and genuinely cared for, lives
               change. Our mission is to build trusted relationships and leave
@@ -164,13 +160,9 @@ export default function AboutPage() {
         <div className="relative z-10 w-full max-w-6xl mx-auto">
           {/* Header */}
           <div className="mb-12 md:mb-16 text-center">
-            <div className="flex items-center justify-center gap-4 mb-4">
-              <div className="h-px w-12 sm:w-24 bg-gradient-to-r from-transparent to-gold-400/50" />
-              <h2 className="text-3xl sm:text-4xl font-serif text-gold-50 tracking-wide">
-                Our Story
-              </h2>
-              <div className="h-px w-12 sm:w-24 bg-gradient-to-l from-transparent to-gold-400/50" />
-            </div>
+            <h2 className="text-3xl sm:text-4xl font-serif text-gold-50 tracking-wide">
+              Our Story
+            </h2>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
@@ -241,7 +233,7 @@ export default function AboutPage() {
           <div className="h-px flex-1 bg-gradient-to-l from-gold-400/40 to-transparent" />
         </div>
 
-        <p className="text-sm text-gold-200/70 leading-relaxed max-w-2xl mx-auto text-center mb-10">
+        <p className="page-supporting-text max-w-2xl mx-auto text-center mb-10">
           Aurea&apos;s mission to bring integrity and human-first compassion into
           the live-in care sector has been recognised by major regional
           broadcasters and press.
@@ -277,7 +269,7 @@ export default function AboutPage() {
                 <h3 className="text-base font-bold text-gold-100 group-hover:text-gold-50 transition-colors mb-1.5">
                   Specialist Live-In Care Interview
                 </h3>
-                <p className="text-sm text-gold-200/60 leading-relaxed">
+                <p className="page-supporting-text">
                   Listen to Aurea&apos;s BBC Radio Newcastle interview — a candid
                   conversation about how Grace &amp; Goodwill is raising the bar
                   in live-in care through integrity and genuine human connection.
@@ -346,7 +338,7 @@ export default function AboutPage() {
                 <h3 className="text-base font-bold text-gold-100 group-hover:text-gold-50 transition-colors mb-1.5">
                   Aurea Launches Compassionate Care Company
                 </h3>
-                <p className="text-sm text-gold-200/60 leading-relaxed">
+                <p className="page-supporting-text">
                   Read the NE BIC customer story documenting how Aurea launched
                   Grace &amp; Goodwill — shaped by lived experience and a
                   commitment to raising standards in client-centred live-in care.
@@ -377,7 +369,7 @@ export default function AboutPage() {
 
         <div className="mt-8 max-w-5xl mx-auto rounded-xl border border-gold-300/8 bg-navy-900/30 px-6 py-4 flex flex-col sm:flex-row items-center gap-3 sm:gap-5">
           <Mic className="w-7 h-7 text-gold-400/50 flex-shrink-0" />
-          <p className="text-sm text-gold-200/55 text-center sm:text-left leading-relaxed">
+          <p className="page-supporting-text text-gold-200/55 text-center sm:text-left">
             <span className="text-gold-200/80 font-semibold">Recognised expertise.</span>{" "}
             Aurea&apos;s story has been shared across regional broadcasting and
             business press as an example of purpose-led entrepreneurship in the

@@ -7,6 +7,7 @@
     opacity: 0;
     transform: translateY(5px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -65,40 +66,25 @@
     --weight-semibold: 600;
     --weight-bold: 700;
 
-    --text-h1: var(--weight-bold) var(--size-h1)/var(--lh-h1)
-      var(--font-family-poppins);
-    --text-h2: var(--weight-bold) var(--size-h2)/var(--lh-h2)
-      var(--font-family-poppins);
-    --text-h3: var(--weight-bold) var(--size-h3)/var(--lh-h3)
-      var(--font-family-poppins);
-    --text-h4: var(--weight-bold) var(--size-h4)/var(--lh-h4)
-      var(--font-family-poppins);
+    --text-h1: var(--weight-bold) var(--size-h1)/var(--lh-h1) var(--font-family-poppins);
+    --text-h2: var(--weight-bold) var(--size-h2)/var(--lh-h2) var(--font-family-poppins);
+    --text-h3: var(--weight-bold) var(--size-h3)/var(--lh-h3) var(--font-family-poppins);
+    --text-h4: var(--weight-bold) var(--size-h4)/var(--lh-h4) var(--font-family-poppins);
 
-    --text-body-base-regular: var(--weight-regular)
-      var(--size-body-base)/var(--lh-body-base) var(--font-family-poppins);
-    --text-body-base-medium: var(--weight-medium)
-      var(--size-body-base)/var(--lh-body-base) var(--font-family-poppins);
+    --text-body-base-regular: var(--weight-regular) var(--size-body-base)/var(--lh-body-base) var(--font-family-poppins);
+    --text-body-base-medium: var(--weight-medium) var(--size-body-base)/var(--lh-body-base) var(--font-family-poppins);
 
-    --text-body-small-regular: var(--weight-regular)
-      var(--size-body-small)/var(--lh-body-small) var(--font-family-poppins);
-    --text-body-small-medium: var(--weight-medium)
-      var(--size-body-small)/var(--lh-body-small) var(--font-family-poppins);
+    --text-body-small-regular: var(--weight-regular) var(--size-body-small)/var(--lh-body-small) var(--font-family-poppins);
+    --text-body-small-medium: var(--weight-medium) var(--size-body-small)/var(--lh-body-small) var(--font-family-poppins);
 
-    --text-body-caption-regular: var(--weight-regular)
-      var(--size-caption)/var(--lh-caption) var(--font-family-poppins);
+    --text-body-caption-regular: var(--weight-regular) var(--size-caption)/var(--lh-caption) var(--font-family-poppins);
 
-    --text-button-default: var(--weight-semibold)
-      var(--size-button-default)/var(--lh-button-default)
-      var(--font-family-poppins);
-    --text-button-small: var(--weight-semibold)
-      var(--size-button-small)/var(--lh-button-small) var(--font-family-poppins);
+    --text-button-default: var(--weight-semibold) var(--size-button-default)/var(--lh-button-default) var(--font-family-poppins);
+    --text-button-small: var(--weight-semibold) var(--size-button-small)/var(--lh-button-small) var(--font-family-poppins);
 
-    --text-form-label: var(--weight-medium)
-      var(--size-form-label)/var(--lh-form-label) var(--font-family-poppins);
-    --text-form-input: var(--weight-regular)
-      var(--size-form-input)/var(--lh-form-input) var(--font-family-poppins);
-    --text-form-help: var(--weight-regular)
-      var(--size-form-help)/var(--lh-form-help) var(--font-family-poppins);
+    --text-form-label: var(--weight-medium) var(--size-form-label)/var(--lh-form-label) var(--font-family-poppins);
+    --text-form-input: var(--weight-regular) var(--size-form-input)/var(--lh-form-input) var(--font-family-poppins);
+    --text-form-help: var(--weight-regular) var(--size-form-help)/var(--lh-form-help) var(--font-family-poppins);
   }
 
   html {
@@ -107,7 +93,8 @@
 
   @media (max-width: 639px) {
     html {
-      font-size: 87.5%; /* Reduces base size from 16px to 14px on mobile devices (< 640px) to scale down rem-based typography by one step */
+      font-size: 87.5%;
+      /* Reduces base size from 16px to 14px on mobile devices (< 640px) to scale down rem-based typography by one step */
     }
   }
 
@@ -159,6 +146,35 @@
   h6 {
     color: var(--color-gold-muted);
     font-weight: 700;
+  }
+}
+
+@layer components {
+  .main-page-heading {
+    @apply text-2xl sm:text-4xl lg:text-[2.75rem] font-serif font-semibold leading-[1.2] text-gold-50 tracking-tight;
+  }
+
+  .page-supporting-text {
+    @apply text-sm sm:text-[15px] text-gold-200/75 leading-relaxed font-light font-serif;
+  }
+
+  .page-strapline {
+    @apply flex items-center justify-center gap-3 sm:gap-4 mb-3 w-full text-center;
+    @apply text-[10px] sm:text-xs font-semibold uppercase tracking-[0.25em] text-gold-400/70;
+  }
+
+  .page-strapline::before,
+  .page-strapline::after {
+    content: "";
+    @apply block h-px w-8 sm:w-12 shrink-0;
+  }
+
+  .page-strapline::before {
+    @apply bg-gradient-to-r from-transparent to-gold-400/40;
+  }
+
+  .page-strapline::after {
+    @apply bg-gradient-to-l from-transparent to-gold-400/40;
   }
 }
 
@@ -230,16 +246,20 @@
     scrollbar-width: thin;
     scrollbar-color: rgba(160, 128, 84, 0.18) transparent;
   }
+
   .custom-scrollbar::-webkit-scrollbar {
     width: 5px;
   }
+
   .custom-scrollbar::-webkit-scrollbar-track {
     background: transparent;
   }
+
   .custom-scrollbar::-webkit-scrollbar-thumb {
     background: rgba(212, 175, 122, 0.15);
     border-radius: 9999px;
   }
+
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: rgba(212, 175, 122, 0.3);
   }
@@ -276,28 +296,20 @@
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(
-      160deg,
+    linear-gradient(160deg,
       rgba(250, 243, 228, 0.38) 0%,
       rgba(252, 247, 236, 0.28) 45%,
-      rgba(245, 236, 216, 0.34) 100%
-    ),
-    radial-gradient(
-      ellipse 120% 110% at 50% 50%,
+      rgba(245, 236, 216, 0.34) 100%),
+    radial-gradient(ellipse 120% 110% at 50% 50%,
       transparent 30%,
       rgba(18, 12, 6, 0.28) 70%,
-      rgba(10, 8, 4, 0.52) 100%
-    ),
-    radial-gradient(
-      ellipse 70% 60% at 50% 50%,
+      rgba(10, 8, 4, 0.52) 100%),
+    radial-gradient(ellipse 70% 60% at 50% 50%,
       rgba(255, 248, 228, 0.22) 0%,
-      transparent 65%
-    ),
-    radial-gradient(
-      ellipse at 15% 80%,
+      transparent 65%),
+    radial-gradient(ellipse at 15% 80%,
       rgba(212, 175, 55, 0.07) 0%,
-      transparent 50%
-    );
+      transparent 50%);
 }
 
 .asl-wrapper {
@@ -358,19 +370,15 @@
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(
-      to right,
+    linear-gradient(to right,
       rgba(5, 8, 20, 0.25) 0%,
       rgba(5, 8, 20, 0.1) 60%,
-      rgba(9, 14, 32, 0.45) 100%
-    ),
-    linear-gradient(
-      to bottom,
+      rgba(9, 14, 32, 0.45) 100%),
+    linear-gradient(to bottom,
       rgba(5, 8, 20, 0.3) 0%,
       transparent 30%,
       transparent 70%,
-      rgba(5, 8, 20, 0.4) 100%
-    );
+      rgba(5, 8, 20, 0.4) 100%);
 }
 
 .asl-left::after {
@@ -380,13 +388,11 @@
   right: 0;
   height: 84%;
   width: 1px;
-  background: linear-gradient(
-    to bottom,
-    transparent 0%,
-    rgba(160, 128, 84, 0.3) 25%,
-    rgba(160, 128, 84, 0.3) 75%,
-    transparent 100%
-  );
+  background: linear-gradient(to bottom,
+      transparent 0%,
+      rgba(160, 128, 84, 0.3) 25%,
+      rgba(160, 128, 84, 0.3) 75%,
+      transparent 100%);
   z-index: 2;
 }
 
@@ -634,12 +640,14 @@
 
 /* ── Pulse and Ripple Animations for Home Page Round Images ──────────────── */
 @keyframes gold-ring-pulse {
+
   0%,
   100% {
     transform: scale(1);
     opacity: 0.15;
     box-shadow: 0 0 15px rgba(212, 160, 71, 0.05);
   }
+
   50% {
     transform: scale(1.035);
     opacity: 0.65;
@@ -648,11 +656,13 @@
 }
 
 @keyframes central-image-pulse {
+
   0%,
   100% {
     transform: scale(1);
     box-shadow: 0 10px 40px rgba(212, 175, 55, 0.15);
   }
+
   50% {
     transform: scale(1.025);
     box-shadow:
@@ -687,9 +697,11 @@
     transform: scale(0.92);
     opacity: 0.6;
   }
+
   50% {
     transform: scale(1.05);
   }
+
   100% {
     transform: scale(1);
     opacity: 1;
@@ -700,9 +712,11 @@
   0% {
     opacity: 0.04;
   }
+
   50% {
     opacity: 0.1;
   }
+
   100% {
     opacity: 0.04;
   }

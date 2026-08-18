@@ -123,15 +123,13 @@ export default function TrainingPage() {
       <div className="container-wrapper">
         {/* Header Section */}
         <section className="mb-20 text-center">
-          <div className="flex items-center justify-center gap-4 mb-8">
-            <div className="h-px w-10 bg-gradient-to-r from-transparent to-gold-400/50" />
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight text-gold-100">
-              Premium Training & Support for Carers
-            </h1>
-            <div className="h-px w-10 bg-gradient-to-l from-transparent to-gold-400/50" />
-          </div>
+          <div className="page-strapline">Training</div>
 
-          <p className="mx-auto mt-6 max-w-2xl text-sm sm:text-base leading-relaxed text-gold-200/80">
+          <h1 className="main-page-heading">
+            Premium Training &amp; Support for Carers
+          </h1>
+
+          <p className="page-supporting-text mx-auto mt-6 max-w-2xl">
             A flexible learning and compliance system built for professional
             care organizations. Empower your team with mandatory courses,
             interactive e-learning, and certificate verification.
@@ -151,7 +149,7 @@ export default function TrainingPage() {
                 <h2 className="text-xl font-semibold text-gold-50 tracking-wide">
                   {m.title}
                 </h2>
-                <p className="mt-3 text-sm leading-relaxed text-gold-200/70">
+                <p className="page-supporting-text mt-3">
                   {m.description}
                 </p>
 
@@ -184,7 +182,7 @@ export default function TrainingPage() {
           <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide">
             Want to customize training paths?
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-gold-200/80 sm:text-base">
+          <p className="page-supporting-text mx-auto mt-4 max-w-xl">
             Configure learning milestones, customized compliance dashboards, and
             group discount structures. Contact our learning advisors to begin.
           </p>

@@ -44,7 +44,7 @@ export default function HomePage() {
         </a>
 
         <div className="max-w-2xl lg:flex-1 xl:flex-none space-y-6 -mt-4 lg:mt-0">
-          <h1 className="font-serif font-medium leading-[1.2] tracking-tight drop-shadow-md">
+          <h1 className="main-page-heading drop-shadow-md">
             <span className="text-3xl sm:text-4xl lg:text-[2.5rem] text-white">
               Live-in Care Matching
             </span>
@@ -163,7 +163,7 @@ export default function HomePage() {
             <span className="text-2xl sm:text-3xl font-serif text-gold-300/70 leading-none h-3 sm:h-4">
               “
             </span>
-            <p className="text-[10px] sm:text-[11px] text-gold-100/80 leading-relaxed">
+            <p className="page-supporting-text text-[10px] sm:text-[11px]">
               Grace & Goodwill has been a true blessing, giving us total peace
               of mind with their reliable, highly compassionate live-in care
               support right at home.
@@ -184,7 +184,7 @@ export default function HomePage() {
             </h2>
             <div className="h-px w-24 bg-gradient-to-r from-transparent via-gold-400/50 to-transparent mx-auto" />
           </div>
-          <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-gold-200/80 sm:text-base">
+          <p className="page-supporting-text mx-auto mt-4 max-w-xl">
             Our mission to bring integrity, continuity, and human-first
             compassion into the live-in care sector has been recognised by
             regional broadcasters and media outlets.
@@ -219,7 +219,7 @@ export default function HomePage() {
                 <h3 className="text-lg font-bold text-gold-100 group-hover:text-gold-50 transition-colors drop-shadow-md leading-tight">
                   Gateshead Care Firm Grows From Lived Experience
                 </h3>
-                <p className="text-xs text-gold-100/80 leading-relaxed drop-shadow-md">
+                <p className="page-supporting-text drop-shadow-md">
                   Read how Grace & Goodwill expands its impact by drawing on
                   personal, lived experiences to introduce families to
                   high-quality, compassionate independent live-in carers.
@@ -267,7 +267,7 @@ export default function HomePage() {
                 <h3 className="text-lg font-bold text-gold-100 group-hover:text-gold-50 transition-colors drop-shadow-md leading-tight">
                   Redefining Care Standards
                 </h3>
-                <p className="text-xs text-gold-100/80 leading-relaxed drop-shadow-md">
+                <p className="page-supporting-text drop-shadow-md">
                   Review the media publication documenting the launch of Grace &
                   Goodwill&apos;s client-centric alignment framework and our
                   dedication to continuity of support.

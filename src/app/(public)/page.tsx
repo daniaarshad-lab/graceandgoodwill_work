@@ -2,6 +2,7 @@ import { Newspaper, ExternalLink, HandHeart, ChevronRight } from "lucide-react";
 import happySeniorCouple from "@/assets/open/happy_senior_couple.png";
 import bbcImage2 from "@/assets/open/bbc-image2.jpg";
 import bbcImage3 from "@/assets/open/bbc-image3.jpg";
+import websiteBanner from "@/assets/open/Website Banner.png";
 import Button from "@/components/Button";
 import dynamic from "next/dynamic";
 import Link from "next/link";
@@ -43,13 +44,9 @@ export default function HomePage() {
           </div>
         </a>
 
-        <div className="max-w-2xl lg:flex-1 xl:flex-none space-y-6 -mt-4 lg:mt-0">
-          <h1 className="main-page-heading drop-shadow-md">
-            Live-in Care Matching
-            <br />
-            <span className="inline-block mt-2 text-2xl font-light text-gold-300">
-              Across The UK
-            </span>
+        <div className="max-w-4xl lg:flex-1 xl:flex-none space-y-6 -mt-4 lg:mt-0">
+          <h1 className="main-page-heading drop-shadow-md ombre-text">
+            Live-in Care Matching Across The UK
           </h1>
 
           <div className="max-w-xl space-y-4">
@@ -76,9 +73,9 @@ export default function HomePage() {
             </p>
           </div>
 
-          <h2 className="rule-heading pt-2 pb-2">
+          <p className="text-base sm:text-lg text-gold-100/90 font-medium pt-2 pb-2">
             Choose the option below that best matches your current needs.
-          </h2>
+          </p>
 
           <div className="flex flex-col xl:flex-row items-start xl:items-center gap-4 flex-wrap xl:flex-nowrap w-full max-w-[100%] overflow-visible">
             <Link
@@ -171,9 +168,46 @@ export default function HomePage() {
             </p>
           </div>
         </div>
+
+        {/* <div className="relative flex items-center justify-center mt-0 sm:mt-8 lg:mt-0 w-full lg:flex-1 xl:flex-none lg:max-w-xl h-[380px] sm:h-[450px] overflow-visible">
+
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="absolute w-[260px] sm:w-[290px] lg:w-[320px] h-[260px] sm:h-[290px] lg:h-[320px] rounded-full border-2 border-gold-400 animate-ring-pulse-1" />
+            <div className="absolute w-[300px] sm:w-[330px] lg:w-[360px] h-[300px] sm:h-[330px] lg:h-[360px] rounded-full border-2 border-gold-400 animate-ring-pulse-2" />
+            <div className="absolute w-[340px] sm:w-[370px] lg:w-[400px] h-[340px] sm:h-[370px] lg:h-[400px] rounded-full border-2 border-gold-400 animate-ring-pulse-3" />
+            <div className="absolute w-[380px] sm:w-[410px] lg:w-[440px] max-w-[95vw] lg:max-w-none h-[380px] sm:h-[410px] lg:h-[440px] max-h-[95vw] lg:max-h-none rounded-full border-2 border-gold-400 animate-ring-pulse-4" />
+          </div>
+
+
+          <div className="relative w-56 h-56 sm:w-64 sm:h-64 lg:w-72 lg:h-72 rounded-full border-4 border-gold-400 bg-navy-950 shadow-elegant overflow-hidden transition-all duration-500 hover:scale-[1.02] animate-image-pulse">
+            <Image
+              src={happySeniorCouple}
+              alt="Reassured senior couple supported by Grace & Goodwill live in care"
+              className="w-full h-full object-cover scale-[1.05] hover:scale-[1.10] transition-transform duration-700 object-center"
+              placeholder="blur"
+            />
+
+            <div className="absolute inset-0 bg-gradient-to-t from-navy-950/20 via-transparent to-transparent pointer-events-none" />
+          </div>
+
+
+          <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 xl:-bottom-2 xl:left-auto xl:-right-12 xl:translate-x-0 bg-navy-900/90 border border-gold-muted/30 shadow-elegant rounded-2xl p-3 sm:p-4 w-[260px] max-w-[90vw] sm:w-auto sm:max-w-[280px] backdrop-blur-md transition-all duration-300 hover:scale-[1.02] flex flex-col gap-1 z-10">
+            <span className="text-2xl sm:text-3xl font-serif text-gold-300/70 leading-none h-3 sm:h-4">
+              “
+            </span>
+            <p className="page-supporting-text text-[10px] sm:text-[11px]">
+              Grace & Goodwill has been a true blessing, giving us total peace
+              of mind with their reliable, highly compassionate live-in care
+              support right at home.
+            </p>
+            <p className="text-[9px] sm:text-[10px] font-semibold text-gold-400 mt-1 self-end">
+              — The Harrison Family
+            </p>
+          </div>
+        </div> */}
       </section>
 
-      {/* Premium Trust & Media Section */}
+
       <section className="container-wrapper border-t border-gold-300/10 mt-24 pt-10">
         <div className="text-center max-w-3xl mx-auto space-y-3 mb-16">
           <div className="text-center mb-10 space-y-5">

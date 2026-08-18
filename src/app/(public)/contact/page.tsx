@@ -16,11 +16,13 @@ export default function ContactPage() {
       <div className="container-wrapper max-w-4xl mx-auto space-y-12">
         {/* Header Heading & Description */}
         <div className="text-center space-y-4">
-          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight text-gold-100">
+          <div className="page-strapline">Contact</div>
+
+          <h1 className="main-page-heading">
             Trusted Live In Care Support Across The UK
           </h1>
 
-          <p className="text-gold-200/80 leading-relaxed text-base mx-auto mt-6 max-w-2xl">
+          <p className="page-supporting-text mx-auto mt-6 max-w-2xl">
             We help families find compassionate, dependable live in care with a
             personal and supportive approach. Welcoming a carer into your home
             is a major family milestone, and our dedicated team is here to guide
@@ -33,7 +35,7 @@ export default function ContactPage() {
         <div className="rounded-[2rem] border border-gold-muted/20 bg-navy-900/50 p-6 sm:p-8 lg:p-10 shadow-elegant backdrop-blur-xl space-y-6">
           <div className="border-b border-gold-300/10 pb-4">
             <h2 className="text-xl font-bold text-gold-200">Contact Us</h2>
-            <p className="text-xs text-gold-100/60 mt-1 leading-relaxed">
+            <p className="page-supporting-text text-gold-100/60 mt-1">
               Have a question or need assistance? Send us a message and our team
               will get back to you as soon as possible.
             </p>
@@ -51,7 +53,7 @@ export default function ContactPage() {
               <h4 className="text-sm font-semibold text-gold-200">
                 Compassionate Matchmaking
               </h4>
-              <p className="text-xs text-gold-100/60 leading-relaxed mt-1">
+              <p className="page-supporting-text text-gold-100/60 mt-1">
                 We carefully select and match carers based on personality,
                 skills, and professional care experience.
               </p>
@@ -66,7 +68,7 @@ export default function ContactPage() {
               <h4 className="text-sm font-semibold text-gold-200">
                 Strict Vetting Standards
               </h4>
-              <p className="text-xs text-gold-100/60 leading-relaxed mt-1">
+              <p className="page-supporting-text text-gold-100/60 mt-1">
                 All our professional carers undergo rigorous vetting and
                 comprehensive background checks.
               </p>

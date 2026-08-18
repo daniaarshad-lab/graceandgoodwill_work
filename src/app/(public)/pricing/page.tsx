@@ -40,14 +40,10 @@ export default function PricingPage() {
         <div className="container-wrapper relative z-10 max-w-5xl mx-auto">
           {/* Heading */}
           <div className="text-center mb-10 sm:mb-12">
-            <div className="flex items-center justify-center gap-4 mb-3">
-              <div className="h-px w-8 sm:w-12 bg-gradient-to-r from-transparent to-gold-400/40" />
-              <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.25em] text-gold-400/70">
-                Pricing
-              </span>
-              <div className="h-px w-8 sm:w-12 bg-gradient-to-l from-transparent to-gold-400/40" />
+            <div className="page-strapline">
+              Pricing
             </div>
-            <h1 className="text-2xl sm:text-4xl lg:text-[2.75rem] font-serif font-medium leading-[1.2] text-gold-50 tracking-tight">
+            <h1 className="main-page-heading">
               Clear, Fair Pricing with No Hidden Costs
             </h1>
           </div>
@@ -67,12 +63,12 @@ export default function PricingPage() {
                 </h2>
 
                 <div className="max-w-2xl mx-auto space-y-3">
-                  <p className="text-sm sm:text-[15px] text-gold-200/75 leading-relaxed font-light">
+                  <p className="page-supporting-text">
                     Sometimes it&rsquo;s easier to speak with someone than
                     complete an online form, especially when you&rsquo;re
                     looking for support during a difficult or uncertain time.
                   </p>
-                  <p className="text-sm sm:text-[15px] text-gold-200/75 leading-relaxed font-light">
+                  <p className="page-supporting-text">
                     Our experienced Family Support Advisors are here to answer
                     your questions, explain how our introduction service works
                     and help you understand the next steps.
@@ -101,7 +97,7 @@ export default function PricingPage() {
                   </Button>
                 </div>
 
-                <p className="text-xs sm:text-sm text-gold-200/50 leading-relaxed font-light pt-1">
+                <p className="page-supporting-text pt-1">
                   Prefer to send an enquiry instead? Simply complete the form
                   below and a member of our Support Team will get back to you as
                   soon as possible.
@@ -126,14 +122,13 @@ export default function PricingPage() {
             <div className="lg:col-span-3 space-y-10">
               {/* Every Care Arrangement is Unique */}
               <div className="space-y-4">
-                <h2 className="text-lg sm:text-xl font-serif text-gold-50 tracking-wide flex items-center gap-3">
-                  <span className="w-7 h-px bg-gold-400/40" />
+                <h2 className="rule-heading">
                   Every Care Arrangement is Unique
                 </h2>
-                <p className="text-sm sm:text-[15px] text-gold-200/75 leading-[1.8] font-light">
+                <p className="page-supporting-text">
                   Live-in care is never a one-size-fits-all service.
                 </p>
-                <p className="text-sm sm:text-[15px] text-gold-200/75 leading-[1.8] font-light">
+                <p className="page-supporting-text">
                   Before providing a quotation, we take the time to understand
                   your individual circumstances, daily routine, support
                   requirements and preferences. This allows us to introduce you
@@ -202,17 +197,17 @@ export default function PricingPage() {
                     Request Your Personalised Quote
                   </h2>
                   <div className="space-y-1.5 max-w-2xl">
-                    <p className="text-xs sm:text-sm text-gold-200/60 leading-relaxed font-light">
+                    <p className="page-supporting-text">
                       Finding the right live-in carer starts with understanding
                       your individual needs.
                     </p>
-                    <p className="text-xs sm:text-sm text-gold-200/60 leading-relaxed font-light">
+                    <p className="page-supporting-text">
                       Complete the short enquiry form below and a member of our
                       Support Team will contact you to discuss your
                       circumstances, answer any questions and provide a
                       personalised quotation.
                     </p>
-                    <p className="text-xs sm:text-sm text-gold-200/60 leading-relaxed font-light">
+                    <p className="page-supporting-text">
                       There is absolutely no obligation to proceed.
                     </p>
                   </div>
@@ -245,7 +240,7 @@ export default function PricingPage() {
           <h2 className="text-xl sm:text-2xl lg:text-3xl font-serif text-gold-50 tracking-wide mb-3">
             Stay Connected
           </h2>
-          <p className="text-sm leading-relaxed text-gold-200/80 sm:text-base mb-8">
+          <p className="page-supporting-text mb-8">
             Receive our latest care articles, family resources, information on specific conditions, events and updates from Grace & Goodwill.
           </p>
 

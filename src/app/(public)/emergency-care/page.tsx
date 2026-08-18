@@ -26,16 +26,11 @@ export default function EmergencyCarePage() {
         <div className="container-wrapper">
           <div className="max-w-4xl mx-auto text-center space-y-5">
             {/* Heading */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
-              <div className="hidden sm:block h-px w-12 lg:w-16 bg-gradient-to-r from-transparent to-gold-400/50" />
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium text-gold-50 leading-[1.15] tracking-tight text-center max-w-2xl">
-                Urgent Live-in Care Matching{" "}
-                <span className="text-gold-300 ml-1.5 font-light">
-                  When You Need It Most
-                </span>
-              </h1>
-              <div className="hidden sm:block h-px w-12 lg:w-16 bg-gradient-to-l from-transparent to-gold-400/50" />
-            </div>
+            <div className="page-strapline">Emergency Care</div>
+
+            <h1 className="main-page-heading">
+              Urgent Live-in Care Matching <span className="text-gold-300 ml-1.5 font-light">When You Need It Most</span>
+            </h1>
           </div>
         </div>
       </section>
@@ -58,7 +53,7 @@ export default function EmergencyCarePage() {
                     <h2 className="text-xl sm:text-2xl font-serif text-gold-50">
                       Urgent Care Matching Request
                     </h2>
-                    <p className="text-sm text-gold-200/60 leading-relaxed font-light max-w-3xl">
+                    <p className="page-supporting-text max-w-3xl">
                       Complete this form and our Urgent Matching Team will
                       review your requirements as quickly as possible. We will
                       begin identifying suitable independent self-employed
@@ -140,7 +135,7 @@ export default function EmergencyCarePage() {
                       <p className="text-xs font-semibold text-gold-100/80">
                         Urgent Matching Team
                       </p>
-                      <p className="text-xs text-gold-100/50 leading-relaxed mt-0.5 font-light">
+                      <p className="page-supporting-text text-gold-100/50 mt-0.5">
                         Our Urgent Matching Team reviews urgent enquiries,
                         identifies suitable independent self-employed carers and
                         facilitates introductions as quickly as possible.
@@ -156,7 +151,7 @@ export default function EmergencyCarePage() {
                       <p className="text-xs font-semibold text-gold-100/80">
                         24–48 Hour Matching
                       </p>
-                      <p className="text-xs text-gold-100/50 leading-relaxed mt-0.5 font-light">
+                      <p className="page-supporting-text text-gold-100/50 mt-0.5">
                         Where suitable carers are available, we aim to introduce
                         independent self-employed live-in carers within 24 to 48
                         hours across the UK. Times may vary depending on

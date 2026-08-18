@@ -80,12 +80,8 @@ function StaticSiteHeader() {
               >
                 GRACE & GOODWILL
               </span>
-              <div className="flex items-center gap-2 sm:gap-3 mt-0.5">
-                <div className="h-[1px] w-4 sm:w-8 lg:w-12 bg-gradient-to-r from-transparent to-[#c7ae85]/70"></div>
-                <span className="text-[9px] sm:text-[10px] font-medium text-[#c7ae85] font-sans tracking-[0.15em] sm:tracking-[0.25em] uppercase whitespace-nowrap">
-                  Care Defined By Integrity
-                </span>
-                <div className="h-[1px] w-4 sm:w-8 lg:w-12 bg-gradient-to-l from-transparent to-[#c7ae85]/70"></div>
+              <div className="tagline">
+                Care Defined By Integrity
               </div>
             </div>
           </Link>

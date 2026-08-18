@@ -63,23 +63,12 @@ export default function HowItWorksPage() {
 
       <div className="mx-auto max-w-5xl">
         <section className="mb-20 text-center">
-          {/* <p className="inline-block rounded-full border border-gold-500/25 bg-gold-500/5 px-4 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-gold-300">
-            Our Process
-          </p>
-          <h1 className="mt-6 text-4xl font-light tracking-tight text-gold-50 sm:text-5xl md:text-6xl">
-            Simple to begin.{" "}
-            <span className="font-semibold text-gold-DEFAULT">
-              Supportive throughout.
-            </span>
-          </h1> */}
-          <div className="flex items-center justify-center gap-4 mb-8">
-            <div className="h-px w-10 bg-gradient-to-r from-transparent to-gold-400/50" />
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight text-gold-100">
-              Simple to begin,supportive throughout
-            </h1>
-            <div className="h-px w-10 bg-gradient-to-l from-transparent text-gold-100" />
-          </div>
-          <p className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-gold-200/80 sm:text-base">
+          <div className="page-strapline">How It Works</div>
+
+          <h1 className="main-page-heading">
+            Simple to begin, supportive throughout
+          </h1>
+          <p className="page-supporting-text mx-auto mt-6 max-w-2xl">
             Make finding the right self-employed live-in carer simple. Our
             introduction platform gives you the freedom to choose the carer that
             best suits your needs, personality and preferences, at your own
@@ -124,7 +113,7 @@ export default function HowItWorksPage() {
                             </h2>
                           </div>
                         </div>
-                        <p className="text-sm leading-relaxed text-gold-200/70 sm:text-base">
+                        <p className="page-supporting-text">
                           {step.description}
                         </p>
                       </div>
@@ -147,7 +136,7 @@ export default function HowItWorksPage() {
           <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide">
             Ready to find trusted support?
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-gold-200/80 sm:text-base">
+          <p className="page-supporting-text mx-auto mt-4 max-w-xl">
             We help families find trusted live-in carers through a carefully considered matching process, giving you the confidence to choose the right person for your needs.
           </p>
           <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">

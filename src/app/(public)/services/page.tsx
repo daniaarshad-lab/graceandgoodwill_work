@@ -88,15 +88,13 @@ export default function ServicesPage() {
       <div className="container-wrapper">
         {/* Header Section */}
         <section className="mb-20 text-center">
-          <div className="flex items-center justify-center gap-4 mb-8">
-            <div className="h-px w-10 bg-gradient-to-r from-transparent to-gold-400/50" />
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight text-gold-100">
-              Support designed around real lives
-            </h1>
-            <div className="h-px w-10 bg-gradient-to-l from-transparent to-gold-400/50" />
-          </div>
+          <div className="page-strapline">Services</div>
 
-          <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-gold-200/80">
+          <h1 className="main-page-heading">
+            Support designed around real lives
+          </h1>
+
+          <p className="page-supporting-text mx-auto mt-6 max-w-2xl">
             Grace & Goodwill is an introductory platform that connects families
             with carefully vetted, independent, self-employed live-in carers
             across the UK. Grace & Goodwill does not directly provide or manage
@@ -117,7 +115,7 @@ export default function ServicesPage() {
               <h2 className="text-xl font-semibold text-gold-50 tracking-wide">
                 {service.title}
               </h2>
-              <p className="mt-4 text-sm leading-relaxed text-gold-200/70">
+              <p className="page-supporting-text mt-4">
                 {service.description}
               </p>
             </div>
@@ -145,7 +143,7 @@ export default function ServicesPage() {
                     </h2>
                   </div>
                 </div>
-                <p className="text-sm leading-relaxed text-gold-200/75 sm:text-base">
+                <p className="page-supporting-text">
                   If your chosen self-employed live-in carer becomes
                   unavailable, Grace & Goodwill will make every reasonable
                   effort to introduce suitable replacement carers from our
@@ -172,7 +170,7 @@ export default function ServicesPage() {
           <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide">
             Let&apos;s discuss how we can support you.
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-gold-200/80 sm:text-base">
+          <p className="page-supporting-text mx-auto mt-4 max-w-xl">
             Speak with our care matching specialists to discuss your
             requirements. We’ll help you find and introduce suitable
             independent, self-employed carers based on your individual needs and

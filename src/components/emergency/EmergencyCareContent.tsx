@@ -27,15 +27,15 @@ export function EmergencyCareContent({
         <div className="container-wrapper">
           <div className="max-w-4xl mx-auto space-y-5">
             {/* Heading */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
-              <div className="hidden sm:block h-px w-12 lg:w-16 bg-gradient-to-r from-transparent to-gold-400/50" />
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium text-gold-50 leading-[1.15] tracking-tight text-center max-w-2xl">
+            <div className="text-center">
+              <div className="page-strapline">Emergency Care</div>
+
+              <h1 className="main-page-heading">
                 Urgent Live-in Care Matching{" "}
                 <span className="text-gold-300 ml-1.5 font-light">
                   When You Need It Most
                 </span>
               </h1>
-              <div className="hidden sm:block h-px w-12 lg:w-16 bg-gradient-to-l from-transparent to-gold-400/50" />
             </div>
           </div>
         </div>

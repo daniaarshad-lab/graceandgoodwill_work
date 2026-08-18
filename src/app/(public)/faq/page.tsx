@@ -16,22 +16,11 @@ export default function FAQPage() {
 
       <div className="mx-auto max-w-4xl">
         <section className="mb-16 text-center">
-          {/* <p className="inline-block rounded-full border border-gold-500/25 bg-gold-500/5 px-4 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-gold-300">
-            Support Desk
-          </p> */}
+          <div className="page-strapline">FAQ</div>
 
-          <div className="flex items-center justify-center gap-4 mb-8">
-            <div className="h-px w-10 bg-gradient-to-r from-transparent to-gold-400/50" />
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight text-gold-100">
-              Frequently Asked Questions
-            </h1>
-            <div className="h-px w-10 bg-gradient-to-l from-transparent to-gold-400/50" />
-          </div>
+          <h1 className="main-page-heading">Frequently Asked Questions</h1>
 
-          {/* <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight  text-gold-darker">
-            Frequently Asked Questions
-          </h1> */}
-          <p className="mx-auto mt-6 max-w-xl text-sm leading-relaxed text-gold-200/80 sm:text-base">
+          <p className="page-supporting-text mx-auto mt-6 max-w-xl">
             Find answers to common questions about matching and how we introduce
             trustworthy self-employed live-in support.
           </p>

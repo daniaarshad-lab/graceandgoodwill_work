@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Poppins, Playfair_Display, Jost } from "next/font/google";
+import { Poppins, Playfair_Display, Jost, Montserrat } from "next/font/google";
 import ToastProvider from "@/components/Providers/ToastProvider";
 import CookieConsentBanner from "@/components/CookieConsentBanner";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
@@ -30,6 +30,14 @@ const jost = Jost({
   display: "swap",
 });
 
+/* Logo strapline only, matching the logo designer artwork. */
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["300"],
+  variable: "--font-family-montserrat",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://graceandgoodwill.co.uk"),
   title: "Grace & Goodwill",
@@ -55,7 +63,7 @@ export default function RootLayout({
       <head suppressHydrationWarning />
       <body
         suppressHydrationWarning
-        className={`bg-navy-950 text-gold-100 flex flex-col min-h-screen font-sans ${poppins.variable} ${playfairDisplay.variable} ${jost.variable}`}
+        className={`bg-navy-950 text-gold-100 flex flex-col min-h-screen font-sans ${poppins.variable} ${playfairDisplay.variable} ${jost.variable} ${montserrat.variable}`}
       >
         <ReduxProvider>
           <AuthProvider>

@@ -160,7 +160,8 @@
 
   .page-strapline {
     @apply flex items-center justify-center gap-3 sm:gap-4 mb-3 w-full text-center;
-    @apply text-[10px] sm:text-xs font-semibold uppercase tracking-[0.25em] text-gold-400/70;
+    @apply text-[10px] sm:text-xs font-semibold uppercase tracking-[0.25em];
+    color: #d49f47b3;
   }
 
   .page-strapline::before,
@@ -170,11 +171,11 @@
   }
 
   .page-strapline::before {
-    @apply bg-gradient-to-r from-transparent to-gold-400/40;
+    background: linear-gradient(to right, transparent, #d49f47b3);
   }
 
   .page-strapline::after {
-    @apply bg-gradient-to-l from-transparent to-gold-400/40;
+    background: linear-gradient(to left, transparent, #d49f47b3);
   }
 
   /* Section heading sitting between the main page heading and body copy.
@@ -850,12 +851,12 @@
   justify-content: center;
   gap: 12px;
   
-  font-family: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
-  font-size: 10px;
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+  font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.25em;
   text-transform: uppercase;
-  color: #c7ae85;
+  color: #d49f47b3; /* A richer, more visible gold */
   white-space: nowrap;
 }
 
@@ -865,7 +866,20 @@
   content: "";
   width: 40px;
   height: 1px;
-  background-color: #775f2d;
+  background-color: #8c7335; /* Darker gold for the lines */
+}
+
+@media (max-width: 639px) {
+  .tagline {
+    font-size: 9px;
+    gap: 8px;
+    letter-spacing: 0.15em;
+  }
+  
+  .tagline::before,
+  .tagline::after {
+    width: 24px;
+  }
 }
 .ombre-text {
   @apply text-transparent bg-clip-text bg-gradient-to-r from-gold-200 to-gold-50 pb-1;

@@ -2,7 +2,6 @@ import { Newspaper, ExternalLink, HandHeart, ChevronRight } from "lucide-react";
 import happySeniorCouple from "@/assets/open/happy_senior_couple.png";
 import bbcImage2 from "@/assets/open/bbc-image2.jpg";
 import bbcImage3 from "@/assets/open/bbc-image3.jpg";
-import websiteBanner from "@/assets/open/Website Banner.png";
 import Button from "@/components/Button";
 import dynamic from "next/dynamic";
 import Link from "next/link";

@@ -76,52 +76,55 @@ export default function ContactPage() {
           </div>
         </div>
 
-        {/* 3. Speak Directly With Us below the grid */}
-        <div className="p-6 rounded-[1.75rem] border border-gold-300/10 bg-navy-900/40 text-center space-y-4 max-w-2xl mx-auto w-full">
-          <div>
-            <h3 className="text-base font-semibold text-gold-100">
-              Speak Directly With Us
-            </h3>
-            <p className="text-xs text-gold-100/50 mt-1">
-              Have simple questions before submitting? Call our friendly support
-              desk.
-            </p>
+        {/* 3 & 4. Additional Contact Info Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* 3. Speak Directly With Us */}
+          <div className="p-6 rounded-[1.75rem] border border-gold-300/10 bg-navy-900/40 text-center flex flex-col justify-center space-y-4 w-full h-full">
+            <div>
+              <h3 className="text-base font-semibold text-gold-100">
+                Speak Directly With Us
+              </h3>
+              <p className="text-xs text-gold-100/50 mt-1">
+                Have simple questions before submitting? Call our friendly support
+                desk.
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3 justify-center w-full max-w-md mx-auto">
+              <Button asChild variant="primary" size="sm" fullWidth>
+                <a href="tel:+442045781269" className="gap-2">
+                  <Phone className="w-4 h-4 fill-current" />
+                  020 4578 1269
+                </a>
+              </Button>
+
+              <Button asChild variant="whatsapp" size="sm" fullWidth>
+                <a
+                  href="https://wa.me/447462931949?text=Hi%2C%20I'd%20like%20to%20chat%20about%20your%20care%20solutions."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="gap-2"
+                >
+                  <WhatsAppIcon className="w-4 h-4" />
+                  Message us on WhatsApp
+                </a>
+              </Button>
+            </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 justify-center max-w-md mx-auto">
-            <Button asChild variant="primary" size="sm" fullWidth>
-              <a href="tel:+442045781269" className="gap-2">
-                <Phone className="w-4 h-4 fill-current" />
-                020 4578 1269
-              </a>
-            </Button>
-
-            <Button asChild variant="whatsapp" size="sm" fullWidth>
-              <a
-                href="https://wa.me/447462931949?text=Hi%2C%20I'd%20like%20to%20chat%20about%20your%20care%20solutions."
-                target="_blank"
-                rel="noopener noreferrer"
-                className="gap-2"
-              >
-                <WhatsAppIcon className="w-4 h-4" />
-                Message us on WhatsApp
-              </a>
-            </Button>
-          </div>
-        </div>
-
-        {/* 4. Registered Office */}
-        <div className="mt-8 p-6 rounded-[1.75rem] border border-gold-300/10 bg-navy-900/40 text-center space-y-4 max-w-2xl mx-auto w-full">
-          <div>
-            <h3 className="text-base font-semibold text-gold-100">
-              Registered Office
-            </h3>
-            <address className="text-sm text-gold-100/60 leading-relaxed mt-2 not-italic">
-              Hypoint,<br />
-              Saltmeadows Road,<br />
-              Gateshead, NE8 3AH,<br />
-              United Kingdom
-            </address>
+          {/* 4. Registered Office */}
+          <div className="p-6 rounded-[1.75rem] border border-gold-300/10 bg-navy-900/40 text-center flex flex-col justify-center space-y-4 w-full h-full">
+            <div>
+              <h3 className="text-base font-semibold text-gold-100">
+                Registered Office
+              </h3>
+              <address className="text-sm text-gold-100/60 leading-relaxed mt-2 not-italic">
+                Hypoint,<br />
+                Saltmeadows Road,<br />
+                Gateshead, NE8 3AH,<br />
+                United Kingdom
+              </address>
+            </div>
           </div>
         </div>
       </div>

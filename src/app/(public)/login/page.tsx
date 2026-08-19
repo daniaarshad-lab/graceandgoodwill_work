@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import AuthSplitLayout from "@/components/AuthSplitLayout";
 import Input from "@/components/Input";
@@ -10,14 +10,48 @@ import Button from "@/components/Button";
 import { validateLoginForm, LoginFormErrors } from "@/lib/validation";
 import { useAuth } from "@/contexts/AuthContext";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
+import { AUTH_ROUTES, parseRole } from "@/lib/auth-routes";
 
+/**
+ * useSearchParams needs a Suspense boundary during prerender — same pattern as
+ * src/app/(protected)/admin/page.tsx.
+ */
 export default function LoginPage() {
+  return (
+    <Suspense fallback={<LoginFallback />}>
+      <LoginPageContent />
+    </Suspense>
+  );
+}
+
+/**
+ * Reading search params opts this page out of prerendering, so the static HTML
+ * is the fallback. It must not be `null`, or the page is blank until JS loads —
+ * this matches the spinner the page already shows while auth is resolving.
+ */
+function LoginFallback() {
+  return (
+    <div className="min-h-[calc(100dvh-80px)] flex flex-col items-center justify-center bg-navy-950 text-gold-100">
+      <div className="flex flex-col items-center space-y-4">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold-DEFAULT"></div>
+        <p className="text-sm tracking-wider text-gold-200">Loading...</p>
+      </div>
+    </div>
+  );
+}
+
+function LoginPageContent() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<LoginFormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { login, isAuthenticated, user, isLoading: authLoading } = useAuth();
+
+  /* Framing only. Authentication is role-agnostic: the account's own role
+     decides where the redirect below sends the user, exactly as before. */
+  const searchParams = useSearchParams();
+  const isCarer = parseRole(searchParams.get("role") ?? undefined) === "carer";
 
   useEffect(() => {
     if (isAuthenticated && user?.role) {
@@ -78,8 +112,12 @@ export default function LoginPage() {
 
   return (
     <AuthSplitLayout
-      title="Welcome Back"
-      subtitle="Login to continue accessing your care platform."
+      title={isCarer ? "Login as a Carer" : "Login as a Client"}
+      subtitle={
+        isCarer
+          ? "Login to your carer account to manage onboarding and placements."
+          : "Login to continue accessing your care platform."
+      }
     >
       <form className="space-y-5" onSubmit={handleSubmit}>
         <Input
@@ -118,7 +156,10 @@ export default function LoginPage() {
         <p className="text-center text-sm">
           Don&apos;t have an account?{" "}
           <Link
-            href="/register"
+            /* Keep the journey: a carer on the carer login goes to carer signup. */
+            href={
+              isCarer ? AUTH_ROUTES.register.carer : AUTH_ROUTES.register.client
+            }
             className="text-gold-muted font-medium hover:text-[#b8915e] hover:underline"
           >
             Register

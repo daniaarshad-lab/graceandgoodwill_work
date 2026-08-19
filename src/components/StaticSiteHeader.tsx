@@ -4,7 +4,10 @@ import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { HeartHandshake, Menu, X } from "lucide-react";
+import HeaderRoleMenu, { type RoleMenuItem } from "@/components/HeaderRoleMenu";
+import MobileRoleMenu from "@/components/MobileRoleMenu";
+import { AUTH_ROUTES } from "@/lib/auth-routes";
 
 // Nav links are defined outside the component so they are never recreated.
 const navLinks = [
@@ -15,6 +18,34 @@ const navLinks = [
   { href: "/pricing", label: "Pricing" },
   { href: "/contact", label: "Contact" },
   { href: "/faq", label: "FAQ" },
+];
+
+/* The role choice is made here, before either journey starts — the descriptions
+   are what stop a carer picking the client option by accident. */
+const loginItems: RoleMenuItem[] = [
+  {
+    href: AUTH_ROUTES.login.client,
+    label: "Login as Client",
+    description: "I need care for myself or a relative",
+  },
+  {
+    href: AUTH_ROUTES.login.carer,
+    label: "Login as Carer",
+    description: "I work as an independent live-in carer",
+  },
+];
+
+const registerItems: RoleMenuItem[] = [
+  {
+    href: AUTH_ROUTES.register.client,
+    label: "Register as Client",
+    description: "Find and compare live-in carers",
+  },
+  {
+    href: AUTH_ROUTES.register.carer,
+    label: "Register as Carer",
+    description: "Join our carer network",
+  },
 ];
 
 function StaticSiteHeader() {
@@ -50,7 +81,7 @@ function StaticSiteHeader() {
         <div className="container-wrapper flex items-center justify-between py-4">
           <Link
             href="/"
-            className="flex items-center gap-2 sm:gap-3 text-white group flex-shrink-0"
+            className="flex items-center gap-[2px] sm:gap-3 text-white group flex-shrink-0"
             onClick={() => setIsMobileMenuOpen(false)}
           >
             <Image
@@ -107,26 +138,41 @@ function StaticSiteHeader() {
                   key={link.href}
                   href={link.href}
                   prefetch={false}
-                  className={`text-[13px] lg:text-sm font-medium transition hover:text-gold-50 whitespace-nowrap ${
-                    isActive ? "text-gold-50" : "text-gold-200"
-                  }`}
+                  className={`text-[13px] lg:text-sm font-medium transition hover:text-gold-50 whitespace-nowrap ${isActive ? "text-gold-50" : "text-gold-200"
+                    }`}
                 >
                   {link.label}
                 </Link>
               );
             })}
 
-            {/* Authentication Actions */}
-            <div className="flex items-center gap-4 lg:gap-6 border-l border-navy-800 pl-4 lg:pl-6 ml-2">
-              <Link
-                href="/login"
-                prefetch={false}
-                className={`text-[13px] lg:text-sm font-semibold hover:text-gold-50 whitespace-nowrap ${
-                  pathname === "/login" ? "text-gold-50" : "text-gold-200"
+            {/* Carer recruitment entry point — kept as its own visible link so
+                carers arriving from ads or search do not have to hunt for it. */}
+            <Link
+              href={AUTH_ROUTES.carerRecruitment}
+              prefetch={false}
+              className={`inline-flex items-center gap-1.5 text-[13px] lg:text-sm font-medium transition hover:text-gold-50 whitespace-nowrap ${pathname === AUTH_ROUTES.carerRecruitment
+                  ? "text-gold-50"
+                  : "text-gold-200"
                 }`}
-              >
-                Login
-              </Link>
+            >
+              <HeartHandshake className="h-4 w-4" aria-hidden="true" />
+              Join as a Carer
+            </Link>
+
+            {/* Authentication Actions */}
+            <div className="flex items-center gap-3 lg:gap-4 border-l border-navy-800 pl-4 lg:pl-6 ml-1">
+              <HeaderRoleMenu
+                label="Login"
+                items={loginItems}
+                isActive={pathname === "/login"}
+              />
+              <HeaderRoleMenu
+                label="Register"
+                items={registerItems}
+                variant="button"
+                isActive={pathname === "/register"}
+              />
             </div>
           </nav>
         </div>
@@ -183,9 +229,8 @@ function StaticSiteHeader() {
                 <Link
                   href="/"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className={`text-base font-medium transition py-3 min-h-[44px] flex items-center border-b border-gold-300/5 hover:text-gold-50 ${
-                    pathname === "/" ? "text-gold-50" : "text-gold-200"
-                  }`}
+                  className={`text-base font-medium transition py-3 min-h-[44px] flex items-center border-b border-gold-300/5 hover:text-gold-50 ${pathname === "/" ? "text-gold-50" : "text-gold-200"
+                    }`}
                 >
                   Home
                 </Link>
@@ -197,24 +242,42 @@ function StaticSiteHeader() {
                       href={link.href}
                       prefetch={false}
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className={`text-base font-medium transition py-3 min-h-[44px] flex items-center border-b border-gold-300/5 hover:text-gold-50 ${
-                        isActive ? "text-gold-50" : "text-gold-200"
-                      }`}
+                      className={`text-base font-medium transition py-3 min-h-[44px] flex items-center border-b border-gold-300/5 hover:text-gold-50 ${isActive ? "text-gold-50" : "text-gold-200"
+                        }`}
                     >
                       {link.label}
                     </Link>
                   );
                 })}
 
-                <div className="pt-6">
-                  <Link
-                    href="/login"
-                    prefetch={false}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center justify-center w-full rounded-xl bg-[#b59469] px-5 py-3 text-sm font-semibold text-navy-950 transition-all duration-300 hover:bg-[#a08054] hover:text-white hover:-translate-y-[1px] hover:shadow-[0_8px_30px_rgba(160,128,84,0.24)]"
-                  >
-                    Login
-                  </Link>
+                {/* Carer recruitment — given its own prominent row so it is
+                    not buried among the marketing pages. */}
+                <Link
+                  href={AUTH_ROUTES.carerRecruitment}
+                  prefetch={false}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={`mt-4 flex min-h-[44px] items-center gap-2.5 rounded-xl border border-gold-400/25 bg-gold-DEFAULT/[0.06] px-4 py-3 text-base font-medium transition hover:border-gold-400/45 ${pathname === AUTH_ROUTES.carerRecruitment
+                      ? "text-gold-50"
+                      : "text-gold-200"
+                    }`}
+                >
+                  <HeartHandshake className="h-4 w-4" aria-hidden="true" />
+                  Join as a Carer
+                </Link>
+
+                {/* Login / Register, each split by role. The same explicit
+                    choice as the desktop dropdowns. */}
+                <div className="pt-2">
+                  <MobileRoleMenu
+                    label="Login"
+                    items={loginItems}
+                    closeMenu={() => setIsMobileMenuOpen(false)}
+                  />
+                  <MobileRoleMenu
+                    label="Register"
+                    items={registerItems}
+                    closeMenu={() => setIsMobileMenuOpen(false)}
+                  />
                 </div>
               </nav>
             </div>

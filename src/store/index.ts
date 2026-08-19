@@ -5,6 +5,7 @@ import clientReducer from "./slices/clientSlice";
 import adminReducer from "./slices/adminSlice";
 import notificationReducer from "./slices/notificationSlice";
 import referralReducer from "./slices/referralSlice";
+import newsletterReducer from "./slices/newsletterSlice";
 import { toastMiddleware } from "./toastMiddleware";
 
 import { combineReducers } from "@reduxjs/toolkit";
@@ -16,6 +17,7 @@ const appReducer = combineReducers({
   admin: adminReducer,
   notification: notificationReducer,
   referral: referralReducer,
+  newsletter: newsletterReducer,
 });
 
 const rootReducer = (state: any, action: any) => {

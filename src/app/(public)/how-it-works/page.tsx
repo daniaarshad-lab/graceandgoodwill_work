@@ -1,6 +1,7 @@
 import Button from "@/components/Button";
 import Link from "next/link";
 import { MapPin, Search, BadgeCheck, HeartHandshake } from "lucide-react";
+import { AUTH_ROUTES } from "@/lib/auth-routes";
 
 const steps = [
   {
@@ -66,7 +67,7 @@ export default function HowItWorksPage() {
           <div className="page-strapline">How It Works</div>
 
           <h1 className="main-page-heading">
-            Simple to begin, supportive throughout
+            Simple To Begin, Supportive Throughout
           </h1>
           <p className="page-supporting-text mx-auto mt-6 max-w-2xl">
             Make finding the right self-employed live-in carer simple. Our
@@ -134,14 +135,16 @@ export default function HowItWorksPage() {
 
         <section className="mt-24 rounded-[32px] border border-gold-300/15 bg-navy-900/30 p-6 sm:p-8 md:p-12 text-center backdrop-blur-sm">
           <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide">
-            Ready to find trusted support?
+            Ready To Find Trusted Support?
           </h2>
           <p className="page-supporting-text mx-auto mt-4 max-w-xl">
             We help families find trusted live-in carers through a carefully considered matching process, giving you the confidence to choose the right person for your needs.
           </p>
           <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
             <Button asChild variant="navy">
-              <Link href="/register" prefetch={false}>
+              {/* This CTA sits under family-facing copy, so it is explicitly
+                  the client journey rather than relying on the default. */}
+              <Link href={AUTH_ROUTES.register.client} prefetch={false}>
                 Get Started
               </Link>
             </Button>

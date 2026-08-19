@@ -441,14 +441,14 @@
 }
 
 .asl-title {
-  font-size: 2rem;
-  font-weight: 700;
+  font-size: 26px;
+  font-weight: 600;
   color: var(--color-gold-muted);
   margin: 0 0 10px 0;
-  letter-spacing: -0.03em;
   line-height: 1.15;
   text-shadow: 0 0 32px rgba(160, 128, 84, 0.18);
   font-family: "Poppins", "Segoe UI", sans-serif;
+  white-space: nowrap;
 }
 
 .asl-subtitle {
@@ -578,7 +578,7 @@
   }
 
   .asl-title {
-    font-size: 1.65rem;
+    font-size: 1.4rem;
   }
 
   .asl-header {
@@ -619,7 +619,7 @@
   }
 
   .asl-title {
-    font-size: 1.35rem;
+    font-size: clamp(1rem, 5.5vw, 1.25rem);
   }
 
   .asl-header {
@@ -849,7 +849,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 8px;
   
   font-family: 'Poppins', 'Segoe UI', sans-serif;
   font-size: 11px;
@@ -864,21 +864,28 @@
 .tagline::before,
 .tagline::after {
   content: "";
-  width: 40px;
+  width: 20px;
   height: 1px;
-  background-color: #8c7335; /* Darker gold for the lines */
+}
+
+.tagline::before {
+  background: linear-gradient(to right, transparent, #8c7335);
+}
+
+.tagline::after {
+  background: linear-gradient(to left, transparent, #8c7335);
 }
 
 @media (max-width: 639px) {
   .tagline {
     font-size: 9px;
-    gap: 8px;
+    gap: 6px;
     letter-spacing: 0.15em;
   }
   
   .tagline::before,
   .tagline::after {
-    width: 24px;
+    width: 12px;
   }
 }
 .ombre-text {

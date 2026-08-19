@@ -190,7 +190,7 @@ export default function JoinAsCarerPage() {
         <div className="container-wrapper mx-auto max-w-4xl">
           <div className="rounded-[1.75rem] border border-gold-400/15 bg-navy-900/40 p-6 shadow-elegant backdrop-blur-xl sm:p-10">
             <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide">
-              Who we are
+              Who We Are
             </h2>
             <div className="mt-4 space-y-4">
               <p className="page-supporting-text">

@@ -112,7 +112,7 @@ function LoginPageContent() {
 
   return (
     <AuthSplitLayout
-      title={isCarer ? "Carer Login" : "Welcome Back"}
+      title={isCarer ? "Login as a Carer" : "Login as a Client"}
       subtitle={
         isCarer
           ? "Login to your carer account to manage onboarding and placements."

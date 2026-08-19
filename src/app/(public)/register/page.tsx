@@ -1,21 +1,34 @@
 import AuthSplitLayout from "@/components/AuthSplitLayout";
 import RegisterForm from "./components/RegisterForm";
+import { parseRole } from "@/lib/auth-routes";
 
 interface PageProps {
-  searchParams: Promise<{ option?: string }>;
+  searchParams: Promise<{ option?: string; role?: string }>;
 }
 
+/**
+ * `role` decides which account type the form starts on, so a carer arriving
+ * from "Register as a Carer" can never silently create a client account.
+ * `option` is unrelated — it only picks the hero image variant.
+ */
 export default async function RegisterPage({ searchParams }: PageProps) {
   const resolvedParams = await searchParams;
   const option = resolvedParams.option;
+  const role = parseRole(resolvedParams.role);
+
+  const isCarer = role === "carer";
 
   return (
     <AuthSplitLayout
-      title="Create Account"
-      subtitle="Register to access the carer matching platform."
+      title={isCarer ? "Create Account as a Carer" : "Create Account as a Client"}
+      subtitle={
+        isCarer
+          ? "Register as an independent live-in carer to begin your onboarding."
+          : "Register to find and compare independent live-in carers."
+      }
       option={option}
     >
-      <RegisterForm />
+      <RegisterForm initialRole={isCarer ? "CARER" : "CLIENT"} />
     </AuthSplitLayout>
   );
 }

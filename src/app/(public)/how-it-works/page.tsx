@@ -1,6 +1,7 @@
 import Button from "@/components/Button";
 import Link from "next/link";
 import { MapPin, Search, BadgeCheck, HeartHandshake } from "lucide-react";
+import { AUTH_ROUTES } from "@/lib/auth-routes";
 
 const steps = [
   {
@@ -141,7 +142,9 @@ export default function HowItWorksPage() {
           </p>
           <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
             <Button asChild variant="navy">
-              <Link href="/register" prefetch={false}>
+              {/* This CTA sits under family-facing copy, so it is explicitly
+                  the client journey rather than relying on the default. */}
+              <Link href={AUTH_ROUTES.register.client} prefetch={false}>
                 Get Started
               </Link>
             </Button>

@@ -81,7 +81,7 @@ function StaticSiteHeader() {
         <div className="container-wrapper flex items-center justify-between py-4">
           <Link
             href="/"
-            className="flex items-center gap-2 sm:gap-3 text-white group flex-shrink-0"
+            className="flex items-center gap-[2px] sm:gap-3 text-white group flex-shrink-0"
             onClick={() => setIsMobileMenuOpen(false)}
           >
             <Image
@@ -138,9 +138,8 @@ function StaticSiteHeader() {
                   key={link.href}
                   href={link.href}
                   prefetch={false}
-                  className={`text-[13px] lg:text-sm font-medium transition hover:text-gold-50 whitespace-nowrap ${
-                    isActive ? "text-gold-50" : "text-gold-200"
-                  }`}
+                  className={`text-[13px] lg:text-sm font-medium transition hover:text-gold-50 whitespace-nowrap ${isActive ? "text-gold-50" : "text-gold-200"
+                    }`}
                 >
                   {link.label}
                 </Link>
@@ -152,11 +151,10 @@ function StaticSiteHeader() {
             <Link
               href={AUTH_ROUTES.carerRecruitment}
               prefetch={false}
-              className={`inline-flex items-center gap-1.5 text-[13px] lg:text-sm font-semibold transition hover:text-gold-50 whitespace-nowrap ${
-                pathname === AUTH_ROUTES.carerRecruitment
+              className={`inline-flex items-center gap-1.5 text-[13px] lg:text-sm font-semibold transition hover:text-gold-50 whitespace-nowrap ${pathname === AUTH_ROUTES.carerRecruitment
                   ? "text-gold-50"
                   : "text-gold-300"
-              }`}
+                }`}
             >
               <HeartHandshake className="h-4 w-4" aria-hidden="true" />
               Join as a Carer
@@ -231,9 +229,8 @@ function StaticSiteHeader() {
                 <Link
                   href="/"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className={`text-base font-medium transition py-3 min-h-[44px] flex items-center border-b border-gold-300/5 hover:text-gold-50 ${
-                    pathname === "/" ? "text-gold-50" : "text-gold-200"
-                  }`}
+                  className={`text-base font-medium transition py-3 min-h-[44px] flex items-center border-b border-gold-300/5 hover:text-gold-50 ${pathname === "/" ? "text-gold-50" : "text-gold-200"
+                    }`}
                 >
                   Home
                 </Link>
@@ -245,9 +242,8 @@ function StaticSiteHeader() {
                       href={link.href}
                       prefetch={false}
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className={`text-base font-medium transition py-3 min-h-[44px] flex items-center border-b border-gold-300/5 hover:text-gold-50 ${
-                        isActive ? "text-gold-50" : "text-gold-200"
-                      }`}
+                      className={`text-base font-medium transition py-3 min-h-[44px] flex items-center border-b border-gold-300/5 hover:text-gold-50 ${isActive ? "text-gold-50" : "text-gold-200"
+                        }`}
                     >
                       {link.label}
                     </Link>
@@ -260,11 +256,10 @@ function StaticSiteHeader() {
                   href={AUTH_ROUTES.carerRecruitment}
                   prefetch={false}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className={`mt-4 flex min-h-[44px] items-center gap-2.5 rounded-xl border border-gold-400/25 bg-gold-DEFAULT/[0.06] px-4 py-3 text-base font-semibold transition hover:border-gold-400/45 ${
-                    pathname === AUTH_ROUTES.carerRecruitment
+                  className={`mt-4 flex min-h-[44px] items-center gap-2.5 rounded-xl border border-gold-400/25 bg-gold-DEFAULT/[0.06] px-4 py-3 text-base font-semibold transition hover:border-gold-400/45 ${pathname === AUTH_ROUTES.carerRecruitment
                       ? "text-gold-50"
                       : "text-gold-300"
-                  }`}
+                    }`}
                 >
                   <HeartHandshake className="h-4 w-4" aria-hidden="true" />
                   Join as a Carer

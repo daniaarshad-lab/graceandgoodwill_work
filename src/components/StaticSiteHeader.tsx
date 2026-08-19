@@ -151,9 +151,9 @@ function StaticSiteHeader() {
             <Link
               href={AUTH_ROUTES.carerRecruitment}
               prefetch={false}
-              className={`inline-flex items-center gap-1.5 text-[13px] lg:text-sm font-semibold transition hover:text-gold-50 whitespace-nowrap ${pathname === AUTH_ROUTES.carerRecruitment
+              className={`inline-flex items-center gap-1.5 text-[13px] lg:text-sm font-medium transition hover:text-gold-50 whitespace-nowrap ${pathname === AUTH_ROUTES.carerRecruitment
                   ? "text-gold-50"
-                  : "text-gold-300"
+                  : "text-gold-200"
                 }`}
             >
               <HeartHandshake className="h-4 w-4" aria-hidden="true" />
@@ -256,9 +256,9 @@ function StaticSiteHeader() {
                   href={AUTH_ROUTES.carerRecruitment}
                   prefetch={false}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className={`mt-4 flex min-h-[44px] items-center gap-2.5 rounded-xl border border-gold-400/25 bg-gold-DEFAULT/[0.06] px-4 py-3 text-base font-semibold transition hover:border-gold-400/45 ${pathname === AUTH_ROUTES.carerRecruitment
+                  className={`mt-4 flex min-h-[44px] items-center gap-2.5 rounded-xl border border-gold-400/25 bg-gold-DEFAULT/[0.06] px-4 py-3 text-base font-medium transition hover:border-gold-400/45 ${pathname === AUTH_ROUTES.carerRecruitment
                       ? "text-gold-50"
-                      : "text-gold-300"
+                      : "text-gold-200"
                     }`}
                 >
                   <HeartHandshake className="h-4 w-4" aria-hidden="true" />

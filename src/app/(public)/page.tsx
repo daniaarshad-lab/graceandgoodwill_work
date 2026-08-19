@@ -213,7 +213,7 @@ export default function HomePage() {
       <section className="container-wrapper border-t border-gold-300/10 mt-24 pt-10">
         <div className="text-center max-w-3xl mx-auto space-y-3 mb-16">
           <div className="text-center mb-10 space-y-5">
-            <h2 className="section-heading">Media presence</h2>
+            <h2 className="section-heading">Media Presence</h2>
           </div>
           <p className="page-supporting-text mx-auto mt-4 max-w-xl">
             Our mission to bring integrity, continuity, and human-first

@@ -135,7 +135,7 @@ export default function HowItWorksPage() {
 
         <section className="mt-24 rounded-[32px] border border-gold-300/15 bg-navy-900/30 p-6 sm:p-8 md:p-12 text-center backdrop-blur-sm">
           <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide">
-            Ready to find trusted support?
+            Ready To Find Trusted Support?
           </h2>
           <p className="page-supporting-text mx-auto mt-4 max-w-xl">
             We help families find trusted live-in carers through a carefully considered matching process, giving you the confidence to choose the right person for your needs.

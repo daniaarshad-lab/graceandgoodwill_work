@@ -34,7 +34,7 @@ const coreServices = [
     ),
   },
   {
-    title: "Dementia support",
+    title: "Dementia Support",
     description:
       "We introduce families to independent self-employed carers with experience supporting people living with dementia, helping families find compassionate, person-centred support suited to their needs.",
     icon: (
@@ -45,7 +45,7 @@ const coreServices = [
     ),
   },
   {
-    title: "Recovery after hospital discharge",
+    title: "Recovery After Hospital Discharge",
     description:
       "We introduce families to independent, self-employed carers who can support individuals following hospital discharge. Depending on the client’s requirements, support may include assistance with daily routines, mobility, meal preparation and encouraging independence during recovery. Grace & Goodwill does not provide nursing or clinical services.",
     icon: (
@@ -56,7 +56,7 @@ const coreServices = [
     ),
   },
   {
-    title: "Respite arrangements",
+    title: "Respite Arrangements",
     description:
       "We introduce families to independent, self-employed carers who can provide temporary live-in support, allowing primary family carers to take a planned or emergency break while maintaining continuity and familiarity at home.",
     icon: (
@@ -67,7 +67,7 @@ const coreServices = [
     ),
   },
   {
-    title: "Couples support",
+    title: "Couples Support",
     description:
       "We introduce experienced self-employed live-in carers who can support couples wishing to remain together in their own home, with care arrangements tailored to each person’s individual needs.",
     icon: (
@@ -168,7 +168,7 @@ export default function ServicesPage() {
 
         <section className="mt-12 rounded-[32px] border border-gold-300/15 bg-navy-900/30 p-6 sm:p-8 md:p-12 text-center backdrop-blur-sm">
           <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide">
-            Let&apos;s discuss how we can support you.
+            Let&apos;s Discuss How We Can Support You.
           </h2>
           <p className="page-supporting-text mx-auto mt-4 max-w-xl">
             Speak with our care matching specialists to discuss your

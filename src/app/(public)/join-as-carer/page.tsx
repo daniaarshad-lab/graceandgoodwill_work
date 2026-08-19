@@ -150,11 +150,11 @@ export default function JoinAsCarerPage() {
               <div className="h-px w-8 bg-gradient-to-l from-transparent to-gold-400/40 sm:w-12" />
             </div>
 
-            <h1 className="font-serif text-2xl font-medium leading-[1.2] tracking-tight text-gold-50 sm:text-4xl lg:text-[2.75rem]">
+            <h1 className="main-page-heading">
               Join Our Carer Network
             </h1>
 
-            <p className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-gold-200/80 sm:text-base">
+            <p className="page-supporting-text mx-auto mt-6 max-w-2xl text-center">
               Grace &amp; Goodwill is recruiting experienced independent live-in
               carers nationwide. If you provide live-in care and want to be
               introduced to families who need your skills, we would like to hear
@@ -173,7 +173,7 @@ export default function JoinAsCarerPage() {
                 href={AUTH_ROUTES.login.carer}
                 className="inline-flex w-full items-center justify-center rounded-xl border border-gold-300/25 px-6 py-3 text-sm font-semibold text-gold-200 transition-all duration-300 hover:border-gold-300/50 hover:text-gold-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-300/60 sm:w-auto"
               >
-                Already registered? Carer login
+                Login as a Carer
               </Link>
             </div>
 
@@ -189,17 +189,17 @@ export default function JoinAsCarerPage() {
       <section className="pb-14 sm:pb-16">
         <div className="container-wrapper mx-auto max-w-4xl">
           <div className="rounded-[1.75rem] border border-gold-400/15 bg-navy-900/40 p-6 shadow-elegant backdrop-blur-xl sm:p-10">
-            <h2 className="font-serif text-xl font-medium tracking-wide text-gold-50 sm:text-2xl">
+            <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide">
               Who we are
             </h2>
-            <div className="mt-4 space-y-4 text-sm leading-relaxed text-gold-200/75 sm:text-base">
-              <p>
+            <div className="mt-4 space-y-4">
+              <p className="page-supporting-text">
                 Grace &amp; Goodwill is an introductory agency. We introduce
                 self-employed live-in carers to families and individuals who
                 need support at home, and we do not provide regulated care
                 services ourselves.
               </p>
-              <p>
+              <p className="page-supporting-text">
                 That distinction matters to you as a carer: you are not our
                 employee. You remain independent, you agree your own terms with
                 the people you support, and you decide which introductions to
@@ -215,8 +215,8 @@ export default function JoinAsCarerPage() {
       <section className="pb-14 sm:pb-16">
         <div className="container-wrapper mx-auto max-w-5xl">
           <div className="mb-8 text-center">
-            <h2 className="font-serif text-xl font-medium tracking-wide text-gold-50 sm:text-2xl">
-              Why carers join us
+            <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide">
+              Why Carers Join Us
             </h2>
             <div
               aria-hidden
@@ -230,10 +230,10 @@ export default function JoinAsCarerPage() {
                 key={reason.title}
                 className="rounded-2xl border border-gold-300/10 bg-navy-900/40 p-6 backdrop-blur-md transition-colors duration-300 hover:border-gold-300/25"
               >
-                <h3 className="text-sm font-semibold text-gold-100 sm:text-base">
+                <h3 className="text-base sm:text-lg font-serif text-gold-50">
                   {reason.title}
                 </h3>
-                <p className="mt-2 text-sm leading-relaxed text-gold-200/70">
+                <p className="page-supporting-text mt-2">
                   {reason.body}
                 </p>
               </li>
@@ -246,10 +246,10 @@ export default function JoinAsCarerPage() {
       <section className="pb-14 sm:pb-16">
         <div className="container-wrapper mx-auto max-w-4xl">
           <div className="mb-8 text-center">
-            <h2 className="font-serif text-xl font-medium tracking-wide text-gold-50 sm:text-2xl">
-              What onboarding involves
+            <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide">
+              What Onboarding Involves
             </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-gold-200/70">
+            <p className="page-supporting-text mx-auto mt-4 max-w-2xl text-center">
               Registration takes a few minutes. Completing your profile takes
               longer, because every carer we introduce is verified to the same
               standard.
@@ -274,10 +274,10 @@ export default function JoinAsCarerPage() {
                   </span>
                 </div>
                 <div className="min-w-0">
-                  <h3 className="text-sm font-semibold text-gold-100 sm:text-base">
+                  <h3 className="text-base sm:text-lg font-serif text-gold-50">
                     {title}
                   </h3>
-                  <p className="mt-1.5 text-sm leading-relaxed text-gold-200/70">
+                  <p className="page-supporting-text mt-1.5">
                     {body}
                   </p>
                 </div>
@@ -291,10 +291,10 @@ export default function JoinAsCarerPage() {
       <section className="pb-14 sm:pb-16">
         <div className="container-wrapper mx-auto max-w-5xl">
           <div className="mb-8 text-center">
-            <h2 className="font-serif text-xl font-medium tracking-wide text-gold-50 sm:text-2xl">
-              Documents you will be asked for
+            <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide">
+              Documents You Will Be Asked For
             </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-gold-200/70">
+            <p className="page-supporting-text mx-auto mt-4 max-w-2xl text-center">
               Having these ready makes onboarding considerably faster. You can
               upload them as you go and return to finish later.
             </p>
@@ -327,7 +327,7 @@ export default function JoinAsCarerPage() {
             ))}
           </div>
 
-          <p className="mt-6 text-center text-xs leading-relaxed text-gold-200/45">
+          <p className="page-supporting-text mx-auto mt-6 max-w-3xl text-center text-gold-200/45">
             Requirements can vary depending on the placement and the specialisms
             you offer. Our team will tell you if anything further is needed for
             a particular introduction.
@@ -342,10 +342,10 @@ export default function JoinAsCarerPage() {
             <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-full border border-gold-400/25 bg-gold-DEFAULT/5">
               <Mail className="h-5 w-5 text-gold-300" aria-hidden="true" />
             </span>
-            <h2 className="mt-5 font-serif text-xl font-medium tracking-wide text-gold-50 sm:text-2xl">
-              Recruitment enquiries
+            <h2 className="mt-5 text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide">
+              Recruitment Enquiries
             </h2>
-            <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-gold-200/70">
+            <p className="page-supporting-text mx-auto mt-3 max-w-xl">
               If you have a question before registering, or you are unsure
               whether your experience is a fit, contact our recruitment team
               directly.
@@ -370,10 +370,10 @@ export default function JoinAsCarerPage() {
               className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-gold-400/[0.06] via-transparent to-transparent"
             />
             <div className="relative z-10">
-              <h2 className="font-serif text-xl font-medium leading-snug tracking-wide text-gold-50 sm:text-3xl">
-                Ready to Join Our Carer Network?
+              <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide leading-snug">
+                Ready To Join Our Carer Network?
               </h2>
-              <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-gold-200/75 sm:text-base">
+              <p className="page-supporting-text mx-auto mt-4 max-w-xl">
                 Create your carer account and start your onboarding today. You
                 can save your progress and complete it at your own pace.
               </p>

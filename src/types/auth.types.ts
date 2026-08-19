@@ -1,4 +1,4 @@
-export interface User {
+﻿export interface User {
   id: string;
   email: string;
   firstName: string;
@@ -19,6 +19,7 @@ export interface RegisterPayload {
 export interface LoginPayload {
   email: string;
   password?: string;
+  role?: string;
 }
 
 export interface AuthResponse {

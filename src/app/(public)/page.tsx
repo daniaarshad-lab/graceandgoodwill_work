@@ -46,8 +46,7 @@ export default function HomePage() {
         <div className="max-w-4xl lg:flex-1 xl:flex-none space-y-6 -mt-4 lg:mt-0">
           <h1 className="main-page-heading drop-shadow-md">
             Live-in Care Matching
-            <br />
-            <span className="font-sans text-lg sm:text-xl lg:text-2xl font-semibold tracking-wide text-[#F5D4A0] inline-block mt-2">
+            <span className="main-page-heading pl-3 text-[#F5D4A0]">
               Across The UK
             </span>
           </h1>

@@ -44,7 +44,7 @@ export default function PricingPage() {
               Pricing
             </div>
             <h1 className="main-page-heading">
-              Clear, Fair Pricing with No Hidden Costs
+              Clear, Fair Pricing With No Hidden Costs
             </h1>
           </div>
 

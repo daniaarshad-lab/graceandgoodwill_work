@@ -91,7 +91,7 @@ export default function ServicesPage() {
           <div className="page-strapline">Services</div>
 
           <h1 className="main-page-heading">
-            Support designed around real lives
+            Support Designed Around Real Lives
           </h1>
 
           <p className="page-supporting-text mx-auto mt-6 max-w-2xl">

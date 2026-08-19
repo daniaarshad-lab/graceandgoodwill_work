@@ -866,7 +866,14 @@
   content: "";
   width: 40px;
   height: 1px;
-  background-color: #8c7335; /* Darker gold for the lines */
+}
+
+.tagline::before {
+  background: linear-gradient(to right, transparent, #8c7335);
+}
+
+.tagline::after {
+  background: linear-gradient(to left, transparent, #8c7335);
 }
 
 @media (max-width: 639px) {

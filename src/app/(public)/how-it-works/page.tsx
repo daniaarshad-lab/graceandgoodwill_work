@@ -67,7 +67,7 @@ export default function HowItWorksPage() {
           <div className="page-strapline">How It Works</div>
 
           <h1 className="main-page-heading">
-            Simple to begin, supportive throughout
+            Simple To Begin, Supportive Throughout
           </h1>
           <p className="page-supporting-text mx-auto mt-6 max-w-2xl">
             Make finding the right self-employed live-in carer simple. Our

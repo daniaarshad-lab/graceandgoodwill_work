@@ -26,7 +26,7 @@ export default function RegisterForm({
   initialRole = "CLIENT",
 }: RegisterFormProps) {
   const { register, logout } = useAuth();
-  const [selectedRole, setSelectedRole] = useState<RegisterRole>(initialRole);
+
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -61,7 +61,7 @@ export default function RegisterForm({
       email,
       phone,
       password,
-      role: selectedRole,
+      role: initialRole,
     };
 
     // Clear any stale auth session before registering
@@ -70,24 +70,31 @@ export default function RegisterForm({
     try {
       // Attempt registration using useAuth register wrapper
       await register(payload);
+
+      // Force logout immediately so the user is not automatically logged in.
+      // This ensures they must manually log in via the Login page.
+      try {
+        await logout();
+      } catch (e) {
+        // Silently ignore logout errors here since registration succeeded
+      }
+
       setFirstName("");
       setLastName("");
       setEmail("");
       setPhone("");
       setPassword("");
-      /* Reset to whichever journey the user entered through, not hard-coded
-         CLIENT — otherwise a failed-then-retried carer signup silently flips. */
-      setSelectedRole(initialRole);
+
       setErrors({});
 
       showSuccessToast(
         "Registration Successful!",
         "Welcome to Grace & Goodwill. You have successfully created your account.",
       );
-      if (selectedRole === "CARER") {
-        router.push("/carer?onboarding=true");
+      if (initialRole === "CARER") {
+        router.push(AUTH_ROUTES.login.carer);
       } else {
-        router.push("/agreements?onboarding=true");
+        router.push(AUTH_ROUTES.login.client);
       }
     } catch (error: any) {
       const errorMsg =
@@ -102,36 +109,7 @@ export default function RegisterForm({
 
   return (
     <form className="space-y-5 pb-16" onSubmit={handleSubmit}>
-      {/* Premium Segmented Role Selection */}
-      <div className="space-y-2">
-        <label className="form-label text-gold-muted/80">
-          I want to register as a:
-        </label>
-        <div className="grid grid-cols-2 gap-2 p-1.5 rounded-xl bg-navy-950/60 border border-gold-muted/20 backdrop-blur-sm">
-          <Button
-            type="button"
-            onClick={() => setSelectedRole("CLIENT")}
-            variant="selectable"
-            isSelected={selectedRole === "CLIENT"}
-            size="sm"
-            fullWidth
-            className="py-2.5 rounded-lg font-semibold"
-          >
-            Family or Client
-          </Button>
-          <Button
-            type="button"
-            onClick={() => setSelectedRole("CARER")}
-            variant="selectable"
-            isSelected={selectedRole === "CARER"}
-            size="sm"
-            fullWidth
-            className="py-2.5 rounded-lg font-semibold"
-          >
-            Professional Carer
-          </Button>
-        </div>
-      </div>
+
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Input
@@ -180,7 +158,11 @@ export default function RegisterForm({
 
       <Button
         type="submit"
-        text={isLoading ? "Creating Account..." : "Create Account"}
+        text={
+          isLoading
+            ? "Creating Account..."
+            : `Create Account as a ${initialRole === "CARER" ? "Carer" : "Client"}`
+        }
         disabled={isLoading}
       />
 
@@ -189,7 +171,7 @@ export default function RegisterForm({
         <Link
           /* Carry the journey through so a carer stays framed as a carer. */
           href={
-            selectedRole === "CARER"
+            initialRole === "CARER"
               ? AUTH_ROUTES.login.carer
               : AUTH_ROUTES.login.client
           }

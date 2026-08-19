@@ -20,7 +20,7 @@ export default async function RegisterPage({ searchParams }: PageProps) {
 
   return (
     <AuthSplitLayout
-      title={isCarer ? "Join as a Carer" : "Create Account"}
+      title={isCarer ? "Create Account as a Carer" : "Create Account as a Client"}
       subtitle={
         isCarer
           ? "Register as an independent live-in carer to begin your onboarding."

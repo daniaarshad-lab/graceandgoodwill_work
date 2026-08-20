@@ -297,7 +297,7 @@ const mapBackendCareRequests = (careRequests: any[]): ClientRequest[] => {
       email: clientUser.email || req.requestorEmail || "",
       phone: clientUser.phoneNumber || req.requestorPhone || "No phone listed",
       clientStatus: profile.status,
-      clientAgreedWeeklyFee: profile.agreedWeeklyFee ?? req.agreedWeeklyFee,
+      clientAgreedWeeklyFee: profile.agreedWeeklyFee ?? profile.weeklyFee ?? req.agreedWeeklyFee ?? req.weeklyFee,
     };
   });
 };
@@ -373,7 +373,7 @@ export type AdminTabType =
 export function useAdminPortal() {
   const searchParams = useSearchParams();
   const tabParam = searchParams.get("tab") as AdminTabType;
-  const [activeTab, setActiveTab] = useState<AdminTabType>(
+  const [activeTab, setLocalActiveTab] = useState<AdminTabType>(
     tabParam &&
       [
         "overview",
@@ -390,6 +390,15 @@ export function useAdminPortal() {
       ? tabParam
       : "overview",
   );
+
+  const setActiveTab = useCallback((tab: AdminTabType) => {
+    setLocalActiveTab(tab);
+    if (typeof window !== "undefined") {
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.set("tab", tab);
+      window.history.replaceState(null, "", newUrl.toString());
+    }
+  }, []);
 
   const dispatch = useAppDispatch();
   const carersPaginationState = useAppSelector((state) => state.admin.carers);
@@ -429,10 +438,11 @@ export function useAdminPortal() {
           "profile-updates",
         ].includes(tabParam)
       ) {
-        setActiveTab(tabParam);
+        setLocalActiveTab(tabParam);
       }
     }
-  }, [tabParam, activeTab]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tabParam]);
 
   useEffect(() => {
     if (globalSearchQuery.trim()) {

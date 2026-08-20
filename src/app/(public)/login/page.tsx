@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { Suspense, useState, useEffect } from "react";
 import Link from "next/link";
@@ -80,7 +80,6 @@ function LoginPageContent() {
       await login({
         email,
         password,
-        role: isAdmin ? "ADMIN" : isCarer ? "CARER" : "CLIENT",
       });
       showSuccessToast("Login Successful", "Welcome back to Grace & Goodwill.");
     } catch (error: any) {

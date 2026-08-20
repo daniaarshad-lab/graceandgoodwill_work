@@ -198,7 +198,7 @@ export default function ClientRequests({
                               const normalizedStatus = req.clientStatus?.toUpperCase();
                               const isNotApproved =
                                 normalizedStatus !== "APPROVED" && normalizedStatus !== "ACTIVE";
-                              const noFees = !req.clientAgreedWeeklyFee;
+                              const noFees = req.clientAgreedWeeklyFee == null;
 
                               if (isNotApproved || noFees) {
                                 isDisabled = true;

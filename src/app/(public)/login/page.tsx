@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Suspense, useState, useEffect } from "react";
 import Link from "next/link";
@@ -13,8 +13,7 @@ import { showSuccessToast, showErrorToast } from "@/utils/toast";
 import { AUTH_ROUTES, parseRole } from "@/lib/auth-routes";
 
 /**
- * useSearchParams needs a Suspense boundary during prerender — same pattern as
- * src/app/(protected)/admin/page.tsx.
+ * useSearchParams needs a Suspense boundary during prerender.
  */
 export default function LoginPage() {
   return (
@@ -24,11 +23,6 @@ export default function LoginPage() {
   );
 }
 
-/**
- * Reading search params opts this page out of prerendering, so the static HTML
- * is the fallback. It must not be `null`, or the page is blank until JS loads —
- * this matches the spinner the page already shows while auth is resolving.
- */
 function LoginFallback() {
   return (
     <div className="min-h-[calc(100dvh-80px)] flex flex-col items-center justify-center bg-navy-950 text-gold-100">
@@ -48,10 +42,10 @@ function LoginPageContent() {
   const router = useRouter();
   const { login, isAuthenticated, user, isLoading: authLoading } = useAuth();
 
-  /* Framing only. Authentication is role-agnostic: the account's own role
-     decides where the redirect below sends the user, exactly as before. */
   const searchParams = useSearchParams();
-  const isCarer = parseRole(searchParams.get("role") ?? undefined) === "carer";
+  const currentRole = parseRole(searchParams.get("role") ?? undefined);
+  const isCarer = currentRole === "carer";
+  const isAdmin = currentRole === "admin";
 
   useEffect(() => {
     if (isAuthenticated && user?.role) {
@@ -60,7 +54,7 @@ function LoginPageContent() {
         router.push("/client");
       } else if (role === "CARER") {
         router.push("/carer");
-      } else if (role === "ADMIN") {
+      } else if (role === "ADMIN" || role === "SUPER_ADMIN") {
         router.push("/admin");
       } else {
         router.push("/");
@@ -86,6 +80,7 @@ function LoginPageContent() {
       await login({
         email,
         password,
+        role: isAdmin ? "ADMIN" : isCarer ? "CARER" : "CLIENT",
       });
       showSuccessToast("Login Successful", "Welcome back to Grace & Goodwill.");
     } catch (error: any) {
@@ -98,6 +93,7 @@ function LoginPageContent() {
       setIsLoading(false);
     }
   };
+
   // Prevent form render while checking auth or redirecting
   if (authLoading || isAuthenticated) {
     return (
@@ -110,15 +106,20 @@ function LoginPageContent() {
     );
   }
 
+  const pageTitle = isAdmin
+    ? "Login as Admin"
+    : isCarer
+    ? "Login as a Carer"
+    : "Login as a Client";
+
+  const pageSubtitle = isAdmin
+    ? "Login to your admin account to manage operations and placements."
+    : isCarer
+    ? "Login to your carer account to manage onboarding and placements."
+    : "Login to continue accessing your care platform.";
+
   return (
-    <AuthSplitLayout
-      title={isCarer ? "Login as a Carer" : "Login as a Client"}
-      subtitle={
-        isCarer
-          ? "Login to your carer account to manage onboarding and placements."
-          : "Login to continue accessing your care platform."
-      }
-    >
+    <AuthSplitLayout title={pageTitle} subtitle={pageSubtitle}>
       <form className="space-y-5" onSubmit={handleSubmit}>
         <Input
           label="Email"
@@ -153,18 +154,21 @@ function LoginPageContent() {
           disabled={isLoading}
         />
 
-        <p className="text-center text-sm">
-          Don&apos;t have an account?{" "}
-          <Link
-            /* Keep the journey: a carer on the carer login goes to carer signup. */
-            href={
-              isCarer ? AUTH_ROUTES.register.carer : AUTH_ROUTES.register.client
-            }
-            className="text-gold-muted font-medium hover:text-[#b8915e] hover:underline"
-          >
-            Register
-          </Link>
-        </p>
+        {!isAdmin && (
+          <p className="text-center text-sm">
+            Don&apos;t have an account?{" "}
+            <Link
+              href={
+                isCarer
+                  ? AUTH_ROUTES.register.carer
+                  : AUTH_ROUTES.register.client
+              }
+              className="text-gold-muted font-medium hover:text-[#b8915e] hover:underline"
+            >
+              Register
+            </Link>
+          </p>
+        )}
       </form>
 
       <div className="mt-12 flex flex-col items-center justify-center text-center select-none">

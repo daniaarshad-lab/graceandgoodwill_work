@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -24,7 +24,6 @@ export default function ProfileAgreements() {
 
   const [selectedAgreement, setSelectedAgreement] =
     useState<LegalAgreement | null>(null);
-  const [signatureName, setSignatureName] = useState("");
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [payingFee, setPayingFee] = useState(false);
@@ -157,24 +156,24 @@ export default function ProfileAgreements() {
     e.preventDefault();
     if (!selectedAgreement) return;
     if (!agreedToTerms) {
-      setError("You must check the agreement box before signing.");
+      setError("You must accept the terms before proceeding.");
       return;
     }
-    if (!signatureName.trim()) {
-      setError("Please type your name as your electronic signature.");
-      return;
-    }
+
+    const autoName =
+      `${user?.firstName || ""} ${user?.lastName || ""}`.trim() ||
+      user?.email ||
+      "Accepted";
 
     try {
       setIsSubmitting(true);
       setError(null);
       await agreementsService.signAgreement(
         selectedAgreement.id,
-        signatureName,
+        autoName,
       );
 
-      // Reset signing state
-      setSignatureName("");
+      // Reset acceptance state
       setAgreedToTerms(false);
 
       // Refresh context profile
@@ -221,9 +220,9 @@ export default function ProfileAgreements() {
     <SectionCard className="w-full space-y-6 mt-6">
       <div className="border-b border-gold-300/10 pb-6 flex flex-col md:flex-row justify-between items-center md:items-end gap-6">
         <div className="text-center md:text-left">
-          <h3 className="text-xl font-bold text-gold-200">Legal Agreements</h3>
+          <h3 className="text-xl font-bold text-gold-200">Terms & Policies</h3>
           <p className="text-sm text-gold-100/60 mt-1">
-            Review and electronically sign your terms and policies.
+            Please review and accept our platform terms and policies to continue.
           </p>
         </div>
 
@@ -237,7 +236,7 @@ export default function ProfileAgreements() {
                 : "border-transparent text-gold-200/60 hover:text-gold-50 hover:bg-navy-900/50"
             }`}
           >
-            Pending Signature ({pending.length})
+            To Accept ({pending.length})
           </button>
           <button
             onClick={() => setActiveTab("history")}
@@ -247,7 +246,7 @@ export default function ProfileAgreements() {
                 : "border-transparent text-gold-200/60 hover:text-gold-50 hover:bg-navy-900/50"
             }`}
           >
-            Signing History ({history.length})
+            Accepted Policies ({history.length})
           </button>
         </div>
       </div>
@@ -420,18 +419,18 @@ export default function ProfileAgreements() {
                         ))}
                     </div>
 
-                    {/* Signature Form */}
+                    {/* Acceptance Form */}
                     <form
                       onSubmit={handleSign}
-                      className="border-t border-gold-300/10 pt-5"
+                      className="border-t border-gold-300/10 pt-5 space-y-4"
                     >
-                      <div className="mb-5 flex items-start group">
+                      <div className="flex items-start group">
                         <div className="relative flex items-center justify-center mt-0.5">
                           <input
                             id="accept-terms"
                             type="checkbox"
                             checked={agreedToTerms}
-                            onChange={(e) => setAgreedToTerms(e.target.checked)}
+                            onChange={(e) => { setAgreedToTerms(e.target.checked); setError(null); }}
                             className="peer appearance-none h-4 w-4 rounded-sm border border-gold-300/30 bg-navy-950 checked:bg-gold-DEFAULT checked:border-gold-DEFAULT cursor-pointer transition-all"
                           />
                           <svg
@@ -452,43 +451,20 @@ export default function ProfileAgreements() {
                           htmlFor="accept-terms"
                           className="ml-3 text-xs text-gold-100/70 group-hover:text-gold-100 transition-colors select-none cursor-pointer"
                         >
-                          I confirm that I have read, understood, and accept the
-                          terms of the{" "}
+                          I have read and accept the{" "}
                           <span className="text-gold-50 font-semibold">
                             {selectedAgreement.title}
-                          </span>
-                          .
+                          </span>.
                         </label>
                       </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
-                        <div>
-                          <label
-                            htmlFor="sig-name"
-                            className="block text-[11px] font-semibold text-gold-200/80 uppercase mb-2"
-                          >
-                            Full Name (Typed Signature)
-                          </label>
-                          <input
-                            id="sig-name"
-                            type="text"
-                            value={signatureName}
-                            onChange={(e) => setSignatureName(e.target.value)}
-                            placeholder="Type your official name"
-                            className="w-full bg-navy-950 border border-gold-300/20 rounded-xl px-4 py-2.5 text-sm text-gold-50 placeholder-gold-100/30 focus:outline-none focus:border-gold-DEFAULT focus:ring-1 focus:ring-gold-DEFAULT transition"
-                          />
-                        </div>
-
-                        <button
-                          type="submit"
-                          disabled={isSubmitting}
-                          className="w-full bg-gold-DEFAULT hover:bg-gold-400 text-navy-950 text-sm font-bold py-2.5 px-6 rounded-xl transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                        >
-                          {isSubmitting
-                            ? "Sealing Agreement..."
-                            : "Electronically Sign"}
-                        </button>
-                      </div>
+                      <button
+                        type="submit"
+                        disabled={isSubmitting || !agreedToTerms}
+                        className="w-full bg-gold-DEFAULT hover:bg-gold-400 text-navy-950 text-sm font-bold py-2.5 px-6 rounded-xl transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                      >
+                        {isSubmitting ? "Processing..." : "Accept & Continue"}
+                      </button>
                     </form>
                   </div>
                 )}
@@ -502,25 +478,25 @@ export default function ProfileAgreements() {
       {activeTab === "history" && (
         <div className="bg-navy-900/40 border border-gold-300/10 rounded-2xl p-5 shadow-soft">
           <h3 className="text-sm font-bold text-gold-50 mb-4">
-            Signature Audit Trail
+            Accepted Policies &amp; Terms
           </h3>
           {history.length === 0 ? (
             <p className="text-gold-100/50 text-sm text-center py-8">
-              No signed agreements found.
+              No accepted policies found.
             </p>
           ) : (
             <div className="overflow-x-auto custom-scrollbar pb-2">
               <table className="w-full text-left border-collapse text-sm">
                 <thead>
-                  <tr className="border-b border-gold-300/10 text-gold-200/70 font-semibold text-xs">
-                    <th className="py-3 px-3">Document Title</th>
+                  <tr className="border-b border-gold-300/10 text-gold-200/70 font-semibold text-xs uppercase tracking-wider">
+                    <th className="py-3 px-3">Policy Title</th>
                     <th className="py-3 px-3 text-center">Version</th>
-                    <th className="py-3 px-3">Signatory Name</th>
-                    <th className="py-3 px-3">Signed Date</th>
+                    <th className="py-3 px-3">Accepted By</th>
+                    <th className="py-3 px-3">Accepted Date</th>
                     <th className="py-3 px-3 hidden md:table-cell">
                       IP Address
                     </th>
-                    <th className="py-3 px-3 text-right">Actions</th>
+                    <th className="py-3 px-3 text-right">Status</th>
                   </tr>
                 </thead>
                 <tbody className="text-gold-100/90 text-[13px]">
@@ -530,32 +506,33 @@ export default function ProfileAgreements() {
                       className="border-b border-gold-300/5 hover:bg-navy-950/40 transition-colors"
                     >
                       <td className="py-3 px-3 font-medium text-gold-50">
-                        {record.agreement?.title || "Legal Agreement"}
+                        {record.agreement?.title || "Platform Policy"}
                       </td>
                       <td className="py-3 px-3 text-center">
-                        <span className="bg-navy-950 text-gold-200/80 px-2 py-0.5 rounded text-[10px] border border-gold-300/10">
+                        <span className="bg-navy-950 text-gold-200/80 px-2 py-0.5 rounded text-[10px] border border-gold-300/10 font-semibold">
                           v{record.versionAccepted}
                         </span>
                       </td>
-                      <td className="py-3 px-3 italic">
-                        "{record.signatureName}"
+                      <td className="py-3 px-3 text-gold-100 whitespace-nowrap">
+                        {record.signatureName}
                       </td>
-                      <td className="py-3 px-3 text-gold-100/60">
-                        {new Date(record.acceptedAt).toLocaleDateString()}
+                      <td className="py-3 px-3 text-gold-100/70 whitespace-nowrap">
+                        {new Date(record.acceptedAt).toLocaleString("en-GB", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
                       </td>
-                      <td className="py-3 px-3 font-mono text-[10px] text-gold-100/40 hidden md:table-cell">
+                      <td className="py-3 px-3 font-mono text-[10px] text-gold-100/50 whitespace-nowrap hidden md:table-cell">
                         {record.ipAddress}
                       </td>
                       <td className="py-3 px-3 text-right">
-                        <button
-                          type="button"
-                          onClick={() =>
-                            handlePrintAgreement(record.agreement, record)
-                          }
-                          className="text-[11px] text-gold-DEFAULT hover:text-gold-300 font-semibold transition-colors"
-                        >
-                          Print / Save PDF
-                        </button>
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                          Accepted
+                        </span>
                       </td>
                     </tr>
                   ))}

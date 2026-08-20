@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -41,7 +41,6 @@ export default function AgreementsPage() {
 
   const [selectedAgreement, setSelectedAgreement] =
     useState<LegalAgreement | null>(null);
-  const [signatureName, setSignatureName] = useState("");
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [payingFee, setPayingFee] = useState(false);
@@ -161,24 +160,24 @@ export default function AgreementsPage() {
     e.preventDefault();
     if (!selectedAgreement) return;
     if (!agreedToTerms) {
-      setError("You must check the agreement box before signing.");
+      setError("You must accept the terms before proceeding.");
       return;
     }
-    if (!signatureName.trim()) {
-      setError("Please type your name as your electronic signature.");
-      return;
-    }
+
+    const autoName =
+      `${user?.firstName || ""} ${user?.lastName || ""}`.trim() ||
+      user?.email ||
+      "Accepted";
 
     try {
       setIsSubmitting(true);
       setError(null);
       await agreementsService.signAgreement(
         selectedAgreement.id,
-        signatureName,
+        autoName,
       );
 
-      // Reset signing state
-      setSignatureName("");
+      // Reset acceptance state
       setAgreedToTerms(false);
 
       // Refresh context profile
@@ -240,10 +239,10 @@ export default function AgreementsPage() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-white/5 pb-6">
           <div>
             <h2 className="text-xl font-bold text-gold-100">
-              Legal Agreements
+              Terms & Policies
             </h2>
             <p className="mt-1 text-sm text-gold-200/60">
-              Review and electronically sign your terms and policies.
+              Please review and accept our platform terms and policies to continue.
             </p>
           </div>
 
@@ -256,7 +255,7 @@ export default function AgreementsPage() {
                   : "text-slate-400 hover:text-white"
               }`}
             >
-              Pending Signature ({pending.length})
+              To Accept ({pending.length})
             </button>
             <button
               onClick={() => setActiveTab("history")}
@@ -266,7 +265,7 @@ export default function AgreementsPage() {
                   : "text-slate-400 hover:text-white"
               }`}
             >
-              Signing History ({history.length})
+              Accepted Policies ({history.length})
             </button>
           </div>
         </div>
@@ -506,83 +505,38 @@ export default function AgreementsPage() {
                           ))}
                       </div>
 
-                      {/* Signature Form */}
+                      {/* Acceptance Form */}
                       <form
                         onSubmit={handleSign}
-                        className="border-t border-navy-800 pt-6"
+                        className="border-t border-navy-800 pt-6 space-y-4"
                       >
-                        <div className="mb-5 flex items-start">
-                          <input
-                            id="accept-terms"
-                            type="checkbox"
-                            checked={agreedToTerms}
-                            onChange={(e) => setAgreedToTerms(e.target.checked)}
-                            className="h-5 w-5 rounded bg-navy-950 border-navy-800 text-gold-DEFAULT focus:ring-gold-DEFAULT focus:ring-offset-navy-900 mt-0.5"
-                          />
-                          <label
-                            htmlFor="accept-terms"
-                            className="ml-3 text-sm text-slate-300 select-none"
-                          >
-                            I confirm that I have read, understood, and accept
-                            the terms of the{" "}
-                            <span className="text-white font-medium">
-                              {selectedAgreement.title}
-                            </span>
-                            .
+                        <div className={`flex items-start bg-navy-900/30 p-4 rounded-xl border transition-colors ${error && !agreedToTerms ? "border-red-500/50" : "border-navy-800/60"}`}>
+                          <div className="mt-0.5 relative flex items-center justify-center shrink-0">
+                            <input id="accept-terms" type="checkbox" checked={agreedToTerms}
+                              onChange={(e) => { setAgreedToTerms(e.target.checked); setError(null); }}
+                              className="peer appearance-none w-5 h-5 border-2 border-navy-700 rounded bg-navy-900/50 checked:bg-[#b59469] checked:border-[#b59469] focus:outline-none focus:ring-2 focus:ring-[#b59469]/30 transition-all cursor-pointer shadow-inner" />
+                            <svg className="absolute w-3.5 h-3.5 text-navy-950 opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                          </div>
+                          <label htmlFor="accept-terms" className="ml-3.5 text-sm text-slate-300 select-none cursor-pointer leading-tight">
+                            I have read and accept the{" "}
+                            <span className="text-white font-bold">{selectedAgreement.title}</span>.
                           </label>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
-                          <div>
-                            <label
-                              htmlFor="sig-name"
-                              className="block text-xs font-semibold text-slate-400 uppercase mb-2"
-                            >
-                              Full Name (Typed Signature)
-                            </label>
-                            <input
-                              id="sig-name"
-                              type="text"
-                              value={signatureName}
-                              onChange={(e) => setSignatureName(e.target.value)}
-                              placeholder="Type your official name to sign"
-                              className="w-full bg-navy-950 border border-navy-800 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-gold-DEFAULT focus:ring-1 focus:ring-gold-DEFAULT transition"
-                            />
-                          </div>
-
-                          <button
-                            type="submit"
-                            disabled={isSubmitting}
-                            className="w-full bg-[#b59469] hover:bg-[#a08054] text-navy-950 font-bold py-3 px-6 rounded-lg transition-all shadow-[0_8px_30px_rgba(160,128,84,0.24)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                          >
-                            {isSubmitting ? (
-                              <>
-                                <svg
-                                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-navy-950"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <circle
-                                    className="opacity-25"
-                                    cx="12"
-                                    cy="12"
-                                    r="10"
-                                    stroke="currentColor"
-                                    strokeWidth="4"
-                                  />
-                                  <path
-                                    className="opacity-75"
-                                    fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                  />
-                                </svg>
-                                Sealing Agreement...
-                              </>
-                            ) : (
-                              "Electronically Sign"
-                            )}
-                          </button>
-                        </div>
+                        <button type="submit" disabled={isSubmitting || !agreedToTerms}
+                          className="w-full bg-[#b59469] hover:bg-[#a08054] text-navy-950 font-bold py-3 px-6 rounded-lg transition-all shadow-[0_8px_30px_rgba(160,128,84,0.24)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center">
+                          {isSubmitting ? (
+                            <>
+                              <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-navy-950" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth={4} />
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                              </svg>
+                              Processing...
+                            </>
+                          ) : ("Accept & Continue")}
+                        </button>
                       </form>
                     </div>
                   )}
@@ -596,26 +550,23 @@ export default function AgreementsPage() {
         {activeTab === "history" && (
           <div className="bg-navy-900/60 border border-navy-800 rounded-2xl p-6 shadow-soft">
             <h2 className="text-xl font-bold text-white mb-6">
-              Signature Audit Trail
+              Accepted Policies &amp; Terms
             </h2>
             {history.length === 0 ? (
               <p className="text-slate-400 text-center py-8">
-                No signed agreements found.
+                No accepted policies found.
               </p>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse text-sm text-slate-300">
                   <thead>
-                    <tr className="border-b border-navy-800 text-slate-400 font-semibold">
-                      <th className="py-3.5 px-4">Document Title</th>
+                    <tr className="border-b border-navy-800 text-slate-400 font-semibold text-xs uppercase tracking-wider">
+                      <th className="py-3.5 px-4">Policy Title</th>
                       <th className="py-3.5 px-4 text-center">Version</th>
-                      <th className="py-3.5 px-4">Signatory Name</th>
-                      <th className="py-3.5 px-4">Signed Date</th>
+                      <th className="py-3.5 px-4">Accepted By</th>
+                      <th className="py-3.5 px-4">Accepted Date</th>
                       <th className="py-3.5 px-4">IP Address</th>
-                      <th className="py-3.5 px-4 hidden md:table-cell">
-                        User Agent
-                      </th>
-                      <th className="py-3.5 px-4 text-right">Actions</th>
+                      <th className="py-3.5 px-4 text-right">Status</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -625,44 +576,33 @@ export default function AgreementsPage() {
                         className="border-b border-navy-800/40 hover:bg-navy-850/30 transition-colors"
                       >
                         <td className="py-4 px-4 font-semibold text-white">
-                          {record.agreement?.title || "Legal Agreement"}
+                          {record.agreement?.title || "Platform Policy"}
                         </td>
                         <td className="py-4 px-4 text-center">
-                          <span className="bg-navy-800 text-gold-DEFAULT px-2 py-0.5 rounded text-xs">
+                          <span className="bg-navy-800 text-gold-DEFAULT px-2.5 py-1 rounded text-xs font-semibold">
                             v{record.versionAccepted}
                           </span>
                         </td>
-                        <td className="py-4 px-4 font-medium italic text-gold-100">
-                          "{record.signatureName}"
+                        <td className="py-4 px-4 font-medium text-slate-200 whitespace-nowrap">
+                          {record.signatureName}
                         </td>
-                        <td className="py-4 px-4 text-slate-450">
-                          {new Date(record.acceptedAt).toLocaleString("en-US", {
-                            month: "short",
+                        <td className="py-4 px-4 text-slate-300 whitespace-nowrap">
+                          {new Date(record.acceptedAt).toLocaleString("en-GB", {
                             day: "numeric",
+                            month: "short",
                             year: "numeric",
-                            hour: "numeric",
+                            hour: "2-digit",
                             minute: "2-digit",
                           })}
                         </td>
-                        <td className="py-4 px-4 font-mono text-xs">
+                        <td className="py-4 px-4 font-mono text-xs text-slate-400 whitespace-nowrap">
                           {record.ipAddress}
                         </td>
-                        <td
-                          className="py-4 px-4 text-xs text-slate-500 max-w-xs truncate hidden md:table-cell"
-                          title={record.userAgent}
-                        >
-                          {record.userAgent}
-                        </td>
                         <td className="py-4 px-4 text-right">
-                          <button
-                            type="button"
-                            onClick={() =>
-                              handlePrintAgreement(record.agreement, record)
-                            }
-                            className="text-xs text-gold-DEFAULT hover:underline font-semibold"
-                          >
-                            Print / Save PDF
-                          </button>
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                            Accepted
+                          </span>
                         </td>
                       </tr>
                     ))}

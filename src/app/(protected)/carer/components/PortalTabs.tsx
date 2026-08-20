@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useRouter } from "next/navigation";
 import { useRef, useEffect, useTransition } from "react";
@@ -115,7 +115,7 @@ export default function PortalTabs({
     },
     {
       id: "agreements" as TabType,
-      label: "Legal Agreements",
+      label: "Terms & Policies",
       href: "/carer?tab=agreements",
     },
     { id: "referrals", label: "Referral Program", href: "/carer/referrals" },
@@ -171,3 +171,4 @@ export default function PortalTabs({
     </>
   );
 }
+

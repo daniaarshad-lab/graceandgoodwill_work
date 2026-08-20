@@ -195,8 +195,9 @@ export default function ClientRequests({
                             let titleText = "";
 
                             if (opt.value === "OPEN_FOR_APPLICATIONS") {
+                              const normalizedStatus = req.clientStatus?.toUpperCase();
                               const isNotApproved =
-                                req.clientStatus !== "APPROVED";
+                                normalizedStatus !== "APPROVED" && normalizedStatus !== "ACTIVE";
                               const noFees = !req.clientAgreedWeeklyFee;
 
                               if (isNotApproved || noFees) {

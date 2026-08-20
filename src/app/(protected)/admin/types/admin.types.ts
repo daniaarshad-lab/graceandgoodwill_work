@@ -46,7 +46,7 @@ export interface ClientRequest {
   email: string;
   phone: string;
   interestListCount?: number;
-  clientStatus?: string;
+  clientStatus?: "PENDING" | "APPROVED" | "SUSPENDED" | "ACTIVE" | string;
   clientAgreedWeeklyFee?: number | null;
 }
 

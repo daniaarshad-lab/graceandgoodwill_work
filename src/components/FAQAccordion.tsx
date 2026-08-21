@@ -1,10 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import { faqs } from "@/data/faqData";
+import { faqs as defaultFaqs } from "@/data/faqData";
 import { ChevronDown } from "lucide-react";
 
-export default function FAQAccordion() {
+export default function FAQAccordion({
+  items = defaultFaqs,
+}: {
+  items?: { question: string; answer: string }[];
+}) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const toggleFAQ = (index: number) => {
@@ -13,7 +17,7 @@ export default function FAQAccordion() {
 
   return (
     <section className="space-y-4">
-      {faqs.map((faq, index) => {
+      {items.map((faq, index) => {
         const isOpen = openIndex === index;
         return (
           <div
@@ -39,13 +43,14 @@ export default function FAQAccordion() {
               </div>
             </div>
 
-            {/* Animated expand/collapse container using grid interpolation */}
+            {/* Animated expand/collapse container using grid interpolation with inline styles to prevent SSR flash */}
             <div
-              className={`grid transition-all duration-300 ease-in-out ${
-                isOpen
-                  ? "grid-rows-[1fr] opacity-100 mt-4"
-                  : "grid-rows-[0fr] opacity-0"
-              }`}
+              className="grid transition-all duration-300 ease-in-out"
+              style={{
+                gridTemplateRows: isOpen ? "1fr" : "0fr",
+                opacity: isOpen ? 1 : 0,
+                marginTop: isOpen ? "1rem" : "0",
+              }}
             >
               <div className="overflow-hidden">
                 <p className="text-sm leading-relaxed text-gold-200/70 sm:text-base border-t border-gold-500/10 pt-4">

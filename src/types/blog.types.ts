@@ -50,6 +50,8 @@ export interface BlogPost {
   seoTitle?: string;
   seoDescription?: string;
   isFeatured?: boolean;
+  faqItems?: { question: string; answer: string }[];
+  cta?: { text: string; href: string };
 }
 
 export interface BlogListParams {

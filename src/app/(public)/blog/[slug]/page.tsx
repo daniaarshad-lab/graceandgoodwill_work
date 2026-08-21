@@ -11,6 +11,7 @@ import BlogBreadcrumbs from "@/components/blog/BlogBreadcrumbs";
 import BlogJsonLd from "@/components/blog/BlogJsonLd";
 import MockPostFallback from "@/components/blog/MockPostFallback";
 import RelatedPosts from "@/components/blog/RelatedPosts";
+import FAQAccordion from "@/components/FAQAccordion";
 import { getCategoryLabel } from "@/data/blogCategories";
 import { blogService, isBlogMockMode } from "@/services/blog/blog.service";
 
@@ -144,7 +145,32 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
             </div>
           )}
 
-          <ArticleAuthor author={post.author} />
+          {post.faqItems && post.faqItems.length > 0 && (
+            <div className="mt-16">
+              <h2 className="mb-8 font-serif text-2xl font-semibold text-gold-50 sm:text-3xl">
+                Frequently Asked Questions
+              </h2>
+              <FAQAccordion items={post.faqItems} />
+            </div>
+          )}
+
+          {post.cta && (
+            <div className="mt-16 rounded-2xl border border-gold-300/10 bg-navy-900/40 p-8 text-center sm:p-12">
+              <h2 className="mb-6 font-serif text-2xl font-semibold text-gold-50">
+                Next Steps
+              </h2>
+              <Link
+                href={post.cta.href}
+                className="inline-flex h-12 items-center justify-center rounded-xl bg-gold-DEFAULT px-8 text-sm font-semibold text-navy-950 transition hover:bg-gold-400 hover:-translate-y-0.5"
+              >
+                {post.cta.text}
+              </Link>
+            </div>
+          )}
+
+          <div className="mt-16 border-t border-gold-500/10 pt-8">
+            <ArticleAuthor author={post.author} />
+          </div>
 
           <div className="mt-10">
             <Link

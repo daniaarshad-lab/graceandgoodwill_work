@@ -262,16 +262,21 @@ export default function PricingPage() {
           }}
         />
 
-        <div className="container-wrapper relative z-20 text-center max-w-2xl mx-auto">
-          <h2 className="text-xl sm:text-2xl lg:text-3xl font-serif text-gold-50 tracking-wide mb-3">
-            Stay Connected
-          </h2>
-          <p className="text-sm leading-relaxed text-gold-200/80 sm:text-base mb-8">
-            Receive care advice, family resources, training opportunities,
-            events and updates from Grace & Goodwill.
-          </p>
-
-          <NewsletterForm />
+        <div className="container-wrapper relative z-20 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-center">
+            <div className="text-center md:text-left">
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-serif text-gold-50 tracking-wide mb-3">
+                Stay Connected
+              </h2>
+              <p className="text-sm leading-relaxed text-gold-200/80 sm:text-base">
+                Receive care advice, family resources, training opportunities,
+                events and updates from Grace & Goodwill.
+              </p>
+            </div>
+            <div>
+              <NewsletterForm />
+            </div>
+          </div>
         </div>
       </section>
     </main>

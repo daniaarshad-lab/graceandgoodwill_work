@@ -209,15 +209,20 @@ export default function ClientRequests({
                             let titleText = "";
 
                             if (opt.value === "OPEN_FOR_APPLICATIONS") {
-                              const normalizedStatus = req.clientStatus?.toUpperCase();
-                              const isNotApproved =
-                                normalizedStatus !== "APPROVED" && normalizedStatus !== "ACTIVE";
-                              const noFees = req.clientAgreedWeeklyFee == null;
+                              if (req.status === "NEW_ENQUIRY") {
+                                isDisabled = false;
+                                titleText = "";
+                              } else {
+                                const normalizedStatus = req.clientStatus?.toUpperCase();
+                                const isNotApproved =
+                                  normalizedStatus !== "APPROVED" && normalizedStatus !== "ACTIVE";
+                                const noFees = req.clientAgreedWeeklyFee == null;
 
-                              if (isNotApproved || noFees) {
-                                isDisabled = true;
-                                titleText =
-                                  "Client must be approved and weekly fees must be updated";
+                                if (isNotApproved || noFees) {
+                                  isDisabled = true;
+                                  titleText =
+                                    "Client must be approved and weekly fees must be updated";
+                                }
                               }
                             }
 
@@ -290,7 +295,7 @@ export default function ClientRequests({
                           <div className="absolute right-0 top-full mt-1 w-48 rounded-xl border border-gold-300/10 bg-navy-950 shadow-2xl opacity-0 invisible group-hover/menu:opacity-100 group-hover/menu:visible transition-all z-20 py-1.5 origin-top-right">
                             {req.clientId ? (
                               <Link
-                                href={`/admin/clients/${req.clientId}`}
+                                href={`/admin/clients/${req.clientId}?careRequestId=${req.id}&clientName=${encodeURIComponent(req.clientName)}`}
                                 className="block px-4 py-2 text-xs text-left text-gold-200 hover:bg-gold-300/10 w-full transition-colors"
                               >
                                 Manage Client Profile
@@ -303,7 +308,7 @@ export default function ClientRequests({
                             {req.clientId &&
                               (req.interestListCount ?? 0) > 0 && (
                                 <Link
-                                  href={`/admin/clients/${req.clientId}/interest-list?clientName=${encodeURIComponent(req.clientName)}`}
+                                  href={`/admin/clients/${req.clientId}/interest-list?clientName=${encodeURIComponent(req.clientName)}&careRequestId=${req.id}`}
                                   className="block px-4 py-2 text-xs text-left text-emerald-400 hover:bg-emerald-500/10 w-full transition-colors border-t border-gold-300/5 mt-1 pt-2"
                                 >
                                   View Interest List ({req.interestListCount})

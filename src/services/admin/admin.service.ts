@@ -770,7 +770,7 @@ export const adminService = {
     });
   },
 
-  async getClientInterestList(clientId: string): Promise<any[]> {
+  async getClientInterestList(clientId: string, careRequestId?: string): Promise<any[]> {
     const token =
       typeof window !== "undefined"
         ? localStorage.getItem("accessToken")
@@ -778,13 +778,13 @@ export const adminService = {
     if (!token) throw new Error("No token found");
 
     try {
-      const result = await apiFetch(
-        `/admin/clients/${clientId}/interest-list`,
-        {
-          method: "GET",
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
+      const url = careRequestId
+        ? `/admin/clients/${clientId}/interest-list?careRequestId=${careRequestId}`
+        : `/admin/clients/${clientId}/interest-list`;
+      const result = await apiFetch(url, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+      });
       return Array.isArray(result)
         ? result
         : result?.interestList || result?.data || [];

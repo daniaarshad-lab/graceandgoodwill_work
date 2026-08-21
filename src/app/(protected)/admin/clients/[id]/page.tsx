@@ -67,6 +67,7 @@ function ClientDetailsContent() {
   const searchParams = useSearchParams();
   const id = params.id as string;
   const fromTab = searchParams.get("from");
+  const careRequestId = searchParams.get("careRequestId");
 
   const [client, setClient] = useState<ClientDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -749,7 +750,7 @@ function ClientDetailsContent() {
 
             {/* INTEREST LIST QUICK ACTION */}
             <Link
-              href={`/admin/clients/${id}/interest-list?clientName=${encodeURIComponent(client.name)}`}
+              href={`/admin/clients/${id}/interest-list?clientName=${encodeURIComponent(client.name)}${careRequestId ? `&careRequestId=${careRequestId}` : ""}`}
               className="flex items-center justify-between gap-4 rounded-2xl border border-rose-500/20 bg-rose-950/10 hover:bg-rose-950/20 hover:border-rose-500/35 p-5 transition-all duration-200 group"
             >
               <div className="flex items-center gap-3">

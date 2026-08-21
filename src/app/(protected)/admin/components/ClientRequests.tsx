@@ -155,6 +155,20 @@ export default function ClientRequests({
                           Start: {req.startDate}
                         </span>
                       </div>
+                        {req.placement?.status === "REJECTED_BY_CARER" && (
+                          <div className="mt-2 flex items-center justify-between gap-2 p-2 rounded-lg bg-rose-500/15 border border-rose-500/30 text-[11px] text-rose-300">
+                            <div className="flex items-center gap-1.5 truncate">
+                              <span className="font-bold text-rose-400 shrink-0">Declined by Carer:</span>
+                              <span className="truncate max-w-[150px]" title={req.placement?.rejectionReason || "Declined"}>
+                                {req.placement?.carerProfile?.user ? `${req.placement.carerProfile.user.firstName} ${req.placement.carerProfile.user.lastName}` : "Carer"}
+                                {req.placement?.rejectionReason ? ` - "${req.placement.rejectionReason}"` : ""}
+                              </span>
+                            </div>
+                            <span className="text-[9px] font-bold uppercase tracking-wider text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20 shrink-0">
+                              Re-assignment Needed
+                            </span>
+                          </div>
+                        )}
                     </td>
 
                     <td className="p-4">

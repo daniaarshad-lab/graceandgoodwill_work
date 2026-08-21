@@ -79,6 +79,10 @@ export interface ClientPlacement {
   careRequestId: string | null;
   hourlyRate: string | number;
   status:
+    | "PENDING_ACCEPTANCE"
+    | "PLACEMENT_CONFIRMED"
+    | "REJECTED_BY_CARER"
+    | "PLACEMENT_STARTED"
     | "ACTIVE"
     | "COMPLETED"
     | "TERMINATED"
@@ -86,7 +90,11 @@ export interface ClientPlacement {
     | "PENDING"
     | "MATCHING"
     | "APPROVED"
-    | "ONGOING";
+    | "ONGOING"
+    | string;
+  rejectionReason?: string | null;
+  rejectedAt?: string | null;
+  acceptedAt?: string | null;
   startDate: string;
   endDate: string | null;
   createdAt: string;

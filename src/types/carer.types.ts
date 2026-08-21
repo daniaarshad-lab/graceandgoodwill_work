@@ -157,6 +157,10 @@ export interface CarerPlacement {
   clientProfileId: string;
   careRequestId: string | null;
   status:
+    | "PENDING_ACCEPTANCE"
+    | "PLACEMENT_CONFIRMED"
+    | "REJECTED_BY_CARER"
+    | "PLACEMENT_STARTED"
     | "ACTIVE"
     | "COMPLETED"
     | "TERMINATED"
@@ -164,7 +168,14 @@ export interface CarerPlacement {
     | "PENDING"
     | "MATCHING"
     | "APPROVED"
-    | "ONGOING";
+    | "ONGOING"
+    | string;
+  hourlyRate?: number | string;
+  weeklyFee?: number | string | null;
+  dailyRate?: number | string | null;
+  rejectionReason?: string | null;
+  rejectedAt?: string | null;
+  acceptedAt?: string | null;
   startDate: string;
   endDate: string | null;
   createdAt: string;
@@ -181,7 +192,7 @@ export interface CarerPlacement {
   };
   careRequest: {
     id: string;
-    careCategory: string;
+    careCategory: string | string[];
     requirements: string;
     city?: string | null;
     address?: string | null;

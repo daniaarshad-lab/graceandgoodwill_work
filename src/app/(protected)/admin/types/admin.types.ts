@@ -48,6 +48,22 @@ export interface ClientRequest {
   interestListCount?: number;
   clientStatus?: "PENDING" | "APPROVED" | "SUSPENDED" | "ACTIVE" | string;
   clientAgreedWeeklyFee?: number | null;
+  placement?: {
+    id: string;
+    status: string;
+    rejectionReason?: string | null;
+    rejectedAt?: string | null;
+    acceptedAt?: string | null;
+    carerProfile?: {
+      user?: {
+        id: string;
+        firstName: string;
+        lastName: string;
+        email?: string;
+        phoneNumber?: string;
+      };
+    };
+  } | null;
 }
 
 export interface PlacementTimelineEvent {
@@ -66,12 +82,17 @@ export interface Placement {
   location: string;
   urgency: "Standard" | "High" | "Emergency";
   status:
+    | "PENDING_ACCEPTANCE"
     | "PLACEMENT_CONFIRMED"
+    | "REJECTED_BY_CARER"
     | "PLACEMENT_STARTED"
     | "ONGOING"
     | "COMPLETED"
     | "CANCELLED"
     | string;
+  rejectionReason?: string | null;
+  rejectedAt?: string | null;
+  acceptedAt?: string | null;
   contactDetailsReleased: boolean;
   startDate: string;
   timeline: PlacementTimelineEvent[];
@@ -192,6 +213,9 @@ export interface AdminPlacementDetail {
   clientProfileId: string;
   careRequestId: string | null;
   status: string;
+  rejectionReason?: string | null;
+  rejectedAt?: string | null;
+  acceptedAt?: string | null;
   startDate: string;
   endDate: string | null;
   createdAt: string;

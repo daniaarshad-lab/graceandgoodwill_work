@@ -50,12 +50,13 @@ export default function AgreementsGuard({ children }: AgreementsGuardProps) {
       }
     }
 
-    // Don't redirect if we're already on the agreements page or login/register/unauthorized
+    // Don't redirect if we're already on the agreements page or login/register/unauthorized/onboarding
     if (
       normalizedPath === "/agreements" ||
       normalizedPath.startsWith("/login") ||
       normalizedPath.startsWith("/register") ||
-      normalizedPath.startsWith("/unauthorized")
+      normalizedPath.startsWith("/unauthorized") ||
+      normalizedPath === "/client/onboarding"
     ) {
       setHasPending(false);
       return;

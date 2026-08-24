@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
 import Image from "next/image";
-import authHero from "@/assets/auth/auth-hero.png";
 
 interface AuthSplitLayoutProps {
   title: string;
@@ -29,13 +28,8 @@ function AuthSplitLayoutContent({
   return (
     <div className="asl-root">
       <div className="asl-bg" aria-hidden="true">
-        <Image
-          src={authHero}
-          alt=""
-          className="asl-bg-img"
-          placeholder="blur"
-        />
-        <div className="asl-bg-overlay" />
+        {/* We use a solid navy background here to match the desired look outside the card */}
+        <div className="absolute inset-0 bg-[#0a1128]" />
       </div>
 
       <div className="asl-wrapper">
@@ -79,12 +73,29 @@ function AuthSplitLayoutContent({
             <div className="asl-left-overlay" />
           </div>
 
-          <div className="asl-right">
-            <div className="asl-header">
+          <div className="asl-right relative">
+            {/* Mobile-only background image inside the form card */}
+            <div className="absolute top-0 left-0 right-0 h-[65%] z-0 block lg:hidden">
+              <Image
+                src={heroSrc}
+                alt=""
+                fill
+                className="object-cover"
+                style={{
+                  objectPosition: "center top",
+                  filter: "sepia(0.05) saturate(1.05) brightness(0.65)",
+                  maskImage: "linear-gradient(to bottom, black 50%, transparent 100%)",
+                  WebkitMaskImage: "linear-gradient(to bottom, black 50%, transparent 100%)",
+                }}
+              />
+              <div className="absolute inset-0 bg-[#0a1128]/30" />
+            </div>
+
+            <div className="asl-header relative z-10">
               <h1 className="asl-title">{title}</h1>
               {subtitle && <p className="asl-subtitle">{subtitle}</p>}
             </div>
-            <div className="asl-body">{children}</div>
+            <div className="asl-body relative z-10">{children}</div>
           </div>
         </div>
       </div>

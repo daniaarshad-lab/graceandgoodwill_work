@@ -8,11 +8,11 @@ const NewsletterForm = dynamic(() => import("@/components/NewsletterForm"));
 
 const includedItems = [
   "Personalised consultation",
-  "Individual assessment",
-  "Carefully matched independent live-in carers",
+  "Individual needs & preferences phone consultation",
+  "Access to suitable live-in carer profiles",
   "Essential compliance checks",
-  "Support using the Grace & Goodwill platform",
-  "Replacement support where required",
+  "Platform guidance and support when needed",
+  "Replacement matching support at your request",
   "Nationwide matching service",
 ];
 
@@ -122,19 +122,23 @@ export default function PricingPage() {
             <div className="lg:col-span-3 space-y-10">
               {/* Every Care Arrangement is Unique */}
               <div className="space-y-4">
-                <h2 className="rule-heading">
+                <h2 className="page-strapline">
                   Every Care Arrangement is Unique
                 </h2>
                 <p className="page-supporting-text">
                   Live-in care is never a one-size-fits-all service.
                 </p>
                 <p className="page-supporting-text">
-                  Before providing a quotation, we take the time to understand
+                  Our platform gives you access to carer profiles so you can
+                  explore available options and choose who you feel best matches
                   your individual circumstances, daily routine, support
-                  requirements and preferences. This allows us to introduce you
-                  to the most suitable independent live-in carer while ensuring
-                  our pricing remains fair, transparent and appropriate to your
-                  needs.
+                  requirements and personal preferences.
+                </p>
+                <p className="page-supporting-text">
+                  If you would like assistance using the platform, or need help
+                  identifying potentially suitable profiles, our Support Team is
+                  available to assist. The choice of carer always remains with
+                  you.
                 </p>
               </div>
             </div>
@@ -147,7 +151,7 @@ export default function PricingPage() {
                     <Shield className="w-4 h-4" strokeWidth={1.5} />
                   </div>
                   <h3 className="text-base sm:text-lg font-serif text-gold-50">
-                    Included With Every Introduction
+                    Included With Our Matching Service
                   </h3>
                 </div>
 

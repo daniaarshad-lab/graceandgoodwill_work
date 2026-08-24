@@ -56,8 +56,9 @@ export default function EmergencyCarePage() {
                     <p className="page-supporting-text max-w-3xl">
                       Complete this form and our Urgent Matching Team will
                       review your requirements as quickly as possible. We will
-                      begin identifying suitable independent self-employed
-                      carers and contact you to discuss available introductions.
+                      identify suitable carers based on your individual needs
+                      and preferences and provide suitable options for you to
+                      consider.
                     </p>
                   </div>
                 </div>
@@ -86,8 +87,8 @@ export default function EmergencyCarePage() {
                       Priority Hotline
                     </h3>
                     <p className="text-xs text-gold-200/50 font-light mt-0.5">
-                      Connect instantly with our Urgent Matching Team on call 24
-                      hours a day
+                      Contact our Urgent Matching Team for urgent matching
+                      enquiries, 24 hours a day.
                     </p>
                   </div>
                 </div>
@@ -96,11 +97,11 @@ export default function EmergencyCarePage() {
 
                 <div className="space-y-2.5">
                   <a
-                    href="tel:+442045781269"
+                    href="tel:+442045240108"
                     className="group flex items-center justify-center gap-2.5 w-full px-4 py-3.5 rounded-xl bg-[#b59469] text-navy-950 text-sm font-bold hover:bg-[#a3835a] hover:text-white hover:-translate-y-[1px] hover:shadow-[0_8px_30px_rgba(160,128,84,0.24)] transition-all duration-300"
                   >
                     <Phone className="w-4 h-4 group-hover:animate-pulse" />
-                    020 4578 1269
+                    020 4524 0108
                   </a>
                   <a
                     href="https://wa.me/447462931949?text=URGENT%3A%20I%20need%20to%20chat%20about%20an%20immediate%20live%20in%20care%20placement."
@@ -109,7 +110,7 @@ export default function EmergencyCarePage() {
                     className="flex items-center justify-center gap-2.5 w-full px-4 py-3.5 rounded-xl border border-emerald-500/30 bg-emerald-500/5 text-emerald-300 text-sm font-semibold hover:bg-emerald-500/10 hover:text-emerald-200 hover:-translate-y-[1px] transition-all duration-300"
                   >
                     <WhatsAppIcon className="w-4 h-4" />
-                    WhatsApp Support
+                    WhatsApp Emergency Support
                   </a>
                 </div>
               </div>
@@ -137,8 +138,9 @@ export default function EmergencyCarePage() {
                       </p>
                       <p className="page-supporting-text text-gold-100/50 mt-0.5">
                         Our Urgent Matching Team reviews urgent enquiries,
-                        identifies suitable independent self-employed carers and
-                        facilitates introductions as quickly as possible.
+                        identifies suitable carers based on the individual's needs
+                        and preferences, and provides suitable options for the client
+                        or family to consider as quickly as possible.
                       </p>
                     </div>
                   </div>
@@ -152,10 +154,10 @@ export default function EmergencyCarePage() {
                         24–48 Hour Matching
                       </p>
                       <p className="page-supporting-text text-gold-100/50 mt-0.5">
-                        Where suitable carers are available, we aim to introduce
-                        independent self-employed live-in carers within 24 to 48
-                        hours across the UK. Times may vary depending on
-                        location, availability and individual requirements.
+                        Where suitable carers are available, we aim to match clients
+                        and families with suitable carers within 24 to 48 hours
+                        across the UK. Times may vary depending on location,
+                        carer availability and individual requirements.
                       </p>
                     </div>
                   </div>
@@ -169,7 +171,7 @@ export default function EmergencyCarePage() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-12 text-sm text-gold-200/60 bg-navy-900/30 rounded-full py-4 border border-gold-400/10 backdrop-blur-sm">
               <div className="flex items-center gap-2.5">
                 <Clock className="w-4 h-4 text-gold-400/80" strokeWidth={1.5} />
-                <span>24 Hour Deploys</span>
+                <span>24-Hour Matching</span>
               </div>
               <div className="hidden sm:block h-4 w-px bg-gold-400/20" />
               <div className="flex items-center gap-2.5">

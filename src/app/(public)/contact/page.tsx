@@ -1,7 +1,7 @@
 import React from "react";
 import Button from "@/components/Button";
 import ContactForm from "@/components/forms/ContactForm";
-import { Heart, CheckCircle, Phone, MessageCircle } from "lucide-react";
+import { Heart, CheckCircle, Phone, MessageCircle, MapPin } from "lucide-react";
 
 export const metadata = {
   title: "Contact | Grace & Goodwill",
@@ -69,8 +69,7 @@ export default function ContactPage() {
                 Strict Vetting Standards
               </h4>
               <p className="page-supporting-text text-gold-100/60 mt-1">
-                All our professional carers undergo rigorous vetting and
-                comprehensive background checks.
+                All our professional carers undergo and background checks.
               </p>
             </div>
           </div>
@@ -92,9 +91,9 @@ export default function ContactPage() {
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center w-full max-w-md mx-auto">
               <Button asChild variant="primary" size="sm" fullWidth>
-                <a href="tel:+442045781269" className="gap-2">
+                <a href="tel:+442045240108" className="gap-2">
                   <Phone className="w-4 h-4 fill-current" />
-                  020 4578 1269
+                  020 4524 0108
                 </a>
               </Button>
 
@@ -114,11 +113,15 @@ export default function ContactPage() {
 
           {/* 4. Registered Office */}
           <div className="p-6 rounded-[1.75rem] border border-gold-300/10 bg-navy-900/40 text-center flex flex-col justify-center space-y-4 w-full h-full">
-            <div>
-              <h3 className="text-base font-semibold text-gold-100">
+            <div className="flex flex-col items-center">
+              <div className="mb-5 inline-flex items-center justify-center gap-2 text-gold-200 font-bold text-sm bg-gradient-to-r from-gold-DEFAULT/5 via-gold-DEFAULT/15 to-gold-DEFAULT/5 px-4 py-2 rounded-full border border-gold-DEFAULT/20 shadow-[0_0_15px_rgba(212,175,55,0.1)]">
+                <MapPin className="w-4 h-4 text-gold-DEFAULT" />
+                <span className="tracking-wide">Nationwide live-in care matching</span>
+              </div>
+              <h3 className="text-sm font-medium text-gold-100/80">
                 Registered Office
               </h3>
-              <address className="text-sm text-gold-100/60 leading-relaxed mt-2 not-italic">
+              <address className="text-sm text-gold-100/60 leading-relaxed mt-1.5 not-italic">
                 Hypoint,<br />
                 Saltmeadows Road,<br />
                 Gateshead, NE8 3AH,<br />

@@ -1,5 +1,7 @@
 "use client";
 
+import { AUTH_ROUTES } from "@/lib/auth-routes";
+
 import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -53,8 +55,19 @@ export default function AuthenticatedHeader() {
     rawRole.charAt(0).toUpperCase() + rawRole.slice(1).toLowerCase();
 
   const handleLogout = async () => {
+    const rawRole = user?.role?.toUpperCase();
+    const isUserAdmin = rawRole === "ADMIN" || rawRole === "SUPER_ADMIN" || pathname.startsWith("/admin");
+    const isUserCarer = rawRole === "CARER" || pathname.startsWith("/carer");
+
     await dispatch(logoutThunk());
-    router.push("/login");
+
+    if (isUserAdmin) {
+      router.push(AUTH_ROUTES.login.admin);
+    } else if (isUserCarer) {
+      router.push(AUTH_ROUTES.login.carer);
+    } else {
+      router.push(AUTH_ROUTES.login.client);
+    }
   };
 
   return (

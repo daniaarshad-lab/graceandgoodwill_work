@@ -80,6 +80,7 @@ function LoginPageContent() {
       await login({
         email,
         password,
+        role: currentRole.toUpperCase(),
       });
       showSuccessToast("Login Successful", "Welcome back to Grace & Goodwill.");
     } catch (error: any) {

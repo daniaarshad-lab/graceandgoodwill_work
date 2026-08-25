@@ -1,5 +1,7 @@
 "use client";
 
+import { AUTH_ROUTES } from "@/lib/auth-routes";
+
 import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
@@ -50,10 +52,21 @@ function SiteHeader() {
   }, [isMobileMenuOpen]);
 
   const handleLogout = async () => {
+    const rawRole = user?.role?.toUpperCase();
+    const isUserAdmin = rawRole === "ADMIN" || rawRole === "SUPER_ADMIN" || pathname.startsWith("/admin");
+    const isUserCarer = rawRole === "CARER" || pathname.startsWith("/carer");
+
     await dispatch(logoutThunk());
     setIsMobileMenuOpen(false);
     showSuccessToast("Logged out successfully");
-    router.push("/login");
+
+    if (isUserAdmin) {
+      router.push(AUTH_ROUTES.login.admin);
+    } else if (isUserCarer) {
+      router.push(AUTH_ROUTES.login.carer);
+    } else {
+      router.push(AUTH_ROUTES.login.client);
+    }
   };
 
   const getPortalLink = () => {

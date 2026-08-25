@@ -14,7 +14,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useAppDispatch } from "@/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { logout as logoutThunk } from "@/store/slices/authSlice";
 import HeaderSearch from "./HeaderSearch";
 
@@ -23,6 +23,7 @@ export default function AuthenticatedHeader() {
   const pathname = usePathname();
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const clientProfile = useAppSelector((state) => state.client.profile);
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -46,6 +47,15 @@ export default function AuthenticatedHeader() {
   if (pathname.startsWith("/admin")) portalName = "Admin Portal";
   else if (pathname.startsWith("/client")) portalName = "Client Portal";
   else if (pathname.startsWith("/carer")) portalName = "Carer Portal";
+
+    const isClient = pathname.startsWith("/client") || user?.role?.toUpperCase() === "CLIENT";
+  const clientStatus = (clientProfile?.status || (user as any)?.status || "").toUpperCase();
+  const isClientPendingOrUnderReview =
+    isClient &&
+    (clientStatus === "PENDING" ||
+      clientStatus === "UNDER_REVIEW" ||
+      clientStatus === "PENDING_APPROVAL" ||
+      pathname === "/client/onboarding");
 
   const isAdmin = pathname.startsWith("/admin") || user?.role === "ADMIN" || user?.role === "SUPER_ADMIN";
 
@@ -128,7 +138,7 @@ export default function AuthenticatedHeader() {
                   </p>
                   <p className="text-xs text-gold-200/60">{displayRole}</p>
                 </div>
-                {!isAdmin && (
+                {!isAdmin && !isClientPendingOrUnderReview && (
                   <>
                     <Link
                       href={`/${pathname.split("/")[1]}?tab=profile`}

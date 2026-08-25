@@ -71,12 +71,14 @@ export default function RegisterForm({
       // Attempt registration using useAuth register wrapper
       await register(payload);
 
-      // Force logout immediately so the user is not automatically logged in.
-      // This ensures they must manually log in via the Login page.
-      try {
-        await logout();
-      } catch (e) {
-        // Silently ignore logout errors here since registration succeeded
+      // Force logout immediately for carers so they must manually log in.
+      // Clients remain logged in to complete the continuity form.
+      if (initialRole === "CARER") {
+        try {
+          await logout();
+        } catch (e) {
+          // Silently ignore logout errors here since registration succeeded
+        }
       }
 
       setFirstName("");
@@ -94,7 +96,7 @@ export default function RegisterForm({
       if (initialRole === "CARER") {
         router.push(AUTH_ROUTES.login.carer);
       } else {
-        router.push(AUTH_ROUTES.login.client);
+        router.push("/client/onboarding");
       }
     } catch (error: any) {
       const errorMsg =

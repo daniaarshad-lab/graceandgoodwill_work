@@ -32,6 +32,12 @@ export interface ClientProfile {
   gocardlessCustomerId?: string | null;
   gocardlessMandateId?: string | null;
 
+  careNote?: string | null;
+  careStartDate?: string | null;
+  careEndDate?: string | null;
+  carePostcode?: string | null;
+  careAddress?: string | null;
+
   user?: ClientUser;
 }
 
@@ -46,6 +52,11 @@ export interface UpdateClientProfilePayload {
   pincode?: string | null;
   postcode?: string | null;
   profilePhotoUrl?: string | null;
+  careNote?: string | null;
+  careStartDate?: string | null;
+  careEndDate?: string | null;
+  carePostcode?: string | null;
+  careAddress?: string | null;
 }
 
 export interface CreateCareRequestPayload {

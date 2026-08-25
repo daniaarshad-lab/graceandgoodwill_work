@@ -21,6 +21,11 @@ export interface SubmitClientDetailsPayload {
   email: string;
   phone: string;
   location: string;
+  careNote: string;
+  careStartDate: string;
+  careEndDate?: string;
+  carePostcode: string;
+  careAddress?: string;
 }
 
 const initialState: ClientState = {
@@ -182,6 +187,11 @@ export const submitClientDetails = createAsyncThunk<
       email: payload.email,
       phoneNumber: payload.phone,
       city: payload.location, // Mapping location to city
+      careNote: payload.careNote,
+      careStartDate: payload.careStartDate,
+      careEndDate: payload.careEndDate || undefined,
+      carePostcode: payload.carePostcode,
+      careAddress: payload.careAddress || undefined,
     });
     return updatedProfile;
   } catch (error: any) {

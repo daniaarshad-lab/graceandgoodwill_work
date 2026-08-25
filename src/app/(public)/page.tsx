@@ -68,27 +68,21 @@ export default function HomePage() {
 
         <div className="max-w-4xl lg:flex-1 xl:flex-none space-y-6 -mt-4 lg:mt-0">
           <h1 className="main-page-heading drop-shadow-md">
-            Find a Live-in Carer Who Fits Your Life
+            Live-in Care Matching
+            <span className="main-page-heading pl-3 text-[#F5D4A0]">
+              Across The UK
+            </span>
           </h1>
 
           <div className="max-w-xl space-y-4">
             <p className="page-supporting-text">
-              Grace & Goodwill is a nationwide online live-in care matching platform, helping individuals and families across the UK find live-in carers based on experience, availability, personality and the things that matter to them personally.
+              Finding someone to support you or a loved one at home is a deeply personal decision. At Grace & Goodwill, you remain in control of your choices and care arrangements. We believe the right match should bring confidence, reassurance and peace of mind when welcoming someone into your home.
             </p>
             <p className="page-supporting-text">
-              Browse available carer profiles, view photographs and introduction videos, learn about their experience, skills, location, interests and availability, and choose who you would like to speak with.
+              Grace & Goodwill brings families and carefully vetted live-in carers together through our online matching platform, where you can explore carer profiles featuring their experience, skills, interests, availability, photo, introductory video and more, helping you find the right live-in carer to match your needs, routines and preferences.
             </p>
             <p className="page-supporting-text">
-              If you would like additional support using the platform or narrowing your search, the Grace & Goodwill team can also help identify potentially suitable available profiles based on the information and preferences you provide.
-            </p>
-            <h3 className="text-lg md:text-xl font-serif text-gold-50 tracking-wide my-4">
-              You remain in control of who you choose.
-            </h3>
-            <p className="page-supporting-text">
-              Whether you need ongoing live-in care, temporary respite, dementia support, support following a stroke or hospital discharge, disability support, companionship or someone at short notice, Grace & Goodwill is designed to make finding a live-in carer clearer, faster and more personal.
-            </p>
-            <p className="text-lg font-serif italic text-gold-300 pt-2">
-              Your home. Your routine. Your choice.
+              Whether care is being planned ahead or needed urgently, we make the matching process simpler and more personal, with ongoing platform support to help maintain continuity when circumstances or care arrangements change.
             </p>
           </div>
 

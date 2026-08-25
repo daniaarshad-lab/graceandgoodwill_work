@@ -16,6 +16,7 @@ import {
   AlertTriangle,
   CheckCircle,
   Heart,
+  FileText,
 } from "lucide-react";
 import { adminService } from "@/services/admin/admin.service";
 import { showSuccessToast } from "@/utils/toast";
@@ -37,6 +38,11 @@ interface ClientDetail {
   agreedWeeklyFee: number;
   totalPaidSoFar: number;
   carerWeeklyPay?: number;
+  careNote?: string;
+  careStartDate?: string;
+  careEndDate?: string;
+  carePostcode?: string;
+  careAddress?: string;
   placementHistory: {
     startDate: string;
     carerName: string;
@@ -132,6 +138,12 @@ function ClientDetailsContent() {
           }
         }
 
+        const fullAddress = [
+          res.careAddress || res.address,
+          res.city,
+          res.carePostcode || res.postcode,
+        ].filter(Boolean).join(", ") || res.careAddress || res.address || res.carePostcode || res.postcode || "No address listed";
+
         setClient({
           id: res.id || id,
           userId: userObj.id || res.userId || id,
@@ -141,12 +153,17 @@ function ClientDetailsContent() {
           name: `${firstName} ${lastName}`.trim() || "Registered Client",
           email: email,
           phone: phoneNumber,
-          address: res.address || "No address listed",
+          address: fullAddress,
           clientSince: res.createdAt || new Date().toISOString(),
           status: res.status || "PENDING",
           agreedWeeklyFee: agreedWeeklyFee,
           totalPaidSoFar: totalPaidSoFar,
           carerWeeklyPay: carerWeeklyPay,
+          careNote: res.careNote || "",
+          careStartDate: res.careStartDate || "",
+          careEndDate: res.careEndDate || "",
+          carePostcode: res.carePostcode || res.postcode || "",
+          careAddress: res.careAddress || res.address || "",
           placementHistory: history,
         });
 
@@ -744,6 +761,77 @@ function ClientDetailsContent() {
                       {client.address}
                     </span>
                   </div>
+                </div>
+              </div>
+            </div>
+
+            {/* SCHEDULE & NOTES CARD */}
+            <div className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md space-y-5">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-gold-200/50 border-b border-gold-300/5 pb-3 flex items-center gap-2">
+                <FileText className="h-4 w-4 text-gold/60" />
+                Schedule & Notes
+              </h3>
+
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex items-center gap-3 p-3.5 rounded-xl bg-navy-950/40 border border-gold-300/5">
+                    <Calendar className="h-5 w-5 text-gold flex-shrink-0" />
+                    <div className="min-w-0">
+                      <span className="text-[10px] uppercase font-bold tracking-wider text-gold-100/40 block">
+                        Start Date
+                      </span>
+                      <span className="text-sm font-semibold text-gold-200 block">
+                        {client.careStartDate
+                          ? new Date(client.careStartDate).toLocaleDateString("en-GB", {
+                              day: "2-digit",
+                              month: "long",
+                              year: "numeric",
+                            })
+                          : "Not specified"}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 p-3.5 rounded-xl bg-navy-950/40 border border-gold-300/5">
+                    {client.careEndDate ? (
+                      <>
+                        <Calendar className="h-5 w-5 text-gold flex-shrink-0" />
+                        <div className="min-w-0">
+                          <span className="text-[10px] uppercase font-bold tracking-wider text-gold-100/40 block">
+                            End Date
+                          </span>
+                          <span className="text-sm font-semibold text-gold-200 block">
+                            {new Date(client.careEndDate).toLocaleDateString("en-GB", {
+                              day: "2-digit",
+                              month: "long",
+                              year: "numeric",
+                            })}
+                          </span>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <Clock className="h-5 w-5 text-gold flex-shrink-0" />
+                        <div className="min-w-0">
+                          <span className="text-[10px] uppercase font-bold tracking-wider text-gold-100/40 block">
+                            End Date
+                          </span>
+                          <span className="text-sm font-semibold text-emerald-400 block">
+                            Ongoing
+                          </span>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                <div className="p-3.5 rounded-xl bg-navy-950/40 border border-gold-300/5">
+                  <span className="text-[10px] uppercase font-bold tracking-wider text-gold-100/40 block mb-1.5">
+                    Note
+                  </span>
+                  <p className="text-sm text-gold-200 leading-relaxed whitespace-pre-wrap">
+                    {client.careNote || "No notes provided"}
+                  </p>
                 </div>
               </div>
             </div>

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import AuthSplitLayout from "@/components/AuthSplitLayout";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import { CheckCircle } from "lucide-react";
@@ -20,8 +19,15 @@ export default function ClientOnboardingPage() {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [location, setLocation] = useState("");
+  const [careStartDate, setCareStartDate] = useState("");
+  const [careEndDate, setCareEndDate] = useState("");
+  const [isOngoing, setIsOngoing] = useState(false);
+  const [carePostcode, setCarePostcode] = useState("");
+  const [careAddress, setCareAddress] = useState("");
+  const [careNote, setCareNote] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const now = new Date();
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 
   useEffect(() => {
     const rawUser = (clientProfile?.user || user) as any;
@@ -38,11 +44,6 @@ export default function ClientOnboardingPage() {
 
   useEffect(() => {
     if (showPendingScreen) {
-      // The user has completed the continuity form and is pending admin approval.
-      // We silently log them out by clearing local storage. This ensures that:
-      // 1. They remain on the "Application Received" screen right now.
-      // 2. Next time they visit (after approval), they MUST log in.
-      // 3. If they try to log in while still pending, they'll just see this screen again.
       import("@/services/auth/auth.service").then(({ authService }) => {
         authService.logout();
       });
@@ -58,7 +59,9 @@ export default function ClientOnboardingPage() {
     if (!email.trim() || !/^\S+@\S+\.\S+$/.test(email))
       formErrors.email = "Valid Email is required";
     if (!phone.trim()) formErrors.phone = "Phone number is required";
-    if (!location.trim()) formErrors.location = "Location is required";
+    if (!careStartDate.trim()) formErrors.careStartDate = "Start Date is required";
+    if (!carePostcode.trim()) formErrors.carePostcode = "Postcode is required";
+    if (!careNote.trim()) formErrors.careNote = "Note is required";
 
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
@@ -72,7 +75,12 @@ export default function ClientOnboardingPage() {
         lastName,
         email,
         phone,
-        location,
+        location: carePostcode,
+        careNote,
+        careStartDate: new Date(careStartDate).toISOString(),
+        careEndDate: isOngoing ? undefined : (careEndDate ? new Date(careEndDate).toISOString() : undefined),
+        carePostcode,
+        careAddress: careAddress || undefined,
       })
     );
   };
@@ -120,13 +128,14 @@ export default function ClientOnboardingPage() {
             Complete Your Details
           </h1>
           <p className="text-sm text-gold-100/70 mt-2 leading-relaxed max-w-xl">
-            Please provide your details below. Our care team will review your registration and configure your dedicated client portal.
+            Please provide your details below. Our team will review your registration and configure your dedicated client portal.
           </p>
         </div>
 
         {/* Form Section */}
         <div className="px-8 py-10 sm:px-12">
           <form onSubmit={handleSubmit} className="space-y-8">
+            {/* Name Fields */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <Input
                 label="First Name"
@@ -152,6 +161,7 @@ export default function ClientOnboardingPage() {
               />
             </div>
 
+            {/* Contact Fields */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <Input
                 label="Email Address"
@@ -176,18 +186,103 @@ export default function ClientOnboardingPage() {
               />
             </div>
 
-            <Input
-              label="Location"
-              type="text"
-              placeholder="Enter your city or postcode"
-              value={location}
-              onChange={(e) => {
-                setLocation(e.target.value);
-                if (errors.location) setErrors({ ...errors, location: "" });
-              }}
-              error={errors.location}
-            />
+            {/* Date Fields with Ongoing Checkbox */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <Input
+                label="Start Date"
+                type="date"
+                min={todayStr}
+                value={careStartDate}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setCareStartDate(val);
+                  if (errors.careStartDate) setErrors({ ...errors, careStartDate: "" });
+                  if (careEndDate && val && careEndDate < val) {
+                    setCareEndDate("");
+                  }
+                }}
+                error={errors.careStartDate}
+              />
 
+              <div>
+                <Input
+                  label="End Date"
+                  type="date"
+                  min={careStartDate && careStartDate > todayStr ? careStartDate : todayStr}
+                  value={careEndDate}
+                  disabled={isOngoing}
+                  onChange={(e) => setCareEndDate(e.target.value)}
+                  className={isOngoing ? "opacity-40 cursor-not-allowed" : ""}
+                />
+                <label className="flex items-center gap-2 text-sm text-gold-200 mt-2.5 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={isOngoing}
+                    onChange={(e) => {
+                      setIsOngoing(e.target.checked);
+                      if (e.target.checked) {
+                        setCareEndDate("");
+                      }
+                    }}
+                    className="w-4 h-4 rounded border-gold-300/20 bg-navy-950 text-gold-DEFAULT focus:ring-gold-DEFAULT focus:ring-offset-navy-950"
+                  />
+                  Ongoing
+                </label>
+              </div>
+            </div>
+
+            {/* Location & Postcode Fields */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <Input
+                label={
+                  <span>
+                    Postcode <span className="text-red-400">*</span>
+                  </span>
+                }
+                type="text"
+                placeholder="e.g. SW1A 1AA"
+                value={carePostcode}
+                onChange={(e) => {
+                  setCarePostcode(e.target.value);
+                  if (errors.carePostcode) setErrors({ ...errors, carePostcode: "" });
+                }}
+                error={errors.carePostcode}
+              />
+
+              <Input
+                label="Location"
+                type="text"
+                placeholder="e.g. 10 Downing Street, London"
+                value={careAddress}
+                onChange={(e) => setCareAddress(e.target.value)}
+              />
+            </div>
+
+            {/* Note Field (at the bottom) */}
+            <div className="space-y-2">
+              <label className="form-label">
+                Note <span className="text-red-400">*</span>
+              </label>
+              <div className="relative">
+                <textarea
+                  placeholder="Please provide any details or specific requirements..."
+                  value={careNote}
+                  onChange={(e) => {
+                    setCareNote(e.target.value);
+                    if (errors.careNote) setErrors({ ...errors, careNote: "" });
+                  }}
+                  rows={4}
+                  className={`w-full rounded-xl border py-3 px-4 outline-none focus:ring-2 focus:ring-primary resize-none ${
+                    errors.careNote ? "border-red-500" : "border-gray-300"
+                  }`}
+                />
+              </div>
+              {errors.careNote && (
+                <p className="form-help text-red-500">{errors.careNote}</p>
+              )}
+            </div>
+
+            {/* Submit Button */}
             <div className="pt-6 mt-4 flex flex-col sm:flex-row items-center justify-between gap-6 border-t border-gold-300/10">
               <p className="text-[11px] font-medium tracking-wide text-gold-100/40 uppercase order-2 sm:order-1">
                 Secure & Confidential
@@ -205,4 +300,3 @@ export default function ClientOnboardingPage() {
     </main>
   );
 }
-

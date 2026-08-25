@@ -60,7 +60,26 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head suppressHydrationWarning />
+      <head suppressHydrationWarning>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "Grace & Goodwill",
+              url: "https://graceandgoodwill.co.uk",
+              logo: "https://graceandgoodwill.co.uk/logo.png",
+              address: {
+                "@type": "PostalAddress",
+                addressLocality: "Gateshead",
+                addressCountry: "UK"
+              },
+              areaServed: "UK"
+            })
+          }}
+        />
+      </head>
       <body
         suppressHydrationWarning
         className={`bg-navy-950 text-gold-100 flex flex-col min-h-screen font-sans ${poppins.variable} ${playfairDisplay.variable} ${jost.variable} ${montserrat.variable}`}

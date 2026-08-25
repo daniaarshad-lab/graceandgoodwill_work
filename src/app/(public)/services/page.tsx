@@ -31,7 +31,7 @@ const coreServices = [
   {
     title: "Live-in Care Matching",
     description:
-      "We introduce families to carefully vetted, independent self-employed live-in carers who can provide personalised support within the client’s home. Grace & Goodwill supports the matching and introduction process while the client remains in control of selecting their preferred carer and agreeing care arrangements directly with them.",
+      "We introduce families to carefully vetted, independent self-employed live-in carers who can provide personalised support within the client's home. Grace & Goodwill supports the matching and introduction process while the client remains in control of selecting their preferred carer and agreeing care arrangements directly with them.",
     icon: (
       <Home
         className="h-8 w-8 text-gold-300 transition-transform duration-300 group-hover:scale-110"
@@ -64,7 +64,7 @@ const coreServices = [
   {
     title: "Recovery After Hospital Discharge",
     description:
-      "We introduce families to independent, self-employed carers who can support individuals following hospital discharge. Depending on the client’s requirements, support may include assistance with daily routines, mobility, meal preparation and encouraging independence during recovery. Grace & Goodwill does not provide nursing or clinical services.",
+      "We introduce families to independent, self-employed carers who can support individuals following hospital discharge. Depending on the client's requirements, support may include assistance with daily routines, mobility, meal preparation and encouraging independence during recovery. Grace & Goodwill does not provide nursing or clinical services.",
     icon: (
       <BadgeCheck
         className="h-8 w-8 text-gold-300 transition-transform duration-300 group-hover:scale-110"
@@ -86,7 +86,7 @@ const coreServices = [
   {
     title: "Couples Support",
     description:
-      "We introduce experienced self-employed live-in carers who can support couples wishing to remain together in their own home, with care arrangements tailored to each person’s individual needs.",
+      "We introduce experienced self-employed live-in carers who can support couples wishing to remain together in their own home, with care arrangements tailored to each person's individual needs.",
     icon: (
       <Heart
         className="h-8 w-8 text-gold-300 transition-transform duration-300 group-hover:scale-110"
@@ -191,7 +191,7 @@ export default function ServicesPage() {
           </h2>
           <p className="page-supporting-text mx-auto mt-4 max-w-xl">
             Speak with our care matching specialists to discuss your
-            requirements. We’ll help you find and introduce suitable
+            requirements. We'll help you find and introduce suitable
             independent, self-employed carers based on your individual needs and
             preferences.
           </p>
@@ -221,6 +221,223 @@ export default function ServicesPage() {
           </div>
         </section>
 
+        
+        {/* --- NEW SEO SECTIONS --- */}
+        <section className="mt-24 grid gap-6 md:grid-cols-2 lg:grid-cols-3 relative z-10 pt-10 border-t border-gold-300/10">
+          
+          {/* Long-Term Live-in Care */}
+          <div className="group relative flex flex-col rounded-[28px] border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)]">
+            <h2 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
+              Long-Term Live-in Care
+            </h2>
+            <div className="page-supporting-text space-y-4 mb-8 flex-grow">
+              <p>Ongoing live-in care can support people who want to remain in their own home while receiving more consistent everyday assistance.</p>
+              <p>Depending on the arrangement agreed with the carer, support may include personal care, meals, mobility, companionship, household activities, shopping, appointments and established daily routines.</p>
+            </div>
+            <Link href="/long-term-live-in-care" className="inline-flex w-full justify-center items-center rounded-xl bg-gold-400/10 border border-gold-400/30 px-4 py-3 text-sm font-medium text-gold-200 transition-colors hover:bg-gold-400/20 hover:text-gold-100">
+              Learn More About Long-Term Live-in Care
+            </Link>
+          </div>
+
+          {/* Urgent Live-in Care */}
+          <div className="group relative flex flex-col rounded-[28px] border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)]">
+            <h2 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
+              Urgent Live-in Care
+            </h2>
+            <div className="page-supporting-text space-y-4 mb-8 flex-grow">
+              <p>When circumstances change suddenly, families may need someone quickly.</p>
+              <p>Grace & Goodwill can support urgent live-in carer searches where a suitable available carer may be able to begin within 24 hours.</p>
+              <p>This may include hospital discharge, a stroke, sudden mobility changes, family emergencies, an existing carer leaving unexpectedly or urgent respite.</p>
+            </div>
+            <Link href="/urgent-live-in-care" className="inline-flex w-full justify-center items-center rounded-xl bg-gold-400/10 border border-gold-400/30 px-4 py-3 text-sm font-medium text-gold-200 transition-colors hover:bg-gold-400/20 hover:text-gold-100">
+              Urgent Live-in Care
+            </Link>
+          </div>
+
+          {/* Hospital Discharge Live-in Care */}
+          <div className="group relative flex flex-col rounded-[28px] border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)]">
+            <h2 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
+              Hospital Discharge Live-in Care
+            </h2>
+            <div className="page-supporting-text space-y-4 mb-8 flex-grow">
+              <p>Someone returning home following hospital treatment may temporarily or permanently need more support than before.</p>
+              <p>Grace & Goodwill helps families search available live-in carers for support following hospital discharge, including short-notice arrangements where possible.</p>
+            </div>
+            <Link href="/hospital-discharge-live-in-care" className="inline-flex w-full justify-center items-center rounded-xl bg-gold-400/10 border border-gold-400/30 px-4 py-3 text-sm font-medium text-gold-200 transition-colors hover:bg-gold-400/20 hover:text-gold-100">
+              Hospital Discharge Support
+            </Link>
+          </div>
+
+          {/* Stroke and Neurological Support */}
+          <div className="group relative flex flex-col rounded-[28px] border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)]">
+            <h2 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
+              Stroke and Neurological Support
+            </h2>
+            <div className="page-supporting-text space-y-4 mb-8 flex-grow">
+              <p>A stroke or neurological condition can affect mobility, communication, confidence and everyday independence differently for every person.</p>
+              <p>Clients can search for live-in carers with relevant experience and compare profiles before choosing who they would like to speak with.</p>
+              <p>This can sit alongside rehabilitation or clinical services provided by the appropriate healthcare professionals.</p>
+            </div>
+            <Link href="/stroke-care" className="inline-flex w-full justify-center items-center rounded-xl bg-gold-400/10 border border-gold-400/30 px-4 py-3 text-sm font-medium text-gold-200 transition-colors hover:bg-gold-400/20 hover:text-gold-100">
+              Live-in Care After Stroke
+            </Link>
+          </div>
+
+          {/* Convalescent and Recovery Support at Home */}
+          <div className="group relative flex flex-col rounded-[28px] border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)]">
+            <h2 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
+              Convalescent and Recovery Support at Home
+            </h2>
+            <div className="page-supporting-text space-y-4 mb-8 flex-grow">
+              <p>Some people need temporary help while recovering following:</p>
+              <ul className="list-disc pl-5 space-y-1 text-gold-100/80">
+                <li>Surgery</li>
+                <li>Illness</li>
+                <li>Hospital treatment</li>
+                <li>A fracture</li>
+                <li>A serious fall</li>
+                <li>Reduced mobility</li>
+                <li>A period of physical weakness</li>
+              </ul>
+              <p>A temporary live-in arrangement may provide practical everyday support while the person recovers at home.</p>
+            </div>
+            <Link href="/recovery-support" className="inline-flex w-full justify-center items-center rounded-xl bg-gold-400/10 border border-gold-400/30 px-4 py-3 text-sm font-medium text-gold-200 transition-colors hover:bg-gold-400/20 hover:text-gold-100">
+              Recovery Support at Home
+            </Link>
+          </div>
+
+          {/* Dementia and Alzheimer’s Live-in Care */}
+          <div className="group relative flex flex-col rounded-[28px] border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)]">
+            <h2 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
+              Dementia and Alzheimer&apos;s Live-in Care
+            </h2>
+            <div className="page-supporting-text space-y-4 mb-8 flex-grow">
+              <p>For someone living with dementia, familiar surroundings and routines may be particularly important.</p>
+              <p>Families can browse carers with relevant dementia experience and decide who they would like to consider.</p>
+            </div>
+            <Link href="/dementia-care" className="inline-flex w-full justify-center items-center rounded-xl bg-gold-400/10 border border-gold-400/30 px-4 py-3 text-sm font-medium text-gold-200 transition-colors hover:bg-gold-400/20 hover:text-gold-100">
+              Dementia Live-in Care
+            </Link>
+          </div>
+
+          {/* Respite Live-in Care */}
+          <div className="group relative flex flex-col rounded-[28px] border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)]">
+            <h2 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
+              Respite Live-in Care
+            </h2>
+            <div className="page-supporting-text space-y-4 mb-8 flex-grow">
+              <p>Respite care provides temporary support when a family carer needs a break or cannot provide their usual support.</p>
+              <p>Grace & Goodwill can help families search for carers for short placements beginning from approximately 2 days, as well as longer temporary arrangements.</p>
+            </div>
+            <Link href="/respite-care" className="inline-flex w-full justify-center items-center rounded-xl bg-gold-400/10 border border-gold-400/30 px-4 py-3 text-sm font-medium text-gold-200 transition-colors hover:bg-gold-400/20 hover:text-gold-100">
+              Respite Live-in Care
+            </Link>
+          </div>
+
+          {/* Brain Injury Live-in Support */}
+          <div className="group relative flex flex-col rounded-[28px] border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)]">
+            <h2 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
+              Brain Injury Live-in Support
+            </h2>
+            <div className="page-supporting-text space-y-4 mb-8 flex-grow">
+              <p>Acquired or traumatic brain injury can affect people in very different ways.</p>
+              <p>Clients can search for carers with relevant experience supporting mobility, memory, communication, routines and everyday independence.</p>
+            </div>
+            <Link href="/brain-injury-support" className="inline-flex w-full justify-center items-center rounded-xl bg-gold-400/10 border border-gold-400/30 px-4 py-3 text-sm font-medium text-gold-200 transition-colors hover:bg-gold-400/20 hover:text-gold-100">
+              Brain Injury Support
+            </Link>
+          </div>
+
+          {/* Spinal Injury Live-in Support */}
+          <div className="group relative flex flex-col rounded-[28px] border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)]">
+            <h2 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
+              Spinal Injury Live-in Support
+            </h2>
+            <div className="page-supporting-text space-y-4 mb-8 flex-grow">
+              <p>Live-in support can help people with spinal injuries or physical disabilities continue living within their own home and maintaining independence.</p>
+              <p>Search profiles according to relevant experience, availability and personal preferences.</p>
+            </div>
+            <Link href="/spinal-injury-support" className="inline-flex w-full justify-center items-center rounded-xl bg-gold-400/10 border border-gold-400/30 px-4 py-3 text-sm font-medium text-gold-200 transition-colors hover:bg-gold-400/20 hover:text-gold-100">
+              Spinal Injury Support
+            </Link>
+          </div>
+
+          {/* Multiple Sclerosis Live-in Support */}
+          <div className="group relative flex flex-col rounded-[28px] border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)]">
+            <h2 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
+              Multiple Sclerosis Live-in Support
+            </h2>
+            <div className="page-supporting-text space-y-4 mb-8 flex-grow">
+              <p>Multiple sclerosis can affect mobility, fatigue and independence differently over time.</p>
+              <p>Clients can search profiles for carers with relevant experience and availability that may suit their circumstances.</p>
+            </div>
+            <Link href="/ms-support" className="inline-flex w-full justify-center items-center rounded-xl bg-gold-400/10 border border-gold-400/30 px-4 py-3 text-sm font-medium text-gold-200 transition-colors hover:bg-gold-400/20 hover:text-gold-100">
+              Multiple Sclerosis Support
+            </Link>
+          </div>
+
+          {/* Young Adult and Disability Live-in Support */}
+          <div className="group relative flex flex-col rounded-[28px] border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)]">
+            <h2 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
+              Young Adult and Disability Live-in Support
+            </h2>
+            <div className="page-supporting-text space-y-4 mb-8 flex-grow">
+              <p>Younger adults who require support should not automatically be treated as though they are receiving traditional elderly care.</p>
+              <p>Grace & Goodwill helps adults find carers who can fit around their routines, social lives, interests and individual preferences.</p>
+            </div>
+            <Link href="/young-adult-support" className="inline-flex w-full justify-center items-center rounded-xl bg-gold-400/10 border border-gold-400/30 px-4 py-3 text-sm font-medium text-gold-200 transition-colors hover:bg-gold-400/20 hover:text-gold-100">
+              Young Adult Live-in Support
+            </Link>
+          </div>
+
+          {/* Companionship Live-in Care */}
+          <div className="group relative flex flex-col rounded-[28px] border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)]">
+            <h2 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
+              Companionship Live-in Care
+            </h2>
+            <div className="page-supporting-text space-y-4 mb-8 flex-grow">
+              <p>For people who need companionship alongside everyday practical support, live-in care can provide greater consistency while allowing the person to remain in familiar surroundings.</p>
+            </div>
+            <Link href="/companionship-care" className="inline-flex w-full justify-center items-center rounded-xl bg-gold-400/10 border border-gold-400/30 px-4 py-3 text-sm font-medium text-gold-200 transition-colors hover:bg-gold-400/20 hover:text-gold-100">
+              Companionship Care
+            </Link>
+          </div>
+          
+          {/* Live-in Care Costs and Funding (Takes up full width ideally, or just matches the grid) */}
+          <div className="md:col-span-2 lg:col-span-3 group relative flex flex-col rounded-[28px] border border-gold-300/15 bg-gradient-to-br from-navy-900/60 to-navy-900/40 p-8 md:p-12 shadow-elegant backdrop-blur-md mt-6">
+            <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide mb-6 text-center">
+              Live-in Care Costs and Funding
+            </h2>
+            <p className="page-supporting-text text-center max-w-3xl mx-auto mb-8 text-lg">
+              Families can also access information about:
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-[15px] text-gold-100/90 text-left max-w-4xl mx-auto mb-10 bg-navy-950/50 p-8 rounded-3xl border border-gold-300/10 shadow-inner w-full">
+              <ul className="space-y-4">
+                <li className="flex items-start gap-3"><BadgeCheck className="w-5 h-5 text-gold-400 shrink-0 mt-0.5" /> <span>Live-in care costs</span></li>
+                <li className="flex items-start gap-3"><BadgeCheck className="w-5 h-5 text-gold-400 shrink-0 mt-0.5" /> <span>Self-funding</span></li>
+                <li className="flex items-start gap-3"><BadgeCheck className="w-5 h-5 text-gold-400 shrink-0 mt-0.5" /> <span>Local authority support</span></li>
+                <li className="flex items-start gap-3"><BadgeCheck className="w-5 h-5 text-gold-400 shrink-0 mt-0.5" /> <span>NHS Continuing Healthcare</span></li>
+              </ul>
+              <ul className="space-y-4">
+                <li className="flex items-start gap-3"><BadgeCheck className="w-5 h-5 text-gold-400 shrink-0 mt-0.5" /> <span>Attendance Allowance</span></li>
+                <li className="flex items-start gap-3"><BadgeCheck className="w-5 h-5 text-gold-400 shrink-0 mt-0.5" /> <span>Funding after hospital discharge</span></li>
+                <li className="flex items-start gap-3"><BadgeCheck className="w-5 h-5 text-gold-400 shrink-0 mt-0.5" /> <span>Benefits and other possible sources of support</span></li>
+              </ul>
+            </div>
+            <div className="flex flex-wrap justify-center gap-4">
+              <Link href="/live-in-care-costs" className="inline-flex w-full sm:w-auto justify-center items-center rounded-xl bg-gold-400 text-navy-950 px-8 py-3.5 text-sm font-bold transition-transform hover:-translate-y-0.5 hover:shadow-lg">
+                Live-in Care Costs
+              </Link>
+              <Link href="/funding-live-in-care" className="inline-flex w-full sm:w-auto justify-center items-center rounded-xl bg-navy-950 border border-gold-400/40 px-8 py-3.5 text-sm font-semibold text-gold-200 transition-colors hover:bg-gold-400 hover:text-navy-950 hover:border-gold-400">
+                Funding Live-in Care
+              </Link>
+            </div>
+          </div>
+
+        </section>
+
+        
+        
         {/* SERVICES FAQ */}
         <section className="mt-20">
           <div className="max-w-4xl mx-auto bg-navy-900/40 p-8 md:p-12 rounded-[2rem] border border-gold-300/10 shadow-elegant">

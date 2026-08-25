@@ -256,7 +256,7 @@ function StaticSiteHeader() {
                   href={AUTH_ROUTES.carerRecruitment}
                   prefetch={false}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className={`mt-4 flex min-h-[44px] items-center gap-2.5 rounded-xl border border-gold-400/25 bg-gold-DEFAULT/[0.06] px-4 py-3 text-base font-medium transition hover:border-gold-400/45 ${pathname === AUTH_ROUTES.carerRecruitment
+                  className={`text-base font-medium transition py-3 min-h-[44px] flex items-center gap-2.5 border-b border-gold-300/5 hover:text-gold-50 ${pathname === AUTH_ROUTES.carerRecruitment
                       ? "text-gold-50"
                       : "text-gold-200"
                     }`}

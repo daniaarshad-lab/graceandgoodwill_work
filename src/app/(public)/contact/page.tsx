@@ -105,7 +105,7 @@ export default function ContactPage() {
                   className="gap-2"
                 >
                   <WhatsAppIcon className="w-4 h-4" />
-                  Message us on WhatsApp
+                  Message Us On WhatsApp
                 </a>
               </Button>
             </div>
@@ -113,15 +113,15 @@ export default function ContactPage() {
 
           {/* 4. Registered Office */}
           <div className="p-6 rounded-[1.75rem] border border-gold-300/10 bg-navy-900/40 text-center flex flex-col justify-center space-y-4 w-full h-full">
-            <div className="flex flex-col items-center">
-              <div className="mb-5 inline-flex items-center justify-center gap-2 text-gold-200 font-bold text-sm bg-gradient-to-r from-gold-DEFAULT/5 via-gold-DEFAULT/15 to-gold-DEFAULT/5 px-4 py-2 rounded-full border border-gold-DEFAULT/20 shadow-[0_0_15px_rgba(212,175,55,0.1)]">
-                <MapPin className="w-4 h-4 text-gold-DEFAULT" />
-                <span className="tracking-wide">Nationwide live-in care matching</span>
+            <div className="flex flex-col items-center w-full">
+              <div className="mb-5 flex w-[92%] items-center justify-center gap-3 text-gold-200 font-black text-base bg-gradient-to-r from-gold-DEFAULT/5 via-gold-DEFAULT/15 to-gold-DEFAULT/5 px-4 py-2.5 rounded-2xl border border-gold-DEFAULT/20 shadow-[0_0_15px_rgba(212,175,55,0.1)]">
+                <MapPin className="w-5 h-5 text-gold-DEFAULT shrink-0" strokeWidth={2.5} />
+                <span className="tracking-widest text-center whitespace-nowrap">Nationwide Live-In Care Matching</span>
               </div>
-              <h3 className="text-sm font-medium text-gold-100/80">
+              <h3 className="text-xs font-medium text-gold-100/80 uppercase tracking-wider">
                 Registered Office
               </h3>
-              <address className="text-sm text-gold-100/60 leading-relaxed mt-1.5 not-italic">
+              <address className="text-xs text-gold-100/60 leading-relaxed mt-2 not-italic">
                 Hypoint,<br />
                 Saltmeadows Road,<br />
                 Gateshead, NE8 3AH,<br />

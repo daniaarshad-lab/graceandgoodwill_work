@@ -24,13 +24,15 @@ export default function ClientOnboardingPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    if (user) {
-      setFirstName(user.firstName || "");
-      setLastName(user.lastName || "");
-      setEmail(user.email || "");
-      setPhone(user.phone || "");
+    const rawUser = (clientProfile?.user || user) as any;
+    if (rawUser) {
+      if (rawUser.firstName) setFirstName(rawUser.firstName);
+      if (rawUser.lastName) setLastName(rawUser.lastName);
+      if (rawUser.email) setEmail(rawUser.email);
+      const rawPhone = rawUser.phoneNumber || rawUser.phone || (clientProfile as any)?.phone || "";
+      if (rawPhone) setPhone(rawPhone);
     }
-  }, [user]);
+  }, [user, clientProfile]);
 
   const showPendingScreen = clientProfile?.status === "PENDING_APPROVAL" || clientProfile?.status === "UNDER_REVIEW";
 

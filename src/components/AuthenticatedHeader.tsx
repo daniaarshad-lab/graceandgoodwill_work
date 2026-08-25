@@ -1,5 +1,7 @@
 "use client";
 
+import { AUTH_ROUTES } from "@/lib/auth-routes";
+
 import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -12,7 +14,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useAppDispatch } from "@/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { logout as logoutThunk } from "@/store/slices/authSlice";
 import HeaderSearch from "./HeaderSearch";
 
@@ -21,6 +23,7 @@ export default function AuthenticatedHeader() {
   const pathname = usePathname();
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const clientProfile = useAppSelector((state) => state.client.profile);
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -45,6 +48,15 @@ export default function AuthenticatedHeader() {
   else if (pathname.startsWith("/client")) portalName = "Client Portal";
   else if (pathname.startsWith("/carer")) portalName = "Carer Portal";
 
+    const isClient = pathname.startsWith("/client") || user?.role?.toUpperCase() === "CLIENT";
+  const clientStatus = (clientProfile?.status || (user as any)?.status || "").toUpperCase();
+  const isClientPendingOrUnderReview =
+    isClient &&
+    (clientStatus === "PENDING" ||
+      clientStatus === "UNDER_REVIEW" ||
+      clientStatus === "PENDING_APPROVAL" ||
+      pathname === "/client/onboarding");
+
   const isAdmin = pathname.startsWith("/admin") || user?.role === "ADMIN" || user?.role === "SUPER_ADMIN";
 
   // Role formatting
@@ -53,8 +65,19 @@ export default function AuthenticatedHeader() {
     rawRole.charAt(0).toUpperCase() + rawRole.slice(1).toLowerCase();
 
   const handleLogout = async () => {
+    const rawRole = user?.role?.toUpperCase();
+    const isUserAdmin = rawRole === "ADMIN" || rawRole === "SUPER_ADMIN" || pathname.startsWith("/admin");
+    const isUserCarer = rawRole === "CARER" || pathname.startsWith("/carer");
+
     await dispatch(logoutThunk());
-    router.push("/login");
+
+    if (isUserAdmin) {
+      router.push(AUTH_ROUTES.login.admin);
+    } else if (isUserCarer) {
+      router.push(AUTH_ROUTES.login.carer);
+    } else {
+      router.push(AUTH_ROUTES.login.client);
+    }
   };
 
   return (
@@ -115,7 +138,7 @@ export default function AuthenticatedHeader() {
                   </p>
                   <p className="text-xs text-gold-200/60">{displayRole}</p>
                 </div>
-                {!isAdmin && (
+                {!isAdmin && !isClientPendingOrUnderReview && (
                   <>
                     <Link
                       href={`/${pathname.split("/")[1]}?tab=profile`}

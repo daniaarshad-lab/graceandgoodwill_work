@@ -9,6 +9,23 @@ import {
   Heart,
   RefreshCw,
 } from "lucide-react";
+import { faqs } from "@/data/faqData";
+import FAQAccordion from "@/components/FAQAccordion";
+
+export const metadata = {
+  title: "Live-in Care Services Across the UK | Grace & Goodwill",
+  description: "Explore live-in care across the UK including dementia, stroke, respite, disability, hospital discharge, neurological support and urgent live-in carer matching.",
+};
+
+const servicesFaqQuestions = [
+  "What types of live-in care can I search for?",
+  "Can I search for someone with experience relevant to a particular condition?",
+  "Can I arrange temporary live-in care?",
+  "Can live-in support help someone returning from hospital?",
+  "Can I find support following a stroke?",
+  "Can younger adults use live-in care?",
+  "Does Grace & Goodwill provide clinical rehabilitation?"
+];
 
 const coreServices = [
   {
@@ -80,6 +97,8 @@ const coreServices = [
 ];
 
 export default function ServicesPage() {
+  const servicesFaqs = faqs.filter(faq => servicesFaqQuestions.includes(faq.question));
+
   return (
     <main className="relative min-h-[calc(100vh-80px)] overflow-hidden bg-navy-950 py-20 text-gold-100/90">
       <div className="pointer-events-none absolute left-1/4 top-10 h-[450px] w-[600px] rounded-full bg-gold-500/5 blur-[130px]" />
@@ -91,7 +110,7 @@ export default function ServicesPage() {
           <div className="page-strapline">Services</div>
 
           <h1 className="main-page-heading">
-            Support Designed Around Real Lives
+            Live-in Care and Support for Different Needs Across the UK
           </h1>
 
           <p className="page-supporting-text mx-auto mt-6 max-w-2xl">
@@ -184,7 +203,7 @@ export default function ServicesPage() {
               fullWidth={false}
               className="px-8 py-3.5"
             >
-              <Link href="/contact" prefetch={false}>
+              <Link href="/contact" prefetch={false} id="btn-services-contact">
                 Get In Touch
               </Link>
             </Button>
@@ -195,10 +214,20 @@ export default function ServicesPage() {
               fullWidth={false}
               className="px-8 py-3.5"
             >
-              <Link href="/about" prefetch={false}>
+              <Link href="/about" prefetch={false} id="btn-services-about">
                 About Our Care
               </Link>
             </Button>
+          </div>
+        </section>
+
+        {/* SERVICES FAQ */}
+        <section className="mt-20">
+          <div className="max-w-4xl mx-auto bg-navy-900/40 p-8 md:p-12 rounded-[2rem] border border-gold-300/10 shadow-elegant">
+            <div className="text-center mb-8">
+              <h2 className="section-heading">Frequently Asked Questions</h2>
+            </div>
+            <FAQAccordion faqsList={servicesFaqs} groupByCategory={false} />
           </div>
         </section>
       </div>

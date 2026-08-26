@@ -26,7 +26,7 @@ export const faqs: FAQItem[] = [
     question: "What types of live-in care can I search for?",
     answer: "You can search profiles for carers with experience in long-term support, urgent care, hospital discharge, stroke and neurological support, convalescence, dementia and Alzheimer’s care, temporary respite, brain injury support, spinal injury support, multiple sclerosis, young adult and disability support, and companionship."
   },
-  
+
   // Urgent and Short-Notice Care
   {
     category: "Urgent and Short-Notice Care",

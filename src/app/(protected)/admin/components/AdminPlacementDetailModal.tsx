@@ -175,6 +175,20 @@ export default function AdminPlacementDetailModal({
         </div>
 
         <div className="p-6 md:p-8 space-y-8 flex-1">
+          {placement.status === "REJECTED_BY_CARER" && (
+            <div className="p-4 rounded-xl bg-rose-500/15 border border-rose-500/30 text-xs text-rose-200 space-y-1.5">
+              <div className="flex items-center gap-2 text-rose-300 font-bold text-sm">
+                <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
+                <span>Placement Offer Declined by Carer {placement.carerProfile?.user ? `(${placement.carerProfile.user.firstName} ${placement.carerProfile.user.lastName})` : ""}</span>
+              </div>
+              <p className="text-rose-300/90 text-xs pl-6">
+                <strong>Decline Reason:</strong> {placement.rejectionReason || "No specific reason provided."}
+              </p>
+              <p className="text-amber-300/80 text-[11px] pl-6">
+                <strong>Action Required:</strong> The care request status has been reverted back to <em>Under Review</em>. Please re-assign an alternative carer from the applicant pool or client interest list.
+              </p>
+            </div>
+          )}
           <div className="space-y-6">
             {/* User Profiles Row */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

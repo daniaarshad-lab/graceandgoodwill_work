@@ -15,6 +15,19 @@ import { CreateEnquiryPayload } from "@/types/client.types";
 import { Carer } from "@/app/(protected)/client/types/client-ui.types";
 import { mapCarerProfileToUICarer } from "@/utils/mappers/carerMapper";
 
+export interface SubmitClientDetailsPayload {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  location: string;
+  careNote: string;
+  careStartDate: string;
+  careEndDate?: string;
+  carePostcode: string;
+  careAddress?: string;
+}
+
 const initialState: ClientState = {
   profile: null,
   careRequests: [],
@@ -159,6 +172,30 @@ export const updateClientProfile = createAsyncThunk<
     return await clientService.updateProfile(payload);
   } catch (error: any) {
     return rejectWithValue(error?.message || "Failed to update client profile");
+  }
+});
+
+export const submitClientDetails = createAsyncThunk<
+  ClientProfile,
+  SubmitClientDetailsPayload,
+  { rejectValue: string }
+>("client/submitDetails", async (payload, { rejectWithValue }) => {
+  try {
+    const updatedProfile = await clientService.updateProfile({
+      firstName: payload.firstName,
+      lastName: payload.lastName,
+      email: payload.email,
+      phoneNumber: payload.phone,
+      city: payload.location, // Mapping location to city
+      careNote: payload.careNote,
+      careStartDate: payload.careStartDate,
+      careEndDate: payload.careEndDate || undefined,
+      carePostcode: payload.carePostcode,
+      careAddress: payload.careAddress || undefined,
+    });
+    return updatedProfile;
+  } catch (error: any) {
+    return rejectWithValue(error?.message || "Failed to submit client details");
   }
 });
 
@@ -388,6 +425,29 @@ const clientSlice = createSlice({
     builder.addCase(updateClientProfile.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload || "Failed to update client profile";
+    });
+
+    // Submit Client Details
+    builder.addCase(submitClientDetails.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+
+    builder.addCase(
+      submitClientDetails.fulfilled,
+      (state, action: PayloadAction<ClientProfile>) => {
+        state.loading = false;
+        if (state.profile) {
+          state.profile = { ...state.profile, ...action.payload };
+        } else {
+          state.profile = action.payload;
+        }
+      },
+    );
+
+    builder.addCase(submitClientDetails.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload || "Failed to submit client details";
     });
 
     // Upload Profile Photo

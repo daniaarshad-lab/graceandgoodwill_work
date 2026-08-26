@@ -50,12 +50,13 @@ export default function AgreementsGuard({ children }: AgreementsGuardProps) {
       }
     }
 
-    // Don't redirect if we're already on the agreements page or login/register/unauthorized
+    // Don't redirect if we're already on the agreements page or login/register/unauthorized/onboarding
     if (
       normalizedPath === "/agreements" ||
       normalizedPath.startsWith("/login") ||
       normalizedPath.startsWith("/register") ||
-      normalizedPath.startsWith("/unauthorized")
+      normalizedPath.startsWith("/unauthorized") ||
+      normalizedPath === "/client/onboarding"
     ) {
       setHasPending(false);
       return;
@@ -81,14 +82,14 @@ export default function AgreementsGuard({ children }: AgreementsGuardProps) {
     checkAgreements();
   }, [user, isAuthenticated, isLoading, pathname, router]);
 
-  // Loading spinner during check
-  if (isLoading || (isAuthenticated && hasPending === null)) {
+  // Loading spinner during check or while redirecting
+  if (isLoading || (isAuthenticated && (hasPending === null || hasPending === true))) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-navy-950 text-gold-100">
         <div className="flex flex-col items-center space-y-4">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold-DEFAULT"></div>
           <p className="text-sm tracking-wider text-gold-200">
-            Checking legal agreements...
+            {hasPending === true ? "Redirecting to agreements..." : "Checking legal agreements..."}
           </p>
         </div>
       </div>

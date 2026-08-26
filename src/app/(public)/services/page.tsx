@@ -9,6 +9,23 @@ import {
   Heart,
   RefreshCw,
 } from "lucide-react";
+import { faqs } from "@/data/faqData";
+import FAQAccordion from "@/components/FAQAccordion";
+
+export const metadata = {
+  title: "Live-in Care Services Across the UK | Grace & Goodwill",
+  description: "Explore live-in care across the UK including dementia, stroke, respite, disability, hospital discharge, neurological support and urgent live-in carer matching.",
+};
+
+const servicesFaqQuestions = [
+  "What types of live-in care can I search for?",
+  "Can I search for someone with experience relevant to a particular condition?",
+  "Can I arrange temporary live-in care?",
+  "Can live-in support help someone returning from hospital?",
+  "Can I find support following a stroke?",
+  "Can younger adults use live-in care?",
+  "Does Grace & Goodwill provide clinical rehabilitation?"
+];
 
 const coreServices = [
   {
@@ -34,7 +51,7 @@ const coreServices = [
     ),
   },
   {
-    title: "Dementia support",
+    title: "Dementia Support",
     description:
       "We introduce families to independent self-employed carers with experience supporting people living with dementia, helping families find compassionate, person-centred support suited to their needs.",
     icon: (
@@ -45,7 +62,7 @@ const coreServices = [
     ),
   },
   {
-    title: "Recovery after hospital discharge",
+    title: "Recovery After Hospital Discharge",
     description:
       "We introduce families to independent, self-employed carers who can support individuals following hospital discharge. Depending on the client’s requirements, support may include assistance with daily routines, mobility, meal preparation and encouraging independence during recovery. Grace & Goodwill does not provide nursing or clinical services.",
     icon: (
@@ -56,7 +73,7 @@ const coreServices = [
     ),
   },
   {
-    title: "Respite arrangements",
+    title: "Respite Arrangements",
     description:
       "We introduce families to independent, self-employed carers who can provide temporary live-in support, allowing primary family carers to take a planned or emergency break while maintaining continuity and familiarity at home.",
     icon: (
@@ -67,7 +84,7 @@ const coreServices = [
     ),
   },
   {
-    title: "Couples support",
+    title: "Couples Support",
     description:
       "We introduce experienced self-employed live-in carers who can support couples wishing to remain together in their own home, with care arrangements tailored to each person’s individual needs.",
     icon: (
@@ -80,6 +97,8 @@ const coreServices = [
 ];
 
 export default function ServicesPage() {
+  const servicesFaqs = faqs.filter(faq => servicesFaqQuestions.includes(faq.question));
+
   return (
     <main className="relative min-h-[calc(100vh-80px)] overflow-hidden bg-navy-950 py-20 text-gold-100/90">
       <div className="pointer-events-none absolute left-1/4 top-10 h-[450px] w-[600px] rounded-full bg-gold-500/5 blur-[130px]" />
@@ -88,15 +107,13 @@ export default function ServicesPage() {
       <div className="container-wrapper">
         {/* Header Section */}
         <section className="mb-20 text-center">
-          <div className="flex items-center justify-center gap-4 mb-8">
-            <div className="h-px w-10 bg-gradient-to-r from-transparent to-gold-400/50" />
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight text-gold-100">
-              Support designed around real lives
-            </h1>
-            <div className="h-px w-10 bg-gradient-to-l from-transparent to-gold-400/50" />
-          </div>
+          <div className="page-strapline">Services</div>
 
-          <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-gold-200/80">
+          <h1 className="main-page-heading">
+            Live-in Care and Support for Different Needs Across the UK
+          </h1>
+
+          <p className="page-supporting-text mx-auto mt-6 max-w-2xl">
             Grace & Goodwill is an introductory platform that connects families
             with carefully vetted, independent, self-employed live-in carers
             across the UK. Grace & Goodwill does not directly provide or manage
@@ -117,7 +134,7 @@ export default function ServicesPage() {
               <h2 className="text-xl font-semibold text-gold-50 tracking-wide">
                 {service.title}
               </h2>
-              <p className="mt-4 text-sm leading-relaxed text-gold-200/70">
+              <p className="page-supporting-text mt-4">
                 {service.description}
               </p>
             </div>
@@ -145,7 +162,7 @@ export default function ServicesPage() {
                     </h2>
                   </div>
                 </div>
-                <p className="text-sm leading-relaxed text-gold-200/75 sm:text-base">
+                <p className="page-supporting-text">
                   If your chosen self-employed live-in carer becomes
                   unavailable, Grace & Goodwill will make every reasonable
                   effort to introduce suitable replacement carers from our
@@ -170,9 +187,9 @@ export default function ServicesPage() {
 
         <section className="mt-12 rounded-[32px] border border-gold-300/15 bg-navy-900/30 p-6 sm:p-8 md:p-12 text-center backdrop-blur-sm">
           <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide">
-            Let&apos;s discuss how we can support you.
+            Let&apos;s Discuss How We Can Support You.
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-gold-200/80 sm:text-base">
+          <p className="page-supporting-text mx-auto mt-4 max-w-xl">
             Speak with our care matching specialists to discuss your
             requirements. We’ll help you find and introduce suitable
             independent, self-employed carers based on your individual needs and
@@ -186,7 +203,7 @@ export default function ServicesPage() {
               fullWidth={false}
               className="px-8 py-3.5"
             >
-              <Link href="/contact" prefetch={false}>
+              <Link href="/contact" prefetch={false} id="btn-services-contact">
                 Get In Touch
               </Link>
             </Button>
@@ -197,10 +214,20 @@ export default function ServicesPage() {
               fullWidth={false}
               className="px-8 py-3.5"
             >
-              <Link href="/about" prefetch={false}>
+              <Link href="/about" prefetch={false} id="btn-services-about">
                 About Our Care
               </Link>
             </Button>
+          </div>
+        </section>
+
+        {/* SERVICES FAQ */}
+        <section className="mt-20">
+          <div className="max-w-4xl mx-auto bg-navy-900/40 p-8 md:p-12 rounded-[2rem] border border-gold-300/10 shadow-elegant">
+            <div className="text-center mb-8">
+              <h2 className="section-heading">Frequently Asked Questions</h2>
+            </div>
+            <FAQAccordion faqsList={servicesFaqs} groupByCategory={false} />
           </div>
         </section>
       </div>

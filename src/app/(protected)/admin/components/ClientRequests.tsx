@@ -155,6 +155,20 @@ export default function ClientRequests({
                           Start: {req.startDate}
                         </span>
                       </div>
+                        {req.placement?.status === "REJECTED_BY_CARER" && (
+                          <div className="mt-2 flex items-center justify-between gap-2 p-2 rounded-lg bg-rose-500/15 border border-rose-500/30 text-[11px] text-rose-300">
+                            <div className="flex items-center gap-1.5 truncate">
+                              <span className="font-bold text-rose-400 shrink-0">Declined by Carer:</span>
+                              <span className="truncate max-w-[150px]" title={req.placement?.rejectionReason || "Declined"}>
+                                {req.placement?.carerProfile?.user ? `${req.placement.carerProfile.user.firstName} ${req.placement.carerProfile.user.lastName}` : "Carer"}
+                                {req.placement?.rejectionReason ? ` - "${req.placement.rejectionReason}"` : ""}
+                              </span>
+                            </div>
+                            <span className="text-[9px] font-bold uppercase tracking-wider text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20 shrink-0">
+                              Re-assignment Needed
+                            </span>
+                          </div>
+                        )}
                     </td>
 
                     <td className="p-4">
@@ -195,14 +209,20 @@ export default function ClientRequests({
                             let titleText = "";
 
                             if (opt.value === "OPEN_FOR_APPLICATIONS") {
-                              const isNotApproved =
-                                req.clientStatus !== "APPROVED";
-                              const noFees = !req.clientAgreedWeeklyFee;
+                              if (req.status === "NEW_ENQUIRY") {
+                                isDisabled = false;
+                                titleText = "";
+                              } else {
+                                const normalizedStatus = req.clientStatus?.toUpperCase();
+                                const isNotApproved =
+                                  normalizedStatus !== "APPROVED" && normalizedStatus !== "ACTIVE";
+                                const noFees = req.clientAgreedWeeklyFee == null;
 
-                              if (isNotApproved || noFees) {
-                                isDisabled = true;
-                                titleText =
-                                  "Client must be approved and weekly fees must be updated";
+                                if (isNotApproved || noFees) {
+                                  isDisabled = true;
+                                  titleText =
+                                    "Client must be approved and weekly fees must be updated";
+                                }
                               }
                             }
 
@@ -275,7 +295,7 @@ export default function ClientRequests({
                           <div className="absolute right-0 top-full mt-1 w-48 rounded-xl border border-gold-300/10 bg-navy-950 shadow-2xl opacity-0 invisible group-hover/menu:opacity-100 group-hover/menu:visible transition-all z-20 py-1.5 origin-top-right">
                             {req.clientId ? (
                               <Link
-                                href={`/admin/clients/${req.clientId}`}
+                                href={`/admin/clients/${req.clientId}?careRequestId=${req.id}&clientName=${encodeURIComponent(req.clientName)}`}
                                 className="block px-4 py-2 text-xs text-left text-gold-200 hover:bg-gold-300/10 w-full transition-colors"
                               >
                                 Manage Client Profile
@@ -288,7 +308,7 @@ export default function ClientRequests({
                             {req.clientId &&
                               (req.interestListCount ?? 0) > 0 && (
                                 <Link
-                                  href={`/admin/clients/${req.clientId}/interest-list?clientName=${encodeURIComponent(req.clientName)}`}
+                                  href={`/admin/clients/${req.clientId}/interest-list?clientName=${encodeURIComponent(req.clientName)}&careRequestId=${req.id}`}
                                   className="block px-4 py-2 text-xs text-left text-emerald-400 hover:bg-emerald-500/10 w-full transition-colors border-t border-gold-300/5 mt-1 pt-2"
                                 >
                                   View Interest List ({req.interestListCount})

@@ -1,6 +1,7 @@
 import Button from "@/components/Button";
 import Link from "next/link";
 import { MapPin, Search, BadgeCheck, HeartHandshake } from "lucide-react";
+import { AUTH_ROUTES } from "@/lib/auth-routes";
 
 const steps = [
   {
@@ -19,7 +20,7 @@ const steps = [
     number: "02",
     title: "Learn how the platform works",
     description:
-      "We’ll explain how our introduction service works and show you how to browse and compare self-employed live-in carers.",
+      "We’ll explain how our platform works and show you how to browse and compare available live-in carers.",
     icon: (
       <Search
         className="h-8 w-8 text-gold-300 transition-transform duration-300 group-hover:scale-110"
@@ -31,7 +32,7 @@ const steps = [
     number: "03",
     title: "Choose your preferred carer",
     description:
-      "View carer profiles, including their photo, introduction video, experience, hobbies, qualifications and availability, then choose the self-employed carer you wish to engage.",
+      "View carer profiles, including their photo, introductory video, experience, hobbies, qualifications and availability, then choose the carer you feel best matches your needs and preferences.",
     icon: (
       <BadgeCheck
         className="h-8 w-8 text-gold-300 transition-transform duration-300 group-hover:scale-110"
@@ -43,7 +44,7 @@ const steps = [
     number: "04",
     title: "Begin your live-in arrangement",
     description:
-      "Once you’ve chosen your preferred self-employed carer and you both agree to proceed, your live-in arrangement can begin.",
+      "Once you’ve chosen your preferred carer and you both agree to proceed, your live-in care arrangement can begin.",
     icon: (
       <HeartHandshake
         className="h-8 w-8 text-gold-300 transition-transform duration-300 group-hover:scale-110"
@@ -63,23 +64,12 @@ export default function HowItWorksPage() {
 
       <div className="mx-auto max-w-5xl">
         <section className="mb-20 text-center">
-          {/* <p className="inline-block rounded-full border border-gold-500/25 bg-gold-500/5 px-4 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-gold-300">
-            Our Process
-          </p>
-          <h1 className="mt-6 text-4xl font-light tracking-tight text-gold-50 sm:text-5xl md:text-6xl">
-            Simple to begin.{" "}
-            <span className="font-semibold text-gold-DEFAULT">
-              Supportive throughout.
-            </span>
-          </h1> */}
-          <div className="flex items-center justify-center gap-4 mb-8">
-            <div className="h-px w-10 bg-gradient-to-r from-transparent to-gold-400/50" />
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight text-gold-100">
-              Simple to begin,supportive throughout
-            </h1>
-            <div className="h-px w-10 bg-gradient-to-l from-transparent text-gold-100" />
-          </div>
-          <p className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-gold-200/80 sm:text-base">
+          <div className="page-strapline">How It Works</div>
+
+          <h1 className="main-page-heading">
+            Simple To Begin, Supportive Throughout
+          </h1>
+          <p className="page-supporting-text mx-auto mt-6 max-w-2xl">
             Make finding the right self-employed live-in carer simple. Our
             introduction platform gives you the freedom to choose the carer that
             best suits your needs, personality and preferences, at your own
@@ -97,18 +87,16 @@ export default function HowItWorksPage() {
               return (
                 <div
                   key={step.title}
-                  className={`group relative flex flex-col md:flex-row md:items-center ${
-                    isEven ? "md:justify-start" : "md:justify-end"
-                  }`}
+                  className={`group relative flex flex-col md:flex-row md:items-center ${isEven ? "md:justify-start" : "md:justify-end"
+                    }`}
                 >
                   <div className="absolute left-8 top-8 z-10 flex h-0.5 w-0.5 items-center justify-center md:left-1/2 md:top-1/2">
                     <div className="h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border border-gold-300 bg-navy-950 shadow-[0_0_12px_rgba(212,175,55,0.4)] group-hover:scale-125 group-hover:border-gold-200 transition-all duration-300" />
                   </div>
 
                   <div
-                    className={`ml-16 w-auto rounded-[24px] border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)] md:ml-0 md:w-[calc(50%-40px)] ${
-                      isEven ? "md:mr-auto" : "md:ml-auto"
-                    }`}
+                    className={`ml-16 w-auto rounded-[24px] border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)] md:ml-0 md:w-[calc(50%-40px)] ${isEven ? "md:mr-auto" : "md:ml-auto"
+                      }`}
                   >
                     <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
                       {/* Left: Icon and Details */}
@@ -126,7 +114,7 @@ export default function HowItWorksPage() {
                             </h2>
                           </div>
                         </div>
-                        <p className="text-sm leading-relaxed text-gold-200/70 sm:text-base">
+                        <p className="page-supporting-text">
                           {step.description}
                         </p>
                       </div>
@@ -147,17 +135,16 @@ export default function HowItWorksPage() {
 
         <section className="mt-24 rounded-[32px] border border-gold-300/15 bg-navy-900/30 p-6 sm:p-8 md:p-12 text-center backdrop-blur-sm">
           <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide">
-            Ready to find trusted support?
+            Ready To Find Trusted Support?
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-gold-200/80 sm:text-base">
-            Begin with confidence. We help families find trusted, independent
-            self-employed carers through a carefully managed introduction and
-            matching process, giving you the confidence to choose the right
-            person for your needs.
+          <p className="page-supporting-text mx-auto mt-4 max-w-xl">
+            We help families find trusted live-in carers through a carefully considered matching process, giving you the confidence to choose the right person for your needs.
           </p>
           <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
             <Button asChild variant="navy">
-              <Link href="/register" prefetch={false}>
+              {/* This CTA sits under family-facing copy, so it is explicitly
+                  the client journey rather than relying on the default. */}
+              <Link href={AUTH_ROUTES.register.client} prefetch={false}>
                 Get Started
               </Link>
             </Button>

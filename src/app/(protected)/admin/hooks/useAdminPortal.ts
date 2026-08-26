@@ -297,7 +297,7 @@ const mapBackendCareRequests = (careRequests: any[]): ClientRequest[] => {
       email: clientUser.email || req.requestorEmail || "",
       phone: clientUser.phoneNumber || req.requestorPhone || "No phone listed",
       clientStatus: profile.status,
-      clientAgreedWeeklyFee: profile.agreedWeeklyFee ?? req.agreedWeeklyFee,
+      clientAgreedWeeklyFee: profile.agreedWeeklyFee ?? profile.weeklyFee ?? req.agreedWeeklyFee ?? req.weeklyFee,
     };
   });
 };
@@ -374,7 +374,7 @@ export type AdminTabType =
 export function useAdminPortal() {
   const searchParams = useSearchParams();
   const tabParam = searchParams.get("tab") as AdminTabType;
-  const [activeTab, setActiveTab] = useState<AdminTabType>(
+  const [activeTab, setLocalActiveTab] = useState<AdminTabType>(
     tabParam &&
       [
         "overview",
@@ -392,6 +392,15 @@ export function useAdminPortal() {
       ? tabParam
       : "overview",
   );
+
+  const setActiveTab = useCallback((tab: AdminTabType) => {
+    setLocalActiveTab(tab);
+    if (typeof window !== "undefined") {
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.set("tab", tab);
+      window.history.replaceState(null, "", newUrl.toString());
+    }
+  }, []);
 
   const dispatch = useAppDispatch();
   const carersPaginationState = useAppSelector((state) => state.admin.carers);
@@ -414,6 +423,28 @@ export function useAdminPortal() {
   useEffect(() => {
     dispatch(setActiveTabAction(activeTab));
   }, [activeTab, dispatch]);
+
+  useEffect(() => {
+    if (tabParam && tabParam !== activeTab) {
+      if (
+        [
+          "overview",
+          "carers",
+          "clients",
+          "requests",
+          "placements",
+          "emergency",
+          "emergency-requests",
+          "billing",
+          "enquiries",
+          "profile-updates",
+        ].includes(tabParam)
+      ) {
+        setLocalActiveTab(tabParam);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tabParam]);
 
   useEffect(() => {
     if (globalSearchQuery.trim()) {
@@ -672,22 +703,34 @@ export function useAdminPortal() {
   // Load total stats counters
   const loadStatsCounts = useCallback(async () => {
     try {
-      const [allCarersRes, pendingCarersRes, emergencyRequestsRes, clientsRes] =
-        await Promise.all([
-          adminService.getCarers(1, 1, "ALL"),
-          adminService.getCarers(1, 1, "PENDING"),
-          adminService.getCareRequests(1, 1, "EMERGENCY"),
-          adminService.getClients(1, 1, "ALL"),
-        ]);
-      setTotalCarersCount(allCarersRes.total || 0);
-      setPendingCarersCount(pendingCarersRes.total || 0);
-      setEmergencyCasesCount(emergencyRequestsRes.total || 0);
-      setTotalClientsCount(clientsRes.total || 0);
-
-      // Fetch dashboard stats from backend
-      await dispatch(fetchAdminDashboardStats()).unwrap();
+      // Fetch dashboard stats from backend API
+      const res = await dispatch(fetchAdminDashboardStats()).unwrap();
+      if (res) {
+        if (res.totalCarers !== undefined) setTotalCarersCount(res.totalCarers);
+        if (res.pendingApprovals !== undefined || res.pendingCarers !== undefined) {
+          setPendingCarersCount(res.pendingApprovals ?? res.pendingCarers ?? 0);
+        }
+        if (res.emergencyCases !== undefined) setEmergencyCasesCount(res.emergencyCases);
+        if (res.totalClients !== undefined) setTotalClientsCount(res.totalClients);
+      }
     } catch (err) {
       console.error("Failed to load stats counts:", err);
+      // Fallback
+      try {
+        const [allCarersRes, pendingCarersRes, emergencyRequestsRes, clientsRes] =
+          await Promise.all([
+            adminService.getCarers(1, 1, "ALL"),
+            adminService.getCarers(1, 1, "PENDING"),
+            adminService.getCareRequests(1, 1, "EMERGENCY"),
+            adminService.getClients(1, 1, "ALL"),
+          ]);
+        setTotalCarersCount(allCarersRes.total || 0);
+        setPendingCarersCount(pendingCarersRes.total || 0);
+        setEmergencyCasesCount(emergencyRequestsRes.total || 0);
+        setTotalClientsCount(clientsRes.total || 0);
+      } catch (fallbackErr) {
+        console.error("Fallback stats counts failed:", fallbackErr);
+      }
     }
   }, [dispatch]);
 
@@ -1093,14 +1136,16 @@ export function useAdminPortal() {
   );
 
   const stats = {
-    totalCarers: totalCarersCount,
-    pendingCarers: pendingCarersCount,
-    totalClients: totalClientsCount,
-    activePlacements: placements.filter(
-      (p) => p.status === "Active" || p.status === "Matched",
+    totalCarers: statsFromState?.totalCarers ?? totalCarersCount,
+    pendingCarers: statsFromState?.pendingApprovals ?? statsFromState?.pendingCarers ?? pendingCarersCount,
+    pendingApprovals: statsFromState?.pendingApprovals ?? statsFromState?.pendingCarers ?? pendingCarersCount,
+    totalClients: statsFromState?.totalClients ?? totalClientsCount,
+    activePlacements: statsFromState?.activePlacements ?? placements.filter(
+      (p) => p.status === "PLACEMENT_CONFIRMED" || p.status === "PLACEMENT_STARTED" || p.status === "ONGOING" || p.status === "Active" || p.status === "Matched",
     ).length,
-    emergencyCases: emergencyCasesCount,
-    unreadEnquiries: enquiries.filter((e) => !e.isRead).length,
+    emergencyCases: statsFromState?.emergencyCases ?? emergencyCasesCount,
+    unreadEnquiries: statsFromState?.openSupportEnquiries ?? statsFromState?.unreadEnquiries ?? enquiries.filter((e) => !e.isRead).length,
+    openSupportEnquiries: statsFromState?.openSupportEnquiries ?? statsFromState?.unreadEnquiries ?? enquiries.filter((e) => !e.isRead).length,
 
     // Extended statistics from backend API
     activeClients: statsFromState?.activeClients,

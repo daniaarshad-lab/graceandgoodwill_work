@@ -671,4 +671,32 @@ export const carerService = {
       headers: { Authorization: `Bearer ${token}` },
     });
   },
+
+  async acceptPlacement(placementId: string): Promise<any> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+    if (!token) throw new Error("No token found");
+    return apiFetch(`/carer/placements/${placementId}/accept`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  },
+
+  async rejectPlacement(placementId: string, reason?: string): Promise<any> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+    if (!token) throw new Error("No token found");
+    return apiFetch(`/carer/placements/${placementId}/reject`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ reason }),
+    });
+  },
 };

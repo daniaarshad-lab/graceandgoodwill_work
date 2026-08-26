@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useRouter } from "next/navigation";
 import { useRef, useEffect, useTransition } from "react";
@@ -115,7 +115,7 @@ export default function PortalTabs({
     },
     {
       id: "agreements" as TabType,
-      label: "Legal Agreements",
+      label: "Terms & Policies",
       href: "/carer?tab=agreements",
     },
     { id: "referrals", label: "Referral Program", href: "/carer/referrals" },
@@ -128,15 +128,8 @@ export default function PortalTabs({
       } else {
         if (setActiveTab) {
           setActiveTab(tabId);
-          if (
-            typeof window !== "undefined" &&
-            window.location.pathname.includes("/referrals")
-          ) {
-            router.push(href);
-          }
-        } else {
-          router.push(href);
         }
+        router.push(href, { scroll: false });
       }
     });
   };
@@ -178,3 +171,4 @@ export default function PortalTabs({
     </>
   );
 }
+

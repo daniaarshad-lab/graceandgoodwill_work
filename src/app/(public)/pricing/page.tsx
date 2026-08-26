@@ -8,11 +8,11 @@ const NewsletterForm = dynamic(() => import("@/components/NewsletterForm"));
 
 const includedItems = [
   "Personalised consultation",
-  "Individual assessment",
-  "Carefully matched independent live-in carers",
+  "Individual needs & preferences phone consultation",
+  "Access to suitable live-in carer profiles",
   "Essential compliance checks",
-  "Support using the Grace & Goodwill platform",
-  "Replacement support where required",
+  "Platform guidance and support when needed",
+  "Replacement matching support at your request",
   "Nationwide matching service",
 ];
 
@@ -22,7 +22,7 @@ export default function PricingPage() {
       {/* ─────────────────────────────────────────────────────────────── */}
       {/* HERO: Heading + CTA Buttons                                   */}
       {/* ─────────────────────────────────────────────────────────────── */}
-      <section className="relative pt-16 sm:pt-20 pb-14 sm:pb-16">
+      <section className="relative pt-16 sm:pt-20 pb-6 sm:pb-8">
         {/* Ambient glow */}
         <div
           aria-hidden
@@ -40,15 +40,11 @@ export default function PricingPage() {
         <div className="container-wrapper relative z-10 max-w-5xl mx-auto">
           {/* Heading */}
           <div className="text-center mb-10 sm:mb-12">
-            <div className="flex items-center justify-center gap-4 mb-3">
-              <div className="h-px w-8 sm:w-12 bg-gradient-to-r from-transparent to-gold-400/40" />
-              <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.25em] text-gold-400/70">
-                Pricing
-              </span>
-              <div className="h-px w-8 sm:w-12 bg-gradient-to-l from-transparent to-gold-400/40" />
+            <div className="page-strapline">
+              Pricing
             </div>
-            <h1 className="text-2xl sm:text-4xl lg:text-[2.75rem] font-serif font-medium leading-[1.2] text-gold-50 tracking-tight">
-              Clear, Fair Pricing with No Hidden Costs
+            <h1 className="main-page-heading">
+              Clear, Fair Pricing With No Hidden Costs
             </h1>
           </div>
 
@@ -67,12 +63,12 @@ export default function PricingPage() {
                 </h2>
 
                 <div className="max-w-2xl mx-auto space-y-3">
-                  <p className="text-sm sm:text-[15px] text-gold-200/75 leading-relaxed font-light">
+                  <p className="page-supporting-text">
                     Sometimes it&rsquo;s easier to speak with someone than
                     complete an online form, especially when you&rsquo;re
                     looking for support during a difficult or uncertain time.
                   </p>
-                  <p className="text-sm sm:text-[15px] text-gold-200/75 leading-relaxed font-light">
+                  <p className="page-supporting-text">
                     Our experienced Family Support Advisors are here to answer
                     your questions, explain how our introduction service works
                     and help you understand the next steps.
@@ -82,9 +78,9 @@ export default function PricingPage() {
                 {/* CTA Buttons */}
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-3">
                   <Button asChild variant="primary" size="lg">
-                    <a href="tel:02045781269" className="gap-2.5 w-auto px-6">
+                    <a href="tel:020 4524 0108" className="gap-2.5 w-auto px-6">
                       <Phone className="w-5 h-5" />
-                      020 4578 1269
+                      020 4524 0108
                     </a>
                   </Button>
 
@@ -96,12 +92,12 @@ export default function PricingPage() {
                       className="gap-2.5 w-auto px-6"
                     >
                       <WhatsAppIcon className="w-5 h-5" />
-                      WhatsApp us
+                      WhatsApp Our Team
                     </a>
                   </Button>
                 </div>
 
-                <p className="text-xs sm:text-sm text-gold-200/50 leading-relaxed font-light pt-1">
+                <p className="page-supporting-text pt-1">
                   Prefer to send an enquiry instead? Simply complete the form
                   below and a member of our Support Team will get back to you as
                   soon as possible.
@@ -115,7 +111,7 @@ export default function PricingPage() {
       {/* ─────────────────────────────────────────────────────────────── */}
       {/* CONTENT: Introduction + Unique + Included — Compact Layout     */}
       {/* ─────────────────────────────────────────────────────────────── */}
-      <section className="relative pt-14 sm:pt-16 pb-6 sm:pb-8">
+      <section className="relative pt-6 sm:pt-8 pb-6 sm:pb-8">
         {/* Subtle ambient */}
         <div className="pointer-events-none absolute right-0 top-0 h-[400px] w-[400px] rounded-full bg-gold-500/3 blur-[120px]" />
 
@@ -124,43 +120,25 @@ export default function PricingPage() {
           <div className="grid lg:grid-cols-5 gap-10 lg:gap-14">
             {/* Left Column — Introduction + Every Care Arrangement (3/5) */}
             <div className="lg:col-span-3 space-y-10">
-              {/* Introduction */}
-              <div className="space-y-4">
-                <p className="text-base sm:text-lg text-gold-100 leading-relaxed font-light">
-                  Every family&rsquo;s circumstances are different.
-                </p>
-                <p className="text-sm sm:text-[15px] text-gold-200/75 leading-[1.8] font-light">
-                  The cost of introducing a live-in carer depends on the level
-                  of support required, the complexity of your circumstances,
-                  mobility needs and the experience required from the carer.
-                </p>
-                <p className="text-sm sm:text-[15px] text-gold-200/75 leading-[1.8] font-light">
-                  Rather than offering one-size-fits-all pricing, we take the
-                  time to understand your situation first. This allows us to
-                  provide a clear, fair quotation, ensuring you only pay for the
-                  support you genuinely need, never more and never less.
-                </p>
-              </div>
-
-              {/* Divider */}
-              <div className="h-px w-full bg-gradient-to-r from-gold-400/15 via-gold-400/8 to-transparent" />
-
               {/* Every Care Arrangement is Unique */}
               <div className="space-y-4">
-                <h2 className="text-lg sm:text-xl font-serif text-gold-50 tracking-wide flex items-center gap-3">
-                  <span className="w-7 h-px bg-gold-400/40" />
+                <h2 className="page-strapline">
                   Every Care Arrangement is Unique
                 </h2>
-                <p className="text-sm sm:text-[15px] text-gold-200/75 leading-[1.8] font-light">
+                <p className="page-supporting-text">
                   Live-in care is never a one-size-fits-all service.
                 </p>
-                <p className="text-sm sm:text-[15px] text-gold-200/75 leading-[1.8] font-light">
-                  Before providing a quotation, we take the time to understand
+                <p className="page-supporting-text">
+                  Our platform gives you access to carer profiles so you can
+                  explore available options and choose who you feel best matches
                   your individual circumstances, daily routine, support
-                  requirements and preferences. This allows us to introduce you
-                  to the most suitable independent live-in carer while ensuring
-                  our pricing remains fair, transparent and appropriate to your
-                  needs.
+                  requirements and personal preferences.
+                </p>
+                <p className="page-supporting-text">
+                  If you would like assistance using the platform, or need help
+                  identifying potentially suitable profiles, our Support Team is
+                  available to assist. The choice of carer always remains with
+                  you.
                 </p>
               </div>
             </div>
@@ -173,7 +151,7 @@ export default function PricingPage() {
                     <Shield className="w-4 h-4" strokeWidth={1.5} />
                   </div>
                   <h3 className="text-base sm:text-lg font-serif text-gold-50">
-                    Included With Every Introduction
+                    Included With Our Matching Service
                   </h3>
                 </div>
 
@@ -223,17 +201,17 @@ export default function PricingPage() {
                     Request Your Personalised Quote
                   </h2>
                   <div className="space-y-1.5 max-w-2xl">
-                    <p className="text-xs sm:text-sm text-gold-200/60 leading-relaxed font-light">
+                    <p className="page-supporting-text">
                       Finding the right live-in carer starts with understanding
                       your individual needs.
                     </p>
-                    <p className="text-xs sm:text-sm text-gold-200/60 leading-relaxed font-light">
+                    <p className="page-supporting-text">
                       Complete the short enquiry form below and a member of our
                       Support Team will contact you to discuss your
                       circumstances, answer any questions and provide a
                       personalised quotation.
                     </p>
-                    <p className="text-xs sm:text-sm text-gold-200/60 leading-relaxed font-light">
+                    <p className="page-supporting-text">
                       There is absolutely no obligation to proceed.
                     </p>
                   </div>
@@ -262,21 +240,15 @@ export default function PricingPage() {
           }}
         />
 
-        <div className="container-wrapper relative z-20 max-w-5xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-center">
-            <div className="text-center md:text-left">
-              <h2 className="text-xl sm:text-2xl lg:text-3xl font-serif text-gold-50 tracking-wide mb-3">
-                Stay Connected
-              </h2>
-              <p className="text-sm leading-relaxed text-gold-200/80 sm:text-base">
-                Receive care advice, family resources, training opportunities,
-                events and updates from Grace & Goodwill.
-              </p>
-            </div>
-            <div>
-              <NewsletterForm />
-            </div>
-          </div>
+        <div className="container-wrapper relative z-20 text-center max-w-2xl mx-auto">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-serif text-gold-50 tracking-wide mb-3">
+            Stay Connected
+          </h2>
+          <p className="page-supporting-text mb-8">
+            Receive our latest care articles, family resources, information on specific conditions, events and updates from Grace & Goodwill.
+          </p>
+
+          <NewsletterForm />
         </div>
       </section>
     </main>

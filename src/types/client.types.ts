@@ -32,6 +32,12 @@ export interface ClientProfile {
   gocardlessCustomerId?: string | null;
   gocardlessMandateId?: string | null;
 
+  careNote?: string | null;
+  careStartDate?: string | null;
+  careEndDate?: string | null;
+  carePostcode?: string | null;
+  careAddress?: string | null;
+
   user?: ClientUser;
 }
 
@@ -46,6 +52,11 @@ export interface UpdateClientProfilePayload {
   pincode?: string | null;
   postcode?: string | null;
   profilePhotoUrl?: string | null;
+  careNote?: string | null;
+  careStartDate?: string | null;
+  careEndDate?: string | null;
+  carePostcode?: string | null;
+  careAddress?: string | null;
 }
 
 export interface CreateCareRequestPayload {
@@ -79,6 +90,10 @@ export interface ClientPlacement {
   careRequestId: string | null;
   hourlyRate: string | number;
   status:
+    | "PENDING_ACCEPTANCE"
+    | "PLACEMENT_CONFIRMED"
+    | "REJECTED_BY_CARER"
+    | "PLACEMENT_STARTED"
     | "ACTIVE"
     | "COMPLETED"
     | "TERMINATED"
@@ -86,7 +101,11 @@ export interface ClientPlacement {
     | "PENDING"
     | "MATCHING"
     | "APPROVED"
-    | "ONGOING";
+    | "ONGOING"
+    | string;
+  rejectionReason?: string | null;
+  rejectedAt?: string | null;
+  acceptedAt?: string | null;
   startDate: string;
   endDate: string | null;
   createdAt: string;

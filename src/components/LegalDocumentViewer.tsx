@@ -72,13 +72,11 @@ export default function LegalDocumentViewer({
 
         <div className="container-wrapper relative z-10 max-w-7xl mx-auto px-4 sm:px-6 mt-4 sm:mt-0">
           <div className="max-w-4xl text-center mx-auto space-y-4 pt-8 sm:pt-4">
-            <div className="flex items-center justify-center gap-4">
-              <div className="h-px w-8 sm:w-16 bg-gradient-to-r from-transparent to-gold-400/40" />
-              <div className="inline-flex items-center gap-2 text-gold-400/80 text-xs font-semibold uppercase tracking-widest">
+            <div className="page-strapline">
+              <span className="inline-flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4" />
                 Official Legal Policy
-              </div>
-              <div className="h-px w-8 sm:w-16 bg-gradient-to-l from-transparent to-gold-400/40" />
+              </span>
             </div>
 
             <h1 className="text-[13px] sm:text-sm lg:text-[15px] font-medium tracking-wide text-gold-200 uppercase max-w-4xl mx-auto px-4">

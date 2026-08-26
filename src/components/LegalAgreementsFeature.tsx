@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -34,11 +34,9 @@ export default function LegalAgreementsFeature({
 
   const [selectedAgreement, setSelectedAgreement] =
     useState<LegalAgreement | null>(null);
-  const [signatureName, setSignatureName] = useState("");
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [validationErrors, setValidationErrors] = useState<{
     terms?: string;
-    signature?: string;
   }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [payingFee, setPayingFee] = useState(false);
@@ -184,32 +182,29 @@ export default function LegalAgreementsFeature({
     e.preventDefault();
     if (!selectedAgreement) return;
 
-    const errors: { terms?: string; signature?: string } = {};
     if (!agreedToTerms) {
-      errors.terms = "You must accept this agreement before signing.";
-    }
-    if (!signatureName.trim()) {
-      errors.signature =
-        "Full Name is required to electronically sign this agreement.";
-    }
-
-    if (Object.keys(errors).length > 0) {
-      setValidationErrors(errors);
+      setValidationErrors({
+        terms: "You must accept the terms before proceeding.",
+      });
       return;
     }
 
     setValidationErrors({});
+
+    const autoName =
+      `${user?.firstName || ""} ${user?.lastName || ""}`.trim() ||
+      user?.email ||
+      "Accepted";
 
     try {
       setIsSubmitting(true);
       setError(null);
       await agreementsService.signAgreement(
         selectedAgreement.id,
-        signatureName,
+        autoName,
       );
 
-      // Reset signing state
-      setSignatureName("");
+      // Reset acceptance state
       setAgreedToTerms(false);
 
       // Refresh context profile
@@ -283,10 +278,10 @@ export default function LegalAgreementsFeature({
         {!isOnboardingMode && (
           <div className="text-center mb-8">
             <h1 className="text-2xl sm:text-3xl font-bold text-gold-100">
-              Legal Agreements
+              Terms & Policies
             </h1>
             <p className="mt-1.5 text-base text-gold-200/70">
-              Review and electronically sign your terms and policies.
+              Please review and accept our platform terms and policies to continue.
             </p>
           </div>
         )}
@@ -308,7 +303,7 @@ export default function LegalAgreementsFeature({
                   : "text-slate-400 hover:text-white hover:bg-navy-800/50"
               }`}
             >
-              Pending ({pending.length})
+              To Accept ({pending.length})
             </button>
             <button
               onClick={() => setActiveTab("history")}
@@ -558,7 +553,6 @@ export default function LegalAgreementsFeature({
                           setError(null);
                           setValidationErrors({});
                           setAgreedToTerms(false);
-                          setSignatureName("");
                         }}
                         className={`w-full text-left p-4 rounded-xl border transition-all duration-300 relative group ${
                           selectedAgreement?.id === doc.id
@@ -613,7 +607,7 @@ export default function LegalAgreementsFeature({
                                   d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                                 ></path>
                               </svg>
-                              Signature Required
+                              Acceptance Required
                             </span>
                           </div>
                         </div>
@@ -669,36 +663,41 @@ export default function LegalAgreementsFeature({
                             ))}
                         </div>
 
-                        {/* Signature Form */}
-                        <form onSubmit={handleSign} className="space-y-5">
+                        {/* Acceptance Form */}
+                        <form onSubmit={handleSign} className="space-y-4">
                           <div className="flex flex-col gap-1.5">
                             <div
                               className={`flex items-start bg-navy-900/30 p-4 rounded-xl border transition-colors ${validationErrors.terms ? "border-red-500/50" : "border-navy-800/60"}`}
                             >
-                              <input
-                                id="accept-terms"
-                                type="checkbox"
-                                checked={agreedToTerms}
-                                onChange={(e) => {
-                                  setAgreedToTerms(e.target.checked);
-                                  if (e.target.checked)
-                                    setValidationErrors((prev) => ({
-                                      ...prev,
-                                      terms: undefined,
-                                    }));
-                                }}
-                                className="mt-0.5 h-4 w-4 rounded border-navy-700 bg-navy-950 text-[#b59469] focus:ring-[#b59469] focus:ring-offset-navy-900 cursor-pointer"
-                              />
+                              <div className="mt-0.5 relative flex items-center justify-center shrink-0">
+                                <input
+                                  id="accept-terms"
+                                  type="checkbox"
+                                  checked={agreedToTerms}
+                                  onChange={(e) => {
+                                    setAgreedToTerms(e.target.checked);
+                                    if (e.target.checked) setValidationErrors({});
+                                  }}
+                                  className="peer appearance-none w-5 h-5 border-2 border-navy-700 rounded bg-navy-900/50 checked:bg-[#b59469] checked:border-[#b59469] focus:outline-none focus:ring-2 focus:ring-[#b59469]/30 transition-all cursor-pointer shadow-inner"
+                                />
+                                <svg
+                                  className="absolute w-3.5 h-3.5 text-navy-950 opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                  strokeWidth={3}
+                                >
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                </svg>
+                              </div>
                               <label
                                 htmlFor="accept-terms"
                                 className="ml-3.5 text-sm text-slate-300 select-none cursor-pointer leading-tight"
                               >
-                                I confirm that I have read, understood, and
-                                accept the terms of the{" "}
+                                I have read and accept the{" "}
                                 <span className="text-white font-bold">
                                   {selectedAgreement.title}
-                                </span>
-                                .
+                                </span>.
                               </label>
                             </div>
                             {validationErrors.terms && (
@@ -708,76 +707,24 @@ export default function LegalAgreementsFeature({
                             )}
                           </div>
 
-                          <div className="flex flex-col gap-1.5">
-                            <div className="flex flex-col sm:flex-row gap-4 items-end">
-                              <div className="flex-grow w-full">
-                                <label
-                                  htmlFor="sig-name"
-                                  className="block text-xs font-semibold text-slate-400 mb-2"
-                                >
-                                  Full Name (Typed Signature)
-                                </label>
-                                <input
-                                  id="sig-name"
-                                  type="text"
-                                  value={signatureName}
-                                  onChange={(e) => {
-                                    setSignatureName(e.target.value);
-                                    if (e.target.value.trim())
-                                      setValidationErrors((prev) => ({
-                                        ...prev,
-                                        signature: undefined,
-                                      }));
-                                  }}
-                                  placeholder="Type your official name to sign"
-                                  className={`w-full bg-navy-950 border rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none transition shadow-inner ${
-                                    validationErrors.signature
-                                      ? "border-red-500/50 focus:border-red-500 focus:ring-1 focus:ring-red-500"
-                                      : "border-navy-800 focus:border-[#b59469] focus:ring-1 focus:ring-[#b59469]"
-                                  }`}
-                                />
-                              </div>
-
-                              <Button
-                                type="submit"
-                                disabled={isSubmitting}
-                                variant="primary"
-                                className="w-full sm:w-auto whitespace-nowrap"
-                              >
-                                {isSubmitting ? (
-                                  <>
-                                    <svg
-                                      className="animate-spin -ml-1 mr-2 h-4 w-4 text-navy-950"
-                                      fill="none"
-                                      viewBox="0 0 24 24"
-                                    >
-                                      <circle
-                                        className="opacity-25"
-                                        cx="12"
-                                        cy="12"
-                                        r="10"
-                                        stroke="currentColor"
-                                        strokeWidth="4"
-                                      ></circle>
-                                      <path
-                                        className="opacity-75"
-                                        fill="currentColor"
-                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                      ></path>
-                                    </svg>
-                                    Sealing Agreement...
-                                  </>
-                                ) : (
-                                  "Electronically Sign"
-                                )}
-                              </Button>
-                            </div>
-                            {validationErrors.signature && (
-                              <p className="text-red-400 text-xs ml-1 font-medium">
-                                {validationErrors.signature}
-                              </p>
+                          <Button
+                            type="submit"
+                            disabled={isSubmitting || !agreedToTerms}
+                            variant="primary"
+                            className="w-full"
+                          >
+                            {isSubmitting ? (
+                              <>
+                                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-navy-950" fill="none" viewBox="0 0 24 24">
+                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth={4} />
+                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                </svg>
+                                Processing...
+                              </>
+                            ) : (
+                              "Accept & Continue"
                             )}
-                          </div>
+                          </Button>
                         </form>
                       </div>
                     )}
@@ -793,27 +740,24 @@ export default function LegalAgreementsFeature({
           <div className="bg-navy-900/60 border border-navy-800 rounded-2xl p-6 shadow-soft animate-fade-in">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
               <h2 className="text-xl font-bold text-white">
-                Signature Audit Trail
+                Accepted Policies &amp; Terms
               </h2>
             </div>
             {history.length === 0 ? (
               <p className="text-slate-400 text-center py-8">
-                No signed agreements found.
+                No accepted policies found.
               </p>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse text-sm text-slate-300">
                   <thead>
-                    <tr className="border-b border-navy-800 text-slate-400 font-semibold">
-                      <th className="py-3.5 px-4">Document Title</th>
+                    <tr className="border-b border-navy-800 text-slate-400 font-semibold text-xs uppercase tracking-wider">
+                      <th className="py-3.5 px-4">Policy Title</th>
                       <th className="py-3.5 px-4 text-center">Version</th>
-                      <th className="py-3.5 px-4">Signatory Name</th>
-                      <th className="py-3.5 px-4">Signed Date</th>
+                      <th className="py-3.5 px-4">Accepted By</th>
+                      <th className="py-3.5 px-4">Accepted Date</th>
                       <th className="py-3.5 px-4">IP Address</th>
-                      <th className="py-3.5 px-4 hidden md:table-cell">
-                        User Agent
-                      </th>
-                      <th className="py-3.5 px-4 text-right">Actions</th>
+                      <th className="py-3.5 px-4 text-right">Status</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -823,44 +767,33 @@ export default function LegalAgreementsFeature({
                         className="border-b border-navy-800/40 hover:bg-navy-850/30 transition-colors"
                       >
                         <td className="py-4 px-4 font-semibold text-white">
-                          {record.agreement?.title || "Legal Agreement"}
+                          {record.agreement?.title || "Platform Policy"}
                         </td>
                         <td className="py-4 px-4 text-center">
-                          <span className="bg-navy-800 text-gold-DEFAULT px-2 py-0.5 rounded text-xs">
+                          <span className="bg-navy-800 text-gold-DEFAULT px-2.5 py-1 rounded text-xs font-semibold">
                             v{record.versionAccepted}
                           </span>
                         </td>
-                        <td className="py-4 px-4 font-medium italic text-gold-100">
-                          "{record.signatureName}"
+                        <td className="py-4 px-4 font-medium text-slate-200 whitespace-nowrap">
+                          {record.signatureName}
                         </td>
-                        <td className="py-4 px-4 text-slate-450">
-                          {new Date(record.acceptedAt).toLocaleString("en-US", {
-                            month: "short",
+                        <td className="py-4 px-4 text-slate-300 whitespace-nowrap">
+                          {new Date(record.acceptedAt).toLocaleString("en-GB", {
                             day: "numeric",
+                            month: "short",
                             year: "numeric",
-                            hour: "numeric",
+                            hour: "2-digit",
                             minute: "2-digit",
                           })}
                         </td>
-                        <td className="py-4 px-4 font-mono text-xs">
+                        <td className="py-4 px-4 font-mono text-xs text-slate-400 whitespace-nowrap">
                           {record.ipAddress}
                         </td>
-                        <td
-                          className="py-4 px-4 text-xs text-slate-500 max-w-xs truncate hidden md:table-cell"
-                          title={record.userAgent}
-                        >
-                          {record.userAgent}
-                        </td>
                         <td className="py-4 px-4 text-right">
-                          <button
-                            type="button"
-                            onClick={() =>
-                              handlePrintAgreement(record.agreement, record)
-                            }
-                            className="text-xs text-gold-DEFAULT hover:underline font-semibold"
-                          >
-                            Print & Save PDF
-                          </button>
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                            Accepted
+                          </span>
                         </td>
                       </tr>
                     ))}

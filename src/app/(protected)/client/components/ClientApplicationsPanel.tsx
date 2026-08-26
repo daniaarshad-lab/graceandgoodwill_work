@@ -252,6 +252,13 @@ export default function ClientApplicationsPanel() {
                   <div className="border-t border-gold-300/10 bg-navy-950/30 p-5">
                     {(() => {
                       const appsForRequest = applications[req.id] || [];
+                      const hasSelectedCarer = appsForRequest.some(
+                        (a) =>
+                          a.status === "SELECTED" ||
+                          a.status === "APPROVED" ||
+                          a.status === "ACCEPTED",
+                      );
+
                       return applicationsLoading ? (
                         <div className="flex items-center justify-center py-8">
                           <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gold-DEFAULT mr-3"></div>
@@ -273,10 +280,22 @@ export default function ClientApplicationsPanel() {
                         </div>
                       ) : (
                         <div className="space-y-3">
+                          {hasSelectedCarer && (
+                            <div className="flex items-center gap-2.5 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs">
+                              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                              <span>
+                                A carer has been selected for this placement offer and is awaiting acceptance. Other pending applications cannot be approved until this offer is resolved.
+                              </span>
+                            </div>
+                          )}
                           {appsForRequest.map((app) => (
                             <div
                               key={app.id}
-                              className="flex items-start justify-between rounded-xl bg-navy-900 border border-gold-300/5 p-4 hover:border-gold-300/15 transition-colors"
+                              className={`flex items-start justify-between rounded-xl bg-navy-900 border p-4 transition-colors ${
+                                app.status === "SELECTED"
+                                  ? "border-emerald-500/30 bg-emerald-950/10"
+                                  : "border-gold-300/5 hover:border-gold-300/15"
+                              }`}
                             >
                               <div className="flex items-start gap-4">
                                 {(app as any).carer?.profilePhotoUrl ||
@@ -305,27 +324,11 @@ export default function ClientApplicationsPanel() {
                                         ?.lastName ||
                                       ""}
                                   </h5>
-                                  {(() => {
-                                    const carerProfileId =
-                                      app.carerProfileId ||
-                                      (app as any).carerProfile?.id;
-                                    const isFromInterestList =
-                                      interestList?.some(
-                                        (carer: any) =>
-                                          carer.id === carerProfileId,
-                                      );
-                                    if (
-                                      isFromInterestList &&
-                                      app.isAssignedByAdmin
-                                    ) {
-                                      return (
-                                        <div className="mt-1 text-[9px] text-emerald-400 font-bold bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded w-fit uppercase tracking-wider">
-                                          Selected by admin from interest list
-                                        </div>
-                                      );
-                                    }
-                                    return null;
-                                  })()}
+                                  {app.isAssignedByAdmin && (
+                                    <div className="mt-1 text-[9px] text-emerald-400 font-bold bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded w-fit uppercase tracking-wider">
+                                      Selected by Admin
+                                    </div>
+                                  )}
                                   {((app as any).carer?.experienceYears !==
                                     undefined ||
                                     (app as any).carerProfile
@@ -344,7 +347,7 @@ export default function ClientApplicationsPanel() {
                                       : "No bio provided."}
                                   </p>
 
-                                  <div className="flex items-center gap-3 mt-2 text-[10px] text-gold-100/40">
+                                  <div className="flex flex-wrap items-center gap-2 mt-2 text-[10px] text-gold-100/40">
                                     <span>
                                       Applied: {formatDate(app.createdAt)}
                                     </span>
@@ -355,13 +358,19 @@ export default function ClientApplicationsPanel() {
                                           : app.status === "SHORTLISTED"
                                             ? "bg-blue-500/10 text-blue-400 border border-blue-500/20"
                                             : app.status === "ACCEPTED" ||
-                                                app.status === "APPROVED"
+                                                app.status === "APPROVED" ||
+                                                app.status === "SELECTED"
                                               ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
                                               : "bg-red-500/10 text-red-400 border border-red-500/20"
                                       }`}
                                     >
                                       {app.status}
                                     </span>
+                                    {app.status === "SELECTED" && (
+                                      <span className="px-2 py-0.5 rounded-full font-bold uppercase tracking-wider bg-amber-500/10 text-amber-300 border border-amber-500/20 text-[9px] flex items-center gap-1">
+                                        Waiting for Carer Acceptance
+                                      </span>
+                                    )}
                                   </div>
                                 </div>
                               </div>
@@ -380,27 +389,35 @@ export default function ClientApplicationsPanel() {
                                   View Profile
                                 </Button>
 
-                                {app.status === "PENDING" &&
-                                  req.status !== "CARER_SELECTED" && (
-                                    <div className="flex items-center gap-2 mt-2">
-                                      <button
-                                        onClick={() => setRejectAppId(app.id)}
-                                        disabled={isSubmitting === app.id}
-                                        className="flex-1 px-4 py-1.5 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500 hover:text-white text-[10px] font-bold transition-all cursor-pointer"
-                                      >
-                                        Reject
-                                      </button>
-                                      <button
-                                        onClick={() => handleApprove(app.id)}
-                                        disabled={isSubmitting === app.id}
-                                        className="flex-1 px-6 py-1.5 rounded-xl bg-gold text-navy-950 font-bold text-[10px] hover:bg-gold-200 transition-all shadow-elegant cursor-pointer flex items-center justify-center"
-                                      >
-                                        {isSubmitting === app.id
-                                          ? "..."
-                                          : "Approve"}
-                                      </button>
-                                    </div>
-                                  )}
+                                {app.status === "PENDING" && (
+                                  <div className="flex items-center gap-2 mt-2">
+                                    <button
+                                      onClick={() => setRejectAppId(app.id)}
+                                      disabled={isSubmitting === app.id}
+                                      className="flex-1 px-4 py-1.5 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500 hover:text-white text-[10px] font-bold transition-all cursor-pointer"
+                                    >
+                                      Reject
+                                    </button>
+                                    <button
+                                      onClick={() => handleApprove(app.id)}
+                                      disabled={isSubmitting === app.id || hasSelectedCarer}
+                                      title={
+                                        hasSelectedCarer
+                                          ? "Another carer is currently selected and awaiting acceptance"
+                                          : "Approve this application"
+                                      }
+                                      className={`flex-1 px-6 py-1.5 rounded-xl font-bold text-[10px] transition-all shadow-elegant flex items-center justify-center ${
+                                        hasSelectedCarer
+                                          ? "bg-navy-950/60 text-gold-100/30 border border-gold-300/10 cursor-not-allowed opacity-50"
+                                          : "bg-gold text-navy-950 hover:bg-gold-200 cursor-pointer"
+                                      }`}
+                                    >
+                                      {isSubmitting === app.id
+                                        ? "..."
+                                        : "Approve"}
+                                    </button>
+                                  </div>
+                                )}
                               </div>
                             </div>
                           ))}

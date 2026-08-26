@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import AuthSplitLayout from "@/components/AuthSplitLayout";
 import Input from "@/components/Input";
@@ -10,14 +10,42 @@ import Button from "@/components/Button";
 import { validateLoginForm, LoginFormErrors } from "@/lib/validation";
 import { useAuth } from "@/contexts/AuthContext";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
+import { AUTH_ROUTES, parseRole } from "@/lib/auth-routes";
 
+/**
+ * useSearchParams needs a Suspense boundary during prerender.
+ */
 export default function LoginPage() {
+  return (
+    <Suspense fallback={<LoginFallback />}>
+      <LoginPageContent />
+    </Suspense>
+  );
+}
+
+function LoginFallback() {
+  return (
+    <div className="min-h-[calc(100dvh-80px)] flex flex-col items-center justify-center bg-navy-950 text-gold-100">
+      <div className="flex flex-col items-center space-y-4">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold-DEFAULT"></div>
+        <p className="text-sm tracking-wider text-gold-200">Loading...</p>
+      </div>
+    </div>
+  );
+}
+
+function LoginPageContent() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<LoginFormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { login, isAuthenticated, user, isLoading: authLoading } = useAuth();
+
+  const searchParams = useSearchParams();
+  const currentRole = parseRole(searchParams.get("role") ?? undefined);
+  const isCarer = currentRole === "carer";
+  const isAdmin = currentRole === "admin";
 
   useEffect(() => {
     if (isAuthenticated && user?.role) {
@@ -26,7 +54,7 @@ export default function LoginPage() {
         router.push("/client");
       } else if (role === "CARER") {
         router.push("/carer");
-      } else if (role === "ADMIN") {
+      } else if (role === "ADMIN" || role === "SUPER_ADMIN") {
         router.push("/admin");
       } else {
         router.push("/");
@@ -52,6 +80,7 @@ export default function LoginPage() {
       await login({
         email,
         password,
+        role: currentRole.toUpperCase(),
       });
       showSuccessToast("Login Successful", "Welcome back to Grace & Goodwill.");
     } catch (error: any) {
@@ -64,6 +93,7 @@ export default function LoginPage() {
       setIsLoading(false);
     }
   };
+
   // Prevent form render while checking auth or redirecting
   if (authLoading || isAuthenticated) {
     return (
@@ -76,11 +106,20 @@ export default function LoginPage() {
     );
   }
 
+  const pageTitle = isAdmin
+    ? "Login as Admin"
+    : isCarer
+    ? "Login as a Carer"
+    : "Login as a Client";
+
+  const pageSubtitle = isAdmin
+    ? "Login to your admin account to manage operations and placements."
+    : isCarer
+    ? "Login to your carer account to manage onboarding and placements."
+    : "Login to continue accessing your care platform.";
+
   return (
-    <AuthSplitLayout
-      title="Welcome Back"
-      subtitle="Login to continue accessing your care platform."
-    >
+    <AuthSplitLayout title={pageTitle} subtitle={pageSubtitle}>
       <form className="space-y-5" onSubmit={handleSubmit}>
         <Input
           label="Email"
@@ -115,32 +154,25 @@ export default function LoginPage() {
           disabled={isLoading}
         />
 
-        <p className="text-center text-sm">
-          Don&apos;t have an account?{" "}
-          <Link
-            href="/register"
-            className="text-gold-muted font-medium hover:text-[#b8915e] hover:underline"
-          >
-            Register
-          </Link>
-        </p>
+        {!isAdmin && (
+          <p className="text-center text-sm">
+            Don&apos;t have an account?{" "}
+            <Link
+              href={
+                isCarer
+                  ? AUTH_ROUTES.register.carer
+                  : AUTH_ROUTES.register.client
+              }
+              className="text-gold-muted font-medium hover:text-[#b8915e] hover:underline"
+            >
+              Register
+            </Link>
+          </p>
+        )}
       </form>
 
       <div className="mt-12 flex flex-col items-center justify-center text-center select-none">
         <img src="/website_logo.png" alt="Logo" className="h-16 w-auto mb-2" />
-
-        <div className="flex items-center w-full justify-center mt-2">
-          <div className="h-px w-4 sm:w-11 bg-gradient-to-r from-transparent to-[#b8915e]/60" />
-
-          <p
-            className="mx-2 text-base font-medium  text-gold-muted tracking-wide"
-            style={{ letterSpacing: "-0.01em" }}
-          >
-            Care Defined By Integrity
-          </p>
-
-          <div className="h-px w-4 sm:w-11 bg-gradient-to-l from-transparent to-[#b8915e]/60" />
-        </div>
       </div>
     </AuthSplitLayout>
   );

@@ -27,15 +27,15 @@ export function EmergencyCareContent({
         <div className="container-wrapper">
           <div className="max-w-4xl mx-auto space-y-5">
             {/* Heading */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
-              <div className="hidden sm:block h-px w-12 lg:w-16 bg-gradient-to-r from-transparent to-gold-400/50" />
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium text-gold-50 leading-[1.15] tracking-tight text-center max-w-2xl">
+            <div className="text-center">
+              <div className="page-strapline">Emergency Care</div>
+
+              <h1 className="main-page-heading">
                 Urgent Live-in Care Matching{" "}
                 <span className="text-gold-300 ml-1.5 font-light">
                   When You Need It Most
                 </span>
               </h1>
-              <div className="hidden sm:block h-px w-12 lg:w-16 bg-gradient-to-l from-transparent to-gold-400/50" />
             </div>
           </div>
         </div>
@@ -104,8 +104,8 @@ export function EmergencyCareContent({
                       Priority Hotline
                     </h3>
                     <p className="text-xs text-gold-200/50 font-light mt-0.5">
-                      Connect instantly with our Urgent Matching Team on call 24
-                      hours a day
+                      Contact our Urgent Matching Team for urgent matching
+                      enquiries, 24 hours a day.
                     </p>
                   </div>
                 </div>
@@ -114,11 +114,11 @@ export function EmergencyCareContent({
 
                 <div className="space-y-2.5">
                   <a
-                    href="tel:+442045781269"
+                    href="tel:+442045240108"
                     className="group flex items-center justify-center gap-2.5 w-full px-4 py-3.5 rounded-xl bg-[#b59469] text-navy-950 text-sm font-bold hover:bg-[#a3835a] hover:text-white hover:-translate-y-[1px] hover:shadow-[0_8px_30px_rgba(160,128,84,0.24)] transition-all duration-300"
                   >
                     <Phone className="w-4 h-4 group-hover:animate-pulse" />
-                    020 4578 1269
+                    020 4524 0108
                   </a>
                   <a
                     href="https://wa.me/447700000000?text=URGENT%3A%20I%20need%20to%20chat%20about%20an%20immediate%20live%20in%20care%20placement."
@@ -127,7 +127,7 @@ export function EmergencyCareContent({
                     className="flex items-center justify-center gap-2.5 w-full px-4 py-3.5 rounded-xl border border-emerald-500/30 bg-emerald-500/5 text-emerald-300 text-sm font-semibold hover:bg-emerald-500/10 hover:text-emerald-200 hover:-translate-y-[1px] transition-all duration-300"
                   >
                     <WhatsAppIcon className="w-4 h-4" />
-                    WhatsApp Support
+                    WhatsApp Emergency Support
                   </a>
                 </div>
               </div>

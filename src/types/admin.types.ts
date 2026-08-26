@@ -1,9 +1,14 @@
 export interface AdminDashboardStats {
-  totalUsers: number;
-  totalCarers: number;
-  totalClients: number;
-  activePlacements: number;
-  pendingVerifications: number;
+  totalUsers?: number;
+  totalCarers?: number;
+  totalClients?: number;
+  pendingApprovals?: number;
+  pendingCarers?: number;
+  activePlacements?: number;
+  openSupportEnquiries?: number;
+  unreadEnquiries?: number;
+  emergencyCases?: number;
+  pendingVerifications?: number;
 
   // Extended statistics fields
   activeClients?: number;

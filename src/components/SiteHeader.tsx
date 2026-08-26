@@ -1,5 +1,7 @@
 "use client";
 
+import { AUTH_ROUTES } from "@/lib/auth-routes";
+
 import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
@@ -50,10 +52,21 @@ function SiteHeader() {
   }, [isMobileMenuOpen]);
 
   const handleLogout = async () => {
+    const rawRole = user?.role?.toUpperCase();
+    const isUserAdmin = rawRole === "ADMIN" || rawRole === "SUPER_ADMIN" || pathname.startsWith("/admin");
+    const isUserCarer = rawRole === "CARER" || pathname.startsWith("/carer");
+
     await dispatch(logoutThunk());
     setIsMobileMenuOpen(false);
     showSuccessToast("Logged out successfully");
-    router.push("/login");
+
+    if (isUserAdmin) {
+      router.push(AUTH_ROUTES.login.admin);
+    } else if (isUserCarer) {
+      router.push(AUTH_ROUTES.login.carer);
+    } else {
+      router.push(AUTH_ROUTES.login.client);
+    }
   };
 
   const getPortalLink = () => {
@@ -110,12 +123,8 @@ function SiteHeader() {
               >
                 GRACE & GOODWILL
               </span>
-              <div className="flex items-center gap-2 sm:gap-3 mt-0.5">
-                <div className="h-[1px] w-4 sm:w-8 lg:w-12 bg-gradient-to-r from-transparent to-[#c7ae85]/70"></div>
-                <span className="text-[9px] sm:text-[10px] font-medium text-[#c7ae85] font-sans tracking-[0.15em] sm:tracking-[0.25em] uppercase whitespace-nowrap">
-                  Care Defined By Integrity
-                </span>
-                <div className="h-[1px] w-4 sm:w-8 lg:w-12 bg-gradient-to-l from-transparent to-[#c7ae85]/70"></div>
+              <div className="tagline mt-0.5">
+                Care Defined By Integrity
               </div>
             </div>
           </Link>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useRouter } from "next/navigation";
 import { useAppSelector } from "@/store/hooks";
@@ -104,7 +104,7 @@ export default function PortalTabs({
     },
     {
       id: "interest-list" as TabType,
-      label: "Interest List ❤️",
+      label: "Interest List â¤ï¸",
       href: "/client?tab=interest-list",
     },
     {
@@ -129,7 +129,7 @@ export default function PortalTabs({
     },
     {
       id: "agreements" as TabType,
-      label: "Legal Agreements",
+      label: "Terms & Policies",
       href: "/client?tab=agreements",
     },
     { id: "referrals", label: "Refer a Client", href: "/client/referrals" },
@@ -179,3 +179,4 @@ export default function PortalTabs({
     </>
   );
 }
+

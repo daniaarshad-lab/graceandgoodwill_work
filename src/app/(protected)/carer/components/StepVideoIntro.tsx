@@ -430,7 +430,7 @@ export default function StepVideoIntro({
                 Your profile picture will be visible to prospective clients and
                 families. Please upload a clear, professional, and
                 natural-looking photo with your face clearly visible. Avoid
-                selfies, group photos, filters, or low-quality images.
+                group photos, filters, or low-quality images.
               </p>
               <p className="text-xs text-gold-100/60 leading-relaxed mt-2">
                 Upload a professional, friendly, high-resolution headshot.

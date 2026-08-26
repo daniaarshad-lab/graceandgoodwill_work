@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Poppins, Cinzel, Playfair_Display, Jost } from "next/font/google";
+import { Poppins, Playfair_Display, Jost, Montserrat } from "next/font/google";
 import ToastProvider from "@/components/Providers/ToastProvider";
 import CookieConsentBanner from "@/components/CookieConsentBanner";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
@@ -14,14 +14,8 @@ const poppins = Poppins({
   display: "swap",
 });
 
-const cinzel = Cinzel({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-family-cinzel",
-  display: "swap",
-});
-
-/* Footer value titles and taglines — matches the supplied artwork. */
+/* Footer value titles and taglines only — matches the supplied artwork.
+   Nothing else in the app uses these two families. */
 const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
   weight: ["500", "600", "700"],
@@ -33,6 +27,14 @@ const jost = Jost({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
   variable: "--font-family-jost",
+  display: "swap",
+});
+
+/* Logo strapline only, matching the logo designer artwork. */
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["300"],
+  variable: "--font-family-montserrat",
   display: "swap",
 });
 
@@ -58,10 +60,29 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head suppressHydrationWarning />
+      <head suppressHydrationWarning>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "Grace & Goodwill",
+              url: "https://graceandgoodwill.co.uk",
+              logo: "https://graceandgoodwill.co.uk/logo.png",
+              address: {
+                "@type": "PostalAddress",
+                addressLocality: "Gateshead",
+                addressCountry: "UK"
+              },
+              areaServed: "UK"
+            })
+          }}
+        />
+      </head>
       <body
         suppressHydrationWarning
-        className={`bg-navy-950 text-gold-100 flex flex-col min-h-screen font-sans ${poppins.variable} ${cinzel.variable} ${playfairDisplay.variable} ${jost.variable}`}
+        className={`bg-navy-950 text-gold-100 flex flex-col min-h-screen font-sans ${poppins.variable} ${playfairDisplay.variable} ${jost.variable} ${montserrat.variable}`}
       >
         <ReduxProvider>
           <AuthProvider>

@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, AlertTriangle } from "lucide-react";
 import { Placement, CarerApplication } from "../types/admin.types";
 import { UseAdminPortalReturn } from "../hooks/useAdminPortal";
 import Button from "@/components/Button";
@@ -462,10 +462,12 @@ export default function PlacementTracking({
           <style>{`.admin-placement-tabs::-webkit-scrollbar { display: none; }`}</style>
           {[
             { label: "All", value: "All" },
-            { label: "Active", value: "PLACEMENT_STARTED" },
+            { label: "Pending Carer Acceptance", value: "PENDING_ACCEPTANCE" },
             { label: "Matched", value: "PLACEMENT_CONFIRMED" },
-            { label: "Completed", value: "COMPLETED" },
+            { label: "Active", value: "PLACEMENT_STARTED" },
             { label: "Ongoing", value: "ONGOING" },
+            { label: "Re-assignment Needed", value: "REJECTED_BY_CARER" },
+            { label: "Completed", value: "COMPLETED" },
             { label: "Cancelled", value: "CANCELLED" },
           ].map((tab) => (
             <Button
@@ -548,6 +550,30 @@ export default function PlacementTracking({
                         : place.careType) + " • "}
                     {place.location} • Commenced: {place.startDate}
                   </p>
+
+                  {place.status === "REJECTED_BY_CARER" && (
+                    <div className="mt-2.5 flex items-center gap-2.5 p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-xs text-rose-200">
+                      <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
+                      <div className="space-y-0.5">
+                        <p className="font-bold text-rose-300">
+                          Placement Offer Declined by Carer ({place.carerName}) — Re-assignment Needed
+                        </p>
+                        <p className="text-[11px] text-rose-300/80">
+                          {place.rejectionReason ? `Reason: "${place.rejectionReason}" — ` : ""}
+                          The care request has been reverted to Under Review.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {place.status === "PENDING_ACCEPTANCE" && (
+                    <div className="mt-2 flex items-center gap-2 p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300">
+                      <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping shrink-0" />
+                      <span>
+                        Offer sent to <strong>{place.carerName}</strong> — Awaiting Carer Response.
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex flex-nowrap items-center gap-2 shrink-0 mt-2 md:mt-0">
@@ -559,9 +585,11 @@ export default function PlacementTracking({
                     }
                     className="rounded-md border border-gold-300/20 bg-navy-950 px-2 py-1.5 text-xs font-bold text-gold-200 outline-none focus:border-gold-300/50 transition duration-300 cursor-pointer"
                   >
+                    <option value="PENDING_ACCEPTANCE">Pending Carer Acceptance</option>
                     <option value="PLACEMENT_CONFIRMED">Matched</option>
                     <option value="PLACEMENT_STARTED">Active</option>
                     <option value="ONGOING">Ongoing</option>
+                    <option value="REJECTED_BY_CARER">Re-assignment Needed</option>
                     <option value="COMPLETED">Completed</option>
                     <option value="CANCELLED">Cancelled</option>
                   </select>

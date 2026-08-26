@@ -1,67 +1,107 @@
 export interface FAQItem {
   question: string;
   answer: string;
+  category: "Finding and Choosing a Carer" | "Urgent and Short-Notice Care" | "Conditions and Circumstances" | "Costs and Funding" | "How Grace & Goodwill Works";
 }
 
 export const faqs: FAQItem[] = [
+  // Finding and Choosing a Carer
   {
-    question: "What does a live in carer do?",
-    answer:
-      "A live in carer provides personalised support in a person's own home. This may include companionship, personal care, bathing, dressing, toileting, meal preparation, medication support, mobility assistance, light housekeeping, transport to appointments, social activities and support with daily routines.",
+    category: "Finding and Choosing a Carer",
+    question: "Can I choose my own live-in carer?",
+    answer: "Yes. Grace & Goodwill gives you complete choice and control over who supports you. You can browse available carer profiles, view their introduction videos, explore their experience and interests, and decide who you would like to speak with before making a decision."
   },
   {
-    question: "What is not included in live in care?",
-    answer:
-      "Live in care does not usually include heavy cleaning, major gardening, property maintenance, clinical nursing procedures requiring a registered nurse, or continuous day and night support without additional arrangements.",
+    category: "Finding and Choosing a Carer",
+    question: "Can I see which carers are available?",
+    answer: "Yes. Each carer profile includes information about their availability, helping you find someone whose schedule matches the dates or ongoing support you require."
   },
   {
-    question: "Does a live in carer need their own room?",
-    answer:
-      "Yes. A live in carer must have their own private bedroom where they can sleep, rest and have personal time during breaks and overnight periods.",
+    category: "Finding and Choosing a Carer",
+    question: "Does Grace & Goodwill operate across the UK?",
+    answer: "Yes. Grace & Goodwill is a nationwide platform introducing families to independent live-in carers right across the UK."
   },
   {
-    question: "How many hours does a live in carer work each day?",
-    answer:
-      "Live in care is not continuous active work for 24 hours a day. Grace & Goodwill's standard is that live in carers should generally provide no more than 8-10 active hours of support within a 24 hour period. If care needs regularly exceed this, the care package may need to be reassessed and additional support may be recommended.",
+    category: "Finding and Choosing a Carer",
+    question: "What types of live-in care can I search for?",
+    answer: "You can search profiles for carers with experience in long-term support, urgent care, hospital discharge, stroke and neurological support, convalescence, dementia and Alzheimer’s care, temporary respite, brain injury support, spinal injury support, multiple sclerosis, young adult and disability support, and companionship."
+  },
+  
+  // Urgent and Short-Notice Care
+  {
+    category: "Urgent and Short-Notice Care",
+    question: "Can I arrange a live-in carer within 24 hours?",
+    answer: "Yes. Our platform includes carers who are immediately available. If you need support following a hospital discharge, stroke, unexpected illness, or emergency respite, you can search for available carers or request our urgent matching support to help find suitable profiles quickly."
   },
   {
-    question: "What breaks should a live in carer receive?",
-    answer:
-      "Grace & Goodwill's standard is that live in carers should receive a minimum of 2 hours uninterrupted break each day. During this time, the carer should be free from duties and may leave the property if they wish.",
+    category: "Urgent and Short-Notice Care",
+    question: "Can Grace & Goodwill help with hospital discharge?",
+    answer: "Yes. We regularly introduce families to carers who can provide support when someone is returning home from hospital. This can help facilitate a faster discharge and ensure practical support is in place while recovering."
   },
   {
-    question: "What happens if support is required during the night?",
-    answer:
-      "Occasional night time support can usually be accommodated within a standard live in care arrangement. However, if a carer is regularly required to provide support more than 2 times during the night, Grace & Goodwill considers this outside a standard live in care arrangement and additional night support charges may apply.",
+    category: "Urgent and Short-Notice Care",
+    question: "Can I arrange temporary respite care?",
+    answer: "Yes. Live-in care does not always need to be long term. Respite arrangements can range from short stays of as little as 2 days to cover a family holiday, weekend away, or emergency situation, through to longer temporary placements."
   },
   {
-    question: "When is a waking night carer needed?",
-    answer:
-      "If a person regularly needs support more than 2 times during the night, Grace & Goodwill may recommend reassessing the care package and introducing additional support, such as a waking night carer, overnight cover or another suitable arrangement. This helps protect both the person receiving care and the wellbeing of the carer.",
+    category: "Urgent and Short-Notice Care",
+    question: "Can I arrange temporary live-in care?",
+    answer: "Yes. Respite and short-term placements can be arranged from as little as 2 days to support families needing a break, covering unexpected emergencies, or providing temporary assistance."
+  },
+
+  // Conditions and Circumstances
+  {
+    category: "Conditions and Circumstances",
+    question: "What is live-in care?",
+    answer: "Live-in care allows someone to receive support while continuing to live in their own home. The live-in carer stays in the home for the agreed placement and provides the support agreed directly with the client, helping them maintain their routines and independence in familiar surroundings."
   },
   {
-    question: "Can couples receive live in care together?",
-    answer:
-      "Yes. Many couples choose live in care so they can remain together in their own home while receiving personalised support. Care requirements will be assessed individually to determine whether one live in carer is suitable or whether additional support is required.",
+    category: "Conditions and Circumstances",
+    question: "Can I find a live-in carer after a stroke?",
+    answer: "Yes. You can search for live-in carers who have experience supporting people during their recovery and rehabilitation following a stroke."
   },
   {
-    question: "How quickly can live in care be arranged?",
-    answer:
-      "Emergency care can often be arranged from the same day, depending on the time the request is received. In most emergency situations, we aim to provide support within 48 hours of an emergency request being submitted through the website or by telephone.",
+    category: "Conditions and Circumstances",
+    question: "Can I search for someone with experience relevant to a particular condition?",
+    answer: "Yes. Our matching platform allows you to review carer profiles to see their specific experience, including dementia, Alzheimer’s, Parkinson’s, stroke recovery, brain injury, spinal injury, and other physical or neurological conditions."
   },
   {
-    question: "Can a live in carer drive?",
-    answer:
-      "Some live in carers can drive, subject to licence checks, insurance arrangements and the requirements of the placement. Driving needs should be discussed during the matching process.",
+    category: "Conditions and Circumstances",
+    question: "Can live-in support help someone returning from hospital?",
+    answer: "Yes. Live-in carers can provide essential support following hospital discharge, helping with mobility, meal preparation, personal care, and maintaining safety during convalescence at home."
   },
   {
-    question: "Do I need to provide meals?",
-    answer:
-      "Families should provide reasonable access to meals and refreshments during the placement. Where meals are not provided directly, Grace & Goodwill recommends a food allowance of approximately £50 per week.",
+    category: "Conditions and Circumstances",
+    question: "Can I find support following a stroke?",
+    answer: "Yes. You can search for carers with experience in stroke recovery who can provide practical assistance, mobility support, and encouragement alongside any external rehabilitation programs."
   },
   {
-    question: "What happens if my carer becomes unwell?",
-    answer:
-      "If your chosen carer becomes unwell, Grace & Goodwill can provide rapid replacement introductions, sourcing a suitable alternative carer from our network to ensure your support continues smoothly.",
+    category: "Conditions and Circumstances",
+    question: "Can younger adults use live-in care?",
+    answer: "Yes. Live-in care is not just for older adults. Grace & Goodwill helps young adults living with physical disabilities and long-term support needs find carers who can assist with everyday life while respecting their independence and routines."
   },
+  {
+    category: "Conditions and Circumstances",
+    question: "Does Grace & Goodwill provide clinical rehabilitation?",
+    answer: "No. Grace & Goodwill introduces independent carers who provide practical assistance, personal care, and companionship. While they can support and encourage a client’s recovery at home, clinical rehabilitation such as physiotherapy must be arranged separately with qualified medical professionals."
+  },
+
+  // Costs and Funding
+  {
+    category: "Costs and Funding",
+    question: "How much does live-in care cost?",
+    answer: "Costs vary depending on the individual carer’s rates and the level of support required. Because you agree arrangements directly with the independent carer, this can often be more cost-effective than traditional agency managed services or residential care."
+  },
+  {
+    category: "Costs and Funding",
+    question: "Can I get help paying for live-in care?",
+    answer: "You may be eligible for financial support toward care costs depending on your needs and circumstances. This could include NHS Continuing Healthcare, Local Authority Funding, or Attendance Allowance."
+  },
+
+  // How Grace & Goodwill Works
+  {
+    category: "How Grace & Goodwill Works",
+    question: "Can Grace & Goodwill help me find suitable profiles?",
+    answer: "Yes. While you can browse profiles independently, our team is also available to help identify potentially suitable available profiles based on the specific information, preferences, and care requirements you provide. You remain in complete control of who you choose."
+  }
 ];

@@ -6,15 +6,27 @@ import Input from "@/components/Input";
 import Button from "@/components/Button";
 import PhoneInput from "@/components/PhoneInput";
 import { validateRegisterForm, RegisterFormErrors } from "@/lib/validation";
+import { AUTH_ROUTES } from "@/lib/auth-routes";
 import { useAuth } from "@/contexts/AuthContext";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 import { useRouter } from "next/navigation";
 
-export default function RegisterForm() {
+type RegisterRole = "CLIENT" | "CARER";
+
+interface RegisterFormProps {
+  /**
+   * Which account type the form opens on. Driven by ?role= on the register
+   * page so "Register as a Carer" lands on the carer option rather than
+   * defaulting to client — the cause of carers registering as clients.
+   */
+  initialRole?: RegisterRole;
+}
+
+export default function RegisterForm({
+  initialRole = "CLIENT",
+}: RegisterFormProps) {
   const { register, logout } = useAuth();
-  const [selectedRole, setSelectedRole] = useState<"CLIENT" | "CARER" | string>(
-    "CLIENT",
-  );
+
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -49,7 +61,7 @@ export default function RegisterForm() {
       email,
       phone,
       password,
-      role: selectedRole,
+      role: initialRole,
     };
 
     // Clear any stale auth session before registering
@@ -58,22 +70,33 @@ export default function RegisterForm() {
     try {
       // Attempt registration using useAuth register wrapper
       await register(payload);
+
+      // Force logout immediately for carers so they must manually log in.
+      // Clients remain logged in to complete the continuity form.
+      if (initialRole === "CARER") {
+        try {
+          await logout();
+        } catch (e) {
+          // Silently ignore logout errors here since registration succeeded
+        }
+      }
+
       setFirstName("");
       setLastName("");
       setEmail("");
       setPhone("");
       setPassword("");
-      setSelectedRole("CLIENT");
+
       setErrors({});
 
       showSuccessToast(
         "Registration Successful!",
         "Welcome to Grace & Goodwill. You have successfully created your account.",
       );
-      if (selectedRole === "CARER") {
-        router.push("/carer?onboarding=true");
+      if (initialRole === "CARER") {
+        router.push(AUTH_ROUTES.login.carer);
       } else {
-        router.push("/agreements?onboarding=true");
+        router.push("/client/onboarding");
       }
     } catch (error: any) {
       const errorMsg =
@@ -88,36 +111,7 @@ export default function RegisterForm() {
 
   return (
     <form className="space-y-5 pb-16" onSubmit={handleSubmit}>
-      {/* Premium Segmented Role Selection */}
-      <div className="space-y-2">
-        <label className="form-label text-gold-muted/80">
-          I want to register as a:
-        </label>
-        <div className="grid grid-cols-2 gap-2 p-1.5 rounded-xl bg-navy-950/60 border border-gold-muted/20 backdrop-blur-sm">
-          <Button
-            type="button"
-            onClick={() => setSelectedRole("CLIENT")}
-            variant="selectable"
-            isSelected={selectedRole === "CLIENT"}
-            size="sm"
-            fullWidth
-            className="py-2.5 rounded-lg font-semibold"
-          >
-            Family or Client
-          </Button>
-          <Button
-            type="button"
-            onClick={() => setSelectedRole("CARER")}
-            variant="selectable"
-            isSelected={selectedRole === "CARER"}
-            size="sm"
-            fullWidth
-            className="py-2.5 rounded-lg font-semibold"
-          >
-            Professional Carer
-          </Button>
-        </div>
-      </div>
+
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Input
@@ -166,14 +160,23 @@ export default function RegisterForm() {
 
       <Button
         type="submit"
-        text={isLoading ? "Creating Account..." : "Create Account"}
+        text={
+          isLoading
+            ? "Creating Account..."
+            : `Create Account as a ${initialRole === "CARER" ? "Carer" : "Client"}`
+        }
         disabled={isLoading}
       />
 
       <p className="text-center text-sm">
         Already have an account?{" "}
         <Link
-          href="/login"
+          /* Carry the journey through so a carer stays framed as a carer. */
+          href={
+            initialRole === "CARER"
+              ? AUTH_ROUTES.login.carer
+              : AUTH_ROUTES.login.client
+          }
           className="text-gold-muted font-medium hover:text-[#b8915e] hover:underline"
         >
           Login

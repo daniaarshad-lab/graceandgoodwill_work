@@ -15,6 +15,9 @@ import {
 import { AUTH_ROUTES, RECRUITMENT_EMAIL } from "@/lib/auth-routes";
 
 export const metadata = {
+  alternates: {
+    canonical: "/join-as-carer",
+  },
   title: "Become a Live-in Carer With Grace & Goodwill",
   description: "Join Grace & Goodwill's carer network as a self-employed live-in carer. Choose your placements and provide compassionate care to people across the UK.",
 };

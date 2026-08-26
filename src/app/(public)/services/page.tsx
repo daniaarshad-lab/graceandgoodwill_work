@@ -13,6 +13,9 @@ import { faqs } from "@/data/faqData";
 import FAQAccordion from "@/components/FAQAccordion";
 
 export const metadata = {
+  alternates: {
+    canonical: "/services",
+  },
   title: "Personalised Live-In Care Services UK | Grace & Goodwill",
   description: "Explore Grace & Goodwill's live-in care services across UK, including dementia care, companionship, respite & post-hospital recovery and aged couples support.",
 };

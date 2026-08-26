@@ -1,3 +1,9 @@
+export const metadata = {
+  alternates: {
+    canonical: "/training",
+  },
+};
+
 import Link from "next/link";
 import Button from "@/components/Button";
 import {

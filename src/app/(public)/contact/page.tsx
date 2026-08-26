@@ -4,6 +4,9 @@ import ContactForm from "@/components/forms/ContactForm";
 import { Heart, CheckCircle, Phone, MessageCircle, MapPin } from "lucide-react";
 
 export const metadata = {
+  alternates: {
+    canonical: "/contact",
+  },
   title: "Discuss Your Live-in Care Needs With Our Care Advisors",
   description: "Talk to our experienced care advisors about your live-in care needs. Get personalised guidance and find the right care and support for you or your family.",
 };

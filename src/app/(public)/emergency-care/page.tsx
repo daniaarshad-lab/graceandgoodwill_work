@@ -8,6 +8,9 @@ import {
 } from "lucide-react";
 
 export const metadata = {
+  alternates: {
+    canonical: "/emergency-care",
+  },
   title: "Urgent Live In Care | Grace & Goodwill",
   description:
     "Arrange rapid-response priority care placements within 24-48 hours.",

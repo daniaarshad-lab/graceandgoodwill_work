@@ -1,5 +1,8 @@
 
 export const metadata = {
+  alternates: {
+    canonical: "/about",
+  },
   title: "About Us | Trusted Live-In Care Agency in UK",
   description: "Meet our founder and our values at Grace & Goodwill, a trusted live-in carer agency UK families rely on. Learn our story, values and commitment to quality care.",
 };

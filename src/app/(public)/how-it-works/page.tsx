@@ -1,5 +1,8 @@
 
 export const metadata = {
+  alternates: {
+    canonical: "/how-it-works",
+  },
   title: "Explore How Grace & Goodwill's Live-In Care Matching Works",
   description: "Learn how live-in care works with Grace & Goodwill: enquire, browse matched vetted live-in carer profiles, choose your carer & begin with confidence.",
 };

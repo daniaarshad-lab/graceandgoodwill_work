@@ -11,6 +11,9 @@ import { faqs } from "@/data/faqData";
 import FAQAccordion from "@/components/FAQAccordion";
 
 export const metadata = {
+  alternates: {
+    canonical: "/",
+  },
   title: "Independent Live-In Care Agency UK | Grace & Goodwill",
   description: "Find trusted independent live-in carers across the UK with Grace & Goodwill. Get personalised support and find the right live-in carer for your care needs.",
 };

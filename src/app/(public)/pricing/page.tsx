@@ -1,5 +1,8 @@
 
 export const metadata = {
+  alternates: {
+    canonical: "/pricing",
+  },
   title: "Affordable Live-In Care Services UK | Grace & Goodwill",
   description: "Discover live-in care costs in the UK with Grace & Goodwill. Get clear, fair pricing with no hidden fees, plus a personalised quote tailored to your care needs.",
 };

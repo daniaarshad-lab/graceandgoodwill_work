@@ -18,12 +18,18 @@ export async function generateMetadata({ searchParams }: PageProps) {
   if (role === "carer") {
     return {
       title: "Register as a Live-in Carer | Grace & Goodwill",
-      description: "Register with Grace & Goodwill as a self-employed live-in carer. Join our UK-wide network, choose suitable placements, and support people in their own homes."
+      description: "Register with Grace & Goodwill as a self-employed live-in carer. Join our UK-wide network, choose suitable placements, and support people in their own homes.",
+      alternates: {
+        canonical: "/register",
+      },
     };
   }
   return {
     title: "Client Registration | Grace & Goodwill",
-    description: "Create your Grace & Goodwill client account to explore live-in care options, share your care needs, and take the first step towards finding the right support."
+    description: "Create your Grace & Goodwill client account to explore live-in care options, share your care needs, and take the first step towards finding the right support.",
+    alternates: {
+      canonical: "/register",
+    },
   };
 }
 

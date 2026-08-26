@@ -4,6 +4,9 @@ import { AGENCY_INTRO_TERMS_TEXT } from "@/lib/legal-documents";
 import LegalDocumentPageClient from "@/components/LegalDocumentPageClient";
 
 export const metadata = {
+  alternates: {
+    canonical: "/agency-introduction-terms",
+  },
   title: "Agency Introduction Terms | Grace & Goodwill",
   description: "Review Grace & Goodwill's agency introduction terms, covering the conditions and responsibilities involved when introducing clients and live-in carers.",
 };

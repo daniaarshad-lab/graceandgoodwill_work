@@ -4,6 +4,9 @@ import { WEBSITE_TERMS_TEXT } from "@/lib/legal-documents";
 import LegalDocumentPageClient from "@/components/LegalDocumentPageClient";
 
 export const metadata = {
+  alternates: {
+    canonical: "/terms",
+  },
   title: "Terms & Conditions | Grace & Goodwill",
   description: "Read Grace & Goodwill's terms and conditions to understand the rules, responsibilities, and conditions that apply when using our website and services.",
 };

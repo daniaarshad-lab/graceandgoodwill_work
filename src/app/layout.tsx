@@ -43,9 +43,6 @@ export const metadata: Metadata = {
   title: "Grace & Goodwill",
   description:
     "Grace & Goodwill care platform: elegant, trustworthy care coordination.",
-  alternates: {
-    canonical: "https://graceandgoodwill.co.uk",
-  },
   openGraph: {
     url: "https://graceandgoodwill.co.uk",
     siteName: "Grace & Goodwill",

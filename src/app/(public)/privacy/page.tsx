@@ -3,9 +3,9 @@ import { Metadata } from "next";
 import { PRIVACY_POLICY_TEXT } from "@/lib/legal-documents";
 import LegalDocumentPageClient from "@/components/LegalDocumentPageClient";
 
-export const metadata: Metadata = {
-  title: "Privacy Policy | Grace & Goodwill Ltd",
-  description: "Official Privacy Policy governing the collection, processing, and protection of personal data for Clients and Care Workers under UK GDPR.",
+export const metadata = {
+  title: "Privacy Policy | Grace & Goodwill",
+  description: "Read Grace & Goodwill's privacy policy to understand how we collect, use and protect your personal information across our platform.",
 };
 
 export default function PrivacyPolicyPage() {

@@ -13,8 +13,8 @@ import { faqs } from "@/data/faqData";
 import FAQAccordion from "@/components/FAQAccordion";
 
 export const metadata = {
-  title: "Live-in Care Services Across the UK | Grace & Goodwill",
-  description: "Explore live-in care across the UK including dementia, stroke, respite, disability, hospital discharge, neurological support and urgent live-in carer matching.",
+  title: "Personalised Live-In Care Services UK | Grace & Goodwill",
+  description: "Explore Grace & Goodwill's live-in care services across UK, including dementia care, companionship, respite & post-hospital recovery and aged couples support.",
 };
 
 const servicesFaqQuestions = [

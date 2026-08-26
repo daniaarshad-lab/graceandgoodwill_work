@@ -1,3 +1,8 @@
+
+export const metadata = {
+  title: "Explore How Grace & Goodwill's Live-In Care Matching Works",
+  description: "Learn how live-in care works with Grace & Goodwill: enquire, browse matched vetted live-in carer profiles, choose your carer & begin with confidence.",
+};
 import Button from "@/components/Button";
 import Link from "next/link";
 import { MapPin, Search, BadgeCheck, HeartHandshake } from "lucide-react";

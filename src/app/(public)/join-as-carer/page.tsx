@@ -14,19 +14,9 @@ import {
 
 import { AUTH_ROUTES, RECRUITMENT_EMAIL } from "@/lib/auth-routes";
 
-export const metadata: Metadata = {
-  title: "Join Our Carer Network | Grace & Goodwill",
-  description:
-    "Grace & Goodwill introduces independent live-in carers to families across the UK. Register as a carer and begin your onboarding.",
-  alternates: { canonical: "/join-as-carer" },
-  openGraph: {
-    type: "website",
-    url: "/join-as-carer",
-    siteName: "Grace & Goodwill",
-    title: "Join Our Carer Network | Grace & Goodwill",
-    description:
-      "Register as an independent live-in carer with Grace & Goodwill and begin your onboarding.",
-  },
+export const metadata = {
+  title: "Become a Live-in Carer With Grace & Goodwill",
+  description: "Join Grace & Goodwill's carer network as a self-employed live-in carer. Choose your placements and provide compassionate care to people across the UK.",
 };
 
 /* Onboarding stages mirror the real carer stepper in

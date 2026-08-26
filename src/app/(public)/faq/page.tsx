@@ -4,9 +4,8 @@ import ServicesReveal from "@/components/ServicesReveal";
 import { faqs } from "@/data/faqData";
 
 export const metadata = {
-  title: "FAQ | Grace & Goodwill",
-  description:
-    "Frequently asked questions about live in care, matching, and support.",
+  title: "Live-In Care FAQs | Grace & Goodwill",
+  description: "Find answers to common live-in care questions, including carer duties, breaks, costs, overnight support, matching, and arranging care with Grace & Goodwill.",
 };
 
 export default function FAQPage() {

@@ -11,6 +11,22 @@ interface PageProps {
  * from "Register as a Carer" can never silently create a client account.
  * `option` is unrelated — it only picks the hero image variant.
  */
+
+export async function generateMetadata({ searchParams }: PageProps) {
+  const resolvedParams = await searchParams;
+  const role = parseRole(resolvedParams.role);
+  if (role === "carer") {
+    return {
+      title: "Register as a Live-in Carer | Grace & Goodwill",
+      description: "Register with Grace & Goodwill as a self-employed live-in carer. Join our UK-wide network, choose suitable placements, and support people in their own homes."
+    };
+  }
+  return {
+    title: "Client Registration | Grace & Goodwill",
+    description: "Create your Grace & Goodwill client account to explore live-in care options, share your care needs, and take the first step towards finding the right support."
+  };
+}
+
 export default async function RegisterPage({ searchParams }: PageProps) {
   const resolvedParams = await searchParams;
   const option = resolvedParams.option;

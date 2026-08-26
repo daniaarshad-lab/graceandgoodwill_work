@@ -6,7 +6,9 @@ const config: Config = {
     extend: {
       fontFamily: {
         sans: ['var(--font-family-poppins)', 'sans-serif'],
-        serif: ['var(--font-family-cinzel)', 'serif'],
+        // `serif` is deliberately NOT overridden — it stays on Tailwind's
+        // default serif stack, which is what every `font-serif` heading across
+        // the app has always used. playfair/jost below are footer-only.
         playfair: ['var(--font-family-playfair)', 'Bodoni Moda', 'Georgia', 'serif'],
         jost: ['var(--font-family-jost)', 'Futura PT', 'Century Gothic', 'sans-serif'],
       },

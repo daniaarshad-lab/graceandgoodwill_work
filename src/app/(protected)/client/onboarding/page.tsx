@@ -8,6 +8,10 @@ import { CheckCircle, Phone, AlertCircle } from "lucide-react";
 
 import PhoneInput from "@/components/PhoneInput";
 import { submitClientDetails } from "@/store/slices/clientSlice";
+import {
+  validateClientOnboardingForm,
+  scrollToFirstError,
+} from "../utils/validation";
 
 export default function ClientOnboardingPage() {
   const dispatch = useAppDispatch();
@@ -26,6 +30,7 @@ export default function ClientOnboardingPage() {
   const [careAddress, setCareAddress] = useState("");
   const [careNote, setCareNote] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
   const now = new Date();
   const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 
@@ -40,6 +45,37 @@ export default function ClientOnboardingPage() {
     }
   }, [user, clientProfile]);
 
+  // Real-time validation after first submit attempt
+  useEffect(() => {
+    if (hasAttemptedSubmit) {
+      const formErrors = validateClientOnboardingForm({
+        firstName,
+        lastName,
+        email,
+        phone,
+        startDate: careStartDate,
+        endDate: careEndDate,
+        isOngoing,
+        postcode: carePostcode,
+        location: careAddress,
+        note: careNote,
+      });
+      setErrors(formErrors);
+    }
+  }, [
+    firstName,
+    lastName,
+    email,
+    phone,
+    careStartDate,
+    careEndDate,
+    isOngoing,
+    carePostcode,
+    careAddress,
+    careNote,
+    hasAttemptedSubmit,
+  ]);
+
   const showPendingScreen = clientProfile?.status === "PENDING_APPROVAL" || clientProfile?.status === "UNDER_REVIEW";
 
   useEffect(() => {
@@ -52,35 +88,44 @@ export default function ClientOnboardingPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setHasAttemptedSubmit(true);
 
-    const formErrors: Record<string, string> = {};
-    if (!firstName.trim()) formErrors.firstName = "First Name is required";
-    if (!lastName.trim()) formErrors.lastName = "Last Name is required";
-    if (!email.trim() || !/^\S+@\S+\.\S+$/.test(email))
-      formErrors.email = "Valid Email is required";
-    if (!phone.trim()) formErrors.phone = "Phone number is required";
-    if (!careStartDate.trim()) formErrors.careStartDate = "Start Date is required";
-    if (!carePostcode.trim()) formErrors.carePostcode = "Postcode is required";
-    if (!careNote.trim()) formErrors.careNote = "Note is required";
+    const formErrors = validateClientOnboardingForm({
+      firstName,
+      lastName,
+      email,
+      phone,
+      startDate: careStartDate,
+      endDate: careEndDate,
+      isOngoing,
+      postcode: carePostcode,
+      location: careAddress,
+      note: careNote,
+    });
 
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
+      scrollToFirstError();
       return;
     }
 
     setErrors({});
     await dispatch(
       submitClientDetails({
-        firstName,
-        lastName,
-        email,
-        phone,
-        location: carePostcode,
-        careNote,
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        email: email.trim(),
+        phone: phone.trim(),
+        location: careAddress.trim(),
+        careNote: careNote.trim(),
         careStartDate: new Date(careStartDate).toISOString(),
-        careEndDate: isOngoing ? undefined : (careEndDate ? new Date(careEndDate).toISOString() : undefined),
-        carePostcode,
-        careAddress: careAddress || undefined,
+        careEndDate: isOngoing
+          ? undefined
+          : careEndDate
+            ? new Date(careEndDate).toISOString()
+            : undefined,
+        carePostcode: carePostcode.trim().toUpperCase(),
+        careAddress: careAddress.trim(),
       })
     );
   };
@@ -180,7 +225,11 @@ export default function ClientOnboardingPage() {
             {/* Line 1: Name and Email */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <Input
-                label="First Name"
+                label={
+                  <span>
+                    First Name <span className="text-red-400">*</span>
+                  </span>
+                }
                 type="text"
                 placeholder="Enter first name"
                 value={firstName}
@@ -191,7 +240,11 @@ export default function ClientOnboardingPage() {
                 error={errors.firstName}
               />
               <Input
-                label="Last Name"
+                label={
+                  <span>
+                    Last Name <span className="text-red-400">*</span>
+                  </span>
+                }
                 type="text"
                 placeholder="Enter last name"
                 value={lastName}
@@ -202,7 +255,11 @@ export default function ClientOnboardingPage() {
                 error={errors.lastName}
               />
               <Input
-                label="Email Address"
+                label={
+                  <span>
+                    Email Address <span className="text-red-400">*</span>
+                  </span>
+                }
                 type="email"
                 placeholder="Enter email address"
                 value={email}
@@ -217,7 +274,11 @@ export default function ClientOnboardingPage() {
             {/* Line 2: Phone, Dates */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <PhoneInput
-                label="Phone Number"
+                label={
+                  <span>
+                    Phone Number <span className="text-red-400">*</span>
+                  </span>
+                }
                 placeholder="Enter phone number"
                 value={phone}
                 onChange={(val) => {
@@ -227,7 +288,11 @@ export default function ClientOnboardingPage() {
                 error={errors.phone}
               />
               <Input
-                label="Start Date"
+                label={
+                  <span>
+                    Start Date <span className="text-red-400">*</span>
+                  </span>
+                }
                 type="date"
                 min={todayStr}
                 value={careStartDate}
@@ -244,12 +309,28 @@ export default function ClientOnboardingPage() {
 
               <div>
                 <Input
-                  label="End Date"
+                  label={
+                    <span>
+                      End Date {!isOngoing && <span className="text-red-400">*</span>}
+                    </span>
+                  }
                   type="date"
-                  min={careStartDate && careStartDate > todayStr ? careStartDate : todayStr}
+                  min={
+                    careStartDate
+                      ? (() => {
+                          const start = new Date(careStartDate);
+                          start.setDate(start.getDate() + 2);
+                          return start.toISOString().split("T")[0];
+                        })()
+                      : todayStr
+                  }
                   value={careEndDate}
                   disabled={isOngoing}
-                  onChange={(e) => setCareEndDate(e.target.value)}
+                  onChange={(e) => {
+                    setCareEndDate(e.target.value);
+                    if (errors.careEndDate) setErrors({ ...errors, careEndDate: "" });
+                  }}
+                  error={errors.careEndDate}
                   className={isOngoing ? "opacity-40 cursor-not-allowed" : ""}
                 />
                 <label className="flex items-center gap-2 text-sm text-gold-200 mt-2.5 cursor-pointer select-none">
@@ -260,6 +341,7 @@ export default function ClientOnboardingPage() {
                       setIsOngoing(e.target.checked);
                       if (e.target.checked) {
                         setCareEndDate("");
+                        if (errors.careEndDate) setErrors({ ...errors, careEndDate: "" });
                       }
                     }}
                     className="w-4 h-4 rounded border-gold-300/30 bg-navy-950 text-gold-DEFAULT focus:ring-gold-DEFAULT focus:ring-offset-navy-950 transition-colors"
@@ -288,11 +370,19 @@ export default function ClientOnboardingPage() {
               />
 
               <Input
-                label="Location"
+                label={
+                  <span>
+                    Location <span className="text-red-400">*</span>
+                  </span>
+                }
                 type="text"
                 placeholder="e.g. 10 Downing Street, London"
                 value={careAddress}
-                onChange={(e) => setCareAddress(e.target.value)}
+                onChange={(e) => {
+                  setCareAddress(e.target.value);
+                  if (errors.careAddress) setErrors({ ...errors, careAddress: "" });
+                }}
+                error={errors.careAddress}
               />
             </div>
 
@@ -303,7 +393,7 @@ export default function ClientOnboardingPage() {
               </label>
               <div className="relative">
                 <textarea
-                  placeholder="Please provide any details or specific requirements..."
+                  placeholder="Please provide any details or specific requirements (minimum 10 characters)..."
                   value={careNote}
                   onChange={(e) => {
                     setCareNote(e.target.value);

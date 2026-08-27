@@ -2,6 +2,8 @@ import { Newspaper, ExternalLink, HandHeart, ChevronRight, CheckCircle2, Calenda
 import happySeniorCouple from "@/assets/open/happy_senior_couple.png";
 import bbcImage2 from "@/assets/open/bbc-image2.jpg";
 import bbcImage3 from "@/assets/open/bbc-image3.jpg";
+import publicImg2 from "@/assets/open/public-img2.jpeg";
+import publicImg3 from "@/assets/open/public-img3.jpeg";
 import Button from "@/components/Button";
 import dynamic from "next/dynamic";
 import Link from "next/link";
@@ -296,6 +298,22 @@ export default function HomePage() {
           </div>
         </div>
 
+        {/* Styled Image Section Below the Box */}
+        <div className="relative max-w-3xl mx-auto mt-16 px-4 py-4 md:px-8 md:py-8">
+          {/* Decorative Offset Wireframe Corners */}
+          <div className="absolute top-0 left-0 w-32 h-32 md:w-48 md:h-48 border-t border-l border-gold-300/40 rounded-tl-[3rem] pointer-events-none"></div>
+          <div className="absolute bottom-0 right-0 w-32 h-32 md:w-48 md:h-48 border-b border-r border-gold-300/40 rounded-br-[3rem] pointer-events-none"></div>
+
+          <div className="relative z-10 rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-gold-300/20 bg-navy-950/40 group">
+            <Image
+              src={publicImg2}
+              alt="Live in care support"
+              className="w-full h-auto transform transition-transform duration-[2s] group-hover:scale-105"
+              placeholder="blur"
+            />
+          </div>
+        </div>
+
         {/* H2: Live-in Care for Different Needs and Circumstances */}
         <div className="space-y-12">
           <div className="text-center max-w-3xl mx-auto">
@@ -478,10 +496,10 @@ export default function HomePage() {
               </div>
             </div>
             <div className="pt-8 flex flex-col sm:flex-row gap-4">
-              <Button asChild variant="outline" size="md">
+              <Button asChild variant="outline" size="md" className="whitespace-nowrap">
                 <Link href="/hospital-discharge-live-in-care">Live-in Care After Hospital Discharge</Link>
               </Button>
-              <Button asChild variant="outline" size="md">
+              <Button asChild variant="outline" size="md" className="whitespace-nowrap">
                 <Link href="/live-in-care-after-stroke">Live-in Care After a Stroke</Link>
               </Button>
             </div>
@@ -492,7 +510,7 @@ export default function HomePage() {
         <div className="relative overflow-hidden rounded-[2.5rem] border border-gold-300/15 bg-navy-900/40 p-8 md:p-12 lg:p-16 shadow-elegant backdrop-blur-sm max-w-5xl mx-auto">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 -mt-24 w-64 h-64 bg-gold-400/10 rounded-full blur-3xl opacity-50"></div>
 
-          <div className="relative z-10 max-w-3xl mx-auto text-center space-y-8">
+          <div className="relative z-10 max-w-3xl mx-auto text-center space-y-8 pb-10">
             <div className="flex justify-center mb-2">
               <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-gold-400/20 bg-navy-950 shadow-inner">
                 <Calendar className="h-8 w-8 text-gold-300" strokeWidth={1.5} />
@@ -509,6 +527,22 @@ export default function HomePage() {
               <p className="page-supporting-text">
                 Clients can use the platform independently or ask the Grace & Goodwill team for support narrowing available profiles based on the information and preferences they provide.
               </p>
+            </div>
+          </div>
+
+          {/* Styled Image Section Inside the Box */}
+          <div className="relative max-w-3xl mx-auto mt-4 px-4 py-4 md:px-8 md:py-8">
+            {/* Decorative Offset Wireframe Corners */}
+            <div className="absolute top-0 left-0 w-32 h-32 md:w-48 md:h-48 border-t border-l border-gold-300/40 rounded-tl-[3rem] pointer-events-none"></div>
+            <div className="absolute bottom-0 right-0 w-32 h-32 md:w-48 md:h-48 border-b border-r border-gold-300/40 rounded-br-[3rem] pointer-events-none"></div>
+
+            <div className="relative z-10 rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-gold-300/20 bg-navy-950/40 group">
+              <Image
+                src={publicImg3}
+                alt="Available live in carers"
+                className="w-full h-auto transform transition-transform duration-[2s] group-hover:scale-105"
+                placeholder="blur"
+              />
             </div>
           </div>
         </div>

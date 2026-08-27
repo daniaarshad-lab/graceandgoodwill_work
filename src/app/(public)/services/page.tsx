@@ -34,7 +34,7 @@ const coreServices = [
   {
     title: "Live-in Care Matching",
     description:
-      "We introduce families to carefully vetted, independent self-employed live-in carers who can provide personalised support within the client’s home. Grace & Goodwill supports the matching and introduction process while the client remains in control of selecting their preferred carer and agreeing care arrangements directly with them.",
+      "Explore carefully vetted live-in carer profiles and find someone whose experience, personality and availability suit your individual needs. Grace & Goodwill supports the matching process while you remain in control of choosing your preferred carer and agreeing arrangements directly with them.",
     icon: (
       <Home
         className="h-8 w-8 text-gold-300 transition-transform duration-300 group-hover:scale-110"
@@ -45,7 +45,7 @@ const coreServices = [
   {
     title: "Companionship Support",
     description:
-      "Find independent self-employed carers who can provide companionship, assistance with daily routines, meal preparation, hobbies and meaningful social interaction tailored to individual preferences and requirements.",
+      "Find carers who can provide companionship and support with daily routines, meal preparation, hobbies and meaningful social interaction, tailored to individual preferences and requirements.",
     icon: (
       <Users
         className="h-8 w-8 text-gold-300 transition-transform duration-300 group-hover:scale-110"
@@ -56,7 +56,7 @@ const coreServices = [
   {
     title: "Dementia Support",
     description:
-      "We introduce families to independent self-employed carers with experience supporting people living with dementia, helping families find compassionate, person-centred support suited to their needs.",
+      "Browse carers with experience supporting people living with dementia and find compassionate, person-centred support suited to the individual’s routines, preferences and needs.",
     icon: (
       <Award
         className="h-8 w-8 text-gold-300 transition-transform duration-300 group-hover:scale-110"
@@ -67,7 +67,7 @@ const coreServices = [
   {
     title: "Recovery After Hospital Discharge",
     description:
-      "We introduce families to independent, self-employed carers who can support individuals following hospital discharge. Depending on the client’s requirements, support may include assistance with daily routines, mobility, meal preparation and encouraging independence during recovery. Grace & Goodwill does not provide nursing or clinical services.",
+      "Find carers who can support individuals following hospital discharge with daily routines, mobility, meal preparation and maintaining independence during recovery. Grace & Goodwill does not provide nursing or clinical services.",
     icon: (
       <BadgeCheck
         className="h-8 w-8 text-gold-300 transition-transform duration-300 group-hover:scale-110"
@@ -78,7 +78,7 @@ const coreServices = [
   {
     title: "Respite Arrangements",
     description:
-      "We introduce families to independent, self-employed carers who can provide temporary live-in support, allowing primary family carers to take a planned or emergency break while maintaining continuity and familiarity at home.",
+      "Access carers who can provide temporary live-in support, giving family carers the opportunity to take a planned or emergency break while helping maintain continuity and familiarity at home.",
     icon: (
       <Sun
         className="h-8 w-8 text-gold-300 transition-transform duration-300 group-hover:scale-110"
@@ -89,7 +89,7 @@ const coreServices = [
   {
     title: "Couples Support",
     description:
-      "We introduce experienced self-employed live-in carers who can support couples wishing to remain together in their own home, with care arrangements tailored to each person’s individual needs.",
+      "Find experienced live-in carers who can support couples wishing to remain together in their own home, with support tailored to each person’s individual needs and preferences.",
     icon: (
       <Heart
         className="h-8 w-8 text-gold-300 transition-transform duration-300 group-hover:scale-110"
@@ -117,11 +117,7 @@ export default function ServicesPage() {
           </h1>
 
           <p className="page-supporting-text mx-auto mt-6 max-w-2xl">
-            Grace & Goodwill is an introductory platform that connects families
-            with carefully vetted, independent, self-employed live-in carers
-            across the UK. Grace & Goodwill does not directly provide or manage
-            care. Clients choose their preferred carer and enter into a separate
-            agreement directly with that carer.
+            Grace & Goodwill is a nationwide live-in care matching platform that helps families find carefully vetted carers across the UK. Clients can explore carer profiles, consider the options available and choose the person they feel is best suited to their needs. Grace & Goodwill supports the matching process and platform experience while clients remain in control of their care arrangements.
           </p>
         </section>
 
@@ -161,14 +157,14 @@ export default function ServicesPage() {
                     Guaranteed Coverage
                   </span>
                   <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide">
-                    Rapid Replacement Introductions
+                    Rapid Replacement Support
                   </h2>
                 </div>
               </div>
               <p className="page-supporting-text max-w-xl">
-                If your chosen self-employed live-in carer becomes
+                If your chosen live-in carer becomes
                 unavailable, Grace & Goodwill will make every reasonable
-                effort to introduce suitable replacement carers from our
+                effort to find suitable replacement carers from our
                 nationwide network as quickly as possible. The client remains
                 responsible for selecting and engaging their preferred carer
               </p>
@@ -182,9 +178,8 @@ export default function ServicesPage() {
           </h2>
           <p className="page-supporting-text mx-auto mt-4 max-w-xl">
             Speak with our care matching specialists to discuss your
-            requirements. We’ll help you find and introduce suitable
-            independent, self-employed carers based on your individual needs and
-            preferences.
+            requirements. We’ll help you find and connect you with suitable
+            carers based on your individual needs and preferences.
           </p>
           <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
             <Button
@@ -217,13 +212,12 @@ export default function ServicesPage() {
         <section className="mt-20">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-serif text-gold-50 tracking-wide mb-6">
-              Live-in Care and Support for Different Needs Across the UK
+              You remain in control of the final choice.
             </h2>
             <div className="page-supporting-text mx-auto max-w-3xl space-y-4">
               <p>Grace & Goodwill helps individuals and families find live-in carers for a wide range of circumstances.</p>
               <p>Browse available profiles yourself or ask for additional matching support where needed.</p>
               <p>You can compare relevant experience, skills, interests, videos and availability before deciding who you would like to consider.</p>
-              <p>You remain in control of the final choice.</p>
             </div>
           </div>
 

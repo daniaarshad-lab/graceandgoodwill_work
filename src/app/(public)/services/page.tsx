@@ -147,43 +147,31 @@ export default function ServicesPage() {
         {/* 7th Service Featured Wide Panel */}
         <section className="mt-8">
           <div className="group relative overflow-hidden rounded-[32px] border border-gold-300/15 bg-gradient-to-r from-navy-900/70 to-navy-900/40 p-6 pb-6 sm:p-8 sm:pb-8 md:px-12 md:pt-12 md:pb-10 shadow-elegant backdrop-blur-md transition-all duration-300 hover:border-gold-300/35 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)]">
-            <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-              <div className="max-w-2xl space-y-4">
-                <div className="flex items-center gap-4">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-gold-400/20 bg-navy-950 shadow-inner">
-                    <RefreshCw
-                      className="h-8 w-8 text-gold-300 transition-transform duration-300 group-hover:scale-110"
-                      strokeWidth={1.5}
-                    />
-                  </div>
-                  <div>
-                    <span className="text-xs uppercase tracking-[0.25em] text-gold-400 font-semibold">
-                      Guaranteed Coverage
-                    </span>
-                    <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide">
-                      Rapid Replacement Introductions
-                    </h2>
-                  </div>
-                </div>
-                <p className="page-supporting-text">
-                  If your chosen self-employed live-in carer becomes
-                  unavailable, Grace & Goodwill will make every reasonable
-                  effort to introduce suitable replacement carers from our
-                  nationwide network as quickly as possible. The client remains
-                  responsible for selecting and engaging their preferred carer
-                </p>
-              </div>
 
-              <div className="flex flex-shrink-0 items-center justify-start lg:justify-end">
-                <div className="rounded-2xl border border-gold-300/10 bg-navy-950/60 px-6 py-4 text-center">
-                  <p className="text-xs uppercase tracking-[0.2em] text-gold-300 font-medium">
-                    Care Standard
-                  </p>
-                  <p className="text-xl font-semibold text-gold-50 mt-1">
+            <div className="mx-auto max-w-2xl space-y-6 flex flex-col items-center text-center">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-gold-400/20 bg-navy-950 shadow-inner shrink-0">
+                  <RefreshCw
+                    className="h-8 w-8 text-gold-300 transition-transform duration-300 group-hover:scale-110"
+                    strokeWidth={1.5}
+                  />
+                </div>
+                <div>
+                  <span className="block text-xs uppercase tracking-[0.25em] text-gold-400 font-semibold mb-1">
+                    Guaranteed Coverage
+                  </span>
+                  <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide">
                     Rapid Replacement Introductions
-                  </p>
+                  </h2>
                 </div>
               </div>
+              <p className="page-supporting-text max-w-xl">
+                If your chosen self-employed live-in carer becomes
+                unavailable, Grace & Goodwill will make every reasonable
+                effort to introduce suitable replacement carers from our
+                nationwide network as quickly as possible. The client remains
+                responsible for selecting and engaging their preferred carer
+              </p>
             </div>
           </div>
         </section>

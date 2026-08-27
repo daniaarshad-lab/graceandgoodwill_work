@@ -506,7 +506,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* H2: See Which Live-in Carers Are Available */}
+        {/* H2: Access to Carers' Immediate Availability */}
         <div className="relative overflow-hidden rounded-[2.5rem] border border-gold-300/15 bg-navy-900/40 p-8 md:p-12 lg:p-16 shadow-elegant backdrop-blur-sm max-w-5xl mx-auto">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 -mt-24 w-64 h-64 bg-gold-400/10 rounded-full blur-3xl opacity-50"></div>
 
@@ -516,16 +516,19 @@ export default function HomePage() {
                 <Calendar className="h-8 w-8 text-gold-300" strokeWidth={1.5} />
               </div>
             </div>
-            <h2 className="section-heading">See Which Live-in Carers Are Available</h2>
+            <h2 className="section-heading">Access to Carers&apos; Immediate Availability</h2>
             <p className="page-supporting-text text-lg text-gold-50/90 font-medium">
-              Availability is especially important when support is needed quickly.
+              Availability is especially important when live-in care is needed quickly.
             </p>
             <div className="space-y-4 pt-4">
               <p className="page-supporting-text">
-                Grace & Goodwill’s platform allows clients to explore available carer profiles and placement availability, helping families focus their search on people who may be available around the required start date.
+                Grace & Goodwill&apos;s platform allows families to explore live-in carer profiles, where carers provide information about their experience, skills, interests and availability.
               </p>
               <p className="page-supporting-text">
-                Clients can use the platform independently or ask the Grace & Goodwill team for support narrowing available profiles based on the information and preferences they provide.
+                Families can explore profiles themselves or ask the Grace & Goodwill team for support with matching based on their individual needs, preferences and required start date.
+              </p>
+              <p className="page-supporting-text">
+                Need care urgently? Our team is available 24 hours a day, and our rapid care service can support urgent requests, with a suitable live-in carer able to start within 24 hours, subject to availability and the necessary arrangements.
               </p>
             </div>
           </div>

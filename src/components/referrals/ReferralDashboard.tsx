@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Referral, ClientReferralResponse } from "@/types/referral";
+import ThinSpinner from "@/components/ThinSpinner";
 
 interface ReferralDashboardProps {
   referrals: Array<Referral | ClientReferralResponse>;
@@ -179,11 +180,8 @@ export default function ReferralDashboard({
       {/* Main Content Area */}
       <div className="flex-grow flex flex-col justify-center min-h-0 pt-2">
         {loading ? (
-          <div className="flex flex-col items-center justify-center p-12 space-y-4 flex-grow">
-            <div className="w-10 h-10 border-4 border-gold border-t-transparent rounded-full animate-spin" />
-            <p className="text-sm text-gold-100/50">
-              Fetching referral records...
-            </p>
+          <div className="flex items-center justify-center p-12 flex-grow">
+            <ThinSpinner size="xl" text="Fetching referral records..." />
           </div>
         ) : filteredReferrals.length === 0 ? (
           <div className="flex flex-col items-center justify-center text-center p-12 space-y-3 flex-grow bg-navy-950/20 border border-gold-300/5 rounded-2xl">

@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
 import { Trash2, AlertCircle, User, Headset, GripVertical } from "lucide-react";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
+import ThinSpinner from "@/components/ThinSpinner";
 
 // DnD Kit imports
 import {
@@ -323,8 +324,8 @@ export default function InterestListPanel() {
       </div>
 
       {interestListLoading && interestList.length === 0 ? (
-        <div className="text-center py-10 text-gold-200 animate-pulse">
-          Loading your Interest List...
+        <div className="py-16 flex items-center justify-center">
+          <ThinSpinner size="xl" text="Loading your Interest List..." />
         </div>
       ) : interestList.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 text-center border border-dashed border-gold-300/20 rounded-xl bg-navy-950/40">

@@ -8,6 +8,7 @@ import AuthSplitLayout from "@/components/AuthSplitLayout";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import { validateLoginForm, LoginFormErrors } from "@/lib/validation";
+import ThinSpinner from "@/components/ThinSpinner";
 import { useAuth } from "@/contexts/AuthContext";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 import { AUTH_ROUTES, parseRole } from "@/lib/auth-routes";
@@ -96,14 +97,7 @@ function LoginPageContent() {
 
   // Prevent form render while checking auth or redirecting
   if (authLoading || isAuthenticated) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-navy-950 text-gold-100">
-        <div className="flex flex-col items-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold-DEFAULT"></div>
-          <p className="text-sm tracking-wider text-gold-200">Redirecting...</p>
-        </div>
-      </div>
-    );
+    return <ThinSpinner fullScreen text="Redirecting..." size="xl" />;
   }
 
   const pageTitle = isAdmin

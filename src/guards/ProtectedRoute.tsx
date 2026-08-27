@@ -4,6 +4,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect, ReactNode } from "react";
 
+import ThinSpinner from "@/components/ThinSpinner";
+
 interface ProtectedRouteProps {
   children: ReactNode;
   allowedRoles?: string[];
@@ -35,30 +37,12 @@ export default function ProtectedRoute({
 
   // Loading spinner styled to match the theme
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-navy-950 text-gold-100">
-        <div className="flex flex-col items-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold-DEFAULT"></div>
-          <p className="text-sm tracking-wider text-gold-200">
-            Verifying session...
-          </p>
-        </div>
-      </div>
-    );
+    return <ThinSpinner fullScreen text="Verifying session..." size="xl" />;
   }
 
   // Prevent flash of secure content if unauthenticated or unauthorized
   if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-navy-950 text-gold-100">
-        <div className="flex flex-col items-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold-DEFAULT"></div>
-          <p className="text-sm tracking-wider text-gold-200">
-            Redirecting to login...
-          </p>
-        </div>
-      </div>
-    );
+    return <ThinSpinner fullScreen text="Redirecting to login..." size="xl" />;
   }
 
   if (
@@ -69,14 +53,7 @@ export default function ProtectedRoute({
         .map((r) => r.toLowerCase())
         .includes(user.role.toLowerCase()))
   ) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-navy-950 text-gold-100">
-        <div className="flex flex-col items-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold-DEFAULT"></div>
-          <p className="text-sm tracking-wider text-gold-200">Redirecting...</p>
-        </div>
-      </div>
-    );
+    return <ThinSpinner fullScreen text="Redirecting..." size="xl" />;
   }
 
   return <>{children}</>;

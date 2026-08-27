@@ -3935,8 +3935,6 @@ export const blogSeedPosts: BlogPost[] = [
         answer: "No. Grace & Goodwill operates as an introductory agency and matching platform. We introduce clients to independent, self-employed live-in carers. The client chooses whether to engage a carer, and the care arrangement is made directly between them."
       }
     ]
-      }
-    ]
   },
   {
     id: "post-respite-live-in-care-family-carers",
@@ -4208,8 +4206,6 @@ export const blogSeedPosts: BlogPost[] = [
       {
         question: "Does Grace & Goodwill provide respite care directly?",
         answer: "No. Grace & Goodwill operates as an introductory agency and matching platform. We introduce clients to independent, self-employed live-in carers. The client chooses whether to engage a particular carer, and the care arrangement is made directly between them."
-      }
-    ]
       }
     ]
   },
@@ -4529,8 +4525,6 @@ export const blogSeedPosts: BlogPost[] = [
         answer: "No. Grace & Goodwill is an introductory agency and matching platform. We introduce clients to independent, self-employed live-in carers. The client chooses whether to engage a particular carer, and the care arrangement is entered into directly between them."
       }
     ]
-      }
-    ]
   },
   {
     id: "post-how-much-does-live-in-care-cost-uk",
@@ -4826,8 +4820,6 @@ export const blogSeedPosts: BlogPost[] = [
       {
         question: "Does Grace & Goodwill employ the live-in carers?",
         answer: "No. Grace & Goodwill is an introductory agency and matching platform. The carers are independent and self-employed, and the client enters into the care arrangement directly with the carer they choose."
-      }
-    ]
       }
     ]
   },
@@ -5168,8 +5160,6 @@ export const blogSeedPosts: BlogPost[] = [
       {
         question: "Does Grace & Goodwill tell the carer exactly how to provide the care?",
         answer: "No. Grace & Goodwill operates as an introductory and matching agency. The care arrangement and agreed support are between the client and the independent carer they choose."
-      }
-    ]
       }
     ]
   },
@@ -5548,8 +5538,6 @@ export const blogSeedPosts: BlogPost[] = [
         answer: "No. Grace & Goodwill facilitates introductions and matching with independent carers. The client ultimately decides whether they wish to engage a particular carer, and the carer also decides whether to accept the placement."
       }
     ]
-      }
-    ]
   },
   {
     id: "post-live-in-care-motor-neurone-disease",
@@ -5842,8 +5830,6 @@ export const blogSeedPosts: BlogPost[] = [
         answer: "No. Grace & Goodwill operates as an introductory agency and matching platform. We introduce clients to independent, self-employed live-in carers. The client chooses whether they wish to engage a carer, and the care arrangement is entered into directly between them."
       }
     ]
-      }
-    ]
   },
   {
     id: "post-live-in-care-huntingtons-disease",
@@ -5941,201 +5927,6 @@ export const blogSeedPosts: BlogPost[] = [
 <p>That should be avoided wherever possible.</p>
 <p>The individual should be given enough time to express themselves in whatever way works best.</p>
 <p>A carer needs patience.</p>
-<p>They may also need to learn the person’s preferred communication methods over time.</p>
-<h2>Eating and swallowing can become more difficult</h2>
-<p>Some people with Huntington’s may experience difficulties with swallowing as the condition progresses.</p>
-<p>This can affect eating, drinking and nutrition.</p>
-<p>Where these issues arise, appropriate clinical advice should come from relevant healthcare professionals such as speech and language therapists or dietitians.</p>
-<p>A live-in carer should not independently decide how swallowing difficulties are managed.</p>
-<p>They may provide agreed everyday support within professional recommendations, provided this is appropriate to their experience and competence.</p>
-<h2>What can a live-in carer help with?</h2>
-<p>The exact support depends on the agreement between the client and chosen independent carer.</p>
-<p>Depending on the person’s needs and the carer’s experience, this may include:</p>
-<ul>
-<li>Daily routines</li>
-<li>Meal preparation</li>
-<li>Mobility support</li>
-<li>Companionship</li>
-<li>Household activities</li>
-<li>Support getting out and about</li>
-<li>Practical reminders</li>
-<li>Support attending appointments</li>
-<li>Assistance with other agreed everyday tasks</li>
-</ul>
-<p>The carer should not replace specialist healthcare professionals.</p>
-<h2>Support needs can change over time</h2>
-<p>A progressive condition means that the arrangement should not remain fixed.</p>
-<p>Someone may need very little support initially.</p>
-<p>Later, more help may be needed with mobility, communication or everyday routines.</p>
-<p>Night-time needs may also change.</p>
-<p>The important thing is to keep reviewing the arrangement.</p>
-<p>What worked six months ago may no longer be appropriate.</p>
-<p>The question should always be:</p>
-<p>“What does this person need now?”</p>
-<h2>Why the right carer matters</h2>
-<p>Relevant neurological experience can be extremely helpful.</p>
-<p>But personality still matters too.</p>
-<p>Someone with Huntington’s may need a calm and patient carer.</p>
-<p>Another person may respond well to humour and conversation.</p>
-<p>A carer may need to tolerate repetition or frustration without reacting personally.</p>
-<p>The person receiving support may also have strong preferences about privacy, routine and how much help they want.</p>
-<p>This makes compatibility particularly important.</p>
-<h2>What should families look for?</h2>
-<p>Useful considerations may include:</p>
-<ul>
-<li>Experience with neurological conditions</li>
-<li>Experience with progressive conditions</li>
-<li>Mobility support experience</li>
-<li>Patience</li>
-<li>Communication style</li>
-<li>Understanding of changing cognitive needs</li>
-<li>Training and documentation</li>
-<li>Respect for independence</li>
-<li>Availability</li>
-<li>Personality compatibility</li>
-<li>Comfort with the household environment</li>
-<li>Willingness to follow relevant professional guidance</li>
-<li>Whether the person receiving support feels comfortable with them</li>
-</ul>
-<p>The carer should also have enough information to decide whether the placement fits their experience.</p>
-<h2>Be honest about difficult parts of the placement</h2>
-<p>Families sometimes worry that if they explain everything, no one will want the placement.</p>
-<p>So they minimise.</p>
-<p>That can be a mistake.</p>
-<p>If the person becomes distressed or frustrated, say so.</p>
-<p>If they need significant supervision, explain it.</p>
-<p>If mobility is changing quickly, that matters.</p>
-<p>If night-time support is becoming more frequent, potential carers need to know.</p>
-<p>A good match depends on reality, not on presenting an easier version of the situation.</p>
-<h2>Supporting younger adults</h2>
-<p>Huntington’s can affect people well before old age.</p>
-<p>This means some clients may still be working, raising children or trying to maintain an active social life.</p>
-<p>They may strongly resist being treated as elderly simply because they need support.</p>
-<p>A younger adult may want help that allows them to keep doing ordinary things.</p>
-<p>Going out.</p>
-<p>Seeing friends.</p>
-<p>Spending time with children.</p>
-<p>Keeping routines that matter to them.</p>
-<p>A carer should fit around that life wherever appropriate.</p>
-<h2>What if the person has children at home?</h2>
-<p>Huntington’s can affect whole families.</p>
-<p>A parent may be living with the condition while still raising children.</p>
-<p>This creates emotional and practical pressures that are very different from traditional older-person care.</p>
-<p>A live-in carer may support the adult’s everyday needs, but the wider household should still be respected.</p>
-<p>The person remains a parent.</p>
-<p>Their relationship with their children should not be reduced to their diagnosis.</p>
-<h2>Supporting families emotionally</h2>
-<p>The practical demands of Huntington’s can be significant.</p>
-<p>But the emotional impact can be just as difficult.</p>
-<p>Family members may be grieving changes while still supporting the person every day.</p>
-<p>There may also be concerns about genetics and other relatives.</p>
-<p>A live-in carer is not a therapist.</p>
-<p>But a calm, respectful presence can still make everyday life feel more manageable.</p>
-<p>Where psychological or specialist support is needed, families should seek appropriate professional help.</p>
-<h2>What about overnight support?</h2>
-<p>Some people may eventually require more help during the night.</p>
-<p>A standard live-in arrangement does not mean one carer stays awake and works continuously across 24 hours.</p>
-<p>If waking-night support becomes substantial, the arrangement may need additional carers or a different structure.</p>
-<p>Families should explain night-time requirements honestly.</p>
-<p>This is especially important in progressive conditions where needs may increase.</p>
-<h2>Can someone with Huntington’s remain at home long term?</h2>
-<p>Some people remain at home for significant periods with a combination of family support, professional services and everyday care.</p>
-<p>Others may eventually need a different environment.</p>
-<p>There is no universal answer.</p>
-<p>The person’s needs, wishes, safety and home environment should all be considered.</p>
-<p>Live-in care may be one option within that wider decision.</p>
-<h2>When might live-in care be worth exploring?</h2>
-<p>Families may consider live-in support where someone:</p>
-<ul>
-<li>Wants to remain at home</li>
-<li>Needs more help than occasional visits provide</li>
-<li>Has increasing mobility needs</li>
-<li>Requires support with daily routines</li>
-<li>Has cognitive or organisational difficulties</li>
-<li>Has a partner or relative providing unsustainable levels of support</li>
-<li>Lives alone</li>
-<li>Would benefit from greater continuity</li>
-<li>Needs support alongside specialist neurological services</li>
-<li>Values choosing who enters their home</li>
-<li>Has changing long-term support needs</li>
-</ul>
-<p>These are reasons to explore the option rather than automatic indications that live-in care is right for everyone.</p>
-<h2>Live-in care should work alongside specialist services</h2>
-<p>Someone living with Huntington’s may already be supported by neurological teams and other healthcare professionals.</p>
-<p>These professionals remain responsible for clinical assessment, treatment and specialist recommendations.</p>
-<p>A live-in carer provides agreed everyday support at home.</p>
-<p>The two roles are different.</p>
-<p>Clear boundaries help keep everyone’s responsibilities properly understood.</p>
-<h2>How Grace &amp; Goodwill works</h2>
-<p>Grace &amp; Goodwill is a nationwide live-in care introduction and matching platform.</p>
-<p>We connect clients with independent, self-employed live-in carers who may have experience relevant to neurological and progressive conditions.</p>
-<p>Grace &amp; Goodwill does not employ carers to provide the care itself.</p>
-<p>Clients can consider available independent carers and decide who they would like to engage.</p>
-<p>Carers also remain independent and decide whether a particular placement is appropriate for them.</p>
-<p>The care arrangement is entered into directly between the client and their chosen carer.</p>
-<p>Our approach is built around Integrity, Compassion, Purpose and Trust.</p>
-<p>We believe support should adapt as circumstances change while continuing to protect the person’s dignity, individuality and voice.</p>
-<h2>A progressive condition should not take away the person’s voice</h2>
-<p>Huntington’s disease can change many things.</p>
-<p>Movement may change.</p>
-<p>Communication may change.</p>
-<p>Everyday routines may become more difficult.</p>
-<p>The amount of support required may increase.</p>
-<p>But the person still matters just as much.</p>
-<p>Their preferences matter.</p>
-<p>Their family relationships matter.</p>
-<p>Their identity matters.</p>
-<p>Their right to be involved in decisions matters.</p>
-<p>Good support should adapt without making the person disappear behind the condition.</p>
-<p>At Grace &amp; Goodwill, our aim is to help individuals and families explore independent live-in carers who may suit both the practical requirements of the placement and the person receiving the support.</p>
-<p>Because even when needs become more complex, dignity and choice should remain simple.</p>
-<p>If you are looking for live-in support at home for yourself or someone living with Huntington’s disease, request a live-in carer through Grace &amp; Goodwill and begin exploring independent carers who may suit your circumstances.</p>
-<p><em>Written by Aurea Neto, Founder of Grace &amp; Goodwill</em></p>`,
-    featuredImageUrl: "/login_option2.jpg",
-    featuredImageAlt: "Person living with Huntington’s disease receiving support from a live-in carer at home",
-    categorySlug: "care-and-support",
-    tags: ["live-in care for Huntington’s disease", "Huntington’s disease care at home", "Huntington’s carer"],
-    status: "PUBLISHED",
-    author: {
-      name: "Aurea Neto",
-      role: "Founder of Grace & Goodwill",
-    },
-    readingTimeMinutes: 10,
-    publishedAt: "2026-08-21T10:00:00.000Z",
-    createdAt: "2026-08-21T10:00:00.000Z",
-    updatedAt: "2026-08-21T10:00:00.000Z",
-    seoTitle: "Live-in Care for Huntington’s Disease: Support at Home as Needs Change",
-    seoDescription: "Learn how live-in care for Huntington’s disease can support daily routines, mobility, communication and independence while helping someone remain at home.",
-    isFeatured: false,
-    cta: {
-      text: "Request a Live-in Carer",
-      href: "/contact",
-    },
-    faqItems: [
-      {
-        question: "Can someone with Huntington’s disease have a live-in carer?",
-        answer: "Yes. Some people living with Huntington’s use live-in support as their everyday needs increase. Suitability depends on the individual circumstances."
-      },
-      {
-        question: "Can someone with Huntington’s remain at home?",
-        answer: "Potentially. Some people remain at home with appropriate combinations of family support, professional services and everyday care. The right arrangement depends on the person’s needs and wishes."
-      },
-      {
-        question: "What can a live-in carer help with?",
-        answer: "Depending on the agreement and the carer’s experience, support may include daily routines, mobility, meals, companionship, household activities and other agreed practical support."
-      },
-      {
-        question: "Can Huntington’s affect behaviour and thinking?",
-        answer: "Yes. Huntington’s can affect cognition, mood and behaviour as well as movement. The exact effects vary from person to person."
-      },
-      {
-        question: "Can a live-in carer manage swallowing or medical problems?",
-        answer: "A live-in carer should not replace healthcare professionals. Clinical issues such as swallowing difficulties require appropriate professional assessment and guidance."
-      },
-      {
-        question: "Does one live-in carer provide waking support throughout the night?",
-        answer: "Not normally. Significant waking-night needs may require additional or alternative arrangements."
-      },
 <p>They may also need to learn the person’s preferred communication methods over time.</p>
 <h2>Eating and swallowing can become more difficult</h2>
 <p>Some people with Huntington’s may experience difficulties with swallowing as the condition progresses.</p>

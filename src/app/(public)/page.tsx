@@ -618,6 +618,19 @@ export default function HomePage() {
             <p className="page-supporting-text text-lg mb-10 max-w-3xl mx-auto">
               Families often begin looking for care before they know exactly how it will be funded. Depending on personal circumstances, possible routes may include:
             </p>
+
+            {/* Elegant Image 2 inside Cost and Funding */}
+            <div className="relative mx-auto w-full max-w-3xl mb-12">
+              <div className="relative aspect-[21/9] w-full overflow-hidden rounded-[2.5rem] border border-gold-300/10 shadow-elegant bg-navy-900/40">
+                <img
+                  src="/service-img2.jpeg"
+                  alt="Live-in care cost and funding support"
+                  className="absolute inset-0 h-full w-full object-contain p-4 transition-transform duration-700 hover:scale-105"
+                />
+                <div className="pointer-events-none absolute inset-0 rounded-[2.5rem] border border-gold-300/10 mix-blend-overlay" />
+                <div className="pointer-events-none absolute -inset-px rounded-[2.5rem] bg-gradient-to-tr from-gold-300/5 via-transparent to-gold-300/5 opacity-50" />
+              </div>
+            </div>
             
             <div className="flex flex-col sm:flex-row gap-6 sm:gap-12 text-[15px] text-gold-100/90 text-left max-w-4xl mx-auto mb-10 bg-navy-950/50 p-8 md:p-10 rounded-3xl border border-gold-300/10 shadow-inner">
               <div className="flex-1 space-y-5">

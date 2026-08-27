@@ -150,7 +150,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
               <h2 className="mb-8 font-serif text-2xl font-semibold text-gold-50 sm:text-3xl">
                 Frequently Asked Questions
               </h2>
-              <FAQAccordion items={post.faqItems} />
+              <FAQAccordion faqsList={post.faqItems as any} />
             </div>
           )}
 

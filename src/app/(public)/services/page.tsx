@@ -106,21 +106,50 @@ export default function ServicesPage() {
 
       <div className="container-wrapper">
         {/* Header Section */}
-        <section className="mb-20 text-center">
-          <div className="page-strapline">Services</div>
-
-          <h1 className="main-page-heading">
-            Live-in Care and Support for Different Needs Across the UK
-          </h1>
-
-          <p className="page-supporting-text mx-auto mt-6 max-w-2xl">
-            Grace & Goodwill is an introductory platform that connects families
-            with carefully vetted, independent, self-employed live-in carers
-            across the UK. Grace & Goodwill does not directly provide or manage
-            care. Clients choose their preferred carer and enter into a separate
-            agreement directly with that carer.
-          </p>
+        <section className="mb-20">
+          <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+            <div className="text-left space-y-6">
+              <div className="page-strapline ml-0">Services</div>
+              <h1 className="main-page-heading text-left">
+                Live-in Care and Support for Different Needs Across the UK
+              </h1>
+              <p className="page-supporting-text text-left max-w-xl">
+                Grace & Goodwill is an introductory platform that connects families
+                with carefully vetted, independent, self-employed live-in carers
+                across the UK. Grace & Goodwill does not directly provide or manage
+                care. Clients choose their preferred carer and enter into a separate
+                agreement directly with that carer.
+              </p>
+            </div>
+            
+            {/* Elegant Image 1 */}
+            <div className="relative mx-auto w-full max-w-lg lg:max-w-none">
+              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[2.5rem] border border-gold-300/10 shadow-elegant bg-navy-900/40">
+                <img
+                  src="/service-img1.jpeg"
+                  alt="Live-in care support"
+                  className="absolute inset-0 h-full w-full object-contain p-4 transition-transform duration-700 hover:scale-105"
+                />
+                {/* Decorative Elements */}
+                <div className="pointer-events-none absolute inset-0 rounded-[2.5rem] border border-gold-300/10 mix-blend-overlay" />
+                <div className="pointer-events-none absolute -inset-px rounded-[2.5rem] bg-gradient-to-tr from-gold-300/5 via-transparent to-gold-300/5 opacity-50" />
+              </div>
+            </div>
+          </div>
         </section>
+
+        {/* Second Image Section (Above Live-in Care matching) */}
+        <div className="mb-16 relative mx-auto w-full max-w-3xl">
+           <div className="relative aspect-[21/9] w-full overflow-hidden rounded-[2.5rem] border border-gold-300/10 shadow-elegant bg-navy-900/40">
+              <img
+                src="/service-img2.jpeg"
+                alt="Care matching support"
+                className="absolute inset-0 h-full w-full object-contain p-4 transition-transform duration-700 hover:scale-105"
+              />
+              <div className="pointer-events-none absolute inset-0 rounded-[2.5rem] border border-gold-300/10 mix-blend-overlay" />
+              <div className="pointer-events-none absolute -inset-px rounded-[2.5rem] bg-gradient-to-tr from-gold-300/5 via-transparent to-gold-300/5 opacity-50" />
+           </div>
+        </div>
 
         <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {coreServices.map((service) => (

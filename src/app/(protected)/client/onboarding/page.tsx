@@ -272,8 +272,8 @@ export default function ClientOnboardingPage() {
                     if (errors.careNote) setErrors({ ...errors, careNote: "" });
                   }}
                   rows={4}
-                  className={`w-full rounded-xl border py-3 px-4 outline-none focus:ring-2 focus:ring-primary resize-none ${
-                    errors.careNote ? "border-red-500" : "border-gray-300"
+                  className={`w-full rounded-xl border py-3 px-4 outline-none focus:ring-2 focus:ring-gold-DEFAULT resize-none bg-navy-950/50 text-gold-50 ${
+                    errors.careNote ? "border-red-500" : "border-gold-300/20"
                   }`}
                 />
               </div>

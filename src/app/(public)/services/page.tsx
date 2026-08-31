@@ -248,7 +248,7 @@ export default function ServicesPage() {
                 <p>Ongoing live-in care can support people who want to remain in their own home while receiving more consistent everyday assistance.</p>
                 <p>Depending on the arrangement agreed with the carer, support may include personal care, meals, mobility, companionship, household activities, shopping, appointments and established daily routines.</p>
               </div>
-              <Link href="/live-in-care" className="inline-flex w-full justify-center items-center rounded-xl bg-gold-400/10 border border-gold-400/30 px-4 py-3 text-sm font-medium text-gold-200 transition-colors hover:bg-gold-400/20 hover:text-gold-100">
+              <Link href="/long-term-live-in-care" className="inline-flex w-full justify-center items-center rounded-xl bg-gold-400/10 border border-gold-400/30 px-4 py-3 text-sm font-medium text-gold-200 transition-colors hover:bg-gold-400/20 hover:text-gold-100">
                 Learn More About Long-Term Live-in Care
               </Link>
             </div>
@@ -390,7 +390,7 @@ export default function ServicesPage() {
               <div className="page-supporting-text space-y-4 mb-8 flex-grow">
                 <p>For people who need companionship alongside everyday practical support, live-in care can provide greater consistency while allowing the person to remain in familiar surroundings.</p>
               </div>
-              <Link href="/live-in-companionship-care" className="inline-flex w-full justify-center items-center rounded-xl bg-gold-400/10 border border-gold-400/30 px-4 py-3 text-sm font-medium text-gold-200 transition-colors hover:bg-gold-400/20 hover:text-gold-100">
+              <Link href="/live-in-companionship" className="inline-flex w-full justify-center items-center rounded-xl bg-gold-400/10 border border-gold-400/30 px-4 py-3 text-sm font-medium text-gold-200 transition-colors hover:bg-gold-400/20 hover:text-gold-100">
                 Companionship Care
               </Link>
             </div>

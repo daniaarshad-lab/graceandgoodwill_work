@@ -12,7 +12,7 @@ export const metadata = {
 
 export default function WhatIsLiveInCarePage() {
   return (
-    <main className="relative min-h-[calc(100vh-80px)] overflow-hidden bg-navy-950 py-20 text-gold-100/90">
+    <main className="relative min-h-[calc(100vh-80px)] overflow-hidden bg-navy-950 py-20 text-gold-100/90 font-serif">
       {/* Ambient Background Lights */}
       <div className="pointer-events-none absolute left-0 top-0 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold-500/10 blur-[130px]" />
       <div className="pointer-events-none absolute right-0 bottom-0 h-[500px] w-[500px] translate-x-1/3 translate-y-1/3 rounded-full bg-navy-800/40 blur-[130px]" />
@@ -51,7 +51,7 @@ export default function WhatIsLiveInCarePage() {
 
             <div className="relative z-10 text-center mb-14">
               <h2 className="text-4xl md:text-5xl font-serif text-gold-50 tracking-wide mb-6">What Does Support Include?</h2>
-              <div className="page-supporting-text space-y-4 max-w-5xl mx-auto text-[17px]">
+              <div className="page-supporting-text space-y-4 max-w-5xl mx-auto text-[17px] font-serif">
                 <p>The exact arrangement will be different for every individual.</p>
                 <p>Depending on what the client and carer agree, support may include:</p>
               </div>
@@ -98,10 +98,10 @@ export default function WhatIsLiveInCarePage() {
               { text: "Families needing temporary respite", link: "/respite-live-in-care" },
               { text: "People who require support following an unexpected change in circumstances", link: "/urgent-live-in-care" }
             ].map((item, i) => (
-              <div key={i} className="group flex items-center gap-4 py-3.5 px-5 bg-gradient-to-br from-navy-900/40 to-navy-950/60 border border-gold-300/10 rounded-[1.25rem] hover:border-gold-300/40 hover:bg-navy-800/50 hover:-translate-y-1 transition-all duration-300 shadow-sm hover:shadow-[0_12px_30px_rgba(212,175,55,0.08)] backdrop-blur-sm min-h-[5rem] cursor-pointer">
+              <Link href={item.link} key={i} className="group flex items-center gap-4 py-3.5 px-5 bg-gradient-to-br from-navy-900/40 to-navy-950/60 border border-gold-300/10 rounded-[1.25rem] hover:border-gold-300/40 hover:bg-navy-800/50 hover:-translate-y-1 transition-all duration-300 shadow-sm hover:shadow-[0_12px_30px_rgba(212,175,55,0.08)] backdrop-blur-sm min-h-[5rem] cursor-pointer">
                 <div className="w-2 h-2 rounded-full bg-gold-400 shrink-0 group-hover:scale-150 group-hover:shadow-[0_0_8px_rgba(212,175,55,0.6)] transition-all duration-300"></div>
                 <span className="text-[14.5px] font-medium text-gold-100/90 group-hover:text-gold-50 transition-colors leading-snug">{item.text}</span>
-              </div>
+              </Link>
             ))}
           </div>
           <p className="page-supporting-text text-center mt-8 italic text-gold-200">

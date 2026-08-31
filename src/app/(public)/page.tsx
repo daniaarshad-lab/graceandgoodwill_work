@@ -330,7 +330,7 @@ export default function HomePage() {
               </div>
               <div className="pt-8 mt-auto">
                 <Button asChild variant="outline" size="sm" fullWidth>
-                  <Link href="/live-in-care">Explore Long-Term Live-in Care</Link>
+                  <Link href="/long-term-live-in-care">Explore Long-Term Live-in Care</Link>
                 </Button>
               </div>
             </div>
@@ -420,7 +420,7 @@ export default function HomePage() {
               </div>
               <div className="pt-8 mt-auto flex justify-center">
                 <Button asChild variant="outline" size="sm">
-                  <Link href="/live-in-companionship-care">Explore Companionship Support</Link>
+                  <Link href="/live-in-companionship">Explore Companionship Support</Link>
                 </Button>
               </div>
             </div>

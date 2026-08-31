@@ -51,6 +51,9 @@ export const metadata: Metadata = {
     siteName: "Grace & Goodwill",
     type: "website",
   },
+  verification: {
+    google: "lK8_u-IHT7cNSuFxyLTA3Gktl4HkPOFPaV_2rxwweVE",
+  },
 };
 
 export default function RootLayout({

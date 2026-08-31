@@ -15,7 +15,7 @@ export default function RespiteLiveInCarePage() {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-gold-500/10 rounded-full blur-[120px] pointer-events-none opacity-50"></div>
 
       <div className="max-w-7xl mx-auto px-6 relative z-10">
-        
+
         {/* Breadcrumb & Header */}
         <div className="max-w-4xl mx-auto text-center mb-20">
           <Link href="/" className="inline-flex items-center text-gold-300/80 hover:text-gold-200 text-sm font-medium mb-6 transition-colors">
@@ -34,15 +34,15 @@ export default function RespiteLiveInCarePage() {
           {/* Box 1 */}
           <section className="bg-gradient-to-br from-navy-900/60 to-navy-950/80 p-10 sm:p-14 rounded-[3rem] border border-gold-300/15 shadow-elegant relative overflow-hidden flex flex-col group">
             <div className="absolute -right-10 -top-10 w-40 h-40 bg-gold-500/10 rounded-full blur-[40px] group-hover:bg-gold-500/20 transition-colors duration-500 pointer-events-none"></div>
-            
+
             <div className="flex items-center gap-5 mb-8 border-b border-gold-400/10 pb-5">
               <div className="w-14 h-14 bg-gold-400/10 rounded-2xl flex items-center justify-center border border-gold-400/20 shadow-inner group-hover:scale-110 transition-transform duration-500 shrink-0">
                 <Coffee className="w-7 h-7 text-gold-400" />
               </div>
               <h2 className="text-[26px] font-serif text-gold-50 leading-tight">Giving Family Carers Time Away</h2>
             </div>
-            
-            <div className="text-[15.5px] text-gold-100/90 leading-relaxed space-y-4">
+
+            <div className="text-[15px] text-gold-100/75 font-light font-serif leading-relaxed space-y-4">
               <p>Caring for somebody over a prolonged period can be physically and emotionally demanding.</p>
               <p>Taking time away does not mean that a family member cares any less.</p>
               <p>Having temporary live-in support can allow a family carer to rest, travel, attend to other responsibilities or simply recover while the person they support remains within their familiar home.</p>
@@ -57,9 +57,9 @@ export default function RespiteLiveInCarePage() {
               <div className="w-14 h-14 bg-gold-400/10 rounded-2xl flex items-center justify-center border border-gold-400/20 shadow-inner group-hover:scale-110 transition-transform duration-500 shrink-0">
                 <ShieldCheck className="w-7 h-7 text-gold-400" />
               </div>
-              <h2 className="text-[26px] font-serif text-gold-50 leading-tight">When to Consider Respite</h2>
+              <h2 className="text-[26px] font-serif text-gold-50 leading-tight">Respite live-in care can be considered when:</h2>
             </div>
-            
+
             <ul className="space-y-3 mt-auto">
               {[
                 "A family carer needs a holiday",
@@ -82,8 +82,8 @@ export default function RespiteLiveInCarePage() {
 
         {/* Urgent Respite & Matching Box */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-20 max-w-5xl mx-auto">
-           {/* Finding Temporary Support */}
-           <section className="bg-gradient-to-b from-navy-800/40 to-navy-900/60 p-10 sm:p-14 rounded-[3rem] border border-gold-300/10 text-center relative shadow-lg">
+          {/* Finding Temporary Support */}
+          <section className="bg-gradient-to-b from-navy-800/40 to-navy-900/60 p-10 sm:p-14 rounded-[3rem] border border-gold-300/10 text-center relative shadow-lg flex flex-col">
             <Heart className="w-10 h-10 text-gold-400 mx-auto mb-6 opacity-80" />
             <h2 className="text-2xl font-serif text-gold-50 mb-6">Finding Temporary Support</h2>
             <div className="space-y-4 text-[15px] text-gold-100/75 font-light font-serif leading-relaxed mx-auto">
@@ -91,7 +91,7 @@ export default function RespiteLiveInCarePage() {
               <p>Families can compare relevant experience, skills, interests, background and availability before deciding who they would like to consider.</p>
               <p>Where additional help is needed, our team can provide matching support.</p>
             </div>
-            <div className="mt-8">
+            <div className="mt-auto pt-8">
               <Button asChild variant="primary" size="md" className="whitespace-nowrap">
                 <Link href="/carers">Find Respite Live-in Support</Link>
               </Button>
@@ -99,7 +99,7 @@ export default function RespiteLiveInCarePage() {
           </section>
 
           {/* Urgent Respite */}
-          <section className="bg-gradient-to-b from-navy-800/40 to-navy-900/60 p-10 sm:p-14 rounded-[3rem] border border-gold-300/10 text-center relative shadow-lg">
+          <section className="bg-gradient-to-b from-navy-800/40 to-navy-900/60 p-10 sm:p-14 rounded-[3rem] border border-gold-300/10 text-center relative shadow-lg flex flex-col">
             <Clock className="w-10 h-10 text-gold-400 mx-auto mb-6 opacity-80" />
             <h2 className="text-2xl font-serif text-gold-50 mb-6">When Respite Becomes Urgent</h2>
             <div className="space-y-4 text-[15px] text-gold-100/75 font-light font-serif leading-relaxed mx-auto">
@@ -107,7 +107,7 @@ export default function RespiteLiveInCarePage() {
               <p>A family carer may suddenly become ill, an existing carer may become unavailable or circumstances may change unexpectedly.</p>
               <p>Grace & Goodwill can support urgent searches in these situations. Where a suitable carer is available and the required arrangements can be completed, somebody may be able to start within 24 hours.</p>
             </div>
-            <div className="mt-8">
+            <div className="mt-auto pt-8">
               <Button asChild variant="outline" size="md" className="whitespace-nowrap bg-navy-950/50 hover:bg-navy-900/80">
                 <Link href="/urgent-live-in-care">Urgent Matching Support</Link>
               </Button>

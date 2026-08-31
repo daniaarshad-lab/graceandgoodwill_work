@@ -11,12 +11,55 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useCarerPortal } from "./hooks/useCarerPortal";
 import { showErrorToast } from "@/utils/toast";
 
-import DashboardOverview from "./components/DashboardOverview";
-import ProfileManagement from "./components/ProfileManagement";
-import ProfileMedia from "./components/ProfileMedia";
-import ProfileAgreements from "./components/ProfileAgreements";
-import ComplianceVault from "./components/ComplianceVault";
-import AvailabilitySchedule from "./components/AvailabilitySchedule";
+import dynamic from "next/dynamic";
+import ThinSpinner from "@/components/ThinSpinner";
+
+const LoadingFallback = () => (
+  <div className="flex h-64 w-full items-center justify-center">
+    <ThinSpinner size="lg" />
+  </div>
+);
+
+const DashboardOverview = dynamic(
+  () => import("./components/DashboardOverview"),
+  { ssr: false, loading: () => <LoadingFallback /> },
+);
+const ProfileManagement = dynamic(
+  () => import("./components/ProfileManagement"),
+  { ssr: false, loading: () => <LoadingFallback /> },
+);
+const ProfileMedia = dynamic(() => import("./components/ProfileMedia"), {
+  ssr: false,
+  loading: () => <LoadingFallback />,
+});
+const ProfileAgreements = dynamic(
+  () => import("./components/ProfileAgreements"),
+  { ssr: false, loading: () => <LoadingFallback /> },
+);
+const ComplianceVault = dynamic(
+  () => import("./components/ComplianceVault"),
+  { ssr: false, loading: () => <LoadingFallback /> },
+);
+const AvailabilitySchedule = dynamic(
+  () => import("./components/AvailabilitySchedule"),
+  { ssr: false, loading: () => <LoadingFallback /> },
+);
+const PlacementOpportunities = dynamic(
+  () => import("./components/PlacementOpportunities"),
+  { ssr: false, loading: () => <LoadingFallback /> },
+);
+const MyApplications = dynamic(
+  () => import("./components/MyApplications"),
+  { ssr: false, loading: () => <LoadingFallback /> },
+);
+const ApplicationHistory = dynamic(
+  () => import("./components/ApplicationHistory"),
+  { ssr: false, loading: () => <LoadingFallback /> },
+);
+const CarerPlacements = dynamic(
+  () => import("./components/CarerPlacements"),
+  { ssr: false, loading: () => <LoadingFallback /> },
+);
 import UploadDocumentModal from "./components/UploadDocumentModal";
 import PortalHeader from "./components/PortalHeader";
 import PortalTabs, { TabType } from "./components/PortalTabs";
@@ -32,15 +75,10 @@ import StepVideoIntro from "./components/StepVideoIntro";
 import StepDeclaration from "./components/StepDeclaration";
 import StepPaymentDetails from "./components/StepPaymentDetails";
 import StepReviewSubmit from "./components/StepReviewSubmit";
-import PlacementOpportunities from "./components/PlacementOpportunities";
-import MyApplications from "./components/MyApplications";
-import ApplicationHistory from "./components/ApplicationHistory";
-import CarerPlacements from "./components/CarerPlacements";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { DocumentFileType } from "@/types/document.types";
 import { agreementsService } from "@/services/agreements/agreements.service";
 import FullScreenLoader from "@/components/FullScreenLoader";
-import ThinSpinner from "@/components/ThinSpinner";
 
 function CarerDashboardContent() {
   const { user } = useAuth();

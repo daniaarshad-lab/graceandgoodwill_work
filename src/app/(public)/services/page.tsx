@@ -156,11 +156,8 @@ export default function ServicesPage() {
                   />
                 </div>
                 <div>
-                  <span className="block text-xs uppercase tracking-[0.25em] text-gold-400 font-semibold mb-1">
-                    Guaranteed Coverage
-                  </span>
-                  <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide">
-                    Rapid Replacement Support
+                  <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide whitespace-nowrap">
+                    Rapid Replacement Support Upon Request
                   </h2>
                 </div>
               </div>
@@ -233,7 +230,7 @@ export default function ServicesPage() {
         <section className="mt-20">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-serif text-gold-50 tracking-wide mb-6">
-              You remain in control of the final choice.
+              You Remain In Control Of The Final Choice.
             </h2>
             <div className="page-supporting-text mx-auto max-w-3xl space-y-4">
               <p>Grace & Goodwill helps individuals and families find live-in carers for a wide range of circumstances.</p>

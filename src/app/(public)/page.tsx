@@ -232,7 +232,7 @@ export default function HomePage() {
         {/* H2: Live-in Care Matching Built Around the Person */}
         <div className="grid lg:grid-cols-2 gap-10 xl:gap-16 items-center">
           <div className="space-y-6">
-            <h2 className="section-heading text-left">Live-in Care Matching Built Around the Person</h2>
+            <h2 className="section-heading text-left">Live-in Care Matching Built Around The Person</h2>
             <p className="page-supporting-text text-left">
               Finding a live-in carer is about more than experience on paper. The person you choose may become part of everyday life in the home, so personality, communication, lifestyle, routines, interests and compatibility can matter just as much as practical experience.
             </p>
@@ -243,7 +243,7 @@ export default function HomePage() {
           <div className="relative group">
             <div className="absolute inset-0 bg-gold-400/5 rounded-[2rem] blur-xl group-hover:bg-gold-400/10 transition-colors duration-500"></div>
             <div className="relative bg-navy-900/60 border border-gold-300/15 p-8 sm:p-10 rounded-[2rem] shadow-elegant backdrop-blur-md space-y-6">
-              <h3 className="text-lg font-semibold text-gold-100">Depending on the profile, you can explore:</h3>
+              <h3 className="text-lg font-semibold text-gold-100">Depending On The Profile, You Can Explore:</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
                 {["Profile photograph", "Introduction video", "Biography", "Care experience", "Skills and training", "Location", "Hobbies and interests", "Languages", "Driving status", "Availability", "Preferred placements", "Other relevant information"].map((item) => (
                   <div key={item} className="flex items-start gap-3">
@@ -289,7 +289,7 @@ export default function HomePage() {
 
             <div className="pt-8 flex justify-center">
               <Button asChild variant="outline" size="md" className="group pr-5">
-                <Link href="/live-in-care" className="flex items-center gap-2">
+                <Link href="/what-is-live-in-care" className="flex items-center gap-2">
                   Learn more about live-in care
                   <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
@@ -330,7 +330,7 @@ export default function HomePage() {
               </div>
               <div className="pt-8 mt-auto">
                 <Button asChild variant="outline" size="sm" fullWidth>
-                  <Link href="/live-in-care">Explore Long-Term Live-in Care</Link>
+                  <Link href="/long-term-live-in-care">Explore Long-Term Live-in Care</Link>
                 </Button>
               </div>
             </div>
@@ -420,7 +420,7 @@ export default function HomePage() {
               </div>
               <div className="pt-8 mt-auto flex justify-center">
                 <Button asChild variant="outline" size="sm">
-                  <Link href="/live-in-companionship-care">Explore Companionship Support</Link>
+                  <Link href="/live-in-companionship">Explore Companionship Support</Link>
                 </Button>
               </div>
             </div>

@@ -14,6 +14,8 @@ import FAQAccordion from "@/components/FAQAccordion";
 import Image from "next/image";
 import serviceImg1 from "@/assets/open/service-img1.jpeg";
 import serviceImg2 from "@/assets/open/service-img2.jpeg";
+import serviceImg3 from "@/assets/open/service-img3.jpeg";
+import serviceImg4 from "@/assets/open/service-img4.jpeg";
 
 export const metadata = {
   alternates: {
@@ -116,13 +118,33 @@ export default function ServicesPage() {
           <div className="page-strapline">Services</div>
 
           <h1 className="main-page-heading">
-            Live-in Care and Support for Different Needs Across the UK
+            Live-in Care And Support For Different Needs Across The UK
           </h1>
 
           <p className="page-supporting-text mx-auto mt-6 max-w-2xl">
             Grace & Goodwill is a nationwide live-in care matching platform that helps families find carefully vetted carers across the UK. Clients can explore carer profiles, consider the options available and choose the person they feel is best suited to their needs. Grace & Goodwill supports the matching process and platform experience while clients remain in control of their care arrangements.
           </p>
         </section>
+
+        {/* Hero Image Section */}
+        <div className="max-w-6xl mx-auto mb-24 px-4 md:px-8">
+          <div className="relative w-full">
+            {/* Decorative Offset Wireframe Corners */}
+            <div className="absolute -top-4 -left-4 md:-top-5 md:-left-5 w-24 h-24 md:w-32 md:h-32 border-t-2 border-l-2 border-gold-400/40 rounded-tl-[3rem] pointer-events-none z-0"></div>
+            <div className="absolute -bottom-4 -right-4 md:-bottom-5 md:-right-5 w-24 h-24 md:w-32 md:h-32 border-b-2 border-r-2 border-gold-400/40 rounded-br-[3rem] pointer-events-none z-0"></div>
+
+            <div className="relative z-10 rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-gold-300/20 bg-navy-950/40 group w-full">
+              <Image
+                src={serviceImg4}
+                alt="Grace and Goodwill Live-in Care Services"
+                className="w-full h-auto aspect-[4/3] md:aspect-[21/9] object-cover object-[center_20%] animate-slow-zoom"
+                placeholder="blur"
+              />
+              {/* Visual decorative gold overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-navy-950/80 via-navy-950/5 to-transparent pointer-events-none" />
+            </div>
+          </div>
+        </div>
 
         <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {coreServices.map((service) => (
@@ -156,11 +178,8 @@ export default function ServicesPage() {
                   />
                 </div>
                 <div>
-                  <span className="block text-xs uppercase tracking-[0.25em] text-gold-400 font-semibold mb-1">
-                    Guaranteed Coverage
-                  </span>
-                  <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide">
-                    Rapid Replacement Support
+                  <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide whitespace-nowrap">
+                    Rapid Replacement Support Upon Request
                   </h2>
                 </div>
               </div>
@@ -218,7 +237,7 @@ export default function ServicesPage() {
 
           <div className="relative z-10 rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-gold-300/20 bg-navy-950/40 group">
             <Image
-              src={serviceImg1}
+              src={serviceImg3}
               alt="Grace and Goodwill Live-in Care Services"
               className="w-full h-auto transform transition-transform duration-[2s] group-hover:scale-105 object-cover"
               placeholder="blur"
@@ -228,12 +247,11 @@ export default function ServicesPage() {
           </div>
         </div>
 
-
         {/* NEW CLIENT CONTENT */}
         <section className="mt-20">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-serif text-gold-50 tracking-wide mb-6">
-              You remain in control of the final choice.
+              You Remain In Control Of The Final Choice.
             </h2>
             <div className="page-supporting-text mx-auto max-w-3xl space-y-4">
               <p>Grace & Goodwill helps individuals and families find live-in carers for a wide range of circumstances.</p>
@@ -251,7 +269,7 @@ export default function ServicesPage() {
                 <p>Ongoing live-in care can support people who want to remain in their own home while receiving more consistent everyday assistance.</p>
                 <p>Depending on the arrangement agreed with the carer, support may include personal care, meals, mobility, companionship, household activities, shopping, appointments and established daily routines.</p>
               </div>
-              <Link href="/live-in-care" className="inline-flex w-full justify-center items-center rounded-xl bg-gold-400/10 border border-gold-400/30 px-4 py-3 text-sm font-medium text-gold-200 transition-colors hover:bg-gold-400/20 hover:text-gold-100">
+              <Link href="/long-term-live-in-care" className="inline-flex w-full justify-center items-center rounded-xl bg-gold-400/10 border border-gold-400/30 px-4 py-3 text-sm font-medium text-gold-200 transition-colors hover:bg-gold-400/20 hover:text-gold-100">
                 Learn More About Long-Term Live-in Care
               </Link>
             </div>
@@ -393,7 +411,7 @@ export default function ServicesPage() {
               <div className="page-supporting-text space-y-4 mb-8 flex-grow">
                 <p>For people who need companionship alongside everyday practical support, live-in care can provide greater consistency while allowing the person to remain in familiar surroundings.</p>
               </div>
-              <Link href="/live-in-companionship-care" className="inline-flex w-full justify-center items-center rounded-xl bg-gold-400/10 border border-gold-400/30 px-4 py-3 text-sm font-medium text-gold-200 transition-colors hover:bg-gold-400/20 hover:text-gold-100">
+              <Link href="/live-in-companionship" className="inline-flex w-full justify-center items-center rounded-xl bg-gold-400/10 border border-gold-400/30 px-4 py-3 text-sm font-medium text-gold-200 transition-colors hover:bg-gold-400/20 hover:text-gold-100">
                 Companionship Care
               </Link>
             </div>

@@ -14,6 +14,8 @@ import FAQAccordion from "@/components/FAQAccordion";
 import Image from "next/image";
 import serviceImg1 from "@/assets/open/service-img1.jpeg";
 import serviceImg2 from "@/assets/open/service-img2.jpeg";
+import serviceImg3 from "@/assets/open/service-img3.jpeg";
+import serviceImg4 from "@/assets/open/service-img4.jpeg";
 
 export const metadata = {
   alternates: {
@@ -124,6 +126,26 @@ export default function ServicesPage() {
           </p>
         </section>
 
+        {/* Hero Image Section */}
+        <div className="max-w-6xl mx-auto mb-24 px-4 md:px-8">
+          <div className="relative w-full">
+            {/* Decorative Offset Wireframe Corners */}
+            <div className="absolute -top-4 -left-4 md:-top-5 md:-left-5 w-24 h-24 md:w-32 md:h-32 border-t-2 border-l-2 border-gold-400/40 rounded-tl-[3rem] pointer-events-none z-0"></div>
+            <div className="absolute -bottom-4 -right-4 md:-bottom-5 md:-right-5 w-24 h-24 md:w-32 md:h-32 border-b-2 border-r-2 border-gold-400/40 rounded-br-[3rem] pointer-events-none z-0"></div>
+
+            <div className="relative z-10 rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-gold-300/20 bg-navy-950/40 group w-full">
+              <Image
+                src={serviceImg4}
+                alt="Grace and Goodwill Live-in Care Services"
+                className="w-full h-auto aspect-[4/3] md:aspect-[21/9] object-cover object-[center_20%] animate-slow-zoom"
+                placeholder="blur"
+              />
+              {/* Visual decorative gold overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-navy-950/80 via-navy-950/5 to-transparent pointer-events-none" />
+            </div>
+          </div>
+        </div>
+
         <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {coreServices.map((service) => (
             <div
@@ -215,7 +237,7 @@ export default function ServicesPage() {
 
           <div className="relative z-10 rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-gold-300/20 bg-navy-950/40 group">
             <Image
-              src={serviceImg1}
+              src={serviceImg3}
               alt="Grace and Goodwill Live-in Care Services"
               className="w-full h-auto transform transition-transform duration-[2s] group-hover:scale-105 object-cover"
               placeholder="blur"
@@ -224,7 +246,6 @@ export default function ServicesPage() {
             <div className="absolute inset-0 bg-gradient-to-t from-navy-950/40 via-transparent to-transparent pointer-events-none" />
           </div>
         </div>
-
 
         {/* NEW CLIENT CONTENT */}
         <section className="mt-20">

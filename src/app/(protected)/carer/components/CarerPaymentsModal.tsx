@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { carerService } from "@/services/carer/carer.service";
 import { storageService } from "@/services/storage.service";
+import ThinSpinner from "@/components/ThinSpinner";
 
 interface Payment {
   id: string;
@@ -88,7 +89,7 @@ export const CarerPaymentsModal: React.FC<CarerPaymentsModalProps> = ({
 
           {loading ? (
             <div className="flex justify-center items-center py-12">
-              <div className="w-8 h-8 border-2 border-gold-DEFAULT border-t-transparent rounded-full animate-spin"></div>
+              <ThinSpinner size="md" text="Loading payment records..." />
             </div>
           ) : payments.length === 0 ? (
             <div className="text-center py-12 text-gold-200/50 bg-navy-950/30 rounded-xl border border-gold-300/5">

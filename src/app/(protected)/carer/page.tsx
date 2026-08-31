@@ -40,6 +40,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { DocumentFileType } from "@/types/document.types";
 import { agreementsService } from "@/services/agreements/agreements.service";
 import FullScreenLoader from "@/components/FullScreenLoader";
+import ThinSpinner from "@/components/ThinSpinner";
 
 function CarerDashboardContent() {
   const { user } = useAuth();
@@ -846,14 +847,7 @@ export default function CarerDashboard() {
   return (
     <Suspense
       fallback={
-        <main className="min-h-screen bg-navy-950 py-10 text-gold-100 flex items-center justify-center">
-          <div className="flex flex-col items-center space-y-4">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold-DEFAULT"></div>
-            <p className="text-sm tracking-wider text-gold-200">
-              Loading Dashboard...
-            </p>
-          </div>
-        </main>
+        <ThinSpinner fullScreen size="xl" text="Loading Dashboard..." />
       }
     >
       <CarerDashboardContent />

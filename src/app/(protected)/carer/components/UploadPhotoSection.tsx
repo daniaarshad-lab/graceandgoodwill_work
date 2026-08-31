@@ -1,4 +1,5 @@
 import { ChangeEvent } from "react";
+import ThinSpinner from "@/components/ThinSpinner";
 
 interface UploadPhotoSectionProps {
   profilePhoto: string | null;
@@ -32,8 +33,8 @@ export default function UploadPhotoSection({
 
         {photoUploading && (
           <div className="absolute inset-0 bg-black/80 rounded-full flex flex-col items-center justify-center p-2">
-            <div className="w-10 h-10 border-2 border-gold-DEFAULT border-t-transparent animate-spin rounded-full"></div>
-            <span className="text-[9px] text-gold-DEFAULT mt-1">
+            <ThinSpinner size="sm" />
+            <span className="text-[9px] text-gold-DEFAULT mt-1 font-semibold">
               {photoProgress}%
             </span>
           </div>

@@ -1,8 +1,8 @@
-﻿"use client";
+"use client";
 
 import { useRouter } from "next/navigation";
 import { useRef, useEffect, useTransition } from "react";
-import { Loader2 } from "lucide-react";
+import ThinSpinner from "@/components/ThinSpinner";
 
 export type TabType =
   | "overview"
@@ -138,11 +138,12 @@ export default function PortalTabs({
     <>
       {isPending && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-navy-950/40 backdrop-blur-[2px]">
-          <div className="bg-navy-900/90 p-4 rounded-2xl border border-navy-800 shadow-2xl flex flex-col items-center space-y-3">
-            <Loader2 className="h-8 w-8 animate-spin text-gold-DEFAULT" />
-            <p className="text-xs font-medium text-gold-200 tracking-wider uppercase">
-              Loading...
-            </p>
+          <div className="bg-navy-900/90 p-6 rounded-2xl border border-navy-800 shadow-2xl flex flex-col items-center">
+            <ThinSpinner
+              size="md"
+              text="Loading..."
+              textClassName="text-xs font-medium text-gold-200 tracking-wider uppercase"
+            />
           </div>
         </div>
       )}

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { adminService } from "@/services/admin/admin.service";
+import ThinSpinner from "@/components/ThinSpinner";
 import {
   FileText,
   Shield,
@@ -95,9 +96,8 @@ export default function UserAuditLogs({
       </div>
 
       {loading ? (
-        <div className="py-12 text-center text-gold-100/60 flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-3 border-gold border-t-transparent rounded-full animate-spin" />
-          <p className="text-xs">Loading audit logs history...</p>
+        <div className="py-12 text-center flex flex-col items-center">
+          <ThinSpinner size="md" text="Loading audit logs history..." textClassName="text-xs text-gold-100/60" />
         </div>
       ) : error ? (
         <div className="py-8 text-center text-rose-400 text-xs bg-rose-500/10 rounded-xl border border-rose-500/20 p-4">

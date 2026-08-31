@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { adminService } from "@/services/admin/admin.service";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
+import ThinSpinner from "@/components/ThinSpinner";
 
 /** Status styling */
 const AVATAR_BG_CLASSES = [
@@ -234,12 +235,7 @@ export default function AdminClientInterestListPage() {
   return (
     <Suspense
       fallback={
-        <main className="min-h-screen bg-navy-950 py-10 text-gold-100 flex flex-col items-center justify-center space-y-4">
-          <div className="w-12 h-12 border-4 border-gold border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm text-gold-100/60 font-semibold">
-            Loading interest list...
-          </p>
-        </main>
+        <ThinSpinner fullScreen size="xl" text="Loading interest list..." />
       }
     >
       <AdminClientInterestListContent />
@@ -554,11 +550,8 @@ function AdminClientInterestListContent() {
 
         {/* Content */}
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-24 space-y-4">
-            <div className="w-10 h-10 border-4 border-gold border-t-transparent rounded-full animate-spin" />
-            <p className="text-sm text-gold-100/60 font-semibold animate-pulse">
-              Fetching interest list...
-            </p>
+          <div className="flex flex-col items-center justify-center py-24">
+            <ThinSpinner size="lg" text="Fetching interest list..." />
           </div>
         ) : error ? (
           <div className="rounded-2xl border border-red-500/20 bg-red-950/10 p-10 text-center space-y-3">

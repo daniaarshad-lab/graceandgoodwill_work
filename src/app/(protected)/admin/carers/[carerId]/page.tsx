@@ -35,6 +35,7 @@ import {
 } from "lucide-react";
 import InternalNotes from "../../components/shared/InternalNotes/InternalNotes";
 import UserAuditLogs from "../../components/shared/UserAuditLogs";
+import ThinSpinner from "@/components/ThinSpinner";
 
 // Document categories are determined by the backend response
 
@@ -42,12 +43,7 @@ export default function CarerDetailsPage() {
   return (
     <Suspense
       fallback={
-        <main className="min-h-screen bg-navy-950 py-10 text-gold-100 flex flex-col items-center justify-center space-y-4">
-          <div className="w-12 h-12 border-4 border-gold border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm text-gold-100/60 font-semibold">
-            Loading carer records...
-          </p>
-        </main>
+        <ThinSpinner fullScreen size="xl" text="Loading carer records..." />
       }
     >
       <CarerDetailsContent />
@@ -182,12 +178,7 @@ function CarerDetailsContent() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-navy-950 py-12 text-gold-100 flex flex-col items-center justify-center space-y-4">
-        <div className="w-12 h-12 border-4 border-gold border-t-transparent rounded-full animate-spin" />
-        <p className="text-sm text-gold-100/60 font-semibold animate-pulse">
-          Fetching carer records...
-        </p>
-      </main>
+      <ThinSpinner fullScreen size="xl" text="Fetching carer records..." />
     );
   }
 
@@ -555,7 +546,7 @@ function CarerDetailsContent() {
                 >
                   {approvingCarer ? (
                     <>
-                      <div className="h-3.5 w-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin shrink-0" />
+                      <ThinSpinner size="xs" spinnerClassName="border-white shrink-0" className="inline-flex flex-row space-y-0" />
                       Approving...
                     </>
                   ) : (
@@ -860,9 +851,8 @@ function CarerDetailsContent() {
                                 colSpan={5}
                                 className="py-8 text-center text-gold-100/30 font-semibold"
                               >
-                                <div className="flex items-center justify-center gap-2">
-                                  <div className="h-4 w-4 border-2 border-gold/30 border-t-gold rounded-full animate-spin" />
-                                  Loading placements...
+                                <div className="flex items-center justify-center">
+                                  <ThinSpinner size="xs" text="Loading placements..." textClassName="text-xs text-gold-100/60" className="flex-row gap-2 space-y-0" />
                                 </div>
                               </td>
                             </tr>

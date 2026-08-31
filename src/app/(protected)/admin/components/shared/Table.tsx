@@ -6,8 +6,8 @@ import {
   ArrowUpDown,
   ChevronUp,
   ChevronDown,
-  RefreshCw,
 } from "lucide-react";
+import ThinSpinner from "@/components/ThinSpinner";
 
 export interface TableColumn<T> {
   header: string;
@@ -248,11 +248,12 @@ export default function Table<T>({
                     colSpan={columns.length}
                     className="py-16 text-center text-gold-100/40"
                   >
-                    <div className="flex flex-col items-center justify-center space-y-3">
-                      <RefreshCw className="h-6 w-6 text-gold animate-spin" />
-                      <span className="font-semibold text-xs animate-pulse">
-                        Loading records...
-                      </span>
+                    <div className="flex flex-col items-center justify-center">
+                      <ThinSpinner
+                        size="md"
+                        text="Loading records..."
+                        textClassName="font-semibold text-xs animate-pulse text-gold-100/60"
+                      />
                     </div>
                   </td>
                 </tr>

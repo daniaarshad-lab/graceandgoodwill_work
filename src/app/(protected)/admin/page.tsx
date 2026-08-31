@@ -53,17 +53,13 @@ const ProfileUpdateRequests = dynamic(
 
 import { Suspense } from "react";
 import EmergencyCareRequestsList from "./components/EmergencyCareRequestsList";
+import ThinSpinner from "@/components/ThinSpinner";
 
 export default function AdminDashboard() {
   return (
     <Suspense
       fallback={
-        <main className="min-h-screen bg-navy-950 py-10 text-gold-100 flex flex-col items-center justify-center space-y-4">
-          <div className="w-12 h-12 border-4 border-gold border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm text-gold-100/60 font-semibold">
-            Loading admin console...
-          </p>
-        </main>
+        <ThinSpinner fullScreen size="xl" text="Loading admin console..." />
       }
     >
       <AdminDashboardContent />
@@ -191,11 +187,8 @@ function AdminDashboardContent() {
         {/* --- MAIN OPERATIONAL CONSOLES --- */}
         <div className="flex-1 min-h-0 overflow-y-auto transition-all duration-300">
           {portal.loading ? (
-            <div className="flex flex-col items-center justify-center p-20 space-y-4">
-              <div className="w-12 h-12 border-4 border-gold border-t-transparent rounded-full animate-spin" />
-              <p className="text-sm text-gold-100/60 font-semibold">
-                Loading dashboard data...
-              </p>
+            <div className="flex flex-col items-center justify-center p-20">
+              <ThinSpinner size="xl" text="Loading dashboard data..." />
             </div>
           ) : portal.error ? (
             <div className="rounded-2xl border border-red-500/20 bg-red-950/10 p-8 text-center text-red-400 max-w-xl mx-auto space-y-4">

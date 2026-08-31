@@ -11,6 +11,7 @@ import {
 import { adminService } from "@/services/admin/admin.service";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 import Button from "@/components/Button";
+import ThinSpinner from "@/components/ThinSpinner";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -135,11 +136,8 @@ export default function ProfileUpdateRequests() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center p-20 space-y-4">
-        <div className="w-8 h-8 border-2 border-gold border-t-transparent rounded-full animate-spin" />
-        <p className="text-sm text-gold-100/60 font-semibold">
-          Loading requests...
-        </p>
+      <div className="flex flex-col items-center justify-center p-20">
+        <ThinSpinner size="md" text="Loading requests..." />
       </div>
     );
   }

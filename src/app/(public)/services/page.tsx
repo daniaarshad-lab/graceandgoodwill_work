@@ -116,7 +116,7 @@ export default function ServicesPage() {
           <div className="page-strapline">Services</div>
 
           <h1 className="main-page-heading">
-            Live-in Care and Support for Different Needs Across the UK
+            Live-in Care And Support For Different Needs Across The UK
           </h1>
 
           <p className="page-supporting-text mx-auto mt-6 max-w-2xl">

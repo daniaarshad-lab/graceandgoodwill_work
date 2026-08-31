@@ -8,6 +8,10 @@ import { CheckCircle, Phone, AlertCircle } from "lucide-react";
 
 import PhoneInput from "@/components/PhoneInput";
 import { submitClientDetails } from "@/store/slices/clientSlice";
+import {
+  validateClientOnboardingForm,
+  scrollToFirstError,
+} from "../utils/validation";
 
 export default function ClientOnboardingPage() {
   const dispatch = useAppDispatch();
@@ -26,6 +30,7 @@ export default function ClientOnboardingPage() {
   const [careAddress, setCareAddress] = useState("");
   const [careNote, setCareNote] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
   const now = new Date();
   const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 
@@ -40,6 +45,37 @@ export default function ClientOnboardingPage() {
     }
   }, [user, clientProfile]);
 
+  // Real-time validation after first submit attempt
+  useEffect(() => {
+    if (hasAttemptedSubmit) {
+      const formErrors = validateClientOnboardingForm({
+        firstName,
+        lastName,
+        email,
+        phone,
+        startDate: careStartDate,
+        endDate: careEndDate,
+        isOngoing,
+        postcode: carePostcode,
+        location: careAddress,
+        note: careNote,
+      });
+      setErrors(formErrors);
+    }
+  }, [
+    firstName,
+    lastName,
+    email,
+    phone,
+    careStartDate,
+    careEndDate,
+    isOngoing,
+    carePostcode,
+    careAddress,
+    careNote,
+    hasAttemptedSubmit,
+  ]);
+
   const showPendingScreen = clientProfile?.status === "PENDING_APPROVAL" || clientProfile?.status === "UNDER_REVIEW";
 
   useEffect(() => {
@@ -52,35 +88,44 @@ export default function ClientOnboardingPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setHasAttemptedSubmit(true);
 
-    const formErrors: Record<string, string> = {};
-    if (!firstName.trim()) formErrors.firstName = "First Name is required";
-    if (!lastName.trim()) formErrors.lastName = "Last Name is required";
-    if (!email.trim() || !/^\S+@\S+\.\S+$/.test(email))
-      formErrors.email = "Valid Email is required";
-    if (!phone.trim()) formErrors.phone = "Phone number is required";
-    if (!careStartDate.trim()) formErrors.careStartDate = "Start Date is required";
-    if (!carePostcode.trim()) formErrors.carePostcode = "Postcode is required";
-    if (!careNote.trim()) formErrors.careNote = "Note is required";
+    const formErrors = validateClientOnboardingForm({
+      firstName,
+      lastName,
+      email,
+      phone,
+      startDate: careStartDate,
+      endDate: careEndDate,
+      isOngoing,
+      postcode: carePostcode,
+      location: careAddress,
+      note: careNote,
+    });
 
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
+      scrollToFirstError();
       return;
     }
 
     setErrors({});
     await dispatch(
       submitClientDetails({
-        firstName,
-        lastName,
-        email,
-        phone,
-        location: carePostcode,
-        careNote,
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        email: email.trim(),
+        phone: phone.trim(),
+        location: careAddress.trim(),
+        careNote: careNote.trim(),
         careStartDate: new Date(careStartDate).toISOString(),
-        careEndDate: isOngoing ? undefined : (careEndDate ? new Date(careEndDate).toISOString() : undefined),
-        carePostcode,
-        careAddress: careAddress || undefined,
+        careEndDate: isOngoing
+          ? undefined
+          : careEndDate
+            ? new Date(careEndDate).toISOString()
+            : undefined,
+        carePostcode: carePostcode.trim().toUpperCase(),
+        careAddress: careAddress.trim(),
       })
     );
   };
@@ -158,25 +203,33 @@ export default function ClientOnboardingPage() {
   }
 
   return (
-    <main className="min-h-[calc(100vh-80px)] bg-navy-950 flex flex-col items-center justify-center p-4 sm:p-8">
-      <div className="w-full max-w-3xl bg-navy-900/50 border border-gold-300/10 rounded-2xl shadow-xl overflow-hidden">
-        {/* Header Section */}
-        <div className="bg-navy-900 border-b border-gold-300/10 px-8 py-8 sm:px-12">
-          <h1 className="text-2xl font-bold text-gold-200">
+    <main className="min-h-[calc(100vh-80px)] bg-navy-950 flex flex-col items-center pb-12 sm:pb-16">
+      {/* Header Section (Outside Box) */}
+      <div className="w-full px-4 py-4 sm:py-5 text-center relative lg:sticky lg:top-20 z-40 bg-navy-950/95 lg:backdrop-blur-xl backdrop-blur-md border-b border-gold-300/10 shadow-md">
+        <div className="max-w-6xl mx-auto">
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-gold-100 via-gold-DEFAULT to-gold-400 drop-shadow-sm mb-2">
             Complete Your Details
           </h1>
-          <p className="text-sm text-gold-100/70 mt-2 leading-relaxed max-w-xl">
-            Please provide your details below. Our team will review your registration and configure your dedicated client portal.
+          <p className="text-sm sm:text-[15px] text-gold-100/80 leading-relaxed max-w-2xl mx-auto font-medium px-4">
+            Please provide your details below. Our team will review your registration and carefully configure your dedicated client portal.
           </p>
         </div>
+      </div>
 
-        {/* Form Section */}
-        <div className="px-8 py-10 sm:px-12">
-          <form onSubmit={handleSubmit} className="space-y-8">
-            {/* Name Fields */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      {/* Form Box */}
+      <div className="w-full max-w-6xl px-4 sm:px-8 mt-6 sm:mt-10">
+        <div className="bg-navy-900/60 backdrop-blur-xl border border-gold-300/20 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.4)] relative">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-gold-DEFAULT/50 to-transparent opacity-70 rounded-t-2xl" />
+          <div className="px-6 py-8 sm:px-12 sm:py-10">
+            <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
+            {/* Line 1: Name and Email */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <Input
-                label="First Name"
+                label={
+                  <span>
+                    First Name <span className="text-red-400">*</span>
+                  </span>
+                }
                 type="text"
                 placeholder="Enter first name"
                 value={firstName}
@@ -187,7 +240,11 @@ export default function ClientOnboardingPage() {
                 error={errors.firstName}
               />
               <Input
-                label="Last Name"
+                label={
+                  <span>
+                    Last Name <span className="text-red-400">*</span>
+                  </span>
+                }
                 type="text"
                 placeholder="Enter last name"
                 value={lastName}
@@ -197,12 +254,12 @@ export default function ClientOnboardingPage() {
                 }}
                 error={errors.lastName}
               />
-            </div>
-
-            {/* Contact Fields */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <Input
-                label="Email Address"
+                label={
+                  <span>
+                    Email Address <span className="text-red-400">*</span>
+                  </span>
+                }
                 type="email"
                 placeholder="Enter email address"
                 value={email}
@@ -212,8 +269,16 @@ export default function ClientOnboardingPage() {
                 }}
                 error={errors.email}
               />
+            </div>
+
+            {/* Line 2: Phone, Dates */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <PhoneInput
-                label="Phone Number"
+                label={
+                  <span>
+                    Phone Number <span className="text-red-400">*</span>
+                  </span>
+                }
                 placeholder="Enter phone number"
                 value={phone}
                 onChange={(val) => {
@@ -222,12 +287,12 @@ export default function ClientOnboardingPage() {
                 }}
                 error={errors.phone}
               />
-            </div>
-
-            {/* Date Fields with Ongoing Checkbox */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <Input
-                label="Start Date"
+                label={
+                  <span>
+                    Start Date <span className="text-red-400">*</span>
+                  </span>
+                }
                 type="date"
                 min={todayStr}
                 value={careStartDate}
@@ -244,12 +309,28 @@ export default function ClientOnboardingPage() {
 
               <div>
                 <Input
-                  label="End Date"
+                  label={
+                    <span>
+                      End Date {!isOngoing && <span className="text-red-400">*</span>}
+                    </span>
+                  }
                   type="date"
-                  min={careStartDate && careStartDate > todayStr ? careStartDate : todayStr}
+                  min={
+                    careStartDate
+                      ? (() => {
+                          const start = new Date(careStartDate);
+                          start.setDate(start.getDate() + 2);
+                          return start.toISOString().split("T")[0];
+                        })()
+                      : todayStr
+                  }
                   value={careEndDate}
                   disabled={isOngoing}
-                  onChange={(e) => setCareEndDate(e.target.value)}
+                  onChange={(e) => {
+                    setCareEndDate(e.target.value);
+                    if (errors.careEndDate) setErrors({ ...errors, careEndDate: "" });
+                  }}
+                  error={errors.careEndDate}
                   className={isOngoing ? "opacity-40 cursor-not-allowed" : ""}
                 />
                 <label className="flex items-center gap-2 text-sm text-gold-200 mt-2.5 cursor-pointer select-none">
@@ -260,16 +341,17 @@ export default function ClientOnboardingPage() {
                       setIsOngoing(e.target.checked);
                       if (e.target.checked) {
                         setCareEndDate("");
+                        if (errors.careEndDate) setErrors({ ...errors, careEndDate: "" });
                       }
                     }}
-                    className="w-4 h-4 rounded border-gold-300/20 bg-navy-950 text-gold-DEFAULT focus:ring-gold-DEFAULT focus:ring-offset-navy-950"
+                    className="w-4 h-4 rounded border-gold-300/30 bg-navy-950 text-gold-DEFAULT focus:ring-gold-DEFAULT focus:ring-offset-navy-950 transition-colors"
                   />
                   Ongoing
                 </label>
               </div>
             </div>
 
-            {/* Location & Postcode Fields */}
+            {/* Line 3: Postcode & Location */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <Input
                 label={
@@ -288,30 +370,38 @@ export default function ClientOnboardingPage() {
               />
 
               <Input
-                label="Location"
+                label={
+                  <span>
+                    Location <span className="text-red-400">*</span>
+                  </span>
+                }
                 type="text"
                 placeholder="e.g. 10 Downing Street, London"
                 value={careAddress}
-                onChange={(e) => setCareAddress(e.target.value)}
+                onChange={(e) => {
+                  setCareAddress(e.target.value);
+                  if (errors.careAddress) setErrors({ ...errors, careAddress: "" });
+                }}
+                error={errors.careAddress}
               />
             </div>
 
             {/* Note Field (at the bottom) */}
             <div className="space-y-2">
-              <label className="form-label">
+              <label className="text-sm font-medium text-gold-200/90 tracking-wide">
                 Note <span className="text-red-400">*</span>
               </label>
               <div className="relative">
                 <textarea
-                  placeholder="Please provide any details or specific requirements..."
+                  placeholder="Please provide any details or specific requirements (minimum 10 characters)..."
                   value={careNote}
                   onChange={(e) => {
                     setCareNote(e.target.value);
                     if (errors.careNote) setErrors({ ...errors, careNote: "" });
                   }}
                   rows={4}
-                  className={`w-full rounded-xl border py-3 px-4 outline-none focus:ring-2 focus:ring-primary resize-none ${
-                    errors.careNote ? "border-red-500" : "border-gray-300"
+                  className={`w-full bg-navy-900/50 rounded-xl border border-gold-300/20 py-3 px-4 outline-none focus:ring-2 focus:ring-gold-DEFAULT/50 text-gold-100 placeholder-gold-100/30 resize-none transition-all duration-300 ${
+                    errors.careNote ? "border-red-500/50 focus:ring-red-500/30" : "hover:border-gold-300/40"
                   }`}
                 />
               </div>
@@ -321,19 +411,20 @@ export default function ClientOnboardingPage() {
             </div>
 
             {/* Submit Button */}
-            <div className="pt-6 mt-4 flex flex-col sm:flex-row items-center justify-between gap-6 border-t border-gold-300/10">
-              <p className="text-[11px] font-medium tracking-wide text-gold-100/40 uppercase order-2 sm:order-1">
+            <div className="pt-6 mt-6 sm:mt-8 flex flex-col sm:flex-row items-center justify-between gap-6 border-t border-gold-300/10">
+              <p className="text-[11px] font-medium tracking-wide text-gold-100/40 uppercase order-2 sm:order-1 mt-2 sm:mt-0">
                 Secure & Confidential
               </p>
               <Button
                 type="submit"
                 text={loading ? "Submitting..." : "Submit Details"}
                 disabled={loading}
-                className="w-full sm:w-auto px-10 py-3 order-1 sm:order-2"
+                className="w-full sm:w-auto px-10 py-3 order-1 sm:order-2 shadow-lg"
               />
             </div>
           </form>
         </div>
+      </div>
       </div>
     </main>
   );

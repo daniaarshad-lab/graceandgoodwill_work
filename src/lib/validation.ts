@@ -98,6 +98,20 @@ export const validatePhone = (phone: string): string | null => {
   return null;
 };
 
+export const validateUKPostcode = (postcode: string): string | null => {
+  const trimmed = (postcode || "").trim();
+  if (!trimmed) {
+    return "Postcode is required";
+  }
+  if (trimmed.length > 10) {
+    return "UK postcodes cannot be longer than 10 characters";
+  }
+  if (!/^[A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}$/i.test(trimmed)) {
+    return "Please enter a valid UK postcode (e.g. SW1A 1AA)";
+  }
+  return null;
+};
+
 export interface LoginFormErrors {
   email?: string;
   password?: string;

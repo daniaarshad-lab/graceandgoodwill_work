@@ -11,6 +11,9 @@ import {
 } from "lucide-react";
 import { faqs } from "@/data/faqData";
 import FAQAccordion from "@/components/FAQAccordion";
+import Image from "next/image";
+import serviceImg1 from "@/assets/open/service-img1.jpeg";
+import serviceImg2 from "@/assets/open/service-img2.jpeg";
 
 export const metadata = {
   alternates: {
@@ -207,6 +210,24 @@ export default function ServicesPage() {
           </div>
         </section>
 
+        {/* Styled Image Section 1 */}
+        <div className="relative max-w-4xl mx-auto mt-20 mb-8 px-4 py-4 md:px-8 md:py-8">
+          {/* Decorative Offset Wireframe Corners */}
+          <div className="absolute top-0 left-0 w-32 h-32 md:w-48 md:h-48 border-t border-l border-gold-300/40 rounded-tl-[3rem] pointer-events-none"></div>
+          <div className="absolute bottom-0 right-0 w-32 h-32 md:w-48 md:h-48 border-b border-r border-gold-300/40 rounded-br-[3rem] pointer-events-none"></div>
+
+          <div className="relative z-10 rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-gold-300/20 bg-navy-950/40 group">
+            <Image
+              src={serviceImg1}
+              alt="Grace and Goodwill Live-in Care Services"
+              className="w-full h-auto transform transition-transform duration-[2s] group-hover:scale-105 object-cover"
+              placeholder="blur"
+            />
+            {/* Visual decorative gold overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-navy-950/40 via-transparent to-transparent pointer-events-none" />
+          </div>
+        </div>
+
 
         {/* NEW CLIENT CONTENT */}
         <section className="mt-20">
@@ -377,6 +398,7 @@ export default function ServicesPage() {
               </Link>
             </div>
 
+
             <div className="md:col-span-2 lg:col-span-3 group relative flex flex-col rounded-[28px] border border-gold-300/15 bg-gradient-to-br from-navy-900/60 to-navy-900/40 p-8 md:p-12 shadow-elegant backdrop-blur-md mt-6">
               <h3 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide mb-6 text-center">
                 Live-in Care Costs and Funding
@@ -384,6 +406,25 @@ export default function ServicesPage() {
               <p className="page-supporting-text text-center max-w-3xl mx-auto mb-8 text-lg">
                 Families can also access information about:
               </p>
+
+              {/* Graceful Banner Image Inside Card */}
+              <div className="relative w-full max-w-xl mx-auto mb-10 px-4 py-4 md:px-6 md:py-6">
+                {/* Decorative Offset Wireframe Corners */}
+                <div className="absolute top-0 left-0 w-20 h-20 md:w-28 md:h-28 border-t border-l border-gold-300/40 rounded-tl-[2.5rem] pointer-events-none"></div>
+                <div className="absolute bottom-0 right-0 w-20 h-20 md:w-28 md:h-28 border-b border-r border-gold-300/40 rounded-br-[2.5rem] pointer-events-none"></div>
+
+                <div className="relative z-10 rounded-[2rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-gold-300/20 bg-navy-950/40 group">
+                  <Image
+                    src={serviceImg2}
+                    alt="Grace and Goodwill Personalised Care"
+                    className="w-full h-auto transform transition-transform duration-[2s] group-hover:scale-105"
+                    placeholder="blur"
+                  />
+                  {/* Visual decorative gold overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-navy-950/60 via-navy-950/10 to-transparent pointer-events-none" />
+                </div>
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-[15px] text-gold-100/90 text-left max-w-4xl mx-auto mb-10 bg-navy-950/50 p-8 rounded-3xl border border-gold-300/10 shadow-inner w-full">
                 <ul className="space-y-4">
                   <li className="flex items-start gap-3">
@@ -438,6 +479,7 @@ export default function ServicesPage() {
             </div>
           </div>
         </section>
+
 
 
         {/* SERVICES FAQ */}

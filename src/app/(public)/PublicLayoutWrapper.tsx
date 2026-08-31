@@ -3,6 +3,7 @@
 import React from "react";
 import StaticSiteHeader from "@/components/StaticSiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import FloatingContact from "@/components/FloatingContact";
 
 export default function PublicLayoutWrapper({
   children,
@@ -13,6 +14,7 @@ export default function PublicLayoutWrapper({
     <>
       <StaticSiteHeader />
       <div className="flex-grow">{children}</div>
+      <FloatingContact />
       <SiteFooter />
     </>
   );

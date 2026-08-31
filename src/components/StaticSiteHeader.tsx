@@ -152,8 +152,8 @@ function StaticSiteHeader() {
               href={AUTH_ROUTES.carerRecruitment}
               prefetch={false}
               className={`inline-flex items-center gap-1.5 text-[13px] lg:text-sm font-medium transition hover:text-gold-50 whitespace-nowrap ${pathname === AUTH_ROUTES.carerRecruitment
-                  ? "text-gold-50"
-                  : "text-gold-200"
+                ? "text-gold-50"
+                : "text-gold-200"
                 }`}
             >
               <HeartHandshake className="h-4 w-4" aria-hidden="true" />
@@ -257,8 +257,8 @@ function StaticSiteHeader() {
                   prefetch={false}
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={`text-base font-medium transition py-3 min-h-[44px] flex items-center gap-2.5 border-b border-gold-300/5 hover:text-gold-50 ${pathname === AUTH_ROUTES.carerRecruitment
-                      ? "text-gold-50"
-                      : "text-gold-200"
+                    ? "text-gold-50"
+                    : "text-gold-200"
                     }`}
                 >
                   <HeartHandshake className="h-4 w-4" aria-hidden="true" />

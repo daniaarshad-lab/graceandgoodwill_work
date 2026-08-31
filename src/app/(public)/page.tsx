@@ -289,7 +289,7 @@ export default function HomePage() {
 
             <div className="pt-8 flex justify-center">
               <Button asChild variant="outline" size="md" className="group pr-5">
-                <Link href="/live-in-care" className="flex items-center gap-2">
+                <Link href="/what-is-live-in-care" className="flex items-center gap-2">
                   Learn more about live-in care
                   <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Link>

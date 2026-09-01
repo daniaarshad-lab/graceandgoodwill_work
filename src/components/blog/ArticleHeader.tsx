@@ -12,52 +12,68 @@ interface ArticleHeaderProps {
 
 export default function ArticleHeader({ post }: ArticleHeaderProps) {
   return (
-    <header className="mb-10">
-      <span className="inline-block rounded-full border border-gold-500/25 bg-gold-500/5 px-4 py-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-gold-300">
-        {getCategoryLabel(post.categorySlug)}
-      </span>
+    <>
+      <header className="relative bg-navy-900 text-white pt-24 pb-32 sm:pb-48 w-full px-4 sm:px-6 lg:px-8">
+        <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none text-navy-950">
+          <svg
+            className="relative block w-[calc(100%+1.3px)] h-[60px] sm:h-[120px]"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 1200 120"
+            preserveAspectRatio="none"
+          >
+            <path
+              d="M0,0 Q600,120 1200,0 L1200,120 L0,120 Z"
+              fill="currentColor"
+            ></path>
+          </svg>
+        </div>
 
-      <h1 className="mt-5 font-serif text-2xl font-medium leading-tight tracking-tight text-gold-50 sm:text-4xl lg:text-[2.75rem]">
-        {post.title}
-      </h1>
+        <div className="relative z-10 mx-auto max-w-4xl text-center flex flex-col items-center">
+          <div className="page-strapline mb-2">
+            {getCategoryLabel(post.categorySlug)}
+          </div>
 
-      <p className="mt-5 max-w-2xl text-base leading-relaxed text-gold-200/80">
-        {post.excerpt}
-      </p>
+          <h1 className="mt-4 font-serif text-3xl font-medium leading-tight sm:text-4xl lg:text-[2.75rem] text-white capitalize">
+            {post.title}
+          </h1>
 
-      <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gold-200/50">
-        <span>By {post.author.name}</span>
-        <span aria-hidden="true" className="text-gold-200/25">
-          •
-        </span>
-        <time dateTime={post.publishedAt ?? post.createdAt}>
-          Published {formatBlogDate(post.publishedAt ?? post.createdAt)}
-        </time>
-        <span aria-hidden="true" className="text-gold-200/25">
-          •
-        </span>
-        <span className="inline-flex items-center gap-1">
-          <Clock className="h-3 w-3" aria-hidden="true" />
-          {post.readingTimeMinutes} min read
-        </span>
-      </div>
+          <p className="mt-6 max-w-2xl font-serif text-lg leading-relaxed text-white/90">
+            {post.excerpt}
+          </p>
 
-      <div className="relative mt-8 overflow-hidden rounded-2xl border border-gold-400/20 bg-navy-950 p-2 shadow-2xl sm:p-3">
-        <div className="relative aspect-[16/9] overflow-hidden rounded-xl">
-          <Image
-            src={post.featuredImageUrl}
-            alt={post.featuredImageAlt}
-            fill
-            priority
-            sizes="(min-width: 1024px) 800px, 100vw"
-            className="object-cover"
-          />
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-gold-400/10"
-          />
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs text-white/70">
+            <span>By {post.author.name}</span>
+            <span aria-hidden="true" className="text-white/40">
+              •
+            </span>
+            <time dateTime={post.publishedAt ?? post.createdAt}>
+              Published {formatBlogDate(post.publishedAt ?? post.createdAt)}
+            </time>
+            <span aria-hidden="true" className="text-white/40">
+              •
+            </span>
+            <span className="inline-flex items-center gap-1">
+              <Clock className="h-3 w-3" aria-hidden="true" />
+              {post.readingTimeMinutes} min read
+            </span>
+          </div>
+        </div>
+      </header>
+
+      <div className="relative z-20 -mt-24 sm:-mt-36 mb-16 mx-auto max-w-4xl">
+        <div className="overflow-hidden shadow-2xl rounded-lg">
+          <div className="relative aspect-[16/9] w-full">
+            <Image
+              src={post.featuredImageUrl}
+              alt={post.featuredImageAlt}
+              fill
+              priority
+              sizes="(min-width: 1024px) 900px, 100vw"
+              className="object-cover"
+            />
+          </div>
         </div>
       </div>
-    </header>
+    </>
   );
 }

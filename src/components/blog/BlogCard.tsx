@@ -42,7 +42,7 @@ export default function BlogCard({
           />
         </svg>
 
-        <h3 className="font-serif text-[17px] sm:text-[18px] font-normal leading-snug text-gold-50 mb-5 group-hover:text-gold-200 transition-colors line-clamp-3">
+        <h3 className="font-serif text-[17px] sm:text-[18px] font-normal leading-snug text-gold-50 mb-5 group-hover:text-gold-200 transition-colors line-clamp-3 capitalize">
           <Link
             href={`/blog/${post.slug}`}
             prefetch={false}

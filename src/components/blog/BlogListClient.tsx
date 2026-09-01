@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Loader2, Search, X } from "lucide-react";
+import { Search, X } from "lucide-react";
 
 import Button from "@/components/Button";
+import ThinSpinner from "@/components/ThinSpinner";
 import BlogCard from "./BlogCard";
 import BlogEmptyState from "./BlogEmptyState";
 import { blogService, isBlogMockMode } from "@/services/blog/blog.service";
@@ -184,92 +185,65 @@ export default function BlogListClient({
       </h2>
 
       {/* ── Controls ──────────────────────────────────────────────────── */}
-      <div className="mb-8 space-y-5">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <div className="relative flex-1">
-            <Search
-              className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gold-200/40"
-              aria-hidden="true"
-            />
-            <label htmlFor="blog-search" className="sr-only">
-              Search articles
-            </label>
-            <input
-              id="blog-search"
-              type="search"
-              value={searchInput}
-              onChange={(event) => setSearchInput(event.target.value)}
-              placeholder="Search articles…"
-              className="w-full rounded-xl border border-gold-300/15 bg-navy-900/50 py-2.5 pl-10 pr-10 text-sm text-gold-100 placeholder-gold-100/30 outline-none transition duration-200 focus:border-gold-300/40"
-            />
-            {searchInput && (
-              <button
-                type="button"
-                onClick={() => setSearchInput("")}
-                aria-label="Clear search"
-                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-gold-200/40 transition hover:text-gold-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-300/60"
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
-            )}
-          </div>
-
-          <div className="shrink-0">
-            <label htmlFor="blog-sort" className="sr-only">
-              Sort articles
-            </label>
-            <select
-              id="blog-sort"
-              value={sort}
-              onChange={(event) =>
-                setSort(event.target.value as BlogSortOption)
-              }
-              className="w-full cursor-pointer rounded-xl border border-gold-300/15 bg-navy-900/50 px-4 py-2.5 text-sm text-gold-200 outline-none transition duration-200 focus:border-gold-300/40 sm:w-auto"
-            >
-              {SORT_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
+      <div className="mb-12 flex flex-col sm:flex-row gap-8 sm:gap-16">
+        {/* Sort by */}
+        <div className="flex-1 max-w-[240px]">
+          <label htmlFor="blog-sort" className="block text-sm text-gold-200/70 mb-1 font-serif">
+            Sort by
+          </label>
+          <select
+            id="blog-sort"
+            value={sort}
+            onChange={(event) =>
+              setSort(event.target.value as BlogSortOption)
+            }
+            className="w-full bg-transparent border-b border-gold-300/30 py-2 text-base text-gold-50 outline-none focus:border-gold-300 transition-colors cursor-pointer appearance-none"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23FDF2D5'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
+              backgroundRepeat: "no-repeat",
+              backgroundPosition: "right 0.5rem center",
+              backgroundSize: "1em",
+            }}
+          >
+            {SORT_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value} className="bg-navy-900 text-gold-50">
+                {option.label}
+              </option>
+            ))}
+          </select>
         </div>
 
-        {/* Category filter — a real radiogroup rather than clickable divs. */}
-        <div
-          role="radiogroup"
-          aria-label="Filter by category"
-          className="flex flex-wrap gap-2"
-        >
-          {[{ slug: "all", label: "All articles" }, ...categories].map(
-            (item) => {
-              const isActive = category === item.slug;
-              return (
-                <button
-                  key={item.slug}
-                  type="button"
-                  role="radio"
-                  aria-checked={isActive}
-                  onClick={() => setCategory(item.slug)}
-                  className={`rounded-full border px-4 py-1.5 text-xs font-medium transition duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-300/60 ${
-                    isActive
-                      ? "border-gold-400/40 bg-gold-DEFAULT/10 text-gold-200"
-                      : "border-gold-300/12 bg-navy-900/40 text-gold-200/55 hover:border-gold-300/30 hover:text-gold-100"
-                  }`}
-                >
-                  {item.label}
-                </button>
-              );
-            },
-          )}
+        {/* Filter by */}
+        <div className="flex-1 max-w-[240px]">
+          <label htmlFor="blog-filter" className="block text-sm text-gold-200/70 mb-1 font-serif">
+            Filter by
+          </label>
+          <select
+            id="blog-filter"
+            value={category}
+            onChange={(event) => setCategory(event.target.value)}
+            className="w-full bg-transparent border-b border-gold-300/30 py-2 text-base text-gold-50 outline-none focus:border-gold-300 transition-colors cursor-pointer appearance-none"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23FDF2D5'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
+              backgroundRepeat: "no-repeat",
+              backgroundPosition: "right 0.5rem center",
+              backgroundSize: "1em",
+            }}
+          >
+            {[{ slug: "all", label: "All" }, ...categories].map((item) => (
+              <option key={item.slug} value={item.slug} className="bg-navy-900 text-gold-50">
+                {item.label}
+              </option>
+            ))}
+          </select>
         </div>
-
-        <p className="text-xs text-gold-200/40" aria-live="polite">
-          {isFiltering
-            ? "Loading articles…"
-            : `${total} ${total === 1 ? "article" : "articles"}`}
-        </p>
       </div>
+
+      <p className="text-xs text-gold-200/40" aria-live="polite">
+        {isFiltering
+          ? "Loading articles…"
+          : `${total} ${total === 1 ? "article" : "articles"}`}
+      </p>
 
       {/* ── Results ───────────────────────────────────────────────────── */}
       {error && (
@@ -280,10 +254,7 @@ export default function BlogListClient({
 
       {isFiltering ? (
         <div className="flex items-center justify-center py-20">
-          <Loader2
-            className="h-6 w-6 animate-spin text-gold-DEFAULT"
-            aria-hidden="true"
-          />
+          <ThinSpinner size="md" />
           <span className="sr-only">Loading articles</span>
         </div>
       ) : posts.length === 0 ? (
@@ -309,9 +280,9 @@ export default function BlogListClient({
         />
       ) : (
         <>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {posts.map((post, index) => (
-              <BlogCard key={post.id} post={post} priority={index < 3} />
+              <BlogCard key={post.id} post={post} priority={index < 4} />
             ))}
           </div>
 

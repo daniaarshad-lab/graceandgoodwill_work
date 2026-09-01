@@ -63,7 +63,7 @@ export default async function BlogIndexPage({
     : response;
 
   return (
-    <main className="relative min-h-[calc(100vh-80px)] overflow-hidden bg-navy-950 py-16 text-gold-100/90 sm:py-20">
+    <main className="relative min-h-[calc(100vh-80px)] overflow-hidden bg-navy-950 pb-16 sm:pb-20">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute left-1/4 top-10 h-[450px] w-[600px] rounded-full bg-gold-500/5 blur-[130px]"
@@ -73,8 +73,9 @@ export default async function BlogIndexPage({
         className="pointer-events-none absolute bottom-10 right-1/4 h-[450px] w-[600px] rounded-full bg-navy-800/30 blur-[130px]"
       />
 
-      <div className="container-wrapper relative">
-        <BlogHero />
+      <BlogHero />
+
+      <div className="container-wrapper relative mt-12">
         {featured && <FeaturedPostCard post={featured} />}
         <BlogListClient
           initialResponse={gridResponse}

@@ -19,6 +19,7 @@ import {
   fetchClientCareRequestApplications,
 } from "@/store/slices/clientSlice";
 import PlacementDetailModal from "./PlacementDetailModal";
+import ThinSpinner from "@/components/ThinSpinner";
 
 interface RequestTrackingProps {
   placements: ClientPlacement[];
@@ -113,29 +114,8 @@ export default function RequestTracking({
 
       {/* States */}
       {loading ? (
-        <div className="space-y-6">
-          {[1, 2].map((i) => (
-            <div
-              key={i}
-              className="rounded-2xl border border-gold-300/10 bg-navy-900/40 p-6 space-y-6 animate-pulse"
-            >
-              <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b border-gold-300/5 pb-4">
-                <div className="space-y-2">
-                  <div className="h-3 w-32 bg-gold-300/10 rounded" />
-                  <div className="h-6 w-48 bg-gold-300/10 rounded" />
-                </div>
-                <div className="h-8 w-24 bg-gold-300/10 rounded-full" />
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 rounded-xl bg-navy-950/40 border border-gold-300/5">
-                {[1, 2, 3, 4].map((index) => (
-                  <div key={index} className="space-y-2">
-                    <div className="h-2 w-16 bg-gold-300/5 rounded" />
-                    <div className="h-4 w-24 bg-gold-300/10 rounded" />
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
+        <div className="py-20 flex items-center justify-center">
+          <ThinSpinner size="xl" text="Loading placement progress..." />
         </div>
       ) : error ? (
         <div className="flex flex-col items-center justify-center text-center p-8 rounded-2xl border border-rose-500/20 bg-rose-950/10 max-w-md mx-auto space-y-4">

@@ -22,6 +22,7 @@ import { adminService } from "@/services/admin/admin.service";
 import { showSuccessToast } from "@/utils/toast";
 import InternalNotes from "../../components/shared/InternalNotes/InternalNotes";
 import UserAuditLogs from "../../components/shared/UserAuditLogs";
+import ThinSpinner from "@/components/ThinSpinner";
 
 // Define strict types for client detail view
 interface ClientDetail {
@@ -54,12 +55,7 @@ export default function ClientDetailsPage() {
   return (
     <Suspense
       fallback={
-        <main className="min-h-screen bg-navy-950 py-10 text-gold-100 flex flex-col items-center justify-center space-y-4">
-          <div className="w-12 h-12 border-4 border-gold border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm text-gold-100/60 font-semibold">
-            Loading client records...
-          </p>
-        </main>
+        <ThinSpinner fullScreen size="xl" text="Loading client records..." />
       }
     >
       <ClientDetailsContent />
@@ -353,12 +349,7 @@ function ClientDetailsContent() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-navy-950 py-12 text-gold-100 flex flex-col items-center justify-center space-y-4">
-        <div className="w-12 h-12 border-4 border-gold border-t-transparent rounded-full animate-spin" />
-        <p className="text-sm text-gold-100/60 font-semibold animate-pulse">
-          Fetching client records...
-        </p>
-      </main>
+      <ThinSpinner fullScreen size="xl" text="Fetching client records..." />
     );
   }
 
@@ -539,7 +530,7 @@ function ClientDetailsContent() {
                     className="w-full mt-4 px-4 py-2.5 text-xs font-bold text-navy-950 bg-gold hover:bg-gold-200 disabled:opacity-40 rounded-xl transition duration-300 flex items-center justify-center gap-1.5 cursor-pointer disabled:cursor-not-allowed"
                   >
                     {approvingClient ? (
-                      <div className="w-3.5 h-3.5 border-2 border-navy-950 border-t-transparent rounded-full animate-spin" />
+                      <ThinSpinner size="xs" spinnerClassName="border-navy-950 shrink-0" className="inline-flex flex-row space-y-0" />
                     ) : (
                       <CheckCircle className="h-4 w-4" />
                     )}
@@ -638,7 +629,7 @@ function ClientDetailsContent() {
                       className="px-4 py-2 text-xs font-bold text-navy-950 bg-gold hover:bg-gold-200 disabled:opacity-40 rounded-xl transition duration-300 flex items-center justify-center whitespace-nowrap cursor-pointer"
                     >
                       {savingFee ? (
-                        <div className="w-3.5 h-3.5 border-2 border-navy-950 border-t-transparent rounded-full animate-spin" />
+                        <ThinSpinner size="xs" spinnerClassName="border-navy-950 shrink-0" className="inline-flex flex-row space-y-0" />
                       ) : (
                         "Save"
                       )}
@@ -682,7 +673,7 @@ function ClientDetailsContent() {
                       className="px-4 py-2 text-xs font-bold text-navy-950 bg-gold hover:bg-gold-200 disabled:opacity-40 rounded-xl transition duration-300 flex items-center justify-center whitespace-nowrap cursor-pointer"
                     >
                       {savingCarerPay ? (
-                        <div className="w-3.5 h-3.5 border-2 border-navy-950 border-t-transparent rounded-full animate-spin" />
+                        <ThinSpinner size="xs" spinnerClassName="border-navy-950 shrink-0" className="inline-flex flex-row space-y-0" />
                       ) : (
                         "Save"
                       )}

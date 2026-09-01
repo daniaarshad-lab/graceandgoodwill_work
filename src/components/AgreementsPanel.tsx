@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -11,6 +11,7 @@ import {
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchClientProfile } from "@/store/slices/clientSlice";
 import { clientService } from "@/services/client/client.service";
+import ThinSpinner from "@/components/ThinSpinner";
 
 export default function AgreementsPage() {
   const { user, refreshUser } = useAuth();
@@ -221,13 +222,8 @@ export default function AgreementsPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-20 text-gold-100">
-        <div className="flex flex-col items-center space-y-4">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-gold-DEFAULT"></div>
-          <p className="text-sm tracking-wider text-gold-200">
-            Loading agreements...
-          </p>
-        </div>
+      <div className="flex items-center justify-center py-20">
+        <ThinSpinner size="xl" text="Loading agreements..." />
       </div>
     );
   }
@@ -284,26 +280,8 @@ export default function AgreementsPage() {
               !profile?.isLifetimeFeePaid ? (
                 paymentStatus === "success" ? (
                   <div className="bg-navy-900/60 border border-navy-800 rounded-2xl p-12 text-center max-w-2xl mx-auto shadow-soft space-y-6">
-                    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gold-DEFAULT/10 border border-gold-DEFAULT/30 text-[#d4af37] animate-pulse">
-                      <svg
-                        className="animate-spin h-8 w-8 text-gold-DEFAULT"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        />
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        />
-                      </svg>
+                    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gold-DEFAULT/10 border border-gold-DEFAULT/30 text-[#d4af37]">
+                      <ThinSpinner size="md" />
                     </div>
                     <h3 className="text-2xl font-serif font-bold text-white">
                       Direct Debit Payment Authorizing...
@@ -374,28 +352,10 @@ export default function AgreementsPage() {
                       className="px-8 py-3.5 bg-[#b59469] hover:bg-[#a08054] text-navy-950 rounded-xl font-bold transition-all shadow-[0_8px_30px_rgba(160,128,84,0.24)] flex items-center justify-center mx-auto min-w-[240px] disabled:opacity-50"
                     >
                       {payingFee ? (
-                        <>
-                          <svg
-                            className="animate-spin -ml-1 mr-3 h-5 w-5 text-navy-950"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                          >
-                            <circle
-                              className="opacity-25"
-                              cx="12"
-                              cy="12"
-                              r="10"
-                              stroke="currentColor"
-                              strokeWidth="4"
-                            />
-                            <path
-                              className="opacity-75"
-                              fill="currentColor"
-                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                            />
-                          </svg>
+                        <span className="flex items-center justify-center gap-2">
+                          <span className="w-4 h-4 border-2 border-navy-950 border-t-transparent animate-spin rounded-full"></span>
                           Redirecting to Checkout...
-                        </>
+                        </span>
                       ) : (
                         "Pay Fee & Activate Matching"
                       )}
@@ -528,13 +488,10 @@ export default function AgreementsPage() {
                         <button type="submit" disabled={isSubmitting || !agreedToTerms}
                           className="w-full bg-[#b59469] hover:bg-[#a08054] text-navy-950 font-bold py-3 px-6 rounded-lg transition-all shadow-[0_8px_30px_rgba(160,128,84,0.24)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center">
                           {isSubmitting ? (
-                            <>
-                              <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-navy-950" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth={4} />
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                              </svg>
+                            <span className="flex items-center justify-center gap-2">
+                              <span className="w-4 h-4 border-2 border-navy-950 border-t-transparent animate-spin rounded-full"></span>
                               Processing...
-                            </>
+                            </span>
                           ) : ("Accept & Continue")}
                         </button>
                       </form>

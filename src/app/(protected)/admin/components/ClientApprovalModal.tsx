@@ -2,6 +2,7 @@
 
 import { AlertTriangle, CheckCircle, X } from "lucide-react";
 import { useEffect } from "react";
+import ThinSpinner from "@/components/ThinSpinner";
 
 interface ClientApprovalModalProps {
   client: any; // We can use any or the specific client type here
@@ -93,7 +94,7 @@ export default function ClientApprovalModal({
           >
             {isApproving ? (
               <>
-                <div className="w-3.5 h-3.5 border-2 border-navy-950 border-t-transparent rounded-full animate-spin" />
+                <ThinSpinner size="xs" spinnerClassName="border-navy-950 shrink-0" className="inline-flex flex-row space-y-0" />
                 Approving...
               </>
             ) : (

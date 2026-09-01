@@ -1,35 +1,50 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useTransition } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAdminPortal, AdminTabType } from "./hooks/useAdminPortal";
-
 import dynamic from "next/dynamic";
+import { Suspense } from "react";
+import ThinSpinner from "@/components/ThinSpinner";
+
+const AdminTabLoadingFallback = () => (
+  <div className="flex flex-col items-center justify-center py-20 min-h-[300px]">
+    <ThinSpinner size="lg" text="Loading..." />
+  </div>
+);
 
 const AdminOverview = dynamic(() => import("./components/AdminOverview"), {
   ssr: false,
+  loading: () => <AdminTabLoadingFallback />,
 });
 const CarerApplications = dynamic(
   () => import("./components/CarerApplications"),
-  { ssr: false },
+  { ssr: false, loading: () => <AdminTabLoadingFallback /> },
 );
 const ClientRequests = dynamic(() => import("./components/ClientRequests"), {
   ssr: false,
+  loading: () => <AdminTabLoadingFallback />,
 });
 const ClientRegistry = dynamic(() => import("./components/ClientRegistry"), {
   ssr: false,
+  loading: () => <AdminTabLoadingFallback />,
 });
 
 const PlacementTracking = dynamic(
   () => import("./components/PlacementTracking"),
-  { ssr: false },
+  { ssr: false, loading: () => <AdminTabLoadingFallback /> },
 );
 const EmergencyCases = dynamic(() => import("./components/EmergencyCases"), {
   ssr: false,
+  loading: () => <AdminTabLoadingFallback />,
 });
 const AdminEmergencyCareRequests = dynamic(
   () => import("./components/AdminEmergencyCareRequests"),
-  { ssr: false },
+  { ssr: false, loading: () => <AdminTabLoadingFallback /> },
+);
+const EmergencyCareRequestsList = dynamic(
+  () => import("./components/EmergencyCareRequestsList"),
+  { ssr: false, loading: () => <AdminTabLoadingFallback /> },
 );
 const ApprovalModal = dynamic(() => import("./components/ApprovalModal"), {
   ssr: false,
@@ -40,33 +55,25 @@ const MatchAssignmentModal = dynamic(
 );
 const BillingManagement = dynamic(
   () => import("./components/BillingManagement"),
-  { ssr: false },
+  { ssr: false, loading: () => <AdminTabLoadingFallback /> },
 );
 const SupportEnquiryManagement = dynamic(
   () => import("./components/SupportEnquiryManagement"),
-  { ssr: false },
+  { ssr: false, loading: () => <AdminTabLoadingFallback /> },
 );
 const ProfileUpdateRequests = dynamic(
   () => import("./components/ProfileUpdateRequests"),
-  { ssr: false },
+  { ssr: false, loading: () => <AdminTabLoadingFallback /> },
 );
 const BlogPostsTab = dynamic(() => import("./components/blog/BlogPostsTab"), {
   ssr: false,
 });
 
-import { Suspense } from "react";
-import EmergencyCareRequestsList from "./components/EmergencyCareRequestsList";
-
 export default function AdminDashboard() {
   return (
     <Suspense
       fallback={
-        <main className="min-h-screen bg-navy-950 py-10 text-gold-100 flex flex-col items-center justify-center space-y-4">
-          <div className="w-12 h-12 border-4 border-gold border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm text-gold-100/60 font-semibold">
-            Loading admin console...
-          </p>
-        </main>
+        <ThinSpinner fullScreen size="xl" text="Loading..." />
       }
     >
       <AdminDashboardContent />
@@ -77,6 +84,13 @@ export default function AdminDashboard() {
 function AdminDashboardContent() {
   const { user } = useAuth();
   const portal = useAdminPortal();
+  const [isTabPending, startTabTransition] = useTransition();
+
+  const handleTabChange = (tab: AdminTabType) => {
+    startTabTransition(() => {
+      portal.setActiveTab(tab);
+    });
+  };
 
   const scrollRef = useRef<HTMLElement>(null);
 
@@ -164,8 +178,8 @@ function AdminDashboardContent() {
               return (
                 <button
                   key={tab}
-                  onClick={() => portal.setActiveTab(tab)}
-                  className={`px-3 sm:px-5 py-3 min-h-[44px] text-xs sm:text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap flex-shrink-0 ${isActive
+                  onClick={() => handleTabChange(tab)}
+                  className={`px-3 sm:px-5 py-3 min-h-[44px] text-xs sm:text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap flex-shrink-0 cursor-pointer ${isActive
                       ? "border-b-2 border-gold-DEFAULT text-gold-DEFAULT bg-gold-DEFAULT/5"
                       : "text-gold-200/60 hover:text-gold-50"
                     }`}
@@ -194,12 +208,9 @@ function AdminDashboardContent() {
 
         {/* --- MAIN OPERATIONAL CONSOLES --- */}
         <div className="flex-1 min-h-0 overflow-y-auto transition-all duration-300">
-          {portal.loading ? (
-            <div className="flex flex-col items-center justify-center p-20 space-y-4">
-              <div className="w-12 h-12 border-4 border-gold border-t-transparent rounded-full animate-spin" />
-              <p className="text-sm text-gold-100/60 font-semibold">
-                Loading dashboard data...
-              </p>
+          {portal.loading || isTabPending ? (
+            <div className="flex flex-col items-center justify-center p-20 min-h-[300px]">
+              <ThinSpinner size="xl" text="Loading..." />
             </div>
           ) : portal.error ? (
             <div className="rounded-2xl border border-red-500/20 bg-red-950/10 p-8 text-center text-red-400 max-w-xl mx-auto space-y-4">
@@ -220,7 +231,7 @@ function AdminDashboardContent() {
                 <AdminOverview
                   stats={portal.stats}
                   activities={portal.activities}
-                  setActiveTab={portal.setActiveTab}
+                  setActiveTab={handleTabChange}
                   isLiveActive={portal.isLiveActive}
                   setIsLiveActive={portal.setIsLiveActive}
                 />
@@ -256,7 +267,7 @@ function AdminDashboardContent() {
                   onLimitChange={portal.setClientsLimit}
                   loading={portal.clientsPagination.loading}
                   error={portal.clientsPagination.error}
-                  setActiveTab={portal.setActiveTab}
+                  setActiveTab={handleTabChange}
                 />
               )}
 
@@ -264,7 +275,7 @@ function AdminDashboardContent() {
               {portal.activeTab === "requests" && (
                 <ClientRequests
                   requests={portal.requests}
-                  setActiveTab={portal.setActiveTab}
+                  setActiveTab={handleTabChange}
                   page={portal.requestsPagination.page}
                   totalPages={portal.requestsPagination.totalPages}
                   totalItems={portal.requestsPagination.totalItems}

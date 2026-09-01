@@ -5,11 +5,11 @@ import {
   FileText,
   Trash2,
   Eye,
-  Loader2,
   ArrowLeft,
   ArrowRight,
 } from "lucide-react";
 import Button from "@/components/Button";
+import ThinSpinner from "@/components/ThinSpinner";
 
 interface ComplianceVaultProps {
   complianceDocs: ComplianceDoc[];
@@ -88,11 +88,8 @@ export default function ComplianceVault({
 
           <div className="flex-1 overflow-y-auto pr-1 custom-scrollbar">
             {documentsLoading ? (
-              <div className="text-center py-12 space-y-3">
-                <Loader2 className="w-8 h-8 text-gold-DEFAULT animate-spin mx-auto" />
-                <p className="text-xs text-gold-100/50">
-                  Loading compliance documents...
-                </p>
+              <div className="text-center py-12">
+                <ThinSpinner size="md" text="Loading compliance documents..." />
               </div>
             ) : complianceDocs.length === 0 ? (
               <div className="text-center py-12 space-y-2">
@@ -189,7 +186,7 @@ export default function ComplianceVault({
                           disabled={isDeleting}
                         >
                           {isDeleting ? (
-                            <Loader2 className="w-4 h-4 animate-spin" />
+                            <ThinSpinner size="xs" spinnerClassName="border-red-400 shrink-0" className="inline-flex flex-row space-y-0" />
                           ) : (
                             <Trash2 className="w-4 h-4" />
                           )}

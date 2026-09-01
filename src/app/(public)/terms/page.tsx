@@ -3,9 +3,12 @@ import { Metadata } from "next";
 import { WEBSITE_TERMS_TEXT } from "@/lib/legal-documents";
 import LegalDocumentPageClient from "@/components/LegalDocumentPageClient";
 
-export const metadata: Metadata = {
-  title: "Website & Platform Terms and Conditions | Grace & Goodwill Ltd",
-  description: "Official Website and Platform Terms and Conditions governing access and account registration for Clients and Care Workers.",
+export const metadata = {
+  alternates: {
+    canonical: "/terms",
+  },
+  title: "Terms & Conditions | Grace & Goodwill",
+  description: "Read Grace & Goodwill's terms and conditions to understand the rules, responsibilities, and conditions that apply when using our website and services.",
 };
 
 export default function WebsiteTermsPage() {

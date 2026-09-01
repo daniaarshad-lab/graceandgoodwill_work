@@ -1,9 +1,8 @@
-﻿"use client";
+"use client";
 
 import { useRouter } from "next/navigation";
 import { useAppSelector } from "@/store/hooks";
-import { useRef, useEffect, useTransition } from "react";
-import { Loader2 } from "lucide-react";
+import { useRef, useEffect } from "react";
 
 export type TabType =
   | "request"
@@ -30,7 +29,6 @@ export default function PortalTabs({
   const router = useRouter();
   const profile = useAppSelector((state) => state.client.profile);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -104,7 +102,7 @@ export default function PortalTabs({
     },
     {
       id: "interest-list" as TabType,
-      label: "Interest List â¤ï¸",
+      label: "Interest List ❤️",
       href: "/client?tab=interest-list",
     },
     {
@@ -136,47 +134,33 @@ export default function PortalTabs({
   ];
 
   const handleTabClick = (tabId: TabType, href: string) => {
-    startTransition(() => {
-      if (setActiveTab) {
-        setActiveTab(tabId);
-      }
-      router.push(href);
-    });
+    if (setActiveTab) {
+      setActiveTab(tabId);
+    }
+    router.push(href);
   };
 
   return (
-    <>
-      {isPending && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-navy-950/40 backdrop-blur-[2px]">
-          <div className="bg-navy-900/90 p-4 rounded-2xl border border-navy-800 shadow-2xl flex flex-col items-center space-y-3">
-            <Loader2 className="h-8 w-8 animate-spin text-gold-DEFAULT" />
-            <p className="text-xs font-medium text-gold-200 tracking-wider uppercase">
-              Loading...
-            </p>
-          </div>
-        </div>
-      )}
-      <div
-        ref={scrollRef}
-        className="flex flex-nowrap items-center border-b border-gold-300/10 pb-1 overflow-x-auto gap-1 client-tabs-nav"
-        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-      >
-        <style>{`.client-tabs-nav::-webkit-scrollbar { display: none; }`}</style>
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => handleTabClick(tab.id as TabType, tab.href)}
-            className={`px-3 sm:px-5 py-3 min-h-[44px] text-xs sm:text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap flex-shrink-0 ${
-              activeTab === tab.id
-                ? "border-b-2 border-gold-DEFAULT text-gold-DEFAULT bg-gold-DEFAULT/5"
-                : "text-gold-200/60 hover:text-gold-50"
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-    </>
+    <div
+      ref={scrollRef}
+      className="flex flex-nowrap items-center border-b border-gold-300/10 pb-1 overflow-x-auto gap-1 client-tabs-nav"
+      style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+    >
+      <style>{`.client-tabs-nav::-webkit-scrollbar { display: none; }`}</style>
+      {tabs.map((tab) => (
+        <button
+          key={tab.id}
+          onClick={() => handleTabClick(tab.id as TabType, tab.href)}
+          className={`px-3 sm:px-5 py-3 min-h-[44px] text-xs sm:text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap flex-shrink-0 ${
+            activeTab === tab.id
+              ? "border-b-2 border-gold-DEFAULT text-gold-DEFAULT bg-gold-DEFAULT/5"
+              : "text-gold-200/60 hover:text-gold-50"
+          }`}
+        >
+          {tab.label}
+        </button>
+      ))}
+    </div>
   );
 }
 

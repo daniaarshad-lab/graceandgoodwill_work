@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { EmergencyCareRequest } from "@/types/admin.types";
 import Pagination from "./shared/Pagination";
+import ThinSpinner from "@/components/ThinSpinner";
 
 interface AdminEmergencyCareRequestsProps {
   requests: EmergencyCareRequest[];
@@ -60,7 +61,7 @@ export default function AdminEmergencyCareRequests({
         </div>
       ) : loading && requests.length === 0 ? (
         <div className="flex justify-center p-12">
-          <div className="w-8 h-8 border-2 border-gold-DEFAULT border-t-transparent rounded-full animate-spin" />
+          <ThinSpinner size="md" text="Loading emergency requests..." />
         </div>
       ) : requests.length === 0 ? (
         <div className="rounded-2xl border border-gold-300/10 bg-navy-950/20 p-12 text-center">

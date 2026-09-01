@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -12,6 +12,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchClientProfile } from "@/store/slices/clientSlice";
 import { clientService } from "@/services/client/client.service";
 import Button from "@/components/Button";
+import ThinSpinner from "@/components/ThinSpinner";
 
 interface LegalAgreementsFeatureProps {
   isOnboardingMode?: boolean;
@@ -259,12 +260,7 @@ export default function LegalAgreementsFeature({
       <div
         className={`${isOnboardingMode ? "min-h-[400px]" : "min-h-screen"} flex items-center justify-center bg-navy-950 text-gold-100 rounded-2xl`}
       >
-        <div className="flex flex-col items-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold-DEFAULT"></div>
-          <p className="text-sm tracking-wider text-gold-200">
-            Loading agreements...
-          </p>
-        </div>
+        <ThinSpinner size="xl" text="Loading agreements..." />
       </div>
     );
   }
@@ -469,28 +465,10 @@ export default function LegalAgreementsFeature({
                       className="mx-auto min-w-[280px] shadow-[0_0_20px_rgba(181,148,105,0.3)] hover:shadow-[0_0_25px_rgba(181,148,105,0.5)] disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {payingFee ? (
-                        <>
-                          <svg
-                            className="animate-spin -ml-1 mr-3 h-5 w-5 text-navy-950"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                          >
-                            <circle
-                              className="opacity-25"
-                              cx="12"
-                              cy="12"
-                              r="10"
-                              stroke="currentColor"
-                              strokeWidth="4"
-                            />
-                            <path
-                              className="opacity-75"
-                              fill="currentColor"
-                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                            />
-                          </svg>
+                        <span className="flex items-center justify-center gap-2">
+                          <span className="w-4 h-4 border-2 border-navy-950 border-t-transparent animate-spin rounded-full"></span>
                           Redirecting to GoCardless...
-                        </>
+                        </span>
                       ) : (
                         "Pay £358.80 & Start Matching Immediately"
                       )}
@@ -714,13 +692,10 @@ export default function LegalAgreementsFeature({
                             className="w-full"
                           >
                             {isSubmitting ? (
-                              <>
-                                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-navy-950" fill="none" viewBox="0 0 24 24">
-                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth={4} />
-                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                                </svg>
+                              <span className="flex items-center justify-center gap-2">
+                                <span className="w-4 h-4 border-2 border-navy-950 border-t-transparent animate-spin rounded-full"></span>
                                 Processing...
-                              </>
+                              </span>
                             ) : (
                               "Accept & Continue"
                             )}

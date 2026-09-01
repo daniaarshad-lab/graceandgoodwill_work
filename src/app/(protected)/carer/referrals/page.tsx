@@ -20,6 +20,7 @@ import PortalTabs from "../components/PortalTabs";
 import ReferralFormCarer from "@/components/referrals/ReferralFormCarer";
 import ReferralFormClient from "@/components/referrals/ReferralFormClient";
 import ReferralDashboard from "@/components/referrals/ReferralDashboard";
+import ThinSpinner from "@/components/ThinSpinner";
 
 function CarerReferralsContent() {
   const { user } = useAuth();
@@ -260,14 +261,7 @@ export default function CarerReferralsPage() {
   return (
     <Suspense
       fallback={
-        <main className="min-h-screen bg-navy-950 py-10 text-gold-100 flex items-center justify-center">
-          <div className="flex flex-col items-center space-y-4">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold-DEFAULT"></div>
-            <p className="text-sm tracking-wider text-gold-200">
-              Loading Referral Portal...
-            </p>
-          </div>
-        </main>
+        <ThinSpinner fullScreen size="xl" text="Loading Referral Portal..." />
       }
     >
       <CarerReferralsContent />

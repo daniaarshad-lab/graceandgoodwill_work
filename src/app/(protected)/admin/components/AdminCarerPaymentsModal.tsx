@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { X, CheckCircle, Upload, Calendar, DollarSign } from "lucide-react";
 import { adminService } from "../../../../services/admin/admin.service";
 import { storageService } from "@/services/storage.service";
+import ThinSpinner from "@/components/ThinSpinner";
 
 interface Payment {
   id: string;
@@ -107,7 +108,7 @@ export const AdminCarerPaymentsModal: React.FC<
 
           {loading ? (
             <div className="flex justify-center items-center py-12">
-              <div className="w-8 h-8 border-2 border-gold-DEFAULT border-t-transparent rounded-full animate-spin"></div>
+              <ThinSpinner size="md" text="Loading payment records..." />
             </div>
           ) : payments.length === 0 ? (
             <div className="text-center py-12 text-gold-200/50">
@@ -179,7 +180,7 @@ export const AdminCarerPaymentsModal: React.FC<
                         >
                           {processingId === payment.id ? (
                             <>
-                              <div className="w-4 h-4 border-2 border-navy-950 border-t-transparent rounded-full animate-spin"></div>{" "}
+                              <ThinSpinner size="xs" spinnerClassName="border-navy-950 shrink-0" className="inline-flex flex-row space-y-0" />
                               Processing
                             </>
                           ) : (

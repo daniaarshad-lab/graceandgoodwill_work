@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Placement } from "../types/admin.types";
 import { adminService } from "@/services/admin/admin.service";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
+import ThinSpinner from "@/components/ThinSpinner";
 
 interface Invoice {
   id: string;
@@ -305,11 +306,8 @@ export default function BillingManagement({
 
   if (loadingInvoices) {
     return (
-      <div className="flex flex-col items-center justify-center p-20 space-y-4">
-        <div className="w-12 h-12 border-4 border-gold border-t-transparent rounded-full animate-spin" />
-        <p className="text-sm text-gold-100/60 font-semibold">
-          Loading billing configuration data...
-        </p>
+      <div className="flex flex-col items-center justify-center p-20">
+        <ThinSpinner size="xl" text="Loading billing configuration data..." />
       </div>
     );
   }

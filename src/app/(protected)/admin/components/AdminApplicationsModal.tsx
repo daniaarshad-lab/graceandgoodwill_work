@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { adminService } from "@/services/admin/admin.service";
-import { User, Loader2, AlertCircle, X } from "lucide-react";
+import { User, AlertCircle, X } from "lucide-react";
+import ThinSpinner from "@/components/ThinSpinner";
 import Button from "@/components/Button";
 import { useRouter } from "next/navigation";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
@@ -108,8 +109,7 @@ export default function AdminApplicationsModal({
         <div className="flex-1 overflow-y-auto min-h-0 space-y-4 pr-1">
           {loading ? (
             <div className="flex flex-col items-center justify-center py-10">
-              <Loader2 className="w-8 h-8 text-gold animate-spin" />
-              <p className="text-xs text-gold-100/50 mt-2">Loading...</p>
+              <ThinSpinner size="md" text="Loading applications..." />
             </div>
           ) : error ? (
             <div className="flex items-center justify-center p-6 text-red-400 bg-red-500/10 rounded-xl border border-red-500/20">

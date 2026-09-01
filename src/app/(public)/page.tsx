@@ -2,6 +2,8 @@ import { Newspaper, ExternalLink, HandHeart, ChevronRight, CheckCircle2, Calenda
 import happySeniorCouple from "@/assets/open/happy_senior_couple.png";
 import bbcImage2 from "@/assets/open/bbc-image2.jpg";
 import bbcImage3 from "@/assets/open/bbc-image3.jpg";
+import publicImg2 from "@/assets/open/public-img2.jpeg";
+import publicImg3 from "@/assets/open/public-img3.jpeg";
 import Button from "@/components/Button";
 import dynamic from "next/dynamic";
 import Link from "next/link";
@@ -11,8 +13,11 @@ import { faqs } from "@/data/faqData";
 import FAQAccordion from "@/components/FAQAccordion";
 
 export const metadata = {
-  title: "Find a Live-in Carer Across the UK | Grace & Goodwill",
-  description: "Find live-in carers across the UK with Grace & Goodwill. Browse profiles, videos, experience and availability, with matching support for urgent, respite and longer-term live-in care.",
+  alternates: {
+    canonical: "/",
+  },
+  title: "Independent Live-In Care Agency UK | Grace & Goodwill",
+  description: "Find trusted independent live-in carers across the UK with Grace & Goodwill. Get personalised support and find the right live-in carer for your care needs.",
 };
 
 const homepageFaqQuestions = [
@@ -36,7 +41,7 @@ export default function HomePage() {
 
   return (
     <main className="overflow-x-hidden min-h-[calc(100vh-80px)] bg-navy-950 pt-6 md:pt-10 lg:pt-20 pb-16 md:pb-24 text-gold-100">
-      <section className="container-wrapper relative flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between pb-16">
+      <section className="container-wrapper relative flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-center lg:gap-12 xl:gap-24 pb-16">
         {/* As Seen In Media Badge (Top Right) */}
         <a
           href="https://www.bbc.co.uk/programmes/p0m85mv7"
@@ -66,7 +71,7 @@ export default function HomePage() {
           </div>
         </a>
 
-        <div className="max-w-4xl lg:flex-1 xl:flex-none space-y-6 -mt-4 lg:mt-0">
+        <div className="max-w-2xl lg:max-w-xl xl:max-w-2xl lg:flex-1 xl:flex-none space-y-6 -mt-4 lg:mt-0 z-10 relative">
           <h1 className="main-page-heading drop-shadow-md">
             Live-in Care Matching
             <span className="main-page-heading pl-3 text-[#F5D4A0]">
@@ -147,17 +152,17 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="relative flex items-center justify-center mt-0 sm:mt-8 lg:mt-0 w-full lg:flex-1 xl:flex-none lg:max-w-xl h-[380px] sm:h-[450px] overflow-visible">
+        <div className="relative flex items-center justify-center mt-0 sm:mt-8 lg:mt-0 w-full lg:flex-1 xl:flex-none lg:max-w-xl h-[380px] sm:h-[450px] overflow-visible lg:-translate-x-4 xl:-translate-x-10">
           {/* Glowing concentric radiating gold rings */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="absolute w-[260px] sm:w-[290px] lg:w-[320px] h-[260px] sm:h-[290px] lg:h-[320px] rounded-full border-2 border-gold-400 animate-ring-pulse-1" />
-            <div className="absolute w-[300px] sm:w-[330px] lg:w-[360px] h-[300px] sm:h-[330px] lg:h-[360px] rounded-full border-2 border-gold-400 animate-ring-pulse-2" />
-            <div className="absolute w-[340px] sm:w-[370px] lg:w-[400px] h-[340px] sm:h-[370px] lg:h-[400px] rounded-full border-2 border-gold-400 animate-ring-pulse-3" />
-            <div className="absolute w-[380px] sm:w-[410px] lg:w-[440px] max-w-[95vw] lg:max-w-none h-[380px] sm:h-[410px] lg:h-[440px] max-h-[95vw] lg:max-h-none rounded-full border-2 border-gold-400 animate-ring-pulse-4" />
+            <div className="absolute shrink-0 w-[260px] sm:w-[290px] lg:w-[320px] h-[260px] sm:h-[290px] lg:h-[320px] rounded-full border-2 border-gold-400 animate-ring-pulse-1" />
+            <div className="absolute shrink-0 w-[300px] sm:w-[330px] lg:w-[360px] h-[300px] sm:h-[330px] lg:h-[360px] rounded-full border-2 border-gold-400 animate-ring-pulse-2" />
+            <div className="absolute shrink-0 w-[340px] sm:w-[370px] lg:w-[400px] h-[340px] sm:h-[370px] lg:h-[400px] rounded-full border-2 border-gold-400 animate-ring-pulse-3" />
+            <div className="absolute shrink-0 w-[380px] sm:w-[410px] lg:w-[440px] max-w-[95vw] lg:max-w-none h-[380px] sm:h-[410px] lg:h-[440px] max-h-[95vw] lg:max-h-none rounded-full border-2 border-gold-400 animate-ring-pulse-4" />
           </div>
 
           {/* Focal Circular Portrait Container */}
-          <div className="relative w-56 h-56 sm:w-64 sm:h-64 lg:w-72 lg:h-72 rounded-full border-4 border-gold-400 bg-navy-950 shadow-elegant overflow-hidden transition-all duration-500 hover:scale-[1.02] animate-image-pulse">
+          <div className="relative shrink-0 w-56 h-56 sm:w-64 sm:h-64 lg:w-72 lg:h-72 rounded-full border-4 border-gold-400 bg-navy-950 shadow-elegant overflow-hidden transition-all duration-500 hover:scale-[1.02] animate-image-pulse">
             <Image
               src={happySeniorCouple}
               alt="Reassured senior couple supported by Grace & Goodwill live in care"
@@ -227,7 +232,7 @@ export default function HomePage() {
         {/* H2: Live-in Care Matching Built Around the Person */}
         <div className="grid lg:grid-cols-2 gap-10 xl:gap-16 items-center">
           <div className="space-y-6">
-            <h2 className="section-heading text-left">Live-in Care Matching Built Around the Person</h2>
+            <h2 className="section-heading text-left">Live-in Care Matching Built Around The Person</h2>
             <p className="page-supporting-text text-left">
               Finding a live-in carer is about more than experience on paper. The person you choose may become part of everyday life in the home, so personality, communication, lifestyle, routines, interests and compatibility can matter just as much as practical experience.
             </p>
@@ -238,7 +243,7 @@ export default function HomePage() {
           <div className="relative group">
             <div className="absolute inset-0 bg-gold-400/5 rounded-[2rem] blur-xl group-hover:bg-gold-400/10 transition-colors duration-500"></div>
             <div className="relative bg-navy-900/60 border border-gold-300/15 p-8 sm:p-10 rounded-[2rem] shadow-elegant backdrop-blur-md space-y-6">
-              <h3 className="text-lg font-semibold text-gold-100">Depending on the profile, you can explore:</h3>
+              <h3 className="text-lg font-semibold text-gold-100">Depending On The Profile, You Can Explore:</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
                 {["Profile photograph", "Introduction video", "Biography", "Care experience", "Skills and training", "Location", "Hobbies and interests", "Languages", "Driving status", "Availability", "Preferred placements", "Other relevant information"].map((item) => (
                   <div key={item} className="flex items-start gap-3">
@@ -255,7 +260,7 @@ export default function HomePage() {
         <div className="relative overflow-hidden rounded-[2.5rem] border border-gold-300/15 bg-navy-900/40 p-8 md:p-12 lg:p-16 shadow-elegant backdrop-blur-sm">
           <div className="absolute top-0 right-0 -mt-16 -mr-16 w-64 h-64 bg-gold-400/10 rounded-full blur-3xl opacity-50"></div>
           <div className="absolute bottom-0 left-0 -mb-16 -ml-16 w-64 h-64 bg-gold-400/10 rounded-full blur-3xl opacity-50"></div>
-          
+
           <div className="relative z-10 max-w-3xl mx-auto text-center space-y-8">
             <h2 className="section-heading">What Is Live-in Care?</h2>
             <p className="page-supporting-text text-lg text-gold-50/90 font-medium">
@@ -264,7 +269,7 @@ export default function HomePage() {
             <p className="page-supporting-text">
               The live-in carer stays in the home for the agreed placement and provides the support agreed directly with the client. Depending on the individual arrangement, this may include help with:
             </p>
-            
+
             <div className="flex flex-wrap justify-center gap-3 pt-2">
               {["Personal care", "Getting dressed", "Meal preparation", "Mobility", "Shopping", "Household tasks", "Attending appointments", "Companionship", "Going out and maintaining social activities", "Everyday routines", "Other agreed practical support"].map((item) => (
                 <span key={item} className="px-5 py-2.5 rounded-full border border-gold-300/20 bg-navy-950/60 text-sm font-medium text-gold-100 shadow-sm transition-colors hover:border-gold-300/40 hover:bg-navy-900/80">
@@ -272,7 +277,7 @@ export default function HomePage() {
                 </span>
               ))}
             </div>
-            
+
             <div className="pt-6 space-y-6">
               <p className="page-supporting-text">
                 For many people, remaining at home means staying close to familiar surroundings, family, neighbours, pets, memories and the routines that make everyday life feel like their own.
@@ -281,15 +286,31 @@ export default function HomePage() {
                 Live-in care may be considered by older adults, people living with dementia, adults with disabilities, people recovering following illness or hospital treatment, people with neurological or physical support needs, and families needing temporary respite or longer-term support.
               </p>
             </div>
-            
+
             <div className="pt-8 flex justify-center">
               <Button asChild variant="outline" size="md" className="group pr-5">
-                <Link href="/live-in-care" className="flex items-center gap-2">
+                <Link href="/what-is-live-in-care" className="flex items-center gap-2">
                   Learn more about live-in care
                   <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Button>
             </div>
+          </div>
+        </div>
+
+        {/* Styled Image Section Below the Box */}
+        <div className="relative max-w-3xl mx-auto mt-16 px-4 py-4 md:px-8 md:py-8">
+          {/* Decorative Offset Wireframe Corners */}
+          <div className="absolute top-0 left-0 w-32 h-32 md:w-48 md:h-48 border-t border-l border-gold-300/40 rounded-tl-[3rem] pointer-events-none"></div>
+          <div className="absolute bottom-0 right-0 w-32 h-32 md:w-48 md:h-48 border-b border-r border-gold-300/40 rounded-br-[3rem] pointer-events-none"></div>
+
+          <div className="relative z-10 rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-gold-300/20 bg-navy-950/40 group">
+            <Image
+              src={publicImg2}
+              alt="Live in care support"
+              className="w-full h-auto transform transition-transform duration-[2s] group-hover:scale-105"
+              placeholder="blur"
+            />
           </div>
         </div>
 
@@ -309,7 +330,7 @@ export default function HomePage() {
               </div>
               <div className="pt-8 mt-auto">
                 <Button asChild variant="outline" size="sm" fullWidth>
-                  <Link href="/live-in-care">Explore Long-Term Live-in Care</Link>
+                  <Link href="/long-term-live-in-care">Explore Long-Term Live-in Care</Link>
                 </Button>
               </div>
             </div>
@@ -399,7 +420,7 @@ export default function HomePage() {
               </div>
               <div className="pt-8 mt-auto flex justify-center">
                 <Button asChild variant="outline" size="sm">
-                  <Link href="/live-in-companionship-care">Explore Companionship Support</Link>
+                  <Link href="/live-in-companionship">Explore Companionship Support</Link>
                 </Button>
               </div>
             </div>
@@ -416,7 +437,7 @@ export default function HomePage() {
                 </div>
                 <h2 className="font-serif font-medium text-gold-50 text-xl lg:text-[22px] xl:text-2xl leading-tight tracking-wide m-0">Need a Live-in Carer Urgently?</h2>
               </div>
-              
+
               <div className="space-y-4">
                 <p className="page-supporting-text">
                   Sometimes care needs change with almost no warning. A person may be medically ready to leave hospital sooner than expected. Someone may have experienced a stroke, serious fall, fracture or sudden change in mobility. A family carer may become unwell or exhausted. An existing carer may leave unexpectedly. A family may suddenly realise that the person they love can no longer safely manage at home without additional support.
@@ -453,19 +474,19 @@ export default function HomePage() {
                 </div>
                 <h2 className="font-serif font-medium text-gold-50 text-xl lg:text-[22px] xl:text-2xl leading-tight tracking-wide m-0">Hospital Discharge and Returning Home</h2>
               </div>
-              
+
               <div className="space-y-4">
                 <p className="page-supporting-text">
                   Being told that Mum, Dad, a partner or another loved one is ready to leave hospital can sometimes happen very quickly.
                 </p>
-                
+
                 <div className="p-6 rounded-2xl border border-gold-300/10 bg-navy-900/20 space-y-3">
                   <p className="text-sm font-serif italic text-gold-200">“My dad is being discharged tomorrow and needs a carer.”</p>
                   <p className="text-sm font-serif italic text-gold-200">“My mum has had a stroke and cannot manage alone at home.”</p>
                   <p className="text-sm font-serif italic text-gold-200">“We need someone to stay with Dad after hospital discharge.”</p>
                   <p className="text-sm font-serif italic text-gold-200">“How do I arrange care at home after a stroke?”</p>
                 </div>
-                
+
                 <p className="page-supporting-text">
                   Grace & Goodwill can help families search available live-in carer profiles for people returning home following hospital treatment. Depending on the individual circumstances and the carer chosen, live-in support may help with everyday routines, mobility, meals, companionship, appointments and other practical needs while the person adjusts to being home again.
                 </p>
@@ -475,37 +496,56 @@ export default function HomePage() {
               </div>
             </div>
             <div className="pt-8 flex flex-col sm:flex-row gap-4">
-              <Button asChild variant="outline" size="md">
+              <Button asChild variant="outline" size="md" className="whitespace-nowrap">
                 <Link href="/hospital-discharge-live-in-care">Live-in Care After Hospital Discharge</Link>
               </Button>
-              <Button asChild variant="outline" size="md">
+              <Button asChild variant="outline" size="md" className="whitespace-nowrap">
                 <Link href="/live-in-care-after-stroke">Live-in Care After a Stroke</Link>
               </Button>
             </div>
           </div>
         </div>
 
-        {/* H2: See Which Live-in Carers Are Available */}
+        {/* H2: Access to Carers' Immediate Availability */}
         <div className="relative overflow-hidden rounded-[2.5rem] border border-gold-300/15 bg-navy-900/40 p-8 md:p-12 lg:p-16 shadow-elegant backdrop-blur-sm max-w-5xl mx-auto">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 -mt-24 w-64 h-64 bg-gold-400/10 rounded-full blur-3xl opacity-50"></div>
-          
-          <div className="relative z-10 max-w-3xl mx-auto text-center space-y-8">
+
+          <div className="relative z-10 max-w-3xl mx-auto text-center space-y-8 pb-10">
             <div className="flex justify-center mb-2">
               <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-gold-400/20 bg-navy-950 shadow-inner">
                 <Calendar className="h-8 w-8 text-gold-300" strokeWidth={1.5} />
               </div>
             </div>
-            <h2 className="section-heading">See Which Live-in Carers Are Available</h2>
+            <h2 className="section-heading">Access to Carers&apos; Immediate Availability</h2>
             <p className="page-supporting-text text-lg text-gold-50/90 font-medium">
-              Availability is especially important when support is needed quickly.
+              Availability is especially important when live-in care is needed quickly.
             </p>
             <div className="space-y-4 pt-4">
               <p className="page-supporting-text">
-                Grace & Goodwill’s platform allows clients to explore available carer profiles and placement availability, helping families focus their search on people who may be available around the required start date.
+                Grace & Goodwill&apos;s platform allows families to explore live-in carer profiles, where carers provide information about their experience, skills, interests and availability.
               </p>
               <p className="page-supporting-text">
-                Clients can use the platform independently or ask the Grace & Goodwill team for support narrowing available profiles based on the information and preferences they provide.
+                Families can explore profiles themselves or ask the Grace & Goodwill team for support with matching based on their individual needs, preferences and required start date.
               </p>
+              <p className="page-supporting-text">
+                Need care urgently? Our team is available 24 hours a day, and our rapid care service can support urgent requests, with a suitable live-in carer able to start within 24 hours, subject to availability and the necessary arrangements.
+              </p>
+            </div>
+          </div>
+
+          {/* Styled Image Section Inside the Box */}
+          <div className="relative max-w-3xl mx-auto mt-4 px-4 py-4 md:px-8 md:py-8">
+            {/* Decorative Offset Wireframe Corners */}
+            <div className="absolute top-0 left-0 w-32 h-32 md:w-48 md:h-48 border-t border-l border-gold-300/40 rounded-tl-[3rem] pointer-events-none"></div>
+            <div className="absolute bottom-0 right-0 w-32 h-32 md:w-48 md:h-48 border-b border-r border-gold-300/40 rounded-br-[3rem] pointer-events-none"></div>
+
+            <div className="relative z-10 rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-gold-300/20 bg-navy-950/40 group">
+              <Image
+                src={publicImg3}
+                alt="Available live in carers"
+                className="w-full h-auto transform transition-transform duration-[2s] group-hover:scale-105"
+                placeholder="blur"
+              />
             </div>
           </div>
         </div>
@@ -515,10 +555,10 @@ export default function HomePage() {
           <div className="text-center max-w-3xl mx-auto">
             <h2 className="section-heading">How Grace & Goodwill Works</h2>
           </div>
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-5 max-w-7xl mx-auto relative">
             <div className="hidden lg:block absolute top-8 left-[10%] right-[10%] h-[2px] bg-gold-400/10 z-0"></div>
-            
+
             {[
               {
                 step: 1,
@@ -564,7 +604,7 @@ export default function HomePage() {
           <div className="text-center max-w-3xl mx-auto">
             <h2 className="section-heading">Why Families Choose Grace & Goodwill</h2>
           </div>
-          
+
           <div className="flex flex-wrap justify-center gap-6 max-w-7xl mx-auto">
             {[
               {
@@ -619,19 +659,6 @@ export default function HomePage() {
               Families often begin looking for care before they know exactly how it will be funded. Depending on personal circumstances, possible routes may include:
             </p>
 
-            {/* Elegant Image 2 inside Cost and Funding */}
-            <div className="relative mx-auto w-full max-w-3xl mb-12">
-              <div className="relative aspect-[21/9] w-full overflow-hidden rounded-[2.5rem] border border-gold-300/10 shadow-elegant bg-navy-900/40">
-                <img
-                  src="/service-img2.jpeg"
-                  alt="Live-in care cost and funding support"
-                  className="absolute inset-0 h-full w-full object-contain p-4 transition-transform duration-700 hover:scale-105"
-                />
-                <div className="pointer-events-none absolute inset-0 rounded-[2.5rem] border border-gold-300/10 mix-blend-overlay" />
-                <div className="pointer-events-none absolute -inset-px rounded-[2.5rem] bg-gradient-to-tr from-gold-300/5 via-transparent to-gold-300/5 opacity-50" />
-              </div>
-            </div>
-            
             <div className="flex flex-col sm:flex-row gap-6 sm:gap-12 text-[15px] text-gold-100/90 text-left max-w-4xl mx-auto mb-10 bg-navy-950/50 p-8 md:p-10 rounded-3xl border border-gold-300/10 shadow-inner">
               <div className="flex-1 space-y-5">
                 <div className="flex items-start gap-3"><CheckCircle2 className="w-5 h-5 text-gold-400 shrink-0 mt-0.5" /> <span>Self-funding</span></div>
@@ -646,11 +673,11 @@ export default function HomePage() {
                 <div className="flex items-start gap-3"><CheckCircle2 className="w-5 h-5 text-gold-400 shrink-0 mt-0.5" /> <span>Independent financial planning for longer-term care</span></div>
               </div>
             </div>
-            
+
             <p className="page-supporting-text text-sm opacity-80 max-w-3xl mx-auto mb-10">
               Grace & Goodwill can provide general information and signposting, but eligibility for public funding is determined by the relevant authority or healthcare body.
             </p>
-            
+
             <div className="flex flex-wrap justify-center gap-4 mt-12 pb-4">
               <Link href="/live-in-care-costs" className="group inline-flex items-center gap-2 rounded-full bg-navy-950/60 border border-gold-400/20 px-6 py-2.5 text-sm font-medium text-gold-200/90 transition-all duration-300 ease-out hover:bg-gold-400/10 hover:border-gold-400/40 hover:text-gold-50">
                 Live-in Care Costs

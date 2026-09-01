@@ -1,48 +1,72 @@
-import type { MetadataRoute } from "next";
+import { MetadataRoute } from 'next';
 
-import { blogService } from "@/services/blog/blog.service";
-
-const BASE_URL = "https://graceandgoodwill.co.uk";
-
-const STATIC_PATHS = [
-  "",
-  "/about",
-  "/services",
-  "/how-it-works",
-  "/pricing",
-  "/contact",
-  "/faq",
-  "/emergency-care",
-  "/blog",
-  "/privacy",
-  "/terms",
-  "/agency-introduction-terms",
-];
-
-/**
- * The listing page uses load-more, so articles beyond the first page are not
- * reachable by a crawler following links. The sitemap is what makes every
- * published article discoverable.
- */
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const { items } = await blogService.listPosts({
-    status: "PUBLISHED",
-    page: 1,
-    limit: 1000,
-  });
-
+export default function sitemap(): MetadataRoute.Sitemap {
   return [
-    ...STATIC_PATHS.map((path) => ({
-      url: `${BASE_URL}${path}`,
+    {
+      url: 'https://graceandgoodwill.co.uk/',
       lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: path === "" ? 1 : 0.7,
-    })),
-    ...items.map((post) => ({
-      url: `${BASE_URL}/blog/${post.slug}`,
-      lastModified: new Date(post.updatedAt),
-      changeFrequency: "monthly" as const,
-      priority: 0.6,
-    })),
+      changeFrequency: 'weekly',
+      priority: 1.0,
+    },
+    {
+      url: 'https://graceandgoodwill.co.uk/about',
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: 'https://graceandgoodwill.co.uk/services',
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.9,
+    },
+    {
+      url: 'https://graceandgoodwill.co.uk/how-it-works',
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: 'https://graceandgoodwill.co.uk/pricing',
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: 'https://graceandgoodwill.co.uk/contact',
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
+    {
+      url: 'https://graceandgoodwill.co.uk/faq',
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
+    {
+      url: 'https://graceandgoodwill.co.uk/join-as-carer',
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: 'https://graceandgoodwill.co.uk/privacy',
+      lastModified: new Date(),
+      changeFrequency: 'yearly',
+      priority: 0.3,
+    },
+    {
+      url: 'https://graceandgoodwill.co.uk/terms',
+      lastModified: new Date(),
+      changeFrequency: 'yearly',
+      priority: 0.3,
+    },
+    {
+      url: 'https://graceandgoodwill.co.uk/agency-introduction-terms',
+      lastModified: new Date(),
+      changeFrequency: 'yearly',
+      priority: 0.3,
+    },
   ];
 }

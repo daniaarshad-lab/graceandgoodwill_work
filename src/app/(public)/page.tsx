@@ -4,11 +4,14 @@ import bbcImage2 from "@/assets/open/bbc-image2.jpg";
 import bbcImage3 from "@/assets/open/bbc-image3.jpg";
 import publicImg2 from "@/assets/open/public-img2.jpeg";
 import publicImg3 from "@/assets/open/public-img3.jpeg";
+import partnershipLogo1 from "@/assets/partnership-logo/partnership-logo1.webp";
+import partnershipLogo2 from "@/assets/partnership-logo/partnership-logo2.webp";
 import Button from "@/components/Button";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import Image from "next/image";
 import EmergencyButton from "@/components/EmergencyButton";
+import PartnersCarousel from "@/components/PartnersCarousel";
 import { faqs } from "@/data/faqData";
 import FAQAccordion from "@/components/FAQAccordion";
 
@@ -225,6 +228,18 @@ export default function HomePage() {
             </p>
           </div>
         </div> */}
+      </section>
+
+      {/* --- PARTNERSHIP LOGOS SECTION --- */}
+      <section className="w-full bg-navy-950 py-12 px-4 relative z-10 border-t border-gold-300/10 overflow-hidden">
+        <div className="container-wrapper max-w-5xl mx-auto flex flex-col items-center justify-center">
+          <h2 className="font-serif text-[22px] md:text-3xl font-bold text-gold-50 mb-12 text-center tracking-wide">
+            Our Featured Partners
+          </h2>
+          
+          <PartnersCarousel />
+          
+        </div>
       </section>
 
       {/* --- INJECTED CLIENT H2 SECTIONS START --- */}

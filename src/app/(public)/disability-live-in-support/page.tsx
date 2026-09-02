@@ -5,6 +5,9 @@ import { UserCheck, Zap, Users } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
+  alternates: {
+    canonical: `/disability-live-in-support`,
+  },
   title: "Disability and Young Adult Live-in Support | Grace & Goodwill",
   description: "Live-in support enabling younger adults and those with physical disabilities to maintain independence and live life on their own terms.",
 };

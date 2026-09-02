@@ -14,7 +14,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/faq',
     '/join-as-carer',
     '/live-in-care-costs',
-    '/location',
     '/training',
   ].map((route) => ({
     url: `${baseUrl}${route}`,
@@ -38,8 +37,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/parkinsons-live-in-care',
     '/complex-needs-live-in-care',
     '/live-in-companionship-care',
+    '/live-in-companionship',
     '/young-adult-live-in-care',
     '/hospital-discharge-live-in-care',
+    '/live-in-care-after-hospital-discharge',
     '/live-in-care-after-stroke',
     '/urgent-live-in-care',
     '/emergency-care',
@@ -64,5 +65,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.3,
   }));
 
-  return [...corePages, ...servicePages, ...legalPages];
+  // Location pages
+  const locationPages = [
+    '/location/birmingham',
+    '/location/bristol',
+    '/location/gateshead',
+    '/location/leeds',
+    '/location/liverpool',
+    '/location/london',
+    '/location/manchester',
+    '/location/newcastle-upon-tyne',
+    '/location/nottingham',
+    '/location/sheffield',
+  ].map((route) => ({
+    url: `${baseUrl}${route}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+  }));
+
+  return [...corePages, ...servicePages, ...legalPages, ...locationPages];
 }

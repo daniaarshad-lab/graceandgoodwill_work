@@ -5,6 +5,9 @@ import { Home, Heart, Users } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
+  alternates: {
+    canonical: `/long-term-live-in-care`,
+  },
   title: "Long-Term Live-in Care | Grace & Goodwill",
   description: "Consistent, long-term live-in support allowing you or a loved one to remain comfortably at home instead of moving to residential care.",
 };

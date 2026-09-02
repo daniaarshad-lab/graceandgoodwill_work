@@ -5,6 +5,9 @@ import { Coffee, Clock, ShieldCheck, Heart } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
+  alternates: {
+    canonical: `/respite-live-in-care`,
+  },
   title: "Respite Live-in Care | Grace & Goodwill",
   description: "Temporary live-in care allowing family carers to take a holiday, rest, or handle unexpected situations while their loved one remains safely at home.",
 };

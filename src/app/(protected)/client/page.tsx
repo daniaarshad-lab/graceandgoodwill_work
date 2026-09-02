@@ -9,11 +9,11 @@ import { useClientPortal } from "./hooks/useClientPortal";
 import PortalHeader from "./components/PortalHeader";
 import PortalTabs, { TabType } from "./components/PortalTabs";
 
-import { Loader2 } from "lucide-react";
+import ThinSpinner from "@/components/ThinSpinner";
 
 const LoadingFallback = () => (
   <div className="flex h-64 w-full items-center justify-center">
-    <Loader2 className="h-10 w-10 animate-spin text-gold-DEFAULT opacity-80" />
+    <ThinSpinner size="lg" />
   </div>
 );
 

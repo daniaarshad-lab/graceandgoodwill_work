@@ -5,6 +5,9 @@ import { MoveRight, UserCog, Users } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
+  alternates: {
+    canonical: `/spinal-injury-live-in-care`,
+  },
   title: "Spinal Injury and Mobility Support | Grace & Goodwill",
   description: "Specialised live-in support for spinal injuries and mobility changes, empowering you to maintain control over your lifestyle at home.",
 };

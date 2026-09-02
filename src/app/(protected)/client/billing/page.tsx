@@ -3,6 +3,8 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
+import ThinSpinner from "@/components/ThinSpinner";
+
 export default function ClientBillingRedirectPage() {
   const router = useRouter();
 
@@ -17,9 +19,5 @@ export default function ClientBillingRedirectPage() {
     router.replace(`/client?${params.toString()}`);
   }, [router]);
 
-  return (
-    <div className="min-h-screen bg-navy-950 flex items-center justify-center text-slate-400">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gold-DEFAULT"></div>
-    </div>
-  );
+  return <ThinSpinner fullScreen text="Redirecting..." size="xl" />;
 }

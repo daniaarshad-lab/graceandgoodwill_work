@@ -14,6 +14,7 @@ import {
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 import SectionCard from "./shared/SectionCard";
 import Button from "@/components/Button";
+import ThinSpinner from "@/components/ThinSpinner";
 import {
   AlertCircle,
   RefreshCw,
@@ -124,9 +125,8 @@ export default function ClientApplicationsPanel() {
 
   if (careRequestsLoading) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 space-y-4">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-gold"></div>
-        <p className="text-sm text-gold-100/60">Loading care requests...</p>
+      <div className="py-20 flex items-center justify-center">
+        <ThinSpinner size="xl" text="Loading care requests..." />
       </div>
     );
   }
@@ -260,11 +260,8 @@ export default function ClientApplicationsPanel() {
                       );
 
                       return applicationsLoading ? (
-                        <div className="flex items-center justify-center py-8">
-                          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gold-DEFAULT mr-3"></div>
-                          <p className="text-sm text-gold-100/60">
-                            Loading applications...
-                          </p>
+                        <div className="py-8 flex items-center justify-center">
+                          <ThinSpinner size="sm" text="Loading applications..." textClassName="text-xs" />
                         </div>
                       ) : applicationsError ? (
                         <div className="flex items-center justify-center py-8 text-red-400">

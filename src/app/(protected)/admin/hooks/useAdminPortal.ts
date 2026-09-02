@@ -368,7 +368,8 @@ export type AdminTabType =
   | "emergency-requests"
   | "billing"
   | "enquiries"
-  | "profile-updates";
+  | "profile-updates"
+  | "blog";
 
 export function useAdminPortal() {
   const searchParams = useSearchParams();
@@ -386,6 +387,7 @@ export function useAdminPortal() {
         "billing",
         "enquiries",
         "profile-updates",
+        "blog",
       ].includes(tabParam)
       ? tabParam
       : "overview",

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -12,6 +12,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchClientProfile } from "@/store/slices/clientSlice";
 import { clientService } from "@/services/client/client.service";
 import SectionCard from "./shared/SectionCard";
+import ThinSpinner from "@/components/ThinSpinner";
 
 export default function ProfileAgreements() {
   const { user, refreshUser } = useAuth();
@@ -206,12 +207,7 @@ export default function ProfileAgreements() {
   if (loading) {
     return (
       <SectionCard className="w-full space-y-6 mt-6 flex items-center justify-center py-20">
-        <div className="flex flex-col items-center space-y-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gold-DEFAULT"></div>
-          <p className="text-sm tracking-wider text-gold-200">
-            Loading agreements...
-          </p>
-        </div>
+        <ThinSpinner size="md" text="Loading agreements..." />
       </SectionCard>
     );
   }

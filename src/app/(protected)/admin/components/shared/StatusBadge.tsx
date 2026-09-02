@@ -13,7 +13,8 @@ export default function StatusBadge({ status }: StatusBadgeProps) {
       s === "completed" ||
       s === "matched" ||
       s === "paid" ||
-      s === "success"
+      s === "success" ||
+      s === "published"
     ) {
       return "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
     }

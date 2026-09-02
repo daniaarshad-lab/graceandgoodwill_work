@@ -51,9 +51,37 @@ const config: Config = {
         soft: '0 24px 80px rgba(15, 23, 42, 0.12)',
         elegant: '0 10px 40px rgba(212, 175, 55, 0.15)',
       },
+      // Long-form article styling for the blog. Used as `prose prose-invert prose-gold`.
+      typography: {
+        gold: {
+          css: {
+            '--tw-prose-invert-body': 'rgb(253 230 196 / 0.82)',
+            '--tw-prose-invert-headings': '#fde6c4',
+            '--tw-prose-invert-lead': 'rgb(245 212 160 / 0.8)',
+            '--tw-prose-invert-links': '#d4af37',
+            '--tw-prose-invert-bold': '#f5d4a0',
+            '--tw-prose-invert-counters': '#e8ba7a',
+            '--tw-prose-invert-bullets': 'rgb(212 160 71 / 0.5)',
+            '--tw-prose-invert-hr': 'rgb(232 186 122 / 0.12)',
+            '--tw-prose-invert-quotes': '#f5d4a0',
+            '--tw-prose-invert-quote-borders': 'rgb(212 175 55 / 0.4)',
+            '--tw-prose-invert-captions': 'rgb(245 212 160 / 0.5)',
+            '--tw-prose-invert-code': '#fde6c4',
+            '--tw-prose-invert-pre-bg': '#0a1128',
+            h2: {
+              fontFamily: 'var(--font-family-cinzel), serif',
+              fontWeight: '500',
+            },
+            h3: {
+              fontFamily: 'var(--font-family-cinzel), serif',
+              fontWeight: '500',
+            },
+          },
+        },
+      },
     },
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/typography')],
 };
 
 export default config;

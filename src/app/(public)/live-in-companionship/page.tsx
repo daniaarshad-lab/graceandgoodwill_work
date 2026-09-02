@@ -5,6 +5,9 @@ import { Coffee, HeartHandshake, Heart } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
+  alternates: {
+    canonical: `/live-in-companionship`,
+  },
   title: "Live-in Companionship & Everyday Support | Grace & Goodwill",
   description: "Live-in companionship combines social connection with practical everyday assistance, allowing you to live safely and independently at home.",
 };

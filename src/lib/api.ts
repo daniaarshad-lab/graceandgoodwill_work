@@ -56,9 +56,13 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}) {
   }
 
   if (!response.ok) {
-    throw new Error(
-      data?.message || `HTTP Error ${response.status}: ${response.statusText}`,
-    );
+    const rawMessage = data?.message;
+    const formattedMessage = Array.isArray(rawMessage)
+      ? rawMessage.join(", ")
+      : typeof rawMessage === "string"
+        ? rawMessage
+        : `HTTP Error ${response.status}: ${response.statusText}`;
+    throw new Error(formattedMessage);
   }
 
   return data;

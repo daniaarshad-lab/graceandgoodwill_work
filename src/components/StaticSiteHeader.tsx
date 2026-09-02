@@ -16,9 +16,14 @@ const navLinks = [
   // { href: "/training", label: "Training" },
   { href: "/how-it-works", label: "How it works" },
   { href: "/pricing", label: "Pricing" },
+  { href: "/blog", label: "Blog" },
   { href: "/contact", label: "Contact" },
   { href: "/faq", label: "FAQ" },
 ];
+
+/** Exact match, plus nested routes so /blog/[slug] still highlights "Blog". */
+const isNavLinkActive = (pathname: string, href: string): boolean =>
+  pathname === href || pathname.startsWith(`${href}/`);
 
 /* The role choice is made here, before either journey starts — the descriptions
    are what stop a carer picking the client option by accident. */
@@ -132,7 +137,7 @@ function StaticSiteHeader() {
 
           <nav className="hidden items-center gap-4 lg:gap-6 xl:flex">
             {navLinks.map((link) => {
-              const isActive = pathname === link.href;
+              const isActive = isNavLinkActive(pathname, link.href);
               return (
                 <Link
                   key={link.href}
@@ -235,7 +240,7 @@ function StaticSiteHeader() {
                   Home
                 </Link>
                 {navLinks.map((link) => {
-                  const isActive = pathname === link.href;
+                  const isActive = isNavLinkActive(pathname, link.href);
                   return (
                     <Link
                       key={link.href}

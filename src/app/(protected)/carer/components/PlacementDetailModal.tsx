@@ -3,6 +3,7 @@
 import { CarerCareRequestDetail } from "@/types/carer.types";
 import Button from "@/components/Button";
 import { X, MapPin, Calendar, Clock, Banknote, FileText } from "lucide-react";
+import ThinSpinner from "@/components/ThinSpinner";
 
 interface PlacementDetailModalProps {
   careRequest: CarerCareRequestDetail | null;
@@ -53,9 +54,8 @@ export default function PlacementDetailModal({
         </div>
 
         {loading || !careRequest ? (
-          <div className="flex flex-col items-center justify-center py-16 space-y-4">
-            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-gold-DEFAULT"></div>
-            <p className="text-sm text-gold-100/60">Loading details...</p>
+          <div className="flex flex-col items-center justify-center py-16">
+            <ThinSpinner size="lg" text="Loading details..." />
           </div>
         ) : (
           <div className="p-6 space-y-6">

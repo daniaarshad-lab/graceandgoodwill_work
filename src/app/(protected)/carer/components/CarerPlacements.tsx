@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import Button from "@/components/Button";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
+import ThinSpinner from "@/components/ThinSpinner";
 
 const DECLINE_REASONS = [
   "Schedule conflict / Unavailable on requested dates",
@@ -219,7 +220,7 @@ function PlacementDetailModal({
   if (loading) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-navy-950/80 p-4 backdrop-blur-sm">
-        <div className="w-12 h-12 border-4 border-gold border-t-transparent rounded-full animate-spin" />
+        <ThinSpinner size="xl" text="Loading placement details..." />
       </div>
     );
   }
@@ -402,7 +403,7 @@ function PlacementDetailModal({
               </h3>
               {paymentsLoading ? (
                 <div className="flex justify-center p-4">
-                  <div className="w-6 h-6 border-2 border-gold border-t-transparent rounded-full animate-spin" />
+                  <ThinSpinner size="sm" text="Loading payment history..." textClassName="text-xs text-gold-100/60" />
                 </div>
               ) : paymentsError ? (
                 <div className="text-center py-4 border border-rose-500/20 rounded-xl bg-rose-950/10">
@@ -544,7 +545,7 @@ export default function CarerPlacements() {
 
       {loading ? (
         <div className="flex justify-center p-12">
-          <div className="w-8 h-8 border-4 border-gold border-t-transparent rounded-full animate-spin" />
+          <ThinSpinner size="md" text="Loading placements..." />
         </div>
       ) : error ? (
         <div className="flex flex-col items-center justify-center text-center p-8 rounded-2xl border border-rose-500/20 bg-rose-950/10 max-w-md mx-auto space-y-4">

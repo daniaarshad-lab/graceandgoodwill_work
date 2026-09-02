@@ -11,6 +11,7 @@ import { adminService } from "@/services/admin/admin.service";
 import { AdminPlacementDetail, CarerPayment } from "../types/admin.types";
 import Button from "@/components/Button";
 import InternalNotes from "./shared/InternalNotes/InternalNotes";
+import ThinSpinner from "@/components/ThinSpinner";
 import { toast } from "sonner";
 
 interface AdminPlacementDetailModalProps {
@@ -130,7 +131,7 @@ export default function AdminPlacementDetailModal({
   if (loading) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-navy-950/80 p-4 backdrop-blur-sm">
-        <div className="w-12 h-12 border-4 border-gold border-t-transparent rounded-full animate-spin" />
+        <ThinSpinner size="xl" text="Loading placement details..." />
       </div>
     );
   }

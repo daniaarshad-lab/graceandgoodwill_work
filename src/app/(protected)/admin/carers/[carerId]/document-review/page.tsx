@@ -28,17 +28,13 @@ import {
 
 import { getDocumentFileLabel } from "@/types/document.types";
 import { storageService } from "@/services/storage.service";
+import ThinSpinner from "@/components/ThinSpinner";
 
 export default function DocumentReviewPage() {
   return (
     <Suspense
       fallback={
-        <main className="min-h-screen bg-navy-950 py-10 text-gold-100 flex flex-col items-center justify-center space-y-4">
-          <div className="w-12 h-12 border-4 border-gold border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm text-gold-100/60 font-semibold">
-            Loading document review console...
-          </p>
-        </main>
+        <ThinSpinner fullScreen size="xl" text="Loading document review console..." />
       }
     >
       <DocumentReviewContent />
@@ -270,12 +266,7 @@ function DocumentReviewContent() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-navy-950 py-12 text-gold-100 flex flex-col items-center justify-center space-y-4">
-        <div className="w-12 h-12 border-4 border-gold border-t-transparent rounded-full animate-spin" />
-        <p className="text-sm text-gold-100/60 font-semibold animate-pulse">
-          Fetching carer records...
-        </p>
-      </main>
+      <ThinSpinner fullScreen size="xl" text="Fetching carer records..." />
     );
   }
 
@@ -701,7 +692,7 @@ function DocumentReviewContent() {
                             className="px-5 py-2 text-xs font-bold text-white bg-rose-600 hover:bg-rose-500 disabled:opacity-40 rounded-xl transition duration-200 flex items-center justify-center gap-1.5 cursor-pointer h-10 flex-shrink-0"
                           >
                             {submittingAction === "REJECT" ? (
-                              <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin flex-shrink-0" />
+                              <ThinSpinner size="xs" spinnerClassName="border-white shrink-0" className="inline-flex flex-row space-y-0" />
                             ) : (
                               <X className="h-4 w-4" flex-shrink-0="true" />
                             )}
@@ -714,7 +705,7 @@ function DocumentReviewContent() {
                             className="px-5 py-2 text-xs font-bold text-navy-950 bg-gold hover:bg-gold-200 disabled:opacity-40 rounded-xl transition duration-200 flex items-center justify-center gap-1.5 cursor-pointer h-10 flex-shrink-0"
                           >
                             {submittingAction === "VERIFY" ? (
-                              <div className="w-3.5 h-3.5 border-2 border-navy-950 border-t-transparent rounded-full animate-spin flex-shrink-0" />
+                              <ThinSpinner size="xs" spinnerClassName="border-navy-950 shrink-0" className="inline-flex flex-row space-y-0" />
                             ) : (
                               <Check className="h-4 w-4" flex-shrink-0="true" />
                             )}

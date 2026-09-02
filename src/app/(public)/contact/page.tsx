@@ -116,9 +116,9 @@ export default function ContactPage() {
           {/* 4. Registered Office */}
           <div className="p-6 rounded-[1.75rem] border border-gold-300/10 bg-navy-900/40 text-center flex flex-col justify-center space-y-4 w-full h-full">
             <div className="flex flex-col items-center w-full">
-              <div className="mb-5 flex w-[92%] items-center justify-center gap-3 text-gold-200 font-black text-base bg-gradient-to-r from-gold-DEFAULT/5 via-gold-DEFAULT/15 to-gold-DEFAULT/5 px-4 py-2.5 rounded-2xl border border-gold-DEFAULT/20 shadow-[0_0_15px_rgba(212,175,55,0.1)]">
+              <div className="mb-5 flex flex-col sm:flex-row w-[92%] sm:w-auto items-center justify-center gap-2 sm:gap-3 text-gold-200 font-black text-sm sm:text-base bg-gradient-to-r from-gold-DEFAULT/5 via-gold-DEFAULT/15 to-gold-DEFAULT/5 px-4 py-3 sm:py-2.5 rounded-2xl border border-gold-DEFAULT/20 shadow-[0_0_15px_rgba(212,175,55,0.1)]">
                 <MapPin className="w-5 h-5 text-gold-DEFAULT shrink-0" strokeWidth={2.5} />
-                <span className="tracking-widest text-center whitespace-nowrap">Nationwide Live-In Care Matching</span>
+                <span className="tracking-widest text-center leading-snug sm:whitespace-nowrap">Nationwide Live-In Care Matching</span>
               </div>
               <h3 className="text-xs font-medium text-gold-100/80 uppercase tracking-wider">
                 Registered Office

@@ -17,6 +17,7 @@ import {
   User,
 } from "lucide-react";
 import ReadOnlyAvailabilityCalendar from "@/components/ReadOnlyAvailabilityCalendar";
+import ThinSpinner from "@/components/ThinSpinner";
 
 export default function CarerDetailsPage() {
   const { carerId } = useParams();
@@ -42,12 +43,11 @@ export default function CarerDetailsPage() {
 
   if (loading || (!carer && carers.length === 0)) {
     return (
-      <div className="min-h-screen bg-navy-950 flex flex-col items-center justify-center space-y-4">
-        <div className="w-12 h-12 border-4 border-gold border-t-transparent rounded-full animate-spin shadow-[0_0_15px_rgba(181,148,105,0.5)]" />
-        <p className="text-gold-100/60 font-medium animate-pulse tracking-wide">
-          Loading Carer Profile...
-        </p>
-      </div>
+      <ThinSpinner
+        fullScreen
+        size="xl"
+        text="Loading Carer Profile..."
+      />
     );
   }
 

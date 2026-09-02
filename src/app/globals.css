@@ -2,6 +2,134 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float 4s ease-in-out infinite;
+  animation-delay: 2s;
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   Partners Infinite Marquee
+   Math: Track = HalfA + HalfB (identical). Animation moves -50% = one
+   half. At loop reset (0→-50%→0) HalfA start looks identical to
+   HalfB start → completely seamless, zero visible jump.
+───────────────────────────────────────────────────────────────────── */
+
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* Outer clipping container */
+.partners-marquee-wrapper {
+  position: relative;
+  width: 100%;
+  height: 152px; /* 120px card + 16px top + 16px bottom */
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+/* Edge fade masks */
+.partners-marquee-fade {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 140px;
+  z-index: 2;
+  pointer-events: none;
+}
+.partners-marquee-fade--left {
+  left: 0;
+  background: linear-gradient(to right, var(--color-navy-950) 0%, transparent 100%);
+}
+.partners-marquee-fade--right {
+  right: 0;
+  background: linear-gradient(to left, var(--color-navy-950) 0%, transparent 100%);
+}
+
+/* The scrolling track — HalfA + HalfB, animated -50% */
+.partners-marquee-track {
+  display: flex;
+  align-items: center;
+  /* width: max-content lets the flex row expand to fit all logos */
+  width: max-content;
+  height: 100%;
+  animation: marquee-scroll 28s linear infinite;
+  /* GPU compositing via will-change — no conflicting static transform */
+  will-change: transform;
+}
+
+/* Pause on hover */
+.partners-marquee-wrapper:hover .partners-marquee-track {
+  animation-play-state: paused;
+}
+
+/* Individual logo slot */
+.partners-marquee-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 0 2rem;
+  flex-shrink: 0;
+}
+
+/* Glassmorphism logo card */
+.partners-logo-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 120px;
+  padding: 0 2rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 1.25rem;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.partners-logo-card:hover {
+  background: rgba(255, 255, 255, 0.10);
+  border-color: rgba(212, 175, 55, 0.30);
+  transform: translateY(-2px);
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .partners-marquee-wrapper { height: 132px; } /* 100px card + 32px */
+  .partners-logo-card {
+    height: 100px;
+    padding: 0 1.5rem;
+  }
+  .partners-marquee-item { padding: 0 1.5rem; }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .partners-marquee-wrapper { height: 116px; } /* 84px card + 32px */
+  .partners-marquee-fade   { width: 60px; }
+  .partners-marquee-item   { padding: 0 1rem; }
+  .partners-logo-card {
+    height: 84px;
+    padding: 0 1.25rem;
+  }
+  .partners-marquee-track  { animation-duration: 18s; }
+}
+
+/* ─────────────────────────────────────────────────────────────────── */
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -851,6 +979,101 @@
   pointer-events: none;
 }
 
+/* ────────────────────────────────────────────────────────────────────────── */
+/*  Rich text editor content (admin blog editor)                             */
+/*  Tailwind preflight strips heading/list styling, so the contentEditable   */
+/*  surface needs its own rules or formatted text looks identical to plain   */
+/*  paragraphs while the author is writing.                                  */
+/* ────────────────────────────────────────────────────────────────────────── */
+.gg-editor>*+* {
+  margin-top: 0.85em;
+}
+
+.gg-editor h2 {
+  font-family: var(--font-family-cinzel), serif;
+  font-size: 1.35rem;
+  font-weight: 500;
+  line-height: 1.3;
+  color: #fde6c4;
+}
+
+.gg-editor h3 {
+  font-family: var(--font-family-cinzel), serif;
+  font-size: 1.1rem;
+  font-weight: 500;
+  line-height: 1.35;
+  color: #fde6c4;
+}
+
+.gg-editor h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #f5d4a0;
+}
+
+.gg-editor p {
+  line-height: 1.7;
+}
+
+.gg-editor strong,
+.gg-editor b {
+  font-weight: 600;
+  color: #f5d4a0;
+}
+
+.gg-editor em,
+.gg-editor i {
+  font-style: italic;
+}
+
+.gg-editor ul,
+.gg-editor ol {
+  padding-left: 1.5rem;
+}
+
+.gg-editor ul {
+  list-style: disc;
+}
+
+.gg-editor ol {
+  list-style: decimal;
+}
+
+.gg-editor li {
+  margin-top: 0.35em;
+  line-height: 1.65;
+}
+
+.gg-editor li::marker {
+  color: rgba(212, 160, 71, 0.55);
+}
+
+.gg-editor blockquote {
+  border-left: 2px solid rgba(212, 175, 55, 0.4);
+  padding-left: 1rem;
+  font-style: italic;
+  color: #f5d4a0;
+}
+
+.gg-editor a {
+  color: #d4af37;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.gg-editor code {
+  font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  font-size: 0.875em;
+  background: rgba(10, 17, 40, 0.8);
+  border-radius: 3px;
+  padding: 0.1em 0.35em;
+}
+
+.gg-editor hr {
+  border-color: rgba(232, 186, 122, 0.15);
+}
+
+
 /* ── LOGO STRAPLINE ───────────────────────────────────────────────────────────
    Single source of truth for the "CARE DEFINED BY INTEGRITY" logo strapline.
    Typography is the logo designer original treatment — do not restyle per page.
@@ -868,17 +1091,16 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  
+
   font-family: 'Poppins', 'Segoe UI', sans-serif;
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.25em;
   text-transform: uppercase;
-  color: #d49f47b3; /* A richer, more visible gold */
+  color: #d49f47b3;
   white-space: nowrap;
 }
 
-/* the short lines on either side */
 .tagline::before,
 .tagline::after {
   content: "";
@@ -900,13 +1122,13 @@
     gap: 6px;
     letter-spacing: 0.15em;
   }
-  
+
   .tagline::before,
   .tagline::after {
     width: 12px;
   }
 }
+
 .ombre-text {
   @apply text-transparent bg-clip-text bg-gradient-to-r from-gold-200 to-gold-50 pb-1;
 }
-

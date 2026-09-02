@@ -4,6 +4,7 @@ import { formatRangeDisplay } from "../../utils/date.utils";
 import { LocalRange } from "./types";
 import { getRangeColor } from "./colors";
 import { Pencil } from "lucide-react";
+import ThinSpinner from "@/components/ThinSpinner";
 
 interface AvailabilitySummaryPanelProps {
   ranges: LocalRange[];
@@ -187,25 +188,7 @@ export default function AvailabilitySummaryPanel({
         >
           {isSaving ? (
             <span className="inline-flex items-center gap-2">
-              <svg
-                className="animate-spin h-4 w-4"
-                viewBox="0 0 24 24"
-                fill="none"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="3"
-                />
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                />
-              </svg>
+              <ThinSpinner size="xs" spinnerClassName="border-navy-950 shrink-0" className="inline-flex flex-row space-y-0" />
               Saving...
             </span>
           ) : (

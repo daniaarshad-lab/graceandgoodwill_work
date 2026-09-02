@@ -14,6 +14,7 @@ import {
   FileText,
   CheckCircle2,
 } from "lucide-react";
+import ThinSpinner from "@/components/ThinSpinner";
 
 export default function MyApplications() {
   const dispatch = useAppDispatch();
@@ -79,9 +80,8 @@ export default function MyApplications() {
 
   if (applicationsLoading) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 space-y-4">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-gold-DEFAULT"></div>
-        <p className="text-sm text-gold-100/60">Loading your applications...</p>
+      <div className="flex flex-col items-center justify-center py-20">
+        <ThinSpinner size="lg" text="Loading your applications..." />
       </div>
     );
   }

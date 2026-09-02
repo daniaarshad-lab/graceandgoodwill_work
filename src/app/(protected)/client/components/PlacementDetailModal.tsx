@@ -10,6 +10,7 @@ import {
 import { clientService } from "@/services/client/client.service";
 import { ClientPlacement } from "@/types/client.types";
 import Button from "@/components/Button";
+import ThinSpinner from "@/components/ThinSpinner";
 
 interface PlacementDetailModalProps {
   placementId: string;
@@ -42,7 +43,7 @@ export default function PlacementDetailModal({
   if (loading) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-navy-950/80 p-4 backdrop-blur-sm">
-        <div className="w-12 h-12 border-4 border-gold border-t-transparent rounded-full animate-spin" />
+        <ThinSpinner size="xl" text="Loading placement details..." />
       </div>
     );
   }

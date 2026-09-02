@@ -16,6 +16,7 @@ import { showSuccessToast, showErrorToast } from "@/utils/toast";
 import { Carer } from "../types/client-ui.types";
 
 import Button from "@/components/Button";
+import ThinSpinner from "@/components/ThinSpinner";
 import {
   ArrowLeft,
   MapPin,
@@ -288,11 +289,8 @@ export default function BrowseCarersPage() {
             </Button>
           </div>
         ) : loading ? (
-          <div className="flex flex-col items-center justify-center py-20 space-y-4">
-            <div className="w-10 h-10 border-2 border-gold-DEFAULT border-t-transparent rounded-full animate-spin"></div>
-            <p className="text-xs text-gold-100/50">
-              Fetching available carer profiles...
-            </p>
+          <div className="py-20 flex items-center justify-center">
+            <ThinSpinner size="xl" text="Fetching available carer profiles..." />
           </div>
         ) : filteredCarers.length === 0 ? (
           <div className="text-center py-20 bg-navy-900/10 border border-dashed border-gold-300/10 rounded-3xl space-y-4">

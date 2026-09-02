@@ -5,6 +5,9 @@ import { Network, Search, AlertCircle } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
+  alternates: {
+    canonical: `/complex-needs-live-in-care`,
+  },
   title: "Live-in Support for Complex Needs | Grace & Goodwill",
   description: "Bespoke live-in care matched precisely to individuals with multiple, overlapping support requirements.",
 };

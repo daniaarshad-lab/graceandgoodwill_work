@@ -222,209 +222,208 @@ export default function ClientOnboardingPage() {
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-gold-DEFAULT/50 to-transparent opacity-70 rounded-t-2xl" />
           <div className="px-6 py-8 sm:px-12 sm:py-10">
             <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
-            {/* Line 1: Name and Email */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <Input
-                label={
-                  <span>
-                    First Name <span className="text-red-400">*</span>
-                  </span>
-                }
-                type="text"
-                placeholder="Enter first name"
-                value={firstName}
-                onChange={(e) => {
-                  setFirstName(e.target.value);
-                  if (errors.firstName) setErrors({ ...errors, firstName: "" });
-                }}
-                error={errors.firstName}
-              />
-              <Input
-                label={
-                  <span>
-                    Last Name <span className="text-red-400">*</span>
-                  </span>
-                }
-                type="text"
-                placeholder="Enter last name"
-                value={lastName}
-                onChange={(e) => {
-                  setLastName(e.target.value);
-                  if (errors.lastName) setErrors({ ...errors, lastName: "" });
-                }}
-                error={errors.lastName}
-              />
-              <Input
-                label={
-                  <span>
-                    Email Address <span className="text-red-400">*</span>
-                  </span>
-                }
-                type="email"
-                placeholder="Enter email address"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  if (errors.email) setErrors({ ...errors, email: "" });
-                }}
-                error={errors.email}
-              />
-            </div>
-
-            {/* Line 2: Phone, Dates */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <PhoneInput
-                label={
-                  <span>
-                    Phone Number <span className="text-red-400">*</span>
-                  </span>
-                }
-                placeholder="Enter phone number"
-                value={phone}
-                onChange={(val) => {
-                  setPhone(val);
-                  if (errors.phone) setErrors({ ...errors, phone: "" });
-                }}
-                error={errors.phone}
-              />
-              <Input
-                label={
-                  <span>
-                    Start Date <span className="text-red-400">*</span>
-                  </span>
-                }
-                type="date"
-                min={todayStr}
-                value={careStartDate}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setCareStartDate(val);
-                  if (errors.careStartDate) setErrors({ ...errors, careStartDate: "" });
-                  if (careEndDate && val && careEndDate < val) {
-                    setCareEndDate("");
-                  }
-                }}
-                error={errors.careStartDate}
-              />
-
-              <div>
+              {/* Line 1: Name and Email */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <Input
                   label={
                     <span>
-                      End Date {!isOngoing && <span className="text-red-400">*</span>}
+                      First Name <span className="text-red-400">*</span>
+                    </span>
+                  }
+                  type="text"
+                  placeholder="Enter first name"
+                  value={firstName}
+                  onChange={(e) => {
+                    setFirstName(e.target.value);
+                    if (errors.firstName) setErrors({ ...errors, firstName: "" });
+                  }}
+                  error={errors.firstName}
+                />
+                <Input
+                  label={
+                    <span>
+                      Last Name <span className="text-red-400">*</span>
+                    </span>
+                  }
+                  type="text"
+                  placeholder="Enter last name"
+                  value={lastName}
+                  onChange={(e) => {
+                    setLastName(e.target.value);
+                    if (errors.lastName) setErrors({ ...errors, lastName: "" });
+                  }}
+                  error={errors.lastName}
+                />
+                <Input
+                  label={
+                    <span>
+                      Email Address <span className="text-red-400">*</span>
+                    </span>
+                  }
+                  type="email"
+                  placeholder="Enter email address"
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (errors.email) setErrors({ ...errors, email: "" });
+                  }}
+                  error={errors.email}
+                />
+              </div>
+
+              {/* Line 2: Phone, Dates */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <PhoneInput
+                  label={
+                    <span>
+                      Phone Number <span className="text-red-400">*</span>
+                    </span>
+                  }
+                  placeholder="Enter phone number"
+                  value={phone}
+                  onChange={(val) => {
+                    setPhone(val);
+                    if (errors.phone) setErrors({ ...errors, phone: "" });
+                  }}
+                  error={errors.phone}
+                />
+                <Input
+                  label={
+                    <span>
+                      Start Date <span className="text-red-400">*</span>
                     </span>
                   }
                   type="date"
-                  min={
-                    careStartDate
-                      ? (() => {
+                  min={todayStr}
+                  value={careStartDate}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setCareStartDate(val);
+                    if (errors.careStartDate) setErrors({ ...errors, careStartDate: "" });
+                    if (careEndDate && val && careEndDate < val) {
+                      setCareEndDate("");
+                    }
+                  }}
+                  error={errors.careStartDate}
+                />
+
+                <div>
+                  <Input
+                    label={
+                      <span>
+                        End Date {!isOngoing && <span className="text-red-400">*</span>}
+                      </span>
+                    }
+                    type="date"
+                    min={
+                      careStartDate
+                        ? (() => {
                           const start = new Date(careStartDate);
                           start.setDate(start.getDate() + 2);
                           return start.toISOString().split("T")[0];
                         })()
-                      : todayStr
-                  }
-                  value={careEndDate}
-                  disabled={isOngoing}
-                  onChange={(e) => {
-                    setCareEndDate(e.target.value);
-                    if (errors.careEndDate) setErrors({ ...errors, careEndDate: "" });
-                  }}
-                  error={errors.careEndDate}
-                  className={isOngoing ? "opacity-40 cursor-not-allowed" : ""}
-                />
-                <label className="flex items-center gap-2 text-sm text-gold-200 mt-2.5 cursor-pointer select-none">
-                  <input
-                    type="checkbox"
-                    checked={isOngoing}
+                        : todayStr
+                    }
+                    value={careEndDate}
+                    disabled={isOngoing}
                     onChange={(e) => {
-                      setIsOngoing(e.target.checked);
-                      if (e.target.checked) {
-                        setCareEndDate("");
-                        if (errors.careEndDate) setErrors({ ...errors, careEndDate: "" });
-                      }
+                      setCareEndDate(e.target.value);
+                      if (errors.careEndDate) setErrors({ ...errors, careEndDate: "" });
                     }}
-                    className="w-4 h-4 rounded border-gold-300/30 bg-navy-950 text-gold-DEFAULT focus:ring-gold-DEFAULT focus:ring-offset-navy-950 transition-colors"
+                    error={errors.careEndDate}
+                    className={isOngoing ? "opacity-40 cursor-not-allowed" : ""}
                   />
-                  Ongoing
-                </label>
+                  <label className="flex items-center gap-2 text-sm text-gold-200 mt-2.5 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={isOngoing}
+                      onChange={(e) => {
+                        setIsOngoing(e.target.checked);
+                        if (e.target.checked) {
+                          setCareEndDate("");
+                          if (errors.careEndDate) setErrors({ ...errors, careEndDate: "" });
+                        }
+                      }}
+                      className="w-4 h-4 rounded border-gold-300/30 bg-navy-950 text-gold-DEFAULT focus:ring-gold-DEFAULT focus:ring-offset-navy-950 transition-colors"
+                    />
+                    Ongoing
+                  </label>
+                </div>
               </div>
-            </div>
 
-            {/* Line 3: Postcode & Location */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <Input
-                label={
-                  <span>
-                    Postcode <span className="text-red-400">*</span>
-                  </span>
-                }
-                type="text"
-                placeholder="e.g. SW1A 1AA"
-                value={carePostcode}
-                onChange={(e) => {
-                  setCarePostcode(e.target.value);
-                  if (errors.carePostcode) setErrors({ ...errors, carePostcode: "" });
-                }}
-                error={errors.carePostcode}
-              />
-
-              <Input
-                label={
-                  <span>
-                    Location <span className="text-red-400">*</span>
-                  </span>
-                }
-                type="text"
-                placeholder="e.g. 10 Downing Street, London"
-                value={careAddress}
-                onChange={(e) => {
-                  setCareAddress(e.target.value);
-                  if (errors.careAddress) setErrors({ ...errors, careAddress: "" });
-                }}
-                error={errors.careAddress}
-              />
-            </div>
-
-            {/* Note Field (at the bottom) */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gold-200/90 tracking-wide">
-                Note <span className="text-red-400">*</span>
-              </label>
-              <div className="relative">
-                <textarea
-                  placeholder="Please provide any details or specific requirements (minimum 10 characters)..."
-                  value={careNote}
+              {/* Line 3: Postcode & Location */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <Input
+                  label={
+                    <span>
+                      Postcode <span className="text-red-400">*</span>
+                    </span>
+                  }
+                  type="text"
+                  placeholder="e.g. SW1A 1AA"
+                  value={carePostcode}
                   onChange={(e) => {
-                    setCareNote(e.target.value);
-                    if (errors.careNote) setErrors({ ...errors, careNote: "" });
+                    setCarePostcode(e.target.value);
+                    if (errors.carePostcode) setErrors({ ...errors, carePostcode: "" });
                   }}
-                  rows={4}
-                  className={`w-full bg-navy-900/50 rounded-xl border border-gold-300/20 py-3 px-4 outline-none focus:ring-2 focus:ring-gold-DEFAULT/50 text-gold-100 placeholder-gold-100/30 resize-none transition-all duration-300 ${
-                    errors.careNote ? "border-red-500/50 focus:ring-red-500/30" : "hover:border-gold-300/40"
-                  }`}
+                  error={errors.carePostcode}
+                />
+
+                <Input
+                  label={
+                    <span>
+                      Location <span className="text-red-400">*</span>
+                    </span>
+                  }
+                  type="text"
+                  placeholder="e.g. 10 Downing Street, London"
+                  value={careAddress}
+                  onChange={(e) => {
+                    setCareAddress(e.target.value);
+                    if (errors.careAddress) setErrors({ ...errors, careAddress: "" });
+                  }}
+                  error={errors.careAddress}
                 />
               </div>
-              {errors.careNote && (
-                <p className="form-help text-red-500">{errors.careNote}</p>
-              )}
-            </div>
 
-            {/* Submit Button */}
-            <div className="pt-6 mt-6 sm:mt-8 flex flex-col sm:flex-row items-center justify-between gap-6 border-t border-gold-300/10">
-              <p className="text-[11px] font-medium tracking-wide text-gold-100/40 uppercase order-2 sm:order-1 mt-2 sm:mt-0">
-                Secure & Confidential
-              </p>
-              <Button
-                type="submit"
-                text={loading ? "Submitting..." : "Submit Details"}
-                disabled={loading}
-                className="w-full sm:w-auto px-10 py-3 order-1 sm:order-2 shadow-lg"
-              />
-            </div>
-          </form>
+              {/* Note Field (at the bottom) */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gold-200/90 tracking-wide">
+                  Note <span className="text-red-400">*</span>
+                </label>
+                <div className="relative">
+                  <textarea
+                    placeholder="Please provide any details or specific requirements (minimum 10 characters)..."
+                    value={careNote}
+                    onChange={(e) => {
+                      setCareNote(e.target.value);
+                      if (errors.careNote) setErrors({ ...errors, careNote: "" });
+                    }}
+                    rows={4}
+                    className={`w-full bg-navy-900/50 rounded-xl border border-gold-300/20 py-3 px-4 outline-none focus:ring-2 focus:ring-gold-DEFAULT/50 text-gold-100 placeholder-gold-100/30 resize-none transition-all duration-300 ${errors.careNote ? "border-red-500/50 focus:ring-red-500/30" : "hover:border-gold-300/40"
+                      }`}
+                  />
+                </div>
+                {errors.careNote && (
+                  <p className="form-help text-red-500">{errors.careNote}</p>
+                )}
+              </div>
+
+              {/* Submit Button */}
+              <div className="pt-6 mt-6 sm:mt-8 flex flex-col sm:flex-row items-center justify-between gap-6 border-t border-gold-300/10">
+                <p className="text-[11px] font-medium tracking-wide text-gold-100/40 uppercase order-2 sm:order-1 mt-2 sm:mt-0">
+                  Secure & Confidential
+                </p>
+                <Button
+                  type="submit"
+                  text={loading ? "Submitting..." : "Submit Details"}
+                  disabled={loading}
+                  className="w-full sm:w-auto px-10 py-3 order-1 sm:order-2 shadow-lg"
+                />
+              </div>
+            </form>
+          </div>
         </div>
-      </div>
       </div>
     </main>
   );

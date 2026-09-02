@@ -11,6 +11,7 @@
  */
 
 import { apiFetch } from "@/lib/api";
+import { blogCategories } from "@/data/blogCategories";
 import type {
   BlogCategory,
   BlogListParams,
@@ -39,28 +40,34 @@ function buildQuery(params: BlogListParams): string {
 
 export const apiBlogService: BlogService = {
   async listPosts(params: BlogListParams = {}): Promise<BlogListResponse> {
-    return apiFetch(`/blog/posts?${buildQuery(params)}`, { method: "GET" });
+    const qs = buildQuery(params);
+    return apiFetch(`/blog/posts${qs ? `?${qs}` : ""}`, { method: "GET" });
   },
 
   async getPostBySlug(slug: string): Promise<BlogPost | null> {
-    return apiFetch(`/blog/posts/slug/${encodeURIComponent(slug)}`, {
-      method: "GET",
-    });
+    try {
+      return await apiFetch(`/blog/posts/slug/${encodeURIComponent(slug)}`, {
+        method: "GET",
+      });
+    } catch {
+      return null;
+    }
   },
 
   async getPostById(id: string): Promise<BlogPost | null> {
-    return apiFetch(`/blog/posts/${id}`, { method: "GET" });
+    try {
+      return await apiFetch(`/blog/posts/${id}`, { method: "GET" });
+    } catch {
+      return null;
+    }
   },
 
   async getRelatedPosts(slug: string, limit = 3): Promise<BlogPost[]> {
-    return apiFetch(
-      `/blog/posts/slug/${encodeURIComponent(slug)}/related?limit=${limit}`,
-      { method: "GET" },
-    );
+    return [];
   },
 
   async listCategories(): Promise<BlogCategory[]> {
-    return apiFetch("/blog/categories", { method: "GET" });
+    return blogCategories;
   },
 
   async listPublishedSlugs(): Promise<string[]> {

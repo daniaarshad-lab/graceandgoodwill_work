@@ -38,6 +38,7 @@ export interface BlogPost {
    * come from the backend later, and a union would force a type change every
    * time an admin adds one. Validated at the form layer instead.
    */
+  category?: string;
   categorySlug: string;
   tags: string[];
   status: BlogStatus;
@@ -50,6 +51,7 @@ export interface BlogPost {
   seoTitle?: string;
   seoDescription?: string;
   isFeatured?: boolean;
+  isDefault?: boolean;
   faqItems?: { question: string; answer: string }[];
   cta?: { text: string; href: string };
 }
@@ -82,6 +84,7 @@ export interface CreateBlogPostPayload {
   content: string;
   featuredImageUrl: string;
   featuredImageAlt: string;
+  category?: string;
   categorySlug: string;
   tags: string[];
   status: BlogStatus;

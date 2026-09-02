@@ -9,7 +9,7 @@ import Button from "@/components/Button";
 import RichTextEditor from "@/components/RichTextEditor/RichTextEditor";
 import BlogImageField from "./BlogImageField";
 import BlogSeoFields from "./BlogSeoFields";
-import { blogCategories } from "@/data/blogCategories";
+import { blogCategories, getCategoryLabel } from "@/data/blogCategories";
 import {
   slugify,
   validateBlogPost,
@@ -104,6 +104,7 @@ function FieldError({ id, message }: { id: string; message?: string }) {
 export default function BlogPostForm({ post }: BlogPostFormProps) {
   const router = useRouter();
   const isEditing = Boolean(post);
+  const isReadOnly = Boolean(post?.isDefault);
 
   const [form, setForm] = useState<FormState>(
     post ? toFormState(post) : emptyState,
@@ -157,6 +158,7 @@ export default function BlogPostForm({ post }: BlogPostFormProps) {
       content: form.content,
       featuredImageUrl: form.featuredImageUrl.trim(),
       featuredImageAlt: form.featuredImageAlt.trim(),
+      category: getCategoryLabel(form.categorySlug),
       categorySlug: form.categorySlug,
       tags,
       status,
@@ -173,6 +175,14 @@ export default function BlogPostForm({ post }: BlogPostFormProps) {
 
   const submit = useCallback(
     async (status: "DRAFT" | "PUBLISHED") => {
+      if (isReadOnly) {
+        showErrorToast(
+          "Action not allowed",
+          "Default system blogs cannot be modified.",
+        );
+        return;
+      }
+
       const payload = buildPayload(status);
       const nextErrors = validateBlogPost(payload);
 
@@ -211,7 +221,7 @@ export default function BlogPostForm({ post }: BlogPostFormProps) {
         setIsSaving(false);
       }
     },
-    [buildPayload, isEditing, post, router],
+    [buildPayload, isEditing, isReadOnly, post, router],
   );
 
   return (
@@ -226,13 +236,26 @@ export default function BlogPostForm({ post }: BlogPostFormProps) {
             <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
             Back to Blog Posts
           </Link>
-          <h1 className="text-xl font-bold text-gold-200">
-            {isEditing ? "Edit Blog Post" : "Create Blog Post"}
-          </h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-xl font-bold text-gold-200">
+              {isReadOnly
+                ? "View Default Blog Post"
+                : isEditing
+                  ? "Edit Blog Post"
+                  : "Create Blog Post"}
+            </h1>
+            {isReadOnly && (
+              <span className="rounded-md border border-gold-400/30 bg-gold-400/10 px-2 py-0.5 text-xs font-semibold text-gold-300">
+                Default Article
+              </span>
+            )}
+          </div>
           <p className="text-xs text-gold-100/50">
-            {isEditing
-              ? "Update the article, then save it as a draft or publish it."
-              : "Write the article, then save it as a draft or publish it straight away."}
+            {isReadOnly
+              ? "Default system blog posts are permanent and cannot be modified."
+              : isEditing
+                ? "Update the article, then save it as a draft or publish it."
+                : "Write the article, then save it as a draft or publish it straight away."}
           </p>
         </div>
 
@@ -249,6 +272,15 @@ export default function BlogPostForm({ post }: BlogPostFormProps) {
         )}
       </div>
 
+      {isReadOnly && (
+        <div className="flex items-center gap-3 rounded-xl border border-gold-300/20 bg-gold-500/10 px-4 py-3 text-xs text-gold-200">
+          <Info className="h-4 w-4 shrink-0 text-gold-300" />
+          <span>
+            <strong>Default System Blog:</strong> This article is a permanent default blog post and is read-only.
+          </span>
+        </div>
+      )}
+
       {isBlogMockMode && (
         <p className="flex items-start gap-2 rounded-xl border border-gold-300/10 bg-navy-900/40 px-4 py-3 text-xs text-gold-100/55">
           <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-gold-300/70" />
@@ -261,7 +293,7 @@ export default function BlogPostForm({ post }: BlogPostFormProps) {
         noValidate
         onSubmit={(event) => {
           event.preventDefault();
-          submit("PUBLISHED");
+          if (!isReadOnly) submit("PUBLISHED");
         }}
         className="grid gap-6 lg:grid-cols-[1fr_320px]"
       >
@@ -275,7 +307,7 @@ export default function BlogPostForm({ post }: BlogPostFormProps) {
               id="blog-title"
               type="text"
               value={form.title}
-              disabled={isSaving}
+              disabled={isSaving || isReadOnly}
               onChange={(event) => handleTitleChange(event.target.value)}
               placeholder="How to Choose the Right Live-In Carer"
               className={inputClass(errors.title)}
@@ -295,7 +327,7 @@ export default function BlogPostForm({ post }: BlogPostFormProps) {
                 id="blog-slug"
                 type="text"
                 value={form.slug}
-                disabled={isSaving}
+                disabled={isSaving || isReadOnly}
                 onChange={(event) => {
                   setSlugTouched(true);
                   setField("slug", event.target.value);
@@ -317,7 +349,7 @@ export default function BlogPostForm({ post }: BlogPostFormProps) {
               id="blog-excerpt"
               rows={3}
               value={form.excerpt}
-              disabled={isSaving}
+              disabled={isSaving || isReadOnly}
               onChange={(event) => setField("excerpt", event.target.value)}
               placeholder="A short summary shown on the blog listing and in search results."
               className={`${inputClass(errors.excerpt)} resize-none`}
@@ -332,7 +364,7 @@ export default function BlogPostForm({ post }: BlogPostFormProps) {
           <RichTextEditor
             label="Article content"
             value={form.content}
-            disabled={isSaving}
+            disabled={isSaving || isReadOnly}
             error={errors.content}
             describedById={errors.content ? "blog-content-error" : undefined}
             onChange={(html) => {
@@ -344,7 +376,7 @@ export default function BlogPostForm({ post }: BlogPostFormProps) {
           <BlogImageField
             url={form.featuredImageUrl}
             alt={form.featuredImageAlt}
-            disabled={isSaving}
+            disabled={isSaving || isReadOnly}
             urlError={errors.featuredImageUrl}
             altError={errors.featuredImageAlt}
             onUrlChange={(value) => {
@@ -369,7 +401,7 @@ export default function BlogPostForm({ post }: BlogPostFormProps) {
             seoDescription={form.seoDescription}
             fallbackTitle={form.title}
             fallbackDescription={form.excerpt}
-            disabled={isSaving}
+            disabled={isSaving || isReadOnly}
             seoDescriptionError={errors.seoDescription}
             onSeoTitleChange={(value) => setField("seoTitle", value)}
             onSeoDescriptionChange={(value) => {
@@ -396,7 +428,7 @@ export default function BlogPostForm({ post }: BlogPostFormProps) {
               <select
                 id="blog-category"
                 value={form.categorySlug}
-                disabled={isSaving}
+                disabled={isSaving || isReadOnly}
                 onChange={(event) =>
                   setField("categorySlug", event.target.value)
                 }
@@ -426,7 +458,7 @@ export default function BlogPostForm({ post }: BlogPostFormProps) {
                 id="blog-tags"
                 type="text"
                 value={form.tagsInput}
-                disabled={isSaving}
+                disabled={isSaving || isReadOnly}
                 onChange={(event) => setField("tagsInput", event.target.value)}
                 placeholder="live-in care, funding"
                 className={inputClass()}
@@ -453,7 +485,7 @@ export default function BlogPostForm({ post }: BlogPostFormProps) {
                 id="blog-author"
                 type="text"
                 value={form.authorName}
-                disabled={isSaving}
+                disabled={isSaving || isReadOnly}
                 onChange={(event) => {
                   setField("authorName", event.target.value);
                   setErrors((previous) => ({
@@ -479,7 +511,7 @@ export default function BlogPostForm({ post }: BlogPostFormProps) {
                 id="blog-author-role"
                 type="text"
                 value={form.authorRole}
-                disabled={isSaving}
+                disabled={isSaving || isReadOnly}
                 onChange={(event) => setField("authorRole", event.target.value)}
                 placeholder="Head of Care Standards"
                 className={inputClass()}
@@ -490,7 +522,7 @@ export default function BlogPostForm({ post }: BlogPostFormProps) {
               <input
                 type="checkbox"
                 checked={form.isFeatured}
-                disabled={isSaving}
+                disabled={isSaving || isReadOnly}
                 onChange={(event) =>
                   setField("isFeatured", event.target.checked)
                 }
@@ -508,35 +540,49 @@ export default function BlogPostForm({ post }: BlogPostFormProps) {
           </div>
 
           <div className="space-y-3 rounded-2xl border border-gold-300/10 bg-navy-900/60 p-5">
-            <Button
-              type="submit"
-              variant="primary"
-              size="md"
-              fullWidth
-              disabled={isSaving}
-            >
-              {isSaving ? "Saving…" : "Publish"}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="md"
-              fullWidth
-              disabled={isSaving}
-              onClick={() => submit("DRAFT")}
-            >
-              Save Draft
-            </Button>
-            <Button
-              type="button"
-              variant="ghost-gold"
-              size="md"
-              fullWidth
-              disabled={isSaving}
-              onClick={() => router.push("/admin?tab=blog")}
-            >
-              Cancel
-            </Button>
+            {isReadOnly ? (
+              <Button
+                type="button"
+                variant="primary"
+                size="md"
+                fullWidth
+                onClick={() => router.push("/admin?tab=blog")}
+              >
+                Back to Blog Posts
+              </Button>
+            ) : (
+              <>
+                <Button
+                  type="submit"
+                  variant="primary"
+                  size="md"
+                  fullWidth
+                  disabled={isSaving}
+                >
+                  {isSaving ? "Saving…" : "Publish"}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="md"
+                  fullWidth
+                  disabled={isSaving}
+                  onClick={() => submit("DRAFT")}
+                >
+                  Save Draft
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost-gold"
+                  size="md"
+                  fullWidth
+                  disabled={isSaving}
+                  onClick={() => router.push("/admin?tab=blog")}
+                >
+                  Cancel
+                </Button>
+              </>
+            )}
           </div>
         </aside>
       </form>

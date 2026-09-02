@@ -13,6 +13,10 @@ const AdminTabLoadingFallback = () => (
   </div>
 );
 
+// CONFIGURATION: Temporarily hide the Blog Management UI from the Admin Panel
+// Set this to true in the future to instantly re-enable full Admin Blog functionality.
+const SHOW_ADMIN_BLOG = false;
+
 const AdminOverview = dynamic(() => import("./components/AdminOverview"), {
   ssr: false,
   loading: () => <AdminTabLoadingFallback />,
@@ -173,36 +177,38 @@ function AdminDashboardContent() {
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
             <style>{`.admin-tabs-nav::-webkit-scrollbar { display: none; }`}</style>
-            {(Object.keys(tabLabels) as AdminTabType[]).map((tab) => {
-              const isActive = portal.activeTab === tab;
-              return (
-                <button
-                  key={tab}
-                  onClick={() => handleTabChange(tab)}
-                  className={`px-3 sm:px-5 py-3 min-h-[44px] text-xs sm:text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap flex-shrink-0 cursor-pointer ${isActive
+            {(Object.keys(tabLabels) as AdminTabType[])
+              .filter((tab) => SHOW_ADMIN_BLOG || tab !== "blog")
+              .map((tab) => {
+                const isActive = portal.activeTab === tab;
+                return (
+                  <button
+                    key={tab}
+                    onClick={() => handleTabChange(tab)}
+                    className={`px-3 sm:px-5 py-3 min-h-[44px] text-xs sm:text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap flex-shrink-0 cursor-pointer ${isActive
                       ? "border-b-2 border-gold-DEFAULT text-gold-DEFAULT bg-gold-DEFAULT/5"
                       : "text-gold-200/60 hover:text-gold-50"
-                    }`}
-                >
-                  {tabLabels[tab]}
-                  {tab === "emergency" && portal.stats.emergencyCases > 0 && (
-                    <span className="ml-1.5 inline-flex items-center justify-center rounded-full bg-rose-500 px-1.5 py-0.5 text-[9px] font-black text-white animate-pulse">
-                      {portal.stats.emergencyCases}
-                    </span>
-                  )}
-                  {tab === "carers" && portal.stats.pendingCarers > 0 && (
-                    <span className="ml-1.5 inline-flex items-center justify-center rounded-full bg-gold-600 px-1.5 py-0.5 text-[9px] font-black text-navy-950">
-                      {portal.stats.pendingCarers}
-                    </span>
-                  )}
-                  {tab === "enquiries" && portal.stats.unreadEnquiries > 0 && (
-                    <span className="ml-1.5 inline-flex items-center justify-center rounded-full bg-amber-500 px-1.5 py-0.5 text-[9px] font-black text-navy-950 animate-pulse">
-                      {portal.stats.unreadEnquiries}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
+                      }`}
+                  >
+                    {tabLabels[tab]}
+                    {tab === "emergency" && portal.stats.emergencyCases > 0 && (
+                      <span className="ml-1.5 inline-flex items-center justify-center rounded-full bg-rose-500 px-1.5 py-0.5 text-[9px] font-black text-white animate-pulse">
+                        {portal.stats.emergencyCases}
+                      </span>
+                    )}
+                    {tab === "carers" && portal.stats.pendingCarers > 0 && (
+                      <span className="ml-1.5 inline-flex items-center justify-center rounded-full bg-gold-600 px-1.5 py-0.5 text-[9px] font-black text-navy-950">
+                        {portal.stats.pendingCarers}
+                      </span>
+                    )}
+                    {tab === "enquiries" && portal.stats.unreadEnquiries > 0 && (
+                      <span className="ml-1.5 inline-flex items-center justify-center rounded-full bg-amber-500 px-1.5 py-0.5 text-[9px] font-black text-navy-950 animate-pulse">
+                        {portal.stats.unreadEnquiries}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
           </nav>
         </div>
 
@@ -352,7 +358,7 @@ function AdminDashboardContent() {
               {portal.activeTab === "profile-updates" && (
                 <ProfileUpdateRequests />
               )}
-              {portal.activeTab === "blog" && <BlogPostsTab />}
+              {SHOW_ADMIN_BLOG && portal.activeTab === "blog" && <BlogPostsTab />}
             </>
           )}
         </div>

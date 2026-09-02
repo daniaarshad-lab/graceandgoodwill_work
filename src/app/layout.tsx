@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Poppins, Playfair_Display, Jost, Montserrat } from "next/font/google";
 import ToastProvider from "@/components/Providers/ToastProvider";
 import CookieConsentBanner from "@/components/CookieConsentBanner";
-import GoogleAnalytics from "@/components/GoogleAnalytics";
 import ReduxProvider from "@/store/ReduxProvider";
 import { AuthProvider } from "@/contexts/AuthContext";
 import "./globals.css";
@@ -91,8 +90,6 @@ export default function RootLayout({
             <ToastProvider />
           </AuthProvider>
         </ReduxProvider>
-        {/* Site-wide GA4 tag; self-gates on the analytics cookie consent. */}
-        <GoogleAnalytics />
       </body>
     </html>
   );

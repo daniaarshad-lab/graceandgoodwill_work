@@ -5,6 +5,7 @@ import { Search, X } from "lucide-react";
 
 import Button from "@/components/Button";
 import ThinSpinner from "@/components/ThinSpinner";
+import Pagination from "@/app/(protected)/admin/components/shared/Pagination";
 import BlogCard from "./BlogCard";
 import BlogEmptyState from "./BlogEmptyState";
 import { blogService, isBlogMockMode } from "@/services/blog/blog.service";
@@ -143,6 +144,32 @@ export default function BlogListClient({
     }
     window.history.replaceState(null, "", url.toString());
   }, [category]);
+
+  const goToPage = useCallback((newPage: number) => {
+    setIsFiltering(true);
+    setError(null);
+    blogService
+      .listPosts({
+        status: "PUBLISHED",
+        page: newPage,
+        limit: pageSize,
+        search,
+        category,
+        sort,
+      })
+      .then((response) => {
+        setPosts(response.items);
+        setPage(response.page);
+        setTotalPages(response.totalPages);
+        setTotal(response.total);
+        const heading = document.getElementById("blog-articles-heading");
+        if (heading) {
+          heading.scrollIntoView({ behavior: "smooth" });
+        }
+      })
+      .catch(() => setError("We could not load articles. Please try again."))
+      .finally(() => setIsFiltering(false));
+  }, [pageSize, search, category, sort]);
 
   const loadMore = useCallback(() => {
     setIsLoadingMore(true);
@@ -298,6 +325,17 @@ export default function BlogListClient({
               >
                 {isLoadingMore ? "Loading…" : "Load more articles"}
               </Button>
+            </div>
+          )}
+
+          {totalPages > 1 && (
+            <div className="mt-8">
+              <Pagination
+                currentPage={page}
+                totalPages={totalPages}
+                totalItems={total}
+                onPageChange={goToPage}
+              />
             </div>
           )}
         </>

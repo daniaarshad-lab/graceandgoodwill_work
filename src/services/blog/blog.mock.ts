@@ -28,7 +28,7 @@ import type {
 } from "@/types/blog.types";
 
 /** Bump the suffix whenever the BlogPost shape changes. */
-const STORAGE_KEY = "gg_blog_posts_v11";
+const STORAGE_KEY = "gg_blog_posts_v12";
 
 const isBrowser = (): boolean => typeof window !== "undefined";
 

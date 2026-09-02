@@ -33,7 +33,7 @@
 .partners-marquee-wrapper {
   position: relative;
   width: 100%;
-  height: 160px;
+  height: 152px; /* 120px card + 16px top + 16px bottom */
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -108,7 +108,7 @@
 
 /* Tablet */
 @media (max-width: 1024px) {
-  .partners-marquee-wrapper { height: 140px; }
+  .partners-marquee-wrapper { height: 132px; } /* 100px card + 32px */
   .partners-logo-card {
     height: 100px;
     padding: 0 1.5rem;
@@ -118,7 +118,7 @@
 
 /* Mobile */
 @media (max-width: 640px) {
-  .partners-marquee-wrapper { height: 120px; }
+  .partners-marquee-wrapper { height: 116px; } /* 84px card + 32px */
   .partners-marquee-fade   { width: 60px; }
   .partners-marquee-item   { padding: 0 1rem; }
   .partners-logo-card {

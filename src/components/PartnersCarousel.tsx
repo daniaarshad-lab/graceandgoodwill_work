@@ -45,8 +45,12 @@ const LogoItem = ({
     aria-hidden={hidden || undefined}
     key={index}
   >
-    <div className="partners-logo-card">
+    <div className="partners-logo-card relative">
+      {/* Soft spotlight glow to ensure dark text is highly readable against the dark card */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(255,255,255,0.7)_0%,_transparent_60%)] pointer-events-none rounded-xl" />
+      
       <Image
+        className="relative z-10 drop-shadow-sm"
         src={partner.src}
         alt={partner.alt}
         style={{

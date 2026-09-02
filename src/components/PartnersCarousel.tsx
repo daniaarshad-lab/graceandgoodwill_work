@@ -1,53 +1,84 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Image from "next/image";
-import partnershipLogo1 from "@/assets/partnership-logo/partnership-logo1.webp";
+import partnershipLogo3 from "@/assets/partnership-logo/partnership-logo3.jpeg";
 import partnershipLogo2 from "@/assets/partnership-logo/partnership-logo2.webp";
 
 const partners = [
   {
     id: 1,
-    src: partnershipLogo1,
+    src: partnershipLogo3,
     alt: "UKABIF Partner",
-    scaleClass: "scale-[1.8] sm:scale-[2.0] group-hover:scale-[1.9] sm:group-hover:scale-[2.1]"
+    cssHeight: 60, // UKABIF — much smaller to fit comfortably
   },
   {
     id: 2,
     src: partnershipLogo2,
     alt: "Brain Injury Group Partner",
-    scaleClass: "scale-[1.3] sm:scale-[1.4] group-hover:scale-[1.4] sm:group-hover:scale-[1.5]"
-  }
+    cssHeight: 72, 
+  },
 ];
 
+/**
+ * True seamless marquee math:
+ * - We render ONE half = 4 repetitions of the partner set (8 logo slots)
+ * - 8 slots × ~280px each ≈ 2240px — wider than any common viewport
+ * - We then render a SECOND identical half (aria-hidden) immediately after
+ * - Total track = 2 × half = ~4480px
+ * - Animation: translateX(-50%) moves the track left by exactly ONE half
+ * - When it resets to 0, the start of half-A looks identical to the start of half-B
+ * - Result: perfectly seamless, no gaps, no jumps, ever.
+ */
+const half = [...partners, ...partners, ...partners, ...partners]; // 8 logo slots
+
+const LogoItem = ({
+  partner,
+  hidden,
+  index,
+}: {
+  partner: (typeof partners)[0];
+  hidden?: boolean;
+  index: number;
+}) => (
+  <div
+    className="partners-marquee-item"
+    aria-hidden={hidden || undefined}
+    key={index}
+  >
+    <div className="partners-logo-card">
+      <Image
+        src={partner.src}
+        alt={partner.alt}
+        style={{
+          height: `${partner.cssHeight}px`,
+          width: "auto",
+          maxWidth: "100%",
+          objectFit: "contain",
+          display: "block",
+        }}
+      />
+    </div>
+  </div>
+);
+
 export default function PartnersCarousel() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % partners.length);
-    }, 2000);
-
-    return () => clearInterval(timer);
-  }, []);
-
   return (
-    <div className="relative h-24 sm:h-28 w-64 sm:w-72 mx-auto bg-white rounded-[2rem] p-4 shadow-soft hover:shadow-elegant overflow-hidden animate-float">
-      {partners.map((partner, index) => (
-        <div
-          key={partner.id}
-          className={`absolute inset-0 flex items-center justify-center transition-opacity duration-700 ${
-            index === currentIndex ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
-          }`}
-        >
-          <Image
-            src={partner.src}
-            alt={partner.alt}
-            fill
-            className={`object-contain transition-transform duration-500 ${partner.scaleClass}`}
-          />
-        </div>
-      ))}
+    <div className="partners-marquee-wrapper">
+      {/* Edge fade masks */}
+      <div className="partners-marquee-fade partners-marquee-fade--left" />
+      <div className="partners-marquee-fade partners-marquee-fade--right" />
+
+      <div className="partners-marquee-track">
+        {/* Half A — the "real" content */}
+        {half.map((partner, i) => (
+          <LogoItem key={`a-${i}`} partner={partner} index={i} />
+        ))}
+
+        {/* Half B — exact duplicate, aria-hidden, makes the -50% loop seamless */}
+        {half.map((partner, i) => (
+          <LogoItem key={`b-${i}`} partner={partner} index={i} hidden />
+        ))}
+      </div>
     </div>
   );
 }

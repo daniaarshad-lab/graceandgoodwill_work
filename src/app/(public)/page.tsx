@@ -231,15 +231,16 @@ export default function HomePage() {
       </section>
 
       {/* --- PARTNERSHIP LOGOS SECTION --- */}
-      <section className="w-full bg-navy-950 py-12 px-4 relative z-10 border-t border-gold-300/10 overflow-hidden">
-        <div className="container-wrapper max-w-5xl mx-auto flex flex-col items-center justify-center">
-          <h2 className="font-serif text-[22px] md:text-3xl font-bold text-gold-50 mb-12 text-center tracking-wide">
+      <section className="w-full bg-navy-950 py-12 relative z-10 border-t border-gold-300/10 overflow-hidden">
+        {/* Heading stays centred in the container */}
+        <div className="px-4 flex flex-col items-center justify-center mb-10">
+          <h2 className="font-serif text-[22px] md:text-3xl font-bold text-gold-50 text-center tracking-wide">
             Our Featured Partners
           </h2>
-          
-          <PartnersCarousel />
-          
         </div>
+
+        {/* Marquee is full-viewport-width — no container constraint */}
+        <PartnersCarousel />
       </section>
 
       {/* --- INJECTED CLIENT H2 SECTIONS START --- */}

@@ -169,7 +169,14 @@ export default function BlogPostsTab() {
             )}
           </div>
           <div className="min-w-0">
-            <p className="truncate font-semibold text-gold-100">{post.title}</p>
+            <div className="flex items-center gap-2">
+              <p className="truncate font-semibold text-gold-100">{post.title}</p>
+              {post.isDefault && (
+                <span className="shrink-0 rounded-md border border-gold-400/20 bg-gold-400/10 px-1.5 py-0.5 text-[9px] font-semibold text-gold-300">
+                  Default
+                </span>
+              )}
+            </div>
             <p className="truncate text-[10px] text-gold-100/40">
               /blog/{post.slug}
             </p>
@@ -217,6 +224,8 @@ export default function BlogPostsTab() {
       key: "actions",
       render: (post) => {
         const isBusy = busyId === post.id;
+        const isDefault = Boolean(post.isDefault);
+
         return (
           <div className="flex items-center gap-1.5">
             {post.status === "PUBLISHED" && (
@@ -231,42 +240,46 @@ export default function BlogPostsTab() {
                 <FileText className="h-3.5 w-3.5" />
               </a>
             )}
-            <Link
-              href={`/admin/blog/${post.id}`}
-              aria-label={`Edit ${post.title}`}
-              title="Edit"
-              className="flex h-7 w-7 items-center justify-center rounded-lg border border-gold-300/15 text-gold-200/70 transition hover:border-gold-300/40 hover:text-gold-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-300/60"
-            >
-              <Pencil className="h-3.5 w-3.5" />
-            </Link>
-            <button
-              type="button"
-              onClick={() => handleStatusToggle(post)}
-              disabled={isBusy}
-              aria-label={
-                post.status === "PUBLISHED"
-                  ? `Unpublish ${post.title}`
-                  : `Publish ${post.title}`
-              }
-              title={post.status === "PUBLISHED" ? "Unpublish" : "Publish"}
-              className="flex h-7 w-7 items-center justify-center rounded-lg border border-gold-300/15 text-gold-200/70 transition hover:border-gold-300/40 hover:text-gold-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-300/60 disabled:opacity-40"
-            >
-              {post.status === "PUBLISHED" ? (
-                <EyeOff className="h-3.5 w-3.5" />
-              ) : (
-                <Send className="h-3.5 w-3.5" />
-              )}
-            </button>
-            <button
-              type="button"
-              onClick={() => setPendingDelete(post)}
-              disabled={isBusy}
-              aria-label={`Delete ${post.title}`}
-              title="Delete"
-              className="flex h-7 w-7 items-center justify-center rounded-lg border border-rose-500/20 text-rose-400/80 transition hover:border-rose-500/40 hover:text-rose-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500/50 disabled:opacity-40"
-            >
-              <Trash2 className="h-3.5 w-3.5" />
-            </button>
+            {!isDefault && (
+              <>
+                <Link
+                  href={`/admin/blog/${post.id}`}
+                  aria-label={`Edit ${post.title}`}
+                  title="Edit"
+                  className="flex h-7 w-7 items-center justify-center rounded-lg border border-gold-300/15 text-gold-200/70 transition hover:border-gold-300/40 hover:text-gold-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-300/60"
+                >
+                  <Pencil className="h-3.5 w-3.5" />
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => handleStatusToggle(post)}
+                  disabled={isBusy}
+                  aria-label={
+                    post.status === "PUBLISHED"
+                      ? `Unpublish ${post.title}`
+                      : `Publish ${post.title}`
+                  }
+                  title={post.status === "PUBLISHED" ? "Unpublish" : "Publish"}
+                  className="flex h-7 w-7 items-center justify-center rounded-lg border border-gold-300/15 text-gold-200/70 transition hover:border-gold-300/40 hover:text-gold-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-300/60 disabled:opacity-40"
+                >
+                  {post.status === "PUBLISHED" ? (
+                    <EyeOff className="h-3.5 w-3.5" />
+                  ) : (
+                    <Send className="h-3.5 w-3.5" />
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPendingDelete(post)}
+                  disabled={isBusy}
+                  aria-label={`Delete ${post.title}`}
+                  title="Delete"
+                  className="flex h-7 w-7 items-center justify-center rounded-lg border border-rose-500/20 text-rose-400/80 transition hover:border-rose-500/40 hover:text-rose-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500/50 disabled:opacity-40"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              </>
+            )}
           </div>
         );
       },

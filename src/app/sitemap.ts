@@ -1,72 +1,68 @@
 import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  return [
-    {
-      url: 'https://graceandgoodwill.co.uk/',
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 1.0,
-    },
-    {
-      url: 'https://graceandgoodwill.co.uk/about',
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: 'https://graceandgoodwill.co.uk/services',
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.9,
-    },
-    {
-      url: 'https://graceandgoodwill.co.uk/how-it-works',
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: 'https://graceandgoodwill.co.uk/pricing',
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: 'https://graceandgoodwill.co.uk/contact',
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-    {
-      url: 'https://graceandgoodwill.co.uk/faq',
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-    {
-      url: 'https://graceandgoodwill.co.uk/join-as-carer',
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: 'https://graceandgoodwill.co.uk/privacy',
-      lastModified: new Date(),
-      changeFrequency: 'yearly',
-      priority: 0.3,
-    },
-    {
-      url: 'https://graceandgoodwill.co.uk/terms',
-      lastModified: new Date(),
-      changeFrequency: 'yearly',
-      priority: 0.3,
-    },
-    {
-      url: 'https://graceandgoodwill.co.uk/agency-introduction-terms',
-      lastModified: new Date(),
-      changeFrequency: 'yearly',
-      priority: 0.3,
-    },
-  ];
+  const baseUrl = 'https://graceandgoodwill.co.uk';
+
+  // Core pages
+  const corePages = [
+    '',
+    '/about',
+    '/services',
+    '/how-it-works',
+    '/pricing',
+    '/contact',
+    '/faq',
+    '/join-as-carer',
+    '/live-in-care-costs',
+    '/location',
+    '/training',
+  ].map((route) => ({
+    url: `${baseUrl}${route}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: route === '' ? 1.0 : 0.8,
+  }));
+
+  // Service pages
+  const servicePages = [
+    '/live-in-care',
+    '/what-is-live-in-care',
+    '/long-term-live-in-care',
+    '/dementia-live-in-care',
+    '/alzheimers-live-in-care',
+    '/respite-live-in-care',
+    '/disability-live-in-support',
+    '/brain-injury-live-in-care',
+    '/spinal-injury-live-in-care',
+    '/multiple-sclerosis-live-in-care',
+    '/parkinsons-live-in-care',
+    '/complex-needs-live-in-care',
+    '/live-in-companionship-care',
+    '/young-adult-live-in-care',
+    '/hospital-discharge-live-in-care',
+    '/live-in-care-after-stroke',
+    '/urgent-live-in-care',
+    '/emergency-care',
+    '/convalescent-care-at-home',
+    '/funding-live-in-care',
+  ].map((route) => ({
+    url: `${baseUrl}${route}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.9, // Higher priority for service pages for SEO
+  }));
+
+  // Legal/Terms pages
+  const legalPages = [
+    '/privacy',
+    '/terms',
+    '/agency-introduction-terms',
+  ].map((route) => ({
+    url: `${baseUrl}${route}`,
+    lastModified: new Date(),
+    changeFrequency: 'yearly' as const,
+    priority: 0.3,
+  }));
+
+  return [...corePages, ...servicePages, ...legalPages];
 }

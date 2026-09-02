@@ -5,6 +5,9 @@ import { Stethoscope, CalendarCheck, Clock, CheckCircle2 } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
+  alternates: {
+    canonical: `/live-in-care-after-hospital-discharge`,
+  },
   title: "Live-in Care After Hospital Discharge | Grace & Goodwill",
   description: "Temporary or ongoing live-in care to assist with recovery at home following a hospital stay, surgery, or illness.",
 };

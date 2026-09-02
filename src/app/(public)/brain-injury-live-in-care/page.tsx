@@ -5,6 +5,9 @@ import { Activity, BrainCircuit, Heart, Clock } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
+  alternates: {
+    canonical: `/brain-injury-live-in-care`,
+  },
   title: "Brain Injury and Neurological Live-in Support | Grace & Goodwill",
   description: "Live-in support enabling individuals with acquired brain injuries or neurological conditions to continue living safely at home.",
 };

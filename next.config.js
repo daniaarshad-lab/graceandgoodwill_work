@@ -20,6 +20,22 @@ const nextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        // Consolidate duplicate companionship pages
+        source: '/live-in-companionship',
+        destination: '/live-in-companionship-care',
+        permanent: true, // 301 redirect for SEO
+      },
+      {
+        // Consolidate duplicate hospital discharge pages
+        source: '/live-in-care-after-hospital-discharge',
+        destination: '/hospital-discharge-live-in-care',
+        permanent: true, // 301 redirect for SEO
+      },
+    ];
+  },
 };
 
 module.exports = withBundleAnalyzer(nextConfig);

@@ -4,11 +4,14 @@ import bbcImage2 from "@/assets/open/bbc-image2.jpg";
 import bbcImage3 from "@/assets/open/bbc-image3.jpg";
 import publicImg2 from "@/assets/open/public-img2.jpeg";
 import publicImg3 from "@/assets/open/public-img3.jpeg";
+import partnershipLogo1 from "@/assets/partnership-logo/partnership-logo1.webp";
+import partnershipLogo2 from "@/assets/partnership-logo/partnership-logo2.webp";
 import Button from "@/components/Button";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import Image from "next/image";
 import EmergencyButton from "@/components/EmergencyButton";
+import PartnersCarousel from "@/components/PartnersCarousel";
 import { faqs } from "@/data/faqData";
 import FAQAccordion from "@/components/FAQAccordion";
 
@@ -40,7 +43,7 @@ export default function HomePage() {
   const homepageFaqs = faqs.filter(faq => homepageFaqQuestions.includes(faq.question));
 
   return (
-    <main className="overflow-x-hidden min-h-[calc(100vh-80px)] bg-navy-950 pt-6 md:pt-10 lg:pt-20 pb-16 md:pb-24 text-gold-100">
+    <main className="overflow-x-hidden min-h-[calc(100vh-80px)] bg-navy-950 pt-6 md:pt-10 lg:pt-20 text-gold-100">
       <section className="container-wrapper relative flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-center lg:gap-12 xl:gap-24 pb-16">
         {/* As Seen In Media Badge (Top Right) */}
         <a
@@ -226,6 +229,7 @@ export default function HomePage() {
           </div>
         </div> */}
       </section>
+
 
       {/* --- INJECTED CLIENT H2 SECTIONS START --- */}
       <section className="container-wrapper mt-20 space-y-24">
@@ -826,6 +830,18 @@ export default function HomePage() {
           </div>
           <FAQAccordion faqsList={homepageFaqs} groupByCategory={false} />
         </div>
+      </section>
+      {/* --- PARTNERSHIP LOGOS SECTION --- */}
+      <section className="w-full bg-navy-950 pt-10 pb-8 mt-20 relative z-10 border-t border-gold-300/10 overflow-hidden">
+        {/* Heading stays centred in the container */}
+        <div className="px-4 flex flex-col items-center justify-center mb-8">
+          <h2 className="font-serif text-[22px] md:text-3xl font-bold text-gold-50 text-center tracking-wide">
+            Our Featured Partners
+          </h2>
+        </div>
+
+        {/* Marquee is full-viewport-width — no container constraint */}
+        <PartnersCarousel />
       </section>
     </main>
   );

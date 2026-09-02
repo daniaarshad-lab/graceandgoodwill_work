@@ -5,6 +5,9 @@ import { AlertCircle, Clock, FileCheck, Search, Users, ShieldCheck, Heart, Calen
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
+  alternates: {
+    canonical: `/urgent-live-in-care`,
+  },
   title: "Urgent & Rapid Live-in Care | Grace & Goodwill",
   description: "When the need for live-in support develops with almost no warning, we can often match families with carers ready to start within 24 hours.",
 };

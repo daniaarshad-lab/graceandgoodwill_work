@@ -129,7 +129,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
                 <p className="text-sm text-gold-200/80 mb-6 leading-relaxed">
                   Call our friendly support desk.
                 </p>
-                <a href="tel:+442045240108" className="block text-xl font-bold text-gold-200 hover:text-gold-100 transition-colors">
+                <a href="tel:02045240108" className="block text-xl font-bold text-gold-200 hover:text-gold-100 transition-colors">
                   020 4524 0108
                 </a>
               </div>

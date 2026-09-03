@@ -296,7 +296,7 @@ export default function InterestListPanel() {
               </div>
               <div className="flex items-center gap-3 mt-1">
                 <a
-                  href="tel:+442045240108"
+                  href="tel:02045240108"
                   className="text-[11px] font-bold text-emerald-400 hover:text-emerald-300 transition-colors"
                 >
                   📞 Call: 020 4524 0108

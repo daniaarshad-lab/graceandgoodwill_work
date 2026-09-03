@@ -93,7 +93,7 @@ export default function ContactPage() {
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center w-full max-w-md mx-auto">
               <Button asChild variant="primary" size="sm" fullWidth>
-                <a href="tel:+442045240108" className="gap-2">
+                <a href="tel:02045240108" className="gap-2">
                   <Phone className="w-4 h-4 fill-current" />
                   020 4524 0108
                 </a>

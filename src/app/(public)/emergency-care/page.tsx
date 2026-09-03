@@ -100,7 +100,7 @@ export default function EmergencyCarePage() {
 
                 <div className="space-y-2.5">
                   <a
-                    href="tel:+442045240108"
+                    href="tel:02045240108"
                     className="group flex items-center justify-center gap-2.5 w-full px-4 py-3.5 rounded-xl bg-[#b59469] text-navy-950 text-sm font-bold hover:bg-[#a3835a] hover:text-white hover:-translate-y-[1px] hover:shadow-[0_8px_30px_rgba(160,128,84,0.24)] transition-all duration-300"
                   >
                     <Phone className="w-4 h-4 group-hover:animate-pulse" />

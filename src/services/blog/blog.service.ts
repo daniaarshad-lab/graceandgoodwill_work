@@ -57,9 +57,14 @@ function filterAndSortPosts(
     tag,
     status = "PUBLISHED",
     sort = "newest",
+    excludeId,
   } = params;
 
   let rows = all.slice();
+
+  if (excludeId) {
+    rows = rows.filter((post) => post.id !== excludeId);
+  }
 
   if (status && status !== "ALL") {
     rows = rows.filter((post) => post.status === status);

@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 
 import BlogHero from "@/components/blog/BlogHero";
 import BlogListClient from "@/components/blog/BlogListClient";
-import FeaturedPostCard from "@/components/blog/FeaturedPostCard";
 import { blogService } from "@/services/blog/blog.service";
 
 export const metadata: Metadata = {
@@ -22,7 +21,7 @@ export const metadata: Metadata = {
   },
 };
 
-const PAGE_SIZE = 9;
+const PAGE_SIZE = 8;
 
 interface BlogIndexPageProps {
   searchParams: Promise<{ category?: string }>;
@@ -38,7 +37,7 @@ export default async function BlogIndexPage({
   const { category } = await searchParams;
   const activeCategory = category ?? "all";
 
-  const [response, categories] = await Promise.all([
+  const [gridResponse, categories] = await Promise.all([
     blogService.listPosts({
       status: "PUBLISHED",
       page: 1,
@@ -48,19 +47,6 @@ export default async function BlogIndexPage({
     }),
     blogService.listCategories(),
   ]);
-
-  const featured =
-    activeCategory === "all"
-      ? (response.items.find((post) => post.isFeatured) ?? null)
-      : null;
-
-  /* Keep the featured article out of the grid so it is not shown twice. */
-  const gridResponse = featured
-    ? {
-        ...response,
-        items: response.items.filter((post) => post.id !== featured.id),
-      }
-    : response;
 
   return (
     <main className="relative min-h-[calc(100vh-80px)] overflow-hidden bg-navy-950 pb-16 sm:pb-20">
@@ -76,7 +62,6 @@ export default async function BlogIndexPage({
       <BlogHero />
 
       <div className="container-wrapper relative mt-12">
-        {featured && <FeaturedPostCard post={featured} />}
         <BlogListClient
           initialResponse={gridResponse}
           categories={categories}

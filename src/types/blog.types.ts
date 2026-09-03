@@ -63,9 +63,9 @@ export interface BlogListParams {
   /** "all" or a BlogCategory.slug. */
   category?: string;
   tag?: string;
-  /** Public callers pass "PUBLISHED"; admin passes "ALL" or a specific status. */
   status?: BlogStatus | "ALL";
   sort?: BlogSortOption;
+  excludeId?: string;
 }
 
 /** Mirrors the paginated shape already returned by admin.service.ts. */

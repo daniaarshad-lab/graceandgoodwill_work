@@ -97,6 +97,25 @@ function StaticSiteHeader() {
   return (
     <>
       <header className="sticky top-0 z-50 w-full h-20 border-b border-navy-800 bg-navy-950/95 backdrop-blur flex items-center transition-all">
+        {/* Floating Auth buttons - attached to the sticky header */}
+        <div className="absolute top-full left-0 w-full hidden xl:flex pointer-events-none">
+          <div className="container-wrapper w-full flex justify-end">
+            <div className="pointer-events-auto flex items-center gap-3 lg:gap-4 pt-3">
+              <HeaderRoleMenu
+                label="Login"
+                items={loginItems}
+                isActive={pathname === "/login"}
+              />
+              <HeaderRoleMenu
+                label="Register"
+                items={registerItems}
+                variant="button"
+                isActive={pathname === "/register"}
+              />
+            </div>
+          </div>
+        </div>
+
         <div className="container-wrapper flex items-center justify-between py-4">
           <Link
             href="/"
@@ -179,22 +198,9 @@ function StaticSiteHeader() {
               Join as a Carer
             </Link>
 
-            {/* Authentication Actions & Call Button */}
-            <div className="flex items-center gap-3 lg:gap-4 border-l border-navy-800 pl-4 lg:pl-6 ml-2">
-              <HeaderRoleMenu
-                label="Login"
-                items={loginItems}
-                isActive={pathname === "/login"}
-              />
-              <HeaderRoleMenu
-                label="Register"
-                items={registerItems}
-                variant="button"
-                isActive={pathname === "/register"}
-              />
-              <div className="hidden xl:flex ml-1">
-                <CallCapsule />
-              </div>
+            {/* Call Button */}
+            <div className="hidden xl:flex flex-col items-end justify-center border-l border-navy-800 pl-4 lg:pl-6 ml-2">
+              <CallCapsule />
             </div>
           </nav>
         </div>

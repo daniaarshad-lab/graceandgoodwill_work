@@ -14,7 +14,7 @@ import { Menu, X, Phone } from "lucide-react";
 const CallCapsule = ({ className = "" }: { className?: string }) => (
   <a 
     href="tel:02045240108"
-    className={`group flex items-center gap-3 rounded-full bg-[#b59469] px-4 py-1.5 text-navy-950 shadow-md transition-all hover:scale-105 hover:shadow-lg hover:bg-white hover:text-navy-950 ${className}`}
+    className={`group flex items-center gap-3 rounded-full bg-[#b59469] px-4 py-1.5 text-navy-950 shadow-md transition-all hover:scale-105 hover:shadow-lg hover:text-white ${className}`}
   >
     <Phone className="h-4 w-4 shrink-0 transition-transform group-hover:rotate-12" fill="currentColor" />
     <div className="flex flex-col items-start leading-tight">

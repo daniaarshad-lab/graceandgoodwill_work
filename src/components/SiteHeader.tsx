@@ -9,7 +9,20 @@ import Button from "./Button";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { logout as logoutThunk } from "@/store/slices/authSlice";
 import { showSuccessToast } from "@/utils/toast";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Phone } from "lucide-react";
+
+const CallCapsule = ({ className = "" }: { className?: string }) => (
+  <a 
+    href="tel:02045240108"
+    className={`group flex items-center gap-3 rounded-full bg-gradient-to-r from-[#d4af37] to-[#e8ba7a] px-4 py-1.5 text-navy-950 shadow-md transition-all hover:scale-105 hover:shadow-lg hover:from-[#e8ba7a] hover:to-[#f3d59e] ${className}`}
+  >
+    <Phone className="h-4 w-4 shrink-0 transition-transform group-hover:rotate-12" fill="currentColor" />
+    <div className="flex flex-col items-start leading-tight">
+      <span className="text-[13px] font-bold tracking-wide">020 4524 0108</span>
+      <span className="text-[10px] font-semibold opacity-80 uppercase tracking-wider">Call us today</span>
+    </div>
+  </a>
+);
 
 // Nav links are defined outside the component so they are never recreated.
 const navLinks = [
@@ -89,8 +102,8 @@ function SiteHeader() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full h-20 bg-navy-950/95 backdrop-blur flex items-center">
-        <div className="container-wrapper flex items-center justify-between py-4">
+      <header className="sticky top-0 z-50 w-full bg-navy-950/95 backdrop-blur flex flex-col shadow-sm border-b border-navy-800/50 transition-all">
+        <div className="container-wrapper flex items-center justify-between min-h-[80px] py-2">
           <Link
             href="/"
             className="flex items-center gap-2 sm:gap-3 text-white group flex-shrink-0"
@@ -161,43 +174,59 @@ function SiteHeader() {
             })}
 
             {/* Actions */}
-            <div className="flex items-center gap-4 lg:gap-6 border-l border-navy-800 pl-4 lg:pl-6 ml-2">
-              {mounted &&
-                portalLink &&
-                !pathname.startsWith(portalLink.href) && (
-                  <Link
-                    href={portalLink.href}
-                    prefetch={false}
-                    className="text-[13px] lg:text-sm font-semibold text-gold-DEFAULT transition hover:text-gold-200 whitespace-nowrap"
-                  >
-                    {portalLink.label}
-                  </Link>
-                )}
+            <div className="flex flex-col items-end gap-1.5 border-l border-navy-800 pl-4 lg:pl-6 ml-2 justify-center py-1">
+              <CallCapsule className="hidden xl:flex mb-1" />
 
-              {mounted && isAuthenticated ? (
-                <Button
-                  onClick={handleLogout}
-                  variant="ghost-gold"
-                  size="sm"
-                  fullWidth={false}
-                >
-                  Logout
-                </Button>
-              ) : (
-                <div className="flex items-center gap-3">
-                  <Link
-                    href="/login"
-                    prefetch={false}
-                    className={`text-[13px] lg:text-sm font-semibold hover:text-gold-50 whitespace-nowrap ${
-                      pathname === "/login" ? "text-gold-50" : "text-gold-200"
-                    }`}
+              <div className="flex items-center gap-4 mr-1">
+                {mounted &&
+                  portalLink &&
+                  !pathname.startsWith(portalLink.href) && (
+                    <Link
+                      href={portalLink.href}
+                      prefetch={false}
+                      className="text-[12px] font-semibold text-gold-DEFAULT transition hover:text-gold-200 whitespace-nowrap"
+                    >
+                      {portalLink.label}
+                    </Link>
+                  )}
+
+                {mounted && isAuthenticated ? (
+                  <Button
+                    onClick={handleLogout}
+                    variant="ghost-gold"
+                    size="sm"
+                    fullWidth={false}
                   >
-                    Login
-                  </Link>
-                </div>
-              )}
+                    Logout
+                  </Button>
+                ) : (
+                  <div className="flex items-center gap-4">
+                    <Link
+                      href="/login"
+                      prefetch={false}
+                      className={`text-[12px] font-semibold hover:text-gold-50 whitespace-nowrap ${
+                        pathname === "/login" ? "text-gold-50" : "text-gold-200"
+                      }`}
+                    >
+                      Login
+                    </Link>
+                    <Link
+                      href="/register"
+                      prefetch={false}
+                      className="text-[12px] font-bold bg-gradient-to-r from-gold-300 to-gold-200 text-navy-950 px-4 py-1.5 rounded-full hover:scale-105 transition-transform"
+                    >
+                      Register
+                    </Link>
+                  </div>
+                )}
+              </div>
             </div>
           </nav>
+        </div>
+
+        {/* Mobile Call Capsule - sticky under header */}
+        <div className="xl:hidden w-full px-4 pb-3 pt-1">
+          <CallCapsule className="w-full justify-center py-2" />
         </div>
       </header>
 

@@ -8,6 +8,20 @@ import { HeartHandshake, Menu, X } from "lucide-react";
 import HeaderRoleMenu, { type RoleMenuItem } from "@/components/HeaderRoleMenu";
 import MobileRoleMenu from "@/components/MobileRoleMenu";
 import { AUTH_ROUTES } from "@/lib/auth-routes";
+import { Phone } from "lucide-react";
+
+const CallCapsule = ({ className = "" }: { className?: string }) => (
+  <a 
+    href="tel:02045240108"
+    className={`group flex items-center justify-center gap-2.5 rounded-full bg-gradient-to-r from-[#d4af37] to-[#e8ba7a] px-5 py-2 text-navy-950 shadow-md transition-all hover:scale-105 hover:shadow-lg hover:from-[#e8ba7a] hover:to-[#f3d59e] flex-shrink-0 ${className}`}
+  >
+    <Phone className="h-[18px] w-[18px] shrink-0 transition-transform group-hover:rotate-12" fill="currentColor" />
+    <div className="flex flex-col items-start leading-none justify-center">
+      <span className="text-[14px] font-bold tracking-wide whitespace-nowrap">020 4524 0108</span>
+      <span className="text-[10px] font-bold opacity-80 uppercase tracking-widest whitespace-nowrap mt-1">Call us today</span>
+    </div>
+  </a>
+);
 
 // Nav links are defined outside the component so they are never recreated.
 const navLinks = [
@@ -82,7 +96,7 @@ function StaticSiteHeader() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full h-20 border-b border-navy-800 bg-navy-950/95 backdrop-blur flex items-center">
+      <header className="sticky top-0 z-50 w-full h-20 border-b border-navy-800 bg-navy-950/95 backdrop-blur flex items-center transition-all">
         <div className="container-wrapper flex items-center justify-between py-4">
           <Link
             href="/"
@@ -165,8 +179,8 @@ function StaticSiteHeader() {
               Join as a Carer
             </Link>
 
-            {/* Authentication Actions */}
-            <div className="flex items-center gap-3 lg:gap-4 border-l border-navy-800 pl-4 lg:pl-6 ml-1">
+            {/* Authentication Actions & Call Button */}
+            <div className="flex items-center gap-3 lg:gap-4 border-l border-navy-800 pl-4 lg:pl-6 ml-2">
               <HeaderRoleMenu
                 label="Login"
                 items={loginItems}
@@ -178,8 +192,16 @@ function StaticSiteHeader() {
                 variant="button"
                 isActive={pathname === "/register"}
               />
+              <div className="hidden xl:flex ml-1">
+                <CallCapsule />
+              </div>
             </div>
           </nav>
+        </div>
+
+        {/* Mobile Call Capsule - sticky under header */}
+        <div className="xl:hidden absolute top-full left-0 w-full px-4 pb-3 pt-1 bg-navy-950/95 backdrop-blur border-b border-navy-800 shadow-sm">
+          <CallCapsule className="w-full justify-center py-2" />
         </div>
       </header>
 

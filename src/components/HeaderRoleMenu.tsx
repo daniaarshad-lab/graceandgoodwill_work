@@ -63,8 +63,8 @@ export default function HeaderRoleMenu({
   const triggerClasses =
     variant === "button"
       ? `inline-flex items-center gap-1.5 rounded-xl bg-[#b59469] px-4 py-2 text-[13px] lg:text-sm font-semibold text-navy-950 transition-all duration-300 hover:bg-[#c9a67d] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-300/60 whitespace-nowrap`
-      : `inline-flex items-center gap-1 text-[13px] lg:text-sm font-semibold transition hover:text-gold-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-300/60 rounded-sm whitespace-nowrap ${
-          isActive || isOpen ? "text-gold-50" : "text-gold-200"
+      : `inline-flex items-center gap-1 text-[13px] lg:text-sm font-semibold transition hover:text-[#f5d4A0] focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-300/60 rounded-sm whitespace-nowrap ${
+          isActive || isOpen ? "text-[#f5d4A0]" : "text-white"
         }`;
 
   return (

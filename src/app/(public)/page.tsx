@@ -1,4 +1,5 @@
 import { Newspaper, ExternalLink, HandHeart, ChevronRight, CheckCircle2, Calendar, Activity, Clock, ArrowRight } from "lucide-react";
+import homeBannerImg from "@/assets/open/Home-banner-img.jpeg";
 import happySeniorCouple from "@/assets/open/happy_senior_couple.png";
 import bbcImage2 from "@/assets/open/bbc-image2.jpg";
 import bbcImage3 from "@/assets/open/bbc-image3.jpg";
@@ -43,39 +44,60 @@ export default function HomePage() {
   const homepageFaqs = faqs.filter(faq => homepageFaqQuestions.includes(faq.question));
 
   return (
-    <main className="overflow-x-hidden min-h-[calc(100vh-80px)] bg-navy-950 pt-6 md:pt-10 lg:pt-20 text-gold-100">
-      <section className="container-wrapper relative flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-center lg:gap-12 xl:gap-24 pb-16">
-        {/* As Seen In Media Badge (Top Right) */}
-        <a
-          href="https://www.bbc.co.uk/programmes/p0m85mv7"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="relative lg:absolute lg:top-0 lg:right-[calc(-50vw+50%+2rem)] 2xl:top-0 2xl:right-[calc(-50vw+50%+4rem)] z-30 inline-flex self-start lg:self-auto items-center gap-3 bg-navy-900 border border-gold-muted/30 px-4 py-2 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.3)] backdrop-blur-md hover:border-gold-400/50 hover:shadow-[0_0_15px_rgba(247,215,116,0.15)] hover:scale-[1.02] transition-all cursor-pointer"
-        >
-          <span className="text-[10px] sm:text-xs font-semibold text-gold-200 uppercase tracking-widest inline-block">
-            As Featured on
-          </span>
-          <div className="flex items-center gap-1.5">
-            {/* BBC Logo Blocks */}
-            <div className="flex gap-0.5">
-              <span className="bg-white text-black text-[10px] sm:text-[11px] font-bold px-1 py-0.5 rounded-sm leading-none">
-                B
-              </span>
-              <span className="bg-white text-black text-[10px] sm:text-[11px] font-bold px-1 py-0.5 rounded-sm leading-none">
-                B
-              </span>
-              <span className="bg-white text-black text-[10px] sm:text-[11px] font-bold px-1 py-0.5 rounded-sm leading-none">
-                C
-              </span>
-            </div>
-            <span className="text-white font-bold tracking-[0.2em] text-xs sm:text-sm">
-              RADIO
-            </span>
-          </div>
-        </a>
+    <main className="overflow-x-clip min-h-[calc(100vh-80px)] bg-navy-950 text-gold-100">
+      <section className="relative w-full pb-16 min-h-[600px] bg-navy-950">
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0 overflow-hidden">
+          <Image
+            src={homeBannerImg}
+            alt="Grace and Goodwill Care"
+            fill
+            className="object-cover object-[100%_20%]"
+            priority
+          />
+          {/* Subtle gradient overlay to blend with bg-navy-950 and ensure text readability */}
+          <div className="absolute inset-0 bg-gradient-to-r from-navy-950 from-[5%] via-navy-950/70 via-50% to-transparent to-80%" />
+          {/* Bottom gradient fade to prevent hard edges if image scales down */}
+          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-navy-950 to-transparent" />
+        </div>
 
-        <div className="max-w-2xl lg:max-w-xl xl:max-w-2xl lg:flex-1 xl:flex-none space-y-6 -mt-4 lg:mt-0 z-10 relative">
-          <h1 className="main-page-heading drop-shadow-md">
+        {/* Top Right BBC Badge (Absolute within Hero) */}
+        <div className="absolute top-[30px] md:top-[40px] xl:top-[40px] left-0 w-full z-40 pointer-events-none">
+          <div className="container-wrapper flex justify-end w-full pr-4 lg:pr-8 xl:pr-12 pointer-events-auto">
+            <a
+              href="https://www.bbc.co.uk/programmes/p0m85mv7"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex lg:inline-flex justify-center w-full lg:w-auto h-14 lg:h-auto items-center gap-3.5 bg-navy-900 border border-gold-muted/30 px-5 py-2.5 lg:px-6 lg:py-3 rounded-full shadow-lg lg:shadow-[0_4px_20px_rgba(0,0,0,0.3)] backdrop-blur-md hover:border-gold-400/50 hover:shadow-[0_0_20px_rgba(247,215,116,0.2)] transition-all cursor-pointer transform hover:-translate-y-0.5 lg:hover:scale-[1.02]"
+            >
+              <span className="text-xs sm:text-sm font-semibold text-gold-200 uppercase tracking-widest">
+                As Featured on
+              </span>
+              <div className="flex items-center gap-1.5">
+                {/* BBC Logo Blocks */}
+                <div className="flex gap-0.5">
+                  <span className="bg-white text-black text-xs sm:text-[13px] font-bold px-1.5 py-0.5 rounded-sm leading-none">
+                    B
+                  </span>
+                  <span className="bg-white text-black text-xs sm:text-[13px] font-bold px-1.5 py-0.5 rounded-sm leading-none">
+                    B
+                  </span>
+                  <span className="bg-white text-black text-xs sm:text-[13px] font-bold px-1.5 py-0.5 rounded-sm leading-none">
+                    C
+                  </span>
+                </div>
+                <span className="text-white font-bold tracking-[0.2em] text-sm sm:text-base">
+                  RADIO
+                </span>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <div className="w-full px-4 md:px-8 lg:px-12 relative z-10 flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-start lg:gap-12 xl:gap-24 pt-4 lg:pt-10">
+          <div className="w-full lg:w-1/2 space-y-6 mt-2 lg:mt-0 z-10 relative">
+            <div className="page-strapline">CARE YOU CAN TRUST</div>
+            <h1 className="main-page-heading drop-shadow-md">
             Live-in Care Matching
             <span className="main-page-heading pl-3 text-[#F5D4A0]">
               Across The UK
@@ -153,81 +175,9 @@ export default function HomePage() {
               />
             </a>
           </div>
+
         </div>
-
-        <div className="relative flex items-center justify-center mt-0 sm:mt-8 lg:mt-0 w-full lg:flex-1 xl:flex-none lg:max-w-xl h-[380px] sm:h-[450px] overflow-visible lg:-translate-x-4 xl:-translate-x-10">
-          {/* Glowing concentric radiating gold rings */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="absolute shrink-0 w-[260px] sm:w-[290px] lg:w-[320px] h-[260px] sm:h-[290px] lg:h-[320px] rounded-full border-2 border-gold-400 animate-ring-pulse-1" />
-            <div className="absolute shrink-0 w-[300px] sm:w-[330px] lg:w-[360px] h-[300px] sm:h-[330px] lg:h-[360px] rounded-full border-2 border-gold-400 animate-ring-pulse-2" />
-            <div className="absolute shrink-0 w-[340px] sm:w-[370px] lg:w-[400px] h-[340px] sm:h-[370px] lg:h-[400px] rounded-full border-2 border-gold-400 animate-ring-pulse-3" />
-            <div className="absolute shrink-0 w-[380px] sm:w-[410px] lg:w-[440px] max-w-[95vw] lg:max-w-none h-[380px] sm:h-[410px] lg:h-[440px] max-h-[95vw] lg:max-h-none rounded-full border-2 border-gold-400 animate-ring-pulse-4" />
-          </div>
-
-          {/* Focal Circular Portrait Container */}
-          <div className="relative shrink-0 w-56 h-56 sm:w-64 sm:h-64 lg:w-72 lg:h-72 rounded-full border-4 border-gold-400 bg-navy-950 shadow-elegant overflow-hidden transition-all duration-500 hover:scale-[1.02] animate-image-pulse">
-            <Image
-              src={happySeniorCouple}
-              alt="Reassured senior couple supported by Grace & Goodwill live in care"
-              className="w-full h-full object-cover scale-[1.05] hover:scale-[1.10] transition-transform duration-700 object-center"
-              placeholder="blur"
-            />
-            {/* Visual decorative gold overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-navy-950/20 via-transparent to-transparent pointer-events-none" />
-          </div>
-
-          {/* Testimonial Quote Bubble overlapping the circle */}
-          <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 xl:-bottom-2 xl:left-auto xl:-right-12 xl:translate-x-0 bg-navy-900/90 border border-gold-muted/30 shadow-elegant rounded-2xl p-3 sm:p-4 w-[260px] max-w-[90vw] sm:w-auto sm:max-w-[280px] backdrop-blur-md transition-all duration-300 hover:scale-[1.02] flex flex-col gap-1 z-10">
-            <span className="text-2xl sm:text-3xl font-serif text-gold-300/70 leading-none h-3 sm:h-4">
-              “
-            </span>
-            <p className="page-supporting-text text-[10px] sm:text-[11px]">
-              Grace & Goodwill has been a true blessing, giving us total peace
-              of mind with their reliable, highly compassionate live-in care
-              support right at home.
-            </p>
-            <p className="text-[9px] sm:text-[10px] font-semibold text-gold-400 mt-1 self-end">
-              — The Harrison Family
-            </p>
-          </div>
-        </div>
-
-        {/* <div className="relative flex items-center justify-center mt-0 sm:mt-8 lg:mt-0 w-full lg:flex-1 xl:flex-none lg:max-w-xl h-[380px] sm:h-[450px] overflow-visible">
-
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="absolute w-[260px] sm:w-[290px] lg:w-[320px] h-[260px] sm:h-[290px] lg:h-[320px] rounded-full border-2 border-gold-400 animate-ring-pulse-1" />
-            <div className="absolute w-[300px] sm:w-[330px] lg:w-[360px] h-[300px] sm:h-[330px] lg:h-[360px] rounded-full border-2 border-gold-400 animate-ring-pulse-2" />
-            <div className="absolute w-[340px] sm:w-[370px] lg:w-[400px] h-[340px] sm:h-[370px] lg:h-[400px] rounded-full border-2 border-gold-400 animate-ring-pulse-3" />
-            <div className="absolute w-[380px] sm:w-[410px] lg:w-[440px] max-w-[95vw] lg:max-w-none h-[380px] sm:h-[410px] lg:h-[440px] max-h-[95vw] lg:max-h-none rounded-full border-2 border-gold-400 animate-ring-pulse-4" />
-          </div>
-
-
-          <div className="relative w-56 h-56 sm:w-64 sm:h-64 lg:w-72 lg:h-72 rounded-full border-4 border-gold-400 bg-navy-950 shadow-elegant overflow-hidden transition-all duration-500 hover:scale-[1.02] animate-image-pulse">
-            <Image
-              src={happySeniorCouple}
-              alt="Reassured senior couple supported by Grace & Goodwill live in care"
-              className="w-full h-full object-cover scale-[1.05] hover:scale-[1.10] transition-transform duration-700 object-center"
-              placeholder="blur"
-            />
-
-            <div className="absolute inset-0 bg-gradient-to-t from-navy-950/20 via-transparent to-transparent pointer-events-none" />
-          </div>
-
-
-          <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 xl:-bottom-2 xl:left-auto xl:-right-12 xl:translate-x-0 bg-navy-900/90 border border-gold-muted/30 shadow-elegant rounded-2xl p-3 sm:p-4 w-[260px] max-w-[90vw] sm:w-auto sm:max-w-[280px] backdrop-blur-md transition-all duration-300 hover:scale-[1.02] flex flex-col gap-1 z-10">
-            <span className="text-2xl sm:text-3xl font-serif text-gold-300/70 leading-none h-3 sm:h-4">
-              “
-            </span>
-            <p className="page-supporting-text text-[10px] sm:text-[11px]">
-              Grace & Goodwill has been a true blessing, giving us total peace
-              of mind with their reliable, highly compassionate live-in care
-              support right at home.
-            </p>
-            <p className="text-[9px] sm:text-[10px] font-semibold text-gold-400 mt-1 self-end">
-              — The Harrison Family
-            </p>
-          </div>
-        </div> */}
+      </div>
       </section>
 
 

@@ -4,24 +4,13 @@ import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { HeartHandshake, Menu, X } from "lucide-react";
+import { HeartHandshake, Menu, X, Calendar } from "lucide-react";
 import HeaderRoleMenu, { type RoleMenuItem } from "@/components/HeaderRoleMenu";
 import MobileRoleMenu from "@/components/MobileRoleMenu";
 import { AUTH_ROUTES } from "@/lib/auth-routes";
 import { Phone } from "lucide-react";
+import WhatsAppIcon from "@/components/WhatsAppIcon";
 
-const CallCapsule = ({ className = "" }: { className?: string }) => (
-  <a 
-    href="tel:02045240108"
-    className={`group flex items-center justify-center gap-2.5 rounded-full bg-[#b59469] px-5 py-2 text-navy-950 shadow-md transition-all hover:scale-105 hover:shadow-lg hover:text-white flex-shrink-0 ${className}`}
-  >
-    <Phone className="h-[18px] w-[18px] shrink-0 transition-transform group-hover:rotate-12" fill="currentColor" />
-    <div className="flex flex-col items-start leading-none justify-center">
-      <span className="text-[14px] font-bold tracking-wide whitespace-nowrap">020 4524 0108</span>
-      <span className="text-[10px] font-bold opacity-80 uppercase tracking-widest whitespace-nowrap mt-1">Call us today</span>
-    </div>
-  </a>
-);
 
 // Nav links are defined outside the component so they are never recreated.
 const navLinks = [
@@ -96,25 +85,25 @@ function StaticSiteHeader() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full h-20 border-b border-navy-800 bg-navy-950/95 backdrop-blur flex items-center transition-all">
-        {/* Floating Auth buttons - attached to the sticky header */}
-        <div className="absolute top-full left-0 w-full hidden xl:flex pointer-events-none">
-          <div className="container-wrapper w-full flex justify-end">
-            <div className="pointer-events-auto flex items-center gap-3 lg:gap-4 pt-3">
-              <HeaderRoleMenu
-                label="Login"
-                items={loginItems}
-                isActive={pathname === "/login"}
-              />
-              <HeaderRoleMenu
-                label="Register"
-                items={registerItems}
-                variant="button"
-                isActive={pathname === "/register"}
-              />
-            </div>
-          </div>
+      {/* Top Contact Bar */}
+      <div className="w-full bg-[#b59469] text-black py-1.5 md:py-2">
+        <div className="container-wrapper flex flex-wrap justify-center items-center gap-6 sm:gap-10 md:gap-24 text-[12px] sm:text-[13px] font-medium tracking-wide">
+          <a href="tel:02045240108" className="flex items-center gap-3 text-black hover:opacity-70 transition-opacity">
+            <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-black" strokeWidth={2.5} />
+            <span className="text-black">Call our office: 020 4524 0108</span>
+          </a>
+          <a href="https://wa.me/442045240108" target="_blank" rel="noreferrer" className="flex items-center gap-3 text-black hover:opacity-70 transition-opacity">
+            <WhatsAppIcon className="w-4 h-4 sm:w-[18px] sm:h-[18px] fill-black" />
+            <span className="text-black">WhatsApp us</span>
+          </a>
+          <Link href="/contact" className="flex items-center gap-3 text-black hover:opacity-70 transition-opacity">
+            <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-black" strokeWidth={2.5} />
+            <span className="text-black">Request a callback</span>
+          </Link>
         </div>
+      </div>
+
+      <header className="sticky top-0 z-50 w-full h-20 border-b border-navy-800 bg-navy-950/95 backdrop-blur flex items-center transition-all">
 
         <div className="container-wrapper flex items-center justify-between py-4">
           <Link
@@ -176,7 +165,7 @@ function StaticSiteHeader() {
                   key={link.href}
                   href={link.href}
                   prefetch={false}
-                  className={`text-[13px] lg:text-sm font-medium transition hover:text-gold-50 whitespace-nowrap ${isActive ? "text-gold-50" : "text-gold-200"
+                  className={`text-[13px] lg:text-sm font-medium transition hover:text-[#f5d4A0] whitespace-nowrap ${isActive ? "text-[#f5d4A0]" : "text-white"
                     }`}
                 >
                   {link.label}
@@ -189,26 +178,33 @@ function StaticSiteHeader() {
             <Link
               href={AUTH_ROUTES.carerRecruitment}
               prefetch={false}
-              className={`inline-flex items-center gap-1.5 text-[13px] lg:text-sm font-medium transition hover:text-gold-50 whitespace-nowrap ${pathname === AUTH_ROUTES.carerRecruitment
-                ? "text-gold-50"
-                : "text-gold-200"
+              className={`inline-flex items-center gap-1.5 text-[13px] lg:text-sm font-medium transition hover:text-[#f5d4A0] whitespace-nowrap ${pathname === AUTH_ROUTES.carerRecruitment
+                ? "text-[#f5d4A0]"
+                : "text-white"
                 }`}
             >
               <HeartHandshake className="h-4 w-4" aria-hidden="true" />
               Join as a Carer
             </Link>
 
-            {/* Call Button */}
-            <div className="hidden xl:flex flex-col items-end justify-center border-l border-navy-800 pl-4 lg:pl-6 ml-2">
-              <CallCapsule />
+            {/* Auth Buttons */}
+            <div className="hidden xl:flex items-center gap-3 lg:gap-4 border-l border-navy-800 pl-4 lg:pl-6 ml-2">
+              <HeaderRoleMenu
+                label="Login"
+                items={loginItems}
+                isActive={pathname === "/login"}
+              />
+              <HeaderRoleMenu
+                label="Register"
+                items={registerItems}
+                variant="button"
+                isActive={pathname === "/register"}
+              />
             </div>
           </nav>
         </div>
 
-        {/* Mobile Call Capsule - sticky under header */}
-        <div className="xl:hidden absolute top-full left-0 w-full px-4 pb-3 pt-1 bg-navy-950/95 backdrop-blur border-b border-navy-800 shadow-sm">
-          <CallCapsule className="w-full justify-center py-2" />
-        </div>
+
       </header>
 
       {/* Mobile Navigation Overlay + Slide-over Drawer */}

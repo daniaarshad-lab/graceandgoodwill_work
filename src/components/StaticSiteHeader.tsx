@@ -87,16 +87,16 @@ function StaticSiteHeader() {
     <header className="sticky top-0 z-50 w-full flex flex-col transition-all">
       {/* Top Contact Bar */}
       <div className="w-full bg-[#b59469] text-black py-1.5 md:py-2">
-        <div className="container-wrapper flex flex-wrap justify-center items-center gap-6 sm:gap-10 md:gap-24 text-[12px] sm:text-[13px] font-medium tracking-wide">
-          <a href="tel:02045240108" className="flex items-center gap-3 text-black hover:opacity-70 transition-opacity">
+        <div className="container-wrapper flex flex-wrap justify-center items-center gap-4 sm:gap-10 md:gap-24 text-[12px] sm:text-[13px] font-medium tracking-wide">
+          <a href="tel:02045240108" className="flex items-center gap-2 sm:gap-3 text-black hover:opacity-70 transition-opacity">
             <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-black" strokeWidth={2.5} />
             <span className="text-black">Call our office: 020 4524 0108</span>
           </a>
-          <a href="https://wa.me/442045240108" target="_blank" rel="noreferrer" className="flex items-center gap-3 text-black hover:opacity-70 transition-opacity">
+          <a href="https://wa.me/442045240108" target="_blank" rel="noreferrer" className="hidden sm:flex items-center gap-3 text-black hover:opacity-70 transition-opacity">
             <WhatsAppIcon className="w-4 h-4 sm:w-[18px] sm:h-[18px] fill-black" />
             <span className="text-black">WhatsApp us</span>
           </a>
-          <Link href="/contact" className="flex items-center gap-3 text-black hover:opacity-70 transition-opacity">
+          <Link href="/contact" className="hidden sm:flex items-center gap-3 text-black hover:opacity-70 transition-opacity">
             <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-black" strokeWidth={2.5} />
             <span className="text-black">Request a callback</span>
           </Link>

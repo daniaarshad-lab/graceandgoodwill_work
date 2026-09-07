@@ -62,8 +62,8 @@ export default function HomePage() {
         </div>
 
         {/* Top Right BBC Badge (Absolute within Hero) */}
-        <div className="absolute top-[30px] md:top-[40px] xl:top-[40px] left-0 w-full z-40 pointer-events-none">
-          <div className="container-wrapper flex justify-end w-full pr-4 lg:pr-8 xl:pr-12 pointer-events-auto">
+        <div className="absolute top-[30px] md:top-[40px] xl:top-[40px] left-0 w-full z-40 pointer-events-none hidden lg:block">
+          <div className="container-wrapper flex justify-end w-full lg:pr-2 xl:pr-4 pointer-events-auto">
             <a
               href="https://www.bbc.co.uk/programmes/p0m85mv7"
               target="_blank"
@@ -173,6 +173,28 @@ export default function HomePage() {
                 strokeWidth={3}
                 className="text-[#00C653]/70 w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1 z-10"
               />
+            </a>
+          </div>
+
+          {/* BBC Badge for mobile (below buttons) */}
+          <div className="mt-8 lg:hidden">
+            <a
+              href="https://www.bbc.co.uk/programmes/p0m85mv7"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex justify-center w-full sm:w-auto h-14 items-center gap-3.5 bg-navy-900 border border-gold-muted/30 px-5 py-2.5 rounded-full shadow-lg backdrop-blur-md hover:border-gold-400/50 transition-all cursor-pointer"
+            >
+              <span className="text-xs sm:text-sm font-semibold text-gold-200 uppercase tracking-widest">
+                As Featured on
+              </span>
+              <div className="flex items-center gap-1.5">
+                <div className="flex gap-0.5">
+                  <span className="bg-white text-black text-xs sm:text-[13px] font-bold px-1.5 py-0.5 rounded-sm leading-none">B</span>
+                  <span className="bg-white text-black text-xs sm:text-[13px] font-bold px-1.5 py-0.5 rounded-sm leading-none">B</span>
+                  <span className="bg-white text-black text-xs sm:text-[13px] font-bold px-1.5 py-0.5 rounded-sm leading-none">C</span>
+                </div>
+                <span className="text-white font-bold tracking-[0.2em] text-sm sm:text-base">RADIO</span>
+              </div>
             </a>
           </div>
 

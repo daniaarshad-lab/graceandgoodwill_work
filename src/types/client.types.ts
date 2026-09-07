@@ -27,6 +27,8 @@ export interface ClientProfile {
   updatedAt: string;
 
   isLifetimeFeePaid?: boolean;
+  isLifetimeFeeWaived?: boolean;
+  lifetimeFeeWaiverCutoff?: string;
   lifetimeFeeInvoiceId?: string | null;
   defaultWeeklyFee?: number | null;
   gocardlessCustomerId?: string | null;

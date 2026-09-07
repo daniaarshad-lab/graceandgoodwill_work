@@ -370,7 +370,12 @@ export default function ClientBillingPage() {
     }
   };
 
-  const isLifetimePaid = profile?.isLifetimeFeePaid;
+  const isWaived = Boolean(
+    (profile as any)?.isLifetimeFeeWaived ||
+    (profile?.createdAt && new Date(profile.createdAt).getTime() < new Date("2027-01-01T00:00:00.000Z").getTime()) ||
+    profile?.lifetimeFeeInvoiceId?.startsWith("WAIVED_")
+  );
+  const isLifetimePaid = Boolean(profile?.isLifetimeFeePaid || isWaived);
 
   const getStatusBadge = (status: string) => {
     const statusMap: Record<string, string> = {
@@ -413,26 +418,46 @@ export default function ClientBillingPage() {
                   Lifetime Platform Fee
                 </h2>
                 {isLifetimePaid ? (
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-950/60 border border-emerald-500/30 text-emerald-400">
-                    Active & Paid
-                  </span>
+                  isWaived ? (
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-950/60 border border-emerald-500/30 text-emerald-300">
+                      Complimentary Access (Pre-2027 Promo)
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-950/60 border border-emerald-500/30 text-emerald-400">
+                      Active & Paid
+                    </span>
+                  )
                 ) : (
                   <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-red-950/60 border border-red-500/30 text-red-400 animate-pulse">
                     Payment Required
                   </span>
                 )}
               </div>
-              <p className="text-slate-300 text-sm leading-relaxed mb-6">
-                Grace & Goodwill charges a one-off lifetime registration fee of{" "}
-                <span className="font-semibold text-white">£299 + VAT</span>{" "}
-                which covers your initial consultation, comprehensive client
-                onboarding, and lifetime access to our carer matching platform.
-              </p>
+              {isWaived ? (
+                <div className="space-y-3 mb-6">
+                  <div className="p-3.5 rounded-xl bg-gold-500/10 border border-gold-400/20 text-gold-200 text-xs leading-relaxed">
+                    <p className="font-semibold text-gold-100 flex items-center gap-1.5 mb-1">
+                      <span>✨</span> Early Registration Benefit Active
+                    </p>
+                    As an early member registered before <strong>1 January 2027</strong>, your one-off Lifetime Platform Fee (£299 + VAT) is <strong>100% waived</strong>. You enjoy permanent complimentary access to search, select, and match with qualified carers.
+                  </div>
+                  <p className="text-slate-300 text-xs leading-relaxed">
+                    Verified on platform security log. Carer browsing and matching active.
+                  </p>
+                </div>
+              ) : (
+                <p className="text-slate-300 text-sm leading-relaxed mb-6">
+                  Grace & Goodwill charges a one-off lifetime registration fee of{" "}
+                  <span className="font-semibold text-white">£299 + VAT</span>{" "}
+                  which covers your initial consultation, comprehensive client
+                  onboarding, and lifetime access to our carer matching platform.
+                </p>
+              )}
             </div>
 
             <div>
               {isLifetimePaid ? (
-                <div className="bg-navy-950 border border-navy-850 rounded-xl p-4 flex items-center space-x-3 text-slate-400">
+                <div className="bg-navy-950 border border-navy-850 rounded-xl p-4 flex items-center space-x-3 text-slate-300">
                   <svg
                     className="h-6 w-6 text-emerald-400 flex-shrink-0"
                     fill="none"
@@ -446,9 +471,18 @@ export default function ClientBillingPage() {
                       d="M5 13l4 4L19 7"
                     />
                   </svg>
-                  <span className="text-sm">
-                    Verified on security log. Matching active.
-                  </span>
+                  <div className="text-sm">
+                    <span className="font-semibold text-white block">
+                      {isWaived
+                        ? "100% Free Lifetime Platform Access"
+                        : "Lifetime Platform Fee Active"}
+                    </span>
+                    <span className="text-xs text-slate-400">
+                      {isWaived
+                        ? "Pre-2027 client registration promotion."
+                        : "Verified on security log. Matching active."}
+                    </span>
+                  </div>
                 </div>
               ) : (
                 <button

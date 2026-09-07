@@ -43,6 +43,18 @@ export default function AgreementsPage() {
   const [selectedAgreement, setSelectedAgreement] =
     useState<LegalAgreement | null>(null);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const isPreCutoff = Boolean(
+    (profile?.createdAt && new Date(profile.createdAt).getTime() < new Date("2027-01-01T00:00:00.000Z").getTime()) ||
+    ((user as any)?.createdAt && new Date((user as any).createdAt).getTime() < new Date("2027-01-01T00:00:00.000Z").getTime())
+  );
+
+  const isLifetimeFeeExempt = Boolean(
+    profile?.isLifetimeFeePaid ||
+    (profile as any)?.isLifetimeFeeWaived ||
+    isPreCutoff ||
+    profile?.lifetimeFeeInvoiceId?.startsWith("WAIVED_")
+  );
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [payingFee, setPayingFee] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -200,7 +212,7 @@ export default function AgreementsPage() {
         const role = user?.role?.toUpperCase();
         if (role === "CLIENT") {
           dispatch(fetchClientProfile());
-          if (profile?.isLifetimeFeePaid) {
+          if (isLifetimeFeeExempt) {
             router.replace("/client");
           }
         } else if (role === "CARER") {
@@ -277,7 +289,7 @@ export default function AgreementsPage() {
           <div>
             {pending.length === 0 ? (
               user?.role?.toUpperCase() === "CLIENT" &&
-              !profile?.isLifetimeFeePaid ? (
+              !isLifetimeFeeExempt ? (
                 paymentStatus === "success" ? (
                   <div className="bg-navy-900/60 border border-navy-800 rounded-2xl p-12 text-center max-w-2xl mx-auto shadow-soft space-y-6">
                     <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gold-DEFAULT/10 border border-gold-DEFAULT/30 text-[#d4af37]">

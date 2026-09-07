@@ -36,6 +36,18 @@ export default function LegalAgreementsFeature({
   const [selectedAgreement, setSelectedAgreement] =
     useState<LegalAgreement | null>(null);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const isPreCutoff = Boolean(
+    (profile?.createdAt && new Date(profile.createdAt).getTime() < new Date("2027-01-01T00:00:00.000Z").getTime()) ||
+    ((user as any)?.createdAt && new Date((user as any).createdAt).getTime() < new Date("2027-01-01T00:00:00.000Z").getTime())
+  );
+
+  const isLifetimeFeeExempt = Boolean(
+    profile?.isLifetimeFeePaid ||
+    (profile as any)?.isLifetimeFeeWaived ||
+    isPreCutoff ||
+    profile?.lifetimeFeeInvoiceId?.startsWith("WAIVED_")
+  );
+
   const [validationErrors, setValidationErrors] = useState<{
     terms?: string;
   }>({});
@@ -227,7 +239,7 @@ export default function LegalAgreementsFeature({
         const role = user?.role?.toUpperCase();
 
         // Prevent auto-redirect for unpaid clients so they can see the payment UI
-        if (role === "CLIENT" && !profile?.isLifetimeFeePaid) {
+        if (role === "CLIENT" && !isLifetimeFeeExempt) {
           // Do nothing, let the component render the payment UI
         } else if (isOnboardingMode && onAllSigned) {
           onAllSigned();
@@ -319,7 +331,7 @@ export default function LegalAgreementsFeature({
             {pending.length === 0 ? (
               <div className="animate-fade-in">
                 {user?.role?.toUpperCase() === "CLIENT" &&
-                !profile?.isLifetimeFeePaid ? (
+                !isLifetimeFeeExempt ? (
                   <div className="bg-gradient-to-b from-navy-900/80 to-navy-900/40 border border-navy-800 rounded-2xl p-6 sm:p-8 text-center w-full max-w-5xl mx-auto shadow-xl mt-4">
                     <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-tr from-[#b59469]/20 to-[#d4af37]/10 border border-[#b59469]/30 text-[#b59469] mb-4 shadow-inner">
                       <svg

@@ -194,7 +194,7 @@ export const blogSeedPosts: BlogPost[] = [
 <p>At Grace &amp; Goodwill, our purpose is not simply to introduce families to available carers.</p>
 <p>It is to help people find independent live-in carers with the experience and qualities that may make them a suitable match, while keeping choice and dignity at the centre of the process.</p>
 <p>If you are considering live-in care for yourself or someone you love, request a live-in carer through Grace &amp; Goodwill and begin exploring the carers who may be right for your circumstances.</p>`,
-    featuredImageUrl: "/login_option1.jpg",
+    featuredImageUrl: "/blog/blog-Home for Families.jpeg",
     featuredImageAlt: "Older person at home with an independent live-in carer",
     categorySlug: "care-and-support",
     tags: ["live-in care"],
@@ -430,7 +430,7 @@ export const blogSeedPosts: BlogPost[] = [
 </ul>
 <p>Those questions can help families move from simply finding care to finding the arrangement that genuinely fits.</p>
 <p>If you are exploring alternatives to a care home for yourself, your mum, your dad or another loved one, request a live-in carer through Grace &amp; Goodwill and begin exploring independent carers who may suit your circumstances.</p>`,
-    featuredImageUrl: "/login_option2.jpg",
+    featuredImageUrl: "/blog/blog-Right for Your.jpeg",
     featuredImageAlt: "Family discussing care options",
     categorySlug: "care-and-support",
     tags: ["live-in care", "care home"],
@@ -676,7 +676,7 @@ export const blogSeedPosts: BlogPost[] = [
 <p>And when a live-in arrangement is being considered, they deserve more than simply the first available carer.</p>
 <p>At Grace &amp; Goodwill, our aim is to help families explore independent live-in carers who may be compatible with the person, their circumstances and the life they want to continue living.</p>
 <p>If you are looking for dementia support at home for yourself or someone you love, request a live-in carer through Grace &amp; Goodwill and begin exploring independent carers who may suit your circumstances.</p>`,
-    featuredImageUrl: "/login_option3.jpg",
+    featuredImageUrl: "/blog/blog-Supporting Someone.jpeg",
     featuredImageAlt: "Older person and carer with dementia support at home",
     categorySlug: "care-and-support",
     tags: ["live-in care", "dementia", "dementia care"],
@@ -914,7 +914,7 @@ export const blogSeedPosts: BlogPost[] = [
 <p>Good support should recognise both the things a person needs help with and the things they can still do for themselves.</p>
 <p>At Grace &amp; Goodwill, our aim is to help families explore independent live-in carers who may be compatible with the individual, their circumstances and the life they want to continue living.</p>
 <p>If you are looking for Parkinson’s support at home for yourself, your mum, your dad or another loved one, request a live-in carer through Grace &amp; Goodwill and begin exploring independent carers who may suit your circumstances.</p>`,
-    featuredImageUrl: "/login_option1.jpg",
+    featuredImageUrl: "/blog/blog-Parkinson’s Disease.jpeg",
     featuredImageAlt: "Parkinson's live-in care",
     categorySlug: "care-and-support",
     tags: ["live-in care", "parkinson's", "parkinson's care"],
@@ -1152,7 +1152,7 @@ export const blogSeedPosts: BlogPost[] = [
 <p>And it should respect the fact that rebuilding confidence can be just as important as completing practical tasks.</p>
 <p>At Grace &amp; Goodwill, our aim is to help families explore independent live-in carers who may be compatible with the individual, their circumstances and the support they need following a stroke.</p>
 <p>If you are arranging support after a stroke or preparing for a loved one to return home from hospital, request a live-in carer through Grace &amp; Goodwill and begin exploring independent carers who may suit your circumstances.</p>`,
-    featuredImageUrl: "/login_option2.jpg",
+    featuredImageUrl: "/blog/blog-After a Stroke.jpeg",
     featuredImageAlt: "Stroke recovery at home",
     categorySlug: "care-and-support",
     tags: ["live-in care", "stroke recovery", "stroke care"],
@@ -1389,7 +1389,7 @@ export const blogSeedPosts: BlogPost[] = [
 <p>The right support should recognise that.</p>
 <p>At Grace &amp; Goodwill, our aim is to help individuals and families explore independent live-in carers who may be compatible with the person, their circumstances and the way they want to live.</p>
 <p>If you are looking for multiple sclerosis support at home for yourself or someone you love, request a live-in carer through Grace &amp; Goodwill and begin exploring independent carers who may suit your circumstances.</p>`,
-    featuredImageUrl: "/login_option2.jpg",
+    featuredImageUrl: "/blog/blog-Multiple Sclerosis.jpeg",
     featuredImageAlt: "Multiple sclerosis support at home",
     categorySlug: "care-and-support",
     tags: ["live-in care", "multiple sclerosis", "MS support"],
@@ -1638,7 +1638,7 @@ export const blogSeedPosts: BlogPost[] = [
 <p>Because good support should not make someone’s world smaller.</p>
 <p>Wherever possible, it should help them continue living it.</p>
 <p>If you are looking for live-in support for yourself or an adult with cerebral palsy, request a live-in carer through Grace &amp; Goodwill and begin exploring independent carers who may suit your circumstances.</p>`,
-    featuredImageUrl: "/login_option2.jpg",
+    featuredImageUrl: "/blog/blog-Cerebral Palsy.jpeg",
     featuredImageAlt: "Cerebral palsy support at home",
     categorySlug: "care-and-support",
     tags: ["live-in care", "cerebral palsy", "disability support"],
@@ -1885,7 +1885,7 @@ export const blogSeedPosts: BlogPost[] = [
 <p>Because support should not simply focus on what has been lost.</p>
 <p>Wherever possible, it should help someone continue building what comes next.</p>
 <p>If you are looking for live-in support following an acquired brain injury, request a live-in carer through Grace &amp; Goodwill and begin exploring independent carers who may suit your circumstances.</p>`,
-    featuredImageUrl: "/login_option2.jpg",
+    featuredImageUrl: "/blog/blog-Brain Injury.jpeg",
     featuredImageAlt: "Acquired brain injury support at home",
     categorySlug: "care-and-support",
     tags: ["live-in care", "acquired brain injury", "ABI support"],
@@ -2146,7 +2146,7 @@ export const blogSeedPosts: BlogPost[] = [
 <p>Because support should not be about taking control away.</p>
 <p>Wherever possible, it should help someone retain it.</p>
 <p>If you are looking for live-in support following a spinal cord injury, request a live-in carer through Grace &amp; Goodwill and begin exploring independent carers who may suit your circumstances.</p>`,
-    featuredImageUrl: "/login_option2.jpg",
+    featuredImageUrl: "/blog/blog-Spinal Cord Injury.jpeg",
     featuredImageAlt: "Spinal cord injury support at home",
     categorySlug: "care-and-support",
     tags: ["live-in care", "spinal cord injury", "disability support"],
@@ -2403,7 +2403,7 @@ export const blogSeedPosts: BlogPost[] = [
 <p>Because the best support should never reduce someone to a diagnosis.</p>
 <p>It should recognise the whole person.</p>
 <p>If you are looking for neurological support at home for yourself, your mum, your dad, your partner or another loved one, request a live-in carer through Grace &amp; Goodwill and begin exploring independent carers who may suit your circumstances.</p>`,
-    featuredImageUrl: "/login_option2.jpg",
+    featuredImageUrl: "/blog/blog-Neurological Conditions.jpeg",
     featuredImageAlt: "Neurological conditions support at home",
     categorySlug: "care-and-support",
     tags: ["live-in care", "neurological conditions", "disability support"],
@@ -2716,7 +2716,7 @@ export const blogSeedPosts: BlogPost[] = [
 <p>It should not erase who they are.</p>
 <p>If you are looking for care at home for your mum, dad, partner or another older person, request a live-in carer through Grace &amp; Goodwill and begin exploring independent carers who may suit your circumstances.</p>
 <p><em>Written by Aurea Neto, Founder of Grace &amp; Goodwill</em></p>`,
-    featuredImageUrl: "/login_option2.jpg",
+    featuredImageUrl: "/blog/blog-blog-Older People.jpeg",
     featuredImageAlt: "Older person at home with an independent live-in carer",
     categorySlug: "care-and-support",
     tags: ["live-in care for older people", "elderly support", "elderly care at home"],
@@ -2999,7 +2999,7 @@ export const blogSeedPosts: BlogPost[] = [
 <p>Because when care becomes part of someone’s life for the long term, it should support the life they want to live rather than become the definition of it.</p>
 <p>If you are looking for long-term or complex support at home for yourself or someone you love, request a live-in carer through Grace &amp; Goodwill and begin exploring independent carers who may suit your circumstances.</p>
 <p><em>Written by Aurea Neto, Founder of Grace &amp; Goodwill</em></p>`,
-    featuredImageUrl: "/login_option2.jpg",
+    featuredImageUrl: "/blog/blog-Care for Complex and Long-Term.jpeg",
     featuredImageAlt: "Adult receiving consistent long-term support from a live-in carer at home",
     categorySlug: "care-and-support",
     tags: ["live-in care for complex needs", "long-term care at home", "complex care at home"],
@@ -3310,7 +3310,7 @@ export const blogSeedPosts: BlogPost[] = [
 <p>It should begin by understanding what independence means to them.</p>
 <p>If you are looking for disability or mobility support at home for yourself or someone you love, request a live-in carer through Grace &amp; Goodwill and begin exploring independent carers who may suit your circumstances.</p>
 <p><em>Written by Aurea Neto, Founder of Grace &amp; Goodwill</em></p>`,
-    featuredImageUrl: "/login_option2.jpg",
+    featuredImageUrl: "/blog/blog-Physical Disabilities.jpeg",
     featuredImageAlt: "Adult with a physical disability receiving support from a live-in carer at home",
     categorySlug: "care-and-support",
     tags: ["live-in care for physical disabilities", "disability care at home", "mobility support"],
@@ -3581,7 +3581,7 @@ export const blogSeedPosts: BlogPost[] = [
 <p>Even when time is limited, the individual still deserves dignity, transparency and as much choice as circumstances allow.</p>
 <p>If you urgently need a live-in carer for yourself, your mum, your dad, your partner or another loved one, request a live-in carer through Grace &amp; Goodwill and begin exploring independent carers who may be available for your circumstances.</p>
 <p><em>Written by Aurea Neto, Founder of Grace &amp; Goodwill</em></p>`,
-    featuredImageUrl: "/login_option2.jpg",
+    featuredImageUrl: "/blog/blog-at Short Notice.jpeg",
     featuredImageAlt: "Family arranging urgent live-in care for an older relative at home",
     categorySlug: "care-and-support",
     tags: ["emergency live-in care", "urgent live-in care", "emergency care at home"],
@@ -3885,7 +3885,7 @@ export const blogSeedPosts: BlogPost[] = [
 <p>“What will help them live well once they are home?”</p>
 <p>If you are arranging support for your mum, dad, partner or another loved one after hospital discharge, request a live-in carer through Grace &amp; Goodwill and begin exploring independent carers who may suit your circumstances.</p>
 <p><em>Written by Aurea Neto, Founder of Grace &amp; Goodwill</em></p>`,
-    featuredImageUrl: "/login_option2.jpg",
+    featuredImageUrl: "/blog/blog-Safe Return Home.jpeg",
     featuredImageAlt: "Older person returning home from hospital with support from a live-in carer",
     categorySlug: "care-and-support",
     tags: ["hospital discharge care", "recovery care at home", "live-in care after hospital"],
@@ -4158,7 +4158,7 @@ export const blogSeedPosts: BlogPost[] = [
 <p>Because caring for somebody else should not mean forgetting that carers are people too.</p>
 <p>If you are looking for temporary or respite live-in support for your mum, dad, partner or another loved one, request a live-in carer through Grace &amp; Goodwill and begin exploring independent carers who may suit your circumstances.</p>
 <p><em>Written by Aurea Neto, Founder of Grace &amp; Goodwill</em></p>`,
-    featuredImageUrl: "/login_option2.jpg",
+    featuredImageUrl: "/blog/blog-Carers Time to Rest.jpeg",
     featuredImageAlt: "Family carer spending time with a loved one at home before taking a short break",
     categorySlug: "care-and-support",
     tags: ["respite live-in care", "respite care at home", "temporary live-in carer"],
@@ -4475,7 +4475,7 @@ export const blogSeedPosts: BlogPost[] = [
 <p>Being there.</p>
 <p>If you are looking for companionship or live-in support at home for your mum, dad, partner or another loved one, request a live-in carer through Grace &amp; Goodwill and begin exploring independent carers who may suit your circumstances.</p>
 <p><em>Written by Aurea Neto, Founder of Grace &amp; Goodwill</em></p>`,
-    featuredImageUrl: "/login_option2.jpg",
+    featuredImageUrl: "/blog/blog-People Living Alone.jpeg",
     featuredImageAlt: "Older person enjoying conversation and companionship with a live-in carer at home",
     categorySlug: "care-and-support",
     tags: ["companion care at home", "companionship care at home", "elderly person living alone"],
@@ -4772,7 +4772,7 @@ export const blogSeedPosts: BlogPost[] = [
 </ul>
 <p>An emergency should not mean families have to agree to costs they do not understand.</p>
 <p><em>Written by Aurea Neto, Founder of Grace &amp; Goodwill</em></p>`,
-    featuredImageUrl: "/login_option2.jpg",
+    featuredImageUrl: "/blog/blog-Cost in the UK.jpeg",
     featuredImageAlt: "Family discussing the cost of arranging live-in care at home",
     categorySlug: "care-and-support",
     tags: ["how much does live-in care cost UK", "live-in care cost", "cost of a live-in carer"],
@@ -5108,7 +5108,7 @@ export const blogSeedPosts: BlogPost[] = [
 <p>“Is this the right person to support the life I want to continue living?”</p>
 <p>If you are looking for a live-in carer for yourself, your mum, your dad, your partner or another loved one, request a live-in carer through Grace &amp; Goodwill and begin exploring independent carers who may suit your circumstances.</p>
 <p><em>Written by Aurea Neto, Founder of Grace &amp; Goodwill</em></p>`,
-    featuredImageUrl: "/login_option2.jpg",
+    featuredImageUrl: "/blog/blog-Guide for Families.jpeg",
     featuredImageAlt: "Independent live-in carer supporting an older person with everyday life at home",
     categorySlug: "care-and-support",
     tags: ["what does a live-in carer do", "live-in carer duties", "carer at home"],
@@ -5488,7 +5488,7 @@ export const blogSeedPosts: BlogPost[] = [
 <p>They should be somebody the client can feel comfortable welcoming into their life.</p>
 <p>If you are looking for a live-in carer for yourself, your mum, your dad, your partner or another loved one, request a live-in carer through Grace &amp; Goodwill and begin exploring independent carers who may suit your circumstances.</p>
 <p><em>Written by Aurea Neto, Founder of Grace &amp; Goodwill</em></p>`,
-    featuredImageUrl: "/login_option2.jpg",
+    featuredImageUrl: "/blog/blog-Someone You Love.jpeg",
     featuredImageAlt: "Family reviewing live-in carer options for an older relative at home",
     categorySlug: "care-and-support",
     tags: ["how to choose a live-in carer", "choosing a live-in carer", "find a live-in carer"],
@@ -5780,7 +5780,7 @@ export const blogSeedPosts: BlogPost[] = [
 <p>Because as circumstances change, dignity, choice and humanity should remain constant.</p>
 <p>If you are looking for live-in support at home for yourself or someone living with motor neurone disease, request a live-in carer through Grace &amp; Goodwill and begin exploring independent carers who may suit your circumstances.</p>
 <p><em>Written by Aurea Neto, Founder of Grace &amp; Goodwill</em></p>`,
-    featuredImageUrl: "/login_option2.jpg",
+    featuredImageUrl: "/blog/blog-Support as Needs Change.jpeg",
     featuredImageAlt: "Person living with motor neurone disease receiving support from a live-in carer at home",
     categorySlug: "care-and-support",
     tags: ["live-in care for motor neurone disease", "MND care at home", "motor neurone disease carer"],
@@ -6077,7 +6077,7 @@ export const blogSeedPosts: BlogPost[] = [
 <p>Because even when needs become more complex, dignity and choice should remain simple.</p>
 <p>If you are looking for live-in support at home for yourself or someone living with Huntington’s disease, request a live-in carer through Grace &amp; Goodwill and begin exploring independent carers who may suit your circumstances.</p>
 <p><em>Written by Aurea Neto, Founder of Grace &amp; Goodwill</em></p>`,
-    featuredImageUrl: "/login_option2.jpg",
+    featuredImageUrl: "/blog/blog-Huntington’s Disease.jpeg",
     featuredImageAlt: "Person living with Huntington’s disease receiving support from a live-in carer at home",
     categorySlug: "care-and-support",
     tags: ["live-in care for Huntington’s disease", "Huntington’s disease care at home", "Huntington’s carer"],
@@ -6416,7 +6416,7 @@ export const blogSeedPosts: BlogPost[] = [
 <p>Because somebody living with epilepsy is still entitled to a life defined by far more than the possibility of their next seizure.</p>
 <p>If you are looking for live-in support at home for yourself or someone living with epilepsy, request a live-in carer through Grace &amp; Goodwill and begin exploring independent carers who may suit your circumstances.</p>
 <p><em>Written by Aurea Neto, Founder of Grace &amp; Goodwill</em></p>`,
-    featuredImageUrl: "/login_option2.jpg",
+    featuredImageUrl: "/blog/blog-extra-img1.jpeg",
     featuredImageAlt: "Adult living with epilepsy receiving everyday support from a live-in carer at home",
     categorySlug: "care-and-support",
     tags: ["live-in support for epilepsy", "epilepsy care at home", "carer for epilepsy"],
@@ -6698,7 +6698,7 @@ export const blogSeedPosts: BlogPost[] = [
 <p>Because someone may need help moving through their day without wanting somebody else to take control of it.</p>
 <p>If you are looking for live-in support at home for yourself or someone living with severe arthritis or mobility difficulties, request a live-in carer through Grace &amp; Goodwill and begin exploring independent carers who may suit your circumstances.</p>
 <p><em>Written by Aurea Neto, Founder of Grace &amp; Goodwill</em></p>`,
-    featuredImageUrl: "/login_option2.jpg",
+    featuredImageUrl: "/blog/blog-Mobility-Problems.jpeg",
     featuredImageAlt: "Older person with arthritis receiving mobility support from a live-in carer at home",
     categorySlug: "care-and-support",
     tags: ["live-in care for arthritis", "arthritis care at home", "carer for severe arthritis"],
@@ -7004,7 +7004,7 @@ export const blogSeedPosts: BlogPost[] = [
 <p>But so does dignity, confidence and the right to remain involved in decisions about your own life.</p>
 <p>If you are looking for live-in support for someone living with osteoporosis, repeated falls or reduced mobility, request a live-in carer through Grace &amp; Goodwill and begin exploring independent carers who may suit your circumstances.</p>
 <p><em>Written by Aurea Neto, Founder of Grace &amp; Goodwill</em></p>`,
-    featuredImageUrl: "/login_option2.jpg",
+    featuredImageUrl: "/blog/blog-Osteoporosis.jpeg",
     featuredImageAlt: "Older person receiving mobility support at home after repeated falls",
     categorySlug: "care-and-support",
     tags: ["live-in care for osteoporosis", "osteoporosis care at home", "repeated falls in elderly"],

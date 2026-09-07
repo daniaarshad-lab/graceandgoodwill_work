@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 const PAGE_SIZE = 8;
 
 interface BlogIndexPageProps {
-  searchParams: Promise<{ category?: string }>;
+  searchParams: Promise<{ category?: string; search?: string }>;
 }
 
 /**
@@ -34,8 +34,9 @@ interface BlogIndexPageProps {
 export default async function BlogIndexPage({
   searchParams,
 }: BlogIndexPageProps) {
-  const { category } = await searchParams;
+  const { category, search } = await searchParams;
   const activeCategory = category ?? "all";
+  const activeSearch = search ?? "";
 
   const [gridResponse, categories] = await Promise.all([
     blogService.listPosts({
@@ -43,6 +44,7 @@ export default async function BlogIndexPage({
       page: 1,
       limit: PAGE_SIZE,
       category: activeCategory,
+      search: activeSearch,
       sort: "newest",
     }),
     blogService.listCategories(),
@@ -66,6 +68,7 @@ export default async function BlogIndexPage({
           initialResponse={gridResponse}
           categories={categories}
           initialCategory={activeCategory}
+          initialSearch={activeSearch}
           pageSize={PAGE_SIZE}
         />
       </div>

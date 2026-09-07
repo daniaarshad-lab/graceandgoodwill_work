@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Search, X } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import Button from "@/components/Button";
 import ThinSpinner from "@/components/ThinSpinner";
@@ -21,6 +22,7 @@ interface BlogListClientProps {
   initialResponse: BlogListResponse;
   categories: BlogCategory[];
   initialCategory: string;
+  initialSearch?: string;
   pageSize: number;
 }
 
@@ -34,15 +36,18 @@ export default function BlogListClient({
   initialResponse,
   categories,
   initialCategory,
+  initialSearch = "",
   pageSize,
 }: BlogListClientProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const search = searchParams.get("search") || initialSearch;
+
   const [posts, setPosts] = useState<BlogPost[]>(initialResponse.items);
   const [page, setPage] = useState(initialResponse.page);
   const [totalPages, setTotalPages] = useState(initialResponse.totalPages);
   const [total, setTotal] = useState(initialResponse.total);
 
-  const [searchInput, setSearchInput] = useState("");
-  const [search, setSearch] = useState("");
   const [category, setCategory] = useState(initialCategory);
   const [sort, setSort] = useState<BlogSortOption>("newest");
 
@@ -89,18 +94,38 @@ export default function BlogListClient({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  /* Debounce the search box so typing does not fire a request per keystroke. */
+  /* Keep the category in the URL so a filtered view can be linked and crawled. */
   useEffect(() => {
-    const timer = setTimeout(() => setSearch(searchInput), 300);
-    return () => clearTimeout(timer);
-  }, [searchInput]);
+    const url = new URL(window.location.href);
+    if (category && category !== "all") {
+      url.searchParams.set("category", category);
+    } else {
+      url.searchParams.delete("category");
+    }
+    window.history.replaceState(null, "", url.toString());
+  }, [category]);
 
+  // Synchronize state when initialResponse changes (e.g. from server action like search)
   useEffect(() => {
     if (isFirstRun.current) {
       isFirstRun.current = false;
       return;
     }
+    setPosts(initialResponse.items);
+    setPage(initialResponse.page);
+    setTotalPages(initialResponse.totalPages);
+    setTotal(initialResponse.total);
+  }, [initialResponse]);
 
+  // Handle client-side filtering and sorting ONLY if category or sort change on the client,
+  // or if they are modified independent of the server component. Since search causes a server reload, 
+  // we let the server component pass down the new initialResponse.
+  useEffect(() => {
+    // If it's just sorting/category change, we still do client-side fetch.
+    if (isFirstRun.current) return;
+    
+    // We only want to run this if category or sort changes manually in the client,
+    // not when initialResponse is fresh from a search.
     let cancelled = false;
     setIsFiltering(true);
     setError(null);
@@ -132,18 +157,7 @@ export default function BlogListClient({
     return () => {
       cancelled = true;
     };
-  }, [search, category, sort, pageSize]);
-
-  /* Keep the category in the URL so a filtered view can be linked and crawled. */
-  useEffect(() => {
-    const url = new URL(window.location.href);
-    if (category && category !== "all") {
-      url.searchParams.set("category", category);
-    } else {
-      url.searchParams.delete("category");
-    }
-    window.history.replaceState(null, "", url.toString());
-  }, [category]);
+  }, [category, sort, pageSize]); // intentionally omitting search to avoid double-fetch
 
   const goToPage = useCallback((newPage: number) => {
     setIsFiltering(true);
@@ -196,11 +210,12 @@ export default function BlogListClient({
   }, [page, pageSize, search, category, sort]);
 
   const clearFilters = useCallback(() => {
-    setSearchInput("");
-    setSearch("");
     setCategory("all");
     setSort("newest");
-  }, []);
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("search");
+    router.push(`/blog?${params.toString()}`, { scroll: false });
+  }, [router, searchParams]);
 
   const hasActiveFilters = Boolean(search) || category !== "all";
   const hasMore = page < totalPages;

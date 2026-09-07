@@ -1,9 +1,29 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import Image from "next/image";
+import { useRouter, useSearchParams } from "next/navigation";
 import { FileText, Heart, ClipboardCheck } from "lucide-react";
 import blogPublicImg from "@/assets/blog/blog-public1.jpeg";
 
 export default function BlogHero() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [query, setQuery] = useState(searchParams.get("search") || "");
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const params = new URLSearchParams(searchParams.toString());
+    if (query.trim()) {
+      params.set("search", query.trim());
+    } else {
+      params.delete("search");
+    }
+    // Reset page to 1 on new search
+    params.delete("page");
+    router.push(`/blog?${params.toString()}`, { scroll: false });
+  };
+
   return (
     <div className="relative bg-[#FDF8EC] w-full pt-28 pb-32 mb-12">
       {/* Elegant, soft asymmetric curve at the bottom to transition into navy */}
@@ -36,16 +56,18 @@ export default function BlogHero() {
             </p>
 
             {/* Search Input */}
-            <div className="flex bg-white rounded-[32px] p-1.5 shadow-sm border border-gray-100 max-w-md">
+            <form onSubmit={handleSearch} className="flex bg-white rounded-[32px] p-1.5 shadow-sm border border-gray-100 max-w-md">
               <input
                 type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search our posts"
                 className="flex-1 bg-transparent px-5 py-2.5 text-[#374151] outline-none placeholder:text-gray-400 text-[15px]"
               />
-              <button className="bg-[#C2A476] hover:bg-[#B39365] text-navy-950 px-8 py-2.5 rounded-full font-semibold transition-colors text-[15px] shadow-sm">
+              <button type="submit" className="bg-[#C2A476] hover:bg-[#B39365] text-navy-950 px-8 py-2.5 rounded-full font-semibold transition-colors text-[15px] shadow-sm">
                 Search
               </button>
-            </div>
+            </form>
           </div>
 
           {/* Right Column: Image/Illustration */}

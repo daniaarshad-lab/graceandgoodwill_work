@@ -125,7 +125,7 @@ export default function HomePage() {
               href="/contact"
               prefetch={false}
               id="btn-find-carer-hero"
-              className="group relative flex items-center justify-between h-14 px-4 sm:px-5 rounded-2xl bg-[#5C441D] shrink-0 shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 hover:shadow-[0_0_25px_rgba(212,175,55,0.25)] hover:bg-[#6E5223] w-full xl:w-max"
+              className="group relative flex items-center justify-between h-14 px-4 sm:px-5 rounded-full border-2 border-[#F7D774] bg-[#5C441D] shrink-0 shadow-[0_0_15px_rgba(247,215,116,0.3)] transition-all duration-300 hover:shadow-[0_0_25px_rgba(247,215,116,0.5)] hover:bg-[#6E5223] w-full xl:w-max"
             >
               <div className="flex items-center gap-2 sm:gap-3 text-left z-10">
                 <div className="relative flex items-center justify-center w-10 h-10">
@@ -152,7 +152,7 @@ export default function HomePage() {
               target="_blank"
               rel="noopener noreferrer"
               id="btn-chat-hero"
-              className="group relative flex items-center justify-between h-14 px-4 sm:px-5 rounded-2xl bg-[#063D24] shrink-0 shadow-[0_0_15px_rgba(0,198,83,0.1)] transition-all duration-300 hover:shadow-[0_0_25px_rgba(0,198,83,0.2)] hover:bg-[#085230] w-full xl:w-max"
+              className="group relative flex items-center justify-between h-14 px-4 sm:px-5 rounded-full border-2 border-[#F7D774] bg-[#0F6D2E] shrink-0 shadow-[0_0_15px_rgba(247,215,116,0.3)] transition-all duration-300 hover:shadow-[0_0_25px_rgba(247,215,116,0.5)] hover:bg-[#0C5A26] w-full xl:w-max"
             >
               <div className="flex items-center gap-2 sm:gap-3 text-left z-10">
                 <div className="relative flex items-center justify-center w-10 h-10">

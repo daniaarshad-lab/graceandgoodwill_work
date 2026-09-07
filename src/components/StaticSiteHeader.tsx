@@ -84,7 +84,7 @@ function StaticSiteHeader() {
   }, [isMobileMenuOpen]);
 
   return (
-    <>
+    <header className="sticky top-0 z-50 w-full flex flex-col transition-all">
       {/* Top Contact Bar */}
       <div className="w-full bg-[#b59469] text-black py-1.5 md:py-2">
         <div className="container-wrapper flex flex-wrap justify-center items-center gap-6 sm:gap-10 md:gap-24 text-[12px] sm:text-[13px] font-medium tracking-wide">
@@ -103,7 +103,7 @@ function StaticSiteHeader() {
         </div>
       </div>
 
-      <header className="sticky top-0 z-50 w-full h-20 border-b border-navy-800 bg-navy-950/95 backdrop-blur flex items-center transition-all">
+      <div className="w-full h-20 border-b border-navy-800 bg-navy-950/95 backdrop-blur flex items-center">
 
         <div className="container-wrapper flex items-center justify-between py-4">
           <Link
@@ -205,7 +205,7 @@ function StaticSiteHeader() {
         </div>
 
 
-      </header>
+      </div>
 
       {/* Mobile Navigation Overlay + Slide-over Drawer */}
       {isMobileMenuOpen && (
@@ -313,7 +313,7 @@ function StaticSiteHeader() {
           </div>
         </>
       )}
-    </>
+    </header>
   );
 }
 

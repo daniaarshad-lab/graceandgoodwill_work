@@ -262,9 +262,9 @@ export default function ServicesPage() {
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             <div className="group relative flex flex-col rounded-[28px] border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)]">
-              <h3 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
+              <h2 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
                 Long-Term Live-in Care
-              </h3>
+              </h2>
               <div className="page-supporting-text space-y-4 mb-8 flex-grow">
                 <p>Ongoing live-in care can support people who want to remain in their own home while receiving more consistent everyday assistance.</p>
                 <p>Depending on the arrangement agreed with the carer, support may include personal care, meals, mobility, companionship, household activities, shopping, appointments and established daily routines.</p>
@@ -274,9 +274,9 @@ export default function ServicesPage() {
               </Link>
             </div>
             <div className="group relative flex flex-col rounded-[28px] border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)]">
-              <h3 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
+              <h2 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
                 Urgent Live-in Care
-              </h3>
+              </h2>
               <div className="page-supporting-text space-y-4 mb-8 flex-grow">
                 <p>When circumstances change suddenly, families may need someone quickly.</p>
                 <p>Grace & Goodwill can support urgent live-in carer searches where a suitable available carer may be able to begin within 24 hours.</p>
@@ -287,9 +287,9 @@ export default function ServicesPage() {
               </Link>
             </div>
             <div className="group relative flex flex-col rounded-[28px] border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)]">
-              <h3 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
+              <h2 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
                 Hospital Discharge Live-in Care
-              </h3>
+              </h2>
               <div className="page-supporting-text space-y-4 mb-8 flex-grow">
                 <p>Someone returning home following hospital treatment may temporarily or permanently need more support than before.</p>
                 <p>Grace & Goodwill helps families search available live-in carers for support following hospital discharge, including short-notice arrangements where possible.</p>
@@ -299,9 +299,9 @@ export default function ServicesPage() {
               </Link>
             </div>
             <div className="group relative flex flex-col rounded-[28px] border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)]">
-              <h3 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
+              <h2 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
                 Stroke and Neurological Support
-              </h3>
+              </h2>
               <div className="page-supporting-text space-y-4 mb-8 flex-grow">
                 <p>A stroke or neurological condition can affect mobility, communication, confidence and everyday independence differently for every person.</p>
                 <p>Clients can search for live-in carers with relevant experience and compare profiles before choosing who they would like to speak with.</p>
@@ -312,9 +312,9 @@ export default function ServicesPage() {
               </Link>
             </div>
             <div className="group relative flex flex-col rounded-[28px] border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)]">
-              <h3 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
+              <h2 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
                 Convalescent and Recovery Support at Home
-              </h3>
+              </h2>
               <div className="page-supporting-text space-y-4 mb-8 flex-grow">
                 <p>Some people need temporary help while recovering following:</p>
                 <ul className="space-y-1 pl-4">
@@ -333,9 +333,9 @@ export default function ServicesPage() {
               </Link>
             </div>
             <div className="group relative flex flex-col rounded-[28px] border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)]">
-              <h3 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
+              <h2 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
                 Dementia and Alzheimer’s Live-in Care
-              </h3>
+              </h2>
               <div className="page-supporting-text space-y-4 mb-8 flex-grow">
                 <p>For someone living with dementia, familiar surroundings and routines may be particularly important.</p>
                 <p>Families can browse carers with relevant dementia experience and decide who they would like to consider.</p>
@@ -345,9 +345,9 @@ export default function ServicesPage() {
               </Link>
             </div>
             <div className="group relative flex flex-col rounded-[28px] border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)]">
-              <h3 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
+              <h2 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
                 Respite Live-in Care
-              </h3>
+              </h2>
               <div className="page-supporting-text space-y-4 mb-8 flex-grow">
                 <p>Respite care provides temporary support when a family carer needs a break or cannot provide their usual support.</p>
                 <p>Grace & Goodwill can help families search for carers for short placements beginning from approximately 2 days, as well as longer temporary arrangements.</p>
@@ -357,9 +357,9 @@ export default function ServicesPage() {
               </Link>
             </div>
             <div className="group relative flex flex-col rounded-[28px] border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)]">
-              <h3 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
+              <h2 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
                 Brain Injury Live-in Support
-              </h3>
+              </h2>
               <div className="page-supporting-text space-y-4 mb-8 flex-grow">
                 <p>Acquired or traumatic brain injury can affect people in very different ways.</p>
                 <p>Clients can search for carers with relevant experience supporting mobility, memory, communication, routines and everyday independence.</p>
@@ -369,9 +369,9 @@ export default function ServicesPage() {
               </Link>
             </div>
             <div className="group relative flex flex-col rounded-[28px] border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)]">
-              <h3 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
+              <h2 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
                 Spinal Injury Live-in Support
-              </h3>
+              </h2>
               <div className="page-supporting-text space-y-4 mb-8 flex-grow">
                 <p>Live-in support can help people with spinal injuries or physical disabilities continue living within their own home and maintaining independence.</p>
                 <p>Search profiles according to relevant experience, availability and personal preferences.</p>
@@ -381,9 +381,9 @@ export default function ServicesPage() {
               </Link>
             </div>
             <div className="group relative flex flex-col rounded-[28px] border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)]">
-              <h3 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
+              <h2 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
                 Multiple Sclerosis Live-in Support
-              </h3>
+              </h2>
               <div className="page-supporting-text space-y-4 mb-8 flex-grow">
                 <p>Multiple sclerosis can affect mobility, fatigue and independence differently over time.</p>
                 <p>Clients can search profiles for carers with relevant experience and availability that may suit their circumstances.</p>
@@ -393,9 +393,9 @@ export default function ServicesPage() {
               </Link>
             </div>
             <div className="group relative flex flex-col rounded-[28px] border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)]">
-              <h3 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
+              <h2 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
                 Young Adult and Disability Live-in Support
-              </h3>
+              </h2>
               <div className="page-supporting-text space-y-4 mb-8 flex-grow">
                 <p>Younger adults who require support should not automatically be treated as though they are receiving traditional elderly care.</p>
                 <p>Grace & Goodwill helps adults find carers who can fit around their routines, social lives, interests and individual preferences.</p>
@@ -405,9 +405,9 @@ export default function ServicesPage() {
               </Link>
             </div>
             <div className="group relative flex flex-col rounded-[28px] border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)]">
-              <h3 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
+              <h2 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
                 Companionship Live-in Care
-              </h3>
+              </h2>
               <div className="page-supporting-text space-y-4 mb-8 flex-grow">
                 <p>For people who need companionship alongside everyday practical support, live-in care can provide greater consistency while allowing the person to remain in familiar surroundings.</p>
               </div>
@@ -418,9 +418,9 @@ export default function ServicesPage() {
 
 
             <div className="md:col-span-2 lg:col-span-3 group relative flex flex-col rounded-[28px] border border-gold-300/15 bg-gradient-to-br from-navy-900/60 to-navy-900/40 p-8 md:p-12 shadow-elegant backdrop-blur-md mt-6">
-              <h3 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide mb-6 text-center">
+              <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide mb-6 text-center">
                 Live-in Care Costs and Funding
-              </h3>
+              </h2>
               <p className="page-supporting-text text-center max-w-3xl mx-auto mb-8 text-lg">
                 Families can also access information about:
               </p>

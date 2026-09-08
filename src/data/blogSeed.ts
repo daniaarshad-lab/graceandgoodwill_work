@@ -7054,5 +7054,99 @@ export const blogSeedPosts: BlogPost[] = [
         answer: "No. Grace & Goodwill operates as an introductory agency and matching platform. We introduce clients to independent, self-employed live-in carers. The client chooses whether to engage a carer, and the care arrangement is entered into directly between them."
       }
     ]
+  },
+  {
+    id: "post-how-much-does-live-in-care-cost",
+    slug: "how-much-does-live-in-care-cost",
+    title: "How Much Does Live-In Care Cost in the UK? Grace & Goodwill Pricing Guide",
+    excerpt: "Live-in care with Grace & Goodwill starts from £1,250 per week. The final cost depends on the level of support required, the client's circumstances, location and the experience needed from the carer.",
+    content: `<p>Live-in care with Grace &amp; Goodwill starts from £1,250 per week. The final cost depends on the level of support required, the client’s circumstances, location and the experience needed from the carer.</p>
+<p>For many families considering support at home, cost is naturally one of the first questions. A relatively straightforward elderly care or companionship arrangement may cost less than support involving complex needs, significant mobility assistance, neurological conditions or more demanding day-to-day requirements.</p>
+<p>At Grace &amp; Goodwill, we believe pricing should reflect both the needs of the person receiving support and the experience required from the carer.</p>
+<h2>What Can Affect the Cost of Live-In Care?</h2>
+<p>Every situation is different, but the weekly cost may be influenced by factors such as:</p>
+<ul>
+<li>the level of support required</li>
+<li>mobility and transfer needs</li>
+<li>dementia or neurological conditions</li>
+<li>complex or specialist experience required</li>
+<li>overnight requirements</li>
+<li>whether support is short-term, respite or ongoing</li>
+<li>location and carer availability</li>
+</ul>
+<p>Before anything begins, the applicable costs are discussed with you so that you have a clear understanding of the proposed arrangement.</p>
+<h2>What Do You Receive Through Grace &amp; Goodwill?</h2>
+<p>Our service is designed to offer more than simply access to available carer profiles.</p>
+<p>Clients can create their own profile, tell us about their needs and preferences and review suitable live-in carer profiles through our platform.</p>
+<p>Once registered with Grace &amp; Goodwill, clients retain ongoing access to their client profile and our platform, subject to our terms. This means that if circumstances or support needs change in the future, they can return to their account and request further matching support without having to begin the process again from the beginning.</p>
+<p>Clients can also benefit from:</p>
+<ul>
+<li>access to suitable live-in carer profiles</li>
+<li>further matching support when requested</li>
+<li>the ability to request support finding another suitable carer if circumstances change</li>
+<li>a dedicated point of contact for platform and administrative enquiries</li>
+<li>payment and invoice administration through our secure system</li>
+<li>access to request platform support 24 hours a day</li>
+</ul>
+<p>Where further matching is requested, timings will depend on the client’s requirements, location and suitable carer availability and cannot be guaranteed.</p>
+<h2>Fair For Families. Fair For Carers.</h2>
+<p>Live-in care is highly responsible and demanding work, and we believe experienced carers should be fairly remunerated for the services they provide.</p>
+<p>At the same time, families deserve transparent and reasonable pricing without compromising on the experience and suitability of the person they welcome into their home.</p>
+<p>Our model is designed to balance both.</p>
+<p>The care arrangement is agreed directly between the client and carer, while Grace &amp; Goodwill supports the matching, platform and associated administration, including payment and invoice administration through our secure system.</p>
+<h2>Are Grace &amp; Goodwill Carers Insured?</h2>
+<img src="/blog/blog-carer-insured.png" alt="Grace &amp; Goodwill Carers Insured" />
+<p>Carers accepted onto the Grace &amp; Goodwill platform are required to maintain appropriate insurance for the care services they provide, including Public Liability Insurance.</p>
+<p>Grace &amp; Goodwill also maintains appropriate business insurance for the matching, platform and administrative services that we provide.</p>
+<p>When a client chooses to work with a carer, the care services are provided by the carer directly to the client under their own service agreement. This agreement sets out the responsibilities of both parties in relation to the placement.</p>
+<p>If an issue or insurance matter arises directly from the care services provided by the carer, it is addressed between the client and the carer in accordance with their direct service agreement and the carer’s applicable insurance cover. Grace &amp; Goodwill can provide relevant platform and administrative support where appropriate.</p>
+<h2>Why Families Choose Grace &amp; Goodwill</h2>
+<p>Price matters, but finding the right person matters just as much.</p>
+<p>Before a carer is accepted onto the Grace &amp; Goodwill platform, they complete our onboarding and compliance process. This includes reviewing relevant identity, right-to-work, DBS, training, references, insurance and supporting documentation.</p>
+<p>We then take an additional step through our video suitability assessment.</p>
+<p>This allows us to understand more about the person behind the profile, including their communication, experience, judgement, reliability, professionalism and approach to supporting somebody at home.</p>
+<p>It gives us another layer of information beyond documentation alone and helps us consider which carers may be more suitable for a client’s circumstances, preferences and communication needs.</p>
+<p>The result is a service designed around choice, transparency and continuity, with families remaining involved in deciding who they want supporting them at home.</p>
+<h2>Live-In Care From £1,250 Per Week</h2>
+<p>If you are considering live-in care for yourself or someone you love, Grace &amp; Goodwill can help you understand what the likely cost may be based on your individual circumstances.</p>
+<p>Call: 020 4524 0108<br>WhatsApp: +44 7462 931949<br>Website: graceandgoodwill.co.uk</p>`,
+    featuredImageUrl: "/blog/cost-in-Uk brief.png",
+    featuredImageAlt: "Cost of Live-In Care in the UK",
+    categorySlug: "care-and-support",
+    tags: ["live-in care pricing", "cost of care", "grace and goodwill"],
+    status: "PUBLISHED",
+    author: {
+      name: "Aurea Neto",
+      role: "Founder of Grace & Goodwill",
+    },
+    readingTimeMinutes: 5,
+    publishedAt: "2026-09-08T10:00:00.000Z",
+    createdAt: "2026-09-08T10:00:00.000Z",
+    updatedAt: "2026-09-08T10:00:00.000Z",
+    seoTitle: "How Much Does Live-In Care Cost in the UK? Pricing Guide",
+    seoDescription: "Learn about the cost of live-in care in the UK. Grace & Goodwill live-in care arrangements start from £1,250 per week.",
+    isFeatured: false,
+    cta: {
+      text: "Request a Live-in Carer",
+      href: "/contact",
+    },
+    faqItems: [
+      {
+        question: "How Much Does a Live-In Carer Cost Per Week?",
+        answer: "Grace & Goodwill live-in care arrangements start from £1,250 per week. The final price depends on the individual’s circumstances, location and the level of support required."
+      },
+      {
+        question: "Why Does Live-In Care Pricing Vary?",
+        answer: "Live-in care prices can vary because no two arrangements are exactly the same. Factors such as mobility needs, dementia or neurological conditions, overnight requirements, complex support needs and carer availability can influence the overall cost."
+      },
+      {
+        question: "Is Live-In Care Charged Weekly?",
+        answer: "Live-in care is commonly priced on a weekly basis. Grace & Goodwill will confirm the applicable costs for your individual arrangement before the placement begins."
+      },
+      {
+        question: "Can I Request Another Carer Later?",
+        answer: "Yes. Clients can request further matching support if circumstances change or they would like to consider another suitable carer. This remains subject to the client’s requirements, location, suitable carer availability and the applicable terms."
+      }
+    ]
   }
 ];

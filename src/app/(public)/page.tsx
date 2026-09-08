@@ -12,6 +12,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import Image from "next/image";
 import EmergencyButton from "@/components/EmergencyButton";
+import HeroActionButtons from "@/components/home/HeroActionButtons";
 import PartnersCarousel from "@/components/PartnersCarousel";
 import { faqs } from "@/data/faqData";
 import FAQAccordion from "@/components/FAQAccordion";
@@ -117,83 +118,7 @@ export default function HomePage() {
               Choose the option below that best matches your current needs.
             </p>
 
-            <div className="flex flex-col xl:flex-row items-start xl:items-center gap-4 flex-wrap xl:flex-nowrap w-full max-w-[100%] overflow-visible">
-              <Link
-                href="/contact"
-                prefetch={false}
-                id="btn-find-carer-hero"
-                className="group relative flex items-center justify-between h-14 px-4 sm:px-5 rounded-full border-2 border-[#F7D774] bg-[#5C441D] shrink-0 shadow-[0_0_15px_rgba(247,215,116,0.3)] transition-all duration-300 hover:shadow-[0_0_25px_rgba(247,215,116,0.5)] hover:bg-[#6E5223] w-full xl:w-max"
-              >
-                <div className="flex items-center gap-2 sm:gap-3 text-left z-10">
-                  <div className="relative flex items-center justify-center w-10 h-10">
-                    <div className="absolute inset-0 scale-125 rounded-full bg-[radial-gradient(circle,_rgba(247,215,116,0.15)_0%,_transparent_70%)] blur-sm"></div>
-                    <HandHeart
-                      className="w-8 h-8 text-[#F7D774] relative z-10 drop-shadow-sm"
-                      strokeWidth={1.5}
-                    />
-                  </div>
-                  <span className="text-[#FDF2D5] font-bold text-[11px] sm:text-[14px] leading-tight tracking-[0.02em] uppercase drop-shadow-sm line-clamp-1">
-                    FIND A LIVE-IN CARER
-                  </span>
-                </div>
-                <ChevronRight
-                  strokeWidth={3}
-                  className="text-[#FDF2D5]/70 w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1 z-10"
-                />
-              </Link>
-
-              <EmergencyButton className="w-full xl:w-max" />
-
-              <a
-                href="https://wa.me/447462931949?text=Hello%2C%20I'd%20like%20to%20enquire%20about%20live%20in%20care%20services%20from%20Grace%20%26%20Goodwill."
-                target="_blank"
-                rel="noopener noreferrer"
-                id="btn-chat-hero"
-                className="group relative flex items-center justify-between h-14 px-4 sm:px-5 rounded-full border-2 border-[#F7D774] bg-[#0F6D2E] shrink-0 shadow-[0_0_15px_rgba(247,215,116,0.3)] transition-all duration-300 hover:shadow-[0_0_25px_rgba(247,215,116,0.5)] hover:bg-[#0C5A26] w-full xl:w-max"
-              >
-                <div className="flex items-center gap-2 sm:gap-3 text-left z-10">
-                  <div className="relative flex items-center justify-center w-10 h-10">
-                    <div className="absolute inset-0 scale-125 rounded-full bg-[radial-gradient(circle,_rgba(0,198,83,0.15)_0%,_transparent_70%)] blur-sm"></div>
-                    <svg
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      className="w-6 h-6 text-[#00C653] relative z-10 drop-shadow-sm"
-                    >
-                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.888-.788-1.487-1.761-1.66-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
-                    </svg>
-                  </div>
-                  <span className="text-[#E0F8EA] font-bold text-[11px] sm:text-[14px] leading-tight tracking-[0.02em] uppercase drop-shadow-sm line-clamp-1">
-                    CHAT TO OUR TEAM
-                  </span>
-                </div>
-                <ChevronRight
-                  strokeWidth={3}
-                  className="text-[#00C653]/70 w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1 z-10"
-                />
-              </a>
-            </div>
-
-            {/* BBC Badge for mobile (below buttons) */}
-            <div className="mt-8 lg:hidden">
-              <a
-                href="https://www.bbc.co.uk/programmes/p0m85mv7"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex justify-center w-full sm:w-auto h-14 items-center gap-3.5 bg-navy-900 border border-gold-muted/30 px-5 py-2.5 rounded-full shadow-lg backdrop-blur-md hover:border-gold-400/50 transition-all cursor-pointer"
-              >
-                <span className="text-xs sm:text-sm font-semibold text-gold-200 uppercase tracking-widest">
-                  As Featured on
-                </span>
-                <div className="flex items-center gap-1.5">
-                  <div className="flex gap-0.5">
-                    <span className="bg-white text-black text-xs sm:text-[13px] font-bold px-1.5 py-0.5 rounded-sm leading-none">B</span>
-                    <span className="bg-white text-black text-xs sm:text-[13px] font-bold px-1.5 py-0.5 rounded-sm leading-none">B</span>
-                    <span className="bg-white text-black text-xs sm:text-[13px] font-bold px-1.5 py-0.5 rounded-sm leading-none">C</span>
-                  </div>
-                  <span className="text-white font-bold tracking-[0.2em] text-sm sm:text-base">RADIO</span>
-                </div>
-              </a>
-            </div>
+            <HeroActionButtons />
 
           </div>
         </div>

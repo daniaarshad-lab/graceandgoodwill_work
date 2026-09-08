@@ -7148,5 +7148,85 @@ export const blogSeedPosts: BlogPost[] = [
         answer: "Yes. Clients can request further matching support if circumstances change or they would like to consider another suitable carer. This remains subject to the client’s requirements, location, suitable carer availability and the applicable terms."
       }
     ]
+  },
+  {
+    id: "post-how-we-assess-and-vet-carers",
+    slug: "how-we-assess-and-vet-carers",
+    title: "How We Assess and Vet Carers Before They Join Grace & Goodwill",
+    excerpt: "Choosing someone to support you or a loved one at home is a significant decision. Experience and documentation matter, but they do not always tell you enough about the person behind the profile.",
+    content: `<p>Choosing someone to support you or a loved one at home is a significant decision.</p>
+<p>Experience and documentation matter, but they do not always tell you enough about the person behind the profile.</p>
+<p>That is why Grace &amp; Goodwill takes a more personal approach to vetting and assessing live-in carers before they are approved onto our platform.</p>
+<p>Before a carer becomes available to families through Grace &amp; Goodwill, we review key information including identity, right-to-work documentation, DBS information where applicable, references, training and relevant care experience.</p>
+<p>But our process does not stop with paperwork.</p>
+<h2>A Face-to-Face Video Assessment</h2>
+<p>Carers progressing through our onboarding process are invited to complete an online video suitability assessment with a member of our team.</p>
+<p>During this meeting, we verify the carer’s identity against the documentation submitted through the platform and spend time getting to know the person behind the CV.</p>
+<p>We consider areas such as:</p>
+<ul>
+<li>communication</li>
+<li>confidence and professional judgement</li>
+<li>reliability</li>
+<li>empathy and respect</li>
+<li>awareness of professional boundaries</li>
+<li>understanding of dignity and independence</li>
+<li>ability to recognise their own limits and experience</li>
+</ul>
+<p>We also use carefully selected situational questions to understand how the carer thinks when faced with realistic situations that can arise when supporting someone at home.</p>
+<p>The aim is not simply to hear the “right” answer. We want to understand how the individual communicates, reasons through situations and approaches responsibility.</p>
+<h2>Why Communication Matters</h2>
+<img src="/blog/blog-communication.png" alt="Why Communication Matters" />
+<p>Live-in care is a very personal arrangement.</p>
+<p>The carer may be living alongside someone for days or weeks at a time, so communication and compatibility can matter just as much as experience.</p>
+<p>Our video assessments allow us to understand how clearly a carer communicates and whether their communication style may be suitable for clients with particular preferences or communication needs.</p>
+<p>This gives us more meaningful information when families are considering suitable carers.</p>
+<h2>More Than an Online Carer Profile</h2>
+<p>A profile can tell you where somebody has worked and what training they have completed.</p>
+<p>A conversation can tell you much more about how they present themselves, communicate and approach the responsibility of supporting another person.</p>
+<p>Our aim is to give families greater confidence that carers available through Grace &amp; Goodwill have gone through a thoughtful onboarding and assessment process before their profiles become available on the platform.</p>
+<p>Because finding the right live-in carer should involve more than simply finding somebody who is available.</p>
+<p>It should involve finding someone who may genuinely be suitable for the person, household and circumstances.</p>`,
+    featuredImageUrl: "/blog/blog-Assess Live-In Carer.png",
+    featuredImageAlt: "How We Assess and Vet Carers",
+    categorySlug: "care-and-support",
+    tags: ["carer assessment", "vetting carers", "grace and goodwill process"],
+    status: "PUBLISHED",
+    author: {
+      name: "Aurea Neto",
+      role: "Founder of Grace & Goodwill",
+    },
+    readingTimeMinutes: 4,
+    publishedAt: "2026-09-08T11:00:00.000Z",
+    createdAt: "2026-09-08T11:00:00.000Z",
+    updatedAt: "2026-09-08T11:00:00.000Z",
+    seoTitle: "How We Assess and Vet Carers | Grace & Goodwill",
+    seoDescription: "Learn about the thorough vetting and assessment process for live-in carers at Grace & Goodwill.",
+    isFeatured: false,
+    cta: {
+      text: "Request a Live-in Carer",
+      href: "/contact",
+    },
+    faqItems: [
+      {
+        question: "How Does Grace & Goodwill Vet Live-In Carers?",
+        answer: "Before carers are approved onto the platform, Grace & Goodwill reviews relevant information including identity, right-to-work documentation, DBS information where applicable, references, training and care experience. Carers progressing through the process also complete an online video suitability assessment."
+      },
+      {
+        question: "Do Grace & Goodwill Carers Have DBS Checks?",
+        answer: "DBS information is reviewed where applicable as part of the onboarding and compliance process. The exact documentation required can depend on the individual carer and their circumstances."
+      },
+      {
+        question: "Why Does Grace & Goodwill Use Video Assessments?",
+        answer: "A CV and compliance documents provide important information, but they cannot show everything about how somebody communicates or approaches responsibility. The video assessment gives us an additional opportunity to understand the carer’s communication, judgement, reliability, professionalism and approach to realistic situations."
+      },
+      {
+        question: "Does Grace & Goodwill Decide Which Carer I Have?",
+        answer: "No. Grace & Goodwill helps clients explore suitable carer profiles, but the client remains involved in deciding who they would like to engage. Compatibility, experience, communication and individual preferences can all form part of that decision."
+      },
+      {
+        question: "What Does Grace & Goodwill Look For in a Live-In Carer?",
+        answer: "We consider more than availability alone. Our assessment process looks at areas such as relevant experience, communication, professional judgement, reliability, respect, dignity, boundaries and self-awareness."
+      }
+    ]
   }
 ];

@@ -1,4 +1,5 @@
 import { MetadataRoute } from 'next';
+import { blogSeedPosts } from '@/data/blogSeed';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://graceandgoodwill.co.uk';
@@ -84,5 +85,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
-  return [...corePages, ...servicePages, ...legalPages, ...locationPages];
+  // Blog pages
+  const blogPages = blogSeedPosts.map((post) => ({
+    url: `${baseUrl}/blog/${post.slug}`,
+    lastModified: new Date(post.updatedAt),
+    changeFrequency: 'weekly' as const,
+    priority: 0.8,
+  }));
+
+  return [...corePages, ...servicePages, ...legalPages, ...locationPages, ...blogPages];
 }

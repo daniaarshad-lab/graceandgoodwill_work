@@ -46,7 +46,8 @@ export async function generateMetadata({
     0,
     160,
   );
-  const path = `/blog/${post.slug}`;
+  const baseUrl = "https://graceandgoodwill.co.uk";
+  const path = `${baseUrl}/blog/${post.slug}`;
 
   return {
     title: `${title} | Grace & Goodwill`,

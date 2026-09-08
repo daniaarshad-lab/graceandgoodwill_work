@@ -10,10 +10,10 @@ export const metadata: Metadata = {
   description:
     "Practical guidance on live-in care, choosing a carer, funding, and supporting someone well at home.",
   /* The root layout pins canonical to the homepage, so every page must override it. */
-  alternates: { canonical: "/blog" },
+  alternates: { canonical: "https://graceandgoodwill.co.uk/blog" },
   openGraph: {
     type: "website",
-    url: "/blog",
+    url: "https://graceandgoodwill.co.uk/blog",
     siteName: "Grace & Goodwill",
     title: "Insights & Care Guides | Grace & Goodwill",
     description:

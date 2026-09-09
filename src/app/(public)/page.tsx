@@ -13,6 +13,7 @@ import Link from "next/link";
 import Image from "next/image";
 import EmergencyButton from "@/components/EmergencyButton";
 import HeroActionButtons from "@/components/home/HeroActionButtons";
+import HeroOfferModal from "@/components/home/HeroOfferModal";
 import PartnersCarousel from "@/components/PartnersCarousel";
 import { faqs } from "@/data/faqData";
 import FAQAccordion from "@/components/FAQAccordion";
@@ -47,19 +48,21 @@ export default function HomePage() {
   return (
     <main className="overflow-x-clip min-h-[calc(100vh-80px)] bg-navy-950 text-gold-100">
       <section className="relative w-full pb-16 min-h-[600px] bg-navy-950">
-        {/* Background Image - Hidden on Mobile */}
-        <div className="absolute inset-0 z-0 overflow-hidden hidden md:block">
+        {/* Background Image */}
+        <div className="absolute top-0 right-0 z-0 overflow-hidden w-full h-[350px] sm:h-[450px] md:h-full md:inset-y-0 md:w-[80%] lg:w-[65%] xl:w-[60%]">
           <Image
             src={homeBannerImg}
             alt="Grace and Goodwill Care"
             fill
-            className="object-cover object-[100%_20%]"
+            className="object-cover object-[center_15%] md:object-[80%_20%]"
             priority
           />
-          {/* Subtle gradient overlay to blend with bg-navy-950 and ensure text readability */}
-          <div className="absolute inset-0 bg-gradient-to-r from-navy-950 from-[5%] via-navy-950/70 via-50% to-transparent to-80%" />
-          {/* Bottom gradient fade to prevent hard edges if image scales down */}
-          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-navy-950 to-transparent" />
+          {/* Mobile bottom gradient to fade into navy background */}
+          <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-navy-950 via-navy-950/80 to-transparent md:hidden" />
+
+          {/* Desktop gradients */}
+          <div className="hidden md:block absolute inset-0 bg-gradient-to-r from-navy-950 from-[0%] via-navy-950/40 via-[20%] to-transparent to-[50%]" />
+          <div className="hidden md:block absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-navy-950 to-transparent" />
         </div>
 
         {/* Top Right BBC Badge (Absolute within Hero) */}
@@ -95,23 +98,24 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="w-full px-4 md:px-8 lg:px-12 relative z-10 flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-start lg:gap-12 xl:gap-24 pt-4 lg:pt-10">
+        <div className="w-full px-4 md:px-8 lg:px-12 relative z-10 flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-start lg:gap-12 xl:gap-24 pt-[280px] sm:pt-[360px] md:pt-4 lg:pt-10">
           <div className="w-full lg:w-1/2 space-y-6 mt-2 lg:mt-0 z-10 relative">
             <div className="page-strapline">CARE YOU CAN TRUST</div>
             <h1 className="main-page-heading drop-shadow-md text-white">
-              Trusted Live-In Care Matching Across the UK
+              Live-In Care Matching Across the UK
             </h1>
 
             <div className="max-w-xl space-y-4">
-              <p className="page-supporting-text">
-                Finding someone to support you or a loved one at home is a deeply personal decision. At Grace & Goodwill, you remain in control of your choices and care arrangements. We believe the right match should bring confidence, reassurance and peace of mind when welcoming someone into your home.
+              <p className="page-supporting-text text-white">
+                Finding someone to support you or a loved one at home is a deeply personal decision. Grace & Goodwill helps you explore suitable live-in carers through our online platform, with profiles showing experience, skills, interests, availability, photographs and introductory videos, so you can choose with greater confidence and control.
               </p>
-              <p className="page-supporting-text">
-                Grace & Goodwill brings families and carefully vetted live-in carers together through our online matching platform, where you can explore carer profiles featuring their experience, skills, interests, availability, photo, introductory video and more, helping you find the right live-in carer to match your needs, routines and preferences.
+              <p className="page-supporting-text text-white">
+                We also support urgent and short-term live-in care, including respite from as little as 2 days. Our office lines are open 24/7 and, for emergency care requests, we aim to find a suitable carer within 24 hours.
               </p>
-              <p className="page-supporting-text">
-                Whether care is being planned ahead or needed urgently, we make the matching process simpler and more personal, with ongoing platform support to help maintain continuity when circumstances or care arrangements change.
-              </p>
+            </div>
+
+            <div className="pt-2">
+              <HeroOfferModal />
             </div>
 
             <p className="text-sm sm:text-lg text-gold-100/90 font-medium pt-2 pb-2">

@@ -121,27 +121,6 @@ export default function HeroActionButtons() {
         />
       </a>
 
-      {/* BBC Radio Featured */}
-      <a
-        href="https://www.bbc.co.uk/programmes/p0m85mv7"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="hero-action-btn relative flex items-center justify-center h-14 w-full xl:w-max px-6 bg-navy-900 border border-gold-muted/30 rounded-full shadow-lg backdrop-blur-md hover:border-gold-400/50 transition-all duration-500 cursor-pointer overflow-hidden mt-4 xl:mt-0 xl:hidden"
-      >
-        <div className="flex items-center justify-center gap-3.5 whitespace-nowrap">
-          <span className="text-[11px] sm:text-xs md:text-sm font-semibold text-gold-200 uppercase tracking-widest">
-            As Featured on
-          </span>
-          <div className="flex items-center gap-1.5">
-            <div className="flex gap-0.5">
-              <span className="bg-white text-black text-[11px] sm:text-xs md:text-[13px] font-bold px-1.5 py-0.5 rounded-sm leading-none">B</span>
-              <span className="bg-white text-black text-[11px] sm:text-xs md:text-[13px] font-bold px-1.5 py-0.5 rounded-sm leading-none">B</span>
-              <span className="bg-white text-black text-[11px] sm:text-xs md:text-[13px] font-bold px-1.5 py-0.5 rounded-sm leading-none">C</span>
-            </div>
-            <span className="text-white font-bold tracking-[0.2em] text-[12px] sm:text-sm md:text-base pt-0.5">RADIO</span>
-          </div>
-        </div>
-      </a>
     </div>
   );
 }

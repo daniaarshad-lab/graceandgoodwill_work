@@ -65,34 +65,50 @@ export default function HomePage() {
           <div className="hidden md:block absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-navy-950 to-transparent" />
         </div>
 
-        {/* Top Right BBC Badge (Absolute within Hero) */}
-        <div className="absolute top-[30px] md:top-[40px] xl:top-[40px] left-0 w-full z-40 pointer-events-none hidden lg:block">
-          <div className="container-wrapper flex justify-end w-full lg:pr-2 xl:pr-4 pointer-events-auto">
+        {/* BBC Radio Badge — centred at top of hero image on mobile, right-aligned on desktop */}
+        <div className="absolute top-[4px] sm:top-[10px] lg:top-[40px] xl:top-[40px] left-0 w-full z-40 pointer-events-none">
+          {/* Mobile: centred pill badge overlaid on the image */}
+          <div className="flex lg:hidden justify-center px-4 pointer-events-auto">
             <a
               href="https://www.bbc.co.uk/programmes/p0m85mv7"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex lg:inline-flex justify-center w-full lg:w-auto h-14 lg:h-auto items-center gap-3.5 bg-navy-900 border border-gold-muted/30 px-5 py-2.5 lg:px-6 lg:py-3 rounded-full shadow-lg lg:shadow-[0_4px_20px_rgba(0,0,0,0.3)] backdrop-blur-md hover:border-gold-400/50 hover:shadow-[0_0_20px_rgba(247,215,116,0.2)] transition-all cursor-pointer transform hover:-translate-y-0.5 lg:hover:scale-[1.02]"
+              className="inline-flex items-center gap-2.5 bg-navy-950/80 border border-gold-muted/40 px-4 py-2 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.4)] backdrop-blur-md hover:border-gold-400/60 hover:shadow-[0_0_20px_rgba(247,215,116,0.25)] transition-all duration-300 cursor-pointer"
             >
-              <span className="text-xs sm:text-sm font-semibold text-gold-200 uppercase tracking-widest">
+              <span className="text-[11px] font-semibold text-gold-200 uppercase tracking-widest whitespace-nowrap">
                 As Featured on
               </span>
               <div className="flex items-center gap-1.5">
                 {/* BBC Logo Blocks */}
                 <div className="flex gap-0.5">
-                  <span className="bg-white text-black text-xs sm:text-[13px] font-bold px-1.5 py-0.5 rounded-sm leading-none">
-                    B
-                  </span>
-                  <span className="bg-white text-black text-xs sm:text-[13px] font-bold px-1.5 py-0.5 rounded-sm leading-none">
-                    B
-                  </span>
-                  <span className="bg-white text-black text-xs sm:text-[13px] font-bold px-1.5 py-0.5 rounded-sm leading-none">
-                    C
-                  </span>
+                  <span className="bg-white text-black text-[11px] font-bold px-1.5 py-0.5 rounded-sm leading-none">B</span>
+                  <span className="bg-white text-black text-[11px] font-bold px-1.5 py-0.5 rounded-sm leading-none">B</span>
+                  <span className="bg-white text-black text-[11px] font-bold px-1.5 py-0.5 rounded-sm leading-none">C</span>
                 </div>
-                <span className="text-white font-bold tracking-[0.2em] text-sm sm:text-base">
-                  RADIO
-                </span>
+                <span className="text-white font-bold tracking-[0.2em] text-xs">RADIO</span>
+              </div>
+            </a>
+          </div>
+
+          {/* Desktop: right-aligned pill badge */}
+          <div className="hidden lg:flex container-wrapper justify-end w-full lg:pr-2 xl:pr-4 pointer-events-auto">
+            <a
+              href="https://www.bbc.co.uk/programmes/p0m85mv7"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-3.5 bg-navy-900 border border-gold-muted/30 px-6 py-3 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.3)] backdrop-blur-md hover:border-gold-400/50 hover:shadow-[0_0_20px_rgba(247,215,116,0.2)] transition-all cursor-pointer transform hover:-translate-y-0.5 hover:scale-[1.02]"
+            >
+              <span className="text-sm font-semibold text-gold-200 uppercase tracking-widest">
+                As Featured on
+              </span>
+              <div className="flex items-center gap-1.5">
+                {/* BBC Logo Blocks */}
+                <div className="flex gap-0.5">
+                  <span className="bg-white text-black text-[13px] font-bold px-1.5 py-0.5 rounded-sm leading-none">B</span>
+                  <span className="bg-white text-black text-[13px] font-bold px-1.5 py-0.5 rounded-sm leading-none">B</span>
+                  <span className="bg-white text-black text-[13px] font-bold px-1.5 py-0.5 rounded-sm leading-none">C</span>
+                </div>
+                <span className="text-white font-bold tracking-[0.2em] text-base">RADIO</span>
               </div>
             </a>
           </div>

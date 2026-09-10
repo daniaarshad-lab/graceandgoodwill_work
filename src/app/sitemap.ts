@@ -11,6 +11,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/services',
     '/how-it-works',
     '/pricing',
+    '/location',
+    '/blog',
     '/contact',
     '/faq',
     '/join-as-carer',
@@ -82,7 +84,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: `${baseUrl}${route}`,
     lastModified: new Date(),
     changeFrequency: 'monthly' as const,
-    priority: 0.7,
+    priority: 0.85,
   }));
 
   // Blog pages

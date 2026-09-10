@@ -31,6 +31,8 @@ const navLinks = [
   // { href: "/training", label: "Training" },
   { href: "/how-it-works", label: "How it works" },
   { href: "/pricing", label: "Pricing" },
+  { href: "/location", label: "Our Locations" },
+  { href: "/blog", label: "Blog" },
   { href: "/contact", label: "Contact" },
   { href: "/faq", label: "FAQ" },
 ];

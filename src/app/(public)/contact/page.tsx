@@ -11,6 +11,7 @@ export const metadata = {
   description: "Talk to our experienced care advisors about your live-in care needs. Get personalised guidance and find the right care and support for you or your family.",
 };
 import WhatsAppIcon from "@/components/WhatsAppIcon";
+import BBCBadge from "@/components/BBCBadge";
 
 export default function ContactPage() {
   return (
@@ -31,6 +32,8 @@ export default function ContactPage() {
             you every step of the way with warmth, careful matching, and
             reassurance.
           </p>
+
+          <BBCBadge className="mt-2" />
         </div>
 
         {/* 1. Contact Us Form Card */}

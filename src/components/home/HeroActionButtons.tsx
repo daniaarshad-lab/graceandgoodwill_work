@@ -15,7 +15,7 @@ export default function HeroActionButtons() {
   return (
     <div className="w-full mt-2 lg:mt-4">
       {/* ── Desktop Layout: Integrated Bar ────────────────────────────── */}
-      <div className="hidden lg:flex items-center bg-[#09101C]/90 backdrop-blur-md border border-[#D4AF7A]/40 rounded-[18px] p-2 shadow-[0_0_20px_rgba(212,175,122,0.15)] w-max">
+      <div className="hidden lg:flex items-center bg-[#0d1b3e]/70 backdrop-blur-md border border-[#D4AF7A]/40 rounded-[18px] p-2 shadow-[0_0_20px_rgba(212,175,122,0.15)] w-max">
         
         {/* Item 1: Find a live-in carer */}
         <Link href="/contact" className="group flex items-center gap-4 px-5 xl:px-7 py-3 hover:bg-white/5 rounded-[12px] transition-colors">
@@ -87,13 +87,13 @@ export default function HeroActionButtons() {
         </Link>
 
         {/* Item 2 */}
-        <Link href="/emergency-care" className="flex items-center gap-4 w-full bg-[#09101C]/80 backdrop-blur-md border border-[#D4AF7A]/30 text-white px-5 py-3.5 rounded-full hover:bg-white/5 transition-colors shadow-sm">
+        <Link href="/emergency-care" className="flex items-center gap-4 w-full bg-[#0d1b3e]/70 backdrop-blur-md border border-[#D4AF7A]/30 text-white px-5 py-3.5 rounded-full hover:bg-white/5 transition-colors shadow-sm">
           <Bell className="w-5 h-5 text-[#D4AF7A] shrink-0" strokeWidth={1.5} />
           <span className="font-[400] text-[14px]">Emergency live-in care 24/7</span>
         </Link>
 
         {/* Item 3 */}
-        <a href="https://wa.me/447462931949" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 w-full bg-[#09101C]/80 backdrop-blur-md border border-[#D4AF7A]/30 text-white px-5 py-3.5 rounded-full hover:bg-white/5 transition-colors shadow-sm">
+        <a href="https://wa.me/447462931949" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 w-full bg-[#0d1b3e]/70 backdrop-blur-md border border-[#D4AF7A]/30 text-white px-5 py-3.5 rounded-full hover:bg-white/5 transition-colors shadow-sm">
           <WhatsAppIcon className="w-5 h-5 text-[#00E676] shrink-0" />
           <span className="font-[400] text-[14px]">WhatsApp us</span>
         </a>

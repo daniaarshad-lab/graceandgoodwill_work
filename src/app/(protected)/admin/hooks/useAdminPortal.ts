@@ -237,6 +237,7 @@ const mapBackendCarers = (backendCarers: any[]): CarerApplication[] => {
       status,
       email: carer.email || "No email",
       phone: carer.phoneNumber || profile.phone || "No phone listed",
+      registrationDate: carer.createdAt || profile?.createdAt || new Date().toISOString(),
     };
   });
 };

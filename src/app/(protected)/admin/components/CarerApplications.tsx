@@ -239,14 +239,13 @@ export default function CarerApplications({
       key: "registrationDate",
       sortable: true,
       render: (carer) => {
-        const ext = getCarerExtendedDetails(carer.id);
         return (
           <span className="font-mono text-gold-100/60">
-            {new Date(ext.registrationDate).toLocaleDateString("en-GB", {
+            {carer.registrationDate ? new Date(carer.registrationDate).toLocaleDateString("en-GB", {
               day: "2-digit",
               month: "short",
               year: "numeric",
-            })}
+            }) : "N/A"}
           </span>
         );
       },

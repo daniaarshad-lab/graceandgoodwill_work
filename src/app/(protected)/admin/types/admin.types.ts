@@ -22,6 +22,7 @@ export interface CarerApplication {
   status: "Pending" | "Approved" | "Rejected";
   email: string;
   phone: string;
+  registrationDate?: string;
 }
 
 export interface ClientRequest {

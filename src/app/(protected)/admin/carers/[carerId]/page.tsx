@@ -269,6 +269,8 @@ function CarerDetailsContent() {
   
   const drivingPreferences = profile.drivingPreferences || carer.drivingPreferences || carer.user?.drivingPreferences || [];
   const hasBusinessInsurance = profile.hasBusinessInsurance || carer.hasBusinessInsurance || carer.user?.hasBusinessInsurance || false;
+  
+  const dbsUpdateServiceNumber = profile.dbsUpdateServiceNumber || carer.dbsUpdateServiceNumber || carer.user?.dbsUpdateServiceNumber;
 
   // Availability mapping
   const availSource =
@@ -703,6 +705,18 @@ function CarerDetailsContent() {
                             title={locationText}
                           >
                             {locationText}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3 p-2 rounded-xl bg-navy-950/40 border border-gold-300/5">
+                        <FileText className="h-4 w-4 text-gold flex-shrink-0" />
+                        <div className="min-w-0">
+                          <span className="text-[9px] uppercase font-bold tracking-wider text-gold-100/40 block">
+                            DBS Reference Number
+                          </span>
+                          <span className="font-semibold text-gold-200 block">
+                            {dbsUpdateServiceNumber || "Not provided by carer"}
                           </span>
                         </div>
                       </div>

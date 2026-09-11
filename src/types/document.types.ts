@@ -1,4 +1,4 @@
-export enum FileCategory {
+﻿export enum FileCategory {
   IDENTITY = "IDENTITY",
   RIGHT_TO_WORK = "RIGHT_TO_WORK",
   COMPLIANCE = "COMPLIANCE",
@@ -14,6 +14,8 @@ export enum DocumentFileType {
   // Identity
   PASSPORT = "PASSPORT",
   DRIVING_LICENCE = "DRIVING_LICENCE",
+  DRIVING_LICENCE_FRONT = "DRIVING_LICENCE_FRONT",
+  DRIVING_LICENCE_BACK = "DRIVING_LICENCE_BACK",
   PROOF_OF_ADDRESS = "PROOF_OF_ADDRESS",
   RIGHT_TO_WORK = "RIGHT_TO_WORK",
   NATIONAL_INSURANCE_PROOF = "NATIONAL_INSURANCE_PROOF",
@@ -62,6 +64,8 @@ export const DocumentFileTypeLabels: Record<string, string> = {
   // Identity
   [DocumentFileType.PASSPORT]: "Passport",
   [DocumentFileType.DRIVING_LICENCE]: "Driving Licence",
+  [DocumentFileType.DRIVING_LICENCE_FRONT]: "Driving Licence (Front)",
+  [DocumentFileType.DRIVING_LICENCE_BACK]: "Driving Licence (Back)",
   [DocumentFileType.PROOF_OF_ADDRESS]: "Proof of Address",
   [DocumentFileType.RIGHT_TO_WORK]: "Right to Work in the UK",
   [DocumentFileType.NATIONAL_INSURANCE_PROOF]:
@@ -115,3 +119,4 @@ export const getDocumentFileLabel = (
 ): string => {
   return DocumentFileTypeLabels[type as DocumentFileType] || type;
 };
+

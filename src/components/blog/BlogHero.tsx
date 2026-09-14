@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { FileText, Heart, ClipboardCheck } from "lucide-react";
+import { FileText, Heart, ClipboardCheck, Search } from "lucide-react";
 import blogPublicImg from "@/assets/blog/blog-public1.jpeg";
 
 export default function BlogHero() {
@@ -64,8 +64,9 @@ export default function BlogHero() {
                 placeholder="Search our posts"
                 className="flex-1 bg-transparent px-5 py-2.5 text-[#374151] outline-none placeholder:text-gray-400 text-[15px]"
               />
-              <button type="submit" className="bg-[#C2A476] hover:bg-[#B39365] text-navy-950 px-8 py-2.5 rounded-full font-semibold transition-colors text-[15px] shadow-sm">
-                Search
+              <button type="submit" aria-label="Search" className="bg-[#C2A476] hover:bg-[#B39365] text-navy-950 px-4 md:px-8 py-2.5 rounded-full font-semibold transition-colors text-[15px] shadow-sm flex items-center justify-center">
+                <span className="hidden md:inline">Search</span>
+                <Search className="w-5 h-5 md:hidden" />
               </button>
             </form>
           </div>

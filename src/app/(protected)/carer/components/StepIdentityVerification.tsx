@@ -110,10 +110,16 @@ export default function StepIdentityVerification({
     complianceDocs.some(
       (d: ComplianceDoc) => d.type === DocumentFileType.PASSPORT,
     ) || !!selectedFiles[DocumentFileType.PASSPORT.toLowerCase()];
-  const hasDL =
+  const hasDLFront =
     complianceDocs.some(
-      (d: ComplianceDoc) => d.type === DocumentFileType.DRIVING_LICENCE,
-    ) || !!selectedFiles[DocumentFileType.DRIVING_LICENCE.toLowerCase()];
+      (d: ComplianceDoc) => d.type === DocumentFileType.DRIVING_LICENCE_FRONT,
+    ) || !!selectedFiles[DocumentFileType.DRIVING_LICENCE_FRONT.toLowerCase()];
+  const hasDLBack =
+    complianceDocs.some(
+      (d: ComplianceDoc) => d.type === DocumentFileType.DRIVING_LICENCE_BACK,
+    ) || !!selectedFiles[DocumentFileType.DRIVING_LICENCE_BACK.toLowerCase()];
+  const hasDL = hasDLFront && hasDLBack;
+  const hasPartialDL = (hasDLFront && !hasDLBack) || (!hasDLFront && hasDLBack);
   const hasPassportOrDL = hasPassport || hasDL;
 
   const hasProofOfAddress =
@@ -137,7 +143,7 @@ export default function StepIdentityVerification({
 
   const docErrors = {
     passportOrDL: !hasPassportOrDL
-      ? "Please upload either your Passport or Driving Licence."
+      ? (hasPartialDL ? "Please upload both front and back of your Driving Licence." : "Please upload EITHER your Passport OR your Driving Licence (Front & Back).")
       : "",
     proofOfAddress: !hasProofOfAddress ? "Proof of Address is required." : "",
     rightToWork: !hasRightToWork ? "Right to Work in the UK is required." : "",
@@ -296,10 +302,7 @@ export default function StepIdentityVerification({
     });
   };
 
-  const hasDrivingLicence =
-    complianceDocs.some(
-      (d: ComplianceDoc) => d.type === DocumentFileType.DRIVING_LICENCE,
-    ) || !!selectedFiles[DocumentFileType.DRIVING_LICENCE.toLowerCase()];
+  const hasDrivingLicence = hasDLFront || hasDLBack;
 
   if (isLocalSaving) {
     return (
@@ -587,15 +590,20 @@ export default function StepIdentityVerification({
                   Please upload EITHER your Passport OR your Driving Licence.
                 </p>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <DocUploadRow
                   label="Passport"
                   type={DocumentFileType.PASSPORT}
                   portal={portal}
                 />
                 <DocUploadRow
-                  label="Driving Licence"
-                  type={DocumentFileType.DRIVING_LICENCE}
+                  label="Driving Licence (Front)"
+                  type={DocumentFileType.DRIVING_LICENCE_FRONT}
+                  portal={portal}
+                />
+                <DocUploadRow
+                  label="Driving Licence (Back)"
+                  type={DocumentFileType.DRIVING_LICENCE_BACK}
                   portal={portal}
                 />
               </div>

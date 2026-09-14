@@ -32,6 +32,8 @@ import {
   Camera,
   Video,
   Info,
+  Car,
+  PhoneCall,
 } from "lucide-react";
 import InternalNotes from "../../components/shared/InternalNotes/InternalNotes";
 import UserAuditLogs from "../../components/shared/UserAuditLogs";
@@ -259,6 +261,16 @@ function CarerDetailsContent() {
   } else if (profile.careTypes && Array.isArray(profile.careTypes)) {
     specialtiesList = profile.careTypes;
   }
+
+  // Emergency Contact & Driving
+  const emergencyContactName = profile.emergencyContactName || carer.emergencyContactName || carer.user?.emergencyContactName;
+  const emergencyContactNumber = profile.emergencyContactNumber || carer.emergencyContactNumber || carer.user?.emergencyContactNumber;
+  const emergencyContactRelation = profile.emergencyContactRelation || carer.emergencyContactRelation || carer.user?.emergencyContactRelation;
+  
+  const drivingPreferences = profile.drivingPreferences || carer.drivingPreferences || carer.user?.drivingPreferences || [];
+  const hasBusinessInsurance = profile.hasBusinessInsurance || carer.hasBusinessInsurance || carer.user?.hasBusinessInsurance || false;
+  
+  const dbsUpdateServiceNumber = profile.dbsUpdateServiceNumber || carer.dbsUpdateServiceNumber || carer.user?.dbsUpdateServiceNumber;
 
   // Availability mapping
   const availSource =
@@ -697,6 +709,18 @@ function CarerDetailsContent() {
                         </div>
                       </div>
 
+                      <div className="flex items-center gap-3 p-2 rounded-xl bg-navy-950/40 border border-gold-300/5">
+                        <FileText className="h-4 w-4 text-gold flex-shrink-0" />
+                        <div className="min-w-0">
+                          <span className="text-[9px] uppercase font-bold tracking-wider text-gold-100/40 block">
+                            DBS Reference Number
+                          </span>
+                          <span className="font-semibold text-gold-200 block">
+                            {dbsUpdateServiceNumber || "Not provided by carer"}
+                          </span>
+                        </div>
+                      </div>
+
                       <div className="flex items-center justify-between border-t border-gold-300/5 pt-3">
                         <span className="text-gold-100/40 font-semibold flex items-center gap-1">
                           <Calendar className="h-3.5 w-3.5 text-gold/60" />{" "}
@@ -723,6 +747,21 @@ function CarerDetailsContent() {
                           {durationWithUs}
                         </span>
                       </div>
+
+                      {emergencyContactName && (
+                        <div className="border-t border-gold-300/5 pt-3 mt-2">
+                          <span className="text-[9px] uppercase font-bold tracking-wider text-rose-400/80 block mb-2 flex items-center gap-1.5">
+                            <PhoneCall className="h-3 w-3" /> Emergency Contact
+                          </span>
+                          <div className="bg-rose-950/20 border border-rose-500/10 rounded-xl p-2.5">
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="font-bold text-rose-100 text-xs">{emergencyContactName}</span>
+                              <span className="text-[9px] font-bold text-rose-300 bg-rose-500/10 px-1.5 py-0.5 rounded border border-rose-500/20">{emergencyContactRelation || "Contact"}</span>
+                            </div>
+                            <span className="text-rose-200/70 text-xs font-mono">{emergencyContactNumber}</span>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -772,6 +811,28 @@ function CarerDetailsContent() {
                         <p className="text-xs text-gold-100/70 leading-relaxed italic">
                           "{bioSource}"
                         </p>
+                      </div>
+
+                      <div className="space-y-2 border-t border-gold-300/5 pt-3">
+                        <span className="text-[9px] uppercase font-bold tracking-wider text-gold-100/40 block flex items-center gap-1.5">
+                          <Car className="h-3 w-3 text-gold/60" /> Driving & Transport
+                        </span>
+                        {drivingPreferences && drivingPreferences.length > 0 ? (
+                          <>
+                            <div className="flex flex-col gap-1.5">
+                              {drivingPreferences.map((pref: string, idx: number) => (
+                                <span key={idx} className="text-xs text-gold-200/80 bg-gold/5 px-2 py-1.5 rounded-lg border border-gold-300/10 flex items-start gap-2 leading-tight">
+                                  <span className="mt-0.5 h-1.5 w-1.5 rounded-full bg-gold/40 shrink-0"></span>
+                                  {pref}
+                                </span>
+                              ))}
+                            </div>
+                          </>
+                        ) : (
+                          <div className="bg-navy-950/40 px-3 py-2 rounded-lg border border-gold-300/5 text-xs text-gold-100/40 italic">
+                            No driving license selected
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>

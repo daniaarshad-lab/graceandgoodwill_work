@@ -11,6 +11,7 @@ import ceoImage from "@/assets/auth/ceo-image.jpeg";
 import aboutUsFirstImg from "@/assets/open/AboutUs-first-img.jpeg";
 import aboutUsSecondImg from "@/assets/open/AboutUs-second-img.jpeg";
 import aboutUsThirdImg from "@/assets/open/AboutUs-third-img.jpeg";
+import BBCBadge from "@/components/BBCBadge";
 
 // ─── Value card data ──────────────────────────────────────────────────────────
 
@@ -38,6 +39,8 @@ export default function AboutPage() {
               and meaningful human connection.
             </p>
           </div>
+
+          <BBCBadge className="mt-6" />
         </div>
       </section>
 

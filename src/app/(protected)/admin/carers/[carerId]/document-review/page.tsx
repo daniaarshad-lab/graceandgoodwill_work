@@ -115,6 +115,7 @@ function DocumentReviewContent() {
   const [submittingAction, setSubmittingAction] = useState<
     "VERIFY" | "REJECT" | null
   >(null);
+  const [showRejectInput, setShowRejectInput] = useState(false);
   const [notes, setNotes] = useState<Record<string, string>>({});
   const [validationError, setValidationError] = useState<string | null>(null);
 
@@ -185,6 +186,7 @@ function DocumentReviewContent() {
 
   useEffect(() => {
     setValidationError(null);
+    setShowRejectInput(false);
   }, [activeDocId]);
 
   const handleVerify = async (e: React.MouseEvent) => {
@@ -211,6 +213,12 @@ function DocumentReviewContent() {
   const handleReject = async (e: React.MouseEvent) => {
     e.preventDefault();
     if (!activeDoc) return;
+
+    if (!showRejectInput) {
+      setShowRejectInput(true);
+      return;
+    }
+
     const docNotes = (notes[activeDoc.id] || "").trim();
     if (!docNotes) {
       setValidationError(
@@ -425,15 +433,9 @@ function DocumentReviewContent() {
           <section className="lg:col-span-3 flex flex-col">
             {activeDoc ? (
               <div
-                className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md flex flex-col justify-between"
-                style={{
-                  height: "820px",
-                  minHeight: "820px",
-                  maxHeight: "820px",
-                  overflow: "hidden",
-                }}
+                className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md flex flex-col gap-6 h-full"
               >
-                <div className="space-y-6 flex-1 flex flex-col">
+                <div className="space-y-6 flex flex-col">
                   {/* ACTIVE DOCUMENT METADATA */}
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gold-300/5 pb-4 flex-shrink-0">
                     <div className="space-y-1">
@@ -649,6 +651,42 @@ function DocumentReviewContent() {
                 </div>
 
                 <div className="space-y-4 flex-shrink-0">
+                  {/* ADMIN NOTES */}
+                  {showRejectInput && (
+                    <div className="space-y-2 pt-2 border-t border-gold-300/5 animate-in fade-in slide-in-from-top-2 duration-300">
+                      <label className="text-xs uppercase font-bold text-gold-200/60 block">
+                        Rejection Reason{" "}
+                        <span className="text-rose-500 font-bold ml-1">*</span>
+                      </label>
+                      <textarea
+                        value={notes[activeDoc.id] || ""}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setNotes((prev) => ({
+                            ...prev,
+                            [activeDoc.id]: val,
+                          }));
+                          if (val.trim()) {
+                            setValidationError(null);
+                          }
+                        }}
+                        placeholder="Provide a reason for rejection (required)..."
+                        rows={2}
+                        className={`w-full rounded-xl bg-navy-950 p-3 text-xs text-gold-100 placeholder-gold-100/20 outline-none transition duration-300 resize-none animate-none border ${
+                          validationError
+                            ? "border-rose-500 focus:border-rose-500 focus:ring-1 focus:ring-rose-500/20"
+                            : "border-gold-300/10 focus:border-gold-300/30"
+                        }`}
+                        autoFocus
+                      />
+                      {validationError && (
+                        <p className="text-[10px] text-rose-400 font-semibold mt-1">
+                          {validationError}
+                        </p>
+                      )}
+                    </div>
+                  )}
+
                   {/* ACTION PORTAL */}
                   <div className="bg-navy-950/40 rounded-xl border border-gold-300/5 p-4 flex flex-col md:flex-row items-center justify-between gap-4">
                     <div className="text-xs text-gold-100/50">
@@ -685,82 +723,72 @@ function DocumentReviewContent() {
                         </div>
                       ) : (
                         <div className="flex flex-row items-center gap-3">
-                          <button
-                            type="button"
-                            onClick={handleReject}
-                            disabled={submittingAction !== null}
-                            className="px-5 py-2 text-xs font-bold text-white bg-rose-600 hover:bg-rose-500 disabled:opacity-40 rounded-xl transition duration-200 flex items-center justify-center gap-1.5 cursor-pointer h-10 flex-shrink-0"
-                          >
-                            {submittingAction === "REJECT" ? (
-                              <ThinSpinner size="xs" spinnerClassName="border-white shrink-0" className="inline-flex flex-row space-y-0" />
-                            ) : (
-                              <X className="h-4 w-4" flex-shrink-0="true" />
-                            )}
-                            Reject
-                          </button>
-                          <button
-                            type="button"
-                            onClick={handleVerify}
-                            disabled={submittingAction !== null}
-                            className="px-5 py-2 text-xs font-bold text-navy-950 bg-gold hover:bg-gold-200 disabled:opacity-40 rounded-xl transition duration-200 flex items-center justify-center gap-1.5 cursor-pointer h-10 flex-shrink-0"
-                          >
-                            {submittingAction === "VERIFY" ? (
-                              <ThinSpinner size="xs" spinnerClassName="border-navy-950 shrink-0" className="inline-flex flex-row space-y-0" />
-                            ) : (
-                              <Check className="h-4 w-4" flex-shrink-0="true" />
-                            )}
-                            Approve
-                          </button>
+                          {showRejectInput ? (
+                            <>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setShowRejectInput(false);
+                                  setValidationError(null);
+                                }}
+                                disabled={submittingAction !== null}
+                                className="px-5 py-2 text-xs font-bold text-gold-200 bg-navy-950 hover:bg-navy-900 border border-gold-300/10 disabled:opacity-40 rounded-xl transition duration-200 flex items-center justify-center h-10 flex-shrink-0"
+                              >
+                                Cancel
+                              </button>
+                              <button
+                                type="button"
+                                onClick={handleReject}
+                                disabled={submittingAction !== null}
+                                className="px-5 py-2 text-xs font-bold text-white bg-rose-600 hover:bg-rose-500 disabled:opacity-40 rounded-xl transition duration-200 flex items-center justify-center gap-1.5 h-10 flex-shrink-0"
+                              >
+                                {submittingAction === "REJECT" ? (
+                                  <ThinSpinner size="xs" spinnerClassName="border-white shrink-0" className="inline-flex flex-row space-y-0" />
+                                ) : (
+                                  <X className="h-4 w-4" flex-shrink-0="true" />
+                                )}
+                                Submit Rejection
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              <button
+                                type="button"
+                                onClick={handleReject}
+                                disabled={submittingAction !== null}
+                                className="px-5 py-2 text-xs font-bold text-white bg-rose-600 hover:bg-rose-500 disabled:opacity-40 rounded-xl transition duration-200 flex items-center justify-center gap-1.5 cursor-pointer h-10 flex-shrink-0"
+                              >
+                                {submittingAction === "REJECT" ? (
+                                  <ThinSpinner size="xs" spinnerClassName="border-white shrink-0" className="inline-flex flex-row space-y-0" />
+                                ) : (
+                                  <X className="h-4 w-4" flex-shrink-0="true" />
+                                )}
+                                Reject
+                              </button>
+                              <button
+                                type="button"
+                                onClick={handleVerify}
+                                disabled={submittingAction !== null}
+                                className="px-5 py-2 text-xs font-bold text-navy-950 bg-gold hover:bg-gold-200 disabled:opacity-40 rounded-xl transition duration-200 flex items-center justify-center gap-1.5 cursor-pointer h-10 flex-shrink-0"
+                              >
+                                {submittingAction === "VERIFY" ? (
+                                  <ThinSpinner size="xs" spinnerClassName="border-navy-950 shrink-0" className="inline-flex flex-row space-y-0" />
+                                ) : (
+                                  <Check className="h-4 w-4" flex-shrink-0="true" />
+                                )}
+                                Approve
+                              </button>
+                            </>
+                          )}
                         </div>
                       )}
                     </div>
-                  </div>
-
-                  {/* ADMIN NOTES */}
-                  <div className="space-y-2 pt-2 border-t border-gold-300/5">
-                    <label className="text-xs uppercase font-bold text-gold-200/60 block">
-                      Admin Notes{" "}
-                      {validationError && (
-                        <span className="text-rose-500 font-bold ml-1">*</span>
-                      )}
-                    </label>
-                    <textarea
-                      value={notes[activeDoc.id] || ""}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        setNotes((prev) => ({
-                          ...prev,
-                          [activeDoc.id]: val,
-                        }));
-                        if (val.trim()) {
-                          setValidationError(null);
-                        }
-                      }}
-                      placeholder="Add notes about this document review (e.g. key credentials verified, reason for rejection...)"
-                      rows={2}
-                      className={`w-full rounded-xl bg-navy-950 p-3 text-xs text-gold-100 placeholder-gold-100/20 outline-none transition duration-300 resize-none animate-none border ${
-                        validationError
-                          ? "border-rose-500 focus:border-rose-500 focus:ring-1 focus:ring-rose-500/20"
-                          : "border-gold-300/10 focus:border-gold-300/30"
-                      }`}
-                    />
-                    {validationError && (
-                      <p className="text-[10px] text-rose-400 font-semibold mt-1">
-                        {validationError}
-                      </p>
-                    )}
                   </div>
                 </div>
               </div>
             ) : (
               <div
-                className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-12 text-center text-gold-100/40 backdrop-blur-md flex flex-col justify-center items-center"
-                style={{
-                  height: "820px",
-                  minHeight: "820px",
-                  maxHeight: "820px",
-                  overflow: "hidden",
-                }}
+                className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-12 text-center text-gold-100/40 backdrop-blur-md flex flex-col justify-center items-center h-full min-h-[500px]"
               >
                 <FileText className="h-12 w-12 text-gold-100/20 mb-4 animate-bounce" />
                 <h3 className="text-lg font-bold text-gold-200">

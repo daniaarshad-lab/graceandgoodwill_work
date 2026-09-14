@@ -235,14 +235,16 @@ function CarerDashboardContent() {
             if (!hasAllTraining) return 5;
 
             // Step 6: Compliance
+            const hasDLFront = docs.some(
+              (d: any) => d.fileType === DocumentFileType.DRIVING_LICENCE_FRONT,
+            );
+            const hasDLBack = docs.some(
+              (d: any) => d.fileType === DocumentFileType.DRIVING_LICENCE_BACK,
+            );
+            const hasDL = hasDLFront && hasDLBack;
             const hasPassportOrDL = docs.some(
-              (d: any) =>
-                d.fileType === DocumentFileType.PASSPORT ||
-                d.fileType === DocumentFileType.DRIVING_LICENCE,
-            );
-            const hasDL = docs.some(
-              (d: any) => d.fileType === DocumentFileType.DRIVING_LICENCE,
-            );
+              (d: any) => d.fileType === DocumentFileType.PASSPORT
+            ) || hasDL;
             const hasProofOfAddress = docs.some(
               (d: any) => d.fileType === DocumentFileType.PROOF_OF_ADDRESS,
             );
@@ -407,14 +409,16 @@ function CarerDashboardContent() {
       missing.push("Personal Information");
     }
 
+    const hasDLFront = complianceDocs.some(
+      (d: any) => d.type === DocumentFileType.DRIVING_LICENCE_FRONT,
+    );
+    const hasDLBack = complianceDocs.some(
+      (d: any) => d.type === DocumentFileType.DRIVING_LICENCE_BACK,
+    );
+    const hasDL = hasDLFront && hasDLBack;
     const hasPassportOrDL = complianceDocs.some(
-      (d: any) =>
-        d.type === DocumentFileType.PASSPORT ||
-        d.type === DocumentFileType.DRIVING_LICENCE,
-    );
-    const hasDL = complianceDocs.some(
-      (d: any) => d.type === DocumentFileType.DRIVING_LICENCE,
-    );
+      (d: any) => d.type === DocumentFileType.PASSPORT,
+    ) || hasDL;
     const hasProofOfAddress = complianceDocs.some(
       (d: any) => d.type === DocumentFileType.PROOF_OF_ADDRESS,
     );

@@ -70,7 +70,7 @@ export default function StepReviewSubmit({
   // Identity docs check
   const hasPassportOrDL =
     hasDocType(DocumentFileType.PASSPORT) ||
-    hasDocType(DocumentFileType.DRIVING_LICENCE);
+    (hasDocType(DocumentFileType.DRIVING_LICENCE_FRONT) && hasDocType(DocumentFileType.DRIVING_LICENCE_BACK));
   const hasProofOfAddress = hasDocType(DocumentFileType.PROOF_OF_ADDRESS);
   const hasRightToWork = hasDocType(DocumentFileType.RIGHT_TO_WORK);
   const hasNiProof = hasDocType(DocumentFileType.NATIONAL_INSURANCE_PROOF);

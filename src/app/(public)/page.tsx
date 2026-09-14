@@ -75,12 +75,7 @@ export default function HomePage() {
               rel="noopener noreferrer"
               className="group inline-flex items-center gap-3 bg-navy-950/85 border border-[#D4AF7A]/30 px-5 py-2.5 rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.5)] backdrop-blur-md hover:border-[#D4AF7A]/60 transition-all duration-300"
             >
-              {/* Pulse dot */}
-              <span className="relative flex h-2 w-2 shrink-0">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#D4AF7A] opacity-60" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#D4AF7A]" />
-              </span>
-              <span className="text-[10px] font-semibold text-[#D4AF7A]/80 uppercase tracking-[0.18em] whitespace-nowrap">
+              <span className="text-[8px] font-semibold text-gold-200 uppercase tracking-widest whitespace-nowrap">
                 As Featured on
               </span>
               {/* BBC badge */}
@@ -90,7 +85,7 @@ export default function HomePage() {
                   <span className="bg-white text-black text-[11px] font-extrabold px-[5px] py-[2px] rounded-[3px] leading-none tracking-tight">B</span>
                   <span className="bg-white text-black text-[11px] font-extrabold px-[5px] py-[2px] rounded-[3px] leading-none tracking-tight">C</span>
                 </div>
-                <span className="text-white/90 font-bold tracking-[0.18em] text-[11px]">RADIO</span>
+                <span className="text-white font-bold tracking-[0.2em] text-[8px]">RADIO</span>
               </div>
             </a>
           </div>

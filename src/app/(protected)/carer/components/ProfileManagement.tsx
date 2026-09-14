@@ -91,6 +91,7 @@ export default function ProfileManagement({
   onSubmit,
   setActiveTab,
   complianceDocs = [],
+  onShareClick,
 }: ProfileManagementProps) {
   const [activeSection, setActiveSection] = useState<
     "personal" | "professional" | "financial"

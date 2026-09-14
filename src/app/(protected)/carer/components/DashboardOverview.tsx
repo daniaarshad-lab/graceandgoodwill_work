@@ -9,6 +9,7 @@ interface DashboardOverviewProps {
   complianceDocs: ComplianceDoc[];
   availability: string[];
   setActiveTab: (tab: any) => void;
+  onShareClick?: () => void;
 }
 
 export default function DashboardOverview({
@@ -16,6 +17,7 @@ export default function DashboardOverview({
   complianceDocs,
   availability,
   setActiveTab,
+  onShareClick,
 }: DashboardOverviewProps) {
   const profile = useAppSelector((state) => state.carer.profile);
 

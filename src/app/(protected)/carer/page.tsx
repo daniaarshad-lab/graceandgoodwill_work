@@ -886,6 +886,11 @@ function CarerDashboardContent() {
           }
         }}
       />
+    
+      <ShareProfileModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+      />
     </main>
   );
 }

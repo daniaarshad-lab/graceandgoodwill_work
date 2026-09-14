@@ -1,6 +1,8 @@
 "use client";
 
 import { useAppSelector } from "@/store/hooks";
+import { Share2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface PortalHeaderProps {
   firstName: string;
@@ -8,6 +10,7 @@ interface PortalHeaderProps {
   email: string;
   phone: string;
   profilePhoto: string | null;
+  onShareClick?: () => void;
 }
 
 export default function PortalHeader({
@@ -16,8 +19,10 @@ export default function PortalHeader({
   email,
   phone,
   profilePhoto,
+  onShareClick,
 }: PortalHeaderProps) {
   const profile = useAppSelector((state) => state.carer.profile);
+  const router = useRouter();
 
   const currentPhoto = profile?.profilePhotoUrl || profilePhoto;
 
@@ -49,9 +54,18 @@ export default function PortalHeader({
     }
     return finalUrl;
   };
+
+  const handleShareClick = () => {
+    if (onShareClick) {
+      onShareClick();
+    } else {
+      router.push("/carer?tab=share");
+    }
+  };
+
   return (
     <section className="w-full flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 rounded-3xl border border-gold-300/10 bg-navy-900/40 p-4 sm:p-6 md:p-8 shadow-elegant backdrop-blur-md">
-      <div className="flex items-center gap-5">
+      <div className="flex items-center gap-5 min-w-0 flex-1">
         <div className="relative group block">
           <div className="relative h-24 w-24 sm:h-28 sm:w-28 shrink-0 overflow-hidden rounded-full border-2 border-gold-DEFAULT bg-navy-950 flex items-center justify-center text-4xl font-bold text-gold-DEFAULT shadow-soft">
             {currentPhoto ? (
@@ -93,6 +107,24 @@ export default function PortalHeader({
             </div>
           )}
         </div>
+      </div>
+
+      {/* Share Profile Action Button */}
+      <div className="flex items-center gap-3 shrink-0 self-stretch sm:self-center mt-2 sm:mt-0">
+        <button
+          id="header-share-profile-btn"
+          type="button"
+          onClick={handleShareClick}
+          style={{
+            background: "linear-gradient(135deg, #F5D4A0 0%, #D4AF37 50%, #C99232 100%)",
+            color: "#0A1128",
+            border: "1px solid rgba(253, 230, 196, 0.5)",
+          }}
+          className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-2xl font-bold text-sm shadow-[0_4px_25px_rgba(212,175,55,0.45)] hover:shadow-[0_6px_30px_rgba(212,175,55,0.65)] hover:brightness-110 hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer"
+        >
+          <Share2 className="w-4 h-4 text-[#0A1128]" />
+          <span className="font-bold text-[#0A1128]">Share Profile</span>
+        </button>
       </div>
     </section>
   );

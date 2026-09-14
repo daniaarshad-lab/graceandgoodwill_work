@@ -54,6 +54,30 @@ export default function DashboardOverview({
         </div>
       </SectionCard>
 
+
+      {/* Share Profile Quick Card */}
+      <SectionCard className="space-y-4">
+        <div className="flex items-center gap-2 text-gold-200">
+          <span className="text-base">🔗</span>
+          <h4 className="font-bold text-sm">Share My Profile</h4>
+        </div>
+        <p className="text-xs text-gold-100/60 leading-relaxed">
+          Generate a secure, 30-minute shareable link to introduce your verified profile to prospective clients via WhatsApp, Email, or SMS.
+        </p>
+        <button
+          id="overview-share-profile-btn"
+          onClick={onShareClick || (() => setActiveTab("overview"))}
+          style={{
+            background: "linear-gradient(135deg, #F5D4A0 0%, #D4AF37 50%, #C99232 100%)",
+            color: "#0A1128",
+          }}
+          className="w-full py-2.5 px-4 rounded-xl text-xs font-bold shadow-[0_4px_15px_rgba(212,175,55,0.3)] hover:brightness-110 transition flex items-center justify-center gap-2 cursor-pointer"
+        >
+          <span className="font-bold text-[#0A1128]">Share Profile</span>
+          <span className="text-xs text-[#0A1128]">→</span>
+        </button>
+      </SectionCard>
+
       {/* Profile completeness Quick Stats widget */}
       <SectionCard className="space-y-4">
         <h4 className="font-bold text-gold-200 text-sm">Dashboard Overview</h4>

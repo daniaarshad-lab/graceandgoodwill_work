@@ -21,4 +21,19 @@ export const publicService = {
       return null;
     }
   },
+
+  async requestCallback(payload: {
+    name: string;
+    email: string;
+    phoneNumber: string;
+    clientOrCarer: string;
+    location: string;
+    consent: boolean;
+  }): Promise<any> {
+    const response = await apiFetch("/public/request-callback", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+    return response;
+  }
 };

@@ -6,6 +6,10 @@ import Image from "next/image";
 import { ArrowRight, Phone, CheckCircle2, Star, ChevronRight } from "lucide-react";
 import olderPeopleImg from "@/assets/blog/blog-blog-Older People.jpeg";
 import communicationImg from "@/assets/blog/blog-communication.png";
+import Input from "@/components/Input";
+import Select from "@/components/Select";
+import PhoneInput from "@/components/PhoneInput";
+import { publicService } from "@/services/public.service";
 
 interface Props {
   townName: string;
@@ -16,11 +20,53 @@ interface Props {
 
 export default function TownPageClient({ townName, countyName, regionName, countySlug }: Props) {
   const [form, setForm] = useState({ name: "", email: "", phone: "", type: "I'm looking for care" });
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const validate = () => {
+    const newErrors: Record<string, string> = {};
+    if (!form.name.trim()) newErrors.name = "Full Name is required";
+    if (!form.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+      newErrors.email = "Please enter a valid email address";
+    }
+    if (!form.phone.trim() || form.phone.replace(/[^0-9]/g, "").length < 10) {
+      newErrors.phone = "Please enter a valid phone number";
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleFieldChange = (field: string, value: string) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors((prev) => ({ ...prev, [field]: "" }));
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    if (validate()) {
+      setIsSubmitting(true);
+      try {
+        await publicService.requestCallback({
+          name: form.name,
+          email: form.email,
+          phoneNumber: form.phone,
+          clientOrCarer: form.type === "I'm looking for care" ? "Client" : "Carer",
+          location: townName,
+          consent: true,
+        });
+        setSubmitted(true);
+      } catch (error) {
+        console.error("Failed to submit callback request:", error);
+      } finally {
+        setIsSubmitting(false);
+      }
+    }
   };
 
   return (
@@ -94,57 +140,49 @@ export default function TownPageClient({ townName, countyName, regionName, count
                 <p className="text-gold-100/60 text-sm max-w-xs">One of our care advisors will call you back within 1 working day.</p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-xs font-medium text-gold-100/80 mb-1.5">Full Name *</label>
-                  <input
-                    required
-                    type="text"
-                    placeholder="Your full name"
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className="w-full bg-navy-950/40 border border-gold-400/20 rounded-md px-4 py-2.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#D4AF7A]/60 transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gold-100/80 mb-1.5">Email Address *</label>
-                  <input
-                    required
-                    type="email"
-                    placeholder="youremail@example.com"
-                    value={form.email}
-                    onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    className="w-full bg-navy-950/40 border border-gold-400/20 rounded-md px-4 py-2.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#D4AF7A]/60 transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gold-100/80 mb-1.5">Phone Number *</label>
-                  <input
-                    required
-                    type="tel"
-                    placeholder="+44"
-                    value={form.phone}
-                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    className="w-full bg-navy-950/40 border border-gold-400/20 rounded-md px-4 py-2.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#D4AF7A]/60 transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gold-100/80 mb-1.5">I am a *</label>
-                  <select
-                    value={form.type}
-                    onChange={(e) => setForm({ ...form, type: e.target.value })}
-                    className="w-full bg-navy-950/40 border border-gold-400/20 rounded-md px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#D4AF7A]/60 transition-colors appearance-none"
-                  >
-                    <option>I'm looking for care</option>
-                    <option>I'm a carer looking for work</option>
-                    <option>I'm a professional referrer</option>
-                  </select>
-                </div>
+              <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+                <Input
+                  label="Full Name *"
+                  required
+                  type="text"
+                  placeholder="Your full name"
+                  value={form.name}
+                  onChange={(e) => handleFieldChange("name", e.target.value)}
+                  error={errors.name}
+                  className="!bg-white/5 !border-[#a08054]/20 !text-[#dcc8aa] focus:!border-[#a08054]/60 placeholder:text-white/20"
+                />
+                <Input
+                  label="Email Address *"
+                  required
+                  type="email"
+                  placeholder="youremail@example.com"
+                  value={form.email}
+                  onChange={(e) => handleFieldChange("email", e.target.value)}
+                  error={errors.email}
+                  className="!bg-white/5 !border-[#a08054]/20 !text-[#dcc8aa] focus:!border-[#a08054]/60 placeholder:text-white/20"
+                />
+                <PhoneInput
+                  label="Phone Number *"
+                  value={form.phone}
+                  onChange={(value) => handleFieldChange("phone", value)}
+                  error={errors.phone}
+                />
+                <Select
+                  label="I am a *"
+                  value={form.type}
+                  onChange={(e) => handleFieldChange("type", e.target.value)}
+                  options={[
+                    { value: "I'm looking for care", label: "I'm looking for care" },
+                    { value: "I'm a carer looking for work", label: "I'm a carer looking for work" }
+                  ]}
+                  className="!bg-white/5 !border-[#a08054]/20 !text-[#dcc8aa] focus:!border-[#a08054]/60 appearance-none"
+                />
                 <button
                   type="submit"
-                  className="w-full py-3 rounded-md bg-[#D4AF7A] text-navy-950 font-semibold text-sm hover:bg-[#e8c98a] transition-colors mt-2"
+                  disabled={isSubmitting}
+                  className="w-full py-3 rounded-md bg-[#D4AF7A] text-navy-950 font-semibold text-sm hover:bg-[#e8c98a] transition-colors mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Request Callback
+                  {isSubmitting ? "Requesting..." : "Request Callback"}
                 </button>
               </form>
             )}

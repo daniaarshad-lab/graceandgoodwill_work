@@ -10,6 +10,7 @@ export default function Select({
   label,
   options,
   error,
+  className = "",
   ...props
 }: SelectProps) {
   return (
@@ -20,7 +21,7 @@ export default function Select({
         {...props}
         className={`w-full rounded-xl border px-4 py-3 outline-none focus:ring-2 focus:ring-primary ${
           error ? "border-red-500" : "border-gray-300"
-        }`}
+        } ${className}`}
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>

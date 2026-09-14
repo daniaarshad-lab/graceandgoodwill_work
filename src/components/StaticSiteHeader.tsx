@@ -106,7 +106,7 @@ function StaticSiteHeader() {
 
       <div className="w-full h-20 border-b border-navy-800 bg-navy-950/95 backdrop-blur flex items-center">
 
-        <div className="container-wrapper flex items-center justify-between py-4">
+        <div className="container-wrapper flex items-center justify-between py-4 gap-4 xl:gap-8">
           <Link
             href="/"
             className="flex items-center gap-[2px] sm:gap-3 text-white group flex-shrink-0"
@@ -124,10 +124,12 @@ function StaticSiteHeader() {
                 className="
                 font-['Cinzel']
                 text-[14px]
-                sm:text-[20px]
+                sm:text-[18px]
+                2xl:text-[20px]
                 font-medium
                 tracking-[0.15em]
-                sm:tracking-[0.25em]
+                sm:tracking-[0.2em]
+                2xl:tracking-[0.25em]
                 uppercase
                 text-[#D4AF7A]
                 transition-colors
@@ -158,7 +160,7 @@ function StaticSiteHeader() {
             )}
           </button>
 
-          <nav className="hidden items-center gap-4 lg:gap-6 xl:flex">
+          <nav className="hidden items-center gap-2 xl:gap-3 2xl:gap-6 xl:flex">
             {navLinks.map((link) => {
               const isActive = isNavLinkActive(pathname, link.href);
               return (
@@ -166,7 +168,7 @@ function StaticSiteHeader() {
                   key={link.href}
                   href={link.href}
                   prefetch={false}
-                  className={`text-[13px] lg:text-sm font-medium transition hover:text-[#f5d4A0] whitespace-nowrap ${isActive ? "text-[#f5d4A0]" : "text-white"
+                  className={`text-[12px] xl:text-[12.5px] 2xl:text-[13.5px] font-medium transition hover:text-[#f5d4A0] whitespace-nowrap ${isActive ? "text-[#f5d4A0]" : "text-white"
                     }`}
                 >
                   {link.label}
@@ -179,7 +181,7 @@ function StaticSiteHeader() {
             <Link
               href={AUTH_ROUTES.carerRecruitment}
               prefetch={false}
-              className={`inline-flex items-center gap-1.5 text-[13px] lg:text-sm font-medium transition hover:text-[#f5d4A0] whitespace-nowrap ${pathname === AUTH_ROUTES.carerRecruitment
+              className={`inline-flex items-center gap-1.5 text-[12px] xl:text-[12.5px] 2xl:text-[13.5px] font-medium transition hover:text-[#f5d4A0] whitespace-nowrap ${pathname === AUTH_ROUTES.carerRecruitment
                 ? "text-[#f5d4A0]"
                 : "text-white"
                 }`}
@@ -189,7 +191,7 @@ function StaticSiteHeader() {
             </Link>
 
             {/* Auth Buttons */}
-            <div className="hidden xl:flex items-center gap-3 lg:gap-4 border-l border-navy-800 pl-4 lg:pl-6 ml-2">
+            <div className="hidden xl:flex items-center gap-2 2xl:gap-4 border-l border-navy-800 pl-3 2xl:pl-6 ml-1">
               <HeaderRoleMenu
                 label="Login"
                 items={loginItems}

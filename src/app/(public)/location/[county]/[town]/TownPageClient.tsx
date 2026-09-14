@@ -62,13 +62,21 @@ export default function TownPageClient({ townName, countyName, regionName, count
                 At Grace &amp; Goodwill, we help families in {townName} find experienced, compassionate live-in carers who provide one-to-one support in the comfort of your own home. Explore our options below.
               </p>
               
-              <div className="relative w-full max-w-lg aspect-video rounded-2xl overflow-hidden shadow-lg border border-gold-400/20 mt-8">
-                <Image
-                  src={communicationImg}
-                  alt={`Live-in care consultation in ${townName}`}
-                  fill
-                  className="object-cover"
-                />
+              <div className="relative mt-12 w-full max-w-lg z-10 lg:ml-4">
+                {/* Top-left blueish background shape */}
+                <div className="absolute -top-4 -left-4 sm:-top-6 sm:-left-6 w-full h-full bg-[#172554]/25 border border-[#172554]/50 rounded-[2.5rem] -z-10" />
+                
+                {/* Bottom-right blueish background shape */}
+                <div className="absolute -bottom-4 -right-4 sm:-bottom-6 sm:-right-6 w-full h-full bg-[#172554]/25 border border-[#172554]/50 rounded-[2.5rem] -z-10" />
+                
+                <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-lg border border-[#172554]/50">
+                  <Image
+                    src={communicationImg}
+                    alt={`Live-in care consultation in ${townName}`}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
               </div>
             </div>
 

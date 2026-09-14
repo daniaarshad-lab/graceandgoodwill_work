@@ -34,10 +34,12 @@ import {
   Info,
   Car,
   PhoneCall,
+  Upload,
 } from "lucide-react";
 import InternalNotes from "../../components/shared/InternalNotes/InternalNotes";
 import UserAuditLogs from "../../components/shared/UserAuditLogs";
 import ThinSpinner from "@/components/ThinSpinner";
+import AdminUploadCarerDocumentModal from "@/app/(protected)/admin/components/AdminUploadCarerDocumentModal";
 
 // Document categories are determined by the backend response
 
@@ -74,6 +76,7 @@ function CarerDetailsContent() {
     "profile" | "documents" | "media" | "audit"
   >(initialTab);
   const [approvingCarer, setApprovingCarer] = useState(false);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
   // Dynamic placement data from backend
   const [carerPlacements, setCarerPlacements] = useState<any[]>([]);
@@ -1096,10 +1099,19 @@ function CarerDetailsContent() {
 
           {activeTab === "documents" && (
             <div className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md flex flex-col h-[400px] lg:h-[600px]">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-gold-200/50 border-b border-gold-300/5 pb-3 flex items-center gap-2 shrink-0">
-                <FileText className="h-4 w-4 text-gold/60" /> Compliance
-                Documents Log
-              </h3>
+              <div className="flex items-center justify-between border-b border-gold-300/5 pb-3 shrink-0">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-gold-200/50 flex items-center gap-2">
+                  <FileText className="h-4 w-4 text-gold/60" /> Compliance
+                  Documents Log
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => setIsUploadModalOpen(true)}
+                  className="px-3.5 py-1.5 rounded-xl text-xs font-bold text-navy-950 bg-gradient-to-r from-[#F5D4A0] via-[#D4AF37] to-[#C99232] hover:brightness-110 shadow-md shadow-gold/20 flex items-center gap-1.5 transition duration-200 cursor-pointer"
+                >
+                  <Upload className="h-3.5 w-3.5" /> Upload Document
+                </button>
+              </div>
 
               <div className="flex-1 overflow-x-auto overflow-y-auto pr-2 mt-4 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gold-300/20 hover:[&::-webkit-scrollbar-thumb]:bg-gold-300/40 [&::-webkit-scrollbar-thumb]:rounded-full">
                 <table className="w-full min-w-[800px] text-left text-xs text-gold-100/70 border-collapse">
@@ -1303,6 +1315,15 @@ function CarerDetailsContent() {
             />
           )}
         </div>
+        <AdminUploadCarerDocumentModal
+          isOpen={isUploadModalOpen}
+          onClose={() => setIsUploadModalOpen(false)}
+          carerId={carerId}
+          carerName={carerName}
+          onUploadSuccess={() => {
+            dispatch(fetchCarerDetails(carerId));
+          }}
+        />
       </div>
     </main>
   );

@@ -1,3 +1,9 @@
+/* Ensure zero margin at top of document */
+html, body {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

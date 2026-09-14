@@ -7,6 +7,7 @@ import {
   fetchCarerDetails,
   verifyDocument,
   rejectDocument,
+  updateDocumentInStore,
 } from "@/store/slices/adminSlice";
 import { useAuth } from "@/contexts/AuthContext";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
@@ -24,11 +25,13 @@ import {
   AlertTriangle,
   ShieldCheck,
   Download,
+  Upload,
 } from "lucide-react";
 
 import { getDocumentFileLabel } from "@/types/document.types";
 import { storageService } from "@/services/storage.service";
 import ThinSpinner from "@/components/ThinSpinner";
+import AdminUploadCarerDocumentModal from "@/app/(protected)/admin/components/AdminUploadCarerDocumentModal";
 
 export default function DocumentReviewPage() {
   return (
@@ -112,12 +115,15 @@ function DocumentReviewContent() {
   const documentId = searchParams.get("documentId");
 
   const [activeDocId, setActiveDocId] = useState<string | null>(documentId);
+  const [optimisticDoc, setOptimisticDoc] = useState<any>(null);
+  const [isPreviewLoading, setIsPreviewLoading] = useState<boolean>(true);
   const [submittingAction, setSubmittingAction] = useState<
     "VERIFY" | "REJECT" | null
   >(null);
   const [showRejectInput, setShowRejectInput] = useState(false);
   const [notes, setNotes] = useState<Record<string, string>>({});
   const [validationError, setValidationError] = useState<string | null>(null);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
   useEffect(() => {
     if (carerId) {
@@ -159,22 +165,55 @@ function DocumentReviewContent() {
     return profile.documents || carer.documents || [];
   };
 
-  const rawDocs = extractDocuments();
+  const rawDocs = (() => {
+    const docs = extractDocuments();
+    if (optimisticDoc) {
+      const existingIdx = docs.findIndex((d: any) => d.id === optimisticDoc.id);
+      if (existingIdx >= 0) {
+        const existing = docs[existingIdx];
+        // If the document in Redux has been verified or rejected, clear optimisticDoc and use existing!
+        if (existing.status && existing.status !== "PENDING" && existing.status !== "UPLOADED") {
+          return docs;
+        }
+        const updated = [...docs];
+        updated[existingIdx] = { ...existing, ...optimisticDoc };
+        return updated;
+      }
+      return [optimisticDoc, ...docs];
+    }
+    return docs;
+  })();
 
   const activeDoc =
     rawDocs.find((doc: any) => doc.id === activeDocId) || rawDocs[0];
   const [previewSignedUrl, setPreviewSignedUrl] = useState<string>("");
 
   useEffect(() => {
+    setIsPreviewLoading(true);
     if (activeDoc) {
       const keyOrUrl = activeDoc.fileKey || activeDoc.fileUrl;
       if (keyOrUrl) {
+        let isCancelled = false;
         storageService.getPresignedUrl(keyOrUrl).then((url) => {
-          setPreviewSignedUrl(url);
+          if (!isCancelled) {
+            setPreviewSignedUrl(url);
+          }
+        }).catch(() => {
+          if (!isCancelled) {
+            setPreviewSignedUrl("");
+            setIsPreviewLoading(false);
+          }
         });
+        return () => {
+          isCancelled = true;
+        };
       } else {
         setPreviewSignedUrl("");
+        setIsPreviewLoading(false);
       }
+    } else {
+      setPreviewSignedUrl("");
+      setIsPreviewLoading(false);
     }
   }, [activeDoc?.id, activeDoc?.fileKey, activeDoc?.fileUrl]);
 
@@ -199,10 +238,17 @@ function DocumentReviewContent() {
       await dispatch(
         verifyDocument({ docId: activeDoc.id, notes: docNotes }),
       ).unwrap();
+
+      // Clear optimisticDoc so verified status from Redux immediately takes over
+      setOptimisticDoc(null);
+
       showSuccessToast(
         "Document Approved",
         "The document has been approved successfully.",
       );
+
+      // Re-fetch carer details so server & client state stay 100% in sync
+      dispatch(fetchCarerDetails(carerId));
     } catch (err: any) {
       showErrorToast("Error", err || "Failed to verify document");
     } finally {
@@ -232,7 +278,10 @@ function DocumentReviewContent() {
       await dispatch(
         rejectDocument({ docId: activeDoc.id, rejectionReason: docNotes }),
       ).unwrap();
+
+      setOptimisticDoc(null);
       showSuccessToast("Document Rejected", "The document has been rejected.");
+      dispatch(fetchCarerDetails(carerId));
     } catch (err: any) {
       showErrorToast("Error", err || "Failed to reject document");
     } finally {
@@ -245,6 +294,41 @@ function DocumentReviewContent() {
     return doc.fileType
       ? getDocumentFileLabel(doc.fileType)
       : doc.fileName || doc.fileCategory || "Unknown Document";
+  };
+
+  const carerName = carer
+    ? `${carer.user?.firstName || carer.firstName || ""} ${carer.user?.lastName || carer.lastName || ""}`.trim() || "Carer"
+    : "Carer";
+
+  const handleUploadSuccess = (newDoc: any) => {
+    setIsPreviewLoading(true);
+    setPreviewSignedUrl("");
+    if (newDoc?.id) {
+      setOptimisticDoc(newDoc);
+      setActiveDocId(newDoc.id);
+      if (newDoc.fileUrl) {
+        setPreviewSignedUrl(newDoc.fileUrl);
+      }
+      // Instantly update Redux store in place
+      dispatch(updateDocumentInStore({ docId: newDoc.id, updates: newDoc }));
+
+      const newUrl = `${window.location.pathname}?documentId=${newDoc.id}`;
+      window.history.pushState(
+        {
+          ...window.history.state,
+          as: newUrl,
+          url: newUrl,
+        },
+        "",
+        newUrl,
+      );
+    }
+    dispatch(fetchCarerDetails(carerId))
+      .unwrap()
+      .then(() => {
+        setOptimisticDoc(null);
+      })
+      .catch(() => {});
   };
 
   const activeDocName = getDocumentName(activeDoc);
@@ -310,7 +394,7 @@ function DocumentReviewContent() {
   const fullFileUrl = previewSignedUrl || getFullFileUrl(activeDoc?.fileUrl);
 
   return (
-    <main className="min-h-screen bg-navy-950 py-10 text-gold-100">
+    <main className="min-h-screen bg-navy-950 pt-2 pb-8 sm:pt-4 sm:pb-10 text-gold-100">
       <div className="container-wrapper space-y-8 max-w-7xl mx-auto px-4">
         {/* --- PORTAL HEADER --- */}
         <header className="rounded-2xl border border-gold-300/10 bg-gradient-to-r from-navy-900 via-navy-950 to-navy-900 p-6 shadow-soft backdrop-blur-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -344,9 +428,19 @@ function DocumentReviewContent() {
                 maxHeight: "820px",
               }}
             >
-              <h3 className="text-xs font-bold uppercase tracking-wider text-gold-200/50 mb-3 border-b border-gold-300/5 pb-2 flex-shrink-0">
-                Document Vault ({rawDocs.length})
-              </h3>
+              <div className="flex items-center justify-between mb-3 border-b border-gold-300/5 pb-2 flex-shrink-0">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-gold-200/50">
+                  Document Vault ({rawDocs.length})
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => setIsUploadModalOpen(true)}
+                  className="px-2.5 py-1 rounded-lg text-[10px] font-bold text-gold bg-gold/10 hover:bg-gold/20 border border-gold/30 flex items-center gap-1 transition cursor-pointer"
+                  title="Upload Document for Carer"
+                >
+                  <Upload className="h-3 w-3" /> + Upload
+                </button>
+              </div>
 
               {rawDocs.length === 0 ? (
                 <div className="text-center py-8 text-xs text-gold-100/40">
@@ -374,6 +468,10 @@ function DocumentReviewContent() {
                         <button
                           key={doc.id}
                           onClick={() => {
+                            if (doc.id !== activeDocId) {
+                              setIsPreviewLoading(true);
+                              setPreviewSignedUrl("");
+                            }
                             setActiveDocId(doc.id);
                             const newUrl = `${window.location.pathname}?documentId=${doc.id}`;
                             window.history.pushState(
@@ -455,25 +553,35 @@ function DocumentReviewContent() {
                       </p>
                     </div>
 
-                    <div className="text-left sm:text-right space-y-1 text-xs flex-shrink-0">
-                      <p className="text-gold-100/40 font-semibold uppercase tracking-wider text-[10px]">
-                        Upload Date
-                      </p>
-                      <p className="text-gold-100/80 font-bold flex items-center gap-1 sm:justify-end">
-                        <Calendar className="h-3.5 w-3.5 text-gold/60" />
-                        {activeDoc.createdAt
-                          ? new Date(activeDoc.createdAt).toLocaleDateString(
-                              "en-GB",
-                              {
-                                day: "2-digit",
-                                month: "long",
-                                year: "numeric",
-                              },
-                            )
-                          : getMockDocDetails(
-                              activeDoc.fileCategory || activeDoc.fileType,
-                            ).uploadDate}
-                      </p>
+                    <div className="flex items-center gap-4 flex-shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => setIsUploadModalOpen(true)}
+                        className="px-3.5 py-2 rounded-xl text-xs font-bold text-navy-950 bg-gradient-to-r from-[#F5D4A0] via-[#D4AF37] to-[#C99232] hover:brightness-110 shadow-md shadow-gold/20 flex items-center gap-2 transition duration-200 cursor-pointer shrink-0"
+                      >
+                        <Upload className="h-3.5 w-3.5" /> Upload Document
+                      </button>
+
+                      <div className="text-left sm:text-right space-y-1 text-xs flex-shrink-0">
+                        <p className="text-gold-100/40 font-semibold uppercase tracking-wider text-[10px]">
+                          Upload Date
+                        </p>
+                        <p className="text-gold-100/80 font-bold flex items-center gap-1 sm:justify-end">
+                          <Calendar className="h-3.5 w-3.5 text-gold/60" />
+                          {activeDoc.createdAt
+                            ? new Date(activeDoc.createdAt).toLocaleDateString(
+                                "en-GB",
+                                {
+                                  day: "2-digit",
+                                  month: "long",
+                                  year: "numeric",
+                                },
+                              )
+                            : getMockDocDetails(
+                                activeDoc.fileCategory || activeDoc.fileType,
+                              ).uploadDate}
+                        </p>
+                      </div>
                     </div>
                   </div>
 
@@ -582,6 +690,12 @@ function DocumentReviewContent() {
                       maxHeight: "350px",
                     }}
                   >
+                    {/* Centered Preview Loader */}
+                    {isPreviewLoading && activeDoc.fileUrl && (
+                      <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-navy-950/85 backdrop-blur-sm rounded-xl">
+                        <ThinSpinner size="md" spinnerClassName="border-gold" text="Loading document preview..." />
+                      </div>
+                    )}
                     {!activeDoc.fileUrl ? (
                       <div className="flex flex-col items-center justify-center p-8 text-center text-gold-100/40">
                         <FileText className="h-16 w-16 text-gold-100/20 mb-3 animate-pulse" />
@@ -597,6 +711,7 @@ function DocumentReviewContent() {
                       <div className="w-full h-full relative">
                         <iframe
                           src={`${fullFileUrl}#toolbar=0&navpanes=0`}
+                          onLoad={() => setIsPreviewLoading(false)}
                           className="w-full h-full rounded-lg bg-navy-900 border-0"
                           title={activeDocName}
                         />
@@ -607,8 +722,10 @@ function DocumentReviewContent() {
                         <img
                           src={fullFileUrl}
                           alt={activeDocName}
+                          onLoad={() => setIsPreviewLoading(false)}
                           className="max-w-full max-h-[330px] object-contain rounded-lg shadow-elegant"
                           onError={(e) => {
+                            setIsPreviewLoading(false);
                             e.currentTarget.style.display = "none";
                             const sibling = e.currentTarget
                               .nextElementSibling as HTMLElement;
@@ -798,10 +915,32 @@ function DocumentReviewContent() {
                   Select an uploaded compliance document from the vault to
                   verify or review its qualifications checklist.
                 </p>
+                <button
+                  type="button"
+                  onClick={() => setIsUploadModalOpen(true)}
+                  className="mt-4 px-4 py-2 rounded-xl text-xs font-bold text-navy-950 bg-gradient-to-r from-[#F5D4A0] via-[#D4AF37] to-[#C99232] hover:brightness-110 shadow-md shadow-gold/20 flex items-center gap-2 transition duration-200 cursor-pointer"
+                >
+                  <Upload className="h-4 w-4" /> Upload Document
+                </button>
               </div>
             )}
           </section>
         </div>
+        <AdminUploadCarerDocumentModal
+          isOpen={isUploadModalOpen}
+          onClose={() => setIsUploadModalOpen(false)}
+          carerId={carerId}
+          carerName={carerName}
+          initialCategory={activeDoc?.fileCategory || activeDoc?.category}
+          initialType={
+            activeDoc?.fileType ||
+            activeDoc?.type ||
+            activeDoc?.fileName ||
+            activeDoc?.name
+          }
+          isLocked={true}
+          onUploadSuccess={handleUploadSuccess}
+        />
       </div>
     </main>
   );

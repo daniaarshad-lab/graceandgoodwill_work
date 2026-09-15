@@ -111,19 +111,21 @@ export default function TownPageClient({ townName, countyName, regionName, count
               </p>
 
               <div className="relative mt-12 w-full max-w-lg z-10 lg:ml-4">
-                {/* Top-left blueish background shape */}
-                <div className="absolute -top-4 -left-4 sm:-top-6 sm:-left-6 w-full h-full bg-[#172554]/25 border border-[#172554]/50 rounded-[2rem] -z-10" />
+                <div className="relative w-full aspect-video">
+                  {/* Top-left elegant corner bracket */}
+                  <div className="absolute -top-4 -left-4 sm:-top-6 sm:-left-6 w-24 h-24 sm:w-32 sm:h-32 border-t border-l border-[#C2A476]/60 rounded-tl-[2.5rem] -z-10 transition-all duration-500" />
 
-                {/* Bottom-right blueish background shape */}
-                <div className="absolute -bottom-4 -right-4 sm:-bottom-6 sm:-right-6 w-full h-full bg-[#172554]/25 border border-[#172554]/50 rounded-[2rem] -z-10" />
+                  {/* Bottom-right elegant corner bracket */}
+                  <div className="absolute -bottom-4 -right-4 sm:-bottom-6 sm:-right-6 w-24 h-24 sm:w-32 sm:h-32 border-b border-r border-[#C2A476]/60 rounded-br-[2.5rem] -z-10 transition-all duration-500" />
 
-                <div className="relative w-full aspect-[4/3] rounded-[2rem] overflow-hidden shadow-[0_0_40px_rgba(0,0,0,0.3)] border border-[#172554]/50">
-                  <Image
-                    src={communicationImg}
-                    alt={`Live-in care consultation in ${townName}`}
-                    fill
-                    className="object-cover"
-                  />
+                  <div className="relative w-full h-full rounded-[2rem] overflow-hidden shadow-[0_0_40px_rgba(0,0,0,0.3)] border border-[#172554]/50">
+                    <Image
+                      src={communicationImg}
+                      alt={`Live-in care consultation in ${townName}`}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -202,19 +204,21 @@ export default function TownPageClient({ townName, countyName, regionName, count
             {/* Left Image Side */}
             <div className="relative flex justify-center lg:justify-start">
               <div className="relative w-full max-w-[550px] z-10 lg:pl-6 pt-6 lg:pt-0">
-                {/* Top-left asymmetric offset background shape */}
-                <div className="absolute -top-4 -left-4 sm:-top-6 sm:-left-6 w-full h-full bg-[#C2A476]/10 border border-[#C2A476]/20 rounded-[2rem] -z-10" />
+                <div className="relative w-full aspect-[3/2]">
+                  {/* Top-left asymmetric offset background shape */}
+                  <div className="absolute -top-4 -left-4 sm:-top-8 sm:-left-8 w-full h-full bg-[#C2A476]/10 border border-[#C2A476]/20 rounded-full -z-10" />
 
-                {/* Bottom-right asymmetric offset background shape */}
-                <div className="absolute -bottom-4 -right-4 sm:-bottom-6 sm:-right-6 w-full h-full bg-[#C2A476]/10 border border-[#C2A476]/20 rounded-[2rem] -z-10" />
+                  {/* Bottom-right asymmetric offset background shape */}
+                  <div className="absolute -bottom-4 -right-4 sm:-bottom-8 sm:-right-8 w-full h-full bg-[#C2A476]/10 border border-[#C2A476]/20 rounded-full -z-10" />
 
-                <div className="relative w-full aspect-[4/3] rounded-[2rem] overflow-hidden border border-gold-400/10 shadow-[0_0_40px_rgba(0,0,0,0.3)]">
-                  <Image
-                    src={olderPeopleImg}
-                    alt={`Live-in care in ${townName}`}
-                    fill
-                    className="object-cover"
-                  />
+                  <div className="relative w-full h-full rounded-[2rem] overflow-hidden border border-gold-400/10 shadow-[0_0_40px_rgba(0,0,0,0.3)]">
+                    <Image
+                      src={olderPeopleImg}
+                      alt={`Live-in care in ${townName}`}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
                 </div>
               </div>
             </div>

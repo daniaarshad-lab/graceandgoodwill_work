@@ -404,7 +404,7 @@ export default function PublicProfileClient({ token }: PublicProfileClientProps)
         )}
 
         {/* Full Compliance Statement Block */}
-        <section className="bg-gradient-to-br from-emerald-950/40 via-navy-900/60 to-navy-900/40 border border-emerald-500/20 rounded-3xl p-6 sm:p-8 backdrop-blur-md shadow-elegant flex flex-col sm:flex-row items-start sm:items-center gap-5">
+        {/* <section className="bg-gradient-to-br from-emerald-950/40 via-navy-900/60 to-navy-900/40 border border-emerald-500/20 rounded-3xl p-6 sm:p-8 backdrop-blur-md shadow-elegant flex flex-col sm:flex-row items-start sm:items-center gap-5">
           <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
             <ShieldCheck className="w-8 h-8" />
           </div>
@@ -418,7 +418,7 @@ export default function PublicProfileClient({ token }: PublicProfileClientProps)
               training certificates, verified professional references, and valid liability insurance.
             </p>
           </div>
-        </section>
+        </section> */}
 
         {/* ── Contact Grace & Goodwill Section ─────────────────────── */}
         <section className="bg-gradient-to-b from-navy-900/60 to-navy-950/80 border border-gold-300/15 rounded-3xl p-6 sm:p-10 backdrop-blur-md shadow-2xl text-center space-y-6">

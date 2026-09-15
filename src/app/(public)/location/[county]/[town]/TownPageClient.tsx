@@ -9,6 +9,8 @@ import communicationImg from "@/assets/blog/blog-communication.png";
 import Input from "@/components/Input";
 import Select from "@/components/Select";
 import PhoneInput from "@/components/PhoneInput";
+import Button from "@/components/Button";
+import WhatsAppIcon from "@/components/WhatsAppIcon";
 import { publicService } from "@/services/public.service";
 
 interface Props {
@@ -35,7 +37,7 @@ export default function TownPageClient({ townName, countyName, regionName, count
     if (!form.phone.trim() || form.phone.replace(/[^0-9]/g, "").length < 10) {
       newErrors.phone = "Please enter a valid phone number";
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -96,7 +98,7 @@ export default function TownPageClient({ townName, countyName, regionName, count
             <div className="space-y-6 pt-6">
               <div className="space-y-1">
                 <h1 className="font-['Cinzel'] text-3xl sm:text-4xl lg:text-[42px] font-semibold text-[#1F2937] leading-[1.15] tracking-tight">
-                  Live in Care in {townName}
+                  Find 24-Hour Live-in Care in {townName}
                 </h1>
                 {/* Wave underline */}
                 <div className="w-14 h-2 mt-2">
@@ -107,14 +109,14 @@ export default function TownPageClient({ townName, countyName, regionName, count
               <p className="text-base text-[#4B5563] leading-relaxed max-w-lg">
                 At Grace &amp; Goodwill, we help families in {townName} find experienced, compassionate live-in carers who provide one-to-one support in the comfort of your own home. Explore our options below.
               </p>
-              
+
               <div className="relative mt-12 w-full max-w-lg z-10 lg:ml-4">
                 {/* Top-left blueish background shape */}
                 <div className="absolute -top-4 -left-4 sm:-top-6 sm:-left-6 w-full h-full bg-[#172554]/25 border border-[#172554]/50 rounded-[2.5rem] -z-10" />
-                
+
                 {/* Bottom-right blueish background shape */}
                 <div className="absolute -bottom-4 -right-4 sm:-bottom-6 sm:-right-6 w-full h-full bg-[#172554]/25 border border-[#172554]/50 rounded-[2.5rem] -z-10" />
-                
+
                 <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-lg border border-[#172554]/50">
                   <Image
                     src={communicationImg}
@@ -126,70 +128,70 @@ export default function TownPageClient({ townName, countyName, regionName, count
               </div>
             </div>
 
-          {/* Right — callback form */}
-          <div className="rounded-xl border border-gold-400/10 bg-navy-900 p-7 sm:p-9">
-            <div className="mb-6">
-              <h2 className="font-['Cinzel'] text-xl font-semibold text-white mb-1">Request a Call Back</h2>
-              <p className="text-sm text-gold-100/50">We will be in touch within 1 working day.</p>
-            </div>
-
-            {submitted ? (
-              <div className="flex flex-col items-center gap-4 py-8 text-center">
-                <CheckCircle2 className="w-14 h-14 text-[#D4AF7A]" />
-                <p className="font-semibold text-white text-lg">Thank you, {form.name}!</p>
-                <p className="text-gold-100/60 text-sm max-w-xs">One of our care advisors will call you back within 1 working day.</p>
+            {/* Right — callback form */}
+            <div className="rounded-xl border border-gold-400/10 bg-navy-900 p-7 sm:p-9">
+              <div className="mb-6">
+                <h2 className="font-['Cinzel'] text-xl font-semibold text-white mb-1">Request a Call Back</h2>
+                <p className="text-sm text-gold-100/50">We will be in touch within 1 working day.</p>
               </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-                <Input
-                  label="Full Name *"
-                  required
-                  type="text"
-                  placeholder="Your full name"
-                  value={form.name}
-                  onChange={(e) => handleFieldChange("name", e.target.value)}
-                  error={errors.name}
-                  className="!bg-white/5 !border-[#a08054]/20 !text-[#dcc8aa] focus:!border-[#a08054]/60 placeholder:text-white/20"
-                />
-                <Input
-                  label="Email Address *"
-                  required
-                  type="email"
-                  placeholder="youremail@example.com"
-                  value={form.email}
-                  onChange={(e) => handleFieldChange("email", e.target.value)}
-                  error={errors.email}
-                  className="!bg-white/5 !border-[#a08054]/20 !text-[#dcc8aa] focus:!border-[#a08054]/60 placeholder:text-white/20"
-                />
-                <PhoneInput
-                  label="Phone Number *"
-                  value={form.phone}
-                  onChange={(value) => handleFieldChange("phone", value)}
-                  error={errors.phone}
-                />
-                <Select
-                  label="I am a *"
-                  value={form.type}
-                  onChange={(e) => handleFieldChange("type", e.target.value)}
-                  options={[
-                    { value: "I'm looking for care", label: "I'm looking for care" },
-                    { value: "I'm a carer looking for work", label: "I'm a carer looking for work" }
-                  ]}
-                  className="!bg-white/5 !border-[#a08054]/20 !text-[#dcc8aa] focus:!border-[#a08054]/60 appearance-none"
-                />
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full py-3 rounded-md bg-[#D4AF7A] text-navy-950 font-semibold text-sm hover:bg-[#e8c98a] transition-colors mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isSubmitting ? "Requesting..." : "Request Callback"}
-                </button>
-              </form>
-            )}
+
+              {submitted ? (
+                <div className="flex flex-col items-center gap-4 py-8 text-center">
+                  <CheckCircle2 className="w-14 h-14 text-[#D4AF7A]" />
+                  <p className="font-semibold text-white text-lg">Thank you, {form.name}!</p>
+                  <p className="text-gold-100/60 text-sm max-w-xs">One of our care advisors will call you back within 1 working day.</p>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+                  <Input
+                    label="Full Name *"
+                    required
+                    type="text"
+                    placeholder="Your full name"
+                    value={form.name}
+                    onChange={(e) => handleFieldChange("name", e.target.value)}
+                    error={errors.name}
+                    className="!bg-white/5 !border-[#a08054]/20 !text-[#dcc8aa] focus:!border-[#a08054]/60 placeholder:text-white/20"
+                  />
+                  <Input
+                    label="Email Address *"
+                    required
+                    type="email"
+                    placeholder="youremail@example.com"
+                    value={form.email}
+                    onChange={(e) => handleFieldChange("email", e.target.value)}
+                    error={errors.email}
+                    className="!bg-white/5 !border-[#a08054]/20 !text-[#dcc8aa] focus:!border-[#a08054]/60 placeholder:text-white/20"
+                  />
+                  <PhoneInput
+                    label="Phone Number *"
+                    value={form.phone}
+                    onChange={(value) => handleFieldChange("phone", value)}
+                    error={errors.phone}
+                  />
+                  <Select
+                    label="I am a *"
+                    value={form.type}
+                    onChange={(e) => handleFieldChange("type", e.target.value)}
+                    options={[
+                      { value: "I'm looking for care", label: "I'm looking for care" },
+                      { value: "I'm a carer looking for work", label: "I'm a carer looking for work" }
+                    ]}
+                    className="!bg-white/5 !border-[#a08054]/20 !text-[#dcc8aa] focus:!border-[#a08054]/60 appearance-none"
+                  />
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full py-3 rounded-md bg-[#D4AF7A] text-navy-950 font-semibold text-sm hover:bg-[#e8c98a] transition-colors mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isSubmitting ? "Requesting..." : "Request Callback"}
+                  </button>
+                </form>
+              )}
 
 
+            </div>
           </div>
-        </div>
         </div>
       </section>
 
@@ -202,10 +204,10 @@ export default function TownPageClient({ townName, countyName, regionName, count
               <div className="relative w-full max-w-[550px] z-10 lg:pl-6 pt-6 lg:pt-0">
                 {/* Top-left asymmetric offset background shape */}
                 <div className="absolute -top-4 -left-4 sm:-top-8 sm:-left-8 w-full h-full bg-[#C2A476]/10 border border-[#C2A476]/20 rounded-full -z-10" />
-                
+
                 {/* Bottom-right asymmetric offset background shape */}
                 <div className="absolute -bottom-4 -right-4 sm:-bottom-8 sm:-right-8 w-full h-full bg-[#C2A476]/10 border border-[#C2A476]/20 rounded-full -z-10" />
-                
+
                 <div className="relative w-full aspect-[5/4] rounded-[2rem] overflow-hidden border border-gold-400/10 shadow-[0_0_40px_rgba(0,0,0,0.3)]">
                   <Image
                     src={olderPeopleImg}
@@ -220,40 +222,67 @@ export default function TownPageClient({ townName, countyName, regionName, count
             {/* Right Text Side */}
             <div className="space-y-6">
               <h2 className="font-['Cinzel'] text-3xl font-semibold text-white leading-snug">
-                24 Hour Care at Home in {townName}
+                Find 24-Hour Live-in Care in {townName}
               </h2>
-              
+
               <div className="space-y-4 text-base text-gold-100/75 leading-relaxed">
                 <p>
-                  Our wonderful live-in carers in {townName} have years of experience providing one-to-one care at home. We always take the time to understand your individual needs and situation to provide you and your loved one with a professional, individualised service.
+                  Find experienced live-in carers in {townName} for personalised one-to-one support in the comfort and familiarity of home.
                 </p>
                 <p>
-                  We methodically match our clients with skilled, hard-working live-in carers who provide care in the comfort of their {townName} home. Our trained carers can support any needs such as 24-hour dementia care, spinal care, young adult live in care or even respite live in care.
+                  At Grace & Goodwill, we take the time to understand your individual needs, preferences and circumstances, helping you find suitable live-in carers who match what you are looking for.
                 </p>
                 <p>
-                  All of our full-time carers in {townName} have been thoroughly interviewed, DBS checked and reference checked.
+                  Our live-in care matching service gives clients and families greater choice and control when finding support at home. You can consider suitable carer profiles and choose the person you feel is right for you or your loved one.
+                </p>
+                <p>
+                  Live-in carers may provide support with a wide range of needs, including dementia care, spinal injury support, young adult live-in care, companionship, personal care, respite care and more, depending on the individual carer&apos;s experience, skills and availability.
+                </p>
+                <p>
+                  Carers available through Grace & Goodwill complete our onboarding and compliance checks before their profiles are approved, including identity, right-to-work, DBS, references and relevant training checks, where applicable.
+                </p>
+                <p>
+                  Whether you are planning live-in care in advance or need to find suitable support quickly, Grace & Goodwill can help you explore available live-in carers in {townName} and across the UK.
                 </p>
               </div>
 
               {/* Call to action section */}
-              <div className="flex flex-col sm:flex-row sm:items-center gap-8 pt-6">
-                <div>
-                  <p className="text-xs text-gold-100/50 uppercase tracking-widest mb-1.5">For enquiries call</p>
-                  <a href="tel:02045240108" className="text-3xl font-semibold text-white hover:text-[#D4AF7A] transition-colors">
-                    020 4524 0108
-                  </a>
-                  <div className="flex items-center gap-2 mt-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                    <p className="text-xs text-gold-100/50">Operators available now</p>
-                  </div>
+              <div className="flex flex-col gap-4 pt-6">
+                <div className="flex items-center justify-between w-full max-w-[420px]">
+                   <p className="text-xs text-gold-100/50 uppercase tracking-widest">For enquiries call</p>
+                   <div className="flex items-center gap-2">
+                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                     <p className="text-[11px] text-gold-100/40">Operators available now</p>
+                   </div>
                 </div>
-                
-                <Link
-                  href="/contact"
-                  className="inline-flex items-center justify-center px-8 py-3.5 rounded-full border border-[#D4AF7A] text-[#D4AF7A] font-semibold text-sm hover:bg-[#D4AF7A]/10 transition-colors"
-                >
-                  Request a callback
-                </Link>
+
+                <div className="flex items-center gap-3 w-full overflow-x-auto hide-scrollbar pb-1 -ml-1 pl-1">
+                  <Button asChild variant="primary" size="sm" className="shrink-0 rounded-full">
+                    <a href="tel:02045240108" className="gap-2 whitespace-nowrap !px-5 !py-3">
+                      <Phone className="w-4 h-4 fill-current" />
+                      020 4524 0108
+                    </a>
+                  </Button>
+                  <Button asChild variant="whatsapp" size="sm" className="shrink-0 rounded-full">
+                    <a
+                      href="https://wa.me/442045240108"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="gap-2 whitespace-nowrap !px-5 !py-3"
+                    >
+                      <WhatsAppIcon className="w-4 h-4 shrink-0" />
+                      Message Us On WhatsApp
+                    </a>
+                  </Button>
+                  <Button asChild variant="ghost-gold" size="sm" className="shrink-0 rounded-full">
+                    <Link
+                      href="/contact"
+                      className="whitespace-nowrap !px-5 !py-3"
+                    >
+                      Request a callback
+                    </Link>
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
@@ -265,7 +294,7 @@ export default function TownPageClient({ townName, countyName, regionName, count
         <div className="container-wrapper text-center space-y-4">
           <h2 className="font-['Cinzel'] text-2xl sm:text-3xl font-semibold text-white">Ready to Find a Carer in {townName}?</h2>
           <p className="text-gold-100/50 max-w-md mx-auto text-sm">
-            Speak to one of our friendly care advisors today. We&apos;re here 9am – 7pm, 7 days a week.
+            Speak to one of our friendly care advisors today.
           </p>
           <div className="flex flex-wrap justify-center gap-4 pt-2">
             <a href="tel:02045240108" className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-[#b59469] text-navy-950 font-semibold text-sm hover:bg-[#a08054] transition-all duration-300 shadow-lg">

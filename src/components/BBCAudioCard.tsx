@@ -120,7 +120,7 @@ export default function BBCAudioCard() {
         onEnded={() => setIsPlaying(false)}
       />
 
-      <div className="relative w-full flex-grow flex flex-col justify-between p-6 sm:p-8 group/media">
+      <div className="relative w-full flex-grow flex flex-col justify-between p-6 sm:p-8 min-h-[280px] sm:min-h-[340px] group/media">
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-navy-950/20 mix-blend-multiply z-10 pointer-events-none" />
           <div className="absolute inset-0 bg-gradient-to-t from-navy-950/95 via-navy-950/50 to-transparent z-10 pointer-events-none transition-opacity duration-500" />

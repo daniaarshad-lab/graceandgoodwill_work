@@ -209,28 +209,28 @@ function SiteFooter() {
         </div>
 
         {/* Legal Links & Cookie Preferences */}
-        <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-[10px] sm:text-[11px] mb-4">
+        <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 sm:gap-6 text-[10px] sm:text-[11px] mb-4 text-center px-2">
           <Link
             href="/privacy"
             className="text-gold-100/40 hover:text-gold-100/90 transition-colors font-light hover:underline underline-offset-4 decoration-gold-100/20"
           >
             Privacy Policy
           </Link>
-          <span className="text-gold-100/20">•</span>
+          <span className="text-gold-100/20 hidden sm:inline">•</span>
           <Link
             href="/terms"
             className="text-gold-100/40 hover:text-gold-100/90 transition-colors font-light hover:underline underline-offset-4 decoration-gold-100/20"
           >
             Website &amp; Platform Terms
           </Link>
-          <span className="text-gold-100/20">•</span>
+          <span className="text-gold-100/20 hidden sm:inline">•</span>
           <Link
             href="/agency-introduction-terms"
             className="text-gold-100/40 hover:text-gold-100/90 transition-colors font-light hover:underline underline-offset-4 decoration-gold-100/20"
           >
             Agency Introduction Terms
           </Link>
-          <span className="text-gold-100/20">•</span>
+          <span className="text-gold-100/20 hidden sm:inline">•</span>
           <button
             type="button"
             onClick={(e) => {

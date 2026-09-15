@@ -92,12 +92,12 @@ export default function TownPageClient({ townName, countyName, regionName, count
           <path d="M0,120 C320,40 820,120 1440,20 V120 H0 Z" />
         </svg>
 
-        <div className="container-wrapper relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+        <div className="container-wrapper relative z-10 w-full max-w-full min-w-0">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start w-full min-w-0">
             {/* Left — hero copy */}
-            <div className="space-y-6 pt-6">
+            <div className="space-y-6 pt-6 w-full min-w-0">
               <div className="space-y-1">
-                <h1 className="font-['Cinzel'] text-3xl sm:text-4xl lg:text-[42px] font-semibold text-[#1F2937] leading-[1.15] tracking-tight">
+                <h1 className="font-['Cinzel'] text-3xl sm:text-4xl lg:text-[42px] font-semibold text-[#1F2937] leading-[1.15] tracking-tight break-words">
                   Find 24-Hour Live-in Care in {townName}
                 </h1>
                 {/* Wave underline */}
@@ -106,17 +106,17 @@ export default function TownPageClient({ townName, countyName, regionName, count
                 </div>
               </div>
 
-              <p className="text-base text-[#4B5563] leading-relaxed max-w-lg">
+              <p className="text-base text-[#4B5563] leading-relaxed max-w-lg break-words">
                 At Grace &amp; Goodwill, we help families in {townName} find experienced, compassionate live-in carers who provide one-to-one support in the comfort of your own home. Explore our options below.
               </p>
 
               <div className="relative mt-12 w-full max-w-lg z-10 lg:ml-4">
                 <div className="relative w-full aspect-video">
-                  {/* Top-left elegant corner bracket */}
-                  <div className="absolute -top-4 -left-4 sm:-top-6 sm:-left-6 w-24 h-24 sm:w-32 sm:h-32 border-t border-l border-[#C2A476]/60 rounded-tl-[2.5rem] -z-10 transition-all duration-500" />
+                  {/* Top-left elegant corner bracket — hidden on mobile to prevent left-side overflow */}
+                  <div className="hidden sm:block absolute -top-4 -left-4 sm:-top-6 sm:-left-6 w-24 h-24 sm:w-32 sm:h-32 border-t border-l border-[#C2A476]/60 rounded-tl-[2.5rem] -z-10 transition-all duration-500" />
 
-                  {/* Bottom-right elegant corner bracket */}
-                  <div className="absolute -bottom-4 -right-4 sm:-bottom-6 sm:-right-6 w-24 h-24 sm:w-32 sm:h-32 border-b border-r border-[#C2A476]/60 rounded-br-[2.5rem] -z-10 transition-all duration-500" />
+                  {/* Bottom-right elegant corner bracket — hidden on mobile to prevent right-side overflow */}
+                  <div className="hidden sm:block absolute -bottom-6 -right-6 w-32 h-32 border-b border-r border-[#C2A476]/60 rounded-br-[2.5rem] -z-10 transition-all duration-500" />
 
                   <div className="relative w-full h-full rounded-[2rem] overflow-hidden shadow-[0_0_40px_rgba(0,0,0,0.3)] border border-[#172554]/50">
                     <Image
@@ -131,7 +131,7 @@ export default function TownPageClient({ townName, countyName, regionName, count
             </div>
 
             {/* Right — callback form */}
-            <div className="rounded-xl border border-gold-400/10 bg-navy-900 p-7 sm:p-9">
+            <div className="rounded-xl border border-gold-400/10 bg-navy-900 p-6 sm:p-9 w-full min-w-0">
               <div className="mb-6">
                 <h2 className="font-['Cinzel'] text-xl font-semibold text-white mb-1">Request a Call Back</h2>
                 <p className="text-sm text-gold-100/50">We will be in touch within 1 working day.</p>
@@ -198,38 +198,36 @@ export default function TownPageClient({ townName, countyName, regionName, count
       </section>
 
       {/* ── About live-in care in this town ── */}
-      <section className="py-16 lg:py-24 relative">
-        <div className="container-wrapper">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+      <section className="py-16 lg:py-24 relative overflow-hidden w-full">
+        <div className="container-wrapper w-full max-w-full min-w-0">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center w-full min-w-0">
             {/* Left Image Side */}
-            <div className="relative flex justify-center lg:justify-start">
+            <div className="relative flex justify-center lg:justify-start w-full min-w-0">
               <div className="relative w-full max-w-[550px] z-10 lg:pl-6 pt-6 lg:pt-0">
-                <div className="relative w-full aspect-[3/2]">
-                  {/* Top-left asymmetric offset background shape */}
-                  <div className="absolute -top-4 -left-4 sm:-top-8 sm:-left-8 w-full h-full bg-[#C2A476]/10 border border-[#C2A476]/20 rounded-full -z-10" />
+                {/* Top-left asymmetric offset background shape */}
+                <div className="absolute -top-4 -left-4 sm:-top-8 sm:-left-8 w-full h-full bg-[#C2A476]/10 border border-[#C2A476]/20 rounded-full -z-10" />
+                
+                {/* Bottom-right asymmetric offset background shape */}
+                <div className="absolute -bottom-4 -right-4 sm:-bottom-8 sm:-right-8 w-full h-full bg-[#C2A476]/10 border border-[#C2A476]/20 rounded-full -z-10" />
 
-                  {/* Bottom-right asymmetric offset background shape */}
-                  <div className="absolute -bottom-4 -right-4 sm:-bottom-8 sm:-right-8 w-full h-full bg-[#C2A476]/10 border border-[#C2A476]/20 rounded-full -z-10" />
-
-                  <div className="relative w-full h-full rounded-[2rem] overflow-hidden border border-gold-400/10 shadow-[0_0_40px_rgba(0,0,0,0.3)]">
-                    <Image
-                      src={olderPeopleImg}
-                      alt={`Live-in care in ${townName}`}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
+                <div className="relative w-full aspect-[5/4] rounded-[2rem] overflow-hidden border border-gold-400/10 shadow-[0_0_40px_rgba(0,0,0,0.3)]">
+                  <Image
+                    src={olderPeopleImg}
+                    alt={`Live-in care in ${townName}`}
+                    fill
+                    className="object-cover object-[75%_center] md:object-center"
+                  />
                 </div>
               </div>
             </div>
 
             {/* Right Text Side */}
-            <div className="space-y-6">
-              <h2 className="font-['Cinzel'] text-3xl font-semibold text-white leading-snug">
+            <div className="space-y-6 w-full min-w-0">
+              <h2 className="font-['Cinzel'] text-2xl sm:text-3xl font-semibold text-white leading-snug break-words">
                 Find 24-Hour Live-in Care in {townName}
               </h2>
 
-              <div className="space-y-4 text-base text-gold-100/75 leading-relaxed">
+              <div className="space-y-4 text-base text-gold-100/75 leading-relaxed break-words">
                 <p>
                   Find experienced live-in carers in {townName} for personalised one-to-one support in the comfort and familiarity of home.
                 </p>
@@ -251,37 +249,37 @@ export default function TownPageClient({ townName, countyName, regionName, count
               </div>
 
               {/* Call to action section */}
-              <div className="flex flex-col gap-4 pt-6">
-                <div className="flex items-center justify-between w-full max-w-[420px]">
-                   <p className="text-xs text-gold-100/50 uppercase tracking-widest">For enquiries call</p>
-                   <div className="flex items-center gap-2">
+              <div className="flex flex-col gap-4 pt-6 w-full min-w-0">
+                <div className="flex flex-wrap items-center justify-between gap-2 w-full max-w-[420px]">
+                   <p className="text-xs text-gold-100/50 uppercase tracking-widest shrink-0">For enquiries call</p>
+                   <div className="flex items-center gap-2 shrink-0">
                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
                      <p className="text-[11px] text-gold-100/40">Operators available now</p>
                    </div>
                 </div>
 
-                <div className="flex items-center gap-3 w-full overflow-x-auto hide-scrollbar pb-1 -ml-1 pl-1">
-                  <Button asChild variant="primary" size="sm" className="shrink-0">
-                    <a href="tel:02045240108" className="gap-2 whitespace-nowrap">
+                <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-3 w-full">
+                  <Button asChild variant="primary" size="sm" className="w-full sm:w-auto shrink-0">
+                    <a href="tel:02045240108" className="gap-2 whitespace-nowrap justify-center">
                       <Phone className="w-4 h-4 fill-current" />
                       020 4524 0108
                     </a>
                   </Button>
-                  <Button asChild variant="whatsapp" size="sm" className="shrink-0">
+                  <Button asChild variant="whatsapp" size="sm" className="w-full sm:w-auto shrink-0">
                     <a
                       href="https://wa.me/442045240108"
                       target="_blank"
                       rel="noreferrer"
-                      className="gap-2 whitespace-nowrap"
+                      className="gap-2 whitespace-nowrap justify-center"
                     >
                       <WhatsAppIcon className="w-4 h-4 shrink-0" />
                       Message Us On WhatsApp
                     </a>
                   </Button>
-                  <Button asChild variant="ghost-gold" size="sm" className="shrink-0">
+                  <Button asChild variant="ghost-gold" size="sm" className="w-full sm:w-auto shrink-0">
                     <Link
                       href="/contact"
-                      className="whitespace-nowrap"
+                      className="whitespace-nowrap justify-center text-center"
                     >
                       Request a callback
                     </Link>
@@ -302,8 +300,8 @@ export default function TownPageClient({ townName, countyName, regionName, count
           </p>
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4 pt-2">
             <Button asChild variant="primary" size="md" fullWidth={false} className="w-full sm:w-[260px]">
-              <a href="tel:02045240108" className="gap-2 shadow-lg">
-                <Phone className="w-4 h-4 fill-current" /> 020 4524 0108
+              <a href="tel:02045240108" className="gap-2 shadow-lg whitespace-nowrap justify-center">
+                <Phone className="w-4 h-4 fill-current shrink-0" /> 020 4524 0108
               </a>
             </Button>
             <Button asChild variant="whatsapp" size="md" fullWidth={false} className="w-full sm:w-[260px]">
@@ -311,9 +309,9 @@ export default function TownPageClient({ townName, countyName, regionName, count
                 href="https://wa.me/442045240108"
                 target="_blank"
                 rel="noreferrer"
-                className="gap-2"
+                className="gap-2 whitespace-nowrap justify-center"
               >
-                <WhatsAppIcon className="w-4 h-4" />
+                <WhatsAppIcon className="w-4 h-4 shrink-0" />
                 Message Us On WhatsApp
               </a>
             </Button>

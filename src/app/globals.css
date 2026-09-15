@@ -1,7 +1,9 @@
-/* Ensure zero margin at top of document */
+/* Ensure zero margin at top of document and prevent horizontal overflow blowout */
 html, body {
   margin-top: 0 !important;
   padding-top: 0 !important;
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 @tailwind base;

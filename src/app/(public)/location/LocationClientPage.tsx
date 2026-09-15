@@ -3,7 +3,9 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { MapPin, ArrowRight, Map, Navigation, ChevronUp, ChevronDown } from "lucide-react";
+import WhatsAppIcon from "@/components/WhatsAppIcon";
+import { MapPin, ArrowRight, Map, Navigation, ChevronUp, ChevronDown, Phone } from "lucide-react";
+import Button from "@/components/Button";
 
 import ourLocationHeroSection from "@/assets/our-locations/our-location-hero-section.png";
 import { regions as ukRegions, Region } from "@/data/locationsData";
@@ -166,14 +168,24 @@ export default function LocationIndexPage() {
       <section className="py-16 border-t border-gold-400/10">
         <div className="container-wrapper text-center">
           <h2 className="font-['Cinzel'] text-2xl sm:text-3xl font-semibold text-white mb-4">Speak to one of our experts</h2>
-          <p className="text-white/50 text-base max-w-lg mx-auto mb-8">Our friendly experts are here to help from 9am to 7pm, 7 days a week.</p>
-          <a href="tel:02045240108" className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-[#b59469] text-navy-950 font-semibold text-base hover:bg-[#a08054] hover:scale-105 transition-all duration-300 shadow-lg shadow-gold-500/20 mb-6">
-            020 4524 0108
-          </a>
-          <div className="mt-6">
-            <Link href="/contact" className="inline-flex items-center gap-2 text-gold-300/70 hover:text-white text-sm font-medium transition-colors duration-200">
-              Or send us a message <ArrowRight className="w-4 h-4" />
-            </Link>
+          <p className="text-white/50 text-base max-w-lg mx-auto mb-8">Our friendly experts are here to help.</p>
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-6">
+            <Button asChild variant="primary" size="md" fullWidth={false} className="w-full sm:w-[260px]">
+              <a href="tel:02045240108" className="gap-2 shadow-lg">
+                <Phone className="w-4 h-4 fill-current" /> 020 4524 0108
+              </a>
+            </Button>
+            <Button asChild variant="whatsapp" size="md" fullWidth={false} className="w-full sm:w-[260px]">
+              <a
+                href="https://wa.me/442045240108"
+                target="_blank"
+                rel="noreferrer"
+                className="gap-2"
+              >
+                <WhatsAppIcon className="w-4 h-4" />
+                Message Us On WhatsApp
+              </a>
+            </Button>
           </div>
         </div>
       </section>

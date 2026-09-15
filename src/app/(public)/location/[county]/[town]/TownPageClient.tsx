@@ -112,12 +112,12 @@ export default function TownPageClient({ townName, countyName, regionName, count
 
               <div className="relative mt-12 w-full max-w-lg z-10 lg:ml-4">
                 {/* Top-left blueish background shape */}
-                <div className="absolute -top-4 -left-4 sm:-top-6 sm:-left-6 w-full h-full bg-[#172554]/25 border border-[#172554]/50 rounded-[2.5rem] -z-10" />
+                <div className="absolute -top-4 -left-4 sm:-top-6 sm:-left-6 w-full h-full bg-[#172554]/25 border border-[#172554]/50 rounded-[2rem] -z-10" />
 
                 {/* Bottom-right blueish background shape */}
-                <div className="absolute -bottom-4 -right-4 sm:-bottom-6 sm:-right-6 w-full h-full bg-[#172554]/25 border border-[#172554]/50 rounded-[2.5rem] -z-10" />
+                <div className="absolute -bottom-4 -right-4 sm:-bottom-6 sm:-right-6 w-full h-full bg-[#172554]/25 border border-[#172554]/50 rounded-[2rem] -z-10" />
 
-                <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-lg border border-[#172554]/50">
+                <div className="relative w-full aspect-[4/3] rounded-[2rem] overflow-hidden shadow-[0_0_40px_rgba(0,0,0,0.3)] border border-[#172554]/50">
                   <Image
                     src={communicationImg}
                     alt={`Live-in care consultation in ${townName}`}
@@ -203,12 +203,12 @@ export default function TownPageClient({ townName, countyName, regionName, count
             <div className="relative flex justify-center lg:justify-start">
               <div className="relative w-full max-w-[550px] z-10 lg:pl-6 pt-6 lg:pt-0">
                 {/* Top-left asymmetric offset background shape */}
-                <div className="absolute -top-4 -left-4 sm:-top-8 sm:-left-8 w-full h-full bg-[#C2A476]/10 border border-[#C2A476]/20 rounded-full -z-10" />
+                <div className="absolute -top-4 -left-4 sm:-top-6 sm:-left-6 w-full h-full bg-[#C2A476]/10 border border-[#C2A476]/20 rounded-[2rem] -z-10" />
 
                 {/* Bottom-right asymmetric offset background shape */}
-                <div className="absolute -bottom-4 -right-4 sm:-bottom-8 sm:-right-8 w-full h-full bg-[#C2A476]/10 border border-[#C2A476]/20 rounded-full -z-10" />
+                <div className="absolute -bottom-4 -right-4 sm:-bottom-6 sm:-right-6 w-full h-full bg-[#C2A476]/10 border border-[#C2A476]/20 rounded-[2rem] -z-10" />
 
-                <div className="relative w-full aspect-[5/4] rounded-[2rem] overflow-hidden border border-gold-400/10 shadow-[0_0_40px_rgba(0,0,0,0.3)]">
+                <div className="relative w-full aspect-[4/3] rounded-[2rem] overflow-hidden border border-gold-400/10 shadow-[0_0_40px_rgba(0,0,0,0.3)]">
                   <Image
                     src={olderPeopleImg}
                     alt={`Live-in care in ${townName}`}
@@ -257,27 +257,27 @@ export default function TownPageClient({ townName, countyName, regionName, count
                 </div>
 
                 <div className="flex items-center gap-3 w-full overflow-x-auto hide-scrollbar pb-1 -ml-1 pl-1">
-                  <Button asChild variant="primary" size="sm" className="shrink-0 rounded-full">
-                    <a href="tel:02045240108" className="gap-2 whitespace-nowrap !px-5 !py-3">
+                  <Button asChild variant="primary" size="sm" className="shrink-0">
+                    <a href="tel:02045240108" className="gap-2 whitespace-nowrap">
                       <Phone className="w-4 h-4 fill-current" />
                       020 4524 0108
                     </a>
                   </Button>
-                  <Button asChild variant="whatsapp" size="sm" className="shrink-0 rounded-full">
+                  <Button asChild variant="whatsapp" size="sm" className="shrink-0">
                     <a
                       href="https://wa.me/442045240108"
                       target="_blank"
                       rel="noreferrer"
-                      className="gap-2 whitespace-nowrap !px-5 !py-3"
+                      className="gap-2 whitespace-nowrap"
                     >
                       <WhatsAppIcon className="w-4 h-4 shrink-0" />
                       Message Us On WhatsApp
                     </a>
                   </Button>
-                  <Button asChild variant="ghost-gold" size="sm" className="shrink-0 rounded-full">
+                  <Button asChild variant="ghost-gold" size="sm" className="shrink-0">
                     <Link
                       href="/contact"
-                      className="whitespace-nowrap !px-5 !py-3"
+                      className="whitespace-nowrap"
                     >
                       Request a callback
                     </Link>
@@ -296,13 +296,23 @@ export default function TownPageClient({ townName, countyName, regionName, count
           <p className="text-gold-100/50 max-w-md mx-auto text-sm">
             Speak to one of our friendly care advisors today.
           </p>
-          <div className="flex flex-wrap justify-center gap-4 pt-2">
-            <a href="tel:02045240108" className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-[#b59469] text-navy-950 font-semibold text-sm hover:bg-[#a08054] transition-all duration-300 shadow-lg">
-              <Phone className="w-4 h-4" /> 020 4524 0108
-            </a>
-            <Link href="/contact" className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full border border-gold-400/30 text-gold-100 font-semibold text-sm hover:border-gold-400/60 hover:bg-gold-400/10 transition-all duration-300">
-              Send a Message <ArrowRight className="w-4 h-4" />
-            </Link>
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-4 pt-2">
+            <Button asChild variant="primary" size="md" fullWidth={false} className="w-full sm:w-[260px]">
+              <a href="tel:02045240108" className="gap-2 shadow-lg">
+                <Phone className="w-4 h-4 fill-current" /> 020 4524 0108
+              </a>
+            </Button>
+            <Button asChild variant="whatsapp" size="md" fullWidth={false} className="w-full sm:w-[260px]">
+              <a
+                href="https://wa.me/442045240108"
+                target="_blank"
+                rel="noreferrer"
+                className="gap-2"
+              >
+                <WhatsAppIcon className="w-4 h-4" />
+                Message Us On WhatsApp
+              </a>
+            </Button>
           </div>
         </div>
       </section>

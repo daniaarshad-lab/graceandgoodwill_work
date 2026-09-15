@@ -11,12 +11,9 @@ import {
   Award,
   Video,
   Phone,
-  MessageCircle,
   ArrowRight,
   AlertCircle,
-  Sparkles,
   X,
-  Check,
 } from "lucide-react";
 import shareableProfileService, {
   PublicCarerProfile,
@@ -24,6 +21,7 @@ import shareableProfileService, {
 import { publicService } from "@/services/public.service";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import ThinSpinner from "@/components/ThinSpinner";
+import WhatsAppIcon from "@/components/WhatsAppIcon";
 
 interface PublicProfileClientProps {
   token: string;
@@ -34,6 +32,7 @@ export default function PublicProfileClient({ token }: PublicProfileClientProps)
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [videoError, setVideoError] = useState(false);
 
   // Request introduction form state
   const [clientName, setClientName] = useState("");
@@ -141,7 +140,7 @@ export default function PublicProfileClient({ token }: PublicProfileClientProps)
             </ul>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 pt-2">
+          {/* <div className="flex flex-col sm:flex-row gap-3 pt-2">
             <Link
               href="/contact"
               className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-b from-gold-200 to-gold-200/80 text-navy-950 font-bold text-sm text-center shadow-lg hover:brightness-105 transition"
@@ -154,38 +153,30 @@ export default function PublicProfileClient({ token }: PublicProfileClientProps)
             >
               Return Home
             </Link>
-          </div>
+          </div> */}
         </div>
       </main>
     );
   }
 
-  return (
-    <main className="min-h-screen bg-navy-950 text-gold-100 pb-28">
-      {/* ── Top Grace & Goodwill Verified Banner ─────────────────────── */}
-      <div className="bg-navy-900/90 border-b border-gold-300/10 py-2.5 px-4 sticky top-0 z-30 backdrop-blur-md">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-2 text-xs font-semibold text-gold-200">
-            <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-            <span>Compliance Checked by Grace &amp; Goodwill™</span>
-          </div>
-          <a
-            href="tel:02045240108"
-            className="text-xs text-gold-300/80 hover:text-gold-200 flex items-center gap-1.5 transition"
-          >
-            <Phone className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Support:</span> 020 4524 0108
-          </a>
-        </div>
-      </div>
+  // Check whether intro video URL exists and is non-empty
+  const hasIntroVideo = Boolean(
+    profile.introVideoUrl &&
+      typeof profile.introVideoUrl === "string" &&
+      profile.introVideoUrl.trim() !== "" &&
+      profile.introVideoUrl.trim().toLowerCase() !== "null" &&
+      profile.introVideoUrl.trim().toLowerCase() !== "undefined",
+  );
 
+  return (
+    <main className="min-h-screen bg-navy-950 text-gold-100 pb-16">
       {/* ── Hero Profile Header ──────────────────────────────────────── */}
       <section className="relative overflow-hidden bg-gradient-to-b from-navy-900/80 via-navy-950 to-navy-950 border-b border-gold-300/10 pt-10 pb-12 sm:pt-14 sm:pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
           <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
-            {/* Avatar / Photo */}
+            {/* Avatar / Photo - Circle Profile Box */}
             <div className="relative shrink-0">
-              <div className="w-36 h-36 sm:w-44 sm:h-44 rounded-3xl overflow-hidden border-2 border-gold-DEFAULT/40 shadow-2xl bg-navy-900 flex items-center justify-center text-4xl sm:text-5xl font-bold text-gold-DEFAULT">
+              <div className="w-36 h-36 sm:w-44 sm:h-44 rounded-full overflow-hidden border-2 border-gold-DEFAULT/40 shadow-2xl bg-navy-900 flex items-center justify-center text-4xl sm:text-5xl font-bold text-gold-DEFAULT">
                 {profile.photoUrl ? (
                   <img
                     src={profile.photoUrl}
@@ -193,74 +184,46 @@ export default function PublicProfileClient({ token }: PublicProfileClientProps)
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <span>{profile.displayName.slice(0, 2).toUpperCase()}</span>
+                  <span>
+                    {profile.displayName
+                      .split(" ")
+                      .filter(Boolean)
+                      .map((n) => n[0])
+                      .join("")
+                      .slice(0, 2)
+                      .toUpperCase()}
+                  </span>
                 )}
-              </div>
-              <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-emerald-950/90 border border-emerald-500/40 text-emerald-300 text-[11px] font-bold px-3 py-1 rounded-full whitespace-nowrap shadow-lg flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                Verified Carer
               </div>
             </div>
 
-            {/* Profile Summary Info */}
-            <div className="flex-1 text-center md:text-left space-y-4">
-              <div className="space-y-1">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold-DEFAULT/10 border border-gold-DEFAULT/20 text-gold-200 text-xs font-semibold uppercase tracking-wider">
-                  <Sparkles className="w-3.5 h-3.5" /> Approved Professional Carer
-                </div>
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-serif text-gold-50 tracking-tight">
-                  {profile.displayName}
-                </h1>
-                <p className="text-sm sm:text-base text-gold-100/70 max-w-2xl leading-relaxed">
-                  Compliance-checked and registered through Grace &amp; Goodwill Private Care.
+            {/* Profile Summary Info: Name -> Verified Icon -> Compliance -> Experience */}
+            <div className="flex-1 text-center md:text-left space-y-3">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-serif text-gold-50 tracking-tight">
+                {profile.displayName}
+              </h1>
+
+              {/* 1. Verified Icon below name */}
+              <div className="flex items-center justify-center md:justify-start">
+                <span className="inline-flex items-center gap-1.5 bg-emerald-950/90 border border-emerald-500/40 text-emerald-300 text-xs sm:text-sm font-semibold px-3.5 py-1 rounded-full shadow-sm">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span>Verified Carer</span>
+                </span>
+              </div>
+
+              {/* 2. Compliance below verified */}
+              <div className="flex items-center justify-center md:justify-start gap-2 text-xs sm:text-sm font-medium text-gold-200">
+                <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span>Compliance Verified by Grace &amp; Goodwill</span>
+              </div>
+
+              {/* 3. Experience below compliance */}
+              {profile.experienceYears !== undefined && profile.experienceYears > 0 && (
+                <p className="text-sm sm:text-base text-gold-100/90 font-medium pt-0.5">
+                  <span className="text-gold-200 font-semibold">Experience:</span>{" "}
+                  <span className="text-gold-50 font-bold">{profile.experienceYears}+ Years</span>
                 </p>
-              </div>
-
-              {/* Badges / Highlights */}
-              <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 pt-1">
-                {profile.experienceYears !== undefined && profile.experienceYears > 0 && (
-                  <div className="bg-navy-900/80 border border-gold-300/15 rounded-xl px-3.5 py-2 text-center sm:text-left">
-                    <p className="text-[10px] uppercase font-semibold text-gold-300/60 tracking-wider">
-                      Experience
-                    </p>
-                    <p className="text-sm sm:text-base font-bold text-gold-50">
-                      {profile.experienceYears}+ Years
-                    </p>
-                  </div>
-                )}
-                <div className="bg-navy-900/80 border border-gold-300/15 rounded-xl px-3.5 py-2 text-center sm:text-left">
-                  <p className="text-[10px] uppercase font-semibold text-gold-300/60 tracking-wider">
-                    DBS Check
-                  </p>
-                  <p className="text-sm sm:text-base font-bold text-emerald-400 flex items-center gap-1">
-                    <Check className="w-4 h-4" /> Enhanced DBS
-                  </p>
-                </div>
-                <div className="bg-navy-900/80 border border-gold-300/15 rounded-xl px-3.5 py-2 text-center sm:text-left">
-                  <p className="text-[10px] uppercase font-semibold text-gold-300/60 tracking-wider">
-                    Insurance
-                  </p>
-                  <p className="text-sm sm:text-base font-bold text-gold-200">
-                    Fully Insured
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Quick Desktop Call To Action */}
-            <div className="hidden lg:flex flex-col gap-3 shrink-0 w-64 bg-navy-900/60 border border-gold-300/15 rounded-2xl p-5 shadow-xl">
-              <h3 className="text-sm font-bold text-gold-50 font-serif">
-                Interested in {profile.displayName}?
-              </h3>
-              <p className="text-xs text-gold-100/65 leading-relaxed">
-                Grace &amp; Goodwill will arrange an introduction and answer any care requirements.
-              </p>
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className="w-full py-3 rounded-xl bg-gradient-to-b from-gold-200 to-gold-200/80 text-navy-950 font-bold text-xs shadow-md hover:brightness-105 transition"
-              >
-                Request an Introduction
-              </button>
+              )}
             </div>
           </div>
         </div>
@@ -268,8 +231,8 @@ export default function PublicProfileClient({ token }: PublicProfileClientProps)
 
       {/* ── Main Profile Details ─────────────────────────────────────── */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 space-y-8">
-        {/* Introductory Video Section */}
-        {profile.introVideoUrl && (
+        {/* Introductory Video Section - Only shown if video intro exists and is not empty */}
+        {hasIntroVideo && !videoError && (
           <section className="bg-navy-900/40 border border-gold-300/10 rounded-3xl p-6 sm:p-8 backdrop-blur-md shadow-elegant space-y-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-gold-DEFAULT/10 border border-gold-DEFAULT/20 flex items-center justify-center text-gold-DEFAULT">
@@ -290,6 +253,7 @@ export default function PublicProfileClient({ token }: PublicProfileClientProps)
                 controls
                 className="w-full h-full object-contain"
                 poster={profile.photoUrl}
+                onError={() => setVideoError(true)}
               >
                 Your browser does not support the video element.
               </video>
@@ -455,48 +419,66 @@ export default function PublicProfileClient({ token }: PublicProfileClientProps)
             </p>
           </div>
         </section>
-      </div>
 
-      {/* ── Sticky Bottom CTA Bar ───────────────────────────────────── */}
-      <div className="fixed bottom-0 inset-x-0 z-40 bg-navy-900/95 border-t border-gold-300/15 py-3.5 px-4 backdrop-blur-lg shadow-2xl">
-        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="text-center sm:text-left">
-            <p className="text-xs sm:text-sm font-bold text-gold-50 font-serif">
-              Interested in {profile.displayName}?
-            </p>
-            <p className="text-[11px] sm:text-xs text-gold-100/60">
-              Request an introduction through Grace &amp; Goodwill Private Care.
+        {/* ── Contact Grace & Goodwill Section ─────────────────────── */}
+        <section className="bg-gradient-to-b from-navy-900/60 to-navy-950/80 border border-gold-300/15 rounded-3xl p-6 sm:p-10 backdrop-blur-md shadow-2xl text-center space-y-6">
+          <div className="max-w-xl mx-auto space-y-2">
+            <h2 className="text-xl sm:text-2xl font-bold font-serif text-gold-50 tracking-tight">
+              Contact Grace &amp; Goodwill
+            </h2>
+            <p className="text-xs sm:text-sm text-gold-100/70 leading-relaxed">
+              Speak directly with our dedicated care management team to enquire about live-in care arrangements with{" "}
+              <span className="text-gold-200 font-semibold">{profile.displayName}</span>.
             </p>
           </div>
 
-          <div className="flex items-center gap-2 w-full sm:w-auto">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 pt-1">
+            {/* Phone Button */}
             <a
-              href={`https://wa.me/447000000000?text=${encodeURIComponent(
-                `Hello, I am interested in carer ${profile.displayName} on Grace & Goodwill.`,
+              href="tel:02045240108"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-5 py-3.5 rounded-2xl bg-navy-950/90 border border-gold-300/20 hover:border-gold-300/45 text-gold-100 hover:text-gold-50 font-semibold text-xs sm:text-sm shadow-md transition duration-200"
+            >
+              <div className="w-7 h-7 rounded-lg bg-gold-DEFAULT/10 border border-gold-DEFAULT/20 flex items-center justify-center text-gold-DEFAULT">
+                <Phone className="w-3.5 h-3.5" />
+              </div>
+              <div className="text-left">
+                <span className="block text-[9px] uppercase font-bold text-gold-300/60 tracking-wider">
+                  Office Number
+                </span>
+                <span className="text-sm font-bold text-gold-100">020 4524 0108</span>
+              </div>
+            </a>
+
+            {/* WhatsApp Button */}
+            <a
+              href={`https://wa.me/447462931949?text=${encodeURIComponent(
+                `Hello Grace & Goodwill, I am interested in carer ${profile.displayName}.`,
               )}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-600/90 hover:bg-emerald-600 text-white font-semibold text-xs transition"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-5 py-3.5 rounded-2xl bg-emerald-950/40 border border-emerald-500/30 hover:border-emerald-500/60 text-emerald-200 hover:text-emerald-100 font-semibold text-xs sm:text-sm shadow-md transition duration-200"
             >
-              <MessageCircle className="w-4 h-4" />
-              <span>WhatsApp</span>
+              <div className="w-7 h-7 rounded-lg bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
+                <WhatsAppIcon className="w-3.5 h-3.5 fill-current" />
+              </div>
+              <div className="text-left">
+                <span className="block text-[9px] uppercase font-bold text-emerald-400/80 tracking-wider">
+                  WhatsApp Us
+                </span>
+                <span className="text-sm font-bold text-emerald-100">+44 7462 931949</span>
+              </div>
             </a>
-            <a
-              href="tel:02045240108"
-              className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-navy-800 border border-gold-300/20 hover:border-gold-300/40 text-gold-100 font-semibold text-xs transition"
-            >
-              <Phone className="w-3.5 h-3.5" />
-              <span>Call</span>
-            </a>
+
+            {/* Request Introduction Button */}
             <button
               onClick={() => setIsModalOpen(true)}
-              className="flex-2 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-b from-gold-200 to-gold-200/80 text-navy-950 font-bold text-xs shadow-md hover:brightness-105 transition"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-gradient-to-b from-gold-200 to-gold-200/80 text-navy-950 hover:brightness-105 font-bold text-xs sm:text-sm shadow-md transition duration-200 cursor-pointer"
             >
               <span>Request Introduction</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight className="w-4 h-4" />
             </button>
           </div>
-        </div>
+        </section>
       </div>
 
       {/* ── Introduction Request Modal ───────────────────────────────── */}

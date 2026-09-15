@@ -62,6 +62,13 @@ function StaticSiteHeader() {
     rawPathname.endsWith("/") && rawPathname !== "/"
       ? rawPathname.slice(0, -1)
       : rawPathname;
+
+  const isPublicCarerProfile =
+    pathname.startsWith("/public/carer") ||
+    pathname.startsWith("/carer/") ||
+    (typeof window !== "undefined" &&
+      (window.location.pathname.startsWith("/public/carer") ||
+        window.location.pathname.startsWith("/carer/")));
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleMenu = useCallback(() => setIsMobileMenuOpen((v) => !v), []);
@@ -86,6 +93,7 @@ function StaticSiteHeader() {
   return (
     <header className="sticky top-0 z-50 w-full flex flex-col transition-all">
       {/* Top Contact Bar */}
+      {!isPublicCarerProfile && (
       <div className="w-full bg-[#b59469] text-black py-1.5 md:py-2">
         <div className="container-wrapper flex flex-wrap justify-center items-center gap-4 sm:gap-10 md:gap-24 text-[12px] sm:text-[13px] font-medium tracking-wide">
           <a href="tel:02045240108" className="flex items-center gap-2 sm:gap-3 text-black hover:opacity-70 transition-opacity">
@@ -102,6 +110,7 @@ function StaticSiteHeader() {
           </Link>
         </div>
       </div>
+      )}
 
       <div className="w-full h-20 border-b border-navy-800 bg-navy-950/95 backdrop-blur flex items-center">
 
@@ -145,18 +154,21 @@ function StaticSiteHeader() {
           </Link>
 
           {/* Mobile menu button */}
-          <button
-            className="xl:hidden flex items-center text-gold-200 hover:text-gold-50 transition p-2 -mr-2"
-            onClick={toggleMenu}
-            aria-label="Toggle menu"
-          >
-            {isMobileMenuOpen ? (
-              <X className="w-6 h-6" />
-            ) : (
-              <Menu className="w-6 h-6" />
-            )}
-          </button>
+          {!isPublicCarerProfile && (
+            <button
+              className="xl:hidden flex items-center text-gold-200 hover:text-gold-50 transition p-2 -mr-2"
+              onClick={toggleMenu}
+              aria-label="Toggle menu"
+            >
+              {isMobileMenuOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
+            </button>
+          )}
 
+          {!isPublicCarerProfile && (
           <nav className="hidden items-center gap-4 lg:gap-6 xl:flex">
             {navLinks.map((link) => {
               const isActive = isNavLinkActive(pathname, link.href);
@@ -202,13 +214,14 @@ function StaticSiteHeader() {
               />
             </div>
           </nav>
+          )}
         </div>
 
 
       </div>
 
       {/* Mobile Navigation Overlay + Slide-over Drawer */}
-      {isMobileMenuOpen && (
+      {!isPublicCarerProfile && isMobileMenuOpen && (
         <>
           <div
             className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100]"

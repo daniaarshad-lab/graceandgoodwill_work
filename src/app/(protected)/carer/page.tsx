@@ -56,6 +56,11 @@ const ApplicationHistory = dynamic(
   () => import("./components/ApplicationHistory"),
   { ssr: false, loading: () => <LoadingFallback /> },
 );
+import ShareProfileModal from "./components/share-profile/ShareProfileModal";
+const ShareProfilePanel = dynamic(
+  () => import("./components/share-profile/ShareProfilePanel"),
+  { ssr: false, loading: () => <LoadingFallback /> },
+);
 const CarerPlacements = dynamic(
   () => import("./components/CarerPlacements"),
   { ssr: false, loading: () => <LoadingFallback /> },
@@ -89,6 +94,7 @@ function CarerDashboardContent() {
 
   const tabParam = searchParams.get("tab") as TabType;
   const [activeTab, setActiveTab] = useState<TabType>("overview");
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
   useEffect(() => {
     if (
@@ -740,7 +746,7 @@ function CarerDashboardContent() {
           </div>
         </div>
 
-        <UploadDocumentModal
+      <UploadDocumentModal
           previewDoc={portal.previewDoc}
           setPreviewDoc={portal.setPreviewDoc}
           docToDelete={portal.docToDelete}
@@ -768,6 +774,7 @@ function CarerDashboardContent() {
           profilePhoto={
             profile?.profilePhotoUrl || actualProfile?.profilePhotoUrl || null
           }
+          onShareClick={() => setIsShareModalOpen(true)}
         />
 
         <PortalTabs activeTab={activeTab} setActiveTab={setActiveTab} />
@@ -781,6 +788,7 @@ function CarerDashboardContent() {
                 actualProfile?.availability ?? profile?.availability ?? []
               }
               setActiveTab={setActiveTab}
+              onShareClick={() => setIsShareModalOpen(true)}
             />
           )}
 
@@ -825,6 +833,7 @@ function CarerDashboardContent() {
                 isProfileSaving={portal.isProfileSaving}
                 onSubmit={portal.handleSaveProfile}
                 setActiveTab={setActiveTab}
+                onShareClick={() => setIsShareModalOpen(true)}
               />
             </div>
           )}
@@ -880,6 +889,11 @@ function CarerDashboardContent() {
             portal.setDocToDelete(null);
           }
         }}
+      />
+    
+      <ShareProfileModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
       />
     </main>
   );

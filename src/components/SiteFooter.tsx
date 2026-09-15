@@ -3,6 +3,7 @@
 import React from "react";
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import integrityIcon from "@/assets/open/value-icon-integrity.png";
 import compassionIcon from "@/assets/open/value-icon-compassion.png";

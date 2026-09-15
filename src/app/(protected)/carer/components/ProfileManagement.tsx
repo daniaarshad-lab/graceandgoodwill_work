@@ -1,5 +1,5 @@
 import { ChangeEvent, FormEvent, useState } from "react";
-import { Pencil } from "lucide-react";
+import { Pencil, Share2 } from "lucide-react";
 import SectionCard from "./shared/SectionCard";
 import Input from "@/components/Input";
 import PhoneInput from "@/components/PhoneInput";
@@ -47,10 +47,9 @@ interface ProfileManagementProps {
   errors: Record<string, string>;
   isProfileSaving: boolean;
   onSubmit: (e: FormEvent) => void;
-  setActiveTab: (
-    tab: "overview" | "profile" | "compliance" | "availability",
-  ) => void;
+  setActiveTab: (tab: any) => void;
   complianceDocs?: ComplianceDoc[];
+  onShareClick?: () => void;
 }
 
 export default function ProfileManagement({
@@ -92,6 +91,7 @@ export default function ProfileManagement({
   onSubmit,
   setActiveTab,
   complianceDocs = [],
+  onShareClick,
 }: ProfileManagementProps) {
   const [activeSection, setActiveSection] = useState<
     "personal" | "professional" | "financial"
@@ -110,7 +110,23 @@ export default function ProfileManagement({
           <h3 className="text-lg font-bold text-gold-200">
             Personal Profile Management
           </h3>
-          <button
+          <div className="flex items-center gap-3">
+            <button
+              id="profile-section-share-btn"
+              type="button"
+              onClick={onShareClick || (() => setActiveTab("profile"))}
+              style={{
+                background: "linear-gradient(135deg, #F5D4A0 0%, #D4AF37 50%, #C99232 100%)",
+                color: "#0A1128",
+                border: "1px solid rgba(253, 230, 196, 0.5)",
+              }}
+              className="px-5 py-2.5 rounded-xl transition-all duration-300 flex items-center gap-2 text-sm font-bold shadow-[0_4px_15px_rgba(212,175,55,0.35)] hover:brightness-110 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
+              title="Share Public Profile"
+            >
+              <Share2 className="w-4 h-4 text-[#0A1128]" />
+              <span className="font-bold text-[#0A1128]">Share Profile</span>
+            </button>
+            <button
             type="button"
             onClick={() => setIsEditing(!isEditing)}
             className={`px-4 py-2 rounded-xl transition-all duration-300 flex items-center gap-2 text-sm font-medium border ${
@@ -123,6 +139,7 @@ export default function ProfileManagement({
             <Pencil className="w-4 h-4" />
             {isEditing ? "Editing Mode" : "Edit Profile"}
           </button>
+          </div>
         </div>
 
         {/* TAB NAVIGATION */}

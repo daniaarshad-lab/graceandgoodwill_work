@@ -426,6 +426,25 @@ export const adminService = {
     });
   },
 
+    async uploadCarerDocument(
+    carerId: string,
+    formData: FormData,
+  ): Promise<any> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch(`/admin/carers/${carerId}/documents`, {
+      method: "POST",
+      body: formData,
+    });
+  },
+
   async updateCarerPaymentStatus(
     paymentId: string,
     statusOrFormData: string | FormData,

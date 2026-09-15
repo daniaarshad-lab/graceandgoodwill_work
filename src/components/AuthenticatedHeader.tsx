@@ -81,7 +81,7 @@ export default function AuthenticatedHeader() {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 w-full shrink-0 min-h-[72px] bg-navy-950/95 backdrop-blur shadow-soft">
+    <header className="fixed top-0 left-0 right-0 z-40 w-full shrink-0 min-h-[72px] bg-navy-950/95 backdrop-blur shadow-soft" style={{ top: 0, marginTop: 0 }}>
       <div className="container-wrapper py-4 flex items-center justify-between h-[72px] min-h-[72px] shrink-0">
         {/* Left Side: Branding */}
         <Link href={`/${pathname.split("/")[1]}`} className="flex items-center gap-2 sm:gap-3 flex-shrink-0 hover:opacity-90 transition-opacity">

@@ -326,6 +326,55 @@ export const fetchGlobalSearchResults = createAsyncThunk<
   }
 });
 
+const applyDocumentUpdate = (state: any, docId: string, updates: any) => {
+  // Helper to update a document within an array
+  const updateDocsArray = (docs: any[] | undefined) => {
+    if (!Array.isArray(docs)) return false;
+    const doc = docs.find((d: any) => d.id === docId);
+    if (doc) {
+      Object.assign(doc, updates);
+      return true;
+    }
+    return false;
+  };
+
+  // 1. Update selectedCarer
+  if (state.selectedCarer.data) {
+    const data = state.selectedCarer.data;
+    let found = false;
+    if (updateDocsArray(data.documents)) found = true;
+    if (updateDocsArray(data.complianceDocuments)) found = true;
+    if (updateDocsArray(data.complianceDocs)) found = true;
+    if (data.carerProfile) {
+      if (updateDocsArray(data.carerProfile.documents)) found = true;
+      if (updateDocsArray(data.carerProfile.complianceDocuments)) found = true;
+      if (updateDocsArray(data.carerProfile.complianceDocs)) found = true;
+    }
+
+    // If not found in existing arrays (e.g. newly uploaded document), insert it!
+    if (!found) {
+      const targetArray =
+        data.carerProfile?.documents ||
+        data.documents ||
+        data.complianceDocuments ||
+        data.carerProfile?.complianceDocuments;
+      if (Array.isArray(targetArray)) {
+        targetArray.unshift({ id: docId, ...updates });
+      }
+    }
+  }
+
+  // 2. Update carers list
+  if (Array.isArray(state.carers.items)) {
+    state.carers.items.forEach((user: any) => {
+      updateDocsArray(user.documents);
+      if (user.carerProfile) {
+        updateDocsArray(user.carerProfile.documents);
+      }
+    });
+  }
+};
+
 const adminSlice = createSlice({
   name: "admin",
   initialState,
@@ -386,6 +435,10 @@ const adminSlice = createSlice({
     setClientsLimit(state, action: PayloadAction<number>) {
       state.clients.limit = action.payload;
       state.clients.page = 1;
+    },
+
+    updateDocumentInStore(state, action: PayloadAction<{ docId: string; updates: any }>) {
+      applyDocumentUpdate(state, action.payload.docId, action.payload.updates);
     },
 
     clearCareRequestApplications(state) {
@@ -520,43 +573,7 @@ const adminSlice = createSlice({
       state.selectedCarer.error =
         action.payload || "Failed to fetch carer details";
     });
-
-    const applyDocumentUpdate = (state: any, docId: string, updates: any) => {
-      // Helper to update a document within an array
-      const updateDocsArray = (docs: any[] | undefined) => {
-        if (!Array.isArray(docs)) return false;
-        const doc = docs.find((d: any) => d.id === docId);
-        if (doc) {
-          Object.assign(doc, updates);
-          return true;
-        }
-        return false;
-      };
-
-      // 1. Update selectedCarer
-      if (state.selectedCarer.data) {
-        const data = state.selectedCarer.data;
-        updateDocsArray(data.documents);
-        updateDocsArray(data.complianceDocuments);
-        updateDocsArray(data.complianceDocs);
-        if (data.carerProfile) {
-          updateDocsArray(data.carerProfile.documents);
-          updateDocsArray(data.carerProfile.complianceDocuments);
-          updateDocsArray(data.carerProfile.complianceDocs);
-        }
-      }
-
-      // 2. Update carers list
-      if (Array.isArray(state.carers.items)) {
-        state.carers.items.forEach((user: any) => {
-          updateDocsArray(user.documents);
-          if (user.carerProfile) {
-            updateDocsArray(user.carerProfile.documents);
-          }
-        });
-      }
-    };
-
+    
     // verifyDocument
     builder.addCase(verifyDocument.fulfilled, (state, action) => {
       const { docId, status, data } = action.payload;
@@ -621,6 +638,7 @@ export const {
   setClientsStatus,
   setClientsLimit,
 
+  updateDocumentInStore,
   clearCareRequestApplications,
 } = adminSlice.actions;
 

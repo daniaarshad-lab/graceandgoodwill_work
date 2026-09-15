@@ -73,19 +73,19 @@ export default function HomePage() {
               href="https://www.bbc.co.uk/programmes/p0m85mv7"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2.5 bg-navy-950/80 border border-gold-muted/40 px-4 py-2 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.4)] backdrop-blur-md hover:border-gold-400/60 hover:shadow-[0_0_20px_rgba(247,215,116,0.25)] transition-all duration-300 cursor-pointer"
+              className="inline-flex items-center gap-1.5 bg-navy-950/80 border border-gold-muted/40 px-3 py-1.5 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.4)] backdrop-blur-md hover:border-gold-400/60 hover:shadow-[0_0_20px_rgba(247,215,116,0.25)] transition-all duration-300 cursor-pointer"
             >
-              <span className="text-[11px] font-semibold text-gold-200 uppercase tracking-widest whitespace-nowrap">
+              <span className="text-[9px] font-semibold text-gold-200 uppercase tracking-widest whitespace-nowrap">
                 As Featured on
               </span>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1">
                 {/* BBC Logo Blocks */}
-                <div className="flex gap-0.5">
-                  <span className="bg-white text-black text-[11px] font-bold px-1.5 py-0.5 rounded-sm leading-none">B</span>
-                  <span className="bg-white text-black text-[11px] font-bold px-1.5 py-0.5 rounded-sm leading-none">B</span>
-                  <span className="bg-white text-black text-[11px] font-bold px-1.5 py-0.5 rounded-sm leading-none">C</span>
+                <div className="flex gap-[1px]">
+                  <span className="bg-white text-black text-[9px] font-bold px-1 py-[2px] rounded-sm leading-none">B</span>
+                  <span className="bg-white text-black text-[9px] font-bold px-1 py-[2px] rounded-sm leading-none">B</span>
+                  <span className="bg-white text-black text-[9px] font-bold px-1 py-[2px] rounded-sm leading-none">C</span>
                 </div>
-                <span className="text-white font-bold tracking-[0.2em] text-xs">RADIO</span>
+                <span className="text-white font-bold tracking-[0.2em] text-[10px]">RADIO</span>
               </div>
             </a>
           </div>

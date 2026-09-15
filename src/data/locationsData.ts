@@ -109,7 +109,7 @@ export const regions: Region[] = [
     ],
   },
   {
-    name: "Eastern",
+    name: "East of England",
     counties: [
       {
         name: "Essex",
@@ -310,15 +310,6 @@ export const regions: Region[] = [
       {
         name: "County Derry / Londonderry",
         towns: ["Coleraine", "Derry", "Limavady", "Magherafelt", "Portrush", "Portstewart"],
-      },
-    ],
-  },
-  {
-    name: "Channel Islands",
-    counties: [
-      {
-        name: "Channel Islands",
-        towns: ["Guernsey", "Jersey"],
       },
     ],
   },

@@ -208,7 +208,7 @@ export default function CountyPageClient({ countyName, regionName, countySlug, t
               <div className="relative w-full max-w-[550px] z-10 lg:pl-6 pt-6 lg:pt-0">
                 {/* Top-left asymmetric offset background shape */}
                 <div className="absolute -top-4 -left-4 sm:-top-8 sm:-left-8 w-full h-full bg-[#C2A476]/10 border border-[#C2A476]/20 rounded-full -z-10" />
-                
+
                 {/* Bottom-right asymmetric offset background shape */}
                 <div className="absolute -bottom-4 -right-4 sm:-bottom-8 sm:-right-8 w-full h-full bg-[#C2A476]/10 border border-[#C2A476]/20 rounded-full -z-10" />
 
@@ -253,11 +253,11 @@ export default function CountyPageClient({ countyName, regionName, countySlug, t
               {/* Call to action section */}
               <div className="flex flex-col gap-4 pt-6 w-full min-w-0">
                 <div className="flex flex-wrap items-center justify-between gap-2 w-full max-w-[420px]">
-                   <p className="text-xs text-gold-100/50 uppercase tracking-widest shrink-0">For enquiries call</p>
-                   <div className="flex items-center gap-2 shrink-0">
-                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                     <p className="text-[11px] text-gold-100/40">Operators available now</p>
-                   </div>
+                  <p className="text-xs text-gold-100/50 uppercase tracking-widest shrink-0">For enquiries call</p>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                    <p className="text-[11px] text-gold-100/40">Operators available now</p>
+                  </div>
                 </div>
 
                 <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-3 w-full">
@@ -297,23 +297,23 @@ export default function CountyPageClient({ countyName, regionName, countySlug, t
       {towns && towns.length > 0 && (
         <section className="py-16 bg-[#1a233a] border-y border-gold-400/10">
           <div className="container-wrapper">
-             <h2 className="font-['Cinzel'] text-2xl sm:text-3xl font-semibold text-white mb-10 text-center">
-               Live-in Care in {countyName} Towns &amp; Villages
-             </h2>
-             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-               {towns.map((town) => (
-                 <Link
-                   key={town}
-                   href={`/location/${countySlug}/${slugify(town)}`}
-                   className="group flex items-center gap-2 p-3 rounded-lg border border-gold-400/10 bg-navy-900/40 hover:bg-navy-900 hover:border-gold-400/30 transition-all"
-                 >
-                   <ChevronRight className="w-4 h-4 text-gold-400/50 group-hover:text-gold-300 shrink-0" />
-                   <span className="text-gold-200 group-hover:text-gold-100 text-sm font-medium line-clamp-1 text-ellipsis overflow-hidden">
-                     {town}
-                   </span>
-                 </Link>
-               ))}
-             </div>
+            <h2 className="font-['Cinzel'] text-2xl sm:text-3xl font-semibold text-white mb-10 text-center">
+              Live-in Care in {countyName} Towns &amp; Villages
+            </h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+              {towns.map((town) => (
+                <Link
+                  key={town}
+                  href={`/location/${countySlug}/${slugify(town)}`}
+                  className="group flex items-center gap-2 p-3 rounded-lg border border-gold-400/10 bg-navy-900/40 hover:bg-navy-900 hover:border-gold-400/30 transition-all"
+                >
+                  <ChevronRight className="w-4 h-4 text-gold-400/50 group-hover:text-gold-300 shrink-0" />
+                  <span className="text-gold-200 group-hover:text-gold-100 text-sm font-medium line-clamp-1 text-ellipsis overflow-hidden">
+                    {town}
+                  </span>
+                </Link>
+              ))}
+            </div>
           </div>
         </section>
       )}

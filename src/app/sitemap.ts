@@ -1,5 +1,10 @@
 import { MetadataRoute } from 'next';
 import { blogSeedPosts } from '@/data/blogSeed';
+import { regions } from '@/data/locationsData';
+
+function slugify(str: string) {
+  return str.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+}
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://graceandgoodwill.co.uk';
@@ -68,8 +73,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.3,
   }));
 
-  // Location pages
-  const locationPages = [
+  // Major City Location pages (hardcoded)
+  const majorCityLocationPages = [
     '/location/birmingham',
     '/location/bristol',
     '/location/gateshead',
@@ -87,6 +92,23 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.85,
   }));
 
+  // Dynamic Town Location pages
+  const dynamicLocationPages: MetadataRoute.Sitemap = [];
+  regions.forEach((region) => {
+    region.counties.forEach((county) => {
+      county.towns.forEach((town) => {
+        const countySlug = slugify(county.name);
+        const townSlug = slugify(town);
+        dynamicLocationPages.push({
+          url: `${baseUrl}/location/${countySlug}/${townSlug}`,
+          lastModified: new Date(),
+          changeFrequency: 'monthly' as const,
+          priority: 0.8,
+        });
+      });
+    });
+  });
+
   // Blog pages
   const blogPages = blogSeedPosts.map((post) => ({
     url: `${baseUrl}/blog/${post.slug}`,
@@ -95,5 +117,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
-  return [...corePages, ...servicePages, ...legalPages, ...locationPages, ...blogPages];
+  return [
+    ...corePages,
+    ...servicePages,
+    ...legalPages,
+    ...majorCityLocationPages,
+    ...dynamicLocationPages,
+    ...blogPages,
+  ];
 }

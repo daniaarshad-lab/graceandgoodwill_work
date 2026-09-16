@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `Live-in Care in ${townName}, ${countyName} | Grace & Goodwill`,
     description: `Find trusted live-in carers in ${townName}, ${countyName} with Grace & Goodwill. Get personalised one-to-one care at home from experienced, DBS-checked carers.`,
-    alternates: { canonical: `/location/${county}/${town}` },
+    alternates: { canonical: `/location/${slugify(county)}/${slugify(town)}` },
   };
 }
 

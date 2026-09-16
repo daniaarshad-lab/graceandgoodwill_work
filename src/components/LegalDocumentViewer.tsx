@@ -82,7 +82,7 @@ export default function LegalDocumentViewer({
             <h1 className="text-[13px] sm:text-sm lg:text-[15px] font-medium tracking-wide text-gold-200 uppercase max-w-4xl mx-auto px-4">
               {documentTitle}
             </h1>
-            
+
             {documentSubtitle && (
               <p className="text-xs sm:text-sm text-gold-200/80 max-w-2xl mx-auto uppercase tracking-wider font-medium">
                 {documentSubtitle}

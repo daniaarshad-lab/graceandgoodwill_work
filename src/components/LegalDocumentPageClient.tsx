@@ -56,6 +56,19 @@ export default function LegalDocumentPageClient({
 
   const paragraphs = content.split("\n\n").filter(Boolean);
 
+  // The first paragraph in each document is the full document title (e.g. "GRACE & GOODWILL LTD - ..."),
+  // which is already displayed in the hero header via documentTitle/documentSubtitle props.
+  // Skip it to avoid a duplicate heading on the page.
+  const isDuplicateTitle = (para: string) =>
+    para.startsWith("GRACE & GOODWILL LTD") ||
+    para.startsWith("PRIVACY POLICY") ||
+    para.startsWith("WEBSITE AND PLATFORM TERMS AND CONDITIONS") ||
+    para.startsWith("PLATFORM / AGENCY INTRODUCTION TERMS");
+
+  const filteredParagraphs = paragraphs.filter(
+    (para, idx) => !(idx === 0 && isDuplicateTitle(para))
+  );
+
   return (
     <LegalDocumentViewer
       documentTitle={docTitle}
@@ -64,7 +77,7 @@ export default function LegalDocumentPageClient({
       sections={[]}
     >
       <div className="space-y-4 text-slate-200 text-sm leading-relaxed font-sans">
-        {paragraphs.map((para, idx) => {
+        {filteredParagraphs.map((para, idx) => {
           const isHeading =
             para.match(/^[0-9]+\.\s+[A-Z\s&/]+$/) ||
             para.startsWith("GRACE & GOODWILL LTD") ||

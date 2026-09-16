@@ -8,6 +8,8 @@ import {
   verifyDocument,
   rejectDocument,
   updateDocumentInStore,
+  updateDocumentNotesThunk,
+  deleteDocumentThunk,
 } from "@/store/slices/adminSlice";
 import { useAuth } from "@/contexts/AuthContext";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
@@ -26,6 +28,7 @@ import {
   ShieldCheck,
   Download,
   Upload,
+  Trash2,
 } from "lucide-react";
 
 import { getDocumentFileLabel } from "@/types/document.types";
@@ -124,6 +127,12 @@ function DocumentReviewContent() {
   const [notes, setNotes] = useState<Record<string, string>>({});
   const [validationError, setValidationError] = useState<string | null>(null);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [uploadModalContext, setUploadModalContext] = useState<{ category?: string, type?: string } | null>(null);
+
+  const [editingNotes, setEditingNotes] = useState(false);
+  const [tempNotes, setTempNotes] = useState("");
+  const [isSavingNotes, setIsSavingNotes] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     if (carerId) {
@@ -226,7 +235,9 @@ function DocumentReviewContent() {
   useEffect(() => {
     setValidationError(null);
     setShowRejectInput(false);
-  }, [activeDocId]);
+    setEditingNotes(false);
+    setTempNotes(activeDoc?.internalNotes || "");
+  }, [activeDocId, activeDoc?.internalNotes]);
 
   const handleVerify = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -234,7 +245,7 @@ function DocumentReviewContent() {
     setValidationError(null);
     setSubmittingAction("VERIFY");
     try {
-      const docNotes = notes[activeDoc.id] || "";
+      const docNotes = tempNotes || activeDoc.internalNotes || "";
       await dispatch(
         verifyDocument({ docId: activeDoc.id, notes: docNotes }),
       ).unwrap();
@@ -286,6 +297,37 @@ function DocumentReviewContent() {
       showErrorToast("Error", err || "Failed to reject document");
     } finally {
       setSubmittingAction(null);
+    }
+  };
+
+  const handleSaveNotes = async () => {
+    if (!activeDoc) return;
+    setIsSavingNotes(true);
+    try {
+      await dispatch(updateDocumentNotesThunk({ docId: activeDoc.id, internalNotes: tempNotes })).unwrap();
+      showSuccessToast("Notes Saved", "Internal notes updated successfully.");
+      setEditingNotes(false);
+      dispatch(fetchCarerDetails(carerId));
+    } catch (err: any) {
+      showErrorToast("Error", err || "Failed to save notes");
+    } finally {
+      setIsSavingNotes(false);
+    }
+  };
+
+  const handleDeleteDoc = async () => {
+    if (!activeDoc) return;
+    if (!confirm("Are you sure you want to delete this document? This action cannot be undone.")) return;
+    setIsDeleting(true);
+    try {
+      await dispatch(deleteDocumentThunk({ docId: activeDoc.id })).unwrap();
+      showSuccessToast("Document Deleted", "The document has been removed.");
+      setActiveDocId(null);
+      dispatch(fetchCarerDetails(carerId));
+    } catch (err: any) {
+      showErrorToast("Error", err || "Failed to delete document");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -382,6 +424,18 @@ function DocumentReviewContent() {
     );
   }
 
+  const groupedDocs = (() => {
+    const groups: Record<string, any[]> = {};
+    rawDocs.forEach((doc: any) => {
+      const groupName = getDocumentName(doc);
+      if (!groups[groupName]) {
+        groups[groupName] = [];
+      }
+      groups[groupName].push(doc);
+    });
+    return groups;
+  })();
+
   const isPDF =
     activeDoc?.fileType === "application/pdf" ||
     activeDoc?.fileName?.toLowerCase().endsWith(".pdf") ||
@@ -434,7 +488,10 @@ function DocumentReviewContent() {
                 </h3>
                 <button
                   type="button"
-                  onClick={() => setIsUploadModalOpen(true)}
+                  onClick={() => {
+                    setUploadModalContext(null);
+                    setIsUploadModalOpen(true);
+                  }}
                   className="px-2.5 py-1 rounded-lg text-[10px] font-bold text-gold bg-gold/10 hover:bg-gold/20 border border-gold/30 flex items-center gap-1 transition cursor-pointer"
                   title="Upload Document for Carer"
                 >
@@ -460,65 +517,88 @@ function DocumentReviewContent() {
                     .vault-scroll::-webkit-scrollbar-thumb { background-color: rgba(160,128,84,0.18); border-radius: 20px; }
                     .vault-scroll::-webkit-scrollbar-thumb:hover { background-color: rgba(160,128,84,0.36); }
                   `}</style>
-                  <div className="vault-scroll space-y-2">
-                    {rawDocs.map((doc: any) => {
-                      const isActive = doc.id === activeDocId;
-                      const cleanStatus = getStatusLabel(doc.status);
+                  <div className="vault-scroll space-y-4">
+                    {Object.entries(groupedDocs).map(([groupName, docs]) => {
+                      const isPending = docs.some((d: any) => d.status === "PENDING" || d.status === "UPLOADED");
+                      const groupStatus = isPending ? "PENDING" : docs[0]?.status || "UPLOADED";
+                      
                       return (
-                        <button
-                          key={doc.id}
-                          onClick={() => {
-                            if (doc.id !== activeDocId) {
-                              setIsPreviewLoading(true);
-                              setPreviewSignedUrl("");
-                            }
-                            setActiveDocId(doc.id);
-                            const newUrl = `${window.location.pathname}?documentId=${doc.id}`;
-                            window.history.pushState(
-                              {
-                                ...window.history.state,
-                                as: newUrl,
-                                url: newUrl,
-                              },
-                              "",
-                              newUrl,
-                            );
-                          }}
-                          className={`relative w-full text-left rounded-xl p-3 border transition-all duration-300 flex items-center justify-between gap-3 ${
-                            isActive
-                              ? "bg-navy-900/80 border-gold border-l-4 border-l-gold shadow-[0_0_12px_rgba(212,175,55,0.15)] ring-1 ring-gold/30 text-gold-100 pl-2.5"
-                              : "bg-navy-950/40 border-gold-300/5 text-gold-100 hover:border-gold-300/20 hover:bg-navy-950/60 pl-3.5"
-                          }`}
-                        >
-                          {/* Left Column: Document Type & File Name */}
-                          <div className="flex-1 min-w-0 flex flex-col gap-0.5">
-                            <span className="text-sm font-semibold text-gold-200 truncate">
-                              {getDocumentName(doc)}
+                        <div key={groupName} className="rounded-xl border border-navy-800 bg-navy-900/40 p-2 space-y-2">
+                          <div className="flex items-center justify-between px-2 pt-1 pb-2 border-b border-navy-800">
+                            <h4 className="text-[13px] font-bold text-gold-200 truncate pr-2">{groupName}</h4>
+                            <span className={`px-1.5 py-0.5 rounded text-[8px] font-bold tracking-wider flex-shrink-0 ${getStatusBadgeStyles(groupStatus)}`}>
+                              {getStatusLabel(groupStatus)}
                             </span>
-                            <span
-                              className="text-[11px] text-gold-100/50 truncate w-full"
-                              title={doc.fileName}
-                            >
-                              {doc.fileName}
-                            </span>
+                          </div>
+                          
+                          <div className="space-y-1.5">
+                            {docs.map((doc: any) => {
+                              const isActive = doc.id === activeDocId;
+                              const cleanStatus = getStatusLabel(doc.status);
+                              const uploaderName = doc.uploadedByName || (doc.uploadedByRole === "ADMIN" ? "Admin" : "Carer");
+                              const uploadDate = doc.createdAt 
+                                ? new Date(doc.createdAt).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
+                                : "Unknown Date";
+
+                              return (
+                                <button
+                                  key={doc.id}
+                                  onClick={() => {
+                                    if (doc.id !== activeDocId) {
+                                      setIsPreviewLoading(true);
+                                      setPreviewSignedUrl("");
+                                    }
+                                    setActiveDocId(doc.id);
+                                    const newUrl = `${window.location.pathname}?documentId=${doc.id}`;
+                                    window.history.pushState({ ...window.history.state, as: newUrl, url: newUrl }, "", newUrl);
+                                  }}
+                                  className={`relative w-full text-left rounded-lg p-2 border transition-all duration-300 flex items-center justify-between gap-2 ${
+                                    isActive
+                                      ? "bg-navy-900/80 border-gold shadow-[0_0_8px_rgba(212,175,55,0.15)] ring-1 ring-gold/30 text-gold-100"
+                                      : "bg-navy-950/40 border-gold-300/5 text-gold-100 hover:border-gold-300/20 hover:bg-navy-950/60"
+                                  }`}
+                                >
+                                  {/* Left Column: File Name & Meta */}
+                                  <div className="flex-1 min-w-0 flex flex-col gap-1">
+                                    <div className="flex items-center gap-1.5">
+                                      {doc.fileType === "application/pdf" ? (
+                                        <FileText className="h-3 w-3 text-rose-400 flex-shrink-0" />
+                                      ) : (
+                                        <ImageIcon className="h-3 w-3 text-blue-400 flex-shrink-0" />
+                                      )}
+                                      <span className="text-[11px] font-semibold text-gold-100 truncate" title={doc.fileName}>
+                                        {doc.fileName || "Document"}
+                                      </span>
+                                    </div>
+                                    <span className="text-[9px] text-gold-100/50 truncate w-full pl-4">
+                                      Uploaded by {uploaderName} • {uploadDate}
+                                    </span>
+                                  </div>
+
+                                  {/* Right Column: View Icon */}
+                                  <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                                    {isActive && <Eye className="h-3 w-3 text-gold flex-shrink-0" />}
+                                  </div>
+                                </button>
+                              );
+                            })}
                           </div>
 
-                          {/* Right Column: View Icon & Status Badge */}
-                          <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
-                            <span
-                              className={`px-1.5 py-0.5 rounded text-[8px] font-bold tracking-wider ${getStatusBadgeStyles(doc.status)}`}
-                            >
-                              {cleanStatus}
-                            </span>
-                            {isActive ? (
-                              <Eye className="h-3.5 w-3.5 text-gold flex-shrink-0" />
-                            ) : doc.fileType === "application/pdf" ? (
-                              <FileText className="h-3.5 w-3.5 text-gold-100/30 flex-shrink-0" />
-                            ) : (
-                              <ImageIcon className="h-3.5 w-3.5 text-gold-100/30 flex-shrink-0" />
-                            )}
-                          </div>
-                        </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setUploadModalContext({
+                                category: docs[0]?.fileCategory || docs[0]?.category,
+                                type: docs[0]?.fileType || docs[0]?.type || docs[0]?.fileName || docs[0]?.name
+                              });
+                              setIsUploadModalOpen(true);
+                            }}
+                            className="w-full mt-1.5 py-1.5 px-3 rounded-lg border border-gold-300/20 text-[10px] font-semibold text-gold-200/70 hover:text-gold-200 hover:bg-gold-300/10 hover:border-gold-300/40 transition-colors flex items-center justify-center gap-1.5"
+                          >
+                            <Upload className="w-3 h-3" />
+                            + Upload additional document
+                          </button>
+                        </div>
                       );
                     })}
                   </div>
@@ -804,8 +884,69 @@ function DocumentReviewContent() {
                     </div>
                   )}
 
-                  {/* ACTION PORTAL */}
-                  <div className="bg-navy-950/40 rounded-xl border border-gold-300/5 p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+                  {/* ACTION PORTAL AND INTERNAL NOTES */}
+                  <div className="space-y-4">
+                    {/* INTERNAL ADMIN NOTES */}
+                    <div className="space-y-2 pt-2 border-t border-gold-300/5">
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs uppercase font-bold text-gold-200/60">
+                          Internal Admin Notes
+                        </label>
+                        {!editingNotes ? (
+                          <button
+                            type="button"
+                            onClick={() => setEditingNotes(true)}
+                            className="text-[10px] text-gold hover:text-gold-200 uppercase tracking-wider font-bold transition-colors"
+                          >
+                            Edit Notes
+                          </button>
+                        ) : null}
+                      </div>
+                      {editingNotes ? (
+                        <div className="space-y-2 animate-in fade-in slide-in-from-top-1 duration-200">
+                          <textarea
+                            value={tempNotes}
+                            onChange={(e) => setTempNotes(e.target.value)}
+                            placeholder="Add internal notes about this document..."
+                            rows={2}
+                            disabled={isSavingNotes}
+                            className="w-full rounded-xl bg-navy-950 p-3 text-xs text-gold-100 placeholder-gold-100/20 outline-none border border-gold-300/10 focus:border-gold-300/30 transition duration-300 resize-none"
+                          />
+                          <div className="flex justify-end gap-2">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setEditingNotes(false);
+                                setTempNotes(activeDoc.internalNotes || "");
+                              }}
+                              disabled={isSavingNotes}
+                              className="px-3 py-1 text-[10px] font-bold text-gold-200 hover:text-gold-100 uppercase tracking-wider"
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              type="button"
+                              onClick={handleSaveNotes}
+                              disabled={isSavingNotes}
+                              className="px-4 py-1.5 text-[10px] uppercase tracking-wider font-bold bg-gold/10 hover:bg-gold/20 text-gold rounded-lg border border-gold/20 flex items-center gap-1 transition-colors"
+                            >
+                              {isSavingNotes ? "Saving..." : "Save Notes"}
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="rounded-xl bg-navy-950/40 p-3 text-xs text-gold-100/80 border border-gold-300/5 min-h-[50px] whitespace-pre-wrap">
+                          {activeDoc.internalNotes ? (
+                            activeDoc.internalNotes
+                          ) : (
+                            <span className="italic text-gold-100/30">No internal notes added.</span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* ACTION PORTAL */}
+                    <div className="bg-navy-950/40 rounded-xl border border-gold-300/5 p-4 flex flex-col md:flex-row items-center justify-between gap-4">
                     <div className="text-xs text-gold-100/50">
                       <span className="font-bold text-gold-200 block mb-0.5">
                         Verification Guidelines
@@ -814,7 +955,25 @@ function DocumentReviewContent() {
                       with client care requests profile.
                     </div>
 
-                    <div className="flex flex-row items-center gap-3 w-full md:w-auto justify-end whitespace-nowrap">
+                    <div className="flex flex-row items-center gap-3 w-full md:w-auto justify-end whitespace-nowrap overflow-x-auto pb-1 md:pb-0">
+                      {/* Delete Button */}
+                      <button
+                        type="button"
+                        onClick={handleDeleteDoc}
+                        disabled={isDeleting || submittingAction !== null}
+                        className="px-4 py-2 text-xs font-bold text-rose-400 bg-navy-950 border border-rose-500/10 hover:border-rose-500/30 hover:bg-rose-500/10 rounded-xl transition duration-200 flex items-center justify-center gap-1.5 cursor-pointer h-10 flex-shrink-0"
+                        title="Delete Document"
+                      >
+                        {isDeleting ? (
+                          <ThinSpinner size="xs" spinnerClassName="border-rose-400 shrink-0" className="inline-flex flex-row space-y-0" />
+                        ) : (
+                          <>
+                            <Trash2 className="h-4 w-4 flex-shrink-0" />
+                            <span className="hidden sm:inline">Delete</span>
+                          </>
+                        )}
+                      </button>
+
                       {activeDoc.fileUrl && (
                         <a
                           href={fullFileUrl}
@@ -903,6 +1062,7 @@ function DocumentReviewContent() {
                   </div>
                 </div>
               </div>
+              </div>
             ) : (
               <div
                 className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-12 text-center text-gold-100/40 backdrop-blur-md flex flex-col justify-center items-center h-full min-h-[500px]"
@@ -931,14 +1091,9 @@ function DocumentReviewContent() {
           onClose={() => setIsUploadModalOpen(false)}
           carerId={carerId}
           carerName={carerName}
-          initialCategory={activeDoc?.fileCategory || activeDoc?.category}
-          initialType={
-            activeDoc?.fileType ||
-            activeDoc?.type ||
-            activeDoc?.fileName ||
-            activeDoc?.name
-          }
-          isLocked={true}
+          initialCategory={uploadModalContext ? uploadModalContext.category : undefined}
+          initialType={uploadModalContext ? uploadModalContext.type : undefined}
+          isLocked={!!uploadModalContext}
           onUploadSuccess={handleUploadSuccess}
         />
       </div>

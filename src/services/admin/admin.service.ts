@@ -374,6 +374,7 @@ export const adminService = {
     docId: string,
     status: string,
     rejectionReason?: string,
+    internalNotes?: string,
   ): Promise<any> {
     const token =
       typeof window !== "undefined"
@@ -384,9 +385,12 @@ export const adminService = {
       throw new Error("No token found");
     }
 
-    const body: { status: string; rejectionReason?: string } = { status };
+    const body: { status: string; rejectionReason?: string; internalNotes?: string } = { status };
     if (status === "REJECTED") {
       body.rejectionReason = rejectionReason || "";
+    }
+    if (internalNotes !== undefined) {
+      body.internalNotes = internalNotes;
     }
 
     return apiFetch(`/admin/carers/document/${docId}/status`, {
@@ -395,6 +399,43 @@ export const adminService = {
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(body),
+    });
+  },
+
+  async updateDocumentNotes(docId: string, internalNotes: string): Promise<any> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch(`/admin/carers/document/${docId}/notes`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ internalNotes }),
+    });
+  },
+
+  async deleteCarerDocument(docId: string): Promise<any> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch(`/admin/carers/document/${docId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
   },
 
@@ -441,6 +482,9 @@ export const adminService = {
 
     return apiFetch(`/admin/carers/${carerId}/documents`, {
       method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
       body: formData,
     });
   },

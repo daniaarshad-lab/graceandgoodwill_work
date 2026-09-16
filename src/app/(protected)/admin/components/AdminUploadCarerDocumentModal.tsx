@@ -301,6 +301,7 @@ export default function AdminUploadCarerDocumentModal({
   const [selectedType, setSelectedType] = useState<string>(initialResolved.typeValue);
   const [resolvedMeta, setResolvedMeta] = useState(initialResolved);
   const [customDocumentType, setCustomDocumentType] = useState<string>("");
+  const [internalNotes, setInternalNotes] = useState<string>("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -320,6 +321,7 @@ export default function AdminUploadCarerDocumentModal({
       setSelectedCategory(resolved.catId);
       setSelectedType(resolved.typeValue);
       setSelectedFile(null);
+      setInternalNotes("");
       setErrorMsg(null);
     }
   }, [isOpen, initialCategory, initialType]);
@@ -422,16 +424,61 @@ export default function AdminUploadCarerDocumentModal({
       // When locked, strictly use the resolved metadata
       const catToSend = isLocked ? resolvedMeta.catId : selectedCategory;
       const typeToSend = isLocked ? resolvedMeta.typeValue : selectedType;
+      
+      let finalCategory = catToSend;
+      if (finalCategory === "Insurance & Business") finalCategory = "INSURANCE";
+      else if (finalCategory === "Identity & Right to Work") finalCategory = "IDENTITY";
+      else if (finalCategory === "Mandatory Care Training") finalCategory = "MANDATORY_TRAINING";
+      else if (finalCategory === "Compliance & Background Checks") finalCategory = "COMPLIANCE";
+      else if (finalCategory === "Additional Training (Optional)") finalCategory = "ADDITIONAL_TRAINING";
 
-      formData.append("category", catToSend);
-      formData.append("type", typeToSend);
+      let finalType = typeToSend;
+      const typeMap: Record<string, string> = {
+        "Public Liability Insurance": "PUBLIC_LIABILITY_INSURANCE",
+        "Professional Indemnity Insurance": "PROFESSIONAL_INDEMNITY_INSURANCE",
+        "UTR Certificate": "UTR_CERTIFICATE",
+        "Self-Employment Registration": "SELF_EMPLOYMENT_REGISTRATION",
+        "Certificate of Incorporation": "LIMITED_COMPANY_CERTIFICATE",
+        "Business Insurance": "BUSINESS_INSURANCE",
+        "VAT Registration Certificate": "VAT_CERTIFICATE",
+        "Passport": "PASSPORT",
+        "Driving Licence": "DRIVING_LICENCE",
+        "Driving Licence (Front)": "DRIVING_LICENCE_FRONT",
+        "Driving Licence (Back)": "DRIVING_LICENCE_BACK",
+        "Proof of Address": "PROOF_OF_ADDRESS",
+        "Right to Work in the UK": "RIGHT_TO_WORK",
+        "Proof of National Insurance Number": "NATIONAL_INSURANCE_PROOF",
+        "Safeguarding Adults": "SAFEGUARDING_ADULTS",
+        "Moving and Handling": "MOVING_AND_HANDLING",
+        "Medication Administration": "MEDICATION_ADMINISTRATION",
+        "Basic Life Support / First Aid": "BASIC_LIFE_SUPPORT_FIRST_AID",
+        "Infection Prevention and Control": "INFECTION_PREVENTION_AND_CONTROL",
+        "Health and Safety": "HEALTH_AND_SAFETY",
+        "Fire Safety": "FIRE_SAFETY",
+        "Food Hygiene": "FOOD_HYGIENE",
+        "GDPR / Data Protection": "GDPR_DATA_PROTECTION",
+        "Enhanced DBS Certificate": "ENHANCED_DBS_CERTIFICATE",
+        "CV / Resume": "CV_RESUME",
+        "Professional Reference 1": "PROFESSIONAL_REFERENCE_1",
+        "Professional Reference 2": "PROFESSIONAL_REFERENCE_2",
+        "Additional Reference": "ADDITIONAL_REFERENCE"
+      };
+      if (typeMap[typeToSend]) finalType = typeMap[typeToSend];
+
+      formData.append("category", finalCategory);
+      formData.append("type", finalType);
 
       if (documentId) {
         formData.append("documentId", documentId);
+        formData.append("replaceExisting", "true");
       }
 
       if (customDocumentType.trim()) {
         formData.append("customDocumentType", customDocumentType.trim());
+      }
+
+      if (internalNotes.trim()) {
+        formData.append("internalNotes", internalNotes.trim());
       }
 
       // Explicitly set to PENDING per user requirement
@@ -463,6 +510,7 @@ export default function AdminUploadCarerDocumentModal({
     if (isSubmitting) return;
     setSelectedFile(null);
     setCustomDocumentType("");
+    setInternalNotes("");
     setErrorMsg(null);
     onClose();
   };
@@ -599,6 +647,21 @@ export default function AdminUploadCarerDocumentModal({
               />
             </div>
           )}
+
+          {/* Internal Notes */}
+          <div className="space-y-1.5">
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-gold-200/80">
+              Internal Admin Notes (Optional)
+            </label>
+            <textarea
+              value={internalNotes}
+              onChange={(e) => setInternalNotes(e.target.value)}
+              placeholder='e.g. "Verified with Home Office checking service on 16/09/2026."'
+              disabled={isSubmitting}
+              rows={2}
+              className="w-full rounded-xl border border-gold-300/20 bg-navy-950/80 px-3.5 py-2.5 text-xs text-gold-100 placeholder-gold-100/30 focus:border-gold focus:outline-none transition resize-none"
+            />
+          </div>
 
           {/* File Upload Dropzone */}
           <div className="space-y-1.5">

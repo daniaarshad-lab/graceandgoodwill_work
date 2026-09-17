@@ -46,17 +46,18 @@ const navColumns = [
   {
     heading: "Services",
     links: [
-      { label: "Live-in Care", href: "/live-in-care" },
-      { label: "Dementia Care", href: "/dementia-live-in-care" },
-      { label: "Parkinson's Care", href: "/parkinsons-live-in-care" },
-      { label: "Alzheimer's Care", href: "/alzheimers-live-in-care" },
-      { label: "Stroke Care", href: "/live-in-care-after-stroke" },
-      { label: "Respite Care", href: "/respite-live-in-care" },
-      { label: "Emergency Care", href: "/emergency-care" },
-      { label: "Hospital Discharge", href: "/hospital-discharge-live-in-care" },
-      { label: "Complex Needs", href: "/complex-needs-live-in-care" },
-      { label: "Palliative Care", href: "/long-term-live-in-care" },
-      { label: "Companionship", href: "/live-in-companionship-care" },
+      { label: "Learn More About Long-Term Live-in Care", href: "/long-term-live-in-care" },
+      { label: "Urgent Live-in Care", href: "/urgent-live-in-care" },
+      { label: "Hospital Discharge Support", href: "/hospital-discharge-live-in-care" },
+      { label: "Live-in Care After Stroke", href: "/live-in-care-after-stroke" },
+      { label: "Recovery Support at Home", href: "/convalescent-care-at-home" },
+      { label: "Dementia Live-in Care", href: "/dementia-live-in-care" },
+      { label: "Respite Live-in Care", href: "/respite-live-in-care" },
+      { label: "Brain Injury Support", href: "/brain-injury-live-in-care" },
+      { label: "Spinal Injury Support", href: "/spinal-injury-live-in-care" },
+      { label: "Multiple Sclerosis Support", href: "/multiple-sclerosis-live-in-care" },
+      { label: "Young Adult Live-in Support", href: "/young-adult-live-in-care" },
+      { label: "Companionship Care", href: "/live-in-companionship" },
     ],
   },
   {
@@ -70,15 +71,6 @@ const navColumns = [
       { label: "FAQ", href: "/faq" },
       { label: "Contact Us", href: "/contact" },
       { label: "Join as a Carer", href: "/join-as-carer" },
-      { label: "Funding Live-in Care", href: "/funding-live-in-care" },
-    ],
-  },
-  {
-    heading: "Legal",
-    links: [
-      { label: "Privacy Policy", href: "/privacy" },
-      { label: "Website Terms", href: "/terms" },
-      { label: "Agency Introduction Terms", href: "/agency-introduction-terms" },
     ],
   },
 ];
@@ -150,7 +142,7 @@ function SiteFooter() {
 
       {/* ── Navigation Links ─────────────────────────────────────────── */}
       <div className="container-wrapper pb-8">
-        <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-4 xl:gap-12">
+        <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 xl:gap-12">
           {/* Address + Contact Column */}
           <div className="col-span-2 sm:col-span-1">
             <h4 className="text-[11px] font-semibold uppercase tracking-[0.12em] text-gold-400/70 mb-4">
@@ -167,7 +159,7 @@ function SiteFooter() {
             <div className="flex flex-col items-start gap-2 mt-1">
               <a
                 href="tel:02045240108"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#b59469] text-navy-950 font-semibold text-xs hover:bg-[#a07f58] hover:-translate-y-[1px] transition-all duration-300 shadow-sm"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#b59469] text-navy-950 font-semibold text-xs hover:bg-[#a07f58] hover:text-white hover:-translate-y-[1px] transition-all duration-300 shadow-sm"
               >
                 <Phone className="w-3.5 h-3.5 fill-current shrink-0" />
                 020 4524 0108

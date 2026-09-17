@@ -20,6 +20,7 @@ export interface AdminUploadCarerDocumentModalProps {
   documentId?: string;
   initialCategory?: string;
   initialType?: string;
+  initialNotes?: string;
   isLocked?: boolean;
   onUploadSuccess: (newDocument: any) => void;
 }
@@ -291,6 +292,7 @@ export default function AdminUploadCarerDocumentModal({
   documentId,
   initialCategory,
   initialType,
+  initialNotes,
   isLocked = true,
   onUploadSuccess,
 }: AdminUploadCarerDocumentModalProps) {
@@ -321,10 +323,10 @@ export default function AdminUploadCarerDocumentModal({
       setSelectedCategory(resolved.catId);
       setSelectedType(resolved.typeValue);
       setSelectedFile(null);
-      setInternalNotes("");
+      setInternalNotes(initialNotes || "");
       setErrorMsg(null);
     }
-  }, [isOpen, initialCategory, initialType]);
+  }, [isOpen, initialCategory, initialType, initialNotes]);
 
   // Lock body scroll and handle Escape key to prevent background moving
   useEffect(() => {
@@ -424,7 +426,7 @@ export default function AdminUploadCarerDocumentModal({
       // When locked, strictly use the resolved metadata
       const catToSend = isLocked ? resolvedMeta.catId : selectedCategory;
       const typeToSend = isLocked ? resolvedMeta.typeValue : selectedType;
-      
+
       let finalCategory = catToSend;
       if (finalCategory === "Insurance & Business") finalCategory = "INSURANCE";
       else if (finalCategory === "Identity & Right to Work") finalCategory = "IDENTITY";
@@ -633,20 +635,20 @@ export default function AdminUploadCarerDocumentModal({
           {!isLocked && (selectedType === "Other" ||
             selectedType === "Any Other Relevant Certificates" ||
             selectedType === "Additional Training") && (
-            <div className="space-y-1.5">
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-gold-200/80">
-                Custom Document Title / Certificate Name
-              </label>
-              <input
-                type="text"
-                value={customDocumentType}
-                onChange={(e) => setCustomDocumentType(e.target.value)}
-                placeholder="e.g. Specialized Dementia Care Certificate"
-                disabled={isSubmitting}
-                className="w-full rounded-xl border border-gold-300/20 bg-navy-950/80 px-3.5 py-2.5 text-xs text-gold-100 placeholder-gold-100/30 focus:border-gold focus:outline-none transition"
-              />
-            </div>
-          )}
+              <div className="space-y-1.5">
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-gold-200/80">
+                  Custom Document Title / Certificate Name
+                </label>
+                <input
+                  type="text"
+                  value={customDocumentType}
+                  onChange={(e) => setCustomDocumentType(e.target.value)}
+                  placeholder="e.g. Specialized Dementia Care Certificate"
+                  disabled={isSubmitting}
+                  className="w-full rounded-xl border border-gold-300/20 bg-navy-950/80 px-3.5 py-2.5 text-xs text-gold-100 placeholder-gold-100/30 focus:border-gold focus:outline-none transition"
+                />
+              </div>
+            )}
 
           {/* Internal Notes */}
           <div className="space-y-1.5">
@@ -657,9 +659,9 @@ export default function AdminUploadCarerDocumentModal({
               value={internalNotes}
               onChange={(e) => setInternalNotes(e.target.value)}
               placeholder='e.g. "Verified with Home Office checking service on 16/09/2026."'
-              disabled={isSubmitting}
+              disabled={isSubmitting || isLocked}
               rows={2}
-              className="w-full rounded-xl border border-gold-300/20 bg-navy-950/80 px-3.5 py-2.5 text-xs text-gold-100 placeholder-gold-100/30 focus:border-gold focus:outline-none transition resize-none"
+              className={`w-full rounded-xl border border-gold-300/20 bg-navy-950/80 px-3.5 py-2.5 text-xs text-gold-100 placeholder-gold-100/30 transition resize-none ${isLocked ? 'opacity-60 cursor-not-allowed' : 'focus:border-gold focus:outline-none'}`}
             />
           </div>
 
@@ -685,11 +687,10 @@ export default function AdminUploadCarerDocumentModal({
                 onDragLeave={() => setIsDragging(false)}
                 onDrop={handleFileDrop}
                 onClick={() => fileInputRef.current?.click()}
-                className={`flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-xl cursor-pointer transition duration-200 ${
-                  isDragging
+                className={`flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-xl cursor-pointer transition duration-200 ${isDragging
                     ? "border-gold bg-gold/10"
                     : "border-gold-300/20 bg-navy-950/40 hover:border-gold-300/40 hover:bg-navy-950/60"
-                }`}
+                  }`}
               >
                 <Upload className="w-8 h-8 text-gold/60 mb-2" />
                 <p className="text-xs font-semibold text-gold-200">

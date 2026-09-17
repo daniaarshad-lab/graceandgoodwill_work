@@ -29,6 +29,7 @@ import {
   Download,
   Upload,
   Trash2,
+  Edit,
 } from "lucide-react";
 
 import { getDocumentFileLabel } from "@/types/document.types";
@@ -127,12 +128,13 @@ function DocumentReviewContent() {
   const [notes, setNotes] = useState<Record<string, string>>({});
   const [validationError, setValidationError] = useState<string | null>(null);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
-  const [uploadModalContext, setUploadModalContext] = useState<{ category?: string, type?: string } | null>(null);
+  const [uploadModalContext, setUploadModalContext] = useState<{ category?: string, type?: string, documentId?: string, initialNotes?: string } | null>(null);
 
   const [editingNotes, setEditingNotes] = useState(false);
   const [tempNotes, setTempNotes] = useState("");
   const [isSavingNotes, setIsSavingNotes] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
     if (carerId) {
@@ -317,12 +319,12 @@ function DocumentReviewContent() {
 
   const handleDeleteDoc = async () => {
     if (!activeDoc) return;
-    if (!confirm("Are you sure you want to delete this document? This action cannot be undone.")) return;
     setIsDeleting(true);
     try {
       await dispatch(deleteDocumentThunk({ docId: activeDoc.id })).unwrap();
       showSuccessToast("Document Deleted", "The document has been removed.");
       setActiveDocId(null);
+      setShowDeleteConfirm(false);
       dispatch(fetchCarerDetails(carerId));
     } catch (err: any) {
       showErrorToast("Error", err || "Failed to delete document");
@@ -486,17 +488,7 @@ function DocumentReviewContent() {
                 <h3 className="text-xs font-bold uppercase tracking-wider text-gold-200/50">
                   Document Vault ({rawDocs.length})
                 </h3>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setUploadModalContext(null);
-                    setIsUploadModalOpen(true);
-                  }}
-                  className="px-2.5 py-1 rounded-lg text-[10px] font-bold text-gold bg-gold/10 hover:bg-gold/20 border border-gold/30 flex items-center gap-1 transition cursor-pointer"
-                  title="Upload Document for Carer"
-                >
-                  <Upload className="h-3 w-3" /> + Upload
-                </button>
+
               </div>
 
               {rawDocs.length === 0 ? (
@@ -634,14 +626,31 @@ function DocumentReviewContent() {
                     </div>
 
                     <div className="flex items-center gap-4 flex-shrink-0">
-                      <button
-                        type="button"
-                        onClick={() => setIsUploadModalOpen(true)}
-                        className="px-3.5 py-2 rounded-xl text-xs font-bold text-navy-950 bg-gradient-to-r from-[#F5D4A0] via-[#D4AF37] to-[#C99232] hover:brightness-110 shadow-md shadow-gold/20 flex items-center gap-2 transition duration-200 cursor-pointer shrink-0"
-                      >
-                        <Upload className="h-3.5 w-3.5" /> Upload Document
-                      </button>
-
+                      <div className="flex items-center gap-2.5 mr-3">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setUploadModalContext({
+                              category: activeDoc.fileCategory || activeDoc.category,
+                              type: activeDoc.fileType || activeDoc.type || activeDoc.fileName || activeDoc.name,
+                              documentId: activeDoc.id,
+                              initialNotes: activeDoc.internalNotes
+                            });
+                            setIsUploadModalOpen(true);
+                          }}
+                          className="px-3 py-1.5 rounded-lg text-xs font-bold text-gold bg-gold/10 hover:bg-gold/20 border border-gold/30 shadow-sm transition-all flex items-center gap-1.5 cursor-pointer"
+                        >
+                          <Edit className="w-3.5 h-3.5" /> Edit
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setShowDeleteConfirm(true)}
+                          disabled={isDeleting}
+                          className="px-3 py-1.5 rounded-lg text-xs font-bold text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 shadow-sm transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" /> Delete
+                        </button>
+                      </div>
                       <div className="text-left sm:text-right space-y-1 text-xs flex-shrink-0">
                         <p className="text-gold-100/40 font-semibold uppercase tracking-wider text-[10px]">
                           Upload Date
@@ -1091,11 +1100,68 @@ function DocumentReviewContent() {
           onClose={() => setIsUploadModalOpen(false)}
           carerId={carerId}
           carerName={carerName}
+          documentId={uploadModalContext?.documentId}
           initialCategory={uploadModalContext ? uploadModalContext.category : undefined}
           initialType={uploadModalContext ? uploadModalContext.type : undefined}
+          initialNotes={uploadModalContext ? uploadModalContext.initialNotes : undefined}
           isLocked={!!uploadModalContext}
           onUploadSuccess={handleUploadSuccess}
         />
+
+        {showDeleteConfirm && (
+          <div
+            className="fixed inset-0 top-0 left-0 right-0 bottom-0 z-[9999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
+            onClick={() => {
+              if (!isDeleting) setShowDeleteConfirm(false);
+            }}
+          >
+            <div
+              className="relative w-full max-w-md rounded-2xl border border-rose-500/20 bg-gradient-to-b from-navy-900 to-[#0a0f1d] p-6 text-gold-100 shadow-2xl space-y-6"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-start gap-4">
+                <div className="p-3 rounded-full bg-rose-500/10 text-rose-400 shrink-0">
+                  <AlertTriangle className="w-6 h-6" />
+                </div>
+                <div className="space-y-2 pt-1">
+                  <h3 className="text-lg font-bold text-rose-100">Delete Document?</h3>
+                  <p className="text-xs text-rose-100/60 leading-relaxed">
+                    Are you sure you want to delete this document? This action cannot be undone and the document will be permanently removed from the carer's compliance record.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-rose-500/10">
+                <button
+                  type="button"
+                  onClick={() => setShowDeleteConfirm(false)}
+                  disabled={isDeleting}
+                  className="px-4 py-2 text-xs font-semibold text-rose-100/60 hover:text-rose-200 transition-colors disabled:opacity-50 cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDeleteDoc}
+                  disabled={isDeleting}
+                  className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-rose-600 hover:bg-rose-500 shadow-lg shadow-rose-900/20 flex items-center gap-2 transition duration-200 disabled:opacity-50 cursor-pointer"
+                >
+                  {isDeleting ? (
+                    <>
+                      <ThinSpinner size="xs" spinnerClassName="border-white" className="inline-flex flex-row space-y-0" />
+                      Deleting...
+                    </>
+                  ) : (
+                    <>
+                      <Trash2 className="w-4 h-4" />
+                      Delete Document
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </main>
   );

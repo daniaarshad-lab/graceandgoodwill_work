@@ -32,22 +32,22 @@ export default function ThinSpinner({
   textClassName = "",
 }: ThinSpinnerProps) {
   const spinnerElement = (
-    <div
-      className={`animate-spin rounded-full border-gold-DEFAULT ${sizeClasses[size]} ${spinnerClassName}`}
+    <span
+      className={`animate-spin rounded-full border-gold-DEFAULT inline-block ${sizeClasses[size]} ${spinnerClassName}`}
     />
   );
 
   const content = (
-    <div className={`flex flex-col items-center space-y-4 ${className}`}>
+    <span className={`flex flex-col items-center space-y-4 ${className}`}>
       {spinnerElement}
       {text && (
-        <p
-          className={`text-sm tracking-wider text-gold-200 ${textClassName}`}
+        <span
+          className={`text-sm tracking-wider text-gold-200 block ${textClassName}`}
         >
           {text}
-        </p>
+        </span>
       )}
-    </div>
+    </span>
   );
 
   if (fullScreen) {

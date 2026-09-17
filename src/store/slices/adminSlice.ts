@@ -181,6 +181,7 @@ export const verifyDocument = createAsyncThunk<
     const response = await adminService.updateDocumentStatus(
       docId,
       "VERIFIED",
+      undefined,
       notes,
     );
     return { docId, status: "VERIFIED", data: response };
@@ -205,6 +206,38 @@ export const rejectDocument = createAsyncThunk<
       return { docId, status: "REJECTED", data: response };
     } catch (error: any) {
       return rejectWithValue(error?.message || "Failed to reject document");
+    }
+  },
+);
+
+export const updateDocumentNotesThunk = createAsyncThunk<
+  { docId: string; internalNotes: string; data?: any },
+  { docId: string; internalNotes: string },
+  { rejectValue: string }
+>(
+  "admin/updateDocumentNotes",
+  async ({ docId, internalNotes }, { rejectWithValue }) => {
+    try {
+      const response = await adminService.updateDocumentNotes(docId, internalNotes);
+      return { docId, internalNotes, data: response };
+    } catch (error: any) {
+      return rejectWithValue(error?.message || "Failed to update document notes");
+    }
+  },
+);
+
+export const deleteDocumentThunk = createAsyncThunk<
+  { docId: string; data?: any },
+  { docId: string },
+  { rejectValue: string }
+>(
+  "admin/deleteDocument",
+  async ({ docId }, { rejectWithValue }) => {
+    try {
+      const response = await adminService.deleteCarerDocument(docId);
+      return { docId, data: response };
+    } catch (error: any) {
+      return rejectWithValue(error?.message || "Failed to delete document");
     }
   },
 );

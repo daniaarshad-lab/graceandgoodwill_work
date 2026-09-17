@@ -675,7 +675,7 @@ function DocumentReviewContent() {
                   </div>
 
                   {/* DOCUMENT DETAILED INFORMATION */}
-                  <div className="grid grid-cols-2 md:grid-cols-5 gap-4 p-4 rounded-xl bg-navy-950/40 border border-gold-300/5 text-xs flex-shrink-0">
+                  <div className="grid grid-cols-2 md:grid-cols-6 gap-4 p-4 rounded-xl bg-navy-950/40 border border-gold-300/5 text-xs flex-shrink-0">
                     <div>
                       <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1">
                         Document Type
@@ -695,6 +695,23 @@ function DocumentReviewContent() {
                       <span className="text-gold-200 font-bold">
                         {activeDoc.approvedAt
                           ? new Date(activeDoc.approvedAt).toLocaleDateString(
+                              "en-GB",
+                              {
+                                day: "2-digit",
+                                month: "long",
+                                year: "numeric",
+                              },
+                            )
+                          : "N/A"}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1">
+                        Rejected At
+                      </span>
+                      <span className="text-gold-200 font-bold">
+                        {activeDoc.rejectedAt
+                          ? new Date(activeDoc.rejectedAt).toLocaleDateString(
                               "en-GB",
                               {
                                 day: "2-digit",

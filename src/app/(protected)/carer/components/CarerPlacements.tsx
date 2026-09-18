@@ -18,6 +18,8 @@ import {
   Clock,
   Sparkles,
   Check,
+  Lock,
+  ShieldCheck,
 } from "lucide-react";
 import Button from "@/components/Button";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
@@ -315,9 +317,20 @@ function PlacementDetailModal({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4 p-5 rounded-xl border border-gold-300/10 bg-navy-950/40">
-              <h3 className="text-lg font-bold text-gold-200 flex items-center gap-2">
-                <User className="h-4 w-4 text-gold-200" /> Client Profile
-              </h3>
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-bold text-gold-200 flex items-center gap-2">
+                  <User className="h-4 w-4 text-gold-200" /> Client Profile
+                </h3>
+                {placement.contactDetailsReleased ? (
+                  <span className="flex items-center gap-1 text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full">
+                    <ShieldCheck className="w-3 h-3" /> Details Released
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-1 text-[10px] font-semibold text-amber-400/90 bg-amber-500/10 border border-amber-500/20 px-2.5 py-0.5 rounded-full">
+                    <Lock className="w-3 h-3" /> Details Locked
+                  </span>
+                )}
+              </div>
               <div className="space-y-3 text-sm">
                 <div>
                   <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1 text-[10px]">
@@ -332,10 +345,47 @@ function PlacementDetailModal({
                   <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1 text-[10px]">
                     Contact
                   </span>
-                  <span className="text-gold-100">
-                    {placement.clientProfile?.user?.email} <br />{" "}
-                    {placement.clientProfile?.user?.phoneNumber}
-                  </span>
+                  {placement.contactDetailsReleased && placement.clientProfile?.user?.email ? (
+                    <span className="text-gold-100">
+                      <a
+                        href={`mailto:${placement.clientProfile.user.email}`}
+                        className="hover:underline text-gold-200 font-medium"
+                      >
+                        {placement.clientProfile.user.email}
+                      </a>
+                      {placement.clientProfile.user.phoneNumber && (
+                        <>
+                          <br />
+                          <a
+                            href={`tel:${placement.clientProfile.user.phoneNumber}`}
+                            className="hover:underline text-gold-100"
+                          >
+                            {placement.clientProfile.user.phoneNumber}
+                          </a>
+                        </>
+                      )}
+                    </span>
+                  ) : (
+                    <div className="p-3 rounded-lg bg-gold-300/5 border border-gold-300/10 text-xs space-y-1">
+                      <div className="flex items-center gap-1.5 text-amber-400/90 font-semibold">
+                        <Lock className="w-3.5 h-3.5 shrink-0" />
+                        <span>
+                          {isRejected
+                            ? "Contact details unavailable"
+                            : isPendingOffer
+                              ? "Hidden during offer review"
+                              : "Automatic 48h Release"}
+                        </span>
+                      </div>
+                      <p className="text-gold-100/60 text-[11px] leading-relaxed">
+                        {isRejected
+                          ? "Direct client phone and email are not disclosed for declined placements."
+                          : isPendingOffer
+                            ? "Client direct phone and email will unlock 48 hours before placement commences once accepted."
+                            : "Direct phone number and email will be automatically released 48 hours before placement starts."}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -359,12 +409,27 @@ function PlacementDetailModal({
                   <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1 text-[10px]">
                     Location
                   </span>
-                  <span className="text-gold-100">
-                    {placement.careRequest?.address}
-                    <br />
-                    {placement.careRequest?.city}{" "}
-                    {placement.careRequest?.postcode}
-                  </span>
+                  {placement.contactDetailsReleased && placement.careRequest?.address ? (
+                    <span className="text-gold-100">
+                      {placement.careRequest.address}
+                      <br />
+                      {placement.careRequest.city} {placement.careRequest.postcode}
+                    </span>
+                  ) : (
+                    <div className="space-y-1">
+                      <span className="text-gold-100 font-medium block">
+                        {[placement.careRequest?.city, placement.careRequest?.postcode]
+                          .filter(Boolean)
+                          .join(", ") || placement.careRequest?.city || "Location provided upon placement"}
+                      </span>
+                      {!placement.contactDetailsReleased && (
+                        <span className="text-gold-100/50 flex items-center gap-1.5 text-[11px] italic">
+                          <Lock className="w-3 h-3 text-amber-400/80 shrink-0" />
+                          Exact street address unlocked 48h prior to commencement
+                        </span>
+                      )}
+                    </div>
+                  )}
                 </div>
                 <div>
                   <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1 text-[10px]">

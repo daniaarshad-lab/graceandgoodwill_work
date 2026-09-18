@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import {
   ShieldCheck,
@@ -23,6 +23,179 @@ import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import ThinSpinner from "@/components/ThinSpinner";
 import WhatsAppIcon from "@/components/WhatsAppIcon";
 
+interface ParsedRange {
+  startDate: string;
+  endDate: string;
+  formatted: string;
+  totalDays: number;
+}
+
+const MONTH_NAMES = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+function formatIsoDate(dateStr: string): string {
+  if (!dateStr) return "";
+  const match = dateStr.trim().match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!match) return dateStr;
+  const y = parseInt(match[1], 10);
+  const m = parseInt(match[2], 10);
+  const d = parseInt(match[3], 10);
+  const month = MONTH_NAMES[m - 1] || "";
+  return `${d} ${month} ${y}`;
+}
+
+function normalizeAvailabilityRanges(profile: PublicCarerProfile | null): ParsedRange[] {
+  if (!profile) return [];
+
+  const raw = profile.availabilityRanges || profile.availability;
+  if (!raw) return [];
+
+  let list: any[] = raw;
+  if (typeof list === "string") {
+    try {
+      list = JSON.parse(list);
+    } catch {
+      return [];
+    }
+  }
+
+  if (!Array.isArray(list) || list.length === 0) return [];
+
+  // Case A: Array of range objects with startDate / start / from
+  if (
+    typeof list[0] === "object" &&
+    list[0] !== null &&
+    ("startDate" in list[0] || "start" in list[0] || "from" in list[0])
+  ) {
+    return list.map((item) => {
+      const start = item.startDate || item.start || item.from || "";
+      const end = item.endDate || item.end || item.to || start;
+      const formatted =
+        item.formatted ||
+        (start === end
+          ? formatIsoDate(start)
+          : `${formatIsoDate(start)} – ${formatIsoDate(end)}`);
+
+      let totalDays = item.totalDays;
+      if (!totalDays && start && end) {
+        const sMatch = String(start).match(/^(\d{4})-(\d{2})-(\d{2})/);
+        const eMatch = String(end).match(/^(\d{4})-(\d{2})-(\d{2})/);
+        if (sMatch && eMatch) {
+          const sTime = Date.UTC(
+            parseInt(sMatch[1], 10),
+            parseInt(sMatch[2], 10) - 1,
+            parseInt(sMatch[3], 10),
+          );
+          const eTime = Date.UTC(
+            parseInt(eMatch[1], 10),
+            parseInt(eMatch[2], 10) - 1,
+            parseInt(eMatch[3], 10),
+          );
+          totalDays = Math.max(
+            1,
+            Math.round((eTime - sTime) / (1000 * 60 * 60 * 24)) + 1,
+          );
+        }
+      }
+
+      return {
+        startDate: start,
+        endDate: end,
+        formatted,
+        totalDays: totalDays || 1,
+      };
+    });
+  }
+
+  // Case B: Array of date strings e.g. ["2026-06-01", "2026-06-02", ...]
+  if (typeof list[0] === "string") {
+    const dates: string[] = [];
+    for (const item of list) {
+      if (typeof item === "string") {
+        const m = item.trim().match(/^\d{4}-\d{2}-\d{2}/);
+        if (m) dates.push(m[0]);
+      }
+    }
+    const uniqueSorted = Array.from(new Set(dates)).sort();
+    if (uniqueSorted.length === 0) return [];
+
+    const getNextDayIso = (isoDate: string): string => {
+      const [y, m, d] = isoDate.split("-").map(Number);
+      const dt = new Date(Date.UTC(y, m - 1, d + 1));
+      const ny = dt.getUTCFullYear();
+      const nm = String(dt.getUTCMonth() + 1).padStart(2, "0");
+      const nd = String(dt.getUTCDate()).padStart(2, "0");
+      return `${ny}-${nm}-${nd}`;
+    };
+
+    const ranges: ParsedRange[] = [];
+    let currentStart = uniqueSorted[0];
+    let currentEnd = uniqueSorted[0];
+
+    for (let i = 1; i < uniqueSorted.length; i++) {
+      if (uniqueSorted[i] === getNextDayIso(currentEnd)) {
+        currentEnd = uniqueSorted[i];
+      } else {
+        const formatted =
+          currentStart === currentEnd
+            ? formatIsoDate(currentStart)
+            : `${formatIsoDate(currentStart)} – ${formatIsoDate(currentEnd)}`;
+        const [sy, sm, sd] = currentStart.split("-").map(Number);
+        const [ey, em, ed] = currentEnd.split("-").map(Number);
+        const days = Math.max(
+          1,
+          Math.round(
+            (Date.UTC(ey, em - 1, ed) - Date.UTC(sy, sm - 1, sd)) /
+              (1000 * 60 * 60 * 24),
+          ) + 1,
+        );
+        ranges.push({
+          startDate: currentStart,
+          endDate: currentEnd,
+          formatted,
+          totalDays: days,
+        });
+        currentStart = uniqueSorted[i];
+        currentEnd = uniqueSorted[i];
+      }
+    }
+    const formatted =
+      currentStart === currentEnd
+        ? formatIsoDate(currentStart)
+        : `${formatIsoDate(currentStart)} – ${formatIsoDate(currentEnd)}`;
+    const [sy, sm, sd] = currentStart.split("-").map(Number);
+    const [ey, em, ed] = currentEnd.split("-").map(Number);
+    const days = Math.max(
+      1,
+      Math.round(
+        (Date.UTC(ey, em - 1, ed) - Date.UTC(sy, sm - 1, sd)) /
+          (1000 * 60 * 60 * 24),
+      ) + 1,
+    );
+    ranges.push({
+      startDate: currentStart,
+      endDate: currentEnd,
+      formatted,
+      totalDays: days,
+    });
+    return ranges;
+  }
+
+  return [];
+}
+
 interface PublicProfileClientProps {
   token: string;
 }
@@ -33,6 +206,11 @@ export default function PublicProfileClient({ token }: PublicProfileClientProps)
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [videoError, setVideoError] = useState(false);
+
+  // Normalize placement availability date ranges
+  const availabilityRanges = useMemo(() => {
+    return normalizeAvailabilityRanges(profile);
+  }, [profile]);
 
   // Request introduction form state
   const [clientName, setClientName] = useState("");
@@ -342,8 +520,8 @@ export default function PublicProfileClient({ token }: PublicProfileClientProps)
           </section>
         )}
 
-        {/* Weekly Availability */}
-        {profile.availability && profile.availability.length > 0 && (
+        {/* Carer Placement Availability */}
+        {profile && (
           <section className="bg-navy-900/40 border border-gold-300/10 rounded-3xl p-6 sm:p-8 backdrop-blur-md shadow-elegant space-y-5">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-gold-DEFAULT/10 border border-gold-DEFAULT/20 flex items-center justify-center text-gold-DEFAULT">
@@ -351,55 +529,70 @@ export default function PublicProfileClient({ token }: PublicProfileClientProps)
               </div>
               <div>
                 <h2 className="text-lg sm:text-xl font-bold text-gold-50 font-serif">
-                  Typical Weekly Availability
+                  Carer Availability
                 </h2>
                 <p className="text-xs text-gold-100/60">
-                  Current schedule preferences. Exact placement dates confirmed during consultation.
+                  Confirmed placement availability dates for live-in care
                 </p>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-3 pt-2">
-              {profile.availability.map((day, idx) => (
-                <div
-                  key={idx}
-                  className={`rounded-2xl p-3 text-center border transition ${
-                    day.enabled
-                      ? "bg-navy-800/60 border-gold-300/25 text-gold-50 shadow-sm"
-                      : "bg-navy-950/40 border-gold-300/5 text-gold-100/30 opacity-60"
-                  }`}
-                >
-                  <p className="text-xs font-bold uppercase tracking-wider mb-2">
-                    {day.dayName.slice(0, 3)}
-                  </p>
+            {availabilityRanges.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-1">
+                {availabilityRanges.map((range, idx) => (
                   <div
-                    className={`w-7 h-7 mx-auto rounded-full flex items-center justify-center text-xs font-bold mb-2 ${
-                      day.enabled
-                        ? "bg-emerald-500/20 border border-emerald-500/30 text-emerald-400"
-                        : "bg-navy-900 border border-navy-800 text-gold-100/20"
-                    }`}
+                    key={idx}
+                    className="rounded-xl p-3 sm:p-3.5 bg-navy-800/60 border border-gold-300/15 hover:border-gold-300/35 transition shadow-sm space-y-2"
                   >
-                    {day.enabled ? "✓" : "–"}
-                  </div>
-                  {day.enabled && day.slots && day.slots.length > 0 ? (
-                    <div className="flex flex-col gap-1">
-                      {day.slots.map((slot, sIdx) => (
-                        <span
-                          key={sIdx}
-                          className="text-[10px] font-semibold px-1.5 py-0.5 rounded capitalize bg-gold-DEFAULT/10 text-gold-200 border border-gold-DEFAULT/20 truncate"
-                        >
-                          {slot.shiftType}
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/15 border border-emerald-500/30 text-emerald-300">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                        Available
+                      </span>
+                      {range.totalDays && range.totalDays > 0 ? (
+                        <span className="text-[10px] font-medium text-gold-200/80 bg-gold-DEFAULT/10 border border-gold-DEFAULT/15 px-2 py-0.5 rounded-full">
+                          {range.totalDays} {range.totalDays === 1 ? "day" : "days"}
                         </span>
-                      ))}
+                      ) : null}
                     </div>
-                  ) : (
-                    <span className="text-[10px] text-gold-100/40">
-                      {day.enabled ? "Available" : "Off"}
-                    </span>
-                  )}
-                </div>
-              ))}
-            </div>
+
+                    {/* From and To Date Display */}
+                    <div className="bg-navy-950/60 rounded-lg px-3 py-2 border border-gold-300/10 flex items-center justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <span className="block text-[9px] uppercase font-bold text-gold-300/60 tracking-wider">
+                          From
+                        </span>
+                        <span className="text-xs sm:text-[13px] font-bold text-gold-50 truncate block leading-tight">
+                          {formatIsoDate(range.startDate)}
+                        </span>
+                      </div>
+
+                      <div className="shrink-0 text-gold-DEFAULT/60 px-1 flex items-center justify-center">
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </div>
+
+                      <div className="flex-1 min-w-0 text-right">
+                        <span className="block text-[9px] uppercase font-bold text-gold-300/60 tracking-wider">
+                          To
+                        </span>
+                        <span className="text-xs sm:text-[13px] font-bold text-gold-50 truncate block leading-tight">
+                          {formatIsoDate(range.endDate)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="rounded-2xl p-5 bg-navy-950/40 border border-gold-300/10 text-center space-y-2">
+                <p className="text-sm text-gold-100/80 font-medium">
+                  No specific placement dates currently listed.
+                </p>
+                <p className="text-xs text-gold-100/60">
+                  Please contact Grace &amp; Goodwill directly to enquire about upcoming availability for {profile.displayName}.
+                </p>
+              </div>
+            )}
           </section>
         )}
 

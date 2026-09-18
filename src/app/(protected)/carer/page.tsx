@@ -373,8 +373,13 @@ function CarerDashboardContent() {
 
   // Optional: We no longer sync `onboardingStep` to localStorage since it's saved to the DB on Continue clicks.
 
+  const isApproved =
+    portal.applicationStatus === "approved" ||
+    user?.status === "APPROVED" ||
+    profileUser?.status === "APPROVED";
+
   const showOnboarding =
-    isClient && !onboardingDone && portal.applicationStatus !== "approved";
+    isClient && !onboardingDone && !isApproved;
 
   const validateAllCompulsoryFields = () => {
     const missing = [];

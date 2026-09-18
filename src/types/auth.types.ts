@@ -1,10 +1,11 @@
-﻿export interface User {
+export interface User {
   id: string;
   email: string;
   firstName: string;
   lastName: string;
   phone: string;
   role?: string;
+  status?: string;
 }
 
 export interface RegisterPayload {

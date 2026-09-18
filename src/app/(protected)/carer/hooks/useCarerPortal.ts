@@ -186,9 +186,13 @@ export function useCarerPortal({
   );
   const [isProfileSaving, setIsProfileSaving] = useState(false);
 
-  // Application status dynamically derived from profile user status
+  // Application status dynamically derived from profile user status or auth user status
   const applicationStatus: "pending" | "approved" | "rejected" =
-    profile?.user?.status === "APPROVED" ? "approved" : "pending";
+    (profile?.user?.status ||
+      (profile as any)?.carerProfile?.user?.status ||
+      user?.status) === "APPROVED"
+      ? "approved"
+      : "pending";
   const [membershipActive] = useState(true);
   const [membershipExpiry] = useState("");
 

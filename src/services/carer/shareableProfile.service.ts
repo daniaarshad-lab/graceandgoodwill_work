@@ -1,4 +1,4 @@
-﻿import { apiFetch } from "@/lib/api";
+import { apiFetch } from "@/lib/api";
 
 export interface ShareTokenStatus {
   hasActiveToken: boolean;
@@ -6,6 +6,13 @@ export interface ShareTokenStatus {
   generatedAt?: string;
   expiresAt?: string;
   expiresInSeconds?: number;
+}
+
+export interface AvailabilityRange {
+  startDate: string;
+  endDate: string;
+  formatted?: string;
+  totalDays?: number;
 }
 
 export interface PublicCarerProfile {
@@ -16,7 +23,8 @@ export interface PublicCarerProfile {
   experienceYears?: number;
   careSpecialties?: string[];
   languages?: string[];
-  availability?: AvailabilityDay[];
+  availability?: AvailabilityRange[] | any[];
+  availabilityRanges?: AvailabilityRange[];
   isComplianceChecked: boolean;
   brandName: string;
 }

@@ -544,7 +544,11 @@ const carerSlice = createSlice({
         updateCarerAvailability.fulfilled,
         (state, action: PayloadAction<CarerProfile>) => {
           state.loading = false;
-          state.profile = action.payload;
+          state.profile = {
+            ...state.profile,
+            ...action.payload,
+            user: action.payload?.user || (state.profile as any)?.user,
+          } as CarerProfile;
         },
       )
       .addCase(updateCarerAvailability.rejected, (state, action) => {

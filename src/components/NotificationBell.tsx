@@ -195,8 +195,8 @@ export default function NotificationBell() {
 
         .notif-badge {
           position: absolute;
-          top: -3px;
-          right: -3px;
+          top: -6px;
+          right: -10px;
           min-width: 18px;
           height: 18px;
           border-radius: 9px;
@@ -232,9 +232,37 @@ export default function NotificationBell() {
           z-index: 1000;
           animation: panel-slide-in 0.2s cubic-bezier(0.34,1.56,0.64,1);
         }
+        
+        /* Mobile responsive positioning */
+        @media (max-width: 640px) {
+          .notif-panel {
+            position: fixed;
+            top: 80px; /* just below the 72px header */
+            right: 12px;
+            left: 12px;
+            width: auto;
+            max-width: none;
+            /* Update animation to slide down slightly from fixed top */
+            animation: mobile-panel-slide-in 0.2s cubic-bezier(0.34,1.56,0.64,1);
+          }
+          .notif-panel-header {
+            padding: 12px 12px 10px !important;
+          }
+          .notif-panel-title {
+            font-size: 13px !important;
+          }
+          .mark-all-text {
+            display: none;
+          }
+        }
+
         @keyframes panel-slide-in {
           from { opacity: 0; transform: translateY(-8px) scale(0.97); }
           to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes mobile-panel-slide-in {
+          from { opacity: 0; transform: translateY(-8px); }
+          to   { opacity: 1; transform: translateY(0); }
         }
 
         .notif-panel-header {
@@ -259,7 +287,8 @@ export default function NotificationBell() {
           background: rgba(239,68,68,0.15);
           color: #ef4444;
           border-radius: 10px;
-          padding: 1px 7px;
+          padding: 2px 8px;
+          white-space: nowrap;
         }
         .notif-header-actions {
           display: flex;
@@ -545,7 +574,7 @@ export default function NotificationBell() {
                     disabled={markingAll}
                   >
                     <CheckCheck style={{ width: 12, height: 12 }} />
-                    Mark all read
+                    <span className="mark-all-text">Mark all read</span>
                   </button>
                 )}
               </div>

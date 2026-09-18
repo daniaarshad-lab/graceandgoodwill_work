@@ -161,11 +161,6 @@ const notificationSlice = createSlice({
         state.totalCount = action.payload.totalCount;
         state.page = action.payload.page;
         state.hasMore = action.payload.hasMore;
-        // On first page load, recalculate unread count from returned items
-        // (SSE may not have connected yet, or count may be stale)
-        if (action.payload.page === 1) {
-          state.unreadCount = action.payload.items.filter((i) => !i.isRead).length;
-        }
       }
     );
     builder.addCase(fetchNotifications.rejected, (state, action) => {

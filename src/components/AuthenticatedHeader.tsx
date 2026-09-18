@@ -17,13 +17,18 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { logout as logoutThunk } from "@/store/slices/authSlice";
 import HeaderSearch from "./HeaderSearch";
+import NotificationBell from "./NotificationBell";
+import { useNotificationSSE } from "@/hooks/useNotificationSSE";
 
 export default function AuthenticatedHeader() {
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const pathname = usePathname();
   const dispatch = useAppDispatch();
   const router = useRouter();
   const clientProfile = useAppSelector((state) => state.client.profile);
+
+  // Start SSE real-time notification stream
+  useNotificationSSE(isAuthenticated);
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -109,6 +114,9 @@ export default function AuthenticatedHeader() {
         <div className="flex items-center gap-4 sm:gap-6 shrink-0">
           {/* Header Search (Desktop & Mobile) */}
           <HeaderSearch />
+
+          {/* Real-time notification bell */}
+          <NotificationBell />
 
           <div className="relative" ref={dropdownRef}>
             <button

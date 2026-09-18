@@ -15,7 +15,7 @@ export default function EmergencyButton({
   onClick,
   className = "",
 }: EmergencyButtonProps) {
-  const commonClasses = `group relative flex items-center justify-start h-14 overflow-hidden rounded-full border-2 border-[#F7D774] bg-[#7A180F] shrink-0 shadow-[0_0_25px_rgba(247,215,116,0.65)] transition-all duration-500 hover:shadow-[0_0_35px_rgba(247,215,116,0.85)] ${className || "w-full sm:w-max"
+  const commonClasses = `group relative flex items-center justify-start h-14 rounded-full border-2 border-[#F7D774] bg-[#7A180F] shrink-0 shadow-[0_0_25px_rgba(247,215,116,0.65)] transition-all duration-500 hover:shadow-[0_0_35px_rgba(247,215,116,0.85)] ${className || "w-full sm:w-max"
     }`;
 
   const content = (

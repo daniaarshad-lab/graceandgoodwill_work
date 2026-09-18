@@ -17,13 +17,18 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { logout as logoutThunk } from "@/store/slices/authSlice";
 import HeaderSearch from "./HeaderSearch";
+import NotificationBell from "./NotificationBell";
+import { useNotificationSSE } from "@/hooks/useNotificationSSE";
 
 export default function AuthenticatedHeader() {
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const pathname = usePathname();
   const dispatch = useAppDispatch();
   const router = useRouter();
   const clientProfile = useAppSelector((state) => state.client.profile);
+
+  // Start SSE real-time notification stream
+  useNotificationSSE(isAuthenticated);
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -81,39 +86,42 @@ export default function AuthenticatedHeader() {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 w-full shrink-0 min-h-[72px] bg-navy-950/95 backdrop-blur shadow-soft" style={{ top: 0, marginTop: 0 }}>
+    <header className="fixed top-0 left-0 right-0 z-[100] w-full shrink-0 min-h-[72px] bg-navy-950/95 backdrop-blur shadow-soft" style={{ top: 0, marginTop: 0 }}>
       <div className="container-wrapper py-4 flex items-center justify-between h-[72px] min-h-[72px] shrink-0">
         {/* Left Side: Branding */}
-        <Link href={`/${pathname.split("/")[1]}`} className="flex items-center gap-2 sm:gap-3 flex-shrink-0 hover:opacity-90 transition-opacity">
+        <Link href={`/${pathname.split("/")[1]}`} className="flex items-center gap-1.5 min-[360px]:gap-2 sm:gap-3 flex-shrink-0 hover:opacity-90 transition-opacity">
           <Image
             src="/website_logo.png"
             alt="Grace & Goodwill logo"
             width={48}
             height={48}
-            className="h-8 w-8 sm:h-10 sm:w-10 object-contain drop-shadow-elegant"
+            className="h-7 w-7 min-[360px]:h-8 min-[360px]:w-8 sm:h-10 sm:w-10 object-contain drop-shadow-elegant"
           />
           <div className="flex flex-col justify-center">
             <span
-              className="font-['Cinzel'] text-[14px] sm:text-[18px] font-medium tracking-[0.15em] uppercase text-[#D4AF7A]"
+              className="font-['Cinzel'] text-[12px] min-[360px]:text-[14px] sm:text-[18px] font-medium tracking-[0.1em] min-[360px]:tracking-[0.15em] uppercase text-[#D4AF7A] whitespace-nowrap"
               style={{ textShadow: "0 1px 2px rgba(0,0,0,0.4)" }}
             >
               GRACE & GOODWILL
             </span>
-            <span className="text-[9px] sm:text-[10px] font-medium text-gold-200/60 font-sans tracking-[0.15em] sm:tracking-[0.2em] uppercase mt-0.5">
+            <span className="text-[8px] min-[360px]:text-[9px] sm:text-[10px] font-medium text-gold-200/60 font-sans tracking-[0.1em] min-[360px]:tracking-[0.15em] sm:tracking-[0.2em] uppercase mt-0.5">
               {portalName}
             </span>
           </div>
         </Link>
 
         {/* Right Side: Profile */}
-        <div className="flex items-center gap-4 sm:gap-6 shrink-0">
+        <div className="flex items-center gap-2 sm:gap-6 shrink-0">
           {/* Header Search (Desktop & Mobile) */}
           <HeaderSearch />
+
+          {/* Real-time notification bell */}
+          <NotificationBell />
 
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="flex items-center gap-3 p-1.5 pr-3 rounded-full border border-gold-300/10 hover:border-gold-300/30 hover:bg-gold-DEFAULT/5 transition-all focus:outline-none"
+              className="flex items-center gap-3 p-1.5 sm:pr-3 rounded-full border border-gold-300/10 hover:border-gold-300/30 hover:bg-gold-DEFAULT/5 transition-all focus:outline-none"
             >
               <div className="w-8 h-8 rounded-full bg-navy-900 border border-gold-DEFAULT/50 flex items-center justify-center overflow-hidden shrink-0">
                 <UserIcon className="w-4 h-4 text-gold-DEFAULT" />

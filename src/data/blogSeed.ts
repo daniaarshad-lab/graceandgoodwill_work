@@ -6762,8 +6762,8 @@ export const blogSeedPosts: BlogPost[] = [
     id: "post-how-much-does-live-in-care-cost",
     slug: "how-much-does-live-in-care-cost",
     title: "How Much Does Live-In Care Cost in the UK? Grace & Goodwill Pricing Guide",
-    excerpt: "Live-in care with Grace & Goodwill starts from £1,250 per week. The final cost depends on the level of support required, the client's circumstances, location and the experience needed from the carer.",
-    content: `<p>Live-in care with Grace &amp; Goodwill starts from £1,250 per week. The final cost depends on the level of support required, the client’s circumstances, location and the experience needed from the carer.</p>
+    excerpt: "Live-in care with Grace & Goodwill starts from £1,350 per week. The final cost depends on the level of support required, the client's circumstances, location and the experience needed from the carer.",
+    content: `<p>Live-in care with Grace &amp; Goodwill starts from £1,350 per week. The final cost depends on the level of support required, the client’s circumstances, location and the experience needed from the carer.</p>
 <p>For many families considering support at home, cost is naturally one of the first questions. A relatively straightforward elderly care or companionship arrangement may cost less than support involving complex needs, significant mobility assistance, neurological conditions or more demanding day-to-day requirements.</p>
 <p>At Grace &amp; Goodwill, we believe pricing should reflect both the needs of the person receiving support and the experience required from the carer.</p>
 <h2>What Can Affect the Cost of Live-In Care?</h2>

@@ -21,6 +21,7 @@ export interface NotificationItem {
   priority: NotificationPriority;
   isRead: boolean;
   createdAt: string;
+  actionUrl?: string;
 }
 
 // ─── Paginated response ──────────────────────────────────────────────────────

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { Bell, Check, CheckCheck, Circle, X, RefreshCw } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
@@ -46,14 +47,15 @@ const PRIORITY_COLORS: Record<NotificationPriority, string> = {
 
 interface NotificationRowProps {
   item: NotificationItem;
+  onRowClick: (item: NotificationItem) => void;
   onToggleRead: (id: string, isRead: boolean) => void;
 }
 
-function NotificationRow({ item, onToggleRead }: NotificationRowProps) {
+function NotificationRow({ item, onRowClick, onToggleRead }: NotificationRowProps) {
   return (
     <div
       className={`notification-row ${!item.isRead ? "unread" : ""}`}
-      onClick={() => !item.isRead && onToggleRead(item.id, item.isRead)}
+      onClick={() => onRowClick(item)}
     >
       {/* Priority dot */}
       <div
@@ -76,17 +78,12 @@ function NotificationRow({ item, onToggleRead }: NotificationRowProps) {
       {/* Toggle read/unread button */}
       <button
         className="toggle-read-btn"
-        title={item.isRead ? "Mark as unread" : "Mark as read"}
         onClick={(e) => {
           e.stopPropagation();
           onToggleRead(item.id, item.isRead);
         }}
       >
-        {item.isRead ? (
-          <Circle className="w-3.5 h-3.5" />
-        ) : (
-          <Check className="w-3.5 h-3.5" />
-        )}
+        {item.isRead ? "Mark unread" : "Mark read"}
       </button>
     </div>
   );
@@ -104,6 +101,7 @@ export default function NotificationBell() {
   const [markingAll, setMarkingAll] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const bellRef = useRef<HTMLButtonElement>(null);
+  const router = useRouter();
 
   // ── Close on outside click ──
   useEffect(() => {
@@ -138,6 +136,40 @@ export default function NotificationBell() {
       }
     },
     [dispatch]
+  );
+
+  const handleRowClick = useCallback(
+    (item: NotificationItem) => {
+      // Mark as read if it is currently unread
+      if (!item.isRead) {
+        dispatch(markNotificationRead(item.id));
+      }
+
+      let targetUrl = item.actionUrl;
+
+      // Fallback redirection logic if actionUrl is missing
+      if (!targetUrl) {
+        const title = item.title.toLowerCase();
+        const msg = item.message.toLowerCase();
+        
+        if (title.includes("user registered")) {
+          if (msg.includes("carer")) {
+            targetUrl = item.userId ? `/admin/carers/${item.userId}` : `/admin/carers`;
+          } else if (msg.includes("client")) {
+            targetUrl = item.userId ? `/admin/clients/${item.userId}` : `/admin/clients`;
+          }
+        } else if (title.includes("professional info") || title.includes("compliance document")) {
+          targetUrl = item.userId ? `/admin/carers/${item.userId}` : `/admin/carers`;
+        }
+      }
+
+      // Navigate to the associated URL if it exists
+      if (targetUrl) {
+        router.push(targetUrl);
+        setOpen(false);
+      }
+    },
+    [dispatch, router]
   );
 
   const handleMarkAll = useCallback(async () => {
@@ -342,7 +374,7 @@ export default function NotificationBell() {
           gap: 10px;
           padding: 12px 16px;
           border-bottom: 1px solid rgba(212,175,122,0.05);
-          cursor: default;
+          cursor: pointer;
           transition: background 0.15s;
           position: relative;
         }
@@ -351,7 +383,6 @@ export default function NotificationBell() {
         }
         .notification-row.unread {
           background: rgba(212,175,122,0.04);
-          cursor: pointer;
         }
         .notification-row:hover {
           background: rgba(212,175,122,0.07);
@@ -404,27 +435,26 @@ export default function NotificationBell() {
 
         .toggle-read-btn {
           flex-shrink: 0;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 24px;
-          height: 24px;
-          border-radius: 50%;
-          background: none;
-          border: 1px solid rgba(212,175,122,0.15);
-          color: rgba(212,175,122,0.4);
+          font-size: 10px;
+          font-weight: 600;
+          padding: 4px 8px;
+          border-radius: 6px;
+          background: rgba(212,175,122,0.08);
+          color: rgba(212,175,122,0.7);
+          border: 1px solid transparent;
           cursor: pointer;
           transition: all 0.15s;
           opacity: 0;
           margin-top: 2px;
+          white-space: nowrap;
         }
         .notification-row:hover .toggle-read-btn {
           opacity: 1;
         }
         .toggle-read-btn:hover {
-          background: rgba(212,175,122,0.12);
+          background: rgba(212,175,122,0.15);
           color: #D4AF7A;
-          border-color: rgba(212,175,122,0.4);
+          border-color: rgba(212,175,122,0.2);
         }
 
         /* ── States ─────────────────────────────────────────────────────── */
@@ -606,6 +636,7 @@ export default function NotificationBell() {
                     <NotificationRow
                       key={item.id}
                       item={item}
+                      onRowClick={handleRowClick}
                       onToggleRead={handleToggleRead}
                     />
                   ))}

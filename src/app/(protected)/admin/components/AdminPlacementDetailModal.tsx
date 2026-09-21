@@ -6,6 +6,8 @@ import {
   AlertTriangle,
   Download,
   DollarSign,
+  Lock,
+  ShieldCheck,
 } from "lucide-react";
 import { adminService } from "@/services/admin/admin.service";
 import { AdminPlacementDetail, CarerPayment } from "../types/admin.types";
@@ -17,6 +19,7 @@ import { toast } from "sonner";
 interface AdminPlacementDetailModalProps {
   placementId: string;
   onClose: () => void;
+  onPlacementUpdated?: () => void;
 }
 
 function PaymentUpdateModal({
@@ -104,6 +107,7 @@ function PaymentUpdateModal({
 export default function AdminPlacementDetailModal({
   placementId,
   onClose,
+  onPlacementUpdated,
 }: AdminPlacementDetailModalProps) {
   const [placement, setPlacement] = useState<AdminPlacementDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -111,6 +115,7 @@ export default function AdminPlacementDetailModal({
   const [selectedPayment, setSelectedPayment] = useState<CarerPayment | null>(
     null,
   );
+  const [togglingContactRelease, setTogglingContactRelease] = useState(false);
 
   const loadPlacement = async () => {
     try {
@@ -121,6 +126,26 @@ export default function AdminPlacementDetailModal({
       setError(err.message || "Failed to load placement details");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleToggleContactRelease = async () => {
+    try {
+      setTogglingContactRelease(true);
+      await adminService.togglePlacementContactRelease(placementId);
+      toast.success(
+        placement?.contactDetailsReleased
+          ? "Contact details revoked from carer."
+          : "Contact details released to carer successfully."
+      );
+      await loadPlacement();
+      if (onPlacementUpdated) {
+        onPlacementUpdated();
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Failed to toggle contact release");
+    } finally {
+      setTogglingContactRelease(false);
     }
   };
 
@@ -238,6 +263,85 @@ export default function AdminPlacementDetailModal({
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+
+            {/* 48-Hour Contact Details Release Status & Control Card */}
+            <div
+              className={`p-5 rounded-2xl border flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all duration-300 ${
+                placement.contactDetailsReleased
+                  ? "bg-emerald-950/25 border-emerald-500/30 text-emerald-200 shadow-lg shadow-emerald-950/20"
+                  : "bg-amber-950/25 border-amber-500/30 text-amber-200 shadow-lg shadow-amber-950/20"
+              }`}
+            >
+              <div className="flex items-start gap-3.5">
+                <div
+                  className={`p-2.5 rounded-xl shrink-0 mt-0.5 ${
+                    placement.contactDetailsReleased
+                      ? "bg-emerald-500/15 border border-emerald-500/30 text-emerald-400"
+                      : "bg-amber-500/15 border border-amber-500/30 text-amber-400"
+                  }`}
+                >
+                  {placement.contactDetailsReleased ? (
+                    <ShieldCheck className="w-5 h-5" />
+                  ) : (
+                    <Lock className="w-5 h-5" />
+                  )}
+                </div>
+                <div className="space-y-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h4 className="font-bold text-sm text-gold-50">
+                      Client Contact & Address Sharing
+                    </h4>
+                    <span
+                      className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider border ${
+                        placement.contactDetailsReleased
+                          ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/30"
+                          : "bg-amber-500/20 text-amber-300 border-amber-500/30"
+                      }`}
+                    >
+                      {placement.contactDetailsReleased
+                        ? "Released to Carer"
+                        : "Locked (48h Release Window)"}
+                    </span>
+                  </div>
+                  <p className="text-xs text-gold-100/70 leading-relaxed">
+                    {placement.contactDetailsReleased
+                      ? `Direct client phone, email, and exact home address are unlocked in the carer's portal. ${
+                          placement.contactDetailsReleasedAt
+                            ? `Released on ${new Date(placement.contactDetailsReleasedAt).toLocaleString("en-GB")}.`
+                            : ""
+                        }`
+                      : "For client privacy, direct phone, email, and exact address are hidden from the carer until 48 hours before the placement start date. You can also manually release or revoke access below."}
+                  </p>
+                </div>
+              </div>
+              <div className="shrink-0 flex items-center justify-end">
+                <Button
+                  variant={placement.contactDetailsReleased ? "outline" : "primary"}
+                  size="sm"
+                  disabled={togglingContactRelease}
+                  onClick={handleToggleContactRelease}
+                  className={`text-xs px-4 py-2 font-bold ${
+                    placement.contactDetailsReleased
+                      ? "!border-amber-500/40 !text-amber-300 hover:!bg-amber-500/15"
+                      : ""
+                  }`}
+                >
+                  {togglingContactRelease ? (
+                    "Updating..."
+                  ) : placement.contactDetailsReleased ? (
+                    <>
+                      <Lock className="w-3.5 h-3.5 mr-1.5" />
+                      Revoke Contact Release
+                    </>
+                  ) : (
+                    <>
+                      <ShieldCheck className="w-3.5 h-3.5 mr-1.5" />
+                      Release Contacts Now
+                    </>
+                  )}
+                </Button>
               </div>
             </div>
 

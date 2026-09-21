@@ -607,6 +607,26 @@ export const adminService = {
     });
   },
 
+  async togglePlacementContactRelease(
+    placementId: string,
+  ): Promise<any> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch(`/admin/placements/${placementId}/toggle-contact-release`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
   async replaceCarerInPlacement(
     placementId: string,
     carerUserId: string,

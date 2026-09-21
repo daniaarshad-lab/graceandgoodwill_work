@@ -217,6 +217,9 @@ export interface AdminPlacementDetail {
   rejectionReason?: string | null;
   rejectedAt?: string | null;
   acceptedAt?: string | null;
+  contactDetailsReleased?: boolean;
+  contactDetailsReleasedAt?: string | null;
+  releaseNotificationSent?: boolean;
   startDate: string;
   endDate: string | null;
   createdAt: string;

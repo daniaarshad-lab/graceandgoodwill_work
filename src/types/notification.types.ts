@@ -22,6 +22,11 @@ export interface NotificationItem {
   isRead: boolean;
   createdAt: string;
   actionUrl?: string;
+  subjectName?: string;
+  subjectRole?: string;
+  userName?: string;
+  carerName?: string;
+  clientName?: string;
 }
 
 // ─── Paginated response ──────────────────────────────────────────────────────

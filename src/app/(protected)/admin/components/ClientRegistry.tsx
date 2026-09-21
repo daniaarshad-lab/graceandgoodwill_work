@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { User, Mail, Phone, Calendar, ArrowUpRight } from "lucide-react";
 import StatusBadge from "./shared/StatusBadge";
 import Table, { TableColumn } from "./shared/Table";
@@ -46,6 +47,10 @@ export default function ClientRegistry({
   loading,
   error,
 }: ClientRegistryProps) {
+  const searchParams = useSearchParams();
+  const highlightName = searchParams.get("highlightName")?.toLowerCase();
+  const flashId = searchParams.get("flashId");
+
   const columns: TableColumn<ClientDetailItem>[] = [
     {
       header: "Client Name",
@@ -263,6 +268,17 @@ export default function ClientRegistry({
         <Table
           columns={columns}
           data={clients}
+          searchable
+          searchPlaceholder="Search clients..."
+          searchKeys={["name", "email", "phone", "publicProfileId", "city"]}
+          highlightRowFn={highlightName ? (client) => {
+            const h = highlightName.trim();
+            const n = client.name.toLowerCase().trim();
+            const match = n.includes(h) || h.includes(n);
+            if (match) console.log("✅ HIGHLIGHT MATCH FOUND FOR:", client.name);
+            return match;
+          } : undefined}
+          highlightTrigger={flashId}
           pagination={{
             page,
             totalPages,

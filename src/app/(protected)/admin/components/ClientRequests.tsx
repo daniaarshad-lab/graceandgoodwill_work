@@ -4,6 +4,7 @@ import { UseAdminPortalReturn } from "../hooks/useAdminPortal";
 import Button from "@/components/Button";
 import Pagination from "./shared/Pagination";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import AdminApplicationsModal from "./AdminApplicationsModal";
 import { adminService } from "@/services/admin/admin.service";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
@@ -40,6 +41,9 @@ export default function ClientRequests({
     null,
   );
   const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
+
+  const searchParams = useSearchParams();
+  const highlightName = searchParams.get("highlightName")?.toLowerCase();
 
   const toggleRow = (id: string) => {
     setExpandedRows((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -121,10 +125,16 @@ export default function ClientRequests({
           <tbody className="divide-y divide-gold-300/5">
             {requests.map((req) => {
               const isExpanded = expandedRows[req.id];
+              const isHighlighted = highlightName && req.clientName?.toLowerCase() === highlightName;
               return (
                 <React.Fragment key={req.id}>
                   <tr
-                    className={`hover:bg-navy-900/30 transition-colors group ${isExpanded ? "bg-navy-900/20" : ""}`}
+                    ref={isHighlighted ? (el) => {
+                      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    } : null}
+                    className={`hover:bg-navy-900/30 transition-colors group ${isExpanded ? "bg-navy-900/20" : ""} ${
+                      isHighlighted ? "animate-row-flash ring-2 ring-gold-500/50 relative z-10" : ""
+                    }`}
                   >
                     <td className="p-4">
                       <div className="flex flex-col">

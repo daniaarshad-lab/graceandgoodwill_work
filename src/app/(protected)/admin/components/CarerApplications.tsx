@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { CarerApplication } from "../types/admin.types";
 import StatusBadge from "./shared/StatusBadge";
 import Table, { TableColumn } from "./shared/Table";
@@ -196,6 +197,12 @@ export default function CarerApplications({
   limit,
   onLimitChange,
 }: CarerApplicationsProps) {
+  const searchParams = useSearchParams();
+  const highlightName = searchParams.get("highlightName")?.toLowerCase();
+  const flashId = searchParams.get("flashId");
+
+  console.log("🔍 CarerApplications Rendered with highlightName:", highlightName, "flashId:", flashId);
+
   const columns: TableColumn<CarerApplication>[] = [
     {
       header: "Carer Name",
@@ -326,20 +333,31 @@ export default function CarerApplications({
         </div>
       </div>
 
-      {/* Main reusable table displaying the listing */}
-      <Table
-        className="flex-1 flex flex-col min-h-0"
-        columns={columns}
-        data={carers}
-        pagination={{
-          page,
-          totalPages,
-          totalItems,
-          pageSize: limit,
-          onPageChange,
-          onPageSizeChange: onLimitChange,
-        }}
-      />
+      <div className="mt-8">
+        <Table<CarerApplication>
+          columns={columns}
+          data={carers}
+          searchable
+          searchPlaceholder="Search carers..."
+          searchKeys={["name", "email", "phoneNumber", "publicProfileId"]}
+          highlightRowFn={highlightName ? (carer) => {
+            const h = highlightName.trim();
+            const n = carer.name.toLowerCase().trim();
+            const match = n.includes(h) || h.includes(n);
+            if (match) console.log("✅ HIGHLIGHT MATCH FOUND FOR:", carer.name);
+            return match;
+          } : undefined}
+          highlightTrigger={flashId}
+          pagination={{
+            page,
+            totalPages,
+            totalItems,
+            pageSize: limit,
+            onPageChange,
+            onPageSizeChange: onLimitChange,
+          }}
+        />
+      </div>
     </div>
   );
 }

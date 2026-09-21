@@ -444,8 +444,19 @@ export function useAdminPortal() {
         setLocalActiveTab(tabParam);
       }
     }
+    
+    // Auto-switch to "ALL" status if we are searching for a specific highlightName
+    // so that active/approved carers don't get hidden by the default "PENDING" filter
+    const highlightName = searchParams.get("highlightName");
+    if (highlightName) {
+      if (tabParam === "carers" && carersPaginationState.status !== "ALL") {
+        dispatch(setCarersStatus("ALL"));
+      } else if (tabParam === "clients" && clientsPaginationState.status !== "ALL") {
+        dispatch(setClientsStatus("ALL"));
+      }
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tabParam]);
+  }, [tabParam, searchParams]);
 
   useEffect(() => {
     if (globalSearchQuery.trim()) {

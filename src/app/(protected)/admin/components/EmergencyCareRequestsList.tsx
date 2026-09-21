@@ -1,6 +1,7 @@
 "use client";
 
 import { AlertCircle, Calendar, Mail, MapPin, Phone } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import Table, { TableColumn } from "./shared/Table";
 import { EmergencyCareRequest } from "@/types/admin.types";
 
@@ -33,6 +34,9 @@ export default function EmergencyCareRequestsList({
   loading,
   error,
 }: EmergencyCareRequestsListProps) {
+  const searchParams = useSearchParams();
+  const highlightName = searchParams.get("highlightName")?.toLowerCase();
+
   const columns: TableColumn<EmergencyCareRequest>[] = [
     {
       header: "Requestor",
@@ -240,9 +244,12 @@ export default function EmergencyCareRequestsList({
           </p>
         </div>
       ) : (
-        <Table
+        <Table<EmergencyCareRequest>
           columns={columns}
           data={requests}
+          isLoading={loading}
+          searchable={false} // Minimal search for now
+          highlightRowFn={highlightName ? (req) => req.fullName.toLowerCase() === highlightName : undefined}
           pagination={{
             page,
             totalPages,

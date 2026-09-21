@@ -25,6 +25,19 @@ html, body {
   animation-delay: 2s;
 }
 
+@keyframes row-flash {
+  0%, 100% {
+    background-color: transparent;
+  }
+  15%, 50%, 85% {
+    background-color: rgba(212, 175, 122, 0.35); /* Much brighter gold flash */
+  }
+}
+
+.animate-row-flash {
+  animation: row-flash 3.5s ease-in-out 1; /* 1 long animation with multiple peaks */
+}
+
 /* ─────────────────────────────────────────────────────────────────────
    Partners Infinite Marquee
    Math: Track = HalfA + HalfB (identical). Animation moves -50% = one
@@ -1139,4 +1152,12 @@ html, body {
 
 .ombre-text {
   @apply text-transparent bg-clip-text bg-gradient-to-r from-gold-200 to-gold-50 pb-1;
+}
+@keyframes row-flash {
+  0% { background-color: transparent; }
+  10%, 50% { background-color: rgba(212, 175, 55, 0.35); }
+  30%, 100% { background-color: transparent; }
+}
+.animate-row-flash {
+  animation: row-flash 2.5s ease-in-out 1;
 }

@@ -12,6 +12,7 @@ import { adminService } from "@/services/admin/admin.service";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 import Button from "@/components/Button";
 import ThinSpinner from "@/components/ThinSpinner";
+import { useSearchParams } from "next/navigation";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -45,6 +46,9 @@ export default function ProfileUpdateRequests() {
   const [expandedCarers, setExpandedCarers] = useState<Record<string, boolean>>(
     {},
   );
+
+  const searchParams = useSearchParams();
+  const highlightName = searchParams.get("highlightName")?.toLowerCase();
 
   useEffect(() => {
     fetchRequests();
@@ -203,10 +207,13 @@ export default function ProfileUpdateRequests() {
                 const hasPending = group.requests.some(
                   (r: any) => r.status === "PENDING",
                 );
+                
+                const isHighlighted = highlightName && group.carerName.toLowerCase() === highlightName;
+                
                 const isExpanded =
                   expandedCarers[carerId] !== undefined
                     ? expandedCarers[carerId]
-                    : hasPending;
+                    : (hasPending || isHighlighted);
                 const pendingCount = group.requests.filter(
                   (r: any) => r.status === "PENDING",
                 ).length;
@@ -214,7 +221,14 @@ export default function ProfileUpdateRequests() {
                 return (
                   <div
                     key={carerId}
-                    className="rounded-2xl border border-gold-300/10 bg-navy-900 overflow-hidden transition-all shadow-soft"
+                    ref={isHighlighted ? (el) => {
+                      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    } : null}
+                    className={`rounded-2xl border bg-navy-900 overflow-hidden transition-all shadow-soft ${
+                      isHighlighted 
+                        ? "animate-row-flash border-gold-500/50 ring-2 ring-gold-500/50 relative z-10" 
+                        : "border-gold-300/10"
+                    }`}
                   >
                     <div
                       className="p-5 flex items-center justify-between cursor-pointer hover:bg-gold-300/5 transition-colors"

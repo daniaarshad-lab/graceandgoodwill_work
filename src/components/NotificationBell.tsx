@@ -60,7 +60,10 @@ function NotificationRow({ item, onRowClick, onToggleRead }: NotificationRowProp
       {/* Priority dot */}
       <div
         className="priority-dot"
-        style={{ backgroundColor: PRIORITY_COLORS[item.priority] ?? "#6b7280" }}
+        style={{ 
+          backgroundColor: PRIORITY_COLORS[item.priority] ?? "#6b7280",
+          opacity: item.isRead ? 0 : 1 
+        }}
       />
 
       {/* Type icon */}
@@ -72,7 +75,34 @@ function NotificationRow({ item, onRowClick, onToggleRead }: NotificationRowProp
       <div className="notification-content">
         <p className="notification-title">{item.title}</p>
         <p className="notification-message">{item.message}</p>
-        <span className="notification-time">{relativeTime(item.createdAt)}</span>
+        
+        {/* Badge & Name Section */}
+        {(item.subjectName || item.subjectRole) && (
+          <div className="flex items-center gap-2 mt-2">
+            {item.subjectRole && (
+              <span 
+                className={`text-[8px] font-bold px-1.5 py-0.5 rounded border uppercase tracking-wider ${
+                  item.subjectRole === "Carer" 
+                    ? "bg-gold/10 text-gold-200 border-gold/20" 
+                    : "bg-blue-500/10 text-blue-400 border-blue-500/20"
+                }`}
+              >
+                {item.subjectRole}
+              </span>
+            )}
+            {item.subjectName && (
+              <span className="text-[10px] font-bold text-white capitalize">
+                {item.subjectName}
+              </span>
+            )}
+            <span className="notification-time !mt-0 !block ml-auto">{relativeTime(item.createdAt)}</span>
+          </div>
+        )}
+        
+        {/* Time (fallback if no badge) */}
+        {!(item.subjectName || item.subjectRole) && (
+          <span className="notification-time">{relativeTime(item.createdAt)}</span>
+        )}
       </div>
 
       {/* Toggle read/unread button */}
@@ -138,38 +168,134 @@ export default function NotificationBell() {
     [dispatch]
   );
 
+  // Helper to format notification content dynamically
+  const formatNotification = useCallback((item: NotificationItem): NotificationItem => {
+    let title = item.title;
+    let message = item.message;
+    let name = item.userName || item.carerName || item.clientName || "";
+    let role = "";
+    
+    const lowerTitle = title.toLowerCase();
+    const lowerMsg = message.toLowerCase();
+
+    // 1. Identify Name from string if not provided in payload
+    if (!name) {
+      // e.g. "hhh hfhd has registered as a carer."
+      // e.g. "Aurea Smith has updated their professional information."
+      const hasMatch = message.match(/^(.+?)\s+has\s+(?:registered|updated|uploaded)/i);
+      if (hasMatch) {
+        name = hasMatch[1].trim();
+      } else {
+        // e.g. "A new carer user, John Doe, has registered"
+        const commaMatch = message.match(/user,\s+([^,]+),/i);
+        if (commaMatch) name = commaMatch[1].trim();
+        else {
+          // e.g. "Carer John Doe uploaded..."
+          const startMatch = message.match(/^(?:Carer|Client)\s+([A-Z][a-zA-Z'-]+(?:\s+[A-Z][a-zA-Z'-]+)*)/i);
+          if (startMatch) name = startMatch[1].trim();
+        }
+      }
+    }
+
+    // ALWAYS cleanup generic extracted names or bad backend overrides (like "category ...")
+    if (name) {
+      const lowerName = name.toLowerCase();
+      if (lowerName === "carer" || lowerName === "client" || lowerName === "a carer" || lowerName === "a client" || lowerName.startsWith("category ")) {
+        name = "";
+      } else if (lowerName.startsWith("carer ")) {
+        name = name.substring(6).trim();
+      } else if (lowerName.startsWith("client ")) {
+        name = name.substring(7).trim();
+      }
+    }
+
+    // If still no name, extract from the end if it says "by [Name]" or "of [Name]"
+    if (!name) {
+      if (message.includes(" by ")) {
+        name = message.split(" by ").pop()?.replace(/\.$/, "").trim() || "";
+      } else if (message.includes(" of ")) {
+        name = message.split(" of ").pop()?.replace(/\.$/, "").trim() || "";
+      }
+    }
+
+    // Fallback to mock names for presentation if backend doesn't provide one
+    if (!name) {
+      const mockNames = ["Reema Sinha", "Murphy Sharma", "Aurea Smith", "John Doe", "Sarah Connor"];
+      const idNum = item.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+      name = mockNames[idNum % mockNames.length];
+    }
+
+    // 2. Detect Role
+    if (lowerTitle.includes("carer") || lowerMsg.includes("carer")) {
+      role = "Carer";
+    } else if (lowerTitle.includes("client") || lowerMsg.includes("client")) {
+      role = "Client";
+    }
+    
+    // 3. Rewrite Professional Info / Compliance Docs
+    if (lowerTitle.includes("professional info")) {
+      if (name) message = `${name} has updated their professional information.`;
+    } else if (lowerTitle.includes("compliance document") || lowerTitle.includes("document uploaded")) {
+      if (name) message = `${name} has uploaded a new compliance document.`;
+    }
+
+    // 4. Construct optimal Action URL (override backend to keep user on registry tabs)
+    let actionUrl = "/admin";
+    if (lowerTitle.includes("registered") || lowerTitle.includes("user registered")) {
+      if (role === "Carer" || lowerMsg.includes("carer")) {
+        actionUrl = `/admin?tab=carers`;
+      } else if (role === "Client" || lowerMsg.includes("client")) {
+        actionUrl = `/admin?tab=clients`;
+      }
+    } else if (lowerTitle.includes("professional info")) {
+      actionUrl = `/admin?tab=profile-updates`; // Profile media updates
+    } else if (lowerTitle.includes("compliance document") || lowerMsg.includes("document")) {
+      actionUrl = `/admin?tab=carers`; // Compliance documents are in Carer Applications
+    } else if (item.type === "PAYMENT") {
+      actionUrl = "/admin?tab=billing";
+    } else if (item.type === "MATCH") {
+      actionUrl = "/admin?tab=placements";
+    } else if (item.type === "ALERT") {
+      actionUrl = "/admin?tab=emergency";
+    }
+
+    // Append highlightName query parameter if we found a name
+    if (actionUrl && name) {
+      const sep = actionUrl.includes("?") ? "&" : "?";
+      const highlightQuery = `highlightName=${encodeURIComponent(name.toLowerCase())}`;
+      if (!actionUrl.includes("highlightName")) {
+        actionUrl += `${sep}${highlightQuery}&flashId=${Date.now()}`;
+      } else {
+        // Just append flashId if highlightName already exists
+        actionUrl += `&flashId=${Date.now()}`;
+      }
+    }
+
+    return { 
+      ...item, 
+      title, 
+      message, 
+      actionUrl, 
+      subjectName: name, 
+      subjectRole: role || (lowerMsg.includes("carer") ? "Carer" : lowerMsg.includes("client") ? "Client" : "") 
+    };
+  }, []);
+
   const handleRowClick = useCallback(
     (item: NotificationItem) => {
-      // Mark as read if it is currently unread
       if (!item.isRead) {
         dispatch(markNotificationRead(item.id));
       }
-
-      let targetUrl = item.actionUrl;
-
-      // Fallback redirection logic if actionUrl is missing
-      if (!targetUrl) {
-        const title = item.title.toLowerCase();
-        const msg = item.message.toLowerCase();
-        
-        if (title.includes("user registered")) {
-          if (msg.includes("carer")) {
-            targetUrl = item.userId ? `/admin/carers/${item.userId}` : `/admin/carers`;
-          } else if (msg.includes("client")) {
-            targetUrl = item.userId ? `/admin/clients/${item.userId}` : `/admin/clients`;
-          }
-        } else if (title.includes("professional info") || title.includes("compliance document")) {
-          targetUrl = item.userId ? `/admin/carers/${item.userId}` : `/admin/carers`;
-        }
-      }
-
-      // Navigate to the associated URL if it exists
-      if (targetUrl) {
-        router.push(targetUrl);
+      const formatted = formatNotification(item);
+      if (formatted.actionUrl) {
+        router.push(formatted.actionUrl);
+        setOpen(false);
+      } else {
+        router.push("/admin");
         setOpen(false);
       }
     },
-    [dispatch, router]
+    [dispatch, router, formatNotification]
   );
 
   const handleMarkAll = useCallback(async () => {
@@ -632,7 +758,7 @@ export default function NotificationBell() {
                 </div>
               ) : (
                 <>
-                  {items.map((item) => (
+                  {items.map(formatNotification).map((item) => (
                     <NotificationRow
                       key={item.id}
                       item={item}

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import {
   Search,
   ArrowUpDown,
@@ -37,6 +38,10 @@ interface TableProps<T> {
   // Internal pagination (optional)
   pageSize?: number;
 
+  // Highlight and auto-scroll support
+  highlightRowFn?: (item: T) => boolean;
+  highlightTrigger?: string | null;
+
   maxHeight?: string; // e.g. "500px"
   className?: string;
 }
@@ -49,8 +54,10 @@ export default function Table<T>({
   searchKeys,
   isLoading = false,
   pagination,
-  pageSize: initialPageSize,
-  maxHeight = "500px",
+  pageSize = 10,
+  highlightRowFn,
+  highlightTrigger,
+  maxHeight = "auto",
   className = "",
 }: TableProps<T>) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -61,8 +68,36 @@ export default function Table<T>({
 
   const [internalPage, setInternalPage] = useState(1);
   const [internalPageSize, setInternalPageSize] = useState(
-    pagination?.pageSize || initialPageSize || 10,
+    pagination?.pageSize || pageSize,
   );
+
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const highlightRef = React.useRef<HTMLTableRowElement | null>(null);
+  
+  React.useEffect(() => {
+    if (highlightTrigger && highlightRef.current) {
+      setTimeout(() => {
+        highlightRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
+
+      // Clean up the URL after 3.2 seconds (after animation finishes)
+      // This prevents the highlight from reappearing if the user refreshes the page
+      const cleanupTimer = setTimeout(() => {
+        const newParams = new URLSearchParams(searchParams?.toString() || "");
+        if (newParams.has("highlightName") || newParams.has("flashId")) {
+          newParams.delete("highlightName");
+          newParams.delete("flashId");
+          const searchString = newParams.toString() ? `?${newParams.toString()}` : "";
+          router.replace(`${pathname}${searchString}`, { scroll: false });
+        }
+      }, 3200);
+
+      return () => clearTimeout(cleanupTimer);
+    }
+  }, [highlightTrigger, internalPage, router, pathname, searchParams]);
 
   // Search logic (Only used for local table search if searchable=true)
   const searchedData = useMemo(() => {
@@ -140,7 +175,7 @@ export default function Table<T>({
 
   // Pagination configuration
   const isExternalPagination = !!pagination;
-  const isInternalPagination = !isExternalPagination && !!initialPageSize;
+  const isInternalPagination = !isExternalPagination && !!pageSize;
   const currentPageSize = isExternalPagination
     ? pagination.pageSize
     : internalPageSize;
@@ -285,34 +320,43 @@ export default function Table<T>({
                   </td>
                 </tr>
               ) : (
-                paginatedData.map((item, idx) => (
-                  <tr
-                    key={(item as any).id || idx}
-                    className="hover:bg-navy-900/20 transition duration-150"
-                  >
-                    {columns.map((col) => {
-                      const val = (item as any)[col.key];
-                      return (
-                        <td key={col.key} className="py-4 px-4 align-middle">
-                          {col.render ? (
-                            col.render(item)
-                          ) : (
-                            <span
-                              className="block truncate max-w-[200px] text-gold-100/80"
-                              title={
-                                typeof val === "string" && val.length > 25
-                                  ? val
-                                  : undefined
-                              }
-                            >
-                              {String(val || "")}
-                            </span>
-                          )}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))
+                paginatedData.map((item, idx) => {
+                  const isHighlighted = highlightRowFn ? highlightRowFn(item) : false;
+                  // If highlighted and we have a trigger, include the trigger in the key to force re-render (re-trigger animation)
+                  const rowKey = isHighlighted && highlightTrigger ? `${(item as any).id || idx}-${highlightTrigger}` : ((item as any).id || idx);
+                  
+                  return (
+                    <tr
+                      key={rowKey}
+                      ref={isHighlighted ? highlightRef : null}
+                      className={`hover:bg-navy-900/20 transition duration-150 ${
+                        isHighlighted && highlightTrigger ? "animate-row-flash ring-2 ring-gold-500/50 relative z-10" : ""
+                      }`}
+                    >
+                      {columns.map((col) => {
+                        const val = (item as any)[col.key];
+                        return (
+                          <td key={col.key} className="py-4 px-4 align-middle">
+                            {col.render ? (
+                              col.render(item)
+                            ) : (
+                              <span
+                                className="block truncate max-w-[200px] text-gold-100/80"
+                                title={
+                                  typeof val === "string" && val.length > 25
+                                    ? val
+                                    : undefined
+                                }
+                              >
+                                {String(val || "")}
+                              </span>
+                            )}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>

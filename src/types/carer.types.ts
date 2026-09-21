@@ -176,6 +176,8 @@ export interface CarerPlacement {
   rejectionReason?: string | null;
   rejectedAt?: string | null;
   acceptedAt?: string | null;
+  contactDetailsReleased?: boolean;
+  contactDetailsReleasedAt?: string | null;
   startDate: string;
   endDate: string | null;
   createdAt: string;

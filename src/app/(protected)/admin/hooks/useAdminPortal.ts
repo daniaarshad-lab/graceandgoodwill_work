@@ -1027,10 +1027,7 @@ export function useAdminPortal() {
       const released = !place.contactDetailsReleased;
 
       try {
-        // Backend now handles this boolean on the placement itself (or via direct API we'd add,
-        // for now we simulate success or rely on future admin/placement status API).
-        // Since updateIntroductionStatus is descoped, we'd need a PATCH /admin/placements/:id
-        // which wasn't specified in the plan, but we can assume we'll just log and reload.
+        await adminService.togglePlacementContactRelease(placementId);
 
         logActivity(
           `Contact details sharing for ${place.clientName} and ${place.carerName} has been ${

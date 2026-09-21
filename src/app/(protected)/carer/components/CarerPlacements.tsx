@@ -770,17 +770,33 @@ export default function CarerPlacements() {
                             {place.clientProfile?.user?.lastName}
                           </p>
                         </div>
-                        <span
-                          className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider ${
-                            isRejected
-                              ? "bg-rose-500/10 text-rose-400 border border-rose-500/20"
-                              : place.status === "PLACEMENT_CONFIRMED" || place.status === "ACTIVE"
-                                ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                                : "bg-gold-300/10 text-gold-200 border border-gold-300/20"
-                          }`}
-                        >
-                          {isRejected ? "Declined by You" : place.status?.replace(/_/g, " ")}
-                        </span>
+                        <div className="flex flex-wrap items-center gap-2">
+                          {!isRejected && (
+                            place.contactDetailsReleased ? (
+                              <span className="flex items-center gap-1 text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full">
+                                <ShieldCheck className="w-3 h-3" /> Details Unlocked
+                              </span>
+                            ) : (
+                              <span
+                                className="flex items-center gap-1 text-[10px] font-semibold text-amber-400/90 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-full"
+                                title="Client direct phone, email, and exact street address will unlock automatically 48 hours prior to start date"
+                              >
+                                <Lock className="w-3 h-3" /> Details Locked (48h prior)
+                              </span>
+                            )
+                          )}
+                          <span
+                            className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider ${
+                              isRejected
+                                ? "bg-rose-500/10 text-rose-400 border border-rose-500/20"
+                                : place.status === "PLACEMENT_CONFIRMED" || place.status === "ACTIVE"
+                                  ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                                  : "bg-gold-300/10 text-gold-200 border border-gold-300/20"
+                            }`}
+                          >
+                            {isRejected ? "Declined by You" : place.status?.replace(/_/g, " ")}
+                          </span>
+                        </div>
                       </div>
 
                       {isRejected && place.rejectionReason && (

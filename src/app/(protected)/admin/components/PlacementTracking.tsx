@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { ArrowRight, AlertTriangle } from "lucide-react";
+import { ArrowRight, AlertTriangle, Lock, ShieldCheck } from "lucide-react";
 import { Placement, CarerApplication } from "../types/admin.types";
 import { UseAdminPortalReturn } from "../hooks/useAdminPortal";
 import Button from "@/components/Button";
@@ -57,6 +57,19 @@ export default function PlacementTracking({
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [togglingContactId, setTogglingContactId] = useState<string | null>(null);
+
+  const handleToggleContact = async (placementId: string) => {
+    setTogglingContactId(placementId);
+    try {
+      await onToggleContactRelease(placementId);
+      if (refreshPlacements) refreshPlacements();
+    } catch (err: any) {
+      showErrorToast("Error", err.message || "Failed to toggle contact release.");
+    } finally {
+      setTogglingContactId(null);
+    }
+  };
 
   const fetchPlacementBilling = async (placementId: string) => {
     setLoadingBilling((prev) => ({ ...prev, [placementId]: true }));
@@ -543,13 +556,24 @@ export default function PlacementTracking({
                       </h4>
                     </div>
                   </div>
-                  <p className="text-sm text-gold-100/50 mt-1 truncate">
-                    {place.careType &&
-                      (Array.isArray(place.careType)
-                        ? place.careType.join(", ")
-                        : place.careType) + " • "}
-                    {place.location} • Commenced: {place.startDate}
-                  </p>
+                  <div className="flex flex-wrap items-center gap-2.5 mt-1">
+                    <p className="text-sm text-gold-100/50 truncate">
+                      {place.careType &&
+                        (Array.isArray(place.careType)
+                          ? place.careType.join(", ")
+                          : place.careType) + " • "}
+                      {place.location} • Commenced: {place.startDate}
+                    </p>
+                    {place.contactDetailsReleased ? (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                        <ShieldCheck className="w-3 h-3" /> Contacts Released
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/15 text-amber-400 border border-amber-500/30">
+                        <Lock className="w-3 h-3" /> Contacts Locked (48h Auto)
+                      </span>
+                    )}
+                  </div>
 
                   {place.status === "REJECTED_BY_CARER" && (
                     <div className="mt-2.5 flex items-center gap-2.5 p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-xs text-rose-200">
@@ -577,6 +601,35 @@ export default function PlacementTracking({
                 </div>
 
                 <div className="flex flex-nowrap items-center gap-2 shrink-0 mt-2 md:mt-0">
+                  <Button
+                    onClick={() => handleToggleContact(place.id)}
+                    variant={place.contactDetailsReleased ? "outline" : "primary"}
+                    size="sm"
+                    fullWidth={false}
+                    disabled={togglingContactId === place.id}
+                    className={`px-3 py-1.5 text-xs font-semibold ${
+                      place.contactDetailsReleased
+                        ? "!border-amber-500/40 !text-amber-300 hover:!bg-amber-500/15"
+                        : ""
+                    }`}
+                    title={
+                      place.contactDetailsReleased
+                        ? "Revoke client contact details from carer view"
+                        : "Manually unlock and release client contact details to carer immediately"
+                    }
+                  >
+                    {togglingContactId === place.id ? (
+                      "Updating..."
+                    ) : place.contactDetailsReleased ? (
+                      <>
+                        <Lock className="w-3 h-3 mr-1" /> Revoke
+                      </>
+                    ) : (
+                      <>
+                        <ShieldCheck className="w-3 h-3 mr-1" /> Release
+                      </>
+                    )}
+                  </Button>
                   <select
                     value={place.status}
                     disabled={updatingStatusFor === place.id}
@@ -1068,6 +1121,7 @@ export default function PlacementTracking({
         <AdminPlacementDetailModal
           placementId={detailModalPlacementId}
           onClose={() => setDetailModalPlacementId(null)}
+          onPlacementUpdated={refreshPlacements}
         />
       )}
     </div>

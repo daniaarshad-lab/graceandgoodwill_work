@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import { Clock } from "lucide-react";
+import ArticleAuthor from "./ArticleAuthor";
 
 import { getCategoryLabel } from "@/data/blogCategories";
 import { formatBlogDate } from "@/lib/blogValidation";
@@ -42,10 +43,6 @@ export default function ArticleHeader({ post }: ArticleHeaderProps) {
           </p>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs text-white/70">
-            <span>By {post.author.name}</span>
-            <span aria-hidden="true" className="text-white/40">
-              •
-            </span>
             <time dateTime={post.publishedAt ?? post.createdAt}>
               Published {formatBlogDate(post.publishedAt ?? post.createdAt)}
             </time>
@@ -56,6 +53,10 @@ export default function ArticleHeader({ post }: ArticleHeaderProps) {
               <Clock className="h-3 w-3" aria-hidden="true" />
               {post.readingTimeMinutes} min read
             </span>
+          </div>
+
+          <div className="mt-8">
+            <ArticleAuthor author={post.author} />
           </div>
         </div>
       </header>

@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-import ArticleAuthor from "./ArticleAuthor";
 import ArticleContent from "./ArticleContent";
 import ArticleHeader from "./ArticleHeader";
 import BlogBreadcrumbs from "./BlogBreadcrumbs";
@@ -100,8 +99,6 @@ export default function MockPostFallback({ slug }: MockPostFallbackProps) {
             ))}
           </div>
         )}
-
-        <ArticleAuthor author={post.author} />
 
         <div className="mt-10">
           <Link

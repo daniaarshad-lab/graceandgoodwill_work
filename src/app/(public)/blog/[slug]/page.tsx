@@ -4,7 +4,6 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 
-import ArticleAuthor from "@/components/blog/ArticleAuthor";
 import ArticleContent from "@/components/blog/ArticleContent";
 import ArticleHeader from "@/components/blog/ArticleHeader";
 import BlogBreadcrumbs from "@/components/blog/BlogBreadcrumbs";
@@ -187,9 +186,6 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
               </div>
             )}
 
-            <div className="mt-16 border-t border-gold-500/10 pt-8">
-              <ArticleAuthor author={post.author} />
-            </div>
 
             <div className="mt-10">
               <Link

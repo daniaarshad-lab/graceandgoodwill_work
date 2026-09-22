@@ -87,6 +87,7 @@ export default function HomePage() {
                   <span className="bg-white text-black text-[9px] font-bold px-1 py-[2px] rounded-sm leading-none">C</span>
                 </div>
                 <span className="text-white font-bold tracking-[0.2em] text-[10px]">RADIO</span>
+                <ExternalLink className="w-2.5 h-2.5 text-white/80 ml-0.5" />
               </div>
             </a>
           </div>
@@ -110,6 +111,7 @@ export default function HomePage() {
                   <span className="bg-white text-black text-[13px] font-bold px-1.5 py-0.5 rounded-sm leading-none">C</span>
                 </div>
                 <span className="text-white font-bold tracking-[0.2em] text-base">RADIO</span>
+                <ExternalLink className="w-4 h-4 text-white/80 ml-1" />
               </div>
             </a>
           </div>

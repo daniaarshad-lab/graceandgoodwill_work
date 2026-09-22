@@ -17,7 +17,6 @@ export default function WebsiteTermsPage() {
       agreementType="TERMS_AND_CONDITIONS"
       fallbackText={WEBSITE_TERMS_TEXT}
       documentTitle="Website & Platform Terms and Conditions"
-      documentSubtitle="GRACE & GOODWILL LTD - WEBSITE AND PLATFORM TERMS AND CONDITIONS"
       lastUpdated="August 2026"
     />
   );

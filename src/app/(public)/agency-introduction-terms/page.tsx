@@ -17,7 +17,6 @@ export default function AgencyIntroductionTermsPage() {
       agreementType="PLATFORM_INTRODUCTION_TERMS"
       fallbackText={AGENCY_INTRO_TERMS_TEXT}
       documentTitle="Platform / Agency Introduction Terms"
-      documentSubtitle="GRACE & GOODWILL LTD - PLATFORM / AGENCY INTRODUCTION TERMS"
       lastUpdated="August 2026"
     />
   );

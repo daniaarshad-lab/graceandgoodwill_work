@@ -8,7 +8,7 @@ interface LegalDocumentPageClientProps {
   agreementType: string;
   fallbackText: string;
   documentTitle: string;
-  documentSubtitle: string;
+  documentSubtitle?: string;
   lastUpdated: string;
 }
 

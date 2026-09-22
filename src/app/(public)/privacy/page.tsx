@@ -17,7 +17,6 @@ export default function PrivacyPolicyPage() {
       agreementType="PRIVACY_POLICY"
       fallbackText={PRIVACY_POLICY_TEXT}
       documentTitle="Privacy Policy"
-      documentSubtitle="GRACE & GOODWILL LTD - PRIVACY POLICY"
       lastUpdated="August 2026"
     />
   );

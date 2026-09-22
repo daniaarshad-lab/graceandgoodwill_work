@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Bell, Check, CheckCheck, Circle, X, RefreshCw } from "lucide-react";
+import { Bell, Check, CheckCheck, Circle, X, RefreshCw, Trash2 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   fetchNotifications,
@@ -49,9 +49,10 @@ interface NotificationRowProps {
   item: NotificationItem;
   onRowClick: (item: NotificationItem) => void;
   onToggleRead: (id: string, isRead: boolean) => void;
+  onDelete?: (id: string) => void;
 }
 
-function NotificationRow({ item, onRowClick, onToggleRead }: NotificationRowProps) {
+function NotificationRow({ item, onRowClick, onToggleRead, onDelete }: NotificationRowProps) {
   return (
     <div
       className={`notification-row ${!item.isRead ? "unread" : ""}`}
@@ -105,16 +106,33 @@ function NotificationRow({ item, onRowClick, onToggleRead }: NotificationRowProp
         )}
       </div>
 
-      {/* Toggle read/unread button */}
-      <button
-        className="toggle-read-btn"
-        onClick={(e) => {
-          e.stopPropagation();
-          onToggleRead(item.id, item.isRead);
-        }}
-      >
-        {item.isRead ? "Mark unread" : "Mark read"}
-      </button>
+      {/* Actions container */}
+      <div className="notification-actions flex flex-col gap-2 items-end ml-2">
+        {/* Toggle read/unread button */}
+        <button
+          className="toggle-read-btn"
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleRead(item.id, item.isRead);
+          }}
+        >
+          {item.isRead ? "Mark unread" : "Mark read"}
+        </button>
+
+        {/* Delete single notification */}
+        {onDelete && (
+          <button
+            className="text-gray-400 hover:text-red-500 transition-colors p-1"
+            title="Delete notification"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(item.id);
+            }}
+          >
+            <Trash2 style={{ width: 14, height: 14 }} />
+          </button>
+        )}
+      </div>
     </div>
   );
 }
@@ -298,12 +316,26 @@ export default function NotificationBell() {
     [dispatch, router, formatNotification]
   );
 
-  const handleMarkAll = useCallback(async () => {
-    if (markingAll || unreadCount === 0) return;
-    setMarkingAll(true);
-    await dispatch(markAllNotificationsRead());
-    setMarkingAll(false);
-  }, [dispatch, markingAll, unreadCount]);
+  const handleMarkAll = async () => {
+    try {
+      setMarkingAll(true);
+      await dispatch(markAllNotificationsRead()).unwrap();
+    } catch (error) {
+      console.error("Failed to mark all as read:", error);
+    } finally {
+      setMarkingAll(false);
+    }
+  };
+
+  const handleDelete = (id: string) => {
+    // TODO: Implement delete notification in Redux slice
+    console.log("Delete notification", id);
+  };
+
+  const handleDeleteAll = () => {
+    // TODO: Implement delete all notifications in Redux slice
+    console.log("Delete all notifications");
+  };
 
   const handleLoadMore = useCallback(() => {
     if (loadingMore || !hasMore) return;
@@ -706,7 +738,7 @@ export default function NotificationBell() {
             {/* Header */}
             <div className="notif-panel-header">
               <div className="notif-panel-title">
-                🔔 Notifications
+                🔔
                 {unreadCount > 0 && (
                   <span className="notif-panel-count">{unreadCount} new</span>
                 )}
@@ -728,9 +760,20 @@ export default function NotificationBell() {
                     className="notif-action-btn"
                     onClick={handleMarkAll}
                     disabled={markingAll}
+                    title="Mark all as read"
                   >
                     <CheckCheck style={{ width: 12, height: 12 }} />
                     <span className="mark-all-text">Mark all read</span>
+                  </button>
+                )}
+                {items.length > 0 && (
+                  <button
+                    className="notif-action-btn !text-red-400 hover:!text-red-300 hover:!bg-red-400/10"
+                    onClick={handleDeleteAll}
+                    title="Delete all"
+                  >
+                    <Trash2 style={{ width: 12, height: 12 }} />
+                    <span className="mark-all-text">Clear all</span>
                   </button>
                 )}
               </div>
@@ -764,6 +807,7 @@ export default function NotificationBell() {
                       item={item}
                       onRowClick={handleRowClick}
                       onToggleRead={handleToggleRead}
+                      onDelete={handleDelete}
                     />
                   ))}
                   {hasMore && (

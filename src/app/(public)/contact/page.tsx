@@ -71,10 +71,10 @@ export default function ContactPage() {
             </div>
             <div>
               <h4 className="text-sm font-semibold text-gold-200">
-                Strict Vetting Standards
+                Carefully Vetted Carers
               </h4>
               <p className="page-supporting-text text-gold-100/60 mt-1">
-                All our professional carers undergo and background checks.
+                All carers complete our required compliance and background checks before becoming available for placements.
               </p>
             </div>
           </div>

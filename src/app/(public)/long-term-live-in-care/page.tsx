@@ -22,8 +22,8 @@ export default function LongTermLiveInCarePage() {
 
         {/* Breadcrumb & Header */}
         <div className="max-w-4xl mx-auto text-center mb-20">
-          <Link href="/" className="inline-flex items-center text-gold-300/80 hover:text-gold-200 text-sm font-normal mb-6 transition-colors">
-            &larr; Back to Home
+          <Link href="/services" className="inline-flex items-center text-gold-300/80 hover:text-gold-200 text-sm font-normal mb-6 transition-colors">
+            &larr; Back to Services
           </Link>
           <h1 className="main-page-heading mb-5">
             Long-Term Live-in Care

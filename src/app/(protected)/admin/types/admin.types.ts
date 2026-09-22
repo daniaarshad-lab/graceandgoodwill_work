@@ -261,3 +261,35 @@ export interface CarerPayment {
   paidAt: string | null;
   transactionProofUrl: string | null;
 }
+
+export interface CarerComplianceDocument {
+  id: string;
+  carerProfileId: string;
+  fileName: string;
+  fileUrl: string;
+  fileKey?: string;
+  fileSize: number;
+  fileCategory: string;
+  fileType: string;
+  mimeType?: string;
+  status: "PENDING" | "VERIFIED" | "FAILED" | "REJECTED";
+  rejectionReason?: string | null;
+  internalNotes?: string | null;
+  customDocumentType?: string | null;
+  expiryDate?: string | null;
+  dbsCertificateNumber?: string | null;
+  isExpired?: boolean;
+  reminderMilestonesSent?: number[];
+  lastReminderSentAt?: string | null;
+  uploadedByRole?: string;
+  uploadedById?: string;
+  uploadedByName?: string;
+  approvedById?: string;
+  approvedByName?: string;
+  approvedAt?: string | null;
+  rejectedById?: string;
+  rejectedByName?: string;
+  rejectedAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}

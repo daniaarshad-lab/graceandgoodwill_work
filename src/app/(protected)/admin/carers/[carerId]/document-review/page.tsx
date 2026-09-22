@@ -9,6 +9,7 @@ import {
   rejectDocument,
   updateDocumentInStore,
   updateDocumentNotesThunk,
+  updateDocumentMetadataThunk,
   deleteDocumentThunk,
 } from "@/store/slices/adminSlice";
 import { useAuth } from "@/contexts/AuthContext";
@@ -69,40 +70,6 @@ const getFullFileUrl = (url: string | undefined | null) => {
   return `${baseUrl}${normalizedPath}`;
 };
 
-const getMockDocDetails = (category: string) => {
-  const types: Record<
-    string,
-    { type: string; uploadDate: string; expiryDate: string }
-  > = {
-    CRIMINAL_RECORD_CHECK: {
-      type: "Criminal Record Check",
-      uploadDate: "2026-05-10",
-      expiryDate: "2029-05-10",
-    },
-    DRIVERS_LICENSE: {
-      type: "Identification",
-      uploadDate: "2026-05-12",
-      expiryDate: "2031-11-20",
-    },
-    DEMENTIA_SUPPORT: {
-      type: "Certification",
-      uploadDate: "2026-05-14",
-      expiryDate: "Lifetime",
-    },
-    NURSES_REGISTRY: {
-      type: "Professional License",
-      uploadDate: "2026-05-15",
-      expiryDate: "2027-03-31",
-    },
-  };
-  return (
-    types[category] || {
-      type: "Verification Document",
-      uploadDate: "2026-05-16",
-      expiryDate: "N/A",
-    }
-  );
-};
 
 function DocumentReviewContent() {
   const params = useParams();
@@ -135,6 +102,11 @@ function DocumentReviewContent() {
   const [isSavingNotes, setIsSavingNotes] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  // Compliance Expiry Tracking state
+  const [expiryDateInput, setExpiryDateInput] = useState<string>("");
+  const [isEditingMetadata, setIsEditingMetadata] = useState(false);
+  const [isSavingMetadata, setIsSavingMetadata] = useState(false);
 
   useEffect(() => {
     if (carerId) {
@@ -238,8 +210,59 @@ function DocumentReviewContent() {
     setValidationError(null);
     setShowRejectInput(false);
     setEditingNotes(false);
+    setIsEditingMetadata(false);
     setTempNotes(activeDoc?.internalNotes || "");
-  }, [activeDocId, activeDoc?.internalNotes]);
+
+    if (activeDoc?.expiryDate) {
+      try {
+        const d = new Date(activeDoc.expiryDate);
+        setExpiryDateInput(d.toISOString().split("T")[0]);
+      } catch {
+        setExpiryDateInput("");
+      }
+    } else {
+      setExpiryDateInput("");
+    }
+  }, [activeDocId, activeDoc?.id, activeDoc?.internalNotes, activeDoc?.expiryDate]);
+
+  const isDbsDoc =
+    activeDoc?.fileType === "ENHANCED_DBS_CERTIFICATE" ||
+    activeDoc?.fileCategory === "CRIMINAL_RECORD_CHECK" ||
+    (activeDoc?.customDocumentType &&
+      activeDoc.customDocumentType.toLowerCase().includes("dbs"));
+
+  const getExpiryBadge = (doc: any) => {
+    if (!doc?.expiryDate) {
+      return {
+        label: "No Expiry",
+        className: "bg-slate-500/10 text-slate-400 border-slate-500/20",
+      };
+    }
+    const expiry = new Date(doc.expiryDate);
+    const now = new Date();
+    const msPerDay = 24 * 60 * 60 * 1000;
+    const daysRemaining = Math.ceil((expiry.getTime() - now.getTime()) / msPerDay);
+
+    if (doc.isExpired || daysRemaining < 0) {
+      return {
+        label: "Expired",
+        className: "bg-rose-500/15 text-rose-400 border-rose-500/30",
+        daysRemaining,
+      };
+    }
+    if (daysRemaining <= 30) {
+      return {
+        label: `Expiring Soon (${daysRemaining}d)`,
+        className: "bg-amber-500/15 text-amber-400 border-amber-500/30",
+        daysRemaining,
+      };
+    }
+    return {
+      label: `Valid (${daysRemaining}d)`,
+      className: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
+      daysRemaining,
+    };
+  };
 
   const handleVerify = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -249,7 +272,11 @@ function DocumentReviewContent() {
     try {
       const docNotes = tempNotes || activeDoc.internalNotes || "";
       await dispatch(
-        verifyDocument({ docId: activeDoc.id, notes: docNotes }),
+        verifyDocument({
+          docId: activeDoc.id,
+          notes: docNotes,
+          expiryDate: expiryDateInput ? new Date(expiryDateInput).toISOString() : null,
+        }),
       ).unwrap();
 
       // Clear optimisticDoc so verified status from Redux immediately takes over
@@ -257,7 +284,9 @@ function DocumentReviewContent() {
 
       showSuccessToast(
         "Document Approved",
-        "The document has been approved successfully.",
+        expiryDateInput
+          ? `Document approved with expiry date: ${expiryDateInput}.`
+          : "The document has been approved.",
       );
 
       // Re-fetch carer details so server & client state stay 100% in sync
@@ -266,6 +295,26 @@ function DocumentReviewContent() {
       showErrorToast("Error", err || "Failed to verify document");
     } finally {
       setSubmittingAction(null);
+    }
+  };
+
+  const handleSaveMetadata = async () => {
+    if (!activeDoc) return;
+    setIsSavingMetadata(true);
+    try {
+      await dispatch(
+        updateDocumentMetadataThunk({
+          docId: activeDoc.id,
+          expiryDate: expiryDateInput ? new Date(expiryDateInput).toISOString() : null,
+        }),
+      ).unwrap();
+      showSuccessToast("Compliance Updated", "Expiry date has been updated.");
+      setIsEditingMetadata(false);
+      dispatch(fetchCarerDetails(carerId));
+    } catch (err: any) {
+      showErrorToast("Error", err || "Failed to update compliance details");
+    } finally {
+      setIsSavingMetadata(false);
     }
   };
 
@@ -372,7 +421,7 @@ function DocumentReviewContent() {
       .then(() => {
         setOptimisticDoc(null);
       })
-      .catch(() => {});
+      .catch(() => { });
   };
 
   const activeDocName = getDocumentName(activeDoc);
@@ -513,7 +562,7 @@ function DocumentReviewContent() {
                     {Object.entries(groupedDocs).map(([groupName, docs]) => {
                       const isPending = docs.some((d: any) => d.status === "PENDING" || d.status === "UPLOADED");
                       const groupStatus = isPending ? "PENDING" : docs[0]?.status || "UPLOADED";
-                      
+
                       return (
                         <div key={groupName} className="rounded-xl border border-navy-800 bg-navy-900/40 p-2 space-y-2">
                           <div className="flex items-center justify-between px-2 pt-1 pb-2 border-b border-navy-800">
@@ -522,13 +571,13 @@ function DocumentReviewContent() {
                               {getStatusLabel(groupStatus)}
                             </span>
                           </div>
-                          
+
                           <div className="space-y-1.5">
                             {docs.map((doc: any) => {
                               const isActive = doc.id === activeDocId;
                               const cleanStatus = getStatusLabel(doc.status);
                               const uploaderName = doc.uploadedByName || (doc.uploadedByRole === "ADMIN" ? "Admin" : "Carer");
-                              const uploadDate = doc.createdAt 
+                              const uploadDate = doc.createdAt
                                 ? new Date(doc.createdAt).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
                                 : "Unknown Date";
 
@@ -544,11 +593,10 @@ function DocumentReviewContent() {
                                     const newUrl = `${window.location.pathname}?documentId=${doc.id}`;
                                     window.history.pushState({ ...window.history.state, as: newUrl, url: newUrl }, "", newUrl);
                                   }}
-                                  className={`relative w-full text-left rounded-lg p-2 border transition-all duration-300 flex items-center justify-between gap-2 ${
-                                    isActive
+                                  className={`relative w-full text-left rounded-lg p-2 border transition-all duration-300 flex items-center justify-between gap-2 ${isActive
                                       ? "bg-navy-900/80 border-gold shadow-[0_0_8px_rgba(212,175,55,0.15)] ring-1 ring-gold/30 text-gold-100"
                                       : "bg-navy-950/40 border-gold-300/5 text-gold-100 hover:border-gold-300/20 hover:bg-navy-950/60"
-                                  }`}
+                                    }`}
                                 >
                                   {/* Left Column: File Name & Meta */}
                                   <div className="flex-1 min-w-0 flex flex-col gap-1">
@@ -659,42 +707,6 @@ function DocumentReviewContent() {
                           <Calendar className="h-3.5 w-3.5 text-gold/60" />
                           {activeDoc.createdAt
                             ? new Date(activeDoc.createdAt).toLocaleDateString(
-                                "en-GB",
-                                {
-                                  day: "2-digit",
-                                  month: "long",
-                                  year: "numeric",
-                                },
-                              )
-                            : getMockDocDetails(
-                                activeDoc.fileCategory || activeDoc.fileType,
-                              ).uploadDate}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* DOCUMENT DETAILED INFORMATION */}
-                  <div className="grid grid-cols-2 md:grid-cols-6 gap-4 p-4 rounded-xl bg-navy-950/40 border border-gold-300/5 text-xs flex-shrink-0">
-                    <div>
-                      <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1">
-                        Document Type
-                      </span>
-                      <span className="text-gold-200 font-bold">
-                        {
-                          getMockDocDetails(
-                            activeDoc.fileCategory || activeDoc.fileType,
-                          ).type
-                        }
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1">
-                        Approved At
-                      </span>
-                      <span className="text-gold-200 font-bold">
-                        {activeDoc.approvedAt
-                          ? new Date(activeDoc.approvedAt).toLocaleDateString(
                               "en-GB",
                               {
                                 day: "2-digit",
@@ -702,9 +714,98 @@ function DocumentReviewContent() {
                                 year: "numeric",
                               },
                             )
-                          : "N/A"}
+                            : "N/A"}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* DOCUMENT DETAILED INFORMATION */}
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 p-4 rounded-xl bg-navy-950/40 border border-gold-300/5 text-xs flex-shrink-0">
+                    <div>
+                      <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1">
+                        Document Type
+                      </span>
+                      <span className="text-gold-200 font-bold truncate block" title={getDocumentName(activeDoc)}>
+                        {activeDoc.customDocumentType ||
+                          (activeDoc.fileType
+                            ? getDocumentFileLabel(activeDoc.fileType)
+                            : activeDoc.fileCategory || "Document")}
                       </span>
                     </div>
+
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-gold-100/40 font-semibold uppercase tracking-wider block">
+                          Expiry Date
+                        </span>
+                        {(activeDoc.status?.toUpperCase() === "VERIFIED" ||
+                          activeDoc.status?.toUpperCase() === "APPROVED") &&
+                          !isEditingMetadata && (
+                            <button
+                              type="button"
+                              onClick={() => setIsEditingMetadata(true)}
+                              className="text-[10px] text-gold hover:text-gold-200 uppercase tracking-wider font-bold transition-colors cursor-pointer"
+                            >
+                              Edit
+                            </button>
+                          )}
+                      </div>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="text-gold-200 font-bold">
+                          {activeDoc.expiryDate
+                            ? new Date(activeDoc.expiryDate).toLocaleDateString(
+                              "en-GB",
+                              {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                              },
+                            )
+                            : "No Expiry"}
+                        </span>
+                        {activeDoc.expiryDate && (
+                          <span
+                            className={`text-[9px] px-1.5 py-0.5 rounded font-bold border leading-none ${getExpiryBadge(activeDoc).className
+                              }`}
+                          >
+                            {getExpiryBadge(activeDoc).label}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {isDbsDoc ? (
+                      <div>
+                        <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1">
+                          DBS Number
+                        </span>
+                        <span className="text-gold-200 font-bold font-mono truncate block">
+                          {activeDoc.dbsCertificateNumber ||
+                            carer?.carerProfile?.dbsCertificateNumber ||
+                            "Not Set"}
+                        </span>
+                      </div>
+                    ) : (
+                      <div>
+                        <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1">
+                          Approved At
+                        </span>
+                        <span className="text-gold-200 font-bold">
+                          {activeDoc.approvedAt
+                            ? new Date(activeDoc.approvedAt).toLocaleDateString(
+                              "en-GB",
+                              {
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric",
+                              },
+                            )
+                            : "N/A"}
+                        </span>
+                      </div>
+                    )}
+
                     <div>
                       <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1">
                         Rejected At
@@ -712,76 +813,65 @@ function DocumentReviewContent() {
                       <span className="text-gold-200 font-bold">
                         {activeDoc.rejectedAt
                           ? new Date(activeDoc.rejectedAt).toLocaleDateString(
-                              "en-GB",
-                              {
-                                day: "2-digit",
-                                month: "long",
-                                year: "numeric",
-                              },
-                            )
+                            "en-GB",
+                            {
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                            },
+                          )
                           : "N/A"}
                       </span>
                     </div>
-                    <div>
-                      <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1">
-                        Expiry Date
-                      </span>
-                      <span className="text-gold-200 font-bold">
-                        {
-                          getMockDocDetails(
-                            activeDoc.fileCategory || activeDoc.fileType,
-                          ).expiryDate
-                        }
-                      </span>
-                    </div>
+
                     <div>
                       <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1">
                         Status
                       </span>
                       <span
-                        className={`font-bold uppercase ${
-                          activeDoc.status?.toUpperCase() === "VERIFIED" ||
-                          activeDoc.status?.toUpperCase() === "APPROVED"
+                        className={`font-bold uppercase ${activeDoc.status?.toUpperCase() === "VERIFIED" ||
+                            activeDoc.status?.toUpperCase() === "APPROVED"
                             ? "text-emerald-400"
                             : activeDoc.status?.toUpperCase() === "REJECTED"
                               ? "text-rose-400"
                               : "text-gold-DEFAULT"
-                        }`}
+                          }`}
                       >
                         {getStatusLabel(activeDoc.status)}
                       </span>
                     </div>
+
                     <div>
                       <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1">
                         {activeDoc.status?.toUpperCase() === "REJECTED"
                           ? "Rejected By"
                           : "Approved By"}
                       </span>
-                      <span className="text-gold-200 font-bold">
+                      <span className="text-gold-200 font-bold truncate block">
                         {activeDoc.status?.toUpperCase() === "APPROVED" ||
-                        activeDoc.status?.toUpperCase() === "VERIFIED" ||
-                        activeDoc.status?.toUpperCase() === "REJECTED"
+                          activeDoc.status?.toUpperCase() === "VERIFIED" ||
+                          activeDoc.status?.toUpperCase() === "REJECTED"
                           ? (activeDoc.rejectedByName &&
-                              activeDoc.rejectedByName !== "ADMIN" &&
-                              activeDoc.rejectedByName) ||
-                            (activeDoc.rejectedBy &&
-                              activeDoc.rejectedBy !== "ADMIN" &&
-                              activeDoc.rejectedBy) ||
-                            (activeDoc.approvedByName &&
-                              activeDoc.approvedByName !== "ADMIN" &&
-                              activeDoc.approvedByName) ||
-                            (activeDoc.approvedBy &&
-                              activeDoc.approvedBy !== "ADMIN" &&
-                              activeDoc.approvedBy) ||
-                            (activeDoc.adminName &&
-                              activeDoc.adminName !== "ADMIN" &&
-                              activeDoc.adminName) ||
-                            (activeDoc.reviewedBy &&
-                              activeDoc.reviewedBy !== "ADMIN" &&
-                              activeDoc.reviewedBy) ||
-                            (user?.firstName
-                              ? `${user.firstName} ${user.lastName || ""}`.trim()
-                              : "System Admin")
+                            activeDoc.rejectedByName !== "ADMIN" &&
+                            activeDoc.rejectedByName) ||
+                          (activeDoc.rejectedBy &&
+                            activeDoc.rejectedBy !== "ADMIN" &&
+                            activeDoc.rejectedBy) ||
+                          (activeDoc.approvedByName &&
+                            activeDoc.approvedByName !== "ADMIN" &&
+                            activeDoc.approvedByName) ||
+                          (activeDoc.approvedBy &&
+                            activeDoc.approvedBy !== "ADMIN" &&
+                            activeDoc.approvedBy) ||
+                          (activeDoc.adminName &&
+                            activeDoc.adminName !== "ADMIN" &&
+                            activeDoc.adminName) ||
+                          (activeDoc.reviewedBy &&
+                            activeDoc.reviewedBy !== "ADMIN" &&
+                            activeDoc.reviewedBy) ||
+                          (user?.firstName
+                            ? `${user.firstName} ${user.lastName || ""}`.trim()
+                            : "System Admin")
                           : "N/A"}
                       </span>
                     </div>
@@ -895,11 +985,10 @@ function DocumentReviewContent() {
                         }}
                         placeholder="Provide a reason for rejection (required)..."
                         rows={2}
-                        className={`w-full rounded-xl bg-navy-950 p-3 text-xs text-gold-100 placeholder-gold-100/20 outline-none transition duration-300 resize-none animate-none border ${
-                          validationError
+                        className={`w-full rounded-xl bg-navy-950 p-3 text-xs text-gold-100 placeholder-gold-100/20 outline-none transition duration-300 resize-none animate-none border ${validationError
                             ? "border-rose-500 focus:border-rose-500 focus:ring-1 focus:ring-rose-500/20"
                             : "border-gold-300/10 focus:border-gold-300/30"
-                        }`}
+                          }`}
                         autoFocus
                       />
                       {validationError && (
@@ -971,123 +1060,230 @@ function DocumentReviewContent() {
                       )}
                     </div>
 
-                    {/* ACTION PORTAL */}
-                    <div className="bg-navy-950/40 rounded-xl border border-gold-300/5 p-4 flex flex-col md:flex-row items-center justify-between gap-4">
-                    <div className="text-xs text-gold-100/50">
-                      <span className="font-bold text-gold-200 block mb-0.5">
-                        Verification Guidelines
-                      </span>
-                      Ensure signatures, credentials and dates align properly
-                      with client care requests profile.
-                    </div>
-
-                    <div className="flex flex-row items-center gap-3 w-full md:w-auto justify-end whitespace-nowrap overflow-x-auto pb-1 md:pb-0">
-                      {/* Delete Button */}
-                      <button
-                        type="button"
-                        onClick={handleDeleteDoc}
-                        disabled={isDeleting || submittingAction !== null}
-                        className="px-4 py-2 text-xs font-bold text-rose-400 bg-navy-950 border border-rose-500/10 hover:border-rose-500/30 hover:bg-rose-500/10 rounded-xl transition duration-200 flex items-center justify-center gap-1.5 cursor-pointer h-10 flex-shrink-0"
-                        title="Delete Document"
-                      >
-                        {isDeleting ? (
-                          <ThinSpinner size="xs" spinnerClassName="border-rose-400 shrink-0" className="inline-flex flex-row space-y-0" />
-                        ) : (
-                          <>
-                            <Trash2 className="h-4 w-4 flex-shrink-0" />
-                            <span className="hidden sm:inline">Delete</span>
-                          </>
-                        )}
-                      </button>
-
-                      {activeDoc.fileUrl && (
-                        <a
-                          href={fullFileUrl}
-                          download
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="px-5 py-2 text-xs font-bold text-gold bg-navy-950 border border-gold-300/10 hover:border-gold-300/30 rounded-xl transition duration-200 flex items-center justify-center gap-1.5 cursor-pointer h-10 flex-shrink-0"
-                        >
-                          <Download className="h-4 w-4 flex-shrink-0" />
-                          Download Document
-                        </a>
-                      )}
-
-                      {activeDoc.status?.toUpperCase() === "VERIFIED" ||
-                      activeDoc.status?.toUpperCase() === "APPROVED" ? (
-                        <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-5 py-2 text-emerald-400 font-bold text-xs flex items-center gap-2 h-10 justify-center flex-shrink-0">
-                          <CheckCircle2 className="h-4 w-4 flex-shrink-0" />{" "}
-                          Approved ✓
+                    {/* EDIT EXPIRY METADATA PANEL (For already reviewed documents) */}
+                    {isEditingMetadata && (
+                      <div className="bg-navy-950/80 rounded-xl border border-gold/30 p-4 space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
+                        <div className="flex items-center justify-between">
+                          <label className="text-xs uppercase font-bold text-gold flex items-center gap-1.5">
+                            <Calendar className="h-3.5 w-3.5 text-gold" />
+                            Update Document Expiry Date
+                          </label>
+                          <span className="text-[10px] text-gold-100/50">Admin Update (Optional)</span>
                         </div>
-                      ) : activeDoc.status?.toUpperCase() === "REJECTED" ? (
-                        <div className="bg-rose-500/10 border border-rose-500/20 rounded-xl px-5 py-2 text-rose-400 font-bold text-xs flex items-center gap-2 h-10 justify-center flex-shrink-0">
-                          <X className="h-4 w-4 flex-shrink-0" /> Rejected ✕
-                        </div>
-                      ) : (
-                        <div className="flex flex-row items-center gap-3">
-                          {showRejectInput ? (
-                            <>
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setShowRejectInput(false);
-                                  setValidationError(null);
-                                }}
-                                disabled={submittingAction !== null}
-                                className="px-5 py-2 text-xs font-bold text-gold-200 bg-navy-950 hover:bg-navy-900 border border-gold-300/10 disabled:opacity-40 rounded-xl transition duration-200 flex items-center justify-center h-10 flex-shrink-0"
-                              >
-                                Cancel
-                              </button>
-                              <button
-                                type="button"
-                                onClick={handleReject}
-                                disabled={submittingAction !== null}
-                                className="px-5 py-2 text-xs font-bold text-white bg-rose-600 hover:bg-rose-500 disabled:opacity-40 rounded-xl transition duration-200 flex items-center justify-center gap-1.5 h-10 flex-shrink-0"
-                              >
-                                {submittingAction === "REJECT" ? (
-                                  <ThinSpinner size="xs" spinnerClassName="border-white shrink-0" className="inline-flex flex-row space-y-0" />
-                                ) : (
-                                  <X className="h-4 w-4" flex-shrink-0="true" />
-                                )}
-                                Submit Rejection
-                              </button>
-                            </>
-                          ) : (
-                            <>
-                              <button
-                                type="button"
-                                onClick={handleReject}
-                                disabled={submittingAction !== null}
-                                className="px-5 py-2 text-xs font-bold text-white bg-rose-600 hover:bg-rose-500 disabled:opacity-40 rounded-xl transition duration-200 flex items-center justify-center gap-1.5 cursor-pointer h-10 flex-shrink-0"
-                              >
-                                {submittingAction === "REJECT" ? (
-                                  <ThinSpinner size="xs" spinnerClassName="border-white shrink-0" className="inline-flex flex-row space-y-0" />
-                                ) : (
-                                  <X className="h-4 w-4" flex-shrink-0="true" />
-                                )}
-                                Reject
-                              </button>
-                              <button
-                                type="button"
-                                onClick={handleVerify}
-                                disabled={submittingAction !== null}
-                                className="px-5 py-2 text-xs font-bold text-navy-950 bg-gold hover:bg-gold-200 disabled:opacity-40 rounded-xl transition duration-200 flex items-center justify-center gap-1.5 cursor-pointer h-10 flex-shrink-0"
-                              >
-                                {submittingAction === "VERIFY" ? (
-                                  <ThinSpinner size="xs" spinnerClassName="border-navy-950 shrink-0" className="inline-flex flex-row space-y-0" />
-                                ) : (
-                                  <Check className="h-4 w-4" flex-shrink-0="true" />
-                                )}
-                                Approve
-                              </button>
-                            </>
+
+                        <div className="flex items-center gap-2 max-w-xs">
+                          <input
+                            type="date"
+                            value={expiryDateInput}
+                            onChange={(e) => setExpiryDateInput(e.target.value)}
+                            disabled={isSavingMetadata}
+                            className="w-full rounded-xl bg-navy-900 px-3.5 py-2 text-xs text-gold-100 border border-gold-300/20 focus:border-gold focus:outline-none"
+                          />
+                          {expiryDateInput && (
+                            <button
+                              type="button"
+                              onClick={() => setExpiryDateInput("")}
+                              disabled={isSavingMetadata}
+                              className="text-xs text-gold-100/40 hover:text-gold-200 px-2 py-1 rounded transition-colors cursor-pointer"
+                            >
+                              Clear
+                            </button>
                           )}
                         </div>
+
+                        <div className="flex justify-end gap-2 pt-2 border-t border-gold-300/10">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setIsEditingMetadata(false);
+                              if (activeDoc.expiryDate) {
+                                try {
+                                  setExpiryDateInput(new Date(activeDoc.expiryDate).toISOString().split("T")[0]);
+                                } catch {
+                                  setExpiryDateInput("");
+                                }
+                              } else {
+                                setExpiryDateInput("");
+                              }
+                            }}
+                            disabled={isSavingMetadata}
+                            className="px-3 py-1.5 text-xs font-bold text-gold-200 hover:text-gold-100 uppercase tracking-wider cursor-pointer"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleSaveMetadata}
+                            disabled={isSavingMetadata}
+                            className="px-4 py-1.5 text-xs font-bold bg-gold hover:bg-gold-200 text-navy-950 rounded-lg flex items-center gap-1.5 shadow-sm transition-colors cursor-pointer"
+                          >
+                            {isSavingMetadata ? (
+                              <ThinSpinner size="xs" spinnerClassName="border-navy-950 shrink-0" className="inline-flex flex-row space-y-0" />
+                            ) : (
+                              <Check className="h-3.5 w-3.5" />
+                            )}
+                            Save Expiry Date
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* EXPIRY DATE INPUT (During document review for approval) */}
+                    {activeDoc.status?.toUpperCase() !== "VERIFIED" &&
+                      activeDoc.status?.toUpperCase() !== "APPROVED" && (
+                        <div className="bg-navy-950/60 rounded-xl border border-gold-300/10 p-4 space-y-3 animate-in fade-in duration-200">
+                          <div className="flex items-center justify-between flex-wrap gap-2">
+                            <label className="text-xs uppercase font-bold text-gold-200 flex items-center gap-1.5">
+                              <Calendar className="h-3.5 w-3.5 text-gold" />
+                              Document Expiry Date
+                            </label>
+                            <span className="text-[11px] text-gold-100/40 italic">
+                              Optional — enter if applicable
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-2 max-w-xs">
+                            <input
+                              type="date"
+                              value={expiryDateInput}
+                              onChange={(e) => setExpiryDateInput(e.target.value)}
+                              className="w-full rounded-xl bg-navy-900 px-3.5 py-2 text-xs text-gold-100 border border-gold-300/20 focus:border-gold focus:outline-none"
+                            />
+                            {expiryDateInput && (
+                              <button
+                                type="button"
+                                onClick={() => setExpiryDateInput("")}
+                                className="text-xs text-gold-100/40 hover:text-gold-200 px-2 py-1 rounded transition-colors cursor-pointer"
+                                title="Clear expiry date"
+                              >
+                                Clear
+                              </button>
+                            )}
+                          </div>
+
+                          <p className="text-[10px] text-gold-100/40">
+                            This expiry date will be tracked by the compliance expiry monitor, triggering automated renewal reminders.
+                          </p>
+                        </div>
                       )}
+
+                    {/* ACTION PORTAL */}
+                    <div className="bg-navy-950/40 rounded-xl border border-gold-300/5 p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+                      <div className="text-xs text-gold-100/50">
+                        <span className="font-bold text-gold-200 block mb-0.5">
+                          Verification Guidelines
+                        </span>
+                        Ensure signatures, credentials and dates align properly
+                        with client care requests profile.
+                      </div>
+
+                      <div className="flex flex-row items-center gap-3 w-full md:w-auto justify-end whitespace-nowrap overflow-x-auto pb-1 md:pb-0">
+                        {/* Delete Button */}
+                        <button
+                          type="button"
+                          onClick={handleDeleteDoc}
+                          disabled={isDeleting || submittingAction !== null}
+                          className="px-4 py-2 text-xs font-bold text-rose-400 bg-navy-950 border border-rose-500/10 hover:border-rose-500/30 hover:bg-rose-500/10 rounded-xl transition duration-200 flex items-center justify-center gap-1.5 cursor-pointer h-10 flex-shrink-0"
+                          title="Delete Document"
+                        >
+                          {isDeleting ? (
+                            <ThinSpinner size="xs" spinnerClassName="border-rose-400 shrink-0" className="inline-flex flex-row space-y-0" />
+                          ) : (
+                            <>
+                              <Trash2 className="h-4 w-4 flex-shrink-0" />
+                              <span className="hidden sm:inline">Delete</span>
+                            </>
+                          )}
+                        </button>
+
+                        {activeDoc.fileUrl && (
+                          <a
+                            href={fullFileUrl}
+                            download
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-5 py-2 text-xs font-bold text-gold bg-navy-950 border border-gold-300/10 hover:border-gold-300/30 rounded-xl transition duration-200 flex items-center justify-center gap-1.5 cursor-pointer h-10 flex-shrink-0"
+                          >
+                            <Download className="h-4 w-4 flex-shrink-0" />
+                            Download Document
+                          </a>
+                        )}
+
+                        {activeDoc.status?.toUpperCase() === "VERIFIED" ||
+                          activeDoc.status?.toUpperCase() === "APPROVED" ? (
+                          <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-5 py-2 text-emerald-400 font-bold text-xs flex items-center gap-2 h-10 justify-center flex-shrink-0">
+                            <CheckCircle2 className="h-4 w-4 flex-shrink-0" />{" "}
+                            Approved ✓
+                          </div>
+                        ) : activeDoc.status?.toUpperCase() === "REJECTED" ? (
+                          <div className="bg-rose-500/10 border border-rose-500/20 rounded-xl px-5 py-2 text-rose-400 font-bold text-xs flex items-center gap-2 h-10 justify-center flex-shrink-0">
+                            <X className="h-4 w-4 flex-shrink-0" /> Rejected ✕
+                          </div>
+                        ) : (
+                          <div className="flex flex-row items-center gap-3">
+                            {showRejectInput ? (
+                              <>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setShowRejectInput(false);
+                                    setValidationError(null);
+                                  }}
+                                  disabled={submittingAction !== null}
+                                  className="px-5 py-2 text-xs font-bold text-gold-200 bg-navy-950 hover:bg-navy-900 border border-gold-300/10 disabled:opacity-40 rounded-xl transition duration-200 flex items-center justify-center h-10 flex-shrink-0"
+                                >
+                                  Cancel
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={handleReject}
+                                  disabled={submittingAction !== null}
+                                  className="px-5 py-2 text-xs font-bold text-white bg-rose-600 hover:bg-rose-500 disabled:opacity-40 rounded-xl transition duration-200 flex items-center justify-center gap-1.5 h-10 flex-shrink-0"
+                                >
+                                  {submittingAction === "REJECT" ? (
+                                    <ThinSpinner size="xs" spinnerClassName="border-white shrink-0" className="inline-flex flex-row space-y-0" />
+                                  ) : (
+                                    <X className="h-4 w-4" flex-shrink-0="true" />
+                                  )}
+                                  Submit Rejection
+                                </button>
+                              </>
+                            ) : (
+                              <>
+                                <button
+                                  type="button"
+                                  onClick={handleReject}
+                                  disabled={submittingAction !== null}
+                                  className="px-5 py-2 text-xs font-bold text-white bg-rose-600 hover:bg-rose-500 disabled:opacity-40 rounded-xl transition duration-200 flex items-center justify-center gap-1.5 cursor-pointer h-10 flex-shrink-0"
+                                >
+                                  {submittingAction === "REJECT" ? (
+                                    <ThinSpinner size="xs" spinnerClassName="border-white shrink-0" className="inline-flex flex-row space-y-0" />
+                                  ) : (
+                                    <X className="h-4 w-4" flex-shrink-0="true" />
+                                  )}
+                                  Reject
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={handleVerify}
+                                  disabled={submittingAction !== null}
+                                  className="px-5 py-2 text-xs font-bold text-navy-950 bg-gold hover:bg-gold-200 disabled:opacity-40 rounded-xl transition duration-200 flex items-center justify-center gap-1.5 cursor-pointer h-10 flex-shrink-0"
+                                >
+                                  {submittingAction === "VERIFY" ? (
+                                    <ThinSpinner size="xs" spinnerClassName="border-navy-950 shrink-0" className="inline-flex flex-row space-y-0" />
+                                  ) : (
+                                    <Check className="h-4 w-4" flex-shrink-0="true" />
+                                  )}
+                                  Approve
+                                </button>
+                              </>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
               </div>
             ) : (
               <div

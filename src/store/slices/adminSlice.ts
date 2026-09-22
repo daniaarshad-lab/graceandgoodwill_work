@@ -174,21 +174,56 @@ export const fetchCarerDetails = createAsyncThunk<
 
 export const verifyDocument = createAsyncThunk<
   { docId: string; status: string; data?: any },
-  { docId: string; notes?: string },
+  {
+    docId: string;
+    notes?: string;
+    expiryDate?: string | null;
+    dbsCertificateNumber?: string | null;
+  },
   { rejectValue: string }
->("admin/verifyDocument", async ({ docId, notes }, { rejectWithValue }) => {
-  try {
-    const response = await adminService.updateDocumentStatus(
-      docId,
-      "VERIFIED",
-      undefined,
-      notes,
-    );
-    return { docId, status: "VERIFIED", data: response };
-  } catch (error: any) {
-    return rejectWithValue(error?.message || "Failed to verify document");
-  }
-});
+>(
+  "admin/verifyDocument",
+  async ({ docId, notes, expiryDate, dbsCertificateNumber }, { rejectWithValue }) => {
+    try {
+      const response = await adminService.updateDocumentStatus(
+        docId,
+        "VERIFIED",
+        undefined,
+        notes,
+        expiryDate,
+        dbsCertificateNumber,
+      );
+      return { docId, status: "VERIFIED", data: response };
+    } catch (error: any) {
+      return rejectWithValue(error?.message || "Failed to verify document");
+    }
+  },
+);
+
+export const updateDocumentMetadataThunk = createAsyncThunk<
+  { docId: string; data?: any },
+  {
+    docId: string;
+    expiryDate?: string | null;
+    dbsCertificateNumber?: string | null;
+    internalNotes?: string | null;
+  },
+  { rejectValue: string }
+>(
+  "admin/updateDocumentMetadata",
+  async ({ docId, expiryDate, dbsCertificateNumber, internalNotes }, { rejectWithValue }) => {
+    try {
+      const response = await adminService.updateDocumentMetadata(docId, {
+        expiryDate,
+        dbsCertificateNumber,
+        internalNotes,
+      });
+      return { docId, data: response };
+    } catch (error: any) {
+      return rejectWithValue(error?.message || "Failed to update document metadata");
+    }
+  },
+);
 
 export const rejectDocument = createAsyncThunk<
   { docId: string; status: string; data?: any },
@@ -617,6 +652,12 @@ const adminSlice = createSlice({
     builder.addCase(rejectDocument.fulfilled, (state, action) => {
       const { docId, status, data } = action.payload;
       applyDocumentUpdate(state, docId, { status, ...data });
+    });
+
+    // updateDocumentMetadataThunk
+    builder.addCase(updateDocumentMetadataThunk.fulfilled, (state, action) => {
+      const { docId, data } = action.payload;
+      applyDocumentUpdate(state, docId, data);
     });
 
     // fetchAdminCareRequestApplications

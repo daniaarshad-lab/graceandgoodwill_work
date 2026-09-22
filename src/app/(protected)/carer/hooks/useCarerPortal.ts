@@ -212,7 +212,12 @@ export function useCarerPortal({
           : "pending",
     size: `${(doc.fileSize / (1024 * 1024)).toFixed(1)} MB`,
     previewUrl: doc.fileUrl,
+    fileKey: doc.fileKey,
+    fileUrl: doc.fileUrl,
     rejectionReason: doc.rejectionReason,
+    expiryDate: doc.expiryDate,
+    dbsCertificateNumber: doc?.dbsCertificateNumber,
+    isExpired: doc.isExpired,
   }));
 
   const [uploadingDocType, setUploadingDocType] = useState<string | null>(null);

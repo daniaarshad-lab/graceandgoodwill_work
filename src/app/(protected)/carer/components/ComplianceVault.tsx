@@ -105,9 +105,8 @@ export default function ComplianceVault({
                   return (
                     <div
                       key={doc.id}
-                      className={`p-4 rounded-xl border border-gold-300/10 bg-navy-950/40 flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-4 transition-opacity ${
-                        isDeleting ? "opacity-50 pointer-events-none" : ""
-                      }`}
+                      className={`p-4 rounded-xl border border-gold-300/10 bg-navy-950/40 flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-4 transition-opacity ${isDeleting ? "opacity-50 pointer-events-none" : ""
+                        }`}
                     >
                       <div className="flex items-center gap-3 overflow-hidden w-full sm:w-auto">
                         <div className="shrink-0 h-10 w-10 rounded-lg bg-gold-DEFAULT/10 border border-gold-DEFAULT/20 flex items-center justify-center text-gold-DEFAULT">
@@ -120,16 +119,63 @@ export default function ComplianceVault({
                           <p className="text-[9px] text-gold-100/40 mt-0.5 truncate">
                             {doc.category
                               ? doc.category
-                                  .split("_")
-                                  .map(
-                                    (w: string) =>
-                                      w.charAt(0).toUpperCase() +
-                                      w.slice(1).toLowerCase(),
-                                  )
-                                  .join(" ")
+                                .split("_")
+                                .map(
+                                  (w: string) =>
+                                    w.charAt(0).toUpperCase() +
+                                    w.slice(1).toLowerCase(),
+                                )
+                                .join(" ")
                               : "Document"}{" "}
                             • {doc.size}
+                            {doc.dbsCertificateNumber && (
+                              <span className="ml-1 text-gold-200/70 font-mono">
+                                • DBS: #{doc.dbsCertificateNumber}
+                              </span>
+                            )}
                           </p>
+                          {(() => {
+                            // When pending admin review or rejected, don't show expired/expiring alerts since user updated the file
+                            if (doc.status !== "verified") return null;
+                            if (!doc.expiryDate) return null;
+                            const expiry = new Date(doc.expiryDate);
+                            const now = new Date();
+                            const msPerDay = 24 * 60 * 60 * 1000;
+                            const daysRemaining = Math.ceil(
+                              (expiry.getTime() - now.getTime()) / msPerDay,
+                            );
+                            const formatted = expiry.toLocaleDateString("en-GB", {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                            });
+
+                            if (doc.isExpired || daysRemaining < 0) {
+                              return (
+                                <div className="mt-1.5 flex items-center gap-1.5">
+                                  <span className="rounded px-1.5 py-0.5 text-[9px] font-bold border bg-rose-500/15 text-rose-400 border-rose-500/30">
+                                    Expired on {formatted} — Please upload renewed certificate
+                                  </span>
+                                </div>
+                              );
+                            }
+                            if (daysRemaining <= 30) {
+                              return (
+                                <div className="mt-1.5 flex items-center gap-1.5">
+                                  <span className="rounded px-1.5 py-0.5 text-[9px] font-bold border bg-amber-500/15 text-amber-400 border-amber-500/30">
+                                    Expires in {daysRemaining} days ({formatted})
+                                  </span>
+                                </div>
+                              );
+                            }
+                            return (
+                              <div className="mt-1 flex items-center gap-1.5">
+                                <span className="text-[10px] text-gold-100/50">
+                                  Expiry: <strong className="text-gold-200/80">{formatted}</strong>
+                                </span>
+                              </div>
+                            );
+                          })()}
                           {doc.status === "failed" && doc.rejectionReason && (
                             <p className="text-[10px] text-red-400 mt-1 font-medium break-words">
                               Reason : {doc.rejectionReason}

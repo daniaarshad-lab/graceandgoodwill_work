@@ -43,6 +43,74 @@ import AdminUploadCarerDocumentModal from "@/app/(protected)/admin/components/Ad
 
 // Document categories are determined by the backend response
 
+const getDocExpiryInfo = (doc: any) => {
+  const isPending =
+    doc?.status &&
+    doc.status.toUpperCase() !== "VERIFIED" &&
+    doc.status.toUpperCase() !== "APPROVED";
+
+  if (isPending) {
+    return {
+      formatted: doc?.expiryDate
+        ? new Date(doc.expiryDate).toLocaleDateString("en-GB", {
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+          })
+        : "Pending Review",
+      daysRemaining: null,
+      status: "PENDING_REVIEW",
+      badgeClass: "bg-gold-DEFAULT/10 text-gold-DEFAULT border-gold-DEFAULT/20",
+      badgeText: "Pending Review",
+    };
+  }
+
+  if (!doc?.expiryDate) {
+    return {
+      formatted: "No Expiry",
+      daysRemaining: null,
+      status: "NO_EXPIRY",
+      badgeClass: "bg-slate-500/10 text-slate-400 border-slate-500/20",
+      badgeText: "No Expiry",
+    };
+  }
+  const expiry = new Date(doc.expiryDate);
+  const now = new Date();
+  const msPerDay = 24 * 60 * 60 * 1000;
+  const daysRemaining = Math.ceil((expiry.getTime() - now.getTime()) / msPerDay);
+  const formatted = expiry.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+
+  if (doc.isExpired || daysRemaining < 0) {
+    return {
+      formatted,
+      daysRemaining,
+      status: "EXPIRED",
+      badgeClass: "bg-rose-500/15 text-rose-400 border-rose-500/30",
+      badgeText: `Expired (${Math.abs(daysRemaining)}d ago)`,
+    };
+  }
+  if (daysRemaining <= 30) {
+    return {
+      formatted,
+      daysRemaining,
+      status: "EXPIRING_SOON",
+      badgeClass: "bg-amber-500/15 text-amber-400 border-amber-500/30",
+      badgeText: `Expiring Soon (${daysRemaining}d)`,
+    };
+  }
+  return {
+    formatted,
+    daysRemaining,
+    status: "VALID",
+    badgeClass: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
+    badgeText: `Valid (${daysRemaining}d)`,
+  };
+};
+
 export default function CarerDetailsPage() {
   return (
     <Suspense
@@ -269,10 +337,10 @@ function CarerDetailsContent() {
   const emergencyContactName = profile.emergencyContactName || carer.emergencyContactName || carer.user?.emergencyContactName;
   const emergencyContactNumber = profile.emergencyContactNumber || carer.emergencyContactNumber || carer.user?.emergencyContactNumber;
   const emergencyContactRelation = profile.emergencyContactRelation || carer.emergencyContactRelation || carer.user?.emergencyContactRelation;
-  
+
   const drivingPreferences = profile.drivingPreferences || carer.drivingPreferences || carer.user?.drivingPreferences || [];
   const hasBusinessInsurance = profile.hasBusinessInsurance || carer.hasBusinessInsurance || carer.user?.hasBusinessInsurance || false;
-  
+
   const dbsUpdateServiceNumber = profile.dbsUpdateServiceNumber || carer.dbsUpdateServiceNumber || carer.user?.dbsUpdateServiceNumber;
 
   // Availability mapping
@@ -373,6 +441,7 @@ function CarerDetailsContent() {
     else if (dbsDoc.status === "REJECTED" || dbsDoc.status === "Rejected")
       dbsStatus = "Failed";
   }
+
 
   // Duration with us
   const durationWithUs = getDurationWithUs(registrationDate);
@@ -555,8 +624,8 @@ function CarerDetailsContent() {
                   onClick={handleApproveCarer}
                   disabled={!canApproveCarer || approvingCarer}
                   className={`flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-300 w-full md:w-auto ${canApproveCarer && !approvingCarer
-                      ? "bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-900/30 cursor-pointer"
-                      : "bg-navy-800/60 text-gold-100/30 border border-gold-300/10 cursor-not-allowed"
+                    ? "bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-900/30 cursor-pointer"
+                    : "bg-navy-800/60 text-gold-100/30 border border-gold-300/10 cursor-not-allowed"
                     }`}
                 >
                   {approvingCarer ? (
@@ -587,8 +656,8 @@ function CarerDetailsContent() {
           <button
             onClick={() => setActiveTab("profile")}
             className={`px-5 py-3 text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap cursor-pointer ${activeTab === "profile"
-                ? "border-b-2 border-gold text-gold bg-gold/5"
-                : "text-gold-200/60 hover:text-gold-50"
+              ? "border-b-2 border-gold text-gold bg-gold/5"
+              : "text-gold-200/60 hover:text-gold-50"
               }`}
           >
             Profile Dossier
@@ -596,8 +665,8 @@ function CarerDetailsContent() {
           <button
             onClick={() => setActiveTab("documents")}
             className={`px-5 py-3 text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap cursor-pointer ${activeTab === "documents"
-                ? "border-b-2 border-gold text-gold bg-gold/5"
-                : "text-gold-200/60 hover:text-gold-50"
+              ? "border-b-2 border-gold text-gold bg-gold/5"
+              : "text-gold-200/60 hover:text-gold-50"
               }`}
           >
             Compliance Documents ({rawDocs.length})
@@ -605,8 +674,8 @@ function CarerDetailsContent() {
           <button
             onClick={() => setActiveTab("media")}
             className={`px-5 py-3 text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap cursor-pointer ${activeTab === "media"
-                ? "border-b-2 border-gold text-gold bg-gold/5"
-                : "text-gold-200/60 hover:text-gold-50"
+              ? "border-b-2 border-gold text-gold bg-gold/5"
+              : "text-gold-200/60 hover:text-gold-50"
               }`}
           >
             Media
@@ -614,8 +683,8 @@ function CarerDetailsContent() {
           <button
             onClick={() => setActiveTab("audit")}
             className={`px-5 py-3 text-sm font-semibold rounded-t-xl transition-all duration-300 whitespace-nowrap cursor-pointer ${activeTab === "audit"
-                ? "border-b-2 border-gold text-gold bg-gold/5"
-                : "text-gold-200/60 hover:text-gold-50"
+              ? "border-b-2 border-gold text-gold bg-gold/5"
+              : "text-gold-200/60 hover:text-gold-50"
               }`}
           >
             Audit Logs
@@ -1098,132 +1167,148 @@ function CarerDetailsContent() {
           )}
 
           {activeTab === "documents" && (
-            <div className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md flex flex-col h-[400px] lg:h-[600px]">
-              <div className="flex items-center justify-between border-b border-gold-300/5 pb-3 shrink-0">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-gold-200/50 flex items-center gap-2">
-                  <FileText className="h-4 w-4 text-gold/60" /> Compliance
-                  Documents Log
-                </h3>
-                <button
-                  type="button"
-                  onClick={() => setIsUploadModalOpen(true)}
-                  className="px-3.5 py-1.5 rounded-xl text-xs font-bold text-navy-950 bg-gradient-to-r from-[#F5D4A0] via-[#D4AF37] to-[#C99232] hover:brightness-110 shadow-md shadow-gold/20 flex items-center gap-1.5 transition duration-200 cursor-pointer"
-                >
-                  <Upload className="h-3.5 w-3.5" /> Upload Document
-                </button>
-              </div>
+            <div className="space-y-6">
 
-              <div className="flex-1 overflow-x-auto overflow-y-auto pr-2 mt-4 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gold-300/20 hover:[&::-webkit-scrollbar-thumb]:bg-gold-300/40 [&::-webkit-scrollbar-thumb]:rounded-full">
-                <table className="w-full min-w-[800px] text-left text-xs text-gold-100/70 border-collapse">
-                  <thead className="sticky top-0 bg-navy-900/95 z-10 shadow-[0_1px_0_rgba(234,179,8,0.1)]">
-                    <tr className="text-[10px] font-bold uppercase tracking-wider text-gold-100/40 whitespace-nowrap">
-                      <th className="py-3 px-4">Document Name</th>
-                      <th className="py-3 px-4">Type</th>
-                      <th className="py-3 px-4">Upload Date</th>
-                      <th className="py-3 px-4">Expiry Date</th>
-                      <th className="py-3 px-4">Status</th>
-                      <th className="py-3 px-4 text-right">Review Action</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gold-300/5">
-                    {rawDocs.length === 0 ? (
-                      <tr>
-                        <td
-                          colSpan={6}
-                          className="py-8 text-center text-gold-100/40 text-xs"
-                        >
-                          No compliance documents found.
-                        </td>
+              {/* COMPLIANCE DOCUMENTS LOG TABLE */}
+              <div className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md flex flex-col h-[400px] lg:h-[550px]">
+                <div className="flex items-center justify-between border-b border-gold-300/5 pb-3 shrink-0">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-gold-200/50 flex items-center gap-2">
+                    <FileText className="h-4 w-4 text-gold/60" /> Compliance
+                    Documents Log
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={() => setIsUploadModalOpen(true)}
+                    className="px-3.5 py-1.5 rounded-xl text-xs font-bold text-navy-950 bg-gradient-to-r from-[#F5D4A0] via-[#D4AF37] to-[#C99232] hover:brightness-110 shadow-md shadow-gold/20 flex items-center gap-1.5 transition duration-200 cursor-pointer"
+                  >
+                    <Upload className="h-3.5 w-3.5" /> Upload Document
+                  </button>
+                </div>
+
+                <div className="flex-1 overflow-x-auto overflow-y-auto pr-2 mt-4 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gold-300/20 hover:[&::-webkit-scrollbar-thumb]:bg-gold-300/40 [&::-webkit-scrollbar-thumb]:rounded-full">
+                  <table className="w-full min-w-[800px] text-left text-xs text-gold-100/70 border-collapse">
+                    <thead className="sticky top-0 bg-navy-900/95 z-10 shadow-[0_1px_0_rgba(234,179,8,0.1)]">
+                      <tr className="text-[10px] font-bold uppercase tracking-wider text-gold-100/40 whitespace-nowrap">
+                        <th className="py-3 px-4">Document Name</th>
+                        <th className="py-3 px-4">Type</th>
+                        <th className="py-3 px-4">Upload Date</th>
+                        <th className="py-3 px-4">Expiry Date</th>
+                        <th className="py-3 px-4">Status</th>
+                        <th className="py-3 px-4 text-right">Review Action</th>
                       </tr>
-                    ) : (
-                      rawDocs.map((uploaded: any, index: number) => {
-                        const typeSource =
-                          uploaded.fileType || uploaded.type || uploaded.name;
-                        const catSource =
-                          uploaded.fileCategory || uploaded.category;
-
-                        let fileCategoryClean = catSource
-                          ? catSource
-                            .split("_")
-                            .map(
-                              (w: string) =>
-                                w.charAt(0).toUpperCase() +
-                                w.slice(1).toLowerCase(),
-                            )
-                            .join(" ")
-                          : "Document";
-
-                        let displayName =
-                          uploaded.fileName || "Unnamed Document";
-
-                        if (
-                          typeSource === DocumentFileType.ADDITIONAL_REFERENCE
-                        ) {
-                          displayName = `Additional Reference ${index + 1}`;
-                          fileCategoryClean = "Compliance";
-                        } else if (typeSource) {
-                          displayName =
-                            getDocumentFileLabel(
-                              typeSource as DocumentFileType,
-                            ) || displayName;
-                        }
-
-                        const finalUploadDate = uploaded.createdAt
-                          ? new Date(uploaded.createdAt)
-                            .toISOString()
-                            .split("T")[0]
-                          : "Unknown";
-
-                        const finalExpiryDate = "N/A";
-
-                        const statusLabel =
-                          uploaded.status === "VERIFIED"
-                            ? "Verified"
-                            : uploaded.status === "REJECTED"
-                              ? "Rejected"
-                              : "Uploaded";
-
-                        return (
-                          <tr
-                            key={uploaded.id || index}
-                            className="hover:bg-navy-900/20 transition duration-150"
+                    </thead>
+                    <tbody className="divide-y divide-gold-300/5">
+                      {rawDocs.length === 0 ? (
+                        <tr>
+                          <td
+                            colSpan={6}
+                            className="py-8 text-center text-gold-100/40 text-xs"
                           >
-                            <td className="py-3.5 px-4 font-bold text-gold-200">
-                              {displayName}
-                            </td>
-                            <td className="py-3.5 px-4 text-gold-100/60 font-semibold">
-                              {fileCategoryClean}
-                            </td>
-                            <td className="py-3.5 px-4 font-mono text-gold-100/50">
-                              {finalUploadDate}
-                            </td>
-                            <td className="py-3.5 px-4 font-mono text-gold-100/50">
-                              {finalExpiryDate}
-                            </td>
-                            <td className="py-3.5 px-4">
-                              <span
-                                className={`inline-flex rounded px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider ${getStatusBadgeStyles(
-                                  statusLabel,
-                                )}`}
-                              >
-                                {statusLabel}
-                              </span>
-                            </td>
-                            <td className="py-3.5 px-4 text-right">
-                              <Link
-                                href={`/admin/carers/${carer.userId || carer.id}/document-review?documentId=${uploaded.id}`}
-                                className="inline-flex items-center gap-1 rounded-xl bg-gold text-navy-950 font-bold px-3 py-1 text-[10px] whitespace-nowrap hover:bg-gold-200 transition duration-200 cursor-pointer"
-                              >
-                                Review Document{" "}
-                                <ChevronRight className="h-3 w-3" />
-                              </Link>
-                            </td>
-                          </tr>
-                        );
-                      })
-                    )}
-                  </tbody>
-                </table>
+                            No compliance documents found.
+                          </td>
+                        </tr>
+                      ) : (
+                        rawDocs.map((uploaded: any, index: number) => {
+                          const typeSource =
+                            uploaded.fileType || uploaded.type || uploaded.name;
+                          const catSource =
+                            uploaded.fileCategory || uploaded.category;
+
+                          let fileCategoryClean = catSource
+                            ? catSource
+                              .split("_")
+                              .map(
+                                (w: string) =>
+                                  w.charAt(0).toUpperCase() +
+                                  w.slice(1).toLowerCase(),
+                              )
+                              .join(" ")
+                            : "Document";
+
+                          let displayName =
+                            uploaded.fileName || "Unnamed Document";
+
+                          if (
+                            typeSource === DocumentFileType.ADDITIONAL_REFERENCE
+                          ) {
+                            displayName = `Additional Reference ${index + 1}`;
+                            fileCategoryClean = "Compliance";
+                          } else if (typeSource) {
+                            displayName =
+                              getDocumentFileLabel(
+                                typeSource as DocumentFileType,
+                              ) || displayName;
+                          }
+
+                          const finalUploadDate = uploaded.createdAt
+                            ? new Date(uploaded.createdAt)
+                              .toISOString()
+                              .split("T")[0]
+                            : "Unknown";
+
+                          const expiryInfo = getDocExpiryInfo(uploaded);
+
+                          const statusLabel =
+                            uploaded.status === "VERIFIED"
+                              ? "Verified"
+                              : uploaded.status === "REJECTED"
+                                ? "Rejected"
+                                : "Uploaded";
+
+                          return (
+                            <tr
+                              key={uploaded.id || index}
+                              className="hover:bg-navy-900/20 transition duration-150"
+                            >
+                              <td className="py-3.5 px-4 font-bold text-gold-200">
+                                <div>{displayName}</div>
+                                {uploaded.dbsCertificateNumber && (
+                                  <div className="text-[10px] text-gold-100/40 font-mono font-normal">
+                                    DBS: #{uploaded.dbsCertificateNumber}
+                                  </div>
+                                )}
+                              </td>
+                              <td className="py-3.5 px-4 text-gold-100/60 font-semibold">
+                                {fileCategoryClean}
+                              </td>
+                              <td className="py-3.5 px-4 font-mono text-gold-100/50">
+                                {finalUploadDate}
+                              </td>
+                              <td className="py-3.5 px-4 font-mono text-gold-100/70 whitespace-nowrap">
+                                <span>{expiryInfo.formatted}</span>
+                                {uploaded.expiryDate && (
+                                  <span
+                                    className={`inline-flex rounded px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider ml-2 border ${expiryInfo.badgeClass}`}
+                                  >
+                                    {expiryInfo.badgeText}
+                                  </span>
+                                )}
+                              </td>
+                              <td className="py-3.5 px-4">
+                                <span
+                                  className={`inline-flex rounded px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider ${getStatusBadgeStyles(
+                                    statusLabel,
+                                  )}`}
+                                >
+                                  {statusLabel}
+                                </span>
+                              </td>
+                              <td className="py-3.5 px-4 text-right">
+                                <Link
+                                  href={`/admin/carers/${carer.userId || carer.id}/document-review?documentId=${uploaded.id}`}
+                                  className="inline-flex items-center gap-1 rounded-xl bg-gold text-navy-950 font-bold px-3 py-1 text-[10px] whitespace-nowrap hover:bg-gold-200 transition duration-200 cursor-pointer"
+                                >
+                                  Review Document{" "}
+                                  <ChevronRight className="h-3 w-3" />
+                                </Link>
+                              </td>
+                            </tr>
+                          );
+                        })
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           )}

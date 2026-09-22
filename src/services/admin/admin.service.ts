@@ -375,6 +375,8 @@ export const adminService = {
     status: string,
     rejectionReason?: string,
     internalNotes?: string,
+    expiryDate?: string | null,
+    dbsCertificateNumber?: string | null,
   ): Promise<any> {
     const token =
       typeof window !== "undefined"
@@ -385,12 +387,24 @@ export const adminService = {
       throw new Error("No token found");
     }
 
-    const body: { status: string; rejectionReason?: string; internalNotes?: string } = { status };
+    const body: {
+      status: string;
+      rejectionReason?: string;
+      internalNotes?: string;
+      expiryDate?: string | null;
+      dbsCertificateNumber?: string | null;
+    } = { status };
     if (status === "REJECTED") {
       body.rejectionReason = rejectionReason || "";
     }
     if (internalNotes !== undefined) {
       body.internalNotes = internalNotes;
+    }
+    if (expiryDate !== undefined) {
+      body.expiryDate = expiryDate;
+    }
+    if (dbsCertificateNumber !== undefined) {
+      body.dbsCertificateNumber = dbsCertificateNumber;
     }
 
     return apiFetch(`/admin/carers/document/${docId}/status`, {
@@ -399,6 +413,32 @@ export const adminService = {
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(body),
+    });
+  },
+
+  async updateDocumentMetadata(
+    docId: string,
+    payload: {
+      expiryDate?: string | null;
+      dbsCertificateNumber?: string | null;
+      internalNotes?: string | null;
+    },
+  ): Promise<any> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch(`/admin/carers/document/${docId}/metadata`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
     });
   },
 

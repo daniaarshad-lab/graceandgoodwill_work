@@ -11,6 +11,9 @@ export interface ComplianceDoc {
   fileKey?: string;
   fileUrl?: string;
   rejectionReason?: string | null;
+  expiryDate?: string | null;
+  dbsCertificateNumber?: string | null;
+  isExpired?: boolean;
 }
 
 export type DocumentCategory =
@@ -60,6 +63,11 @@ export interface CarerDocument {
   fileType: string;
   status: "PENDING" | "VERIFIED" | "FAILED" | "REJECTED";
   rejectionReason?: string | null;
+  expiryDate?: string | null;
+  dbsCertificateNumber?: string | null;
+  isExpired?: boolean;
+  reminderMilestonesSent?: number[];
+  lastReminderSentAt?: string | null;
   createdAt: string;
   updatedAt: string;
 }

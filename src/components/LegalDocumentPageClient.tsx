@@ -72,7 +72,7 @@ export default function LegalDocumentPageClient({
   return (
     <LegalDocumentViewer
       documentTitle={docTitle}
-      documentSubtitle={documentSubtitle}
+      documentSubtitle={documentSubtitle || ""}
       lastUpdated={lastUpdatedDate}
       sections={[]}
     >

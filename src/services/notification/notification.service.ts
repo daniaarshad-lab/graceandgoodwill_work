@@ -90,4 +90,22 @@ export const notificationService = {
       headers: { Authorization: `Bearer ${token}` },
     });
   },
+
+  /** DELETE /notifications/:id */
+  async deleteNotification(id: string): Promise<void> {
+    const token = getToken();
+    return apiFetch(`/notifications/${id}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  },
+
+  /** DELETE /notifications */
+  async deleteAllNotifications(): Promise<void> {
+    const token = getToken();
+    return apiFetch("/notifications", {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  },
 };

@@ -9,6 +9,8 @@ import {
   markNotificationRead,
   markNotificationUnread,
   markAllNotificationsRead,
+  deleteNotification,
+  deleteAllNotifications,
 } from "@/store/slices/notificationSlice";
 import { NotificationItem, NotificationType, NotificationPriority } from "@/types/notification.types";
 
@@ -327,14 +329,20 @@ export default function NotificationBell() {
     }
   };
 
-  const handleDelete = (id: string) => {
-    // TODO: Implement delete notification in Redux slice
-    console.log("Delete notification", id);
+  const handleDelete = async (id: string) => {
+    try {
+      await dispatch(deleteNotification(id)).unwrap();
+    } catch (error) {
+      console.error("Failed to delete notification:", error);
+    }
   };
 
-  const handleDeleteAll = () => {
-    // TODO: Implement delete all notifications in Redux slice
-    console.log("Delete all notifications");
+  const handleDeleteAll = async () => {
+    try {
+      await dispatch(deleteAllNotifications()).unwrap();
+    } catch (error) {
+      console.error("Failed to delete all notifications:", error);
+    }
   };
 
   const handleLoadMore = useCallback(() => {
@@ -608,6 +616,13 @@ export default function NotificationBell() {
         }
         .notification-row:hover .toggle-read-btn {
           opacity: 1;
+        }
+        
+        /* Show action buttons by default on touch devices / mobile */
+        @media (hover: none), (max-width: 768px) {
+          .toggle-read-btn {
+            opacity: 1;
+          }
         }
         .toggle-read-btn:hover {
           background: rgba(212,175,122,0.15);

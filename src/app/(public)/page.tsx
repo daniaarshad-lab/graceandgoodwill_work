@@ -3,6 +3,7 @@ import homeBannerImg from "@/assets/open/Home-banner-img.jpeg";
 import happySeniorCouple from "@/assets/open/happy_senior_couple.png";
 import bbcImage2 from "@/assets/open/bbc-image2.jpg";
 import bbcImage3 from "@/assets/open/bbc-image3.jpg";
+import communicationImg from "@/assets/blog/blog-communication.png";
 import publicImg2 from "@/assets/open/public-img2.jpeg";
 import publicImg3 from "@/assets/open/public-img3.jpeg";
 import partnershipLogo1 from "@/assets/partnership-logo/partnership-logo1.webp";
@@ -217,15 +218,15 @@ export default function HomePage() {
         </div>
 
         {/* Styled Image Section Below the Box */}
-        <div className="relative max-w-3xl mx-auto mt-16 px-4 py-4 md:px-8 md:py-8">
+        <div className="relative max-w-4xl mx-auto mt-16 px-4 py-4 md:px-8 md:py-8">
           {/* Decorative Offset Wireframe Corners */}
           <div className="absolute top-0 left-0 w-32 h-32 md:w-48 md:h-48 border-t border-l border-gold-300/40 rounded-tl-[3rem] pointer-events-none"></div>
           <div className="absolute bottom-0 right-0 w-32 h-32 md:w-48 md:h-48 border-b border-r border-gold-300/40 rounded-br-[3rem] pointer-events-none"></div>
 
           <div className="relative z-10 rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-gold-300/20 bg-navy-950/40 group">
             <Image
-              src={publicImg2}
-              alt="Live in care support"
+              src={communicationImg}
+              alt="live in care"
               className="w-full h-auto transform transition-transform duration-[2s] group-hover:scale-105"
               placeholder="blur"
             />
@@ -459,7 +460,7 @@ export default function HomePage() {
 
             <div className="relative z-10 rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-gold-300/20 bg-navy-950/40 group">
               <Image
-                src={publicImg3}
+                src={publicImg2}
                 alt="Available live in carers"
                 className="w-full h-auto transform transition-transform duration-[2s] group-hover:scale-105"
                 placeholder="blur"

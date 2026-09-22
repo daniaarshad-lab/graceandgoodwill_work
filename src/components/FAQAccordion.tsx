@@ -1,11 +1,17 @@
 "use client";
 
 import React, { useState } from "react";
-import { faqs as allFaqs, FAQItem } from "@/data/faqData";
+import { faqs as allFaqs } from "@/data/faqData";
 import { ChevronDown } from "lucide-react";
 
+export interface FAQAccordionItem {
+  question: string;
+  answer: string;
+  category?: string;
+}
+
 interface FAQAccordionProps {
-  faqsList?: FAQItem[];
+  faqsList?: FAQAccordionItem[];
   groupByCategory?: boolean;
 }
 
@@ -16,7 +22,7 @@ export default function FAQAccordion({ faqsList = allFaqs, groupByCategory = fal
     setOpenQuestion(openQuestion === question ? null : question);
   };
 
-  const renderFAQ = (faq: FAQItem) => {
+  const renderFAQ = (faq: FAQAccordionItem) => {
     const isOpen = openQuestion === faq.question;
     return (
       <div

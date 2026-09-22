@@ -1,15 +1,17 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import Button from "@/components/Button";
-import { Coffee, HeartHandshake, Heart } from "lucide-react";
 import type { Metadata } from "next";
+
+import companionshipImg from "@/assets/open/companionship-long-term-livin.jpeg";
 
 export const metadata: Metadata = {
   alternates: {
     canonical: `/live-in-companionship`,
   },
-  title: "Live-in Companionship & Everyday Support | Grace & Goodwill",
-  description: "Live-in companionship combines social connection with practical everyday assistance, allowing you to live safely and independently at home.",
+  title: "Live-in Companionship Care at Home UK | Grace & Goodwill",
+  description: "Explore live-in companionship care at home with Grace & Goodwill. Find experienced carers for company, practical support, routines and everyday independence.",
 };
 
 export default function CompanionshipLiveInCarePage() {
@@ -17,98 +19,188 @@ export default function CompanionshipLiveInCarePage() {
     <main className="min-h-screen bg-navy-950 pt-16 md:pt-20 pb-24 relative overflow-hidden">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-gold-500/10 rounded-full blur-[120px] pointer-events-none opacity-50"></div>
 
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
+      <div className="max-w-4xl mx-auto px-6 relative z-10">
         
         {/* Breadcrumb & Header */}
-        <div className="max-w-4xl mx-auto text-center mb-20">
-          <Link href="/" className="inline-flex items-center text-gold-300/80 hover:text-gold-200 text-sm font-medium mb-6 transition-colors">
-            &larr; Back to Home
+        <div className="text-center mb-12">
+          <Link href="/services" className="inline-flex items-center text-gold-300/80 hover:text-gold-200 text-sm font-medium mb-6 transition-colors">
+            &larr; Back to Services
           </Link>
           <h1 className="main-page-heading mb-5">
-            Live-in Companionship and Everyday Support
+            Live-in Companionship Care
           </h1>
-          <div className="page-supporting-text mt-6 space-y-4">
-            <p>Not everyone searching for a live-in carer has a specific diagnosis.</p>
-            <p>Someone may be physically relatively independent but live alone, feel increasingly isolated, lack confidence managing certain everyday activities or simply feel safer knowing somebody else is in the home.</p>
-            <p>Live-in companionship can combine social connection with agreed practical assistance.</p>
+          <h2 className="text-xl font-medium text-gold-200 mb-6 font-serif">
+            Companionship, reassurance and everyday support at home
+          </h2>
+          <div className="page-supporting-text mt-6 space-y-4 text-left">
+            <p>Not everyone looking for live-in support has a specific diagnosis or complex care need.</p>
+            <p>Some people simply feel increasingly isolated, would value more company or need practical help with everyday life while continuing to live independently at home.</p>
+            <p>Live-in companionship can provide reassuring one-to-one support while helping someone maintain the routines, interests, relationships and familiar surroundings that matter to them.</p>
+            <p>Grace & Goodwill helps individuals and families explore live-in carer profiles, giving you greater visibility over experience, personality, interests, availability and other information that may help you decide who feels right for your home and lifestyle.</p>
+          </div>
+          <div className="mt-8">
+            <Button asChild variant="primary" size="md">
+              <Link href="/carers">Explore Live-in Companionship</Link>
+            </Button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-20">
-          {/* Box 1 */}
-          <section className="bg-gradient-to-br from-navy-900/60 to-navy-950/80 p-10 sm:p-14 rounded-[3rem] border border-gold-300/15 shadow-elegant relative overflow-hidden flex flex-col group">
-            <div className="absolute -right-10 -top-10 w-40 h-40 bg-gold-500/10 rounded-full blur-[40px] group-hover:bg-gold-500/20 transition-colors duration-500 pointer-events-none"></div>
-            
-            <div className="flex items-center gap-5 mb-8 border-b border-gold-400/10 pb-5">
-              <div className="w-14 h-14 bg-gold-400/10 rounded-2xl flex items-center justify-center border border-gold-400/20 shadow-inner group-hover:scale-110 transition-transform duration-500 shrink-0">
-                <Coffee className="w-7 h-7 text-gold-400" />
-              </div>
-              <h2 className="text-[26px] font-serif text-gold-50 leading-tight">More Than Having Someone in the House</h2>
-            </div>
-            
-            <p className="text-[15px] text-gold-100/75 font-light font-serif leading-relaxed mb-6">
-              Good companionship is personal. It might mean:
-            </p>
-            
-            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-auto mb-6">
+        {/* Hero Image Section */}
+        <div className="relative w-full max-w-4xl mx-auto mb-16 px-4">
+          <div className="absolute top-0 left-0 w-24 h-24 md:w-32 md:h-32 border-t-2 border-l-2 border-gold-400/30 rounded-tl-[3rem] pointer-events-none -mt-4 -ml-2"></div>
+          <div className="absolute bottom-0 right-0 w-24 h-24 md:w-32 md:h-32 border-b-2 border-r-2 border-gold-400/30 rounded-br-[3rem] pointer-events-none -mb-4 -mr-2"></div>
+          <div className="relative z-10 rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-gold-300/20 bg-navy-950/40 group">
+            <Image
+              src={companionshipImg}
+              alt="Live-in Companionship Care"
+              className="w-full h-auto aspect-[16/9] object-cover group-hover:scale-105 transition-transform duration-[2s]"
+              placeholder="blur"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-navy-950/80 via-navy-950/5 to-transparent pointer-events-none" />
+          </div>
+        </div>
+
+        <div className="space-y-10">
+          {/* Section 1 */}
+          <section className="bg-gradient-to-br from-navy-900/60 to-navy-950/80 p-8 sm:p-10 rounded-[2rem] border border-gold-300/15 shadow-elegant">
+            <h3 className="text-2xl font-serif text-gold-50 mb-6">Who may benefit from live-in companionship?</h3>
+            <p className="page-supporting-text mb-4">Live-in companionship may be suitable for someone who:</p>
+            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
               {[
-                "Sharing meals", "Having conversations", "Going for walks", 
-                "Attending social activities", "Shopping together", "Appointments", 
-                "Maintaining hobbies", "Visiting friends or relatives", 
-                "Preparing meals", "Light household activities", "Maintaining routines"
+                "lives alone and would value regular company",
+                "feels increasingly isolated or less socially connected",
+                "would feel more reassured with another person in the home",
+                "needs practical help with meals, shopping or household routines",
+                "has become less confident going out independently",
+                "would benefit from support attending appointments or activities",
+                "has family living further away",
+                "wants some everyday support while remaining independent at home",
+                "would benefit from continuity and a familiar person around them"
               ].map((item, i) => (
-                <li key={i} className="flex items-center gap-3">
-                  <div className="w-1.5 h-1.5 rounded-full bg-gold-400/60 shrink-0"></div>
-                  <span className="text-[14px] font-light font-serif text-gold-100/80 leading-snug">{item}</span>
+                <li key={i} className="flex items-start gap-3">
+                  <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-gold-400/60 shrink-0"></div>
+                  <span className="text-[15px] font-light font-serif text-gold-100/80 leading-snug">{item}</span>
                 </li>
               ))}
             </ul>
-
-            <p className="text-[14.5px] text-gold-100/80 font-light font-serif italic mt-auto border-t border-gold-400/10 pt-6">
-                For somebody who has spent years living independently, finding a person they actually enjoy sharing their home with can be extremely important.
-              </p>
+            <div className="page-supporting-text space-y-4">
+              <p>There does not need to be a particular diagnosis before someone considers companionship support.</p>
+              <p className="font-medium text-gold-200">For some people, the most important thing is simply having another person there.</p>
+            </div>
           </section>
 
-          {/* Box 2 */}
-          <section className="bg-gradient-to-br from-navy-900/60 to-navy-950/80 p-10 sm:p-14 rounded-[3rem] border border-gold-300/15 shadow-elegant relative overflow-hidden flex flex-col group">
-            <div className="absolute -left-10 -bottom-10 w-40 h-40 bg-gold-500/10 rounded-full blur-[40px] group-hover:bg-gold-500/20 transition-colors duration-500 pointer-events-none"></div>
-
-            <div className="flex items-center gap-5 mb-8 border-b border-gold-400/10 pb-5">
-              <div className="w-14 h-14 bg-gold-400/10 rounded-2xl flex items-center justify-center border border-gold-400/20 shadow-inner group-hover:scale-110 transition-transform duration-500 shrink-0">
-                <HeartHandshake className="w-7 h-7 text-gold-400" />
-              </div>
-              <h2 className="text-[26px] font-serif text-gold-50 leading-tight">Personality and Interests Matter</h2>
+          {/* Section 2 */}
+          <section className="bg-gradient-to-br from-navy-900/60 to-navy-950/80 p-8 sm:p-10 rounded-[2rem] border border-gold-300/15 shadow-elegant">
+            <h3 className="text-2xl font-serif text-gold-50 mb-6">What can a live-in companion help with?</h3>
+            <div className="page-supporting-text space-y-4 mb-6">
+              <p>The exact arrangement is agreed directly with the chosen carer and should reflect the individual’s own routines, preferences and lifestyle.</p>
+              <p>Depending on the arrangement, companionship may include support with:</p>
             </div>
-            
-            <div className="text-[15.5px] text-gold-100/90 leading-relaxed mb-6 space-y-4">
-              <p>Grace & Goodwill profiles allow clients and families to learn more about carers as individuals.</p>
-              <p>Profiles may include information about:</p>
-            </div>
-            
-            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8 mt-auto">
+            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
               {[
-                "Interests", "Personality", "Background", 
-                "Previous experience", "Skills", "Introductory video", "Availability"
+                "conversation and company",
+                "preparing meals",
+                "shopping",
+                "light household tasks",
+                "attending appointments",
+                "going for walks or outings",
+                "hobbies and interests",
+                "maintaining social activities",
+                "getting out into the local community",
+                "supporting familiar daily routines",
+                "other agreed practical support"
               ].map((item, i) => (
-                <li key={i} className="flex items-center gap-3">
-                  <div className="w-1.5 h-1.5 rounded-full bg-gold-400/60 shrink-0"></div>
-                  <span className="text-[14px] font-light font-serif text-gold-100/80 leading-snug">{item}</span>
+                <li key={i} className="flex items-start gap-3">
+                  <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-gold-400/60 shrink-0"></div>
+                  <span className="text-[15px] font-light font-serif text-gold-100/80 leading-snug">{item}</span>
                 </li>
               ))}
             </ul>
+            <div className="page-supporting-text space-y-4">
+              <p>Where personal care or additional support is also required, this can be considered when exploring suitable carers with relevant experience.</p>
+              <p className="font-medium text-gold-200">The aim is not to take over someone’s life, but to provide support around the way they already choose to live.</p>
+            </div>
+          </section>
 
-            <p className="text-[14.5px] text-gold-100/80 font-light font-serif italic mt-auto border-t border-gold-400/10 pt-6">
-                This gives clients the opportunity to consider compatibility as well as practical experience.
-              </p>
+          {/* Section 3 */}
+          <section className="bg-gradient-to-br from-navy-900/60 to-navy-950/80 p-8 sm:p-10 rounded-[2rem] border border-gold-300/15 shadow-elegant">
+            <h3 className="text-2xl font-serif text-gold-50 mb-6">Staying connected to the life you already know</h3>
+            <div className="page-supporting-text space-y-4">
+              <p>For many people, remaining at home means staying close to much more than a property.</p>
+              <p>It can mean staying near familiar neighbours, local shops, pets, belongings, memories, routines and the community that feels like home.</p>
+              <p>Live-in companionship can help someone continue enjoying those familiar parts of everyday life while having another person nearby for company, practical support and reassurance.</p>
+              <p>For families, this may also provide peace of mind when they cannot always be there themselves.</p>
+            </div>
+          </section>
+
+          {/* Section 4 */}
+          <section className="bg-gradient-to-br from-navy-900/60 to-navy-950/80 p-8 sm:p-10 rounded-[2rem] border border-gold-300/15 shadow-elegant">
+            <h3 className="text-2xl font-serif text-gold-50 mb-6">Finding someone you feel comfortable with</h3>
+            <div className="page-supporting-text space-y-4 mb-6">
+              <p>Compatibility can be especially important when someone will be sharing your home.</p>
+              <p>Experience matters, but so can personality, communication style, interests, routines and the way somebody approaches everyday life.</p>
+              <p>Grace & Goodwill allows clients and families to explore carer profiles and consider information such as:</p>
+            </div>
+            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+              {[
+                "profile photograph",
+                "introduction video",
+                "biography",
+                "care experience",
+                "skills and training",
+                "hobbies and interests",
+                "languages",
+                "driving status",
+                "availability",
+                "preferred placements"
+              ].map((item, i) => (
+                <li key={i} className="flex items-start gap-3">
+                  <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-gold-400/60 shrink-0"></div>
+                  <span className="text-[15px] font-light font-serif text-gold-100/80 leading-snug">{item}</span>
+                </li>
+              ))}
+            </ul>
+            <div className="page-supporting-text space-y-4">
+              <p>Clients can use the platform independently or ask the Grace & Goodwill team for support identifying potentially suitable available profiles.</p>
+              <p className="font-medium text-gold-200">The final choice remains with the client.</p>
+            </div>
+          </section>
+
+          {/* Section 5 */}
+          <section className="bg-gradient-to-br from-navy-900/60 to-navy-950/80 p-8 sm:p-10 rounded-[2rem] border border-gold-300/15 shadow-elegant text-center">
+            <h3 className="text-2xl font-serif text-gold-50 mb-6">Short-term or ongoing companionship</h3>
+            <div className="page-supporting-text space-y-4 text-left max-w-3xl mx-auto mb-8">
+              <p>Live-in companionship can be considered for both ongoing and shorter-term arrangements.</p>
+              <p>Some families may want longer-term continuity, while others may need support for a temporary period, for example while relatives are away, after a change in circumstances or while considering what type of longer-term support may be most appropriate.</p>
+              <p>Grace & Goodwill also supports short-term live-in care, including respite arrangements, subject to suitable carer availability and both parties agreeing to proceed.</p>
+            </div>
+            <div className="flex flex-col sm:flex-row justify-center gap-4">
+              <Button asChild variant="outline" size="md">
+                <Link href="/long-term-live-in-care">Explore Long-Term Live-in Care</Link>
+              </Button>
+              <Button asChild variant="outline" size="md">
+                <Link href="/respite-live-in-care">Explore Respite Live-in Care</Link>
+              </Button>
+            </div>
           </section>
         </div>
 
-        {/* Action Call */}
-        <section className="max-w-4xl mx-auto text-center mt-12">
-          <Button asChild variant="primary" size="md" fullWidth={false} className="px-10 py-4 text-base whitespace-nowrap shadow-lg shadow-gold-500/20">
-            <Link href="/carers">Explore Companionship Support</Link>
-          </Button>
-        </section>
+        {/* Contact Info */}
+        <div className="mt-16 bg-navy-900/40 p-8 sm:p-12 rounded-[2rem] border border-gold-300/10 shadow-elegant text-center">
+          <h3 className="text-2xl font-serif text-gold-50 mb-6">Find companionship that feels right for you</h3>
+          <div className="page-supporting-text space-y-4 max-w-3xl mx-auto mb-8">
+            <p>Choosing somebody to share your home is a personal decision.</p>
+            <p>Whether you are looking for company, practical everyday support or simply greater reassurance at home, Grace & Goodwill helps you explore available live-in carers and make a more informed choice.</p>
+          </div>
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <Button asChild variant="primary" size="md">
+              <Link href="/carers">Find a Live-in Carer</Link>
+            </Button>
+            <Button asChild variant="secondary" size="md">
+              <Link href="/contact">Speak to Our Team</Link>
+            </Button>
+          </div>
+        </div>
 
       </div>
     </main>

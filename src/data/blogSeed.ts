@@ -1151,7 +1151,7 @@ export const blogSeedPosts: BlogPost[] = [
 <p>It should create space for recovery without treating the person as incapable.</p>
 <p>And it should respect the fact that rebuilding confidence can be just as important as completing practical tasks.</p>
 <p>At Grace &amp; Goodwill, our aim is to help families explore independent live-in carers who may be compatible with the individual, their circumstances and the support they need following a stroke.</p>
-<p>If you are arranging support after a stroke or preparing for a loved one to return home from hospital, request a live-in carer through Grace &amp; Goodwill and begin exploring independent carers who may suit your circumstances.</p>`,
+<p>If you are arranging support after a stroke or preparing for a loved one to return home from hospital, <a href="/live-in-care-after-stroke">explore our Live-in Care After a Stroke services</a>, or request a live-in carer through Grace &amp; Goodwill and begin exploring independent carers who may suit your circumstances.</p>`,
     featuredImageUrl: "/blog/blog-After a Stroke.jpeg",
     featuredImageAlt: "Stroke recovery at home",
     categorySlug: "care-and-support",

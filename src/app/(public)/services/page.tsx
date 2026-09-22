@@ -270,7 +270,7 @@ export default function ServicesPage() {
                 <p>Depending on the arrangement agreed with the carer, support may include personal care, meals, mobility, companionship, household activities, shopping, appointments and established daily routines.</p>
               </div>
               <Link href="/long-term-live-in-care" className="inline-flex w-full justify-center items-center rounded-xl bg-gold-400/10 border border-gold-400/30 px-4 py-3 text-sm font-medium text-gold-200 transition-colors hover:bg-gold-400/20 hover:text-gold-100">
-                Learn More About Long-Term Live-in Care
+                Long-Term Live-in Care
               </Link>
             </div>
             <div className="group relative flex flex-col rounded-[28px] border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)]">
@@ -411,8 +411,68 @@ export default function ServicesPage() {
               <div className="page-supporting-text space-y-4 mb-8 flex-grow">
                 <p>For people who need companionship alongside everyday practical support, live-in care can provide greater consistency while allowing the person to remain in familiar surroundings.</p>
               </div>
-              <Link href="/live-in-companionship" className="inline-flex w-full justify-center items-center rounded-xl bg-gold-400/10 border border-gold-400/30 px-4 py-3 text-sm font-medium text-gold-200 transition-colors hover:bg-gold-400/20 hover:text-gold-100">
+              <Link href="/live-in-companionship-care" className="inline-flex w-full justify-center items-center rounded-xl bg-gold-400/10 border border-gold-400/30 px-4 py-3 text-sm font-medium text-gold-200 transition-colors hover:bg-gold-400/20 hover:text-gold-100">
                 Companionship Care
+              </Link>
+            </div>
+            <div className="group relative flex flex-col rounded-[28px] border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)]">
+              <h2 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
+                Live-in Care Costs
+              </h2>
+              <div className="page-supporting-text space-y-4 mb-8 flex-grow">
+                <p>The cost of live-in care will depend on the support required and individual circumstances.</p>
+                <p>We provide clear pricing information to help you understand expected costs, including what can affect the price and what is included in the arrangement.</p>
+              </div>
+              <Link href="/live-in-care-costs" className="inline-flex w-full justify-center items-center rounded-xl bg-gold-400/10 border border-gold-400/30 px-4 py-3 text-sm font-medium text-gold-200 transition-colors hover:bg-gold-400/20 hover:text-gold-100">
+                Understanding Costs
+              </Link>
+            </div>
+            <div className="group relative flex flex-col rounded-[28px] border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)]">
+              <h2 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
+                Funding Live-in Care
+              </h2>
+              <div className="page-supporting-text space-y-4 mb-8 flex-grow">
+                <p>Paying for care can feel complicated, especially when dealing with changes in health or independence.</p>
+                <p>Explore options such as local authority support, NHS Continuing Healthcare, direct payments, and self-funding to understand how to manage care costs effectively.</p>
+              </div>
+              <Link href="/funding-live-in-care" className="inline-flex w-full justify-center items-center rounded-xl bg-gold-400/10 border border-gold-400/30 px-4 py-3 text-sm font-medium text-gold-200 transition-colors hover:bg-gold-400/20 hover:text-gold-100">
+                Funding Options
+              </Link>
+            </div>
+            <div className="group relative flex flex-col rounded-[28px] border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)]">
+              <h2 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
+                NHS Continuing Healthcare
+              </h2>
+              <div className="page-supporting-text space-y-4 mb-8 flex-grow">
+                <p>NHS Continuing Healthcare (CHC) is a package of care funded solely by the NHS for individuals assessed as having a primary health need.</p>
+                <p>Learn about eligibility, the CHC assessment process, and how NHS funding may support care at home.</p>
+              </div>
+              <Link href="/nhs-continuing-healthcare" className="inline-flex w-full justify-center items-center rounded-xl bg-gold-400/10 border border-gold-400/30 px-4 py-3 text-sm font-medium text-gold-200 transition-colors hover:bg-gold-400/20 hover:text-gold-100">
+                NHS Funding Guide
+              </Link>
+            </div>
+            <div className="group relative flex flex-col rounded-[28px] border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)]">
+              <h2 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
+                Local Authority Care Funding
+              </h2>
+              <div className="page-supporting-text space-y-4 mb-8 flex-grow">
+                <p>Learn how local authority care funding works, including needs assessments, financial assessments, personal budgets and direct payments for care at home.</p>
+                <p>Understand how councils can help with the cost of care and what it means for your live-in care arrangements.</p>
+              </div>
+              <Link href="/local-authority-care-funding" className="inline-flex w-full justify-center items-center rounded-xl bg-gold-400/10 border border-gold-400/30 px-4 py-3 text-sm font-medium text-gold-200 transition-colors hover:bg-gold-400/20 hover:text-gold-100">
+                Council Funding Info
+              </Link>
+            </div>
+            <div className="group relative flex flex-col rounded-[28px] border border-gold-300/10 bg-navy-900/40 p-6 sm:p-8 shadow-elegant backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold-300/30 hover:bg-navy-900/60 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)]">
+              <h2 className="text-xl font-semibold text-gold-50 tracking-wide mb-4">
+                Attendance Allowance
+              </h2>
+              <div className="page-supporting-text space-y-4 mb-8 flex-grow">
+                <p>Attendance Allowance is a non-means-tested benefit for people who have reached State Pension age and need help because of a health condition.</p>
+                <p>Find out about current payment rates and other financial help that may contribute towards care at home and live-in care costs.</p>
+              </div>
+              <Link href="/attendance-allowance-care-costs" className="inline-flex w-full justify-center items-center rounded-xl bg-gold-400/10 border border-gold-400/30 px-4 py-3 text-sm font-medium text-gold-200 transition-colors hover:bg-gold-400/20 hover:text-gold-100">
+                Attendance Allowance Guide
               </Link>
             </div>
 

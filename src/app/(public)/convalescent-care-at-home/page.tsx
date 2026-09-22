@@ -1,7 +1,167 @@
-export const metadata = {
+import React from "react";
+import Link from "next/link";
+import Button from "@/components/Button";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
   alternates: {
-    canonical: "/convalescent-care-at-home",
+    canonical: `/convalescent-care-at-home`,
   },
+  title: "Recovery Support at Home UK | Convalescent Live-in Care | Grace & Goodwill",
+  description: "Explore recovery support at home after illness, surgery or hospital treatment, with practical live-in support for mobility, routines, personal care and reassurance.",
 };
 
-export default function Page() { return (<div className="container-wrapper py-20 text-center text-white"><h1 className="main-page-heading">Content Required</h1><p className="page-supporting-text mt-6">Content is required from the client/SEO team for this section.</p></div>); }
+export default function ConvalescentCareAtHomePage() {
+  return (
+    <main className="min-h-screen bg-navy-950 pt-16 md:pt-20 pb-24 relative overflow-hidden">
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-gold-500/10 rounded-full blur-[120px] pointer-events-none opacity-50"></div>
+
+      <div className="max-w-4xl mx-auto px-6 relative z-10">
+        
+        {/* Breadcrumb & Header */}
+        <div className="text-center mb-12">
+          <Link href="/services" className="inline-flex items-center text-gold-300/80 hover:text-gold-200 text-sm font-medium mb-6 transition-colors">
+            &larr; Back to Services
+          </Link>
+          <h1 className="main-page-heading mb-5">
+            Recovery Support at Home
+          </h1>
+          <h2 className="text-xl font-medium text-gold-200 mb-6 font-serif">
+            Practical support while recovering at home
+          </h2>
+          <div className="page-supporting-text mt-6 space-y-4 text-left">
+            <p>Recovery after illness, surgery or a hospital stay can take time.</p>
+            <p>Someone may be medically well enough to return home but still feel tired, less mobile, less confident or unable to manage everyday routines in the same way as before.</p>
+            <p className="font-medium text-gold-200">Live-in support can provide practical help and reassurance while the person recovers in familiar surroundings.</p>
+            <p>Grace & Goodwill helps individuals and families explore available live-in carer profiles based on experience, availability and the type of practical support required at home.</p>
+          </div>
+          <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
+            <Button asChild variant="primary" size="md">
+              <Link href="/carers">Find a Live-in Carer</Link>
+            </Button>
+            <Button asChild variant="outline" size="md">
+              <Link href="/contact">Speak to Our Team</Link>
+            </Button>
+          </div>
+        </div>
+
+        <div className="space-y-10 mt-16">
+          {/* Section 1 */}
+          <section className="bg-gradient-to-br from-navy-900/60 to-navy-950/80 p-8 sm:p-10 rounded-[2rem] border border-gold-300/15 shadow-elegant">
+            <h3 className="text-2xl font-serif text-gold-50 mb-6">When may recovery support be useful?</h3>
+            <div className="page-supporting-text space-y-4 mb-6">
+              <p>Recovery support at home may be considered following:</p>
+            </div>
+            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+              {[
+                "surgery",
+                "a hospital admission",
+                "illness or infection",
+                "a fall or fracture",
+                "reduced mobility",
+                "a period of weakness or fatigue",
+                "a temporary loss of independence",
+                "a change in confidence after treatment"
+              ].map((item, i) => (
+                <li key={i} className="flex items-start gap-3">
+                  <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-gold-400/60 shrink-0"></div>
+                  <span className="text-[15px] font-light font-serif text-gold-100/80 leading-snug">{item}</span>
+                </li>
+              ))}
+            </ul>
+            <div className="page-supporting-text space-y-4">
+              <p>Some people may only require support for a short period, while others may need longer-term practical help depending on how their recovery progresses.</p>
+            </div>
+          </section>
+
+          {/* Section 2 */}
+          <section className="bg-gradient-to-br from-navy-900/60 to-navy-950/80 p-8 sm:p-10 rounded-[2rem] border border-gold-300/15 shadow-elegant">
+            <h3 className="text-2xl font-serif text-gold-50 mb-6">What can a live-in carer help with?</h3>
+            <div className="page-supporting-text space-y-4 mb-6">
+              <p>Depending on the arrangement, support may include:</p>
+            </div>
+            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+              {[
+                "preparing meals and drinks",
+                "personal care",
+                "dressing",
+                "mobility assistance",
+                "shopping",
+                "light household tasks",
+                "attending appointments",
+                "companionship and reassurance",
+                "maintaining familiar routines",
+                "other agreed practical day-to-day support"
+              ].map((item, i) => (
+                <li key={i} className="flex items-start gap-3">
+                  <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-gold-400/60 shrink-0"></div>
+                  <span className="text-[15px] font-light font-serif text-gold-100/80 leading-snug">{item}</span>
+                </li>
+              ))}
+            </ul>
+            <div className="page-supporting-text space-y-4">
+              <p className="font-medium text-gold-200">The aim is to provide support where it is needed while helping the person remain as independent as possible.</p>
+            </div>
+          </section>
+
+          {/* Section 3 */}
+          <section className="bg-gradient-to-br from-navy-900/60 to-navy-950/80 p-8 sm:p-10 rounded-[2rem] border border-gold-300/15 shadow-elegant">
+            <h3 className="text-2xl font-serif text-gold-50 mb-6">Clinical and rehabilitation support</h3>
+            <div className="page-supporting-text space-y-4">
+              <p>Grace & Goodwill does not provide clinical, nursing, physiotherapy, occupational therapy or rehabilitation services.</p>
+              <p>Independent live-in carers introduced through Grace & Goodwill cannot undertake clinical or rehabilitation treatment.</p>
+              <p className="font-medium text-gold-200">Where these services are required, they must be provided separately by the appropriate qualified healthcare professionals.</p>
+              <p>The live-in carer’s role is limited to the agreed practical day-to-day support at home, such as personal care, meals, mobility assistance, companionship and support with everyday routines.</p>
+            </div>
+            
+            {/* Internal Links Block */}
+            <div className="mt-10 border-t border-gold-400/20 pt-6">
+              <p className="text-sm font-serif text-gold-300 mb-4">Related helpful links:</p>
+              <div className="flex flex-wrap gap-3">
+                {[
+                  { text: "Hospital Discharge Support", href: "/hospital-discharge-live-in-care" },
+                  { text: "Respite Live-in Care", href: "/respite-live-in-care" },
+                  { text: "Long-Term Live-in Care", href: "/long-term-live-in-care" },
+                  { text: "Contact", href: "/contact" }
+                ].map((link, idx) => (
+                  <Link key={idx} href={link.href} className="text-[13px] font-medium text-gold-100/70 hover:text-gold-300 bg-navy-950/50 px-3 py-1.5 rounded-full border border-gold-400/10 transition-colors">
+                    {link.text}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Contact Info */}
+          <div className="mt-16 bg-navy-900/40 p-8 sm:p-12 rounded-[2rem] border border-gold-300/10 shadow-elegant text-center">
+            <h3 className="text-2xl font-serif text-gold-50 mb-6">Finding the right support</h3>
+            <div className="page-supporting-text space-y-4 max-w-3xl mx-auto mb-8">
+              <p>Grace & Goodwill allows individuals and families to explore available live-in carer profiles and consider factors such as experience, personality, communication style and availability.</p>
+              <p className="font-medium text-gold-200">The client remains involved in deciding who they would like to consider and ultimately choose.</p>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-6 text-gold-100/80 mb-8">
+              <a href="tel:02045240108" className="hover:text-gold-200 transition-colors">
+                <strong>Telephone:</strong> 020 4524 0108
+              </a>
+              <span className="hidden sm:inline text-gold-300/30">|</span>
+              <a href="https://wa.me/447462931949" target="_blank" rel="noopener noreferrer" className="hover:text-gold-200 transition-colors">
+                <strong>WhatsApp:</strong> +44 7462 931949
+              </a>
+            </div>
+
+            <div className="flex flex-col sm:flex-row justify-center gap-4">
+              <Button asChild variant="primary" size="md">
+                <Link href="/carers">Find a Live-in Carer</Link>
+              </Button>
+              <Button asChild variant="secondary" size="md">
+                <Link href="/contact">Speak to Our Team</Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  );
+}

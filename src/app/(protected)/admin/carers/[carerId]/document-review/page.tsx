@@ -105,7 +105,7 @@ function DocumentReviewContent() {
 
   // Compliance Expiry Tracking state
   const [expiryDateInput, setExpiryDateInput] = useState<string>("");
-  const [isEditingMetadata, setIsEditingMetadata] = useState(false);
+  const [isEditingExpiry, setIsEditingExpiry] = useState(false);
   const [isSavingMetadata, setIsSavingMetadata] = useState(false);
 
   useEffect(() => {
@@ -210,7 +210,7 @@ function DocumentReviewContent() {
     setValidationError(null);
     setShowRejectInput(false);
     setEditingNotes(false);
-    setIsEditingMetadata(false);
+    setIsEditingExpiry(false);
     setTempNotes(activeDoc?.internalNotes || "");
 
     if (activeDoc?.expiryDate) {
@@ -264,6 +264,22 @@ function DocumentReviewContent() {
     };
   };
 
+  const isApproved =
+    activeDoc?.status?.toUpperCase() === "VERIFIED" ||
+    activeDoc?.status?.toUpperCase() === "APPROVED";
+
+  const currentSavedExpiry = activeDoc?.expiryDate
+    ? (() => {
+        try {
+          return new Date(activeDoc.expiryDate).toISOString().split("T")[0];
+        } catch {
+          return "";
+        }
+      })()
+    : "";
+
+  const isDateChanged = expiryDateInput !== currentSavedExpiry;
+
   const handleVerify = async (e: React.MouseEvent) => {
     e.preventDefault();
     if (!activeDoc) return;
@@ -309,7 +325,7 @@ function DocumentReviewContent() {
         }),
       ).unwrap();
       showSuccessToast("Compliance Updated", "Expiry date has been updated.");
-      setIsEditingMetadata(false);
+      setIsEditingExpiry(false);
       dispatch(fetchCarerDetails(carerId));
     } catch (err: any) {
       showErrorToast("Error", err || "Failed to update compliance details");
@@ -735,22 +751,9 @@ function DocumentReviewContent() {
                     </div>
 
                     <div>
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-gold-100/40 font-semibold uppercase tracking-wider block">
-                          Expiry Date
-                        </span>
-                        {(activeDoc.status?.toUpperCase() === "VERIFIED" ||
-                          activeDoc.status?.toUpperCase() === "APPROVED") &&
-                          !isEditingMetadata && (
-                            <button
-                              type="button"
-                              onClick={() => setIsEditingMetadata(true)}
-                              className="text-[10px] text-gold hover:text-gold-200 uppercase tracking-wider font-bold transition-colors cursor-pointer"
-                            >
-                              Edit
-                            </button>
-                          )}
-                      </div>
+                      <span className="text-gold-100/40 font-semibold uppercase tracking-wider block mb-1">
+                        Expiry Date
+                      </span>
                       <div className="flex items-center gap-1.5 flex-wrap">
                         <span className="text-gold-200 font-bold">
                           {activeDoc.expiryDate
@@ -1060,104 +1063,117 @@ function DocumentReviewContent() {
                       )}
                     </div>
 
-                    {/* EDIT EXPIRY METADATA PANEL (For already reviewed documents) */}
-                    {isEditingMetadata && (
-                      <div className="bg-navy-950/80 rounded-xl border border-gold/30 p-4 space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
-                        <div className="flex items-center justify-between">
-                          <label className="text-xs uppercase font-bold text-gold flex items-center gap-1.5">
+                    {/* DOCUMENT EXPIRY DATE */}
+                    <div className="space-y-2 pt-2 border-t border-gold-300/5">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <label className="text-xs uppercase font-bold text-gold-200/60 flex items-center gap-1.5">
                             <Calendar className="h-3.5 w-3.5 text-gold" />
-                            Update Document Expiry Date
+                            Document Expiry Date
+                            <span className="text-[10px] font-normal normal-case text-gold-100/40 italic">
+                              (optional)
+                            </span>
                           </label>
-                          <span className="text-[10px] text-gold-100/50">Admin Update (Optional)</span>
-                        </div>
-
-                        <div className="flex items-center gap-2 max-w-xs">
-                          <input
-                            type="date"
-                            value={expiryDateInput}
-                            onChange={(e) => setExpiryDateInput(e.target.value)}
-                            disabled={isSavingMetadata}
-                            className="w-full rounded-xl bg-navy-900 px-3.5 py-2 text-xs text-gold-100 border border-gold-300/20 focus:border-gold focus:outline-none"
-                          />
-                          {expiryDateInput && (
-                            <button
-                              type="button"
-                              onClick={() => setExpiryDateInput("")}
-                              disabled={isSavingMetadata}
-                              className="text-xs text-gold-100/40 hover:text-gold-200 px-2 py-1 rounded transition-colors cursor-pointer"
+                          {activeDoc.expiryDate && !isEditingExpiry && (
+                            <span
+                              className={`text-[9px] px-1.5 py-0.5 rounded font-bold border leading-none ${getExpiryBadge(activeDoc).className}`}
                             >
-                              Clear
-                            </button>
+                              {getExpiryBadge(activeDoc).label}
+                            </span>
                           )}
                         </div>
-
-                        <div className="flex justify-end gap-2 pt-2 border-t border-gold-300/10">
+                        {activeDoc.expiryDate && !isEditingExpiry ? (
                           <button
                             type="button"
                             onClick={() => {
-                              setIsEditingMetadata(false);
-                              if (activeDoc.expiryDate) {
-                                try {
-                                  setExpiryDateInput(new Date(activeDoc.expiryDate).toISOString().split("T")[0]);
-                                } catch {
-                                  setExpiryDateInput("");
-                                }
-                              } else {
+                              setIsEditingExpiry(true);
+                              try {
+                                setExpiryDateInput(new Date(activeDoc.expiryDate).toISOString().split("T")[0]);
+                              } catch {
                                 setExpiryDateInput("");
                               }
                             }}
-                            disabled={isSavingMetadata}
-                            className="px-3 py-1.5 text-xs font-bold text-gold-200 hover:text-gold-100 uppercase tracking-wider cursor-pointer"
+                            className="text-[10px] text-gold hover:text-gold-200 uppercase tracking-wider font-bold transition-colors cursor-pointer"
                           >
-                            Cancel
+                            Edit Expiry
                           </button>
-                          <button
-                            type="button"
-                            onClick={handleSaveMetadata}
-                            disabled={isSavingMetadata}
-                            className="px-4 py-1.5 text-xs font-bold bg-gold hover:bg-gold-200 text-navy-950 rounded-lg flex items-center gap-1.5 shadow-sm transition-colors cursor-pointer"
-                          >
-                            {isSavingMetadata ? (
-                              <ThinSpinner size="xs" spinnerClassName="border-navy-950 shrink-0" className="inline-flex flex-row space-y-0" />
-                            ) : (
-                              <Check className="h-3.5 w-3.5" />
-                            )}
-                            Save Expiry Date
-                          </button>
-                        </div>
+                        ) : null}
                       </div>
-                    )}
 
-                    {/* EXPIRY DATE INPUT (During document review for approval) */}
-                    {activeDoc.status?.toUpperCase() !== "VERIFIED" &&
-                      activeDoc.status?.toUpperCase() !== "APPROVED" && (
-                        <div className="bg-navy-950/60 rounded-xl border border-gold-300/10 p-4 space-y-3 animate-in fade-in duration-200">
-                          <div className="flex items-center justify-between flex-wrap gap-2">
-                            <label className="text-xs uppercase font-bold text-gold-200 flex items-center gap-1.5">
-                              <Calendar className="h-3.5 w-3.5 text-gold" />
-                              Document Expiry Date
-                            </label>
-                            <span className="text-[11px] text-gold-100/40 italic">
-                              Optional — enter if applicable
+                      {activeDoc.expiryDate && !isEditingExpiry ? (
+                        <div className="flex items-center rounded-xl bg-navy-950/40 p-3 text-xs border border-gold-300/5 min-h-[46px]">
+                          <div className="flex items-center gap-2">
+                            <span className="text-gold-200 font-bold font-mono text-xs">
+                              {new Date(activeDoc.expiryDate).toLocaleDateString("en-GB", {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                              })}
+                            </span>
+                            <span className="text-[11px] text-gold-100/40">
+                              (Tracked by compliance monitor)
                             </span>
                           </div>
+                        </div>
+                      ) : (
+                        <div className="space-y-2 animate-in fade-in slide-in-from-top-1 duration-200">
+                          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                            <div className="flex items-center gap-2 w-full sm:w-auto min-w-[240px] max-w-xs">
+                              <input
+                                type="date"
+                                value={expiryDateInput}
+                                onChange={(e) => setExpiryDateInput(e.target.value)}
+                                disabled={isSavingMetadata}
+                                className="w-full rounded-xl bg-navy-950 p-2.5 text-xs text-gold-100 outline-none border border-gold-300/10 focus:border-gold-300/30 transition duration-300"
+                              />
+                              {expiryDateInput && (
+                                <button
+                                  type="button"
+                                  onClick={() => setExpiryDateInput("")}
+                                  disabled={isSavingMetadata}
+                                  className="text-xs text-gold-100/40 hover:text-gold-200 px-2 py-1 rounded transition-colors cursor-pointer"
+                                  title="Clear expiry date"
+                                >
+                                  Clear
+                                </button>
+                              )}
+                            </div>
 
-                          <div className="flex items-center gap-2 max-w-xs">
-                            <input
-                              type="date"
-                              value={expiryDateInput}
-                              onChange={(e) => setExpiryDateInput(e.target.value)}
-                              className="w-full rounded-xl bg-navy-900 px-3.5 py-2 text-xs text-gold-100 border border-gold-300/20 focus:border-gold focus:outline-none"
-                            />
-                            {expiryDateInput && (
-                              <button
-                                type="button"
-                                onClick={() => setExpiryDateInput("")}
-                                className="text-xs text-gold-100/40 hover:text-gold-200 px-2 py-1 rounded transition-colors cursor-pointer"
-                                title="Clear expiry date"
-                              >
-                                Clear
-                              </button>
+                            {/* Only show save button when user adds or changes an expiry date */}
+                            {isDateChanged && (
+                              <div className="flex items-center gap-2">
+                                <button
+                                  type="button"
+                                  onClick={handleSaveMetadata}
+                                  disabled={isSavingMetadata}
+                                  className="px-4 py-2 text-xs font-bold bg-gold hover:bg-gold-200 text-navy-950 rounded-xl flex items-center gap-1.5 shadow-sm transition duration-200 cursor-pointer h-9"
+                                >
+                                  {isSavingMetadata ? (
+                                    <ThinSpinner size="xs" spinnerClassName="border-navy-950 shrink-0" className="inline-flex flex-row space-y-0" />
+                                  ) : (
+                                    <Check className="h-3.5 w-3.5" />
+                                  )}
+                                  <span>Save Expiry Date</span>
+                                </button>
+
+                                {activeDoc.expiryDate && (
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setIsEditingExpiry(false);
+                                      try {
+                                        setExpiryDateInput(new Date(activeDoc.expiryDate).toISOString().split("T")[0]);
+                                      } catch {
+                                        setExpiryDateInput("");
+                                      }
+                                    }}
+                                    disabled={isSavingMetadata}
+                                    className="px-3 py-1 text-[10px] font-bold text-gold-200 hover:text-gold-100 uppercase tracking-wider cursor-pointer"
+                                  >
+                                    Cancel
+                                  </button>
+                                )}
+                              </div>
                             )}
                           </div>
 
@@ -1166,6 +1182,7 @@ function DocumentReviewContent() {
                           </p>
                         </div>
                       )}
+                    </div>
 
                     {/* ACTION PORTAL */}
                     <div className="bg-navy-950/40 rounded-xl border border-gold-300/5 p-4 flex flex-col md:flex-row items-center justify-between gap-4">

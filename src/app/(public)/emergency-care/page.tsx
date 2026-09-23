@@ -27,7 +27,7 @@ export default function EmergencyCarePage() {
       {/* ── HERO — Compact top section ──────────────────────────────────── */}
       <section className="relative z-10 pt-10 pb-6 md:pt-14 md:pb-8">
         <div className="container-wrapper">
-          <div className="max-w-4xl mx-auto text-center space-y-5">
+          <div className="max-w-7xl mx-auto text-center space-y-5">
             {/* Heading */}
             <div className="page-strapline">Emergency Care</div>
 

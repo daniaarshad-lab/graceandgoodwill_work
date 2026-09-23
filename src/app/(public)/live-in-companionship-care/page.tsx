@@ -19,7 +19,7 @@ export default function CompanionshipLiveInCarePage() {
     <main className="min-h-screen bg-navy-950 pt-16 md:pt-20 pb-24 relative overflow-hidden">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-gold-500/10 rounded-full blur-[120px] pointer-events-none opacity-50"></div>
 
-      <div className="max-w-4xl mx-auto px-6 relative z-10">
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
         
         {/* Breadcrumb & Header */}
         <div className="text-center mb-12">
@@ -46,7 +46,7 @@ export default function CompanionshipLiveInCarePage() {
         </div>
 
         {/* Hero Image Section */}
-        <div className="relative w-full max-w-4xl mx-auto mb-16 px-4">
+        <div className="relative w-full max-w-7xl mx-auto mb-16 px-4">
           <div className="absolute top-0 left-0 w-24 h-24 md:w-32 md:h-32 border-t-2 border-l-2 border-gold-400/30 rounded-tl-[3rem] pointer-events-none -mt-4 -ml-2"></div>
           <div className="absolute bottom-0 right-0 w-24 h-24 md:w-32 md:h-32 border-b-2 border-r-2 border-gold-400/30 rounded-br-[3rem] pointer-events-none -mb-4 -mr-2"></div>
           <div className="relative z-10 rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-gold-300/20 bg-navy-950/40 group">

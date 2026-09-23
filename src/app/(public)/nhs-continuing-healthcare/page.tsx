@@ -16,7 +16,7 @@ export default function NHSContinuingHealthcarePage() {
     <main className="min-h-screen bg-navy-950 pt-16 md:pt-20 pb-24 relative overflow-hidden">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-gold-500/10 rounded-full blur-[120px] pointer-events-none opacity-50"></div>
 
-      <div className="max-w-4xl mx-auto px-6 relative z-10">
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
         
         {/* Breadcrumb & Header */}
         <div className="text-center mb-12">

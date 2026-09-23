@@ -5,6 +5,9 @@ import Button from "@/components/Button";
 import type { Metadata } from "next";
 
 import youngAdultImg from "@/assets/open/young-adult-one.jpeg";
+import youngAdultImg2 from "@/assets/open/young-adult-two.jpeg";
+import { Phone } from "lucide-react";
+import WhatsAppIcon from "@/components/WhatsAppIcon";
 
 export const metadata: Metadata = {
   alternates: {
@@ -19,7 +22,7 @@ export default function YoungAdultLiveInCarePage() {
     <main className="min-h-screen bg-navy-950 pt-16 md:pt-20 pb-24 relative overflow-hidden">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-gold-500/10 rounded-full blur-[120px] pointer-events-none opacity-50"></div>
 
-      <div className="max-w-4xl mx-auto px-6 relative z-10">
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
         
         {/* Breadcrumb & Header */}
         <div className="text-center mb-12">
@@ -41,17 +44,25 @@ export default function YoungAdultLiveInCarePage() {
         </div>
 
         {/* Hero Image Section */}
-        <div className="relative w-full max-w-4xl mx-auto mb-16 px-4">
-          <div className="absolute top-0 left-0 w-24 h-24 md:w-32 md:h-32 border-t-2 border-l-2 border-gold-400/30 rounded-tl-[3rem] pointer-events-none -mt-4 -ml-2"></div>
-          <div className="absolute bottom-0 right-0 w-24 h-24 md:w-32 md:h-32 border-b-2 border-r-2 border-gold-400/30 rounded-br-[3rem] pointer-events-none -mb-4 -mr-2"></div>
-          <div className="relative z-10 rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-gold-300/20 bg-navy-950/40 group">
+        <div className="relative w-full max-w-4xl mx-auto mb-16 px-4 py-4 md:px-8 md:py-8">
+          <div className="absolute top-0 left-0 w-32 h-32 md:w-48 md:h-48 border-t border-l border-gold-300/40 rounded-tl-[3rem] pointer-events-none"></div>
+          <div className="absolute bottom-0 right-0 w-32 h-32 md:w-48 md:h-48 border-b border-r border-gold-300/40 rounded-br-[3rem] pointer-events-none"></div>
+          <div className="relative z-10 rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-gold-300/20 bg-navy-950/40 group aspect-[16/9]">
+            <div className="absolute inset-0 z-0">
+              <Image
+                src={youngAdultImg}
+                alt="Background"
+                className="w-full h-full object-cover blur-xl opacity-50 scale-110"
+                placeholder="blur"
+              />
+            </div>
             <Image
               src={youngAdultImg}
               alt="Young Adult Live-in Care"
-              className="w-full h-auto aspect-[16/9] object-cover group-hover:scale-105 transition-transform duration-[2s]"
+              className="relative z-10 w-full h-full object-contain transform transition-transform duration-[2s] group-hover:scale-105"
               placeholder="blur"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-navy-950/80 via-navy-950/5 to-transparent pointer-events-none" />
+            <div className="absolute inset-0 z-20 bg-gradient-to-t from-navy-950/80 via-navy-950/5 to-transparent pointer-events-none" />
           </div>
         </div>
 
@@ -114,6 +125,31 @@ export default function YoungAdultLiveInCarePage() {
             <p className="page-supporting-text">This can help the individual choose someone they feel comfortable welcoming into their home and everyday life.</p>
           </section>
 
+          {/* Styled Secondary Image Section */}
+          <div className="relative w-full max-w-4xl mx-auto px-4 py-4 md:px-8 md:py-8">
+            {/* Decorative Offset Wireframe Corners */}
+            <div className="absolute top-0 left-0 w-32 h-32 md:w-48 md:h-48 border-t border-l border-gold-300/40 rounded-tl-[3rem] pointer-events-none"></div>
+            <div className="absolute bottom-0 right-0 w-32 h-32 md:w-48 md:h-48 border-b border-r border-gold-300/40 rounded-br-[3rem] pointer-events-none"></div>
+
+            <div className="relative z-10 rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-gold-300/20 bg-navy-950/40 group aspect-[16/9]">
+              <div className="absolute inset-0 z-0">
+                <Image
+                  src={youngAdultImg2}
+                  alt="Background"
+                  className="w-full h-full object-cover blur-xl opacity-50 scale-110"
+                  placeholder="blur"
+                />
+              </div>
+              <Image
+                src={youngAdultImg2}
+                alt="Young Adult Support at Home"
+                className="relative z-10 w-full h-full object-contain transform transition-transform duration-[2s] group-hover:scale-105"
+                placeholder="blur"
+              />
+              <div className="absolute inset-0 z-20 bg-gradient-to-t from-navy-950/80 via-navy-950/5 to-transparent pointer-events-none" />
+            </div>
+          </div>
+
           {/* Section 3 */}
           <section className="bg-gradient-to-br from-navy-900/60 to-navy-950/80 p-8 sm:p-10 rounded-[2rem] border border-gold-300/15 shadow-elegant">
             <h3 className="text-2xl font-serif text-gold-50 mb-6">Support that can change over time</h3>
@@ -147,21 +183,30 @@ export default function YoungAdultLiveInCarePage() {
         </div>
 
         {/* Contact Info */}
-        <div className="mt-16 bg-navy-900/40 p-8 rounded-[2rem] border border-gold-300/10 shadow-elegant text-center">
-          <h3 className="text-xl font-semibold text-gold-100 mb-6">Discuss Your Requirements</h3>
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-6 text-gold-100/80">
-            <a href="tel:02045240108" className="hover:text-gold-200 transition-colors">
-              <strong>Telephone:</strong> 020 4524 0108
-            </a>
-            <span className="hidden sm:inline text-gold-300/30">|</span>
-            <a href="https://wa.me/447462931949" target="_blank" rel="noopener noreferrer" className="hover:text-gold-200 transition-colors">
-              <strong>WhatsApp:</strong> +44 7462 931949
-            </a>
-          </div>
-          <div className="mt-8 flex justify-center">
-             <Button asChild variant="primary" size="md">
-               <Link href="/contact">Contact Us</Link>
-             </Button>
+        <div className="mt-16 bg-navy-900/40 p-8 rounded-[2rem] border border-gold-300/10 shadow-elegant text-center max-w-3xl mx-auto">
+          <h3 className="text-xl font-semibold text-gold-100 mb-3">Discuss Your Requirements</h3>
+          <p className="page-supporting-text text-sm mb-8 max-w-lg mx-auto">
+            Have simple questions or ready to discuss your care needs? Call our friendly support desk or message us directly.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center w-full max-w-md mx-auto">
+            <Button asChild variant="primary" size="sm" fullWidth>
+              <a href="tel:02045240108" className="gap-2">
+                <Phone className="w-4 h-4 fill-current" />
+                020 4524 0108
+              </a>
+            </Button>
+
+            <Button asChild variant="whatsapp" size="sm" fullWidth>
+              <a
+                href="https://wa.me/447462931949?text=Hi%2C%20I'd%20like%20to%20chat%20about%20your%20care%20solutions."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="gap-2"
+              >
+                <WhatsAppIcon className="w-4 h-4" />
+                Message Us On WhatsApp
+              </a>
+            </Button>
           </div>
         </div>
 

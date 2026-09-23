@@ -20,7 +20,7 @@ export default function DementiaLiveInCarePage() {
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         
         {/* Breadcrumb & Header */}
-        <div className="max-w-4xl mx-auto text-center mb-20">
+        <div className="max-w-7xl mx-auto text-center mb-20">
           <Link href="/services" className="inline-flex items-center text-gold-300/80 hover:text-gold-200 text-sm font-medium mb-6 transition-colors">
             &larr; Back to Services
           </Link>
@@ -110,7 +110,7 @@ export default function DementiaLiveInCarePage() {
         </div>
 
         {/* Conclusion / Matching Box */}
-        <section className="max-w-4xl mx-auto bg-gradient-to-b from-navy-800/40 to-navy-900/60 p-10 sm:p-14 rounded-[3rem] border border-gold-300/10 text-center relative shadow-lg">
+        <section className="max-w-7xl mx-auto bg-gradient-to-b from-navy-800/40 to-navy-900/60 p-10 sm:p-14 rounded-[3rem] border border-gold-300/10 text-center relative shadow-lg">
           <Users className="w-10 h-10 text-gold-400 mx-auto mb-6 opacity-80" />
           <h2 className="text-3xl font-serif text-gold-50 mb-6">Choosing a Carer With Relevant Experience</h2>
           

@@ -20,7 +20,7 @@ export default function UrgentLiveInCarePage() {
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         
         {/* Breadcrumb & Header */}
-        <div className="max-w-4xl mx-auto text-center mb-20">
+        <div className="max-w-7xl mx-auto text-center mb-20">
           <Link href="/services" className="inline-flex items-center text-gold-300/80 hover:text-gold-200 text-sm font-medium mb-6 transition-colors">
             &larr; Back to Services
           </Link>
@@ -99,7 +99,7 @@ export default function UrgentLiveInCarePage() {
         </div>
 
         {/* The Process */}
-        <section className="mb-20 max-w-4xl mx-auto">
+        <section className="mb-20 max-w-7xl mx-auto">
           <h2 className="text-3xl font-serif text-gold-50 text-center mb-10">What Happens When You Contact Us?</h2>
           <p className="text-center text-gold-100/80 mb-12">When the situation is urgent, we keep the process focused.</p>
           
@@ -163,7 +163,7 @@ export default function UrgentLiveInCarePage() {
         </section>
 
         {/* Available 24/7 & CTA */}
-        <section className="max-w-4xl mx-auto bg-gradient-to-b from-navy-800/40 to-navy-900/60 p-10 sm:p-14 rounded-[3rem] border border-gold-300/10 text-center relative shadow-lg">
+        <section className="max-w-7xl mx-auto bg-gradient-to-b from-navy-800/40 to-navy-900/60 p-10 sm:p-14 rounded-[3rem] border border-gold-300/10 text-center relative shadow-lg">
           <Clock className="w-12 h-12 text-gold-400 mx-auto mb-6 opacity-80" />
           <h2 className="text-3xl font-serif text-gold-50 mb-6">Available 24 Hours a Day</h2>
           <div className="space-y-4 text-[15px] text-gold-100/75 font-light font-serif leading-relaxed max-w-2xl mx-auto">

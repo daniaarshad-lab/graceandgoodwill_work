@@ -20,7 +20,7 @@ export default function ComplexNeedsLiveInCarePage() {
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         
         {/* Breadcrumb & Header */}
-        <div className="max-w-4xl mx-auto text-center mb-20">
+        <div className="max-w-7xl mx-auto text-center mb-20">
           <Link href="/services" className="inline-flex items-center text-gold-300/80 hover:text-gold-200 text-sm font-medium mb-6 transition-colors">
             &larr; Back to Services
           </Link>
@@ -95,7 +95,7 @@ export default function ComplexNeedsLiveInCarePage() {
         </div>
 
         {/* Action Call */}
-        <section className="max-w-4xl mx-auto text-center mt-12">
+        <section className="max-w-7xl mx-auto text-center mt-12">
           <Button asChild variant="primary" size="md" fullWidth={false} className="px-10 py-4 text-base whitespace-nowrap shadow-lg shadow-gold-500/20">
             <Link href="/carers">Explore Complex Needs Support</Link>
           </Button>

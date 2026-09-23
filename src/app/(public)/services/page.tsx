@@ -167,7 +167,7 @@ export default function ServicesPage() {
 
         {/* 7th Service Featured Wide Panel */}
         <section className="mt-8">
-          <div className="group relative overflow-hidden rounded-[32px] border border-gold-300/15 bg-gradient-to-r from-navy-900/70 to-navy-900/40 p-6 pb-6 sm:p-8 sm:pb-8 md:px-12 md:pt-12 md:pb-10 shadow-elegant backdrop-blur-md transition-all duration-300 hover:border-gold-300/35 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)]">
+          <div className="group relative overflow-hidden rounded-[32px] border border-gold-300/15 bg-gradient-to-r from-navy-900/70 to-navy-900/40 p-5 sm:p-8 md:px-12 md:pt-12 md:pb-10 shadow-elegant backdrop-blur-md transition-all duration-300 hover:border-gold-300/35 hover:shadow-[0_16px_40px_rgba(212,175,55,0.08)]">
 
             <div className="mx-auto max-w-2xl space-y-6 flex flex-col items-center text-center">
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -177,8 +177,8 @@ export default function ServicesPage() {
                     strokeWidth={1.5}
                   />
                 </div>
-                <div>
-                  <h2 className="text-2xl sm:text-3xl font-serif text-gold-50 tracking-wide whitespace-nowrap">
+                <div className="text-center sm:text-left">
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-serif text-gold-50 tracking-wide text-balance leading-snug">
                     Rapid Replacement Support Upon Request
                   </h2>
                 </div>

@@ -51,6 +51,27 @@ function LoginPageContent() {
   useEffect(() => {
     if (isAuthenticated && user?.role) {
       const role = user.role.toUpperCase();
+
+      const redirectParam = searchParams.get("redirect");
+      const storedRedirect =
+        typeof window !== "undefined"
+          ? sessionStorage.getItem("auth_redirect")
+          : null;
+      const targetDestination = redirectParam || storedRedirect;
+
+      if (typeof window !== "undefined") {
+        sessionStorage.removeItem("auth_redirect");
+      }
+
+      if (
+        targetDestination &&
+        targetDestination.startsWith("/") &&
+        !targetDestination.startsWith("/login")
+      ) {
+        router.push(targetDestination);
+        return;
+      }
+
       if (role === "CLIENT") {
         router.push("/client");
       } else if (role === "CARER") {
@@ -61,7 +82,7 @@ function LoginPageContent() {
         router.push("/");
       }
     }
-  }, [isAuthenticated, user, router]);
+  }, [isAuthenticated, user, router, searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

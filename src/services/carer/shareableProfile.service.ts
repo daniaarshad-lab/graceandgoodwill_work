@@ -5,6 +5,7 @@ export interface ShareTokenStatus {
   shareUrl?: string;
   generatedAt?: string;
   expiresAt?: string;
+  expirationDate?: string;
   expiresInSeconds?: number;
 }
 

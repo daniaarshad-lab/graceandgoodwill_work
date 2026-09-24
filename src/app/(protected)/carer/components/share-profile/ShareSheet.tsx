@@ -277,9 +277,9 @@ export default function ShareSheet({
         className="rounded-2xl p-3.5 sm:p-4"
         style={{
           background: "rgba(10, 18, 42, 0.55)",
-          border: "1.5px solid rgba(216, 169, 62, 0.7)",
+          border: "1.5px solid rgba(236, 203, 118, 0.6)",
           boxShadow:
-            "0 0 18px rgba(216, 169, 62, 0.2), inset 0 0 14px rgba(216, 169, 62, 0.04)",
+            "0 0 20px rgba(236, 203, 118, 0.25), inset 0 0 12px rgba(236, 203, 118, 0.08)",
         }}
       >
         <div className="flex items-start gap-3 sm:gap-3.5">
@@ -349,7 +349,7 @@ export default function ShareSheet({
         type="button"
         onClick={onRenew}
         disabled={renewing}
-        className="w-full flex items-center justify-center gap-2 py-3 sm:py-3.5 rounded-xl text-sm sm:text-base font-bold tracking-wide transition-all duration-300 cursor-pointer shadow-lg active:scale-[0.99] mt-2"
+        className="w-full flex items-center justify-center gap-2 py-2.5 sm:py-2.5 px-4 rounded-xl text-xs sm:text-[13.5px] font-semibold tracking-[0.02em] transition-all duration-300 cursor-pointer shadow-md active:scale-[0.99] mt-2"
         style={{
           background: "linear-gradient(135deg, #F8E090 0%, #D8A93E 45%, #B8851E 100%)",
           color: "#0A1128",

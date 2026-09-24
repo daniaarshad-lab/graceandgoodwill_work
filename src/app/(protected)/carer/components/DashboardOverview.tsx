@@ -70,7 +70,7 @@ export default function DashboardOverview({
           id="overview-share-profile-btn"
           onClick={onShareClick || (() => setActiveTab("overview"))}
           style={{
-            background: "linear-gradient(135deg, #F5D4A0 0%, #D4AF37 50%, #C99232 100%)",
+            backgroundColor: "#b59469",
             color: "#0A1128",
           }}
           className="w-full py-2.5 px-4 rounded-xl text-xs font-bold shadow-[0_4px_15px_rgba(212,175,55,0.3)] hover:brightness-110 transition flex items-center justify-center gap-2 cursor-pointer"

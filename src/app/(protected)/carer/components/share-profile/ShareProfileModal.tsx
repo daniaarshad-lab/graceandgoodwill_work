@@ -53,6 +53,8 @@ export default function ShareProfileModal({
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [consented, setConsented] = useState(false);
+  // Incremented every time a link is generated/renewed to bust WhatsApp's cache
+  const [shareVersion, setShareVersion] = useState(() => Date.now());
 
   // Load status on open
   const loadStatus = useCallback(async () => {
@@ -107,6 +109,7 @@ export default function ShareProfileModal({
     try {
       const data = await shareableProfileService.generateShareToken(true);
       setStatus(data);
+      setShareVersion(Date.now()); // new version = fresh WhatsApp preview
       showSuccessToast(
         "Link Ready",
         "Your shareable profile link is now active.",
@@ -124,6 +127,7 @@ export default function ShareProfileModal({
     try {
       const data = await shareableProfileService.generateShareToken(true);
       setStatus(data);
+      setShareVersion(Date.now()); // new version = fresh WhatsApp preview
       showSuccessToast(
         "Link Renewed",
         "A fresh share link has been generated.",
@@ -225,7 +229,7 @@ export default function ShareProfileModal({
 
                 {/* Active token view */}
                 <ShareSheet
-                  shareUrl={status.shareUrl}
+                  shareUrl={`${status.shareUrl}?v=${shareVersion}`}
                   expirationDate={status.expirationDate || status.expiresAt}
                   onRenew={handleRenew}
                   renewing={generating}

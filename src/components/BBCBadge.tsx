@@ -1,4 +1,5 @@
 import React from "react";
+import { ExternalLink } from "lucide-react";
 
 /**
  * Reusable BBC Radio featured badge.
@@ -32,6 +33,7 @@ export default function BBCBadge({ className = "" }: { className?: string }) {
           <span className="text-white font-bold tracking-[0.2em] text-[10px] md:text-xs">
             RADIO
           </span>
+          <ExternalLink className="w-3 h-3 md:w-3.5 md:h-3.5 text-white/80 ml-0.5 md:ml-1" />
         </div>
       </a>
     </div>

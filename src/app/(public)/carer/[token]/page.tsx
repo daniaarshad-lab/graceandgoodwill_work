@@ -24,8 +24,13 @@ export async function generateMetadata(
     }
     const description = `${descriptionParts.join(" ")}. Profile includes my introduction video, care skills, languages, and availability.`;
     
-    const ogImage = profile.photoUrl || "/website_logo.png";
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://portal.graceandgoodwill.co.uk";
+    const appUrl =
+      process.env.NEXT_PUBLIC_APP_URL ||
+      process.env.NEXT_PUBLIC_SITE_URL ||
+      "https://graceandgoodwill.co.uk";
+    
+    const canonicalUrl = `${appUrl}/carer/${token}`;
+    const ogImageUrl = `${appUrl}/carer/${token}/opengraph-image`;
     
     return {
       title,
@@ -33,23 +38,23 @@ export async function generateMetadata(
       openGraph: {
         title,
         description,
-        url: `${appUrl}/public/carer/${token}`,
+        url: canonicalUrl,
         siteName: profile.brandName || "Grace & Goodwill",
+        type: "profile",
         images: [
           {
-            url: ogImage.startsWith("http") ? ogImage : `${appUrl}${ogImage}`,
-            width: 800,
-            height: 800,
-            alt: `${profile.displayName}'s Profile Picture`,
+            url: ogImageUrl,
+            width: 1200,
+            height: 630,
+            alt: title,
           },
         ],
-        type: "profile",
       },
       twitter: {
         card: "summary_large_image",
         title,
         description,
-        images: [ogImage.startsWith("http") ? ogImage : `${appUrl}${ogImage}`],
+        images: [ogImageUrl],
       },
     };
   } catch (error) {

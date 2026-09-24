@@ -49,7 +49,11 @@ const shareableProfileService = {
   },
 
   async getPublicProfile(token: string): Promise<PublicCarerProfile> {
-    const API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000").replace(/\/api\/?$/, "");
+    const API_URL = (
+      process.env.NEXT_PUBLIC_API_URL ||
+      process.env.NEXT_PUBLIC_SITE_URL ||
+      "https://graceandgoodwill.co.uk"
+    ).replace(/\/api\/?$/, "");
     const response = await fetch(`${API_URL}/api/public/carer/${token}`);
     if (!response.ok) {
       const data = await response.json().catch(() => null);

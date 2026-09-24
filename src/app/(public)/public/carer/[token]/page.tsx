@@ -33,6 +33,8 @@ export async function generateMetadata(
     const absoluteOgImage = ogImage.startsWith("http") ? ogImage : `${appUrl}${ogImage}`;
     const canonicalUrl = `${appUrl}/public/carer/${token}`;
 
+    const ogImageUrl = `${appUrl}/public/carer/${token}/opengraph-image`;
+
     return {
       title,
       description,
@@ -42,11 +44,20 @@ export async function generateMetadata(
         url: canonicalUrl,
         siteName: profile.brandName || "Grace & Goodwill",
         type: "profile",
+        images: [
+          {
+            url: ogImageUrl,
+            width: 1200,
+            height: 630,
+            alt: title,
+          },
+        ],
       },
       twitter: {
         card: "summary_large_image",
         title,
         description,
+        images: [ogImageUrl],
       },
     };
   } catch {

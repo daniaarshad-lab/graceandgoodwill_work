@@ -1176,13 +1176,6 @@ function CarerDetailsContent() {
                     <FileText className="h-4 w-4 text-gold/60" /> Compliance
                     Documents Log
                   </h3>
-                  <button
-                    type="button"
-                    onClick={() => setIsUploadModalOpen(true)}
-                    className="px-3.5 py-1.5 rounded-xl text-xs font-bold text-navy-950 bg-gradient-to-r from-[#F5D4A0] via-[#D4AF37] to-[#C99232] hover:brightness-110 shadow-md shadow-gold/20 flex items-center gap-1.5 transition duration-200 cursor-pointer"
-                  >
-                    <Upload className="h-3.5 w-3.5" /> Upload Document
-                  </button>
                 </div>
 
                 <div className="flex-1 overflow-x-auto overflow-y-auto pr-2 mt-4 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gold-300/20 hover:[&::-webkit-scrollbar-thumb]:bg-gold-300/40 [&::-webkit-scrollbar-thumb]:rounded-full">

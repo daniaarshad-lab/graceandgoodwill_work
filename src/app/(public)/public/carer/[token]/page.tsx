@@ -41,21 +41,12 @@ export async function generateMetadata(
         description,
         url: canonicalUrl,
         siteName: profile.brandName || "Grace & Goodwill",
-        images: [
-          {
-            url: absoluteOgImage,
-            width: 800,
-            height: 800,
-            alt: `${profile.displayName} – Professional Live-In Carer`,
-          },
-        ],
         type: "profile",
       },
       twitter: {
         card: "summary_large_image",
         title,
         description,
-        images: [absoluteOgImage],
       },
     };
   } catch {
@@ -73,14 +64,6 @@ export async function generateMetadata(
         title: "Link Expired | Grace & Goodwill",
         description:
           "This shareable professional profile link is no longer active. Please contact Grace & Goodwill for more information.",
-        images: [
-          {
-            url: `${appUrl}/website_logo.png`,
-            width: 800,
-            height: 800,
-            alt: "Grace & Goodwill",
-          },
-        ],
         type: "website",
       },
       twitter: {

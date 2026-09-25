@@ -91,21 +91,14 @@ export default async function Image({ params }: Props) {
     );
   }
 
-  /* ── Fetch carer photo as base64 for embedding (edge-compatible) ── */
+  /* ── Fetch carer photo as base64 for embedding ── */
   let carerPhotoData: string | null = null;
   if (photoUrl) {
     try {
       const res = await fetch(photoUrl, { signal: AbortSignal.timeout(4000) });
       if (res.ok) {
         const buffer = await res.arrayBuffer();
-        const bytes = new Uint8Array(buffer);
-        const CHUNK_SIZE = 8192;
-        let binary = "";
-        for (let i = 0; i < bytes.byteLength; i += CHUNK_SIZE) {
-          const chunk = bytes.subarray(i, i + CHUNK_SIZE);
-          binary += String.fromCharCode.apply(null, chunk as unknown as number[]);
-        }
-        const base64 = btoa(binary);
+        const base64 = Buffer.from(buffer).toString("base64");
         const mime = res.headers.get("content-type") || "image/jpeg";
         carerPhotoData = `data:${mime};base64,${base64}`;
       }

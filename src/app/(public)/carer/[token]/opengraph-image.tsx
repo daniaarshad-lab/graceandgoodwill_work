@@ -1,8 +1,6 @@
 import { ImageResponse } from "next/og";
-import shareableProfileService from "@/services/carer/shareableProfile.service";
 
-export const runtime = "nodejs";
-export const revalidate = 3600; // cache for 1 hour
+export const runtime = "edge";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
@@ -19,18 +17,24 @@ export default async function Image({ params }: Props) {
     process.env.NEXT_PUBLIC_SITE_URL ||
     "https://graceandgoodwill.co.uk";
 
-  /* ── Fetch carer data ── */
+  /* ── Fetch carer data directly (edge-compatible) ── */
   let displayName = "";
   let photoUrl: string | null = null;
   let experienceYears: number | null = null;
   let isValid = false;
 
   try {
-    const profile = await shareableProfileService.getPublicProfile(token);
-    displayName = profile.displayName;
-    photoUrl = profile.photoUrl || null;
-    experienceYears = profile.experienceYears ?? null;
-    isValid = true;
+    const apiBase = appUrl.replace(/\/+$/, "");
+    const res = await fetch(`${apiBase}/api/public/carer/${token}`, {
+      signal: AbortSignal.timeout(5000),
+    });
+    if (res.ok) {
+      const profile = await res.json();
+      displayName = profile.displayName || "";
+      photoUrl = profile.photoUrl || null;
+      experienceYears = profile.experienceYears ?? null;
+      isValid = true;
+    }
   } catch {
     isValid = false;
   }
@@ -82,14 +86,19 @@ export default async function Image({ params }: Props) {
     );
   }
 
-  /* ── Fetch carer photo as ArrayBuffer for embedding ── */
+  /* ── Fetch carer photo as base64 for embedding (edge-compatible) ── */
   let carerPhotoData: string | null = null;
   if (photoUrl) {
     try {
       const res = await fetch(photoUrl, { signal: AbortSignal.timeout(4000) });
       if (res.ok) {
         const buffer = await res.arrayBuffer();
-        const base64 = Buffer.from(buffer).toString("base64");
+        const bytes = new Uint8Array(buffer);
+        let binary = "";
+        for (let i = 0; i < bytes.byteLength; i++) {
+          binary += String.fromCharCode(bytes[i]);
+        }
+        const base64 = btoa(binary);
         const mime = res.headers.get("content-type") || "image/jpeg";
         carerPhotoData = `data:${mime};base64,${base64}`;
       }

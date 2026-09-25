@@ -18,11 +18,11 @@ export async function generateMetadata(
     const title = `${profile.displayName} | Professional Live-In Carer Profile`;
     
     // Construct a short, privacy-safe description based on available data
-    let descriptionParts = ["View my verified professional live-in carer profile"];
+    let descriptionParts = [`View ${profile.displayName}'s verified professional live-in carer profile`];
     if (profile.experienceYears) {
       descriptionParts.push(`with ${profile.experienceYears}+ years of experience`);
     }
-    const description = `${descriptionParts.join(" ")}. Profile includes my introduction video, care skills, languages, and availability.`;
+    const description = `${descriptionParts.join(" ")}. View their introduction video, care skills, languages and current availability.`;
     
     const appUrl =
       process.env.NEXT_PUBLIC_APP_URL ||

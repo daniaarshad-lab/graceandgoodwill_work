@@ -1,9 +1,10 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import shareableProfileService, {
   ShareTokenStatus,
 } from "@/services/carer/shareableProfile.service";
+import { useAuth } from "@/contexts/AuthContext";
 import ConsentModal from "./ConsentModal";
 import ShareSheet from "./ShareSheet";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
@@ -11,6 +12,10 @@ import { showErrorToast, showSuccessToast } from "@/utils/toast";
 const TOKEN_TTL = 30 * 60; // 30 min in seconds
 
 export default function ShareProfilePanel() {
+  const { user } = useAuth();
+  const carerName = user?.firstName
+    ? `${user.firstName}${user.lastName ? ` ${user.lastName}` : ""}`.trim()
+    : "";
   const [status, setStatus] = useState<ShareTokenStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
@@ -196,7 +201,12 @@ export default function ShareProfilePanel() {
             </div>
 
             {/* Link display */}
-            <ShareSheet shareUrl={status.shareUrl} onRenew={handleRenew} renewing={generating} />
+            <ShareSheet
+              shareUrl={status.shareUrl}
+              carerName={carerName}
+              onRenew={handleRenew}
+              renewing={generating}
+            />
           </div>
         )}
       </div>

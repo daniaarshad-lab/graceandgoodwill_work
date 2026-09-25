@@ -24,12 +24,14 @@ import {
 import shareableProfileService, {
   ShareTokenStatus,
 } from "@/services/carer/shareableProfile.service";
+import { useAuth } from "@/contexts/AuthContext";
 import ShareSheet from "./ShareSheet";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 
 interface ShareProfileModalProps {
   isOpen: boolean;
   onClose: () => void;
+  carerName?: string;
 }
 
 const TOKEN_TTL = 30 * 60; // 30 min in seconds (countdown display)
@@ -48,13 +50,17 @@ const PROFILE_ITEMS = [
 export default function ShareProfileModal({
   isOpen,
   onClose,
+  carerName: propCarerName,
 }: ShareProfileModalProps) {
+  const { user } = useAuth();
+  const carerName =
+    propCarerName ||
+    (user?.firstName ? `${user.firstName}${user.lastName ? ` ${user.lastName}` : ""}`.trim() : "");
+
   const [status, setStatus] = useState<ShareTokenStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [consented, setConsented] = useState(false);
-  // Incremented every time a link is generated/renewed to bust WhatsApp's cache
-  const [shareVersion, setShareVersion] = useState(() => Date.now());
 
   // Load status on open
   const loadStatus = useCallback(async () => {
@@ -109,7 +115,6 @@ export default function ShareProfileModal({
     try {
       const data = await shareableProfileService.generateShareToken(true);
       setStatus(data);
-      setShareVersion(Date.now()); // new version = fresh WhatsApp preview
       showSuccessToast(
         "Link Ready",
         "Your shareable profile link is now active.",
@@ -127,7 +132,6 @@ export default function ShareProfileModal({
     try {
       const data = await shareableProfileService.generateShareToken(true);
       setStatus(data);
-      setShareVersion(Date.now()); // new version = fresh WhatsApp preview
       showSuccessToast(
         "Link Renewed",
         "A fresh share link has been generated.",
@@ -229,7 +233,8 @@ export default function ShareProfileModal({
 
                 {/* Active token view */}
                 <ShareSheet
-                  shareUrl={`${status.shareUrl}?v=${shareVersion}`}
+                  shareUrl={status.shareUrl}
+                  carerName={carerName}
                   expirationDate={status.expirationDate || status.expiresAt}
                   onRenew={handleRenew}
                   renewing={generating}

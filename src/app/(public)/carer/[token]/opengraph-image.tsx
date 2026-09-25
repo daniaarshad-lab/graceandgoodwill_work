@@ -24,7 +24,12 @@ export default async function Image({ params }: Props) {
   let isValid = false;
 
   try {
-    const apiBase = appUrl.replace(/\/+$/, "");
+    const apiBase = (
+      process.env.NEXT_PUBLIC_API_URL ||
+      `${appUrl}/api`
+    )
+      .replace(/\/+$/, "")
+      .replace(/\/api\/?$/, "");
     const res = await fetch(`${apiBase}/api/public/carer/${token}`, {
       signal: AbortSignal.timeout(5000),
     });
@@ -94,9 +99,11 @@ export default async function Image({ params }: Props) {
       if (res.ok) {
         const buffer = await res.arrayBuffer();
         const bytes = new Uint8Array(buffer);
+        const CHUNK_SIZE = 8192;
         let binary = "";
-        for (let i = 0; i < bytes.byteLength; i++) {
-          binary += String.fromCharCode(bytes[i]);
+        for (let i = 0; i < bytes.byteLength; i += CHUNK_SIZE) {
+          const chunk = bytes.subarray(i, i + CHUNK_SIZE);
+          binary += String.fromCharCode.apply(null, chunk as unknown as number[]);
         }
         const base64 = btoa(binary);
         const mime = res.headers.get("content-type") || "image/jpeg";

@@ -899,6 +899,7 @@ function CarerDashboardContent() {
       <ShareProfileModal
         isOpen={isShareModalOpen}
         onClose={() => setIsShareModalOpen(false)}
+        carerName={user ? [user.firstName, user.lastName].filter(Boolean).join(" ") : undefined}
       />
     </main>
   );

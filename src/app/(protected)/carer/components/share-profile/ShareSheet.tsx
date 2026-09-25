@@ -13,10 +13,12 @@ import {
   RefreshCw,
   ChevronRight,
 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 
 interface ShareSheetProps {
   shareUrl: string;
+  carerName?: string;
   expirationDate?: string;
   onRenew: () => void;
   renewing: boolean;
@@ -43,15 +45,37 @@ function formatExpirationDate(dateStr?: string): string {
 
 export default function ShareSheet({
   shareUrl,
+  carerName,
   expirationDate,
   onRenew,
   renewing,
 }: ShareSheetProps) {
+  const { user } = useAuth();
   const [copied, setCopied] = useState(false);
+
+  // Stable, clean share URL without query parameters (such as ?v=...)
+  const cleanShareUrl = shareUrl ? shareUrl.split("?")[0] : "";
+
+  // Dynamic carer naming
+  const resolvedName =
+    carerName?.trim() ||
+    (user?.firstName ? `${user.firstName}${user.lastName ? ` ${user.lastName}` : ""}`.trim() : "") ||
+    "Our carer";
+
+  const nameParts = resolvedName.split(/\s+/).filter(Boolean);
+  const firstName = user?.firstName?.trim() || nameParts[0] || "Our carer";
+  const lastInitial = user?.lastName?.trim()
+    ? user.lastName.trim().charAt(0).toUpperCase()
+    : nameParts.length > 1
+    ? nameParts[nameParts.length - 1].charAt(0).toUpperCase()
+    : "";
+  const formalName = lastInitial && !firstName.endsWith(".")
+    ? `${firstName} ${lastInitial}.`
+    : resolvedName;
 
   const copyLink = async () => {
     try {
-      await navigator.clipboard.writeText(shareUrl);
+      await navigator.clipboard.writeText(cleanShareUrl);
       setCopied(true);
       showSuccessToast("Copied!", "Share link copied to clipboard.");
       setTimeout(() => setCopied(false), 2500);
@@ -61,25 +85,25 @@ export default function ShareSheet({
   };
 
   const handleShareWhatsApp = () => {
+    const text = `${formalName} has shared their professional live-in carer profile with you through Grace & Goodwill.\n\nView ${firstName}'s experience, introduction video, care skills, interests, languages and current availability using the secure link below.\n\n🔗 ${cleanShareUrl}\n\nThis profile link is available for a limited period.\n\nIf you would like to discuss ${firstName}'s profile, check their availability or talk to us about other live-in care options, the Grace & Goodwill team is here to help.\n\n📞 Call: 020 4524 0108\n💬 WhatsApp: +44 7462 931949\n🌐 https://graceandgoodwill.co.uk`;
+
     window.open(
-      `https://wa.me/?text=${encodeURIComponent(
-        `Hi! I'd like to share my carer profile with you: ${shareUrl}`,
-      )}`,
+      `https://wa.me/?text=${encodeURIComponent(text)}`,
       "_blank",
     );
   };
 
   const handleShareEmail = () => {
     window.location.href = `mailto:?subject=${encodeURIComponent(
-      "My Carer Profile — Grace & Goodwill",
+      `${formalName} — Professional Live-In Carer Profile`,
     )}&body=${encodeURIComponent(
-      `Hello,\n\nPlease find my professional carer profile here:\n${shareUrl}\n\nKind regards`,
+      `Hello,\n\nPlease find my professional carer profile here:\n${cleanShareUrl}\n\nKind regards,\n${formalName}`,
     )}`;
   };
 
   const handleShareSMS = () => {
     window.location.href = `sms:?&body=${encodeURIComponent(
-      `My carer profile (Grace & Goodwill): ${shareUrl}`,
+      `My carer profile (Grace & Goodwill): ${cleanShareUrl}`,
     )}`;
   };
 
@@ -87,8 +111,8 @@ export default function ShareSheet({
     if (typeof navigator !== "undefined" && navigator.share) {
       try {
         await navigator.share({
-          title: "My Carer Profile – Grace & Goodwill",
-          url: shareUrl,
+          title: `${formalName} – Professional Live-In Carer Profile`,
+          url: cleanShareUrl,
         });
       } catch {
         // Ignored if user dismissed share dialog
@@ -150,7 +174,7 @@ export default function ShareSheet({
           >
             <Link2 className="w-4 h-4 flex-shrink-0 text-[#ECCB76] stroke-[2.2]" />
             <span className="text-xs sm:text-sm text-slate-200 font-mono truncate select-all">
-              {shareUrl}
+              {cleanShareUrl}
             </span>
           </div>
 

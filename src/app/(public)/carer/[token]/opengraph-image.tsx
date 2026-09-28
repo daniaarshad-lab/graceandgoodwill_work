@@ -15,7 +15,7 @@ export default async function Image({ params }: Props) {
   const appUrl =
     process.env.NEXT_PUBLIC_APP_URL ||
     process.env.NEXT_PUBLIC_SITE_URL ||
-    "https://graceandgoodwill.co.uk";
+    "https://unvalidating-alaine-inconsiderately.ngrok-free.dev";
 
   /* ── Fetch carer data directly (edge-compatible) ── */
   let displayName = "";
@@ -149,34 +149,34 @@ export default async function Image({ params }: Props) {
         >
           <svg width="1200" height="220" viewBox="0 0 1200 220" xmlns="http://www.w3.org/2000/svg">
             {/* Big Ben tower */}
-            <rect x="148" y="18" width="36" height="202" fill="#D4A043"/>
-            <rect x="140" y="12" width="52" height="18" fill="#D4A043"/>
-            <polygon points="166,0 140,12 192,12" fill="#D4A043"/>
-            <rect x="152" y="30" width="28" height="28" fill="#0c2418"/>
-            <circle cx="166" cy="44" r="10" fill="none" stroke="#D4A043" strokeWidth="2"/>
+            <rect x="148" y="18" width="36" height="202" fill="#D4A043" />
+            <rect x="140" y="12" width="52" height="18" fill="#D4A043" />
+            <polygon points="166,0 140,12 192,12" fill="#D4A043" />
+            <rect x="152" y="30" width="28" height="28" fill="#0c2418" />
+            <circle cx="166" cy="44" r="10" fill="none" stroke="#D4A043" strokeWidth="2" />
             {/* Westminster */}
-            <rect x="95" y="90" width="110" height="130" fill="#D4A043"/>
-            <rect x="88" y="82" width="124" height="14" fill="#D4A043"/>
+            <rect x="95" y="90" width="110" height="130" fill="#D4A043" />
+            <rect x="88" y="82" width="124" height="14" fill="#D4A043" />
             {/* Buildings left */}
-            <rect x="30" y="130" width="58" height="90" fill="#D4A043"/>
-            <rect x="24" y="124" width="70" height="10" fill="#D4A043"/>
-            <rect x="220" y="110" width="72" height="110" fill="#D4A043"/>
-            <rect x="305" y="135" width="55" height="85" fill="#D4A043"/>
+            <rect x="30" y="130" width="58" height="90" fill="#D4A043" />
+            <rect x="24" y="124" width="70" height="10" fill="#D4A043" />
+            <rect x="220" y="110" width="72" height="110" fill="#D4A043" />
+            <rect x="305" y="135" width="55" height="85" fill="#D4A043" />
             {/* Shard-like */}
-            <polygon points="400,60 415,220 385,220" fill="#D4A043"/>
-            <rect x="430" y="100" width="65" height="120" fill="#D4A043"/>
-            <rect x="505" y="125" width="48" height="95" fill="#D4A043"/>
-            <rect x="560" y="140" width="75" height="80" fill="#D4A043"/>
+            <polygon points="400,60 415,220 385,220" fill="#D4A043" />
+            <rect x="430" y="100" width="65" height="120" fill="#D4A043" />
+            <rect x="505" y="125" width="48" height="95" fill="#D4A043" />
+            <rect x="560" y="140" width="75" height="80" fill="#D4A043" />
             {/* Gherkin shape */}
-            <rect x="645" y="80" width="44" height="140" fill="#D4A043"/>
-            <ellipse cx="667" cy="80" rx="22" ry="14" fill="#D4A043"/>
-            <rect x="700" y="115" width="60" height="105" fill="#D4A043"/>
-            <rect x="770" y="130" width="52" height="90" fill="#D4A043"/>
-            <rect x="832" y="100" width="68" height="120" fill="#D4A043"/>
-            <rect x="910" y="120" width="55" height="100" fill="#D4A043"/>
-            <rect x="975" y="95" width="45" height="125" fill="#D4A043"/>
-            <rect x="1030" y="115" width="80" height="105" fill="#D4A043"/>
-            <rect x="1120" y="135" width="80" height="85" fill="#D4A043"/>
+            <rect x="645" y="80" width="44" height="140" fill="#D4A043" />
+            <ellipse cx="667" cy="80" rx="22" ry="14" fill="#D4A043" />
+            <rect x="700" y="115" width="60" height="105" fill="#D4A043" />
+            <rect x="770" y="130" width="52" height="90" fill="#D4A043" />
+            <rect x="832" y="100" width="68" height="120" fill="#D4A043" />
+            <rect x="910" y="120" width="55" height="100" fill="#D4A043" />
+            <rect x="975" y="95" width="45" height="125" fill="#D4A043" />
+            <rect x="1030" y="115" width="80" height="105" fill="#D4A043" />
+            <rect x="1120" y="135" width="80" height="85" fill="#D4A043" />
           </svg>
         </div>
 

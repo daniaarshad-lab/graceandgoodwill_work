@@ -22,6 +22,7 @@ import { publicService } from "@/services/public.service";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import ThinSpinner from "@/components/ThinSpinner";
 import WhatsAppIcon from "@/components/WhatsAppIcon";
+import ExpiredProfileCard from "@/components/share-profile/ExpiredProfileCard";
 
 interface ParsedRange {
   startDate: string;
@@ -293,46 +294,53 @@ export default function PublicProfileClient({ token }: PublicProfileClientProps)
   }
 
   // ── Error / Expired State ──────────────────────────────────────────
-  if (error || !profile) {
+  const isExpired = error || !profile || profile.isActive === false || (profile.expiresAt && new Date(profile.expiresAt) < new Date());
+
+  if (isExpired) {
     return (
-      <main className="min-h-screen bg-navy-950 py-20 px-4 sm:px-6 lg:px-8 text-gold-100 flex items-center justify-center">
-        <div className="max-w-lg w-full bg-navy-900/70 border border-gold-300/15 rounded-3xl p-8 sm:p-10 text-center shadow-2xl backdrop-blur-md space-y-6">
-          <div className="w-16 h-16 rounded-2xl bg-gold-DEFAULT/10 border border-gold-DEFAULT/20 flex items-center justify-center mx-auto text-gold-DEFAULT">
-            <AlertCircle className="w-8 h-8" />
-          </div>
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold font-serif text-gold-50">
-              Link Expired or Invalid
-            </h1>
-            <p className="text-sm text-gold-100/70 mt-3 leading-relaxed">
-              {error ||
-                "For the privacy and protection of our carers, profile share links expire after 30 minutes."}
-            </p>
-          </div>
+      <main
+        className="min-h-screen flex flex-col"
+        style={{ backgroundColor: "#0d1b3e" }}
+      >
+        {/* ── Brand Header ─────────────────────────────────────────────── */}
+        <header className="flex items-center justify-between px-6 py-4" style={{ backgroundColor: "#0d1b3e" }}>
+          <img
+            src="/website_logo.png"
+            alt="Grace & Goodwill"
+            className="h-10 w-auto object-contain"
+          />
+          <p
+            className="text-xs font-light italic text-right leading-tight hidden sm:block"
+            style={{ color: "#c8a96e", maxWidth: 120 }}
+          >
+            Care<br />You Can<br />Trust
+          </p>
+        </header>
 
-          <div className="bg-navy-950/60 border border-gold-300/10 rounded-2xl p-4 text-left space-y-2 text-xs text-gold-100/60">
-            <p className="font-semibold text-gold-200">What can you do?</p>
-            <ul className="list-disc list-inside space-y-1">
-              <li>Ask the carer to generate a fresh share link.</li>
-              <li>Contact Grace &amp; Goodwill directly to enquire about available live-in carers.</li>
-            </ul>
+        {/* ── Wavy Hero Band ──────────────────────────────────────────────── */}
+        <div className="w-full relative" style={{ height: 100 }}>
+          {/* Solid navy background */}
+          <div className="absolute inset-0" style={{ backgroundColor: "#0d1b3e" }} />
+          {/* Smooth organic wave — cream fill, no sharp peaks */}
+          <div className="absolute bottom-0 left-0 right-0" style={{ lineHeight: 0 }}>
+            <svg
+              viewBox="0 0 1440 72"
+              preserveAspectRatio="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-full"
+              style={{ height: 72, display: "block" }}
+            >
+              {/* Smooth wave: quadratic bezier, y stays between 20-60, never touches edges */}
+              <path
+                d="M0,52 Q240,20 480,48 Q720,72 960,36 Q1200,16 1440,44 L1440,72 L0,72 Z"
+                fill="#f5f0e8"
+              />
+            </svg>
           </div>
-
-          {/* <div className="flex flex-col sm:flex-row gap-3 pt-2">
-            <Link
-              href="/contact"
-              className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-b from-gold-200 to-gold-200/80 text-navy-950 font-bold text-sm text-center shadow-lg hover:brightness-105 transition"
-            >
-              Contact Support
-            </Link>
-            <Link
-              href="/"
-              className="flex-1 py-3 px-4 rounded-xl border border-gold-300/20 text-gold-200 font-semibold text-sm text-center hover:bg-gold-DEFAULT/10 transition"
-            >
-              Return Home
-            </Link>
-          </div> */}
         </div>
+
+        {/* ── Main Card ────────────────────────────────────────────────── */}
+        <ExpiredProfileCard />
       </main>
     );
   }

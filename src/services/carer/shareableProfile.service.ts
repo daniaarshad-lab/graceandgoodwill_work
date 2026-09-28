@@ -7,6 +7,9 @@ export interface ShareTokenStatus {
   expiresAt?: string;
   expirationDate?: string;
   expiresInSeconds?: number;
+  isActive?: boolean;
+  id?: string;
+  token?: string;
 }
 
 export interface AvailabilityRange {
@@ -28,6 +31,8 @@ export interface PublicCarerProfile {
   availabilityRanges?: AvailabilityRange[];
   isComplianceChecked: boolean;
   brandName: string;
+  isActive?: boolean;
+  expiresAt?: string;
 }
 
 export interface AvailabilityDay {
@@ -45,7 +50,14 @@ const shareableProfileService = {
   },
 
   async getShareTokenStatus(): Promise<ShareTokenStatus> {
-    return apiFetch("/carer/profile/share-token", { method: "GET" });
+    return apiFetch("/carer/profile/share-token", { 
+      method: "GET",
+      cache: "no-store",
+      headers: {
+        "Cache-Control": "no-cache",
+        "Pragma": "no-cache"
+      }
+    });
   },
 
   async getPublicProfile(token: string): Promise<PublicCarerProfile> {

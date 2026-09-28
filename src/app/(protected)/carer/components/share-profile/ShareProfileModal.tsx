@@ -26,6 +26,7 @@ import shareableProfileService, {
 } from "@/services/carer/shareableProfile.service";
 import { useAuth } from "@/contexts/AuthContext";
 import ShareSheet from "./ShareSheet";
+import ExpiredProfileCard from "@/components/share-profile/ExpiredProfileCard";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 
 interface ShareProfileModalProps {
@@ -143,6 +144,11 @@ export default function ShareProfileModal({
     }
   };
 
+  const isExpired = true /* TEMPORARY OVERRIDE: Hardcoding true to test expired UI */ || 
+                    status?.isActive === false || 
+                    (status?.expiresAt ? new Date(status.expiresAt) <= new Date() : false) || 
+                    (status?.expirationDate ? new Date(status.expirationDate) <= new Date() : false);
+
   if (!isOpen) return null;
 
   return (
@@ -203,7 +209,7 @@ export default function ShareProfileModal({
 
           {/* Scrollable content inside the modal */}
           <div
-            className="p-5 sm:p-6 overflow-y-auto flex-1 custom-scrollbar"
+            className={`overflow-y-auto flex-1 custom-scrollbar ${isExpired ? "p-4 sm:p-5 pt-12" : "p-5 sm:p-6"}`}
             style={{
               scrollbarWidth: "thin",
               scrollbarColor: "rgba(201, 171, 82, 0.4) transparent",
@@ -214,6 +220,13 @@ export default function ShareProfileModal({
               <div className="py-12 flex flex-col items-center justify-center gap-3">
                 <RefreshCw className="w-8 h-8 animate-spin" style={{ color: "#C9AB52" }} />
                 <p className="text-xs" style={{ color: "rgba(201,171,82,0.7)" }}>Checking share link status...</p>
+              </div>
+            ) : (
+              <>
+                {isExpired ? (
+              /* EXPIRED TOKEN STATE */
+              <div className="flex flex-col items-center w-full py-4">
+                <ExpiredProfileCard />
               </div>
             ) : status?.hasActiveToken && status.shareUrl ? (
               /* ACTIVE TOKEN STATE - Matches Image 2 */
@@ -465,6 +478,8 @@ export default function ShareProfileModal({
               </button> */}
                 </div>
               </div>
+            )}
+              </>
             )}
           </div>
         </div>

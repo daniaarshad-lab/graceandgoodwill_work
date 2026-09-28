@@ -15,7 +15,7 @@ export default async function Image({ params }: Props) {
   const appUrl =
     process.env.NEXT_PUBLIC_APP_URL ||
     process.env.NEXT_PUBLIC_SITE_URL ||
-    "https://graceandgoodwill.co.uk";
+    "https://unvalidating-alaine-inconsiderately.ngrok-free.dev";
 
   /* ── Fetch carer data directly (edge-compatible) ── */
   let displayName = "";

@@ -46,8 +46,43 @@ const BBCAudioCard = dynamic(() => import("@/components/BBCAudioCard"));
 export default function HomePage() {
   const homepageFaqs = faqs.filter(faq => homepageFaqQuestions.includes(faq.question));
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Grace & Goodwill",
+    "image": "https://graceandgoodwill.co.uk/website_logo.png",
+    "@id": "https://graceandgoodwill.co.uk/#localbusiness",
+    "url": "https://graceandgoodwill.co.uk/",
+    "telephone": "020 4524 0108",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Hypoint, Saltmeadows Road,",
+      "addressLocality": "Gateshead",
+      "postalCode": "NE8 3AH",
+      "addressCountry": "GB"
+    },
+    "openingHoursSpecification": {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday"
+      ],
+      "opens": "00:00",
+      "closes": "23:59"
+    }
+  };
+
   return (
     <main className="overflow-x-clip min-h-[calc(100vh-80px)] bg-navy-950 text-gold-100">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <section className="relative w-full pb-16 min-h-[600px] bg-navy-950">
         {/* Background Image */}
         <div className="absolute top-0 right-0 z-0 overflow-hidden w-full h-[350px] sm:h-[450px] md:h-full md:inset-y-0 md:w-[80%] lg:w-[65%] xl:w-[60%]">

@@ -144,10 +144,10 @@ export default function ShareProfileModal({
     }
   };
 
-  const isExpired = true /* TEMPORARY OVERRIDE: Hardcoding true to test expired UI */ || 
-                    status?.isActive === false || 
-                    (status?.expiresAt ? new Date(status.expiresAt) <= new Date() : false) || 
-                    (status?.expirationDate ? new Date(status.expirationDate) <= new Date() : false);
+  const isExpired =
+    status?.isActive === false ||
+    (status?.expiresAt ? new Date(status.expiresAt!) <= new Date() : false) ||
+    (status?.expirationDate ? new Date(status.expirationDate!) <= new Date() : false);
 
   if (!isOpen) return null;
 
@@ -209,7 +209,7 @@ export default function ShareProfileModal({
 
           {/* Scrollable content inside the modal */}
           <div
-            className={`flex-1 custom-scrollbar ${isExpired ? "overflow-y-hidden p-4 sm:p-5" : "overflow-y-auto p-5 sm:p-6"}`}
+            className={`overflow-y-auto flex-1 custom-scrollbar ${isExpired ? "p-4 sm:p-5 pt-12" : "p-5 sm:p-6"}`}
             style={{
               scrollbarWidth: "thin",
               scrollbarColor: "rgba(201, 171, 82, 0.4) transparent",
@@ -224,251 +224,251 @@ export default function ShareProfileModal({
             ) : (
               <>
                 {isExpired ? (
-              /* EXPIRED TOKEN STATE */
-              <div className="flex flex-col items-center w-full">
-                <ExpiredProfileCard />
-              </div>
-            ) : status?.hasActiveToken && status.shareUrl ? (
-              /* ACTIVE TOKEN STATE - Matches Image 2 */
-              <div>
-                {/* Header for Active Shareable Profile */}
-                <div className="pr-8 mb-4">
-                  <h2
-                    className="text-xl sm:text-2xl lg:text-[26px] font-bold leading-tight text-white font-serif"
-                  >
-                    Your profile is ready to share
-                  </h2>
-                  <p className="text-xs sm:text-[12.5px] mt-1.5 text-[#D8BA68] leading-normal">
-                    Use your profile as a digital business card and help more prospective clients,
-                    families and professional contacts discover your experience, skills and availability.
-                  </p>
-                </div>
-
-                {/* Active token view */}
-                <ShareSheet
-                  shareUrl={status.shareUrl}
-                  carerName={carerName}
-                  expirationDate={status.expirationDate || status.expiresAt}
-                  onRenew={handleRenew}
-                  renewing={generating}
-                />
-              </div>
-            ) : (
-              /* NO TOKEN STATE - Matches Pre-Generation Reference */
-              <div>
-                {/* Header for Pre-Generation State */}
-                <div className="flex items-start gap-3.5 pr-8 mb-3.5">
-                  <div
-                    className="w-14 h-14 sm:w-[58px] sm:h-[58px] rounded-2xl flex items-center justify-center flex-shrink-0 mt-1"
-                    style={{
-                      background: "rgba(10, 18, 42, 0.6)",
-                      border: "1.5px solid rgba(201, 171, 82, 0.6)",
-                      boxShadow: "0 0 15px rgba(201, 171, 82, 0.1)",
-                    }}
-                  >
-                    <Share2 className="w-6 h-6 sm:w-7 sm:h-7 text-[#ECCB76] stroke-[2]" />
+                  /* EXPIRED TOKEN STATE */
+                  <div className="flex flex-col items-center w-full py-4">
+                    <ExpiredProfileCard />
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <h2
-                      className="font-bold leading-[1.2] text-white font-serif"
-                      style={{ fontSize: "clamp(1.6rem, 3.5vw, 2.1rem)" }}
-                    >
-                      Share your professional<br />live-in carer profile
-                    </h2>
-                    <p className="text-xs sm:text-[12.5px] mt-1.5 text-[#D8BA68] leading-normal">
-                      Use your shareable profile as a digital business card to showcase
-                      your experience, skills and availability through Grace &amp; Goodwill.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="space-y-2.5">
-                  {/* Profile items box */}
+                ) : status?.hasActiveToken && status.shareUrl ? (
+                  /* ACTIVE TOKEN STATE - Matches Image 2 */
                   <div>
-                    <p className="text-xs sm:text-[13px] font-bold text-white mb-1.5">
-                      Your shareable profile may include:
-                    </p>
-                    <div
-                      className="rounded-2xl p-3 sm:p-3.5"
-                      style={{
-                        background: "rgba(10, 18, 42, 0.55)",
-                        border: "1px solid rgba(201, 171, 82, 0.28)",
-                      }}
-                    >
-                      <div className="grid grid-cols-4 gap-x-2 gap-y-3">
-                        {PROFILE_ITEMS.map(({ icon: Icon, label }) => (
-                          <div key={label} className="flex flex-col items-start gap-1.5 min-w-0">
-                            <Icon className="w-4 h-4 flex-shrink-0 text-[#ECCB76] stroke-[1.8]" />
-                            <span className="text-[10px] sm:text-[11px] text-slate-200 leading-snug">
-                              {label}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
+                    {/* Header for Active Shareable Profile */}
+                    <div className="pr-8 mb-4">
+                      <h2
+                        className="text-xl sm:text-2xl lg:text-[26px] font-bold leading-tight text-white font-serif"
+                      >
+                        Your profile is ready to share
+                      </h2>
+                      <p className="text-xs sm:text-[12.5px] mt-1.5 text-[#D8BA68] leading-normal">
+                        Use your profile as a digital business card and help more prospective clients,
+                        families and professional contacts discover your experience, skills and availability.
+                      </p>
                     </div>
-                  </div>
 
-                  {/* Privacy notice box */}
-                  <div
-                    className="flex items-center gap-3 rounded-xl py-2 px-3 sm:py-2.5 sm:px-3.5"
-                    style={{
-                      background: "rgba(13, 22, 45, 0.65)",
-                      border: "1px solid rgba(255, 255, 255, 0.08)",
-                    }}
-                  >
-                    <div
-                      className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center flex-shrink-0"
-                      style={{ background: "rgba(255, 255, 255, 0.06)", border: "1px solid rgba(255, 255, 255, 0.1)" }}
-                    >
-                      <Lock className="w-4 h-4 text-slate-300" />
-                    </div>
-                    <p className="text-[11px] sm:text-xs leading-snug text-slate-300">
-                      <span className="font-semibold text-white">For your privacy, the following will not be displayed:</span>{" "}
-                      Personal telephone number, email address, home address and compliance documents.
-                    </p>
+                    {/* Active token view */}
+                    <ShareSheet
+                      shareUrl={status.shareUrl}
+                      carerName={carerName}
+                      expirationDate={status.expirationDate || status.expiresAt}
+                      onRenew={handleRenew}
+                      renewing={generating}
+                    />
                   </div>
-
-                  {/* Grace & Goodwill enquiries notice box */}
-                  <div
-                    className="rounded-2xl p-3.5 sm:p-4"
-                    style={{
-                      background: "rgba(10, 18, 42, 0.55)",
-                      border: "1.5px solid rgba(236, 203, 118, 0.6)",
-                      boxShadow:
-                        "0 0 20px rgba(236, 203, 118, 0.25), inset 0 0 12px rgba(236, 203, 118, 0.08)",
-                    }}
-                  >
-                    <div className="flex items-start gap-3 sm:gap-3.5">
-                      <div className="flex-shrink-0 mt-0.5">
-                        <svg
-                          className="w-9 h-11 sm:w-10 sm:h-12 text-[#ECCB76]"
-                          viewBox="0 0 36 44"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          {/* Shield Outline */}
-                          <path
-                            d="M18 2.5L4 7.5v15c0 10.5 14 18 14 18s14-7.5 14-18v-15L18 2.5z"
-                            strokeWidth="2.4"
-                          />
-                          {/* Lock Shackle */}
-                          <path
-                            d="M14 20v-3.5a4 4 0 0 1 8 0V20"
-                            strokeWidth="2.2"
-                          />
-                          {/* Lock Body */}
-                          <rect
-                            x="12"
-                            y="20"
-                            width="12"
-                            height="9"
-                            rx="2"
-                            fill="currentColor"
-                            strokeWidth="2"
-                          />
-                          {/* Keyhole */}
-                          <circle cx="18" cy="23.5" r="1" fill="#0A1128" stroke="none" />
-                          <path d="M18 24.5v2" stroke="#0A1128" strokeWidth="1.2" />
-                        </svg>
-                      </div>
-                      <div className="space-y-1">
-                        <p className="text-xs sm:text-[13px] font-semibold leading-snug text-[#ECCB76]">
-                          All enquiries and care requests generated through your shared profile
-                          are directed through Grace &amp; Goodwill.
-                        </p>
-                        <p className="text-[11px] sm:text-xs leading-normal text-amber-100/75">
-                          If a family or client is interested in your profile, we will contact you directly
-                          to discuss the opportunity.
-                        </p>
-                        <div className="flex items-center gap-1.5 pt-0.5">
-                          <ShieldCheck className="w-3.5 h-3.5 flex-shrink-0 text-[#ECCB76]" />
-                          <p className="text-[10px] sm:text-[11px] text-[#ECCB76]/90">
-                            We handle enquiries securely, so you can focus on what you do best caring.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Link duration notice */}
-                  <div className="flex items-center gap-2 px-1">
-                    <Clock className="w-4 h-4 flex-shrink-0 text-[#ECCB76]/80" />
-                    <p className="text-[11px] sm:text-xs leading-normal text-slate-300">
-                      Your link will remain active for 1 month. You can generate a new link when the current one expires.
-                    </p>
-                  </div>
-
-                  {/* Consent Checkbox */}
-                  <label
-                    htmlFor="modal-consent-checkbox"
-                    className="flex items-start gap-2.5 px-1 cursor-pointer transition-colors"
-                  >
-                    <div className="relative flex-shrink-0 mt-0.5">
-                      <input
-                        id="modal-consent-checkbox"
-                        type="checkbox"
-                        checked={consented}
-                        onChange={(e) => setConsented(e.target.checked)}
-                        className="sr-only"
-                      />
+                ) : (
+                  /* NO TOKEN STATE - Matches Pre-Generation Reference */
+                  <div>
+                    {/* Header for Pre-Generation State */}
+                    <div className="flex items-start gap-3.5 pr-8 mb-3.5">
                       <div
-                        className="w-[18px] h-[18px] sm:w-5 sm:h-5 flex items-center justify-center transition-all duration-200"
+                        className="w-14 h-14 sm:w-[58px] sm:h-[58px] rounded-2xl flex items-center justify-center flex-shrink-0 mt-1"
                         style={{
-                          backgroundColor: consented ? "#EAB308" : "transparent",
-                          border: consented
-                            ? "2px solid #EAB308"
-                            : "1.8px solid rgba(201, 171, 82, 0.75)",
-                          borderRadius: "4px",
-                          boxShadow: consented ? "0 0 10px rgba(234,179,8,0.5)" : "none",
+                          background: "rgba(10, 18, 42, 0.6)",
+                          border: "1.5px solid rgba(201, 171, 82, 0.6)",
+                          boxShadow: "0 0 15px rgba(201, 171, 82, 0.1)",
                         }}
                       >
-                        {consented && (
-                          <svg className="w-3.5 h-3.5" viewBox="0 0 12 12" fill="none">
-                            <path d="M2 6l3 3 5-5" stroke="#0A1128" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                          </svg>
-                        )}
+                        <Share2 className="w-6 h-6 sm:w-7 sm:h-7 text-[#ECCB76] stroke-[2]" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <h2
+                          className="font-bold leading-[1.2] text-white font-serif"
+                          style={{ fontSize: "clamp(1.6rem, 3.5vw, 2.1rem)" }}
+                        >
+                          Share your professional<br />live-in carer profile
+                        </h2>
+                        <p className="text-xs sm:text-[12.5px] mt-1.5 text-[#D8BA68] leading-normal">
+                          Use your shareable profile as a digital business card to showcase
+                          your experience, skills and availability through Grace &amp; Goodwill.
+                        </p>
                       </div>
                     </div>
-                    <span className="text-[11px] sm:text-xs leading-relaxed select-none text-slate-300">
-                      I understand that I choose where and with whom I share my professional profile.
-                      I confirm that I am happy for the approved public profile information listed above
-                      to be displayed through my shareable link.
-                    </span>
-                  </label>
 
-                  {/* Generate CTA Button */}
-                  <button
-                    id="confirm-generate-share-link-btn"
-                    type="button"
-                    onClick={handleGenerate}
-                    disabled={generating}
-                    className="group w-full flex items-center justify-center gap-2 py-2.5 sm:py-2.5 px-4 rounded-xl text-xs sm:text-[13.5px] font-semibold tracking-[0.02em] transition-all duration-300 cursor-pointer shadow-md active:scale-[0.99] mt-1"
-                    style={{
-                      background: "linear-gradient(135deg, #F8E090 0%, #D8A93E 45%, #B8851E 100%)",
-                      color: "#0A1128",
-                      border: "none",
-                      boxShadow: "0 4px 18px rgba(216, 169, 62, 0.3)",
-                      opacity: !consented && !generating ? 0.8 : 1,
-                    }}
-                  >
-                    {generating ? (
-                      <>
-                        <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                        <span>Generating Link...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Link2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2]" />
-                        <span>Generate My Shareable Profile</span>
-                        <ArrowRight className="w-3.5 h-3.5 stroke-[2] transition-transform duration-200 group-hover:translate-x-0.5" />
-                      </>
-                    )}
-                  </button>
+                    <div className="space-y-2.5">
+                      {/* Profile items box */}
+                      <div>
+                        <p className="text-xs sm:text-[13px] font-bold text-white mb-1.5">
+                          Your shareable profile may include:
+                        </p>
+                        <div
+                          className="rounded-2xl p-3 sm:p-3.5"
+                          style={{
+                            background: "rgba(10, 18, 42, 0.55)",
+                            border: "1px solid rgba(201, 171, 82, 0.28)",
+                          }}
+                        >
+                          <div className="grid grid-cols-4 gap-x-2 gap-y-3">
+                            {PROFILE_ITEMS.map(({ icon: Icon, label }) => (
+                              <div key={label} className="flex flex-col items-start gap-1.5 min-w-0">
+                                <Icon className="w-4 h-4 flex-shrink-0 text-[#ECCB76] stroke-[1.8]" />
+                                <span className="text-[10px] sm:text-[11px] text-slate-200 leading-snug">
+                                  {label}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
 
-                  {/* Cancel link */}
-                  {/* <button
+                      {/* Privacy notice box */}
+                      <div
+                        className="flex items-center gap-3 rounded-xl py-2 px-3 sm:py-2.5 sm:px-3.5"
+                        style={{
+                          background: "rgba(13, 22, 45, 0.65)",
+                          border: "1px solid rgba(255, 255, 255, 0.08)",
+                        }}
+                      >
+                        <div
+                          className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center flex-shrink-0"
+                          style={{ background: "rgba(255, 255, 255, 0.06)", border: "1px solid rgba(255, 255, 255, 0.1)" }}
+                        >
+                          <Lock className="w-4 h-4 text-slate-300" />
+                        </div>
+                        <p className="text-[11px] sm:text-xs leading-snug text-slate-300">
+                          <span className="font-semibold text-white">For your privacy, the following will not be displayed:</span>{" "}
+                          Personal telephone number, email address, home address and compliance documents.
+                        </p>
+                      </div>
+
+                      {/* Grace & Goodwill enquiries notice box */}
+                      <div
+                        className="rounded-2xl p-3.5 sm:p-4"
+                        style={{
+                          background: "rgba(10, 18, 42, 0.55)",
+                          border: "1.5px solid rgba(236, 203, 118, 0.6)",
+                          boxShadow:
+                            "0 0 20px rgba(236, 203, 118, 0.25), inset 0 0 12px rgba(236, 203, 118, 0.08)",
+                        }}
+                      >
+                        <div className="flex items-start gap-3 sm:gap-3.5">
+                          <div className="flex-shrink-0 mt-0.5">
+                            <svg
+                              className="w-9 h-11 sm:w-10 sm:h-12 text-[#ECCB76]"
+                              viewBox="0 0 36 44"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              {/* Shield Outline */}
+                              <path
+                                d="M18 2.5L4 7.5v15c0 10.5 14 18 14 18s14-7.5 14-18v-15L18 2.5z"
+                                strokeWidth="2.4"
+                              />
+                              {/* Lock Shackle */}
+                              <path
+                                d="M14 20v-3.5a4 4 0 0 1 8 0V20"
+                                strokeWidth="2.2"
+                              />
+                              {/* Lock Body */}
+                              <rect
+                                x="12"
+                                y="20"
+                                width="12"
+                                height="9"
+                                rx="2"
+                                fill="currentColor"
+                                strokeWidth="2"
+                              />
+                              {/* Keyhole */}
+                              <circle cx="18" cy="23.5" r="1" fill="#0A1128" stroke="none" />
+                              <path d="M18 24.5v2" stroke="#0A1128" strokeWidth="1.2" />
+                            </svg>
+                          </div>
+                          <div className="space-y-1">
+                            <p className="text-xs sm:text-[13px] font-semibold leading-snug text-[#ECCB76]">
+                              All enquiries and care requests generated through your shared profile
+                              are directed through Grace &amp; Goodwill.
+                            </p>
+                            <p className="text-[11px] sm:text-xs leading-normal text-amber-100/75">
+                              If a family or client is interested in your profile, we will contact you directly
+                              to discuss the opportunity.
+                            </p>
+                            <div className="flex items-center gap-1.5 pt-0.5">
+                              <ShieldCheck className="w-3.5 h-3.5 flex-shrink-0 text-[#ECCB76]" />
+                              <p className="text-[10px] sm:text-[11px] text-[#ECCB76]/90">
+                                We handle enquiries securely, so you can focus on what you do best caring.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Link duration notice */}
+                      <div className="flex items-center gap-2 px-1">
+                        <Clock className="w-4 h-4 flex-shrink-0 text-[#ECCB76]/80" />
+                        <p className="text-[11px] sm:text-xs leading-normal text-slate-300">
+                          Your link will remain active for 1 month. You can generate a new link when the current one expires.
+                        </p>
+                      </div>
+
+                      {/* Consent Checkbox */}
+                      <label
+                        htmlFor="modal-consent-checkbox"
+                        className="flex items-start gap-2.5 px-1 cursor-pointer transition-colors"
+                      >
+                        <div className="relative flex-shrink-0 mt-0.5">
+                          <input
+                            id="modal-consent-checkbox"
+                            type="checkbox"
+                            checked={consented}
+                            onChange={(e) => setConsented(e.target.checked)}
+                            className="sr-only"
+                          />
+                          <div
+                            className="w-[18px] h-[18px] sm:w-5 sm:h-5 flex items-center justify-center transition-all duration-200"
+                            style={{
+                              backgroundColor: consented ? "#EAB308" : "transparent",
+                              border: consented
+                                ? "2px solid #EAB308"
+                                : "1.8px solid rgba(201, 171, 82, 0.75)",
+                              borderRadius: "4px",
+                              boxShadow: consented ? "0 0 10px rgba(234,179,8,0.5)" : "none",
+                            }}
+                          >
+                            {consented && (
+                              <svg className="w-3.5 h-3.5" viewBox="0 0 12 12" fill="none">
+                                <path d="M2 6l3 3 5-5" stroke="#0A1128" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                              </svg>
+                            )}
+                          </div>
+                        </div>
+                        <span className="text-[11px] sm:text-xs leading-relaxed select-none text-slate-300">
+                          I understand that I choose where and with whom I share my professional profile.
+                          I confirm that I am happy for the approved public profile information listed above
+                          to be displayed through my shareable link.
+                        </span>
+                      </label>
+
+                      {/* Generate CTA Button */}
+                      <button
+                        id="confirm-generate-share-link-btn"
+                        type="button"
+                        onClick={handleGenerate}
+                        disabled={generating}
+                        className="group w-full flex items-center justify-center gap-2 py-2.5 sm:py-2.5 px-4 rounded-xl text-xs sm:text-[13.5px] font-semibold tracking-[0.02em] transition-all duration-300 cursor-pointer shadow-md active:scale-[0.99] mt-1"
+                        style={{
+                          background: "linear-gradient(135deg, #F8E090 0%, #D8A93E 45%, #B8851E 100%)",
+                          color: "#0A1128",
+                          border: "none",
+                          boxShadow: "0 4px 18px rgba(216, 169, 62, 0.3)",
+                          opacity: !consented && !generating ? 0.8 : 1,
+                        }}
+                      >
+                        {generating ? (
+                          <>
+                            <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                            <span>Generating Link...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Link2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2]" />
+                            <span>Generate My Shareable Profile</span>
+                            <ArrowRight className="w-3.5 h-3.5 stroke-[2] transition-transform duration-200 group-hover:translate-x-0.5" />
+                          </>
+                        )}
+                      </button>
+
+                      {/* Cancel link */}
+                      {/* <button
                 type="button"
                 onClick={onClose}
                 className="w-full text-center py-1 text-xs sm:text-sm font-medium transition-colors cursor-pointer hover:text-white underline underline-offset-2"
@@ -476,9 +476,9 @@ export default function ShareProfileModal({
               >
                 Cancel
               </button> */}
-                </div>
-              </div>
-            )}
+                    </div>
+                  </div>
+                )}
               </>
             )}
           </div>

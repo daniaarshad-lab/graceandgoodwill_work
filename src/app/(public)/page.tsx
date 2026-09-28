@@ -23,8 +23,8 @@ export const metadata = {
   alternates: {
     canonical: "/",
   },
-  title: "Independent Live-In Care Agency UK | Grace & Goodwill",
-  description: "Find trusted independent live-in carers across the UK with Grace & Goodwill. Get personalised support and find the right live-in carer for your care needs.",
+  title: "Find a Live-In Carer Across the UK | Grace & Goodwill",
+  description: "Browse and compare live-in carer profiles across the UK. Find support for long-term care, respite, dementia care, disability support and urgent needs.",
 };
 
 const homepageFaqQuestions = [

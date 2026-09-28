@@ -60,7 +60,6 @@ export default async function Image({ params }: Props) {
             fontFamily: "Georgia, serif",
           }}
         >
-          {/* Gold border frame */}
           <div
             style={{
               position: "absolute",
@@ -110,7 +109,7 @@ export default async function Image({ params }: Props) {
   /* ── Build experience label ── */
   const expLabel = experienceYears ? `${experienceYears}+ Years Experience` : "Professional Live-In Carer";
 
-  /* ── Main Banner Card ── */
+  /* ── Main Banner Card (1200x630 Large Hero Format for WhatsApp) ── */
   return new ImageResponse(
     (
       <div
@@ -121,173 +120,210 @@ export default async function Image({ params }: Props) {
           position: "relative",
           overflow: "hidden",
           fontFamily: "Georgia, 'Times New Roman', serif",
-          background: "linear-gradient(145deg, #061410 0%, #091c13 30%, #0c2418 55%, #0e2d1e 75%, #071812 100%)",
+          background: "linear-gradient(135deg, #050b14 0%, #091722 35%, #0c201e 70%, #061017 100%)",
         }}
       >
-        {/* ── Subtle dot texture ── */}
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            backgroundImage: "radial-gradient(circle, rgba(212,159,71,0.05) 1px, transparent 1px)",
-            backgroundSize: "30px 30px",
-            display: "flex",
-          }}
-        />
-
-        {/* ── London skyline silhouette ── */}
+        {/* ── London skyline silhouette with illuminated Big Ben ── */}
         <div
           style={{
             position: "absolute",
             bottom: 0,
             left: 0,
             right: 0,
-            height: "220px",
+            height: "240px",
             display: "flex",
-            opacity: 0.12,
+            opacity: 0.18,
           }}
         >
-          <svg width="1200" height="220" viewBox="0 0 1200 220" xmlns="http://www.w3.org/2000/svg">
-            {/* Big Ben tower */}
-            <rect x="148" y="18" width="36" height="202" fill="#D4A043"/>
-            <rect x="140" y="12" width="52" height="18" fill="#D4A043"/>
-            <polygon points="166,0 140,12 192,12" fill="#D4A043"/>
-            <rect x="152" y="30" width="28" height="28" fill="#0c2418"/>
-            <circle cx="166" cy="44" r="10" fill="none" stroke="#D4A043" strokeWidth="2"/>
-            {/* Westminster */}
-            <rect x="95" y="90" width="110" height="130" fill="#D4A043"/>
-            <rect x="88" y="82" width="124" height="14" fill="#D4A043"/>
-            {/* Buildings left */}
-            <rect x="30" y="130" width="58" height="90" fill="#D4A043"/>
-            <rect x="24" y="124" width="70" height="10" fill="#D4A043"/>
-            <rect x="220" y="110" width="72" height="110" fill="#D4A043"/>
-            <rect x="305" y="135" width="55" height="85" fill="#D4A043"/>
-            {/* Shard-like */}
-            <polygon points="400,60 415,220 385,220" fill="#D4A043"/>
-            <rect x="430" y="100" width="65" height="120" fill="#D4A043"/>
-            <rect x="505" y="125" width="48" height="95" fill="#D4A043"/>
-            <rect x="560" y="140" width="75" height="80" fill="#D4A043"/>
-            {/* Gherkin shape */}
-            <rect x="645" y="80" width="44" height="140" fill="#D4A043"/>
-            <ellipse cx="667" cy="80" rx="22" ry="14" fill="#D4A043"/>
-            <rect x="700" y="115" width="60" height="105" fill="#D4A043"/>
-            <rect x="770" y="130" width="52" height="90" fill="#D4A043"/>
-            <rect x="832" y="100" width="68" height="120" fill="#D4A043"/>
-            <rect x="910" y="120" width="55" height="100" fill="#D4A043"/>
-            <rect x="975" y="95" width="45" height="125" fill="#D4A043"/>
-            <rect x="1030" y="115" width="80" height="105" fill="#D4A043"/>
-            <rect x="1120" y="135" width="80" height="85" fill="#D4A043"/>
+          <svg width="1200" height="240" viewBox="0 0 1200 360" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="skylineGold" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#F5D384" stopOpacity="0.8" />
+                <stop offset="100%" stopColor="#7A5212" stopOpacity="0.2" />
+              </linearGradient>
+            </defs>
+
+            <rect x="20" y="240" width="70" height="120" fill="url(#skylineGold)" />
+            <rect x="105" y="210" width="85" height="150" fill="url(#skylineGold)" />
+            <polygon points="147,160 105,210 190,210" fill="url(#skylineGold)" />
+            <rect x="205" y="250" width="60" height="110" fill="url(#skylineGold)" />
+            <rect x="280" y="220" width="90" height="140" fill="url(#skylineGold)" />
+            <polygon points="325,185 280,220 370,220" fill="url(#skylineGold)" />
+
+            <rect x="385" y="235" width="130" height="125" fill="url(#skylineGold)" />
+            <polygon points="410,210 395,235 425,235" fill="url(#skylineGold)" />
+            <polygon points="450,205 435,235 465,235" fill="url(#skylineGold)" />
+            <polygon points="490,210 475,235 505,235" fill="url(#skylineGold)" />
+
+            {/* Big Ben Tower */}
+            <rect x="525" y="70" width="56" height="290" fill="url(#skylineGold)" />
+            <rect x="515" y="60" width="76" height="18" fill="url(#skylineGold)" />
+            <polygon points="553,8 515,60 591,60" fill="url(#skylineGold)" />
+            <circle cx="553" cy="98" r="16" fill="#FFF4D0" />
+            <circle cx="553" cy="98" r="14" fill="#E2BD6E" />
+            <circle cx="553" cy="98" r="3" fill="#3D2905" />
+
+            <rect x="595" y="225" width="120" height="135" fill="url(#skylineGold)" />
+            <polygon points="625,195 605,225 645,225" fill="url(#skylineGold)" />
+            <polygon points="685,195 665,225 705,225" fill="url(#skylineGold)" />
+
+            <rect x="940" y="85" width="48" height="275" fill="url(#skylineGold)" />
+            <polygon points="964,28 935,85 993,85" fill="url(#skylineGold)" />
+            <circle cx="964" cy="112" r="12" fill="#FFF4D0" />
+
+            <rect x="1005" y="210" width="80" height="150" fill="url(#skylineGold)" />
+            <rect x="1100" y="240" width="80" height="120" fill="url(#skylineGold)" />
           </svg>
         </div>
 
-        {/* ── Diagonal gold stripe accent ── */}
+        {/* ── Glowing golden swoosh curve ── */}
         <div
           style={{
             position: "absolute",
-            top: "290px",
-            left: "-80px",
-            width: "1360px",
+            bottom: "82px",
+            left: "-40px",
+            width: "1280px",
             height: "2.5px",
-            background: "linear-gradient(90deg, transparent, rgba(212,159,71,0.35), rgba(248,224,144,0.55), rgba(212,159,71,0.35), transparent)",
-            transform: "rotate(-7deg)",
+            background: "linear-gradient(90deg, transparent 0%, rgba(226,189,110,0.2) 15%, #F5D384 60%, rgba(226,189,110,0.6) 85%, transparent 100%)",
+            transform: "rotate(-1.2deg)",
             display: "flex",
           }}
         />
 
-        {/* ── Teal radial glow center-right ── */}
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: "radial-gradient(ellipse at 75% 50%, rgba(10,60,35,0.45) 0%, transparent 65%)",
-            display: "flex",
-          }}
-        />
-
-        {/* ── Gold border frame ── */}
+        {/* ── Outer gold frame ── */}
         <div
           style={{
             position: "absolute",
             inset: "20px",
-            border: "1.5px solid rgba(212,159,71,0.45)",
+            border: "1.5px solid rgba(226, 189, 110, 0.45)",
             borderRadius: "16px",
             display: "flex",
           }}
         />
 
-        {/* ── Top gold accent bar ── */}
+        {/* ── Top gold gradient accent bar ── */}
         <div
           style={{
             position: "absolute",
             top: "20px",
             left: "20px",
             right: "20px",
-            height: "4px",
-            background: "linear-gradient(90deg, transparent, #D4A043, #F8E090, #D4A043, transparent)",
+            height: "3px",
+            background: "linear-gradient(90deg, transparent, #E2BD6E, #FFF2D6, #E2BD6E, transparent)",
             borderRadius: "2px",
             display: "flex",
           }}
         />
 
-        {/* ── Left content area ── */}
+        {/* ── Bottom gold gradient accent bar ── */}
+        <div
+          style={{
+            position: "absolute",
+            bottom: "20px",
+            left: "20px",
+            right: "20px",
+            height: "3px",
+            background: "linear-gradient(90deg, transparent, #E2BD6E, #FFF2D6, #E2BD6E, transparent)",
+            borderRadius: "2px",
+            display: "flex",
+          }}
+        />
+
+        {/* ── Left Content: Branding + Headline + Carer strip ── */}
         <div
           style={{
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
-            padding: "52px 48px 52px 52px",
+            padding: "50px 40px 50px 52px",
             flex: 1,
             zIndex: 2,
           }}
         >
-          {/* Grace & Goodwill branding */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-            <div
-              style={{
-                fontSize: "34px",
-                fontWeight: "bold",
-                color: "#D4A043",
-                letterSpacing: "3px",
-                textTransform: "uppercase",
-                display: "flex",
-              }}
-            >
-              GRACE &amp; GOODWILL
-            </div>
-            <div
-              style={{
-                fontSize: "13px",
-                color: "rgba(212,159,71,0.65)",
-                letterSpacing: "3.5px",
-                textTransform: "uppercase",
-                display: "flex",
-              }}
-            >
-              CARE DEFINED BY INTEGRITY
+          {/* Logo Knot + Brand Name & Strapline */}
+          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+            <svg width="48" height="48" viewBox="0 0 100 100" fill="none">
+              <defs>
+                <linearGradient id="goldKnot" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stopColor="#FFF2D6" />
+                  <stop offset="40%" stopColor="#E2BD6E" />
+                  <stop offset="80%" stopColor="#C8963E" />
+                  <stop offset="100%" stopColor="#8C6219" />
+                </linearGradient>
+              </defs>
+              <rect
+                x="18"
+                y="33"
+                width="64"
+                height="34"
+                rx="17"
+                stroke="url(#goldKnot)"
+                strokeWidth="8.5"
+                fill="none"
+                transform="rotate(-28 50 50)"
+              />
+              <rect
+                x="18"
+                y="33"
+                width="64"
+                height="34"
+                rx="17"
+                stroke="url(#goldKnot)"
+                strokeWidth="8.5"
+                fill="none"
+                transform="rotate(62 50 50)"
+              />
+            </svg>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+              <div
+                style={{
+                  fontSize: "26px",
+                  fontWeight: "bold",
+                  color: "#E2BD6E",
+                  letterSpacing: "4px",
+                  textTransform: "uppercase",
+                  display: "flex",
+                }}
+              >
+                GRACE &amp; GOODWILL
+              </div>
+              <div
+                style={{
+                  fontSize: "11.5px",
+                  color: "rgba(226, 189, 110, 0.75)",
+                  letterSpacing: "3.5px",
+                  textTransform: "uppercase",
+                  display: "flex",
+                }}
+              >
+                CARE DEFINED BY INTEGRITY
+              </div>
             </div>
           </div>
 
-          {/* Main headline */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+          {/* Main Headline */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "24px" }}>
             <div
               style={{
-                fontSize: "66px",
+                fontSize: "64px",
                 fontWeight: "bold",
                 color: "#ffffff",
-                lineHeight: 1.05,
+                lineHeight: 1.08,
                 display: "flex",
                 flexDirection: "column",
-                textShadow: "0 2px 24px rgba(0,0,0,0.6)",
+                textShadow: "0 2px 6px rgba(0,0,0,0.9)",
+                fontFamily: "Georgia, serif",
               }}
             >
-              <span style={{ display: "flex" }}>CARE YOU</span>
-              <span style={{ display: "flex" }}>CAN TRUST</span>
+              <span style={{ display: "flex", letterSpacing: "1px" }}>CARE YOU</span>
+              <span style={{ display: "flex", letterSpacing: "1px" }}>CAN TRUST</span>
             </div>
             <div
               style={{
-                fontSize: "19px",
-                color: "rgba(255,255,255,0.55)",
-                letterSpacing: "0.8px",
+                fontSize: "20px",
+                color: "#E2BD6E",
+                letterSpacing: "0.6px",
                 display: "flex",
               }}
             >
@@ -295,22 +331,22 @@ export default async function Image({ params }: Props) {
             </div>
           </div>
 
-          {/* Carer info strip */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "7px" }}>
+          {/* Carer details */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
             <div
               style={{
                 width: "60px",
                 height: "2px",
-                background: "linear-gradient(90deg, #D4A043, transparent)",
+                background: "linear-gradient(90deg, #E2BD6E, transparent)",
                 display: "flex",
-                marginBottom: "3px",
+                marginBottom: "4px",
               }}
             />
             <div
               style={{
                 fontSize: "26px",
                 fontWeight: "bold",
-                color: "#F8E090",
+                color: "#FFF2D6",
                 display: "flex",
               }}
             >
@@ -319,7 +355,7 @@ export default async function Image({ params }: Props) {
             <div
               style={{
                 fontSize: "15px",
-                color: "rgba(255,255,255,0.5)",
+                color: "rgba(255,255,255,0.6)",
                 display: "flex",
               }}
             >
@@ -328,80 +364,69 @@ export default async function Image({ params }: Props) {
           </div>
         </div>
 
-        {/* ── Right: Carer photo ── */}
+        {/* ── Right: Carer photo + script strapline ── */}
         <div
           style={{
-            width: "340px",
             display: "flex",
+            flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            padding: "40px 48px 40px 0",
-            zIndex: 2,
+            padding: "40px 60px 40px 0",
+            zIndex: 3,
           }}
         >
-          {carerPhotoData ? (
-            <div
-              style={{
-                width: "265px",
-                height: "265px",
-                borderRadius: "50%",
-                overflow: "hidden",
-                border: "4px solid #D4A043",
-                boxShadow: "0 0 50px rgba(212,159,71,0.45), 0 0 100px rgba(212,159,71,0.18), 0 0 0 8px rgba(212,159,71,0.12)",
-                display: "flex",
-              }}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
+          {/* Circular carer photo with golden ring */}
+          <div
+            style={{
+              width: "270px",
+              height: "270px",
+              borderRadius: "50%",
+              overflow: "hidden",
+              border: "5px solid #F3CF7A",
+              boxShadow: "0 0 16px rgba(226, 189, 110, 0.5)",
+              display: "flex",
+              background: "#08131d",
+            }}
+          >
+            {carerPhotoData ? (
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={carerPhotoData}
                 alt={displayName}
                 style={{ width: "100%", height: "100%", objectFit: "cover" }}
               />
-            </div>
-          ) : (
-            <div
-              style={{
-                width: "265px",
-                height: "265px",
-                borderRadius: "50%",
-                border: "4px solid rgba(212,159,71,0.5)",
-                background: "rgba(212,159,71,0.08)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <div style={{ fontSize: "80px", display: "flex" }}>👤</div>
-            </div>
-          )}
+            ) : (
+              <div
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "88px",
+                }}
+              >
+                👤
+              </div>
+            )}
+          </div>
+
+          {/* Cursive script strapline matching mockup */}
+          <div
+            style={{
+              marginTop: "16px",
+              fontSize: "23px",
+              fontFamily: "cursive, Georgia, serif",
+              fontStyle: "italic",
+              color: "#F6D688",
+              letterSpacing: "0.5px",
+              textShadow: "0 2px 4px rgba(0,0,0,0.9)",
+              display: "flex",
+            }}
+          >
+            People Make Brighter Tomorrows
+          </div>
         </div>
-
-        {/* ── Bottom gold accent bar ── */}
-        <div
-          style={{
-            position: "absolute",
-            bottom: "20px",
-            left: "20px",
-            right: "20px",
-            height: "4px",
-            background: "linear-gradient(90deg, transparent, #D4A043, #F8E090, #D4A043, transparent)",
-            borderRadius: "2px",
-            display: "flex",
-          }}
-        />
-
-        {/* ── Right edge fade ── */}
-        <div
-          style={{
-            position: "absolute",
-            right: 0,
-            top: 0,
-            bottom: 0,
-            width: "160px",
-            background: "linear-gradient(to right, transparent, rgba(6,20,16,0.5))",
-            display: "flex",
-          }}
-        />
       </div>
     ),
     { ...size }

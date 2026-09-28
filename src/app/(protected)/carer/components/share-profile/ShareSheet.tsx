@@ -54,7 +54,25 @@ export default function ShareSheet({
   const [copied, setCopied] = useState(false);
 
   // Stable, clean share URL without query parameters (such as ?v=...)
-  const cleanShareUrl = shareUrl ? shareUrl.split("?")[0] : "";
+  const rawShareUrl = shareUrl ? shareUrl.split("?")[0] : "";
+  const cleanShareUrl = (() => {
+    if (!rawShareUrl) return "";
+    // If running in browser and on an external host (e.g. ngrok tunnel), use current origin
+    if (
+      typeof window !== "undefined" &&
+      window.location.origin &&
+      !window.location.origin.includes("localhost") &&
+      !window.location.origin.includes("127.0.0.1")
+    ) {
+      return rawShareUrl.replace(/^https?:\/\/[^\/]+/, window.location.origin);
+    }
+    // If NEXT_PUBLIC_APP_URL is configured (e.g. ngrok tunnel during development)
+    const envAppUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL;
+    if (envAppUrl && !envAppUrl.includes("localhost") && !envAppUrl.includes("127.0.0.1")) {
+      return rawShareUrl.replace(/^https?:\/\/[^\/]+/, envAppUrl.replace(/\/+$/, ""));
+    }
+    return rawShareUrl;
+  })();
 
   // Dynamic carer naming
   const resolvedName =

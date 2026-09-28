@@ -209,7 +209,7 @@ export default function ShareProfileModal({
 
           {/* Scrollable content inside the modal */}
           <div
-            className={`overflow-y-auto flex-1 custom-scrollbar ${isExpired ? "p-4 sm:p-5 pt-12" : "p-5 sm:p-6"}`}
+            className={`flex-1 custom-scrollbar ${isExpired ? "overflow-y-hidden p-4 sm:p-5" : "overflow-y-auto p-5 sm:p-6"}`}
             style={{
               scrollbarWidth: "thin",
               scrollbarColor: "rgba(201, 171, 82, 0.4) transparent",
@@ -225,7 +225,7 @@ export default function ShareProfileModal({
               <>
                 {isExpired ? (
               /* EXPIRED TOKEN STATE */
-              <div className="flex flex-col items-center w-full py-4">
+              <div className="flex flex-col items-center w-full">
                 <ExpiredProfileCard />
               </div>
             ) : status?.hasActiveToken && status.shareUrl ? (

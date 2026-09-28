@@ -39,12 +39,12 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://unvalidating-alaine-inconsiderately.ngrok-free.dev"),
+  metadataBase: new URL("https://graceandgoodwill.co.uk"),
   title: "Grace & Goodwill",
   description:
     "Grace & Goodwill care platform: elegant, trustworthy care coordination.",
   openGraph: {
-    url: "https://unvalidating-alaine-inconsiderately.ngrok-free.dev",
+    url: "https://graceandgoodwill.co.uk",
     siteName: "Grace & Goodwill",
     type: "website",
   },

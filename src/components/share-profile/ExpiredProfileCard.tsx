@@ -1,20 +1,21 @@
 import { Globe, ArrowRight } from "lucide-react";
 import { CallUsButton, WhatsAppButton, EnquiryButton } from "@/components/Button";
+import Link from "next/link";
 
 export default function ExpiredProfileCard() {
   return (
-    <div className="flex-1 flex flex-col items-center px-4 pb-10 relative z-10 w-full">
+    <div className="flex-1 flex flex-col items-center px-4 py-10 relative z-10 w-full">
       {/* ── Logo Container (Above the Card) ── */}
-      <div className="flex items-center gap-3 w-full mb-6 mt-2 px-1">
+      <a href="/" className="flex flex-col md:flex-row items-center justify-center md:justify-start gap-3 w-full mb-10 -mt-2 hover:opacity-90 transition-opacity">
         <img
           src="/website_logo.png"
           alt="Grace & Goodwill logo"
-          className="h-10 w-10 sm:h-12 sm:w-12 object-contain shrink-0"
+          className="h-10 w-10 md:h-9 md:w-9 object-contain shrink-0"
           style={{ filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.3))" }}
         />
-        <div className="flex flex-col items-start justify-center">
+        <div className="flex flex-col items-center justify-center md:items-start">
           <span
-            className="font-['Cinzel'] text-[15px] sm:text-[18px] font-medium tracking-[0.20em] uppercase leading-none"
+            className="font-['Cinzel'] text-[16px] md:text-[18px] font-medium tracking-[0.20em] uppercase leading-none"
             style={{
               color: "#D4AF7A",
               textShadow: "0 1px 2px rgba(0,0,0,0.4)",
@@ -22,23 +23,20 @@ export default function ExpiredProfileCard() {
           >
             GRACE & GOODWILL
           </span>
-          <span 
-            className="text-[8px] sm:text-[9.5px] tracking-[0.2em] uppercase mt-1.5 leading-none"
-            style={{ color: "#D4AF7A", opacity: 0.85 }}
-          >
+          <div className="tagline mt-2 md:mt-1 text-[9px] md:text-[10px]">
             Care Defined By Integrity
-          </span>
+          </div>
         </div>
-      </div>
+      </a>
 
       <div
-        className="w-full max-w-[300px] rounded-3xl shadow-xl overflow-visible"
+        className="w-full max-w-[340px] rounded-3xl shadow-xl overflow-visible"
         style={{ backgroundColor: "#f5f0e8" }}
       >
         {/* Share Icon Badge — floats above card, straddling wave edge */}
-        <div className="flex justify-center" style={{ marginTop: -30 }}>
+        <div className="flex justify-center" style={{ marginTop: -24 }}>
           <div
-            className="w-[58px] h-[58px] rounded-full flex items-center justify-center"
+            className="w-[48px] h-[48px] rounded-full flex items-center justify-center"
             style={{
               backgroundColor: "#f5f0e8",
               border: "2px solid #ddd5c5",
@@ -46,7 +44,7 @@ export default function ExpiredProfileCard() {
             }}
           >
             {/* Share icon: upload/share arrow */}
-            <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" stroke="#c8a96e" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+            <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="#c8a96e" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
               <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
               <polyline points="16 6 12 2 8 6" />
               <line x1="12" y1="2" x2="12" y2="15" />
@@ -125,15 +123,15 @@ export default function ExpiredProfileCard() {
       </div>
 
       {/* ── Divider ──────────────────────────────────────────────────── */}
-      <div className="flex items-center gap-3 w-full max-w-sm mt-6 mb-4 px-2">
-        <div className="flex-1 h-px" style={{ backgroundColor: "#c8a96e44" }} />
+      <div className="flex items-center justify-center gap-2.5 sm:gap-3 w-full max-w-sm mt-8 mb-6 px-2">
+        <div className="flex-1 h-px bg-gradient-to-r from-transparent to-[#d49f47b3]" />
         <span
-          className="text-[10px] tracking-[0.2em] uppercase font-light whitespace-nowrap"
-          style={{ color: "#c8a96e88" }}
+          className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.25em] whitespace-nowrap"
+          style={{ color: "#d49f47b3" }}
         >
           Live-In Care Across the UK
         </span>
-        <div className="flex-1 h-px" style={{ backgroundColor: "#c8a96e44" }} />
+        <div className="flex-1 h-px bg-gradient-to-l from-transparent to-[#d49f47b3]" />
       </div>
 
       {/* ── Brand Values Footer ──────────────────────────────────────── */}
@@ -174,7 +172,7 @@ export default function ExpiredProfileCard() {
             </span>
             <span
               className="text-[8px] leading-tight"
-              style={{ color: "#7a8aaa" }}
+              style={{ color: "#c8a96e" }}
             >
               {sub}
             </span>
@@ -182,13 +180,6 @@ export default function ExpiredProfileCard() {
         ))}
       </div>
 
-      {/* ── Tagline ────────────────────────────────────────────────────── */}
-      <p
-        className="mt-4 text-xs italic"
-        style={{ color: "#c8a96e", fontFamily: "Georgia, serif" }}
-      >
-        Changing lives through better care
-      </p>
     </div>
   );
 }

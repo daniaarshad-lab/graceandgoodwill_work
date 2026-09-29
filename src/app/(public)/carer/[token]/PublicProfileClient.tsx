@@ -23,6 +23,9 @@ import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import ThinSpinner from "@/components/ThinSpinner";
 import WhatsAppIcon from "@/components/WhatsAppIcon";
 import ExpiredProfileCard from "@/components/share-profile/ExpiredProfileCard";
+import Image from "next/image";
+import shareProfileBg from "@/assets/private/share-profile-bg.jpeg";
+import shareProfileMobileBg from "@/assets/private/shareProfile-m-bg.jpeg";
 
 interface ParsedRange {
   startDate: string;
@@ -294,54 +297,79 @@ export default function PublicProfileClient({ token }: PublicProfileClientProps)
   }
 
   // ── Error / Expired State ──────────────────────────────────────────
-  const isExpired = error || !profile || profile.isActive === false || (profile.expiresAt && new Date(profile.expiresAt) < new Date());
+  const isExpired = true /* TEMPORARY OVERRIDE: Hardcoding true to test expired UI */ || error || !profile || profile.isActive === false || (profile.expiresAt && new Date(profile.expiresAt) < new Date());
 
   if (isExpired) {
     return (
-      <main
-        className="min-h-screen flex flex-col"
-        style={{ backgroundColor: "#0d1b3e" }}
-      >
-        {/* ── Brand Header ─────────────────────────────────────────────── */}
-        <header className="flex items-center justify-between px-6 py-4" style={{ backgroundColor: "#0d1b3e" }}>
-          <img
-            src="/website_logo.png"
-            alt="Grace & Goodwill"
-            className="h-10 w-auto object-contain"
-          />
-          <p
-            className="text-xs font-light italic text-right leading-tight hidden sm:block"
-            style={{ color: "#c8a96e", maxWidth: 120 }}
-          >
-            Care<br />You Can<br />Trust
-          </p>
-        </header>
+      <>
+        <style>{`header.sticky { display: none !important; }`}</style>
+        <main className="min-h-screen flex items-center justify-center p-3 sm:p-4 relative" style={{ backgroundColor: "#040815" }}>
+        {/* Modal-like container */}
+        <div
+          className="relative w-full max-w-4xl max-h-[92vh] flex flex-col md:flex-row rounded-3xl shadow-2xl overflow-hidden animate-[fadeIn_0.25s_ease]"
+          style={{
+            border: "2px solid rgba(201,171,82,0.75)",
+            boxShadow: "0 25px 60px -15px rgba(0,0,0,0.85), 0 0 40px rgba(201,171,82,0.25), inset 0 0 0 1px rgba(201,171,82,0.15)",
+          }}
+        >
+          {/* Mobile Background Image (Mobile only) */}
+          <div className="absolute top-0 left-0 right-0 h-[280px] z-0 flex md:hidden">
+            <Image
+              src={shareProfileMobileBg}
+              alt="Share profile background"
+              fill
+              className="object-cover object-top"
+              priority
+            />
+            {/* Dark gradient overlay for text readability over the background */}
+            <div className="absolute inset-0 bg-[#040815]/30" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#070d1e] via-[#070d1e]/20 to-transparent" />
+          </div>
 
-        {/* ── Wavy Hero Band ──────────────────────────────────────────────── */}
-        <div className="w-full relative" style={{ height: 100 }}>
-          {/* Solid navy background */}
-          <div className="absolute inset-0" style={{ backgroundColor: "#0d1b3e" }} />
-          {/* Smooth organic wave — cream fill, no sharp peaks */}
-          <div className="absolute bottom-0 left-0 right-0" style={{ lineHeight: 0 }}>
-            <svg
-              viewBox="0 0 1440 72"
-              preserveAspectRatio="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-full"
-              style={{ height: 72, display: "block" }}
+          {/* Left Image Panel (Desktop only) */}
+          <div className="relative hidden md:flex md:w-[280px] lg:w-[300px] flex-shrink-0 flex-col justify-end overflow-hidden z-10">
+            <Image
+              src={shareProfileBg}
+              alt="Share profile background"
+              fill
+              className="object-cover object-center"
+              priority
+            />
+            {/* Dark gradient overlay for text readability */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#040815]/90 via-[#040815]/30 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#040815]/60" />
+            {/* Decorative golden border line on right edge */}
+            <div className="absolute right-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-[rgba(201,171,82,0.5)] to-transparent" />
+            {/* Bottom italic tagline */}
+            <div className="relative z-10 p-6 pb-12 w-full flex items-center justify-center gap-2.5 sm:gap-3">
+              <div className="h-px w-6 sm:w-8 shrink-0 bg-gradient-to-r from-transparent to-[#d49f47b3]" />
+              <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.25em] whitespace-nowrap" style={{ color: "#d49f47b3" }}>
+                Care You Can Trust
+              </span>
+              <div className="h-px w-6 sm:w-8 shrink-0 bg-gradient-to-l from-transparent to-[#d49f47b3]" />
+            </div>
+          </div>
+
+          {/* Right content panel */}
+          <div
+            className="relative z-10 flex flex-col flex-1 min-w-0 bg-[linear-gradient(180deg,transparent_0%,transparent_200px,#070d1e_260px,#040815_100%)] md:bg-[linear-gradient(165deg,#0b152d_0%,#070d1e_65%,#040815_100%)]"
+          >
+            {/* Scrollable content inside the modal */}
+            <div
+              className="overflow-y-auto flex-1 custom-scrollbar p-4 sm:p-5"
+              style={{
+                scrollbarWidth: "thin",
+                scrollbarColor: "rgba(201, 171, 82, 0.4) transparent",
+              }}
             >
-              {/* Smooth wave: quadratic bezier, y stays between 20-60, never touches edges */}
-              <path
-                d="M0,52 Q240,20 480,48 Q720,72 960,36 Q1200,16 1440,44 L1440,72 L0,72 Z"
-                fill="#f5f0e8"
-              />
-            </svg>
+              <div className="flex flex-col items-center w-full pb-4">
+                <ExpiredProfileCard />
+              </div>
+            </div>
           </div>
         </div>
-
-        {/* ── Main Card ────────────────────────────────────────────────── */}
-        <ExpiredProfileCard />
       </main>
+      </>
     );
   }
 

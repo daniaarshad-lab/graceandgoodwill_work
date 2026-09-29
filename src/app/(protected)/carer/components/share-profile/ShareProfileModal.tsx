@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import shareProfileBg from "@/assets/private/share-profile-bg.jpeg";
+import shareProfileMobileBg from "@/assets/private/shareProfile-m-bg.jpeg";
 import {
   X,
   Share2,
@@ -160,15 +161,29 @@ export default function ShareProfileModal({
       }}
     >
       <div
-        className="relative w-full max-w-4xl max-h-[92vh] flex flex-row rounded-3xl shadow-2xl overflow-hidden animate-[slideUp_0.25s_ease]"
+        className="relative w-full max-w-4xl max-h-[92vh] flex flex-col md:flex-row rounded-3xl shadow-2xl overflow-hidden animate-[slideUp_0.25s_ease]"
         style={{
           border: "2px solid rgba(201,171,82,0.75)",
           boxShadow: "0 25px 60px -15px rgba(0,0,0,0.85), 0 0 40px rgba(201,171,82,0.25), inset 0 0 0 1px rgba(201,171,82,0.15)",
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Left Image Panel */}
-        <div className="relative hidden md:flex md:w-[280px] lg:w-[300px] flex-shrink-0 flex-col justify-end overflow-hidden">
+        {/* Mobile Background Image (Mobile only) */}
+        <div className="absolute top-0 left-0 right-0 h-[280px] z-0 flex md:hidden">
+          <Image
+            src={shareProfileMobileBg}
+            alt="Share profile mobile background"
+            fill
+            className="object-cover object-top"
+            priority
+          />
+          {/* Dark gradient overlay for text readability over the background */}
+          <div className="absolute inset-0 bg-[#040815]/30" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#070d1e] via-[#070d1e]/20 to-transparent" />
+        </div>
+
+        {/* Left Image Panel (Desktop only) */}
+        <div className="relative hidden md:flex md:w-[280px] lg:w-[300px] flex-shrink-0 flex-col justify-end overflow-hidden z-10">
           <Image
             src={shareProfileBg}
             alt="Share profile background"
@@ -193,8 +208,7 @@ export default function ShareProfileModal({
 
         {/* Right content panel */}
         <div
-          className="relative flex flex-col flex-1 min-w-0"
-          style={{ background: "linear-gradient(165deg, #0b152d 0%, #070d1e 65%, #040815 100%)" }}
+          className="relative z-10 flex flex-col flex-1 min-w-0 bg-[linear-gradient(180deg,transparent_0%,transparent_200px,#070d1e_260px,#040815_100%)] md:bg-[linear-gradient(165deg,#0b152d_0%,#070d1e_65%,#040815_100%)]"
         >
           {/* Close Button */}
           <button
@@ -209,7 +223,7 @@ export default function ShareProfileModal({
 
           {/* Scrollable content inside the modal */}
           <div
-            className={`overflow-y-auto flex-1 custom-scrollbar ${isExpired ? "p-4 sm:p-5 pt-12" : "p-5 sm:p-6"}`}
+            className={`overflow-y-auto flex-1 custom-scrollbar ${isExpired ? "p-4 sm:p-5" : "p-5 sm:p-6"}`}
             style={{
               scrollbarWidth: "thin",
               scrollbarColor: "rgba(201, 171, 82, 0.4) transparent",
@@ -225,7 +239,7 @@ export default function ShareProfileModal({
               <>
                 {isExpired ? (
                   /* EXPIRED TOKEN STATE */
-                  <div className="flex flex-col items-center w-full py-4">
+                  <div className="flex flex-col items-center w-full pb-4">
                     <ExpiredProfileCard />
                   </div>
                 ) : status?.hasActiveToken && status.shareUrl ? (

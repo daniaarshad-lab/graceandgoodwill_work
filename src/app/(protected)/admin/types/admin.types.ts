@@ -248,6 +248,8 @@ export interface AdminPlacementDetail {
   invoices: any[];
   carerPayments?: CarerPayment[];
   internalNotes: InternalNote[];
+  preferredBackupCarerProfileId?: string | null;
+  preferredBackupCarer?: any | null;
 }
 
 export interface CarerPayment {

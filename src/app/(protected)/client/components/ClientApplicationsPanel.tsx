@@ -1,30 +1,32 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   fetchCareRequests,
   fetchClientCareRequestApplications,
-  clearApplications,
   approveApplication,
   rejectApplication,
+  clearApplications,
   fetchInterestList,
 } from "@/store/slices/clientSlice";
-import { showSuccessToast, showErrorToast } from "@/utils/toast";
+import { backupCarerService } from "@/services/backupCarer.service";
 import SectionCard from "./shared/SectionCard";
 import Button from "@/components/Button";
 import ThinSpinner from "@/components/ThinSpinner";
+import { useRouter } from "next/navigation";
+import { showSuccessToast, showErrorToast } from "@/utils/toast";
+import SelectBackupCarerModal from "@/components/backup-carer/SelectBackupCarerModal";
+import PlacementDetailModal from "./PlacementDetailModal";
 import {
-  AlertCircle,
-  RefreshCw,
-  Users,
   Calendar,
   Clock,
-  Briefcase,
+  Users,
   ChevronDown,
   ChevronRight,
   UserCircle,
+  Shield,
+  CheckCircle2,
 } from "lucide-react";
 
 export default function ClientApplicationsPanel() {
@@ -47,13 +49,20 @@ export default function ClientApplicationsPanel() {
   const [rejectReason, setRejectReason] = useState("");
   const [isSubmitting, setIsSubmitting] = useState<string | null>(null);
 
+  // Backup Carer & Placement modals
+  const [selectedPlacementForBackup, setSelectedPlacementForBackup] = useState<{
+    placementId: string;
+    clientName: string;
+  } | null>(null);
+  const [activePlacementModalId, setActivePlacementModalId] = useState<string | null>(null);
+
   const handleApprove = async (appId: string) => {
     setIsSubmitting(appId);
     try {
       await dispatch(approveApplication(appId)).unwrap();
       showSuccessToast(
         "Application Approved",
-        "The placement has been created successfully.",
+        "Primary carer selected successfully. You can now also select a preferred backup carer.",
       );
       dispatch(fetchCareRequests());
       if (selectedRequestId) {
@@ -75,11 +84,17 @@ export default function ClientApplicationsPanel() {
     setIsSubmitting("reject");
     try {
       await dispatch(
-        rejectApplication({ applicationId: rejectAppId, reason: rejectReason }),
+        rejectApplication({
+          applicationId: rejectAppId,
+          reason: rejectReason.trim(),
+        }),
       ).unwrap();
+      showSuccessToast(
+        "Application Rejected",
+        "The applicant has been notified.",
+      );
       setRejectAppId(null);
       setRejectReason("");
-      // Refresh applications for the selected request
       if (selectedRequestId) {
         dispatch(fetchClientCareRequestApplications(selectedRequestId));
       }
@@ -90,12 +105,33 @@ export default function ClientApplicationsPanel() {
     }
   };
 
+  const handleDesignateBackupFromApp = async (
+    carerProfileId: string,
+    carerName: string,
+    placementOrRequestId: string,
+  ) => {
+    try {
+      await backupCarerService.designatePreferredBackup(
+        placementOrRequestId,
+        carerProfileId,
+      );
+      showSuccessToast(
+        "Preferred Backup Carer Designated!",
+        `${carerName} is now designated as your Preferred Backup Carer.`,
+      );
+      if (selectedRequestId) {
+        dispatch(fetchClientCareRequestApplications(selectedRequestId));
+      }
+    } catch (err: any) {
+      showErrorToast("Action Failed", err.message || "Failed to designate backup carer.");
+    }
+  };
+
   useEffect(() => {
     dispatch(fetchCareRequests());
     dispatch(fetchInterestList());
   }, [dispatch]);
 
-  // Show all care requests so clients can view applications proposed by G&G or themselves
   const clientManagedRequests = careRequests;
 
   useEffect(() => {
@@ -139,17 +175,14 @@ export default function ClientApplicationsPanel() {
             <h3 className="text-xl font-bold text-gold-200">
               Care Requests & Applications
             </h3>
-            <p className="text-gold-200/70 text-sm mt-1 max-w-2xl">
-              View the status of your care requests and review carer
-              applications. Grace & Goodwill will notify you when new
-              applications are ready for review.
+            <p className="text-xs text-gold-100/50 mt-1 leading-relaxed">
+              View the status of your care requests, review and select primary carers, and designate your Preferred Backup Carer.
             </p>
           </div>
           <Button
             variant="ghost-gold"
             size="sm"
             fullWidth={false}
-            className="self-start shrink-0"
             onClick={() => {
               dispatch(fetchCareRequests());
               if (selectedRequestId) {
@@ -157,18 +190,18 @@ export default function ClientApplicationsPanel() {
               }
             }}
           >
-            <RefreshCw className="w-4 h-4 mr-2" /> Refresh
+            Refresh
           </Button>
         </div>
 
         {clientManagedRequests.length === 0 ? (
-          <div className="flex flex-col items-center justify-center p-12 text-center border border-gold-300/10 rounded-2xl bg-navy-950/40">
-            <Briefcase className="w-12 h-12 mx-auto mb-4 opacity-40" />
-            <p className="text-gold-200/60 font-medium">
-              You do not have any active care requests.
+          <div className="rounded-2xl border border-gold-300/10 bg-navy-950/40 p-12 text-center text-gold-100/50">
+            <UserCircle className="w-12 h-12 mx-auto mb-3 opacity-30 text-gold-300" />
+            <p className="text-sm font-semibold text-gold-100/70">
+              No active care requests found.
             </p>
-            <p className="text-xs mt-1 opacity-60">
-              Create a new care request to begin receiving carer applications.
+            <p className="text-xs mt-1">
+              Create a care request to begin receiving and reviewing carer applications.
             </p>
           </div>
         ) : (
@@ -176,19 +209,19 @@ export default function ClientApplicationsPanel() {
             {clientManagedRequests.map((req) => (
               <div
                 key={req.id}
-                className={`rounded-xl border transition-all duration-300 overflow-hidden ${
+                className={`rounded-2xl border transition-all duration-300 overflow-hidden ${
                   selectedRequestId === req.id
                     ? "border-gold-300/30 bg-navy-900/80 shadow-[0_4px_20px_rgba(0,0,0,0.2)]"
                     : "border-gold-300/10 bg-navy-900/40 hover:border-gold-300/20 hover:bg-navy-900/60"
                 }`}
               >
-                {/* Request Header (Clickable) */}
+                {/* Request Header */}
                 <div
                   className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer"
                   onClick={() => handleSelectRequest(req.id)}
                 >
                   <div className="min-w-0 flex-1">
-                    <h4 className="text-sm font-light text-gold-200 break-words leading-tight">
+                    <h4 className="text-sm font-semibold text-gold-200 break-words leading-tight">
                       {Array.isArray(req.careCategory)
                         ? req.careCategory.join(" • ")
                         : req.careCategory || "Care Request"}
@@ -207,9 +240,11 @@ export default function ClientApplicationsPanel() {
                           className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${
                             req.status === "ACTIVE"
                               ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                              : req.status === "FULFILLED"
-                                ? "bg-blue-500/10 text-blue-400 border border-blue-500/20"
-                                : "bg-gold-500/10 text-gold-400 border border-gold-500/20"
+                              : req.status === "CARER_SELECTED"
+                                ? "bg-amber-500/15 text-amber-300 border border-amber-500/30"
+                                : req.status === "FULFILLED"
+                                  ? "bg-blue-500/10 text-blue-400 border border-blue-500/20"
+                                  : "bg-gold-500/10 text-gold-400 border border-gold-500/20"
                           }`}
                         >
                           {req.status}
@@ -218,20 +253,42 @@ export default function ClientApplicationsPanel() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3 self-end sm:self-auto shrink-0">
-                    {req.status === "CARER_SELECTED" && (
+                  <div className="flex flex-wrap items-center gap-2.5 self-end sm:self-auto shrink-0">
+                    {/* View Placement Button */}
+                    {(req.status === "CARER_SELECTED" || (req as any).placement) && (
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          router.push("/client?tab=tracking");
+                          const pId = (req as any).placement?.id || req.id;
+                          setActivePlacementModalId(pId);
                         }}
-                        className="flex items-center gap-1.5 text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/20 hover:bg-emerald-500/20 transition-colors"
+                        className="flex items-center gap-1.5 text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/20 hover:bg-emerald-500/20 transition-colors cursor-pointer"
+                        title="View multi-carer arrangement (Primary, Backup, Relief)"
                       >
                         <Users className="w-3.5 h-3.5" />
-                        <span className="hidden sm:inline">View Placement</span>
-                        <span className="sm:hidden">View</span>
+                        <span>View Placement</span>
                       </button>
                     )}
+
+                    {/* Choose / Change Backup Carer Direct Action */}
+                    {(req.status === "CARER_SELECTED" || (req as any).placement) && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedPlacementForBackup({
+                            placementId: (req as any).placement?.id || req.id,
+                            clientName: req.requestorName || "Your Placement",
+                          });
+                        }}
+                        className="flex items-center gap-1.5 text-xs font-semibold text-cyan-300 bg-cyan-500/10 px-3 py-1.5 rounded-lg border border-cyan-500/20 hover:bg-cyan-500/20 transition-colors cursor-pointer"
+                        title="Designate or change Preferred Backup Carer"
+                      >
+                        <Shield className="w-3.5 h-3.5 text-cyan-400" />
+                        <span className="hidden sm:inline">Select Backup Carer</span>
+                        <span className="sm:hidden">Backup</span>
+                      </button>
+                    )}
+
                     <div className="flex items-center gap-1.5 text-xs font-semibold text-gold-200 bg-navy-950 px-3 py-1.5 rounded-lg border border-gold-300/10">
                       <Users className="w-3.5 h-3.5 text-gold" />
                       <span className="hidden sm:inline">
@@ -253,20 +310,16 @@ export default function ClientApplicationsPanel() {
                     {(() => {
                       const appsForRequest = applications[req.id] || [];
                       const hasSelectedCarer = appsForRequest.some(
-                        (a) =>
+                        (a: any) =>
                           a.status === "SELECTED" ||
                           a.status === "APPROVED" ||
-                          a.status === "ACCEPTED",
+                          a.status === "ACCEPTED" ||
+                          a.isAccepted,
                       );
 
                       return applicationsLoading ? (
-                        <div className="py-8 flex items-center justify-center">
-                          <ThinSpinner size="sm" text="Loading applications..." textClassName="text-xs" />
-                        </div>
-                      ) : applicationsError ? (
-                        <div className="flex items-center justify-center py-8 text-red-400">
-                          <AlertCircle className="w-5 h-5 mr-2" />
-                          <p className="text-sm">{applicationsError}</p>
+                        <div className="py-8 flex justify-center">
+                          <ThinSpinner size="md" text="Loading applications..." />
                         </div>
                       ) : appsForRequest.length === 0 ? (
                         <div className="text-center py-8">
@@ -277,147 +330,164 @@ export default function ClientApplicationsPanel() {
                         </div>
                       ) : (
                         <div className="space-y-3">
-                          {hasSelectedCarer && (
-                            <div className="flex items-center gap-2.5 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs">
-                              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-                              <span>
-                                A carer has been selected for this placement offer and is awaiting acceptance. Other pending applications cannot be approved until this offer is resolved.
-                              </span>
-                            </div>
-                          )}
-                          {appsForRequest.map((app) => (
-                            <div
-                              key={app.id}
-                              className={`flex items-start justify-between rounded-xl bg-navy-900 border p-4 transition-colors ${
-                                app.status === "SELECTED"
-                                  ? "border-emerald-500/30 bg-emerald-950/10"
-                                  : "border-gold-300/5 hover:border-gold-300/15"
-                              }`}
-                            >
-                              <div className="flex items-start gap-4">
-                                {(app as any).carer?.profilePhotoUrl ||
-                                (app as any).carerProfile?.profilePhotoUrl ? (
-                                  <img
-                                    src={
-                                      (app as any).carer?.profilePhotoUrl ||
-                                      (app as any).carerProfile?.profilePhotoUrl
-                                    }
-                                    alt="Profile"
-                                    className="w-12 h-12 rounded-full object-cover border border-gold-300/20"
-                                  />
-                                ) : (
-                                  <div className="w-12 h-12 rounded-full bg-navy-800 border border-gold-300/10 flex items-center justify-center shrink-0">
-                                    <UserCircle className="w-6 h-6 text-gold-100/30" />
-                                  </div>
-                                )}
-                                <div>
-                                  <h5 className="text-sm font-bold text-gold-100">
-                                    {(app as any).carer?.firstName ||
-                                      (app as any).carerProfile?.user
-                                        ?.firstName ||
-                                      "Carer"}{" "}
-                                    {(app as any).carer?.lastName ||
-                                      (app as any).carerProfile?.user
-                                        ?.lastName ||
-                                      ""}
-                                  </h5>
-                                  {app.isAssignedByAdmin && (
-                                    <div className="mt-1 text-[9px] text-emerald-400 font-bold bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded w-fit uppercase tracking-wider">
-                                      Selected by Admin
+                          {appsForRequest.map((app) => {
+                            const appAny = app as any;
+                            const isAccepted = Boolean(
+                              appAny.isAccepted ||
+                              appAny.placementStatus === "PLACEMENT_CONFIRMED" ||
+                              appAny.placementStatus === "ACTIVE" ||
+                              appAny.placementStatus === "ONGOING"
+                            );
+                            const carerName = `${appAny.carer?.firstName || "Carer"} ${appAny.carer?.lastName || ""}`.trim();
+
+                            return (
+                              <div
+                                key={app.id}
+                                className={`flex items-start justify-between rounded-xl bg-navy-900 border p-4 transition-colors ${
+                                  app.status === "SELECTED"
+                                    ? "border-emerald-500/30 bg-emerald-950/10"
+                                    : "border-gold-300/5 hover:border-gold-300/15"
+                                }`}
+                              >
+                                <div className="flex items-start gap-4">
+                                  {appAny.carer?.profilePhotoUrl ||
+                                  appAny.carerProfile?.profilePhotoUrl ? (
+                                    <img
+                                      src={
+                                        appAny.carer?.profilePhotoUrl ||
+                                        appAny.carerProfile?.profilePhotoUrl
+                                      }
+                                      alt="Carer"
+                                      className="w-12 h-12 rounded-full object-cover border border-gold-300/20 shrink-0"
+                                    />
+                                  ) : (
+                                    <div className="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center text-gold border border-gold/20 shrink-0 font-bold">
+                                      {(appAny.carer?.firstName || "C")[0]}
                                     </div>
                                   )}
-                                  {((app as any).carer?.experienceYears !==
-                                    undefined ||
-                                    (app as any).carerProfile
-                                      ?.experienceYears !== undefined) && (
-                                    <p className="text-xs text-gold-100/70 mt-0.5">
-                                      {(app as any).carer?.experienceYears ??
-                                        (app as any).carerProfile
-                                          ?.experienceYears}{" "}
-                                      Years Experience
-                                    </p>
-                                  )}
-                                  <p className="text-xs text-gold-100/50 mt-1 line-clamp-2 italic">
-                                    {(app as any).carer?.bio ||
-                                    (app as any).carerProfile?.bio
-                                      ? `"${(app as any).carer?.bio || (app as any).carerProfile?.bio}"`
-                                      : "No bio provided."}
-                                  </p>
-
-                                  <div className="flex flex-wrap items-center gap-2 mt-2 text-[10px] text-gold-100/40">
-                                    <span>
-                                      Applied: {formatDate(app.createdAt)}
-                                    </span>
-                                    <span
-                                      className={`px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${
-                                        app.status === "PENDING"
-                                          ? "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20"
-                                          : app.status === "SHORTLISTED"
-                                            ? "bg-blue-500/10 text-blue-400 border border-blue-500/20"
-                                            : app.status === "ACCEPTED" ||
-                                                app.status === "APPROVED" ||
-                                                app.status === "SELECTED"
-                                              ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                                              : "bg-red-500/10 text-red-400 border border-red-500/20"
-                                      }`}
-                                    >
-                                      {app.status}
-                                    </span>
-                                    {app.status === "SELECTED" && (
-                                      <span className="px-2 py-0.5 rounded-full font-bold uppercase tracking-wider bg-amber-500/10 text-amber-300 border border-amber-500/20 text-[9px] flex items-center gap-1">
-                                        Waiting for Carer Acceptance
-                                      </span>
+                                  <div>
+                                    <h5 className="font-bold text-gold-100">
+                                      {carerName}
+                                    </h5>
+                                    {app.isAssignedByAdmin && (
+                                      <div className="mt-1 text-[9px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded w-fit uppercase tracking-wider">
+                                        Selected by Admin
+                                      </div>
                                     )}
+                                    <p className="text-xs text-gold-100/60 mt-1">
+                                      {appAny.carer?.experienceYears
+                                        ? `${appAny.carer.experienceYears} Years Experience`
+                                        : "Experience not specified"}
+                                    </p>
+                                    <p className="text-xs text-gold-100/40 line-clamp-1 italic mt-0.5">
+                                      {appAny.carer?.bio || "No bio provided."}
+                                    </p>
+                                    <div className="flex flex-wrap items-center gap-2 mt-2 text-[10px] text-gold-100/40">
+                                      <span>
+                                        Applied: {formatDate(app.createdAt)}
+                                      </span>
+                                      <span
+                                        className={`px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${
+                                          app.status === "PENDING"
+                                            ? "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20"
+                                            : app.status === "SHORTLISTED"
+                                              ? "bg-blue-500/10 text-blue-400 border border-blue-500/20"
+                                              : app.status === "ACCEPTED" ||
+                                                  app.status === "APPROVED" ||
+                                                  app.status === "SELECTED"
+                                                ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                                                : "bg-red-500/10 text-red-400 border border-red-500/20"
+                                        }`}
+                                      >
+                                        {app.status}
+                                      </span>
+                                      {/* Accurate Acceptance Badge */}
+                                      {app.status === "SELECTED" && (
+                                        isAccepted ? (
+                                          <span className="px-2 py-0.5 rounded-full font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[9px] flex items-center gap-1">
+                                            <CheckCircle2 className="w-3 h-3" /> Offer Accepted • Primary Carer
+                                          </span>
+                                        ) : (
+                                          <span className="px-2 py-0.5 rounded-full font-bold uppercase tracking-wider bg-amber-500/10 text-amber-300 border border-amber-500/20 text-[9px] flex items-center gap-1">
+                                            Waiting for Carer Acceptance
+                                          </span>
+                                        )
+                                      )}
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
 
-                              <div className="flex flex-col gap-2 shrink-0">
-                                <Button
-                                  variant="ghost-gold"
-                                  size="sm"
-                                  fullWidth={false}
-                                  onClick={() => {
-                                    router.push(
-                                      `/client/carers/${app.carerProfileId}`,
-                                    );
-                                  }}
-                                >
-                                  View Profile
-                                </Button>
+                                <div className="flex flex-col gap-2 shrink-0">
+                                  <Button
+                                    variant="ghost-gold"
+                                    size="sm"
+                                    fullWidth={false}
+                                    onClick={() => {
+                                      router.push(
+                                        `/client/carers/${app.carerProfileId}`,
+                                      );
+                                    }}
+                                  >
+                                    View Profile
+                                  </Button>
 
-                                {app.status === "PENDING" && (
-                                  <div className="flex items-center gap-2 mt-2">
-                                    <button
-                                      onClick={() => setRejectAppId(app.id)}
-                                      disabled={isSubmitting === app.id}
-                                      className="flex-1 px-4 py-1.5 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500 hover:text-white text-[10px] font-bold transition-all cursor-pointer"
-                                    >
-                                      Reject
-                                    </button>
-                                    <button
-                                      onClick={() => handleApprove(app.id)}
-                                      disabled={isSubmitting === app.id || hasSelectedCarer}
-                                      title={
-                                        hasSelectedCarer
-                                          ? "Another carer is currently selected and awaiting acceptance"
-                                          : "Approve this application"
+                                  {/* Direct "Set as Backup Carer" Button for Other Applicants */}
+                                  {hasSelectedCarer && app.status !== "SELECTED" && app.status !== "REJECTED" && (
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      fullWidth={false}
+                                      onClick={() =>
+                                        handleDesignateBackupFromApp(
+                                          app.carerProfileId,
+                                          carerName,
+                                          (req as any).placement?.id || req.id,
+                                        )
                                       }
-                                      className={`flex-1 px-6 py-1.5 rounded-xl font-bold text-[10px] transition-all shadow-elegant flex items-center justify-center ${
-                                        hasSelectedCarer
-                                          ? "bg-navy-950/60 text-gold-100/30 border border-gold-300/10 cursor-not-allowed opacity-50"
-                                          : "bg-gold text-navy-950 hover:bg-gold-200 cursor-pointer"
-                                      }`}
+                                      className="!border-cyan-500/30 !text-cyan-300 hover:!bg-cyan-500/10 text-xs flex items-center gap-1"
+                                      title="Designate this applicant as your Preferred Backup Carer"
                                     >
-                                      {isSubmitting === app.id
-                                        ? "..."
-                                        : "Approve"}
-                                    </button>
-                                  </div>
-                                )}
+                                      <Shield className="w-3 h-3 text-cyan-400" />
+                                      Set as Backup
+                                    </Button>
+                                  )}
+
+                                  {app.status === "PENDING" && (
+                                    <div className="flex items-center gap-2 mt-1">
+                                      <button
+                                        onClick={() => setRejectAppId(app.id)}
+                                        disabled={isSubmitting === app.id}
+                                        className="px-3 py-1.5 rounded-lg border border-rose-500/30 text-rose-400 text-xs font-semibold hover:bg-rose-500/10 transition-colors disabled:opacity-50 cursor-pointer"
+                                      >
+                                        Reject
+                                      </button>
+                                      <button
+                                        onClick={() => handleApprove(app.id)}
+                                        disabled={
+                                          isSubmitting === app.id ||
+                                          hasSelectedCarer
+                                        }
+                                        title={
+                                          hasSelectedCarer
+                                            ? "A carer is already selected. You can set other applicants as a Backup Carer."
+                                            : "Approve application as primary carer"
+                                        }
+                                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                                          hasSelectedCarer
+                                            ? "bg-navy-950/60 text-gold-100/30 border border-gold-300/10 cursor-not-allowed opacity-50"
+                                            : "bg-gold text-navy-950 hover:bg-gold-200 cursor-pointer"
+                                        }`}
+                                      >
+                                        {isSubmitting === app.id
+                                          ? "..."
+                                          : "Approve"}
+                                      </button>
+                                    </div>
+                                  )}
+                                </div>
                               </div>
-                            </div>
-                          ))}
+                            );
+                          })}
                         </div>
                       );
                     })()}
@@ -429,6 +499,35 @@ export default function ClientApplicationsPanel() {
         )}
       </SectionCard>
 
+      {/* Select Backup Carer Modal */}
+      {selectedPlacementForBackup && (
+        <SelectBackupCarerModal
+          placementId={selectedPlacementForBackup.placementId}
+          clientName={selectedPlacementForBackup.clientName}
+          isOpen={true}
+          onClose={() => setSelectedPlacementForBackup(null)}
+          onBackupSelected={(carer) => {
+            showSuccessToast(
+              "Preferred Backup Carer Selected!",
+              `${carer.name} is now designated as your Preferred Backup Carer.`,
+            );
+            dispatch(fetchCareRequests());
+            if (selectedRequestId) {
+              dispatch(fetchClientCareRequestApplications(selectedRequestId));
+            }
+          }}
+        />
+      )}
+
+      {/* View Placement Details Modal */}
+      {activePlacementModalId && (
+        <PlacementDetailModal
+          placementId={activePlacementModalId}
+          onClose={() => setActivePlacementModalId(null)}
+        />
+      )}
+
+      {/* Reject Application Modal */}
       {rejectAppId && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div
@@ -441,8 +540,7 @@ export default function ClientApplicationsPanel() {
                 Reject Application
               </h3>
               <p className="text-sm text-gold-100/60 mb-6">
-                Please provide a reason for rejecting this application. This
-                helps us find better matches in the future.
+                Please provide a reason for rejecting this application. This helps us find better matches in the future.
               </p>
               <textarea
                 value={rejectReason}

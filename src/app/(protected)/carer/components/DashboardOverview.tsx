@@ -1,8 +1,12 @@
+import { useState, useEffect } from "react";
 import SectionCard from "./shared/SectionCard";
 import StatusBadge from "./shared/StatusBadge";
 import { ComplianceDoc } from "../types/carer.types";
 import { groupDatesIntoRanges, formatRangeDisplay } from "../utils/date.utils";
 import { useAppSelector } from "@/store/hooks";
+import CarerRolesCard from "@/components/backup-carer/CarerRolesCard";
+import { carerService } from "@/services/carer/carer.service";
+import { backupCarerService } from "@/services/backupCarer.service";
 
 interface DashboardOverviewProps {
   applicationStatus: "pending" | "approved" | "rejected";
@@ -21,13 +25,41 @@ export default function DashboardOverview({
 }: DashboardOverviewProps) {
   const profile = useAppSelector((state) => state.carer.profile);
 
+  const [roleCounts, setRoleCounts] = useState({ primary: 0, backup: 0, relief: 0 });
+
+  useEffect(() => {
+    Promise.all([
+      carerService.getPlacements().catch(() => []),
+      backupCarerService.getReliefOpportunities().catch(() => []),
+      backupCarerService.getPreferredBackupPlacements(profile?.id).catch(() => []),
+    ]).then(([placements, offers, backups]) => {
+      const primary = placements.filter(
+        (p: any) =>
+          ["PLACEMENT_CONFIRMED", "PLACEMENT_STARTED", "ACTIVE", "ONGOING"].includes(p.status)
+      ).length;
+      const backup = backups.length;
+      const relief = offers.filter(
+        (o: any) => o.status === "CONFIRMED" || o.status === "ACTIVE" || o.status === "COVERING"
+      ).length;
+      setRoleCounts({ primary, backup, relief });
+    });
+  }, [profile?.id]);
+
   const rejectedDocs = complianceDocs.filter(
     (doc) => doc.status === "failed" && doc.rejectionReason,
   );
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      {/* Application Review Status Badges Widget */}
+    <div className="space-y-6">
+      {/* Your Carer Roles - Grace & Goodwill Multi-Tier */}
+      <CarerRolesCard
+        primaryCount={roleCounts.primary}
+        backupCount={roleCounts.backup}
+        activeReliefCount={roleCounts.relief}
+      />
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Application Review Status Badges Widget */}
       <SectionCard className="md:col-span-2 space-y-6">
         <div className="flex justify-between items-center border-b border-gold-300/10 pb-4">
           <h3 className="text-lg font-bold text-gold-200">
@@ -164,5 +196,6 @@ export default function DashboardOverview({
         </div>
       </SectionCard>
     </div>
-  );
+  </div>
+);
 }

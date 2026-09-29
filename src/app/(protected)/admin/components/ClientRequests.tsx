@@ -282,7 +282,7 @@ export default function ClientRequests({
                           size="sm"
                           className="!px-3 !py-1.5 !text-[11px] !rounded-lg whitespace-nowrap"
                         >
-                          View Applications
+                          View Applicants / Interest List
                         </Button>
 
                         <div className="relative group/menu inline-block">
@@ -426,7 +426,16 @@ export default function ClientRequests({
           careRequestId={selectedRequestIdForApps}
           clientProfileId={
             requests.find((r) => r.id === selectedRequestIdForApps)
-              ?.clientProfileId || ""
+              ?.clientProfileId ||
+            requests.find((r) => r.id === selectedRequestIdForApps)
+              ?.clientId ||
+            ""
+          }
+          clientName={
+            requests.find((r) => r.id === selectedRequestIdForApps)?.clientName
+          }
+          placementId={
+            (requests.find((r) => r.id === selectedRequestIdForApps) as any)?.placement?.id
           }
           onClose={() => setSelectedRequestIdForApps(null)}
           onStatusUpdated={refreshRequests}

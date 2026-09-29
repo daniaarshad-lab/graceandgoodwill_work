@@ -1,33 +1,42 @@
-import { Globe, ArrowRight } from "lucide-react";
+import { Globe, ChevronRight, Link as LinkIcon } from "lucide-react";
 import { CallUsButton, WhatsAppButton, EnquiryButton } from "@/components/Button";
 import Link from "next/link";
 
 export default function ExpiredProfileCard() {
   return (
-    <div className="flex-1 flex flex-col items-center px-4 py-10 relative z-10 w-full">
+    <div className="flex-1 flex flex-col items-center px-4 pt-6 pb-10 relative z-10 w-full">
       {/* ── Logo Container (Above the Card) ── */}
-      <a href="/" className="flex flex-col md:flex-row items-center justify-center md:justify-start gap-3 w-full mb-10 -mt-2 hover:opacity-90 transition-opacity">
-        <img
-          src="/website_logo.png"
-          alt="Grace & Goodwill logo"
-          className="h-10 w-10 md:h-9 md:w-9 object-contain shrink-0"
-          style={{ filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.3))" }}
-        />
-        <div className="flex flex-col items-center justify-center md:items-start">
-          <span
-            className="font-['Cinzel'] text-[16px] md:text-[18px] font-medium tracking-[0.20em] uppercase leading-none"
-            style={{
-              color: "#D4AF7A",
-              textShadow: "0 1px 2px rgba(0,0,0,0.4)",
-            }}
-          >
-            GRACE & GOODWILL
-          </span>
-          <div className="tagline mt-2 md:mt-1 text-[9px] md:text-[10px]">
-            Care Defined By Integrity
+      <div className="w-full max-w-[340px] flex justify-start mb-12 sm:mb-14 -mt-4 -ml-6 md:-ml-40">
+        <a href="/" className="inline-flex flex-col md:flex-row items-center justify-center md:justify-start gap-3 md:gap-4 hover:opacity-90 transition-opacity">
+          <img
+            src="/website_logo.png"
+            alt="Grace & Goodwill logo"
+            className="h-10 w-10 md:h-11 md:w-11 object-contain shrink-0"
+            style={{ filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.3))" }}
+          />
+          <div className="flex flex-col items-center md:items-start justify-center text-center md:text-left mt-1 md:mt-0">
+            <span
+              className="font-['Cinzel'] text-[16px] md:text-[18px] font-medium tracking-[0.20em] uppercase leading-none"
+              style={{
+                color: "#D4AF7A",
+                textShadow: "0 1px 2px rgba(0,0,0,0.4)",
+              }}
+            >
+              GRACE & GOODWILL
+            </span>
+            <div className="flex items-center gap-2 mt-2 opacity-80">
+              <div className="w-4 h-px" style={{ backgroundColor: "#D4AF7A" }} />
+              <span
+                className="text-[8px] md:text-[9px] tracking-[0.25em] uppercase whitespace-nowrap"
+                style={{ color: "#D4AF7A" }}
+              >
+                Care Defined By Integrity
+              </span>
+              <div className="w-4 h-px" style={{ backgroundColor: "#D4AF7A" }} />
+            </div>
           </div>
-        </div>
-      </a>
+        </a>
+      </div>
 
       <div
         className="w-full max-w-[340px] rounded-3xl shadow-xl overflow-visible"
@@ -43,12 +52,8 @@ export default function ExpiredProfileCard() {
               boxShadow: "0 2px 16px rgba(13,27,62,0.22), 0 0 0 5px #f5f0e8",
             }}
           >
-            {/* Share icon: upload/share arrow */}
-            <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="#c8a96e" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
-              <polyline points="16 6 12 2 8 6" />
-              <line x1="12" y1="2" x2="12" y2="15" />
-            </svg>
+            {/* Share icon: chain link */}
+            <LinkIcon className="w-5 h-5" style={{ color: "#c8a96e" }} strokeWidth={2.5} />
           </div>
         </div>
         {/* Spacer below floating icon */}
@@ -108,7 +113,7 @@ export default function ExpiredProfileCard() {
               style={{ backgroundColor: "#ddd5c5" }}
             />
             <span className="flex-1 px-4 text-left">
-              <span className="block text-sm font-bold" style={{ color: "#0d1b3e" }}>
+              <span className="block text-sm font-medium" style={{ color: "#0d1b3e" }}>
                 Visit Grace &amp; Goodwill
               </span>
               <span className="block text-xs" style={{ color: "#8a8070" }}>
@@ -116,7 +121,7 @@ export default function ExpiredProfileCard() {
               </span>
             </span>
             <span className="pr-4">
-              <ArrowRight className="w-4 h-4" style={{ color: "#8a8070" }} />
+              <ChevronRight className="w-4 h-4" style={{ color: "#8a8070" }} />
             </span>
           </a>
         </div>
@@ -124,14 +129,14 @@ export default function ExpiredProfileCard() {
 
       {/* ── Divider ──────────────────────────────────────────────────── */}
       <div className="flex items-center justify-center gap-2.5 sm:gap-3 w-full max-w-sm mt-8 mb-6 px-2">
-        <div className="flex-1 h-px bg-gradient-to-r from-transparent to-[#d49f47b3]" />
+        <div className="flex-1 h-px bg-gradient-to-r from-transparent to-[#D6BE84]" style={{ opacity: 0.6 }} />
         <span
           className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.25em] whitespace-nowrap"
-          style={{ color: "#d49f47b3" }}
+          style={{ color: "#D6BE84" }}
         >
           Live-In Care Across the UK
         </span>
-        <div className="flex-1 h-px bg-gradient-to-l from-transparent to-[#d49f47b3]" />
+        <div className="flex-1 h-px bg-gradient-to-l from-transparent to-[#D6BE84]" style={{ opacity: 0.6 }} />
       </div>
 
       {/* ── Brand Values Footer ──────────────────────────────────────── */}
@@ -166,20 +171,19 @@ export default function ExpiredProfileCard() {
             />
             <span
               className="text-[9px] font-bold tracking-wider uppercase"
-              style={{ color: "#c8a96e" }}
+              style={{ color: "#D6BE84" }}
             >
               {label}
             </span>
             <span
               className="text-[8px] leading-tight"
-              style={{ color: "#c8a96e" }}
+              style={{ color: "#D6BE84" }}
             >
               {sub}
             </span>
           </div>
         ))}
       </div>
-
     </div>
   );
 }

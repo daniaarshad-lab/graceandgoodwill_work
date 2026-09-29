@@ -1,5 +1,5 @@
 import React, { ButtonHTMLAttributes } from "react";
-import { Phone, ArrowRight } from "lucide-react";
+import { Phone, ChevronRight } from "lucide-react";
 import WhatsAppIcon from "./WhatsAppIcon";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -119,7 +119,7 @@ export function CallUsButton({ href = "tel:02045240108", phoneNumber = "020 4524
         style={{ backgroundColor: "#ffffff18" }}
       />
       <span className="flex-1 px-4 text-left">
-        <span className="block text-sm font-bold" style={{ color: "#f0e8d5" }}>
+        <span className="block text-sm font-medium" style={{ color: "#f0e8d5" }}>
           Call Us
         </span>
         <span className="block text-xs" style={{ color: "#8a9ab8" }}>
@@ -127,7 +127,7 @@ export function CallUsButton({ href = "tel:02045240108", phoneNumber = "020 4524
         </span>
       </span>
       <span className="pr-4">
-        <ArrowRight className="w-4 h-4" style={{ color: "#8a9ab8" }} />
+        <ChevronRight className="w-4 h-4" style={{ color: "#8a9ab8" }} />
       </span>
     </a>
   );
@@ -153,7 +153,7 @@ export function WhatsAppButton({ href = "https://wa.me/447462931949", phoneNumbe
         style={{ backgroundColor: "#ffffff18" }}
       />
       <span className="flex-1 px-4 text-left">
-        <span className="block text-sm font-bold" style={{ color: "#ffffff" }}>
+        <span className="block text-sm font-medium" style={{ color: "#ffffff" }}>
           WhatsApp Us
         </span>
         <span className="block text-xs" style={{ color: "#a8d8b8" }}>
@@ -161,7 +161,7 @@ export function WhatsAppButton({ href = "https://wa.me/447462931949", phoneNumbe
         </span>
       </span>
       <span className="pr-4">
-        <ArrowRight className="w-4 h-4" style={{ color: "#a8d8b8" }} />
+        <ChevronRight className="w-4 h-4" style={{ color: "#a8d8b8" }} />
       </span>
     </a>
   );
@@ -172,28 +172,28 @@ export function EnquiryButton({ href = "mailto:hello@graceandgoodwill.co.uk", em
     <a
       href={href}
       className={`flex items-center w-full rounded-2xl overflow-hidden shadow-sm transition-transform hover:scale-[1.01] active:scale-[0.99] ${className}`}
-      style={{ backgroundColor: "#c8a96e", height: "48px" }}
+      style={{ backgroundImage: "linear-gradient(to right, #C9AA63, #DCC27A, #B88E3C)", height: "48px" }}
     >
       <span
         className="flex items-center justify-center w-12 h-full shrink-0"
-        style={{ backgroundColor: "#b8954e" }}
+        style={{ backgroundColor: "rgba(255, 255, 255, 0.15)" }}
       >
-        <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="#ffffff" strokeWidth={2}>
+        <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="#0D1B3D" strokeWidth={2}>
           <rect x="2" y="4" width="20" height="16" rx="2" />
           <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </span>
       <span
         className="w-px self-stretch"
-        style={{ backgroundColor: "#ffffff28" }}
+        style={{ backgroundColor: "rgba(13, 27, 61, 0.1)" }}
       />
       <span className="flex-1 px-4 text-left">
-        <span className="block text-sm font-bold" style={{ color: "#ffffff" }}>
+        <span className="block text-sm font-medium" style={{ color: "#0D1B3D" }}>
           Make an Enquiry
         </span>
       </span>
       <span className="pr-4">
-        <ArrowRight className="w-4 h-4" style={{ color: "#ffffff" }} />
+        <ChevronRight className="w-4 h-4" style={{ color: "#0D1B3D" }} />
       </span>
     </a>
   );

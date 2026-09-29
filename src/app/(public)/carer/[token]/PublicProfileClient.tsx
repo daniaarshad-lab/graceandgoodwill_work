@@ -297,33 +297,35 @@ export default function PublicProfileClient({ token }: PublicProfileClientProps)
   }
 
   // ── Error / Expired State ──────────────────────────────────────────
-  const isExpired = true /* TEMPORARY OVERRIDE: Hardcoding true to test expired UI */ || error || !profile || profile.isActive === false || (profile.expiresAt && new Date(profile.expiresAt) < new Date());
+  const isExpired = error || !profile || profile.isActive === false || (profile.expiresAt && new Date(profile.expiresAt) < new Date());
 
   if (isExpired) {
     return (
       <>
         <style>{`header.sticky { display: none !important; }`}</style>
-        <main className="min-h-screen flex items-center justify-center p-3 sm:p-4 relative" style={{ backgroundColor: "#040815" }}>
+        <main className="min-h-screen flex items-center justify-center p-3 sm:p-4 relative bg-navy-950" style={{ backgroundColor: "#0a1128" }}>
         {/* Modal-like container */}
         <div
-          className="relative w-full max-w-4xl max-h-[92vh] flex flex-col md:flex-row rounded-3xl shadow-2xl overflow-hidden animate-[fadeIn_0.25s_ease]"
+          className="relative w-full max-w-4xl max-h-[92vh] flex flex-col md:flex-row rounded-3xl shadow-2xl overflow-hidden animate-[fadeIn_0.25s_ease] border-0 md:border-[2px] md:border-[rgba(201,171,82,0.75)]"
           style={{
-            border: "2px solid rgba(201,171,82,0.75)",
-            boxShadow: "0 25px 60px -15px rgba(0,0,0,0.85), 0 0 40px rgba(201,171,82,0.25), inset 0 0 0 1px rgba(201,171,82,0.15)",
+            boxShadow: "0 25px 60px -15px rgba(0,0,0,0.85), 0 0 40px rgba(201,171,82,0.25)",
           }}
         >
           {/* Mobile Background Image (Mobile only) */}
-          <div className="absolute top-0 left-0 right-0 h-[280px] z-0 flex md:hidden">
+          <div className="absolute top-0 left-0 right-0 h-[160px] sm:h-[180px] z-0 flex md:hidden overflow-hidden">
             <Image
               src={shareProfileMobileBg}
-              alt="Share profile background"
+              alt="Grace & Goodwill Living Room Background"
               fill
-              className="object-cover object-top"
+              className="object-cover object-[70%_12%]"
               priority
             />
-            {/* Dark gradient overlay for text readability over the background */}
-            <div className="absolute inset-0 bg-[#040815]/30" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#070d1e] via-[#070d1e]/20 to-transparent" />
+            {/* Subtle dark overlay for contrast */}
+            <div className="absolute inset-0 bg-[#0a1128]/15" />
+            {/* Horizontal gradient: gentle dark fade on left for logo readability, transparent on right to show sofa cushion & logo */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#0a1128] via-[#0a1128]/40 to-transparent" />
+            {/* Vertical gradient for smooth bottom fade */}
+            <div className="absolute inset-0 bg-gradient-to-b from-[#0a1128]/10 via-transparent to-[#0a1128]" />
           </div>
 
           {/* Left Image Panel (Desktop only) */}
@@ -336,8 +338,8 @@ export default function PublicProfileClient({ token }: PublicProfileClientProps)
               priority
             />
             {/* Dark gradient overlay for text readability */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#040815]/90 via-[#040815]/30 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#040815]/60" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0a1128]/90 via-[#0a1128]/30 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#0a1128]/60" />
             {/* Decorative golden border line on right edge */}
             <div className="absolute right-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-[rgba(201,171,82,0.5)] to-transparent" />
             {/* Bottom italic tagline */}
@@ -352,7 +354,7 @@ export default function PublicProfileClient({ token }: PublicProfileClientProps)
 
           {/* Right content panel */}
           <div
-            className="relative z-10 flex flex-col flex-1 min-w-0 bg-[linear-gradient(180deg,transparent_0%,transparent_200px,#070d1e_260px,#040815_100%)] md:bg-[linear-gradient(165deg,#0b152d_0%,#070d1e_65%,#040815_100%)]"
+            className="relative z-10 flex flex-col flex-1 min-w-0 bg-[linear-gradient(180deg,transparent_0%,transparent_240px,#0a1128_340px,#0a1128_100%)] md:bg-[linear-gradient(165deg,#0b152d_0%,#070d1e_65%,#0a1128_100%)]"
           >
             {/* Scrollable content inside the modal */}
             <div

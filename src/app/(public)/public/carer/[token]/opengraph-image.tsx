@@ -12,23 +12,21 @@ interface Props {
 export default async function Image({ params }: Props) {
   const { token } = await params;
 
-  const appUrl =
-    process.env.NEXT_PUBLIC_APP_URL ||
-    process.env.NEXT_PUBLIC_SITE_URL ||
-    "https://graceandgoodwill.co.uk";
-
   let displayName = "";
   let photoUrl: string | null = null;
   let experienceYears: number | null = null;
   let isValid = false;
 
   try {
+    // Fetch directly from the backend API (same pattern as shareableProfile.service.ts)
     const apiBase = (
       process.env.NEXT_PUBLIC_API_URL ||
-      `${appUrl}/api`
+      process.env.NEXT_PUBLIC_SITE_URL ||
+      "https://graceandgoodwill.co.uk"
     )
       .replace(/\/+$/, "")
       .replace(/\/api\/?$/, "");
+
     const res = await fetch(`${apiBase}/api/public/carer/${token}`, {
       signal: AbortSignal.timeout(4000),
       cache: "no-store",

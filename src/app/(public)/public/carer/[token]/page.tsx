@@ -27,7 +27,8 @@ export async function generateMetadata(
     const firstName = profile.displayName ? profile.displayName.split(" ")[0] : "our carer";
     const description = `View ${firstName}'s experience, video, care skills, interests, languages and current availability.`;
 
-    const ogImageUrl = `${appUrl}/api/og/carer/${token}`;
+    // No explicit og:image — Next.js auto-detects the co-located opengraph-image.tsx
+    // convention file and generates the correct <meta property="og:image"> tag.
 
     return {
       title,
@@ -38,21 +39,11 @@ export async function generateMetadata(
         url: canonicalUrl,
         siteName: profile.brandName || "Grace & Goodwill",
         type: "website",
-        images: [
-          {
-            url: ogImageUrl,
-            width: 1200,
-            height: 630,
-            alt: title,
-            type: "image/png",
-          },
-        ],
       },
       twitter: {
         card: "summary_large_image",
         title,
         description,
-        images: [ogImageUrl],
       },
     };
   } catch {

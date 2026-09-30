@@ -23,13 +23,17 @@ export default async function Image({ params }: Props) {
   let isValid = false;
 
   try {
+    // NEXT_PUBLIC_API_URL is e.g. https://graceandgoodwill.co.uk/api
     const apiBase = (
       process.env.NEXT_PUBLIC_API_URL ||
-      `${appUrl}/api`
-    )
-      .replace(/\/+$/, "")
-      .replace(/\/api\/?$/, "");
-    const res = await fetch(`${apiBase}/api/public/carer/${token}`, {
+      "https://graceandgoodwill.co.uk/api"
+    ).replace(/\/+$/, "");
+
+    const profileUrl = apiBase.endsWith("/api")
+      ? `${apiBase}/public/carer/${token}`
+      : `${apiBase}/api/public/carer/${token}`;
+
+    const res = await fetch(profileUrl, {
       signal: AbortSignal.timeout(4000),
       cache: "no-store",
     });

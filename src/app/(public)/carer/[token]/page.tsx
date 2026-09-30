@@ -25,12 +25,12 @@ export async function generateMetadata(
       process.env.NEXT_PUBLIC_SITE_URL ||
       "https://graceandgoodwill.co.uk";
 
-    const canonicalUrl = `${appUrl}/carer/${token}`;
+    // Canonical URL for this profile is /public/carer/{id}
+    const canonicalUrl = `${appUrl}/public/carer/${token}`;
 
-    // Explicitly set the og:image to our stable /api/og/carer/[token] route.
-    // This route returns a proper PNG image with Content-Type: image/png so
-    // WhatsApp Web can render the large preview card correctly.
-    const ogImageUrl = `${appUrl}/api/og/carer/${token}`;
+    // Point to the canonical opengraph-image served by Next.js convention file
+    // at /public/carer/[token]/opengraph-image (not /api/)
+    const ogImageUrl = `${appUrl}/public/carer/${token}/opengraph-image`;
 
     return {
       title,
@@ -46,7 +46,7 @@ export async function generateMetadata(
             url: ogImageUrl,
             width: 1200,
             height: 630,
-            alt: `${profile.displayName} | Professional Live-In Carer Profile`,
+            alt: title,
             type: "image/png",
           },
         ],

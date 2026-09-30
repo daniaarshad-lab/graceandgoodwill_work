@@ -6,20 +6,18 @@ import {
   Shield,
   UserCheck,
   CalendarClock,
-  Info,
-  MoreVertical,
-  ArrowUpRight,
   UserPlus,
   RefreshCw,
   Sparkles,
 } from "lucide-react";
 import Button from "@/components/Button";
-import { CarerMiniProfile } from "@/types/backupCarer.types";
 
 interface CarerArrangementCardProps {
-  primaryCarer?: CarerMiniProfile | null;
-  preferredBackupCarer?: CarerMiniProfile | null;
-  activeReliefCarer?: CarerMiniProfile | null;
+  primaryCarer?: any;
+  preferredBackupCarer?: any;
+  secondaryBackupCarer?: any;
+  backupCarers?: any[];
+  activeReliefCarer?: any;
   activeReliefDates?: {
     startDate: string;
     endDate: string;
@@ -27,7 +25,7 @@ interface CarerArrangementCardProps {
   placementStartDate?: string;
   isAdmin?: boolean;
   onViewProfile?: (carerProfileId: string) => void;
-  onSelectBackupClick?: () => void;
+  onSelectBackupClick?: (priority?: number) => void;
   onPromoteBackupClick?: () => void;
   onAssignReliefClick?: () => void;
   className?: string;
@@ -36,6 +34,8 @@ interface CarerArrangementCardProps {
 export default function CarerArrangementCard({
   primaryCarer,
   preferredBackupCarer,
+  secondaryBackupCarer,
+  backupCarers = [],
   activeReliefCarer,
   activeReliefDates,
   placementStartDate,
@@ -46,8 +46,6 @@ export default function CarerArrangementCard({
   onAssignReliefClick,
   className = "",
 }: CarerArrangementCardProps) {
-  const [activeMenu, setActiveMenu] = useState<string | null>(null);
-
   const formatReliefDates = () => {
     if (!activeReliefDates?.startDate) return "";
     const s = new Date(activeReliefDates.startDate).toLocaleDateString("en-GB", {
@@ -64,6 +62,34 @@ export default function CarerArrangementCard({
     return `${s} – ${e}`;
   };
 
+  const getCarerName = (carer: any, defaultText: string) => {
+    if (!carer) return defaultText;
+    if (carer.user) {
+      const full = `${carer.user.firstName || ""} ${carer.user.lastName || ""}`.trim();
+      if (full) return full;
+    }
+    if (carer.firstName || carer.lastName) {
+      return `${carer.firstName || ""} ${carer.lastName || ""}`.trim();
+    }
+    return carer.name || defaultText;
+  };
+
+  // Resolve 1st and 2nd backup carers from array or individual props
+  const backup1 =
+    backupCarers.find((b) => b.priority === 1)?.carerProfile ||
+    preferredBackupCarer ||
+    null;
+
+  const backup2 =
+    backupCarers.find((b) => b.priority === 2)?.carerProfile ||
+    secondaryBackupCarer ||
+    null;
+
+  const primaryName = getCarerName(primaryCarer, "Not Assigned");
+  const backup1Name = getCarerName(backup1, "1st Choice Backup Carer");
+  const backup2Name = getCarerName(backup2, "2nd Choice Backup Carer");
+  const reliefName = getCarerName(activeReliefCarer, "Active Relief Carer");
+
   return (
     <div
       className={`rounded-2xl border border-gold-300/20 bg-navy-900/60 p-6 shadow-xl space-y-4 relative ${className}`}
@@ -75,7 +101,7 @@ export default function CarerArrangementCard({
             {isAdmin ? "Carer Arrangement" : "Carers for this Placement"}
           </h3>
           <p className="text-xs text-gold-100/60 mt-0.5">
-            Unified single-placement multi-carer continuity model
+            Unified single-placement multi-carer continuity model (Primary + Up to 2 Backup Carers)
           </p>
         </div>
       </div>
@@ -88,7 +114,7 @@ export default function CarerArrangementCard({
               {primaryCarer?.profilePhotoUrl ? (
                 <img
                   src={primaryCarer.profilePhotoUrl}
-                  alt={primaryCarer.user.firstName}
+                  alt={primaryName}
                   className="w-full h-full rounded-full object-cover"
                 />
               ) : (
@@ -99,9 +125,7 @@ export default function CarerArrangementCard({
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-bold text-sm text-white">
-                  {primaryCarer
-                    ? `${primaryCarer.user.firstName} ${primaryCarer.user.lastName}`
-                    : "Not Assigned"}
+                  {primaryCarer ? primaryName : "Not Assigned"}
                 </span>
                 <span
                   className={`inline-flex items-center gap-1 text-[10px] px-2.5 py-0.5 rounded-full font-bold border ${
@@ -145,14 +169,14 @@ export default function CarerArrangementCard({
           </div>
         </div>
 
-        {/* 2. Preferred Relief / Backup Carer */}
+        {/* 2. Preferred Backup Carer (1st Choice) */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl border border-amber-500/20 bg-amber-950/20 hover:border-amber-500/40 transition-all">
           <div className="flex items-center gap-3.5">
             <div className="w-12 h-12 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center justify-center font-bold text-sm shrink-0">
-              {preferredBackupCarer?.profilePhotoUrl ? (
+              {backup1?.profilePhotoUrl ? (
                 <img
-                  src={preferredBackupCarer.profilePhotoUrl}
-                  alt={preferredBackupCarer.user.firstName}
+                  src={backup1.profilePhotoUrl}
+                  alt={backup1Name}
                   className="w-full h-full rounded-full object-cover"
                 />
               ) : (
@@ -163,41 +187,39 @@ export default function CarerArrangementCard({
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-bold text-sm text-white">
-                  {preferredBackupCarer
-                    ? `${preferredBackupCarer.user.firstName} ${preferredBackupCarer.user.lastName}`
-                    : "Preferred Backup Carer"}
+                  {backup1 ? backup1Name : "1st Choice Backup Carer"}
                 </span>
                 <span
                   className={`inline-flex items-center gap-1 text-[10px] px-2.5 py-0.5 rounded-full font-bold border ${
-                    preferredBackupCarer
+                    backup1
                       ? "bg-amber-500/20 text-amber-300 border-amber-500/30"
                       : "bg-slate-700/40 text-slate-400 border-slate-600/30"
                   }`}
                 >
                   <span
                     className={`w-1.5 h-1.5 rounded-full ${
-                      preferredBackupCarer ? "bg-amber-400" : "bg-slate-400"
+                      backup1 ? "bg-amber-400" : "bg-slate-400"
                     }`}
                   />
-                  {preferredBackupCarer ? "Preferred Backup Carer • Active" : "Not Allocated"}
+                  {backup1 ? "1st Backup • Active" : "Not Allocated"}
                 </span>
               </div>
               <p className="text-xs text-gold-100/70 mt-0.5">
-                {preferredBackupCarer
-                  ? "Available for future relief opportunities (Not allocated to specific dates) • Zero Extra Charge"
-                  : "No preferred backup carer designated yet. Select a preferred backup carer from the interest list."}
+                {backup1
+                  ? "1st choice relief carer for holidays and emergencies • Zero Extra Charge"
+                  : "No 1st choice backup designated yet. Designate from candidate list."}
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2 self-end sm:self-center">
-            {preferredBackupCarer ? (
+            {backup1 ? (
               <>
                 {onViewProfile && (
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => onViewProfile(preferredBackupCarer.id)}
+                    onClick={() => onViewProfile(backup1.id || backup1.carerProfileId)}
                     className="text-xs py-1.5"
                   >
                     View Profile
@@ -209,9 +231,19 @@ export default function CarerArrangementCard({
                     size="sm"
                     onClick={onPromoteBackupClick}
                     className="text-xs py-1.5 text-amber-300 hover:text-amber-200"
-                    title="Promote backup carer to become the primary carer if primary leaves"
+                    title="Promote backup carer to become primary carer"
                   >
                     Promote to Primary
+                  </Button>
+                )}
+                {onSelectBackupClick && (
+                  <Button
+                    variant="ghost-gold"
+                    size="sm"
+                    onClick={() => onSelectBackupClick(1)}
+                    className="text-xs py-1.5 text-gold-100/70 hover:text-gold-200"
+                  >
+                    Change 1st Backup
                   </Button>
                 )}
               </>
@@ -220,49 +252,130 @@ export default function CarerArrangementCard({
                 <Button
                   variant="primary"
                   size="sm"
-                  onClick={onSelectBackupClick}
+                  onClick={() => onSelectBackupClick(1)}
                   className="text-xs py-1.5 font-bold shadow-md shadow-gold/20"
                 >
                   <UserPlus className="w-3.5 h-3.5 mr-1" />
-                  Select Backup Carer
+                  Select 1st Backup
                 </Button>
               )
             )}
           </div>
         </div>
 
-        {/* 3. Active Relief Carer */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl border border-blue-500/20 bg-blue-950/20 hover:border-blue-500/40 transition-all">
+        {/* 3. Secondary Backup Carer (2nd Choice) */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl border border-blue-500/20 bg-blue-950/15 hover:border-blue-500/35 transition-all">
           <div className="flex items-center gap-3.5">
             <div className="w-12 h-12 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 flex items-center justify-center font-bold text-sm shrink-0">
-              {activeReliefCarer?.profilePhotoUrl ? (
+              {backup2?.profilePhotoUrl ? (
                 <img
-                  src={activeReliefCarer.profilePhotoUrl}
-                  alt={activeReliefCarer.user.firstName}
+                  src={backup2.profilePhotoUrl}
+                  alt={backup2Name}
                   className="w-full h-full rounded-full object-cover"
                 />
               ) : (
-                <CalendarClock className="w-5 h-5 text-blue-400" />
+                <Shield className="w-5 h-5 text-blue-400" />
               )}
             </div>
 
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-bold text-sm text-white">
-                  {activeReliefCarer
-                    ? `${activeReliefCarer.user.firstName} ${activeReliefCarer.user.lastName}`
-                    : "Active Relief Carer"}
+                  {backup2 ? backup2Name : "2nd Choice Backup Carer"}
                 </span>
                 <span
                   className={`inline-flex items-center gap-1 text-[10px] px-2.5 py-0.5 rounded-full font-bold border ${
-                    activeReliefCarer
+                    backup2
                       ? "bg-blue-500/20 text-blue-300 border-blue-500/30"
                       : "bg-slate-700/40 text-slate-400 border-slate-600/30"
                   }`}
                 >
                   <span
                     className={`w-1.5 h-1.5 rounded-full ${
-                      activeReliefCarer ? "bg-blue-400" : "bg-slate-400"
+                      backup2 ? "bg-blue-400" : "bg-slate-400"
+                    }`}
+                  />
+                  {backup2 ? "2nd Backup • Active" : "Not Allocated"}
+                </span>
+              </div>
+              <p className="text-xs text-gold-100/70 mt-0.5">
+                {backup2
+                  ? "Secondary backup safety net if 1st choice is unavailable • Zero Extra Charge"
+                  : "Optional 2nd choice backup for additional peace of mind."}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 self-end sm:self-center">
+            {backup2 ? (
+              <>
+                {onViewProfile && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onViewProfile(backup2.id || backup2.carerProfileId)}
+                    className="text-xs py-1.5"
+                  >
+                    View Profile
+                  </Button>
+                )}
+                {onSelectBackupClick && (
+                  <Button
+                    variant="ghost-gold"
+                    size="sm"
+                    onClick={() => onSelectBackupClick(2)}
+                    className="text-xs py-1.5 text-gold-100/70 hover:text-gold-200"
+                  >
+                    Change 2nd Backup
+                  </Button>
+                )}
+              </>
+            ) : (
+              onSelectBackupClick && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => onSelectBackupClick(2)}
+                  className="text-xs py-1.5 font-bold !border-blue-500/40 !text-blue-300 hover:!bg-blue-500/10"
+                >
+                  <UserPlus className="w-3.5 h-3.5 mr-1" />
+                  Select 2nd Backup
+                </Button>
+              )
+            )}
+          </div>
+        </div>
+
+        {/* 4. Active Relief Carer */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl border border-teal-500/20 bg-teal-950/20 hover:border-teal-500/40 transition-all">
+          <div className="flex items-center gap-3.5">
+            <div className="w-12 h-12 rounded-full bg-teal-500/20 text-teal-300 border border-teal-500/30 flex items-center justify-center font-bold text-sm shrink-0">
+              {activeReliefCarer?.profilePhotoUrl ? (
+                <img
+                  src={activeReliefCarer.profilePhotoUrl}
+                  alt={reliefName}
+                  className="w-full h-full rounded-full object-cover"
+                />
+              ) : (
+                <CalendarClock className="w-5 h-5 text-teal-400" />
+              )}
+            </div>
+
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-sm text-white">
+                  {activeReliefCarer ? reliefName : "Active Relief Carer"}
+                </span>
+                <span
+                  className={`inline-flex items-center gap-1 text-[10px] px-2.5 py-0.5 rounded-full font-bold border ${
+                    activeReliefCarer
+                      ? "bg-teal-500/20 text-teal-300 border-teal-500/30"
+                      : "bg-slate-700/40 text-slate-400 border-slate-600/30"
+                  }`}
+                >
+                  <span
+                    className={`w-1.5 h-1.5 rounded-full ${
+                      activeReliefCarer ? "bg-teal-400" : "bg-slate-400"
                     }`}
                   />
                   {activeReliefCarer ? "Covering" : "Not Active"}
@@ -275,43 +388,7 @@ export default function CarerArrangementCard({
               </p>
             </div>
           </div>
-
-          <div className="flex items-center gap-2 self-end sm:self-center">
-            {activeReliefCarer ? (
-              onViewProfile && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => onViewProfile(activeReliefCarer.id)}
-                  className="text-xs py-1.5"
-                >
-                  View Profile
-                </Button>
-              )
-            ) : (
-              isAdmin &&
-              onAssignReliefClick && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={onAssignReliefClick}
-                  className="text-xs py-1.5"
-                >
-                  Assign Relief
-                </Button>
-              )
-            )}
-          </div>
         </div>
-      </div>
-
-      {/* Explanatory note (Mockup 2 #1) */}
-      <div className="flex items-start gap-2.5 p-3 rounded-xl bg-gold-300/5 border border-gold-300/10 text-xs text-gold-100/70">
-        <Info className="w-4 h-4 text-gold-400 shrink-0 mt-0.5" />
-        <p className="text-[11px] leading-relaxed">
-          Having a Preferred Relief/Backup Carer does not automatically allocate them to dates. They
-          will only become an Active Relief Carer once they accept a specific relief placement offer.
-        </p>
       </div>
     </div>
   );

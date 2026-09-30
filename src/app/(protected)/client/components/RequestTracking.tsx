@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { ClientPlacement } from "@/types/client.types";
 import {
   User,
@@ -36,6 +37,7 @@ export default function RequestTracking({
   onRetry,
   setActiveTab,
 }: RequestTrackingProps) {
+  const router = useRouter();
   const dispatch = useAppDispatch();
   const { feedbacks, careRequests, applications, applicationsLoading } =
     useAppSelector((state) => state.client);
@@ -230,7 +232,7 @@ export default function RequestTracking({
                         {getStatusLabel(place.status)}
                       </span>
                       <button
-                        onClick={() => setDetailPlacementId(place.id)}
+                        onClick={() => router.push(`/placement/${place.id}`)}
                         className="px-3 py-1 rounded bg-navy-950/60 text-gold-200 border border-gold-300/20 hover:bg-gold-300/10 text-[9px] font-bold uppercase tracking-wider transition-all"
                       >
                         View Details & Invoices

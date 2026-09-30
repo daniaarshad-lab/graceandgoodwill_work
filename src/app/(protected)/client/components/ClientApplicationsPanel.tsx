@@ -16,7 +16,7 @@ import Button from "@/components/Button";
 import ThinSpinner from "@/components/ThinSpinner";
 import { useRouter } from "next/navigation";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
-import SelectBackupCarerModal from "@/components/backup-carer/SelectBackupCarerModal";
+import ClientBackupCarerModal from "@/components/backup-carer/ClientBackupCarerModal";
 import PlacementDetailModal from "./PlacementDetailModal";
 import {
   Calendar,
@@ -52,7 +52,10 @@ export default function ClientApplicationsPanel() {
   // Backup Carer & Placement modals
   const [selectedPlacementForBackup, setSelectedPlacementForBackup] = useState<{
     placementId: string;
+    careRequestId?: string;
     clientName: string;
+    backupCarers?: any[];
+    preferredBackupCarer?: any;
   } | null>(null);
   const [activePlacementModalId, setActivePlacementModalId] = useState<string | null>(null);
 
@@ -255,12 +258,12 @@ export default function ClientApplicationsPanel() {
 
                   <div className="flex flex-wrap items-center gap-2.5 self-end sm:self-auto shrink-0">
                     {/* View Placement Button */}
-                    {(req.status === "CARER_SELECTED" || (req as any).placement) && (
+                    {(req.status === "CARER_SELECTED" || (req as any).placement || (req as any).placementId) && (
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          const pId = (req as any).placement?.id || req.id;
-                          setActivePlacementModalId(pId);
+                          const pId = (req as any).placement?.id || (req as any).placementId || req.id;
+                          router.push(`/placement/${pId}`);
                         }}
                         className="flex items-center gap-1.5 text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/20 hover:bg-emerald-500/20 transition-colors cursor-pointer"
                         title="View multi-carer arrangement (Primary, Backup, Relief)"
@@ -271,13 +274,16 @@ export default function ClientApplicationsPanel() {
                     )}
 
                     {/* Choose / Change Backup Carer Direct Action */}
-                    {(req.status === "CARER_SELECTED" || (req as any).placement) && (
+                    {(req.status === "CARER_SELECTED" || (req as any).placement || (req as any).placementId) && (
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           setSelectedPlacementForBackup({
-                            placementId: (req as any).placement?.id || req.id,
+                            placementId: (req as any).placement?.id || (req as any).placementId || req.id,
+                            careRequestId: req.id,
                             clientName: req.requestorName || "Your Placement",
+                            backupCarers: (req as any).placement?.backupCarers || [],
+                            preferredBackupCarer: (req as any).placement?.preferredBackupCarer,
                           });
                         }}
                         className="flex items-center gap-1.5 text-xs font-semibold text-cyan-300 bg-cyan-500/10 px-3 py-1.5 rounded-lg border border-cyan-500/20 hover:bg-cyan-500/20 transition-colors cursor-pointer"
@@ -499,17 +505,17 @@ export default function ClientApplicationsPanel() {
         )}
       </SectionCard>
 
-      {/* Select Backup Carer Modal */}
       {selectedPlacementForBackup && (
-        <SelectBackupCarerModal
+        <ClientBackupCarerModal
           placementId={selectedPlacementForBackup.placementId}
-          clientName={selectedPlacementForBackup.clientName}
-          isOpen={true}
+          careRequestId={selectedPlacementForBackup.careRequestId}
+          preferredBackupCarerId={selectedPlacementForBackup.preferredBackupCarer?.id}
+          backupCarers={selectedPlacementForBackup.backupCarers || []}
           onClose={() => setSelectedPlacementForBackup(null)}
           onBackupSelected={(carer) => {
             showSuccessToast(
-              "Preferred Backup Carer Selected!",
-              `${carer.name} is now designated as your Preferred Backup Carer.`,
+              "Backup Carer Designated!",
+              `${carer.name} is now designated as your Backup Carer.`,
             );
             dispatch(fetchCareRequests());
             if (selectedRequestId) {

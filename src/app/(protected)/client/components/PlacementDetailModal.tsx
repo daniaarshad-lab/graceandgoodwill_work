@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import {
   ArrowLeft,
@@ -18,17 +18,21 @@ import {
   Phone,
   Mail,
   Heart,
+  RefreshCw,
+  Plane,
 } from "lucide-react";
 import Image from "next/image";
 import { clientService } from "@/services/client/client.service";
 import { ClientPlacement } from "@/types/client.types";
 import Button from "@/components/Button";
 import ThinSpinner from "@/components/ThinSpinner";
-import SelectBackupCarerModal from "@/components/backup-carer/SelectBackupCarerModal";
+import CarerArrangementCard from "@/components/backup-carer/CarerArrangementCard";
+import ClientBackupCarerModal from "@/components/backup-carer/ClientBackupCarerModal";
 
 interface PlacementDetailModalProps {
   placementId: string;
   onClose: () => void;
+  isPage?: boolean;
 }
 
 type ClientPlacementTab = "arrangement" | "requirements" | "invoices";
@@ -36,6 +40,7 @@ type ClientPlacementTab = "arrangement" | "requirements" | "invoices";
 export default function PlacementDetailModal({
   placementId,
   onClose,
+  isPage = false,
 }: PlacementDetailModalProps) {
   const [mounted, setMounted] = useState(false);
   const [placement, setPlacement] = useState<ClientPlacement | null>(null);
@@ -43,6 +48,7 @@ export default function PlacementDetailModal({
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<ClientPlacementTab>("arrangement");
   const [isSelectBackupOpen, setIsSelectBackupOpen] = useState(false);
+  const [backupTargetPriority, setBackupTargetPriority] = useState<number>(1);
   const [designatedBackupCarer, setDesignatedBackupCarer] = useState<any>(null);
 
   // Lock outer page scrollbar while full-screen modal is active
@@ -55,20 +61,21 @@ export default function PlacementDetailModal({
     };
   }, []);
 
-  useEffect(() => {
-    async function loadPlacement() {
-      try {
-        setLoading(true);
-        const data = await clientService.getPlacementDetail(placementId);
-        setPlacement(data);
-      } catch (err: any) {
-        setError(err.message || "Failed to load placement details");
-      } finally {
-        setLoading(false);
-      }
+  const loadPlacement = useCallback(async () => {
+    try {
+      setLoading(true);
+      const data = await clientService.getPlacementDetail(placementId);
+      setPlacement(data);
+    } catch (err: any) {
+      setError(err.message || "Failed to load placement details");
+    } finally {
+      setLoading(false);
     }
-    loadPlacement();
   }, [placementId]);
+
+  useEffect(() => {
+    loadPlacement();
+  }, [loadPlacement]);
 
   // Support ESC key to go back
   useEffect(() => {
@@ -136,9 +143,22 @@ export default function PlacementDetailModal({
     return str.replace(/([a-z])([0-9A-Z])/g, "$1 • $2");
   };
 
+  const formatDate = (dateStr?: string | null) => {
+    if (!dateStr) return "Flexible / TBD";
+    try {
+      return new Date(dateStr).toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      });
+    } catch {
+      return String(dateStr);
+    }
+  };
+
   const formattedTitle = formatCareTitle(placement.careRequest?.careCategory);
 
-  return createPortal(
+  const modalContent = (
     <div className="fixed top-[72px] inset-x-0 bottom-0 z-40 bg-navy-950 text-gold-100 flex flex-col overflow-hidden animate-fadeIn">
       {/* ========================================================= */}
       {/* 1. TOP BRAND & WORKSPACE HEADER BAR (Cleanly under AuthenticatedHeader) */}
@@ -184,104 +204,34 @@ export default function PlacementDetailModal({
             </div>
           </div>
 
-          {/* Right: Quick Action & Close */}
-          <div className="flex items-center gap-2.5 justify-end">
+          {/* Right: Placement Start Date Badge & Refresh */}
+          <div className="flex items-center gap-2 self-start sm:self-auto shrink-0 flex-wrap justify-end">
+            {(placement.startDate || (placement as any).careRequest?.startDate) && (
+              <div
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gold-300/20 bg-navy-950/80 text-xs font-semibold text-gold-200 shadow-sm"
+                title="Placement Start Date"
+              >
+                <Calendar className="w-3.5 h-3.5 text-gold-DEFAULT" />
+                <span>
+                  Start Date:{" "}
+                  {formatDate(placement.startDate || (placement as any).careRequest?.startDate)}
+                </span>
+              </div>
+            )}
+
             <button
-              onClick={() => setIsSelectBackupOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gold-300/30 bg-gold-500/10 hover:bg-gold-500/20 text-gold-200 text-xs font-bold transition-all shadow-sm cursor-pointer"
+              onClick={loadPlacement}
+              className="p-1.5 rounded-xl border border-gold-300/15 bg-navy-950 text-gold-100/60 hover:text-gold-200 hover:bg-gold-300/10 transition-colors cursor-pointer"
+              title="Refresh placement data"
             >
-              <Users className="w-3.5 h-3.5 text-gold-DEFAULT" />
-              <span>{backupCarerName ? "Change Preferred Backup Carer" : "Select Preferred Backup Carer"}</span>
+              <RefreshCw className="w-4 h-4" />
             </button>
           </div>
         </div>
       </header>
 
       {/* ========================================================= */}
-      {/* 2. BALANCED EXECUTIVE SUMMARY STRIP (FULL WIDTH 4 CARDS)  */}
-      {/* ========================================================= */}
-      <div className="shrink-0 bg-navy-950 border-b border-gold-300/10 px-4 sm:px-8 py-3.5">
-        <div className="max-w-7xl mx-auto w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-          {/* Card 1: Primary Lead Carer */}
-          <div className="p-3.5 rounded-2xl bg-navy-900/70 border border-teal-500/25 flex items-center gap-3 shadow-md">
-            <div className="w-10 h-10 rounded-xl bg-teal-500/15 border border-teal-500/30 flex items-center justify-center text-teal-300 font-bold text-sm shrink-0">
-              <User className="w-5 h-5" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <span className="text-[9px] uppercase font-bold text-teal-400 tracking-wider block">
-                Primary Lead Carer
-              </span>
-              <span className="text-sm font-bold text-white truncate block">
-                {primaryCarerName}
-              </span>
-              <span className="text-[10px] text-teal-300/80 truncate block">
-                Lead Carer • Active
-              </span>
-            </div>
-          </div>
-
-          {/* Card 2: Preferred Backup Carer */}
-          <div className="p-3.5 rounded-2xl bg-navy-900/70 border border-amber-500/25 flex items-center gap-3 shadow-md">
-            <div className="w-10 h-10 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-300 font-bold text-sm shrink-0">
-              <Users className="w-5 h-5" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <span className="text-[9px] uppercase font-bold text-amber-400 tracking-wider block">
-                Preferred Backup Carer
-              </span>
-              <span className="text-sm font-bold text-white truncate block">
-                {backupCarerName || "None Assigned"}
-              </span>
-              <span className="text-[10px] text-amber-300/80 truncate block">
-                Ready for Relief • Zero Extra Fee
-              </span>
-            </div>
-          </div>
-
-          {/* Card 3: Start Date */}
-          <div className="p-3.5 rounded-2xl bg-navy-900/70 border border-gold-300/15 flex items-center gap-3 shadow-md">
-            <div className="w-10 h-10 rounded-xl bg-gold-500/15 border border-gold-500/30 flex items-center justify-center text-gold-DEFAULT font-bold text-sm shrink-0">
-              <Calendar className="w-5 h-5" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <span className="text-[9px] uppercase font-bold text-gold-100/50 tracking-wider block">
-                Placement Start
-              </span>
-              <span className="text-sm font-bold text-gold-200 block">
-                {new Date(placement.startDate).toLocaleDateString("en-GB", {
-                  day: "numeric",
-                  month: "short",
-                  year: "numeric",
-                })}
-              </span>
-              <span className="text-[10px] text-gold-100/60 block">
-                Ongoing Live-in Care
-              </span>
-            </div>
-          </div>
-
-          {/* Card 4: Continuity Guarantee */}
-          <div className="p-3.5 rounded-2xl bg-navy-900/70 border border-emerald-500/25 flex items-center gap-3 shadow-md">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold text-sm shrink-0">
-              <ShieldCheck className="w-5 h-5" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <span className="text-[9px] uppercase font-bold text-emerald-400 tracking-wider block">
-                Continuity Guarantee
-              </span>
-              <span className="text-sm font-bold text-white block">
-                Protected Coverage
-              </span>
-              <span className="text-[10px] text-emerald-300/80 truncate block">
-                Seamless relief on call
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ========================================================= */}
-      {/* 3. CLIENT TAB NAVIGATION                                  */}
+      {/* 2. CLIENT TAB NAVIGATION                                  */}
       {/* ========================================================= */}
       <div className="shrink-0 bg-navy-900/90 border-b border-gold-300/10 px-4 sm:px-8">
         <div className="max-w-7xl mx-auto flex items-center gap-2 overflow-x-auto no-scrollbar">
@@ -346,92 +296,129 @@ export default function PlacementDetailModal({
                 <Button
                   variant="primary"
                   size="sm"
-                  onClick={() => setIsSelectBackupOpen(true)}
+                  onClick={() => {
+                    setBackupTargetPriority(1);
+                    setIsSelectBackupOpen(true);
+                  }}
                   className="font-bold text-xs shrink-0"
                 >
                   <Users className="w-3.5 h-3.5 mr-1.5" />
-                  {backupCarerName ? "Change Preferred Backup Carer" : "Designate Preferred Backup Carer"}
+                  {backupCarerName ? "Manage Backup Carers" : "Designate Backup Carer"}
                 </Button>
               </div>
 
-              {/* Lead Primary Carer Card */}
-              <div className="p-6 rounded-2xl border border-teal-500/30 bg-navy-900/70 shadow-xl space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-2xl bg-teal-500/15 border border-teal-500/30 text-teal-300 flex items-center justify-center font-bold text-xl shrink-0">
-                      {primaryCarerName.charAt(0)}
+              {/* Multi-Carer Arrangement Card (Primary, 1st Backup, 2nd Backup) */}
+              <CarerArrangementCard
+                primaryCarer={placement.carerProfile as any}
+                preferredBackupCarer={placement.preferredBackupCarer}
+                backupCarers={placement.backupCarers || []}
+                activeReliefCarer={
+                  placement.leaveRequests?.some((l: any) => l.status === "COVER_CONFIRMED")
+                    ? (placement.activeReliefCarer || placement.preferredBackupCarer)
+                    : (placement.activeReliefCarer || null)
+                }
+                activeReliefDates={(() => {
+                  const confirmedLeave = placement.leaveRequests?.find((l: any) => l.status === "COVER_CONFIRMED");
+                  return confirmedLeave
+                    ? { startDate: confirmedLeave.startDate, endDate: confirmedLeave.endDate }
+                    : undefined;
+                })()}
+                placementStartDate={placement.startDate}
+                isAdmin={false}
+                onSelectBackupClick={(priority) => {
+                  setBackupTargetPriority(priority || 1);
+                  setIsSelectBackupOpen(true);
+                }}
+              />
+
+              {/* Upcoming Holiday & Relief Schedule Section */}
+              <div className="p-6 rounded-2xl border border-gold-300/20 bg-gradient-to-br from-navy-900 to-navy-950 shadow-xl space-y-4">
+                <div className="flex items-center justify-between border-b border-gold-300/10 pb-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="p-2 rounded-xl bg-blue-500/20 text-blue-400">
+                      <Plane className="w-5 h-5" />
                     </div>
-                    <div className="space-y-0.5">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <h4 className="text-base font-bold text-white">
-                          {primaryCarerName}
-                        </h4>
-                        <span className="px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-teal-500/15 text-teal-300 border border-teal-500/30">
-                          Lead Primary Carer • Active
-                        </span>
-                      </div>
-                      <p className="text-xs text-gold-100/70">
-                        Assigned since {new Date(placement.startDate).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+                    <div>
+                      <h4 className="text-base font-bold text-gold-200">
+                        Holiday Relief & Coverage Schedule
+                      </h4>
+                      <p className="text-xs text-gold-100/60 mt-0.5">
+                        Seamless continuity when your lead carer takes scheduled holiday. Zero extra charge.
                       </p>
                     </div>
                   </div>
-
-                  <div className="text-left sm:text-right">
-                    <span className="text-[10px] uppercase font-bold text-teal-400 block tracking-wider">
-                      Role in Placement
-                    </span>
-                    <span className="text-xs text-white font-medium">
-                      Regular daily care & companionship
-                    </span>
-                  </div>
                 </div>
 
-                <div className="p-4 rounded-xl bg-navy-950/60 border border-gold-300/5 text-xs text-gold-100/80 leading-relaxed">
-                  {primaryCarerName} is your dedicated lead carer managing all routine tasks, mobility assistance, medication prompting, and companion support.
-                </div>
-              </div>
-
-              {/* Preferred Backup Carer Card */}
-              <div className="p-6 rounded-2xl border border-amber-500/30 bg-navy-900/70 shadow-xl space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-300 flex items-center justify-center font-bold text-xl shrink-0">
-                      {backupCarerName ? backupCarerName.charAt(0) : "B"}
-                    </div>
-                    <div className="space-y-0.5">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <h4 className="text-base font-bold text-white">
-                          {backupCarerName || "No Preferred Backup Carer Assigned"}
-                        </h4>
-                        <span className="px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-amber-500/15 text-amber-300 border border-amber-500/30">
-                          Preferred Backup Carer • Active
-                        </span>
-                      </div>
-                      <p className="text-xs text-gold-100/70">
-                        {backupCarerName ? "Ready for future relief cover • Zero extra fee" : "Please choose your preferred backup carer below"}
-                      </p>
-                    </div>
+                {(!placement.leaveRequests || placement.leaveRequests.length === 0) ? (
+                  <div className="p-6 rounded-xl bg-navy-950/40 border border-gold-300/10 text-xs text-gold-100/60 text-center">
+                    No scheduled holiday or relief breaks recorded for this placement yet. When {primaryCarerName} requests time off, scheduled relief cover with {backupCarerName || "your preferred backup carer"} will appear here.
                   </div>
+                ) : (
+                  <div className="space-y-3">
+                    {placement.leaveRequests.map((req: any) => {
+                      const isConfirmed = req.status === "COVER_CONFIRMED";
+                      const isOffered = req.status === "OFFERED_TO_BACKUP";
 
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => setIsSelectBackupOpen(true)}
-                      className="px-3.5 py-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 text-xs font-bold transition-all cursor-pointer"
-                    >
-                      {backupCarerName ? "Change Preferred Backup Carer" : "Choose Preferred Backup Carer"}
-                    </button>
-                  </div>
-                </div>
+                      return (
+                        <div
+                          key={req.id}
+                          className="p-4 rounded-xl border border-gold-300/15 bg-navy-950/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                        >
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-2">
+                              <span className="font-bold text-white text-sm">
+                                {req.reason || "Carer Scheduled Holiday"}
+                              </span>
+                              <span
+                                className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
+                                  isConfirmed
+                                    ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                                    : isOffered
+                                    ? "bg-blue-500/20 text-blue-300 border border-blue-500/30"
+                                    : "bg-amber-500/20 text-amber-300 border border-amber-500/30"
+                                }`}
+                              >
+                                {isConfirmed
+                                  ? "Relief Cover Confirmed"
+                                  : isOffered
+                                  ? "Relief Offered to Backup"
+                                  : "Arranging Relief Cover"}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2 text-xs text-gold-100/70">
+                              <Calendar className="w-3.5 h-3.5 text-gold-DEFAULT" />
+                              <span>
+                                {new Date(req.startDate).toLocaleDateString("en-GB", {
+                                  day: "numeric",
+                                  month: "short",
+                                  year: "numeric",
+                                })}{" "}
+                                –{" "}
+                                {new Date(req.endDate).toLocaleDateString("en-GB", {
+                                  day: "numeric",
+                                  month: "short",
+                                  year: "numeric",
+                                })}
+                              </span>
+                            </div>
+                          </div>
 
-                <div className="p-4 rounded-xl bg-navy-950/60 border border-gold-300/5 text-xs text-gold-100/80 leading-relaxed space-y-1.5">
-                  <div className="flex items-center gap-2 text-amber-300 font-bold text-xs">
-                    <ShieldCheck className="w-4 h-4 text-amber-400" />
-                    <span>How your preferred backup carer protects your care:</span>
+                          <div className="text-xs text-gold-100/70">
+                            {isConfirmed ? (
+                              <span className="text-emerald-400 font-medium flex items-center gap-1">
+                                <CheckCircle2 className="w-3.5 h-3.5" /> Covered by {backupCarerName || "Preferred Backup Carer"}
+                              </span>
+                            ) : (
+                              <span className="text-amber-400/90 font-medium">
+                                Coordination team arranging cover
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
-                  <p className="text-xs text-gold-100/70 pl-6">
-                    If {primaryCarerName} schedules holiday or time off, {backupCarerName || "your preferred backup carer"} is offered the shift first to ensure continuity with a familiar carer. There is absolutely no extra retainer or matching fee.
-                  </p>
-                </div>
+                )}
               </div>
             </div>
           )}
@@ -600,27 +587,25 @@ export default function PlacementDetailModal({
         </div>
       </main>
 
-      {/* Select Backup Carer Modal */}
-      {placement && (
-        <SelectBackupCarerModal
+      {/* Client Backup Carer Modal — Interest list based, same UI as admin */}
+      {isSelectBackupOpen && placement && (
+        <ClientBackupCarerModal
           placementId={placement.id}
-          clientName={placement.careRequest?.requestorName || "Current Placement"}
-          isOpen={isSelectBackupOpen}
-          onClose={() => setIsSelectBackupOpen(false)}
-          onBackupSelected={(carer) => {
-            setDesignatedBackupCarer({
-              id: carer.id,
-              userId: carer.id,
-              user: {
-                id: carer.id,
-                firstName: carer.name.split(" ")[0],
-                lastName: carer.name.split(" ")[1] || "",
-              },
-            });
+          careRequestId={(placement as any).careRequestId || placement.careRequest?.id}
+          preferredBackupCarerId={placement.preferredBackupCarer?.id}
+          backupCarers={(placement as any).backupCarers || []}
+          targetPriority={backupTargetPriority}
+          onClose={() => {
+            setIsSelectBackupOpen(false);
+            setBackupTargetPriority(1);
+          }}
+          onBackupSelected={() => {
+            loadPlacement();
           }}
         />
       )}
-    </div>,
-    document.body
+    </div>
   );
+
+  return isPage ? modalContent : createPortal(modalContent, document.body);
 }

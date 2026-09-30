@@ -15,6 +15,7 @@ import {
   Sparkles,
   CheckCircle2,
   Users,
+  UserPlus,
   CreditCard,
   MessageSquare,
   Clock,
@@ -43,7 +44,6 @@ import { showSuccessToast, showErrorToast } from "@/utils/toast";
 import CarerArrangementCard from "@/components/backup-carer/CarerArrangementCard";
 import PlacementCalendarView from "@/components/backup-carer/PlacementCalendarView";
 import PromoteBackupModal from "@/components/backup-carer/PromoteBackupModal";
-import SelectBackupCarerModal from "@/components/backup-carer/SelectBackupCarerModal";
 import AdminApplicationsModal from "./AdminApplicationsModal";
 import { backupCarerService } from "@/services/backupCarer.service";
 import { CarerLeaveRequest } from "@/types/backupCarer.types";
@@ -182,9 +182,11 @@ export default function AdminPlacementDetailModal({
 
   // Backup Carer & Leave Requests States
   const [isSelectBackupOpen, setIsSelectBackupOpen] = useState(false);
+  const [backupTargetPriority, setBackupTargetPriority] = useState<number>(1);
   const [isPromoteBackupOpen, setIsPromoteBackupOpen] = useState(false);
   const [leaveRequests, setLeaveRequests] = useState<CarerLeaveRequest[]>([]);
   const [dispatchingLeaveId, setDispatchingLeaveId] = useState<string | null>(null);
+  const [approvingLeaveId, setApprovingLeaveId] = useState<string | null>(null);
   const [preferredBackupCarer, setPreferredBackupCarer] = useState<any>(null);
 
   const loadPlacement = async () => {
@@ -201,7 +203,13 @@ export default function AdminPlacementDetailModal({
       } else {
         setPreferredBackupCarer(null);
       }
-      setLeaveRequests(leaves);
+      const combinedLeaves =
+        Array.isArray(leaves) && leaves.length > 0
+          ? leaves
+          : Array.isArray(data?.leaveRequests) && data.leaveRequests.length > 0
+          ? data.leaveRequests
+          : [];
+      setLeaveRequests(combinedLeaves);
       setBillingDetail(billing);
       if (billing && billing.weeklyFee) {
         setOverrideFee(Number(billing.weeklyFee));
@@ -213,28 +221,67 @@ export default function AdminPlacementDetailModal({
     }
   };
 
-  const handleDispatchRelief = async (leaveId: string) => {
-    if (!preferredBackupCarer?.id) {
-      toast.error("Please designate a preferred backup carer before dispatching relief offers.");
+  const handleDispatchRelief = async (
+    leaveId: string,
+    targetCarer: any,
+    targetRoleName: string
+  ) => {
+    if (!targetCarer?.id) {
+      toast.error(`Please assign a ${targetRoleName} before dispatching relief offers.`);
       return;
     }
-    setDispatchingLeaveId(leaveId);
+    const targetName =
+      `${targetCarer.user?.firstName || targetCarer.firstName || ""} ${targetCarer.user?.lastName || targetCarer.lastName || ""}`.trim() ||
+      targetRoleName;
+    setDispatchingLeaveId(`${leaveId}-${targetCarer.id}`);
     try {
       await backupCarerService.dispatchReliefOfferToBackup(
         placementId,
         leaveId,
-        preferredBackupCarer.id
+        targetCarer.id
       );
-      toast.success("Relief opportunity offer dispatched to preferred backup carer!");
+      toast.success(`Relief opportunity offer dispatched to ${targetName} (${targetRoleName})!`);
       setLeaveRequests((prev) =>
         prev.map((l) =>
-          l.id === leaveId ? { ...l, status: "OFFERED_TO_BACKUP" as const } : l
+          l.id === leaveId
+            ? {
+                ...l,
+                status: "OFFERED_TO_BACKUP" as const,
+                offeredCarerProfileId: targetCarer.id,
+                reliefAssignment: {
+                  ...(l as any).reliefAssignment,
+                  carerProfileId: targetCarer.id,
+                  status: "OFFER_PENDING",
+                },
+              }
+            : l
         )
       );
+      await loadPlacement();
+      if (onPlacementUpdated) onPlacementUpdated();
     } catch (err: any) {
       toast.error(err.message || "Failed to dispatch relief offer");
     } finally {
       setDispatchingLeaveId(null);
+    }
+  };
+
+  const handleApproveLeave = async (leaveId: string) => {
+    setApprovingLeaveId(leaveId);
+    try {
+      await backupCarerService.approveLeaveRequest(placementId, leaveId, "Approved by Admin");
+      toast.success("Leave request approved successfully!");
+      setLeaveRequests((prev) =>
+        prev.map((l) =>
+          l.id === leaveId ? { ...l, adminNotes: "Approved by Admin" } : l
+        )
+      );
+      await loadPlacement();
+      if (onPlacementUpdated) onPlacementUpdated();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to approve leave request");
+    } finally {
+      setApprovingLeaveId(null);
     }
   };
 
@@ -526,10 +573,27 @@ export default function AdminPlacementDetailModal({
   const primaryCarerName =
     `${placement.carerProfile?.user?.firstName || ""} ${placement.carerProfile?.user?.lastName || ""}`.trim() ||
     "Primary Carer";
-  const backupName =
-    `${preferredBackupCarer?.user?.firstName || ""} ${preferredBackupCarer?.user?.lastName || ""}`.trim();
+
+  // Resolve 1st and 2nd backup carers
+  const backup1 =
+    placement.backupCarers?.find((b: any) => b.priority === 1)?.carerProfile ||
+    placement.preferredBackupCarer ||
+    preferredBackupCarer ||
+    null;
+  const backup2 =
+    placement.backupCarers?.find((b: any) => b.priority === 2)?.carerProfile ||
+    null;
+
+  const backup1Name = backup1
+    ? `${backup1.user?.firstName || backup1.firstName || ""} ${backup1.user?.lastName || backup1.lastName || ""}`.trim() || "1st Choice Backup"
+    : "";
+  const backup2Name = backup2
+    ? `${backup2.user?.firstName || backup2.firstName || ""} ${backup2.user?.lastName || backup2.lastName || ""}`.trim() || "2nd Choice Backup"
+    : "";
+  const backupName = backup1Name;
+
   const pendingLeavesCount = leaveRequests.filter(
-    (l) => l.status === "PENDING_RELIEF"
+    (l) => l.status === "PENDING_RELIEF" || l.status === "OFFERED_TO_BACKUP"
   ).length;
 
   // Timeline events: from props or synthesized from placement records
@@ -576,6 +640,19 @@ export default function AdminPlacementDetailModal({
       ? billingDetail.invoices
       : placement.invoices || [];
 
+  const formatDate = (dateStr?: string | null) => {
+    if (!dateStr) return "Flexible / TBD";
+    try {
+      return new Date(dateStr).toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      });
+    } catch {
+      return String(dateStr);
+    }
+  };
+
   return (
     <div className="fixed top-[72px] inset-x-0 bottom-0 z-40 bg-navy-950 text-gold-100 flex flex-col overflow-hidden animate-fadeIn">
       {/* ========================================================= */}
@@ -601,9 +678,7 @@ export default function AdminPlacementDetailModal({
                 <span className="text-[10px] uppercase font-bold tracking-wider text-gold-100/50">
                   Placement Workspace
                 </span>
-                <span className="text-[10px] font-mono text-gold-100/40">
-                  • #{placement.id.slice(0, 8)}
-                </span>
+               
                 <span
                   className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider border ${
                     placement.status === "ACTIVE" ||
@@ -627,15 +702,20 @@ export default function AdminPlacementDetailModal({
             </div>
           </div>
 
-          {/* Right: Quick Action Buttons */}
+          {/* Right: Quick Action Buttons & Start Date */}
           <div className="flex items-center gap-2 flex-wrap justify-end">
-            <button
-              onClick={() => setIsSelectBackupOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gold-300/30 bg-gold-500/10 hover:bg-gold-500/20 text-gold-200 text-xs font-bold transition-all shadow-sm cursor-pointer"
-            >
-              <Users className="w-3.5 h-3.5 text-gold-DEFAULT" />
-              <span>{backupName ? "Change Backup Carer" : "Assign Backup Carer"}</span>
-            </button>
+            {(placement.startDate || placement.careRequest?.startDate) && (
+              <div
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gold-300/20 bg-navy-950/80 text-xs font-semibold text-gold-200 shadow-sm"
+                title="Placement Start Date"
+              >
+                <Calendar className="w-3.5 h-3.5 text-gold-DEFAULT" />
+                <span>
+                  Start Date:{" "}
+                  {formatDate(placement.startDate || placement.careRequest?.startDate)}
+                </span>
+              </div>
+            )}
 
             <button
               onClick={handleToggleContactRelease}
@@ -671,70 +751,10 @@ export default function AdminPlacementDetailModal({
         </div>
       </header>
 
-      {/* ========================================================= */}
-      {/* 2. EXECUTIVE GLANCE STRIP                                 */}
-      {/* ========================================================= */}
-      <div className="shrink-0 bg-navy-950/90 border-b border-gold-300/10 px-4 sm:px-8 py-3">
-        <div className="max-w-7xl mx-auto grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-3">
-          {/* Client Card */}
-          <div className="p-2.5 rounded-xl bg-navy-900/60 border border-gold-300/10">
-            <span className="text-[9px] uppercase font-bold text-gold-100/50 block">Client</span>
-            <span className="text-xs font-bold text-white truncate block">{clientName}</span>
-            <span className="text-[10px] text-gold-100/60 truncate block">
-              {placement.clientProfile?.user?.phoneNumber || placement.clientProfile?.user?.email || "No phone"}
-            </span>
-          </div>
-
-          {/* Primary Carer Card */}
-          <div className="p-2.5 rounded-xl bg-navy-900/60 border border-gold-300/10">
-            <span className="text-[9px] uppercase font-bold text-teal-400 block">Primary Carer</span>
-            <span className="text-xs font-bold text-white truncate block">{primaryCarerName}</span>
-            <span className="text-[10px] text-teal-300/80 truncate block">Assigned & Active</span>
-          </div>
-
-          {/* Backup Carer Card */}
-          <div className="p-2.5 rounded-xl bg-navy-900/60 border border-gold-300/10">
-            <span className="text-[9px] uppercase font-bold text-amber-400 block">Preferred Backup</span>
-            <span className="text-xs font-bold text-white truncate block">
-              {backupName || "None Assigned"}
-            </span>
-          </div>
-
-          {/* Start Date */}
-          <div className="p-2.5 rounded-xl bg-navy-900/60 border border-gold-300/10">
-            <span className="text-[9px] uppercase font-bold text-gold-100/50 block">Placement Start</span>
-            <span className="text-xs font-bold text-gold-200 block">
-              {new Date(placement.startDate).toLocaleDateString("en-GB", {
-                day: "numeric",
-                month: "short",
-                year: "numeric",
-              })}
-            </span>
-            <span className="text-[10px] text-gold-100/60 block">Ongoing Service</span>
-          </div>
-
-          {/* 48h Privacy Status */}
-          <div className="p-2.5 rounded-xl bg-navy-900/60 border border-gold-300/10 col-span-2 sm:col-span-1">
-            <span className="text-[9px] uppercase font-bold text-gold-100/50 block">48h Contact Privacy</span>
-            <div className="flex items-center gap-1.5 mt-0.5">
-              <span
-                className={`w-2 h-2 rounded-full ${
-                  placement.contactDetailsReleased ? "bg-emerald-400 animate-pulse" : "bg-amber-400"
-                }`}
-              />
-              <span className="text-xs font-bold text-white">
-                {placement.contactDetailsReleased ? "Unlocked for Carer" : "Safeguarded / Locked"}
-              </span>
-            </div>
-            <span className="text-[10px] text-gold-100/60 truncate block">
-              {placement.contactDetailsReleased ? "Direct contact enabled" : "Reveals 48h prior to start"}
-            </span>
-          </div>
-        </div>
-      </div>
+   
 
       {/* ========================================================= */}
-      {/* 3. INTUITIVE TABBED NAVIGATION BAR                        */}
+      {/* 2. INTUITIVE TABBED NAVIGATION BAR                        */}
       {/* ========================================================= */}
       <div className="shrink-0 bg-navy-900/80 border-b border-gold-300/10 px-4 sm:px-8">
         <div className="max-w-7xl mx-auto flex items-center gap-1 sm:gap-2 overflow-x-auto no-scrollbar">
@@ -846,21 +866,25 @@ export default function AdminPlacementDetailModal({
                   <Button
                     variant="primary"
                     size="sm"
-                    onClick={() => setIsSelectBackupOpen(true)}
+                    onClick={() => {
+                      setBackupTargetPriority(1);
+                      setIsSelectBackupOpen(true);
+                    }}
                     className="font-bold text-xs"
                   >
                     <Users className="w-3.5 h-3.5 mr-1.5" />
-                    {backupName ? "Change Backup Carer" : "Designate Backup Carer"}
+                    {backupName ? "Change Backup Carers" : "Designate Backup Carers"}
                   </Button>
                 </div>
 
                 <CarerArrangementCard
                   primaryCarer={placement.carerProfile as any}
                   preferredBackupCarer={preferredBackupCarer}
+                  backupCarers={placement.backupCarers || []}
                   activeReliefCarer={
                     leaveRequests.some((l) => l.status === "COVER_CONFIRMED")
-                      ? preferredBackupCarer
-                      : null
+                      ? (placement.activeReliefCarer || preferredBackupCarer)
+                      : (placement.activeReliefCarer || null)
                   }
                   activeReliefDates={(() => {
                     const confirmedLeave = leaveRequests.find((l) => l.status === "COVER_CONFIRMED");
@@ -870,7 +894,10 @@ export default function AdminPlacementDetailModal({
                   })()}
                   placementStartDate={placement.startDate}
                   isAdmin={true}
-                  onSelectBackupClick={() => setIsSelectBackupOpen(true)}
+                  onSelectBackupClick={(priority) => {
+                    setBackupTargetPriority(priority || 1);
+                    setIsSelectBackupOpen(true);
+                  }}
                   onPromoteBackupClick={() => setIsPromoteBackupOpen(true)}
                 />
               </div>
@@ -1034,49 +1061,141 @@ export default function AdminPlacementDetailModal({
                     No holiday or time-off requests registered for this placement.
                   </div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="space-y-5">
                     {leaveRequests.map((req) => {
                       const isPendingRelief = req.status === "PENDING_RELIEF";
                       const isOffered = req.status === "OFFERED_TO_BACKUP";
                       const isConfirmed = req.status === "COVER_CONFIRMED";
+                      const isNoCoverNeeded = req.status === "NO_COVER_NEEDED";
+                      const isCancelled = req.status === "CANCELLED";
+                      const isApproved = Boolean(
+                        req.adminNotes?.toLowerCase().includes("approved") ||
+                        req.status === "NO_COVER_NEEDED" ||
+                        req.status === "COVER_CONFIRMED"
+                      );
+
+                      const reliefAssignmentCarerId =
+                        (req as any).reliefAssignment?.carerProfileId ||
+                        (req as any).reliefAssignment?.carerProfile?.id ||
+                        (req as any).offeredCarerProfileId;
+
+                      const isOfferedToBackup1 =
+                        Boolean(backup1) &&
+                        ((isOffered && (!reliefAssignmentCarerId || reliefAssignmentCarerId === backup1?.id)) ||
+                          reliefAssignmentCarerId === backup1?.id);
+
+                      const isOfferedToBackup2 =
+                        Boolean(backup2) &&
+                        ((isOffered && reliefAssignmentCarerId === backup2?.id) ||
+                          reliefAssignmentCarerId === backup2?.id);
+
+                      const reqCarer = ((req as any).carerProfile || placement.carerProfile) as any;
+                      const reqCarerName =
+                        `${reqCarer?.user?.firstName || reqCarer?.firstName || ""} ${reqCarer?.user?.lastName || reqCarer?.lastName || ""}`.trim() ||
+                        primaryCarerName;
+                      const reqCarerEmail = reqCarer?.user?.email || "";
+                      const reqCarerPhone = reqCarer?.user?.phoneNumber || "";
+
+                      const sDate = new Date(req.startDate);
+                      const eDate = new Date(req.endDate);
+                      const daysDiff = Math.max(
+                        1,
+                        Math.round((eDate.getTime() - sDate.getTime()) / (1000 * 60 * 60 * 24)) + 1
+                      );
+
+                      // Split reason and notes if formatted as "Reason: Notes"
+                      const fullReasonText = req.reason || "Holiday / Time Off";
+                      const parts = fullReasonText.split(":");
+                      const reasonCategory = parts.length > 1 ? parts[0].trim() : fullReasonText;
+                      const reasonNotes = parts.length > 1 ? parts.slice(1).join(":").trim() : "";
+
+                      // Resolved relief carer if confirmed or assigned
+                      const reliefCarer = (req as any).reliefAssignment?.carerProfile || placement.activeReliefCarer || null;
+                      const reliefCarerName = reliefCarer
+                        ? `${reliefCarer.user?.firstName || reliefCarer.firstName || ""} ${reliefCarer.user?.lastName || reliefCarer.lastName || ""}`.trim()
+                        : "";
 
                       return (
                         <div
                           key={req.id}
-                          className="p-5 rounded-xl border border-gold-300/15 bg-navy-950/60 space-y-4"
+                          className="p-6 rounded-2xl border border-gold-300/20 bg-gradient-to-b from-navy-900/90 via-navy-950 to-navy-900 shadow-2xl space-y-5 transition-all"
                         >
-                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                            <div className="space-y-1">
-                              <div className="flex items-center gap-2">
-                                <span className="font-bold text-white text-sm">
-                                  {req.reason || "Holiday Request"}
-                                </span>
-                                <span
-                                  className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
-                                    isPendingRelief
-                                      ? "bg-amber-500/20 text-amber-300 border border-amber-500/30 animate-pulse"
-                                      : isOffered
-                                      ? "bg-blue-500/20 text-blue-300 border border-blue-500/30"
-                                      : "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
-                                  }`}
-                                >
-                                  {isPendingRelief
-                                    ? "Pending Relief Cover"
-                                    : isOffered
-                                    ? "Offer Sent to Backup"
-                                    : "Relief Cover Confirmed"}
-                                </span>
+                          {/* 1. Header: Carer Identity & Live Status Badge */}
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gold-300/10">
+                            <div className="flex items-center gap-3.5">
+                              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500/20 to-gold-300/20 text-gold-200 border border-gold-300/30 flex items-center justify-center font-bold text-base shrink-0 shadow-inner">
+                                {reqCarerName.charAt(0)}
                               </div>
-                              <div className="flex items-center gap-2 text-xs text-gold-100/70">
-                                <Calendar className="w-3.5 h-3.5 text-amber-400" />
-                                <span>
-                                  {new Date(req.startDate).toLocaleDateString("en-GB", {
-                                    day: "numeric",
-                                    month: "short",
-                                    year: "numeric",
-                                  })}{" "}
-                                  –{" "}
-                                  {new Date(req.endDate).toLocaleDateString("en-GB", {
+                              <div>
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <span className="font-bold text-white text-base tracking-wide">
+                                    {reqCarerName}
+                                  </span>
+                                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                                    Primary Carer
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-3 text-xs text-gold-100/60 mt-0.5 flex-wrap">
+                                  {reqCarerEmail && (
+                                    <span className="flex items-center gap-1">
+                                      <Mail className="w-3 h-3 text-gold-DEFAULT" /> {reqCarerEmail}
+                                    </span>
+                                  )}
+                                  {reqCarerPhone && (
+                                    <span className="flex items-center gap-1">
+                                      <Phone className="w-3 h-3 text-gold-DEFAULT" /> {reqCarerPhone}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Live Status Pill */}
+                            <div className="self-start sm:self-center flex items-center gap-2 flex-wrap">
+                              <span
+                                className={`inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider border shadow-sm ${
+                                  isConfirmed || isApproved
+                                    ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/30"
+                                    : isCancelled
+                                    ? "bg-rose-500/20 text-rose-300 border-rose-500/30"
+                                    : isOffered
+                                    ? "bg-blue-500/20 text-blue-300 border-blue-500/30"
+                                    : "bg-amber-500/20 text-amber-300 border-amber-500/30 animate-pulse"
+                                }`}
+                              >
+                                <span
+                                  className={`w-2 h-2 rounded-full ${
+                                    isConfirmed || isApproved
+                                      ? "bg-emerald-400"
+                                      : isCancelled
+                                      ? "bg-rose-400"
+                                      : isOffered
+                                      ? "bg-blue-400"
+                                      : "bg-amber-400"
+                                  }`}
+                                />
+                                {isConfirmed || isApproved
+                                  ? "Approved"
+                                  : isCancelled
+                                  ? "Declined"
+                                  : "Pending"}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* 2. Dates & Duration Banner */}
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-4 rounded-xl bg-navy-950/70 border border-gold-300/10">
+                            <div className="flex items-center gap-3">
+                              <div className="p-2.5 rounded-xl bg-amber-500/15 text-amber-400 border border-amber-500/25 shrink-0">
+                                <Calendar className="w-4 h-4" />
+                              </div>
+                              <div>
+                                <span className="text-[10px] uppercase font-bold text-gold-100/50 block tracking-wider">
+                                  Start Date (First Day Away)
+                                </span>
+                                <span className="text-sm font-bold text-white">
+                                  {sDate.toLocaleDateString("en-GB", {
+                                    weekday: "short",
                                     day: "numeric",
                                     month: "short",
                                     year: "numeric",
@@ -1084,61 +1203,292 @@ export default function AdminPlacementDetailModal({
                                 </span>
                               </div>
                             </div>
+
+                            <div className="flex items-center gap-3">
+                              <div className="p-2.5 rounded-xl bg-amber-500/15 text-amber-400 border border-amber-500/25 shrink-0">
+                                <Calendar className="w-4 h-4" />
+                              </div>
+                              <div>
+                                <span className="text-[10px] uppercase font-bold text-gold-100/50 block tracking-wider">
+                                  End Date (Last Day Away)
+                                </span>
+                                <span className="text-sm font-bold text-white">
+                                  {eDate.toLocaleDateString("en-GB", {
+                                    weekday: "short",
+                                    day: "numeric",
+                                    month: "short",
+                                    year: "numeric",
+                                  })}
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-3 md:justify-end">
+                              <div className="px-3.5 py-2 rounded-xl bg-gold-DEFAULT/10 border border-gold-DEFAULT/25 text-gold-DEFAULT text-xs font-bold text-center">
+                                <span className="text-[10px] uppercase block text-gold-100/60 font-semibold">
+                                  Total Duration
+                                </span>
+                                {daysDiff} {daysDiff === 1 ? "Day" : "Days"} Absence
+                              </div>
+                            </div>
                           </div>
 
-                          {/* Admin Action Alert */}
-                          {isPendingRelief && (
-                            <div className="p-4 rounded-xl bg-amber-950/30 border border-amber-500/30 space-y-3">
-                              <div className="flex items-start gap-2.5">
-                                <div className="p-1 rounded-full bg-amber-500/20 text-amber-400 mt-0.5">
-                                  <Sparkles className="w-4 h-4" />
-                                </div>
-                                <div className="space-y-1">
-                                  <span className="font-bold text-xs text-amber-300 block">
-                                    Relief Dispatch Action Required:
+                          {/* 3. Reason & Carer Notes */}
+                          <div className="p-4 rounded-xl bg-navy-950/40 border border-gold-300/10 space-y-2">
+                            <div className="flex items-center gap-2">
+                              <Plane className="w-3.5 h-3.5 text-amber-400" />
+                              <span className="text-xs font-bold text-amber-300 uppercase tracking-wider">
+                                Leave Reason: {reasonCategory}
+                              </span>
+                            </div>
+                            {reasonNotes && (
+                              <div className="text-xs text-gold-100/80 pl-5.5 italic border-l-2 border-gold-300/30 py-0.5">
+                                "{reasonNotes}"
+                              </div>
+                            )}
+                            {req.adminNotes && (
+                              <div className="text-[11px] text-emerald-300/90 pl-5.5 flex items-center gap-1.5 pt-1">
+                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                                <span>Admin Note: {req.adminNotes}</span>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* 4. Action & Relief Dispatch Controls */}
+                          <div className="space-y-4 pt-1">
+                            {/* Approved Notification if already approved prior to relief confirmation */}
+                            {isApproved && !isConfirmed && (
+                              <div className="p-3.5 rounded-xl bg-emerald-950/20 border border-emerald-500/25 text-xs text-emerald-200 flex items-center justify-between gap-3">
+                                <div className="flex items-center gap-2.5">
+                                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                                  <span>
+                                    Leave request approved by admin. You can dispatch relief cover below to a backup carer whenever needed.
                                   </span>
-                                  <p className="text-xs text-gold-100/80 leading-relaxed">
-                                    {primaryCarerName} has requested time off for these dates. Dispatch the relief opportunity offer directly to your designated Preferred Backup Carer ({backupName || "Preferred Backup Carer"}).
-                                  </p>
+                                </div>
+                                <span className="text-[11px] font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20 shrink-0">
+                                  ✓ Approved
+                                </span>
+                              </div>
+                            )}
+
+                            {/* Confirmed Cover Banner */}
+                            {isConfirmed && (
+                              <div className="p-4 rounded-xl bg-emerald-950/30 border border-emerald-500/30 text-xs text-emerald-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div className="flex items-center gap-2.5">
+                                  <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+                                  <div>
+                                    <span className="font-bold text-white block">
+                                      Relief Cover Confirmed & Active
+                                    </span>
+                                    <span className="text-emerald-300/80">
+                                      {reliefCarerName || "Backup Carer"} accepted and is scheduled to cover this placement period.
+                                    </span>
+                                  </div>
+                                </div>
+
+                                {isApproved ? (
+                                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 shrink-0">
+                                    <Check className="w-3.5 h-3.5 text-emerald-400" />
+                                    Leave Approved
+                                  </span>
+                                ) : (
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    disabled={approvingLeaveId === req.id}
+                                    onClick={() => handleApproveLeave(req.id)}
+                                    className="font-bold text-xs shrink-0 !border-emerald-500/40 !text-emerald-300 hover:!bg-emerald-500/15"
+                                  >
+                                    <Check className="w-3.5 h-3.5 mr-1 text-emerald-400" />
+                                    {approvingLeaveId === req.id ? "Approving..." : "Approve Leave"}
+                                  </Button>
+                                )}
+                              </div>
+                            )}
+
+                            {/* Pending Relief Dispatch Options (Buttons for 1st Backup, 2nd Backup, and Approve Leave) */}
+                            {!isConfirmed && (
+                              <div className="p-5 rounded-2xl bg-navy-950/60 border border-gold-300/15 space-y-4">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gold-300/10 pb-3">
+                                  <div>
+                                    <h5 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+                                      <Send className="w-3.5 h-3.5 text-gold-DEFAULT" />
+                                      Dispatch Relief Offer to Backup Carer
+                                    </h5>
+                                    <p className="text-[11px] text-gold-100/60 mt-0.5">
+                                      Send a 1-click relief opportunity to either designated backup carer, or approve the leave directly.
+                                    </p>
+                                  </div>
+
+                                  {/* Approve Leave Button */}
+                                  {isApproved ? (
+                                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 shrink-0">
+                                      <Check className="w-3.5 h-3.5 text-emerald-400" />
+                                      Leave Approved
+                                    </span>
+                                  ) : (
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      disabled={approvingLeaveId === req.id}
+                                      onClick={() => handleApproveLeave(req.id)}
+                                      className="font-bold text-xs shrink-0 !border-emerald-500/40 !text-emerald-300 hover:!bg-emerald-500/15"
+                                    >
+                                      <Check className="w-3.5 h-3.5 mr-1 text-emerald-400" />
+                                      {approvingLeaveId === req.id ? "Approving..." : "Approve Leave"}
+                                    </Button>
+                                  )}
+                                </div>
+
+                                {/* Two Backup Carer Option Cards */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                                  {/* Option 1: 1st Choice Preferred Backup Carer */}
+                                  <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-950/15 flex flex-col justify-between gap-3">
+                                    <div className="space-y-1">
+                                      <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider block">
+                                        1st Choice Backup Carer
+                                      </span>
+                                      <span className="font-bold text-sm text-white block">
+                                        {backup1 ? backup1Name : "No 1st Backup Allocated"}
+                                      </span>
+                                      <p className="text-[11px] text-gold-100/60">
+                                        {backup1
+                                          ? "Designated preferred carer for first-priority relief"
+                                          : "Assign candidate from your pool as 1st backup"}
+                                      </p>
+                                    </div>
+
+                                    <div className="pt-2 border-t border-amber-500/15">
+                                      {backup1 ? (
+                                        isOfferedToBackup1 ? (
+                                          <div className="space-y-1.5">
+                                            <Button
+                                              variant="outline"
+                                              size="sm"
+                                              disabled
+                                              className="w-full font-bold text-xs py-2 !border-amber-500/50 !bg-amber-500/15 !text-amber-300 opacity-95 cursor-default flex items-center justify-center gap-1.5"
+                                            >
+                                              <Clock className="w-3.5 h-3.5 text-amber-400" />
+                                              Waiting for Acceptance
+                                            </Button>
+                                            <div className="flex items-center justify-between text-[10px] text-amber-200/70 px-1">
+                                              <span>Relief offer sent to {backup1Name.split(" ")[0]}</span>
+                                              <button
+                                                type="button"
+                                                disabled={dispatchingLeaveId === `${req.id}-${backup1.id}`}
+                                                onClick={() => handleDispatchRelief(req.id, backup1, "1st Choice Backup")}
+                                                className="text-amber-400 hover:text-amber-300 underline font-medium cursor-pointer"
+                                              >
+                                                {dispatchingLeaveId === `${req.id}-${backup1.id}` ? "Re-sending..." : "Re-send Offer"}
+                                              </button>
+                                            </div>
+                                          </div>
+                                        ) : (
+                                          <Button
+                                            variant="primary"
+                                            size="sm"
+                                            disabled={dispatchingLeaveId === `${req.id}-${backup1.id}`}
+                                            onClick={() => handleDispatchRelief(req.id, backup1, "1st Choice Backup")}
+                                            className="w-full font-bold text-xs py-2 shadow-md shadow-gold/20"
+                                          >
+                                            <Send className="w-3.5 h-3.5 mr-1.5" />
+                                            {dispatchingLeaveId === `${req.id}-${backup1.id}`
+                                              ? "Dispatching..."
+                                              : `Send Relief Offer to ${backup1Name.split(" ")[0] || "1st Backup"}`}
+                                          </Button>
+                                        )
+                                      ) : (
+                                        <Button
+                                          variant="outline"
+                                          size="sm"
+                                          onClick={() => {
+                                            setBackupTargetPriority(1);
+                                            setIsSelectBackupOpen(true);
+                                          }}
+                                          className="w-full font-bold text-xs py-2 border-amber-500/40 text-amber-300 hover:bg-amber-500/10"
+                                        >
+                                          <UserPlus className="w-3.5 h-3.5 mr-1.5" />
+                                          + Assign 1st Backup
+                                        </Button>
+                                      )}
+                                    </div>
+                                  </div>
+
+                                  {/* Option 2: 2nd Choice Secondary Backup Carer */}
+                                  <div className="p-4 rounded-xl border border-blue-500/30 bg-blue-950/15 flex flex-col justify-between gap-3">
+                                    <div className="space-y-1">
+                                      <span className="text-[10px] font-bold text-blue-400 uppercase tracking-wider block">
+                                        2nd Choice Backup Carer
+                                      </span>
+                                      <span className="font-bold text-sm text-white block">
+                                        {backup2 ? backup2Name : "No 2nd Backup Allocated"}
+                                      </span>
+                                      <p className="text-[11px] text-gold-100/60">
+                                        {backup2
+                                          ? "Secondary backup safety net if 1st choice is unavailable"
+                                          : "Assign candidate from your pool as 2nd backup"}
+                                      </p>
+                                    </div>
+
+                                    <div className="pt-2 border-t border-blue-500/15">
+                                      {backup2 ? (
+                                        isOfferedToBackup2 ? (
+                                          <div className="space-y-1.5">
+                                            <Button
+                                              variant="outline"
+                                              size="sm"
+                                              disabled
+                                              className="w-full font-bold text-xs py-2 !border-blue-500/50 !bg-blue-500/15 !text-blue-300 opacity-95 cursor-default flex items-center justify-center gap-1.5"
+                                            >
+                                              <Clock className="w-3.5 h-3.5 text-blue-400" />
+                                              Waiting for Acceptance
+                                            </Button>
+                                            <div className="flex items-center justify-between text-[10px] text-blue-200/70 px-1">
+                                              <span>Relief offer sent to {backup2Name.split(" ")[0]}</span>
+                                              <button
+                                                type="button"
+                                                disabled={dispatchingLeaveId === `${req.id}-${backup2.id}`}
+                                                onClick={() => handleDispatchRelief(req.id, backup2, "2nd Choice Backup")}
+                                                className="text-blue-400 hover:text-blue-300 underline font-medium cursor-pointer"
+                                              >
+                                                {dispatchingLeaveId === `${req.id}-${backup2.id}` ? "Re-sending..." : "Re-send Offer"}
+                                              </button>
+                                            </div>
+                                          </div>
+                                        ) : (
+                                          <Button
+                                            variant="outline"
+                                            size="sm"
+                                            disabled={dispatchingLeaveId === `${req.id}-${backup2.id}`}
+                                            onClick={() => handleDispatchRelief(req.id, backup2, "2nd Choice Backup")}
+                                            className="w-full font-bold text-xs py-2 !border-blue-500/40 !text-blue-300 hover:!bg-blue-500/20"
+                                          >
+                                            <Send className="w-3.5 h-3.5 mr-1.5" />
+                                            {dispatchingLeaveId === `${req.id}-${backup2.id}`
+                                              ? "Dispatching..."
+                                              : `Send Relief Offer to ${backup2Name.split(" ")[0] || "2nd Backup"}`}
+                                          </Button>
+                                        )
+                                      ) : (
+                                        <Button
+                                          variant="outline"
+                                          size="sm"
+                                          onClick={() => {
+                                            setBackupTargetPriority(2);
+                                            setIsSelectBackupOpen(true);
+                                          }}
+                                          className="w-full font-bold text-xs py-2 border-blue-500/40 text-blue-300 hover:bg-blue-500/10"
+                                        >
+                                          <UserPlus className="w-3.5 h-3.5 mr-1.5" />
+                                          + Assign 2nd Backup
+                                        </Button>
+                                      )}
+                                    </div>
+                                  </div>
                                 </div>
                               </div>
-
-                              <div className="flex justify-end pt-1">
-                                <Button
-                                  variant="primary"
-                                  size="sm"
-                                  disabled={dispatchingLeaveId === req.id}
-                                  onClick={() => handleDispatchRelief(req.id)}
-                                  className="font-bold text-xs shadow-md shadow-gold/20"
-                                >
-                                  <Send className="w-3.5 h-3.5 mr-1.5" />
-                                  {dispatchingLeaveId === req.id
-                                    ? "Dispatching..."
-                                    : `Offer to ${backupName || "Backup Carer"}`}
-                                </Button>
-                              </div>
-                            </div>
-                          )}
-
-                          {isOffered && (
-                            <div className="p-3.5 rounded-xl bg-blue-950/30 border border-blue-500/30 text-xs text-blue-200/90 flex items-center justify-between gap-3">
-                              <span>
-                                Relief placement offer sent to <strong>{backupName}</strong>. Awaiting carer acceptance in portal.
-                              </span>
-                              <span className="text-[10px] text-blue-300 uppercase tracking-wider font-semibold">
-                                Pending Carer Response
-                              </span>
-                            </div>
-                          )}
-
-                          {isConfirmed && (
-                            <div className="p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-500/30 text-xs text-emerald-200 flex items-center gap-2">
-                              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                              <span>
-                                <strong>{backupName}</strong> has confirmed relief cover for these dates and is active as the Relief Carer.
-                              </span>
-                            </div>
-                          )}
+                            )}
+                          </div>
                         </div>
                       );
                     })}
@@ -1673,32 +2023,28 @@ export default function AdminPlacementDetailModal({
         />
       )}
 
-      {/* Select Preferred Backup Carer Modal via Candidate & Interest List Modal */}
+      {/* Care Request Candidate Hub Modal for Backup Carer Selection */}
       {isSelectBackupOpen && placement && (
         <AdminApplicationsModal
-          careRequestId={placement.careRequestId}
-          clientProfileId={placement.clientProfileId}
-          clientName={clientName}
           placementId={placement.id}
+          careRequestId={placement.careRequestId || placement.careRequest?.id || null}
+          careRequestStatus={placement.careRequest?.status || "CARER_SELECTED"}
+          clientProfileId={placement.clientProfileId || (placement.clientProfile as any)?.id || ""}
+          clientName={clientName}
+          primaryCarerProfileId={placement.carerProfileId || (placement.carerProfile as any)?.id}
+          preferredBackupCarerId={placement.preferredBackupCarerProfileId || placement.preferredBackupCarer?.id}
+          backupCarers={placement.backupCarers || []}
+          targetPriority={backupTargetPriority}
           initialTab="interest-list"
-          onClose={() => setIsSelectBackupOpen(false)}
+          onClose={() => {
+            setIsSelectBackupOpen(false);
+            setBackupTargetPriority(1);
+          }}
           onStatusUpdated={() => {
             loadPlacement();
             if (onPlacementUpdated) onPlacementUpdated();
           }}
-          onBackupSelected={(carer) => {
-            setPreferredBackupCarer({
-              id: carer.id,
-              userId: carer.userId || carer.id,
-              user: {
-                id: carer.id,
-                firstName: carer.firstName || carer.name?.split(" ")[0] || "Preferred",
-                lastName: carer.lastName || carer.name?.split(" ")[1] || "Backup",
-                email: carer.email || "carer@example.com",
-                phoneNumber: carer.phoneNumber || "+44 222 222 222",
-              },
-            });
-            setIsSelectBackupOpen(false);
+          onBackupSelected={() => {
             loadPlacement();
             if (onPlacementUpdated) onPlacementUpdated();
           }}

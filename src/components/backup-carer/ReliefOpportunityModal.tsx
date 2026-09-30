@@ -131,7 +131,7 @@ export default function ReliefOpportunityModal({
               <div className="flex justify-between border-b border-gold-300/10 pb-2">
                 <span className="text-gold-100/60">Relief Dates:</span>
                 <span className="font-semibold text-gold-100">
-                  {formattedStartDate} – {formattedEndDate} ({offer.nightsCount} nights)
+                  {formattedStartDate} – {formattedEndDate} ({offer.nightsCount} days)
                 </span>
               </div>
               <div className="flex justify-between border-b border-gold-300/10 pb-2">
@@ -298,7 +298,7 @@ export default function ReliefOpportunityModal({
                   </span>
                   <div className="flex items-center gap-1.5 text-gold-100 font-medium">
                     <Clock className="w-3.5 h-3.5 text-amber-400" />
-                    <span>{offer.nightsCount} nights / days</span>
+                    <span>{offer.nightsCount} days</span>
                   </div>
                 </div>
               </div>

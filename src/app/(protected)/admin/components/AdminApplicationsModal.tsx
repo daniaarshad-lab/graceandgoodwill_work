@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { adminService } from "@/services/admin/admin.service";
 import { backupCarerService } from "@/services/backupCarer.service";
 import {
@@ -23,10 +24,15 @@ import { reviewInterestList } from "@/store/slices/adminSlice";
 
 interface AdminApplicationsModalProps {
   careRequestId?: string | null;
+  careRequestStatus?: string;
   clientProfileId: string;
   clientName?: string;
   placementId?: string;
   initialTab?: "applicants" | "interest-list";
+  targetPriority?: number;
+  primaryCarerProfileId?: string;
+  preferredBackupCarerId?: string;
+  backupCarers?: any[];
   onClose: () => void;
   onStatusUpdated?: () => void;
   onBackupSelected?: (carer: any) => void;
@@ -36,10 +42,15 @@ type TabType = "applicants" | "interest-list";
 
 export default function AdminApplicationsModal({
   careRequestId,
+  careRequestStatus,
   clientProfileId,
   clientName,
   placementId,
   initialTab = "applicants",
+  targetPriority = 1,
+  primaryCarerProfileId,
+  preferredBackupCarerId,
+  backupCarers,
   onClose,
   onStatusUpdated,
   onBackupSelected,
@@ -47,6 +58,7 @@ export default function AdminApplicationsModal({
   const dispatch = useAppDispatch();
   const router = useRouter();
 
+  const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>(initialTab);
   const [applications, setApplications] = useState<any[]>([]);
   const [interestList, setInterestList] = useState<any[]>([]);
@@ -57,10 +69,32 @@ export default function AdminApplicationsModal({
   const [selectedPlacementId, setSelectedPlacementId] = useState<string>(
     placementId || careRequestId || ""
   );
-  const [designatedBackupCarerId, setDesignatedBackupCarerId] = useState<string | null>(null);
+
+  const current1stBackupId =
+    preferredBackupCarerId ||
+    backupCarers?.find((b: any) => b.priority === 1)?.carerProfileId ||
+    backupCarers?.find((b: any) => b.priority === 1)?.carerProfile?.id;
+
+  const current2ndBackupId =
+    backupCarers?.find((b: any) => b.priority === 2)?.carerProfileId ||
+    backupCarers?.find((b: any) => b.priority === 2)?.carerProfile?.id;
+
+  const currentTargetBackupId =
+    targetPriority === 2 ? current2ndBackupId : current1stBackupId;
+
+  const [designatedBackupCarerId, setDesignatedBackupCarerId] = useState<string | null>(
+    currentTargetBackupId || null
+  );
+
+  useEffect(() => {
+    if (currentTargetBackupId) {
+      setDesignatedBackupCarerId(currentTargetBackupId);
+    }
+  }, [currentTargetBackupId]);
 
   // Lock outer scroll while modal is active
   useEffect(() => {
+    setMounted(true);
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
@@ -109,10 +143,11 @@ export default function AdminApplicationsModal({
 
       const [appsData, interestData] = await Promise.all(promises);
 
-      setApplications(Array.isArray(appsData) ? appsData : []);
+      const appsList = Array.isArray(appsData) ? appsData : [];
+      setApplications(appsList);
 
-      if (appsData && appsData.length > 0) {
-        const withPlacement = appsData.find((d: any) => d.placementId || d.placement?.id);
+      if (appsList && appsList.length > 0) {
+        const withPlacement = appsList.find((d: any) => d.placementId || d.placement?.id);
         if (withPlacement && !placementId) {
           setSelectedPlacementId(withPlacement.placementId || withPlacement.placement?.id);
         }
@@ -122,6 +157,10 @@ export default function AdminApplicationsModal({
         ? interestData
         : interestData?.interestList || interestData?.data || [];
       setInterestList(normalizedInterest);
+
+      if (appsList.length === 0 && normalizedInterest.length > 0 && initialTab === "applicants") {
+        setActiveTab("interest-list");
+      }
     } catch (err: any) {
       setError(err.message || "Failed to load candidates data");
     } finally {
@@ -130,8 +169,8 @@ export default function AdminApplicationsModal({
   };
 
   const selectedApp = applications.find((app) => app.status === "SELECTED");
-  const hasSelectedCarer = Boolean(selectedApp);
-  const selectedCarerProfileId = selectedApp?.carerProfileId;
+  const hasSelectedCarer = Boolean(selectedApp || primaryCarerProfileId || placementId);
+  const selectedCarerProfileId = selectedApp?.carerProfileId || primaryCarerProfileId;
 
   // Handle approving or rejecting an applicant
   const handleUpdateStatus = async (carerProfileId: string, status: string) => {
@@ -163,6 +202,31 @@ export default function AdminApplicationsModal({
   };
 
   // Handle selecting a carer from the Client Interest List as Primary
+
+  const handleAssignFromInterestList = async (carerProfileId: string, carerName: string) => {
+    if (!careRequestId) return;
+    setUpdatingId(carerProfileId);
+    try {
+      await dispatch(
+        reviewInterestList({
+          careRequestId,
+          clientId: clientProfileId,
+          carerId: carerProfileId,
+          status: "ASSIGNED" as any,
+        })
+      ).unwrap();
+      showSuccessToast(
+        "Assigned",
+        `${carerName} has been assigned (awaiting client approval).`
+      );
+      await loadAll();
+      if (onStatusUpdated) onStatusUpdated();
+    } catch (err: any) {
+      showErrorToast("Assignment Failed", err.message || "Failed to assign carer.");
+    } finally {
+      setUpdatingId(null);
+    }
+  };
   const handleSelectFromInterestList = async (carerProfileId: string, carerName: string) => {
     if (!careRequestId) {
       showErrorToast("Error", "No care request associated with this selection.");
@@ -191,19 +255,21 @@ export default function AdminApplicationsModal({
     }
   };
 
-  // Handle designating as Preferred Backup Carer
+  // Handle designating as Preferred / Backup Carer
   const handleDesignateBackup = async (carerProfileId: string, carerName: string, rawCarer?: any) => {
     setUpdatingId(carerProfileId);
     const targetPlacementId = selectedPlacementId || placementId || careRequestId || "";
     try {
-      await backupCarerService.designatePreferredBackup(
-        targetPlacementId,
-        carerProfileId
-      );
+      if (targetPriority === 2) {
+        await backupCarerService.designateBackupCarer(targetPlacementId, carerProfileId, 2);
+      } else {
+        await backupCarerService.designatePreferredBackup(targetPlacementId, carerProfileId);
+        await backupCarerService.designateBackupCarer(targetPlacementId, carerProfileId, 1).catch(() => {});
+      }
       setDesignatedBackupCarerId(carerProfileId);
       showSuccessToast(
-        "Preferred Backup Carer Designated!",
-        `${carerName} is now designated as the Preferred Backup Carer. Zero extra charge.`
+        `${targetPriority === 2 ? "2nd Choice Backup" : "Preferred Backup"} Carer Designated!`,
+        `${carerName} is now designated as the ${targetPriority === 2 ? "2nd Choice Secondary" : "1st Choice Preferred"} Backup Carer. Zero extra charge.`
       );
 
       if (onBackupSelected) {
@@ -225,21 +291,48 @@ export default function AdminApplicationsModal({
     }
   };
 
+  const handleRemoveBackup = async (carerProfileId: string, carerName: string) => {
+    const targetPlacementId = selectedPlacementId || placementId || careRequestId || "";
+    setUpdatingId(carerProfileId);
+    try {
+      await backupCarerService.removeBackupCarer(targetPlacementId, carerProfileId);
+      setDesignatedBackupCarerId(null);
+      showSuccessToast(
+        "Backup Carer Removed",
+        `${carerName} removed from ${targetPriority === 2 ? "2nd Choice" : "1st Choice Preferred"} Backup Carer role.`
+      );
+      await loadAll();
+      if (onStatusUpdated) onStatusUpdated();
+    } catch (err: any) {
+      showErrorToast("Action Failed", err.message || "Failed to remove backup carer.");
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
   const filteredApps = applications;
   const filteredInterest = interestList;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm animate-fadeIn">
-      <div className="w-full max-w-4xl rounded-2xl border border-gold-300/25 bg-navy-900 shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+  if (!mounted) return null;
+
+  const modalContent = (
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 p-4 sm:p-6 pt-20 sm:pt-24 pb-6 backdrop-blur-sm animate-fadeIn">
+      <div className="w-full max-w-4xl rounded-2xl border border-gold-300/25 bg-navy-900 shadow-2xl flex flex-col max-h-[calc(100vh-6rem)] overflow-hidden">
         {/* ========================================================= */}
         {/* 1. MODAL HEADER                                           */}
         {/* ========================================================= */}
         <div className="shrink-0 p-5 sm:p-6 border-b border-gold-300/15 bg-navy-950/70 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
           <div>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-gold-400 bg-gold-400/10 px-2 py-0.5 rounded-full border border-gold-400/20">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-gold-400 bg-gold-400/10 px-2.5 py-0.5 rounded-full border border-gold-400/20">
                 Care Request Candidate Hub
               </span>
+              {placementId && (
+                <span className="text-[10px] font-bold uppercase tracking-wider text-amber-300 bg-amber-500/10 px-2.5 py-0.5 rounded-full border border-amber-500/25 flex items-center gap-1">
+                  <Shield className="w-3 h-3 text-amber-400" />
+                  {targetPriority === 2 ? "Designating 2nd Choice Backup" : "Designating 1st Choice Preferred Backup"}
+                </span>
+              )}
               {clientName && (
                 <span className="text-xs text-gold-100/60">
                   Client: <strong className="text-white">{clientName}</strong>
@@ -247,7 +340,9 @@ export default function AdminApplicationsModal({
               )}
             </div>
             <h3 className="text-xl font-bold text-white mt-1">
-              Candidates, Applicants & Client Interest List
+              {placementId
+                ? `Designate ${targetPriority === 2 ? "2nd Choice" : "1st Choice Preferred"} Backup Carer`
+                : "Candidates, Applicants & Client Interest List"}
             </h3>
             <p className="text-xs text-gold-100/60 mt-0.5">
               Review carers who applied directly or were shortlisted in the client’s interest list to allocate Primary or Preferred Backup Carers.
@@ -349,9 +444,17 @@ export default function AdminApplicationsModal({
                           app.placementStatus === "ACTIVE" ||
                           app.placementStatus === "ONGOING"
                       );
-                      const isSelected = app.status === "SELECTED";
-                      const isPreferredBackup =
-                        designatedBackupCarerId === carerProfileId;
+                      const isSelected =
+                        app.status === "SELECTED" ||
+                        (primaryCarerProfileId && carerProfileId === primaryCarerProfileId);
+                      const isCurrentTargetBackup =
+                        designatedBackupCarerId === carerProfileId ||
+                        currentTargetBackupId === carerProfileId;
+                      const isOtherBackup =
+                        targetPriority === 1
+                          ? carerProfileId === current2ndBackupId
+                          : carerProfileId === current1stBackupId;
+                      const isPreferredBackup = isCurrentTargetBackup;
 
                       return (
                         <div
@@ -428,10 +531,19 @@ export default function AdminApplicationsModal({
                             </div>
                           </div>
 
+
+
                           {/* Action controls */}
                           <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
-                            {/* Approve as Primary */}
-                            {app.status === "PENDING" && (
+                            {app.isAssignedByAdmin ? (
+                              <span className="text-xs font-bold text-emerald-300 px-3 py-1.5 rounded-lg border border-emerald-500/20 bg-emerald-500/10 flex items-center gap-1">
+                                <CheckCircle2 className="w-4 h-4" /> Selected by Admin
+                              </span>
+                            ) : isSelected ? (
+                              <span className="text-xs font-bold text-emerald-300 px-3 py-1.5 rounded-lg border border-emerald-500/20 bg-emerald-500/10 flex items-center gap-1">
+                                <Check className="w-4 h-4" /> Selected as Primary
+                              </span>
+                            ) : careRequestStatus === "INFORM_CLIENT_TO_AVAILABLE_CARER" && app.status === "PENDING" ? (
                               <>
                                 <Button
                                   variant="outline"
@@ -443,46 +555,61 @@ export default function AdminApplicationsModal({
                                 >
                                   {updatingId === carerProfileId ? "..." : "Reject"}
                                 </Button>
-
+                                <Button
+                                  variant="primary"
+                                  size="sm"
+                                  fullWidth={false}
+                                  disabled={updatingId === carerProfileId || hasSelectedCarer}
+                                  onClick={() => handleUpdateStatus(carerProfileId, "SELECTED")}
+                                  className="text-xs font-bold shadow-md shadow-gold/20"
+                                >
+                                  {updatingId === carerProfileId ? "..." : "Approve"}
+                                </Button>
                                 <Button
                                   variant="outline"
                                   size="sm"
                                   fullWidth={false}
                                   disabled={updatingId === carerProfileId || hasSelectedCarer}
-                                  title={
-                                    hasSelectedCarer
-                                      ? "Another carer is already selected. You can set this carer as the Preferred Backup Carer."
-                                      : "Approve and send placement offer as Primary Carer"
-                                  }
-                                  onClick={() => handleUpdateStatus(carerProfileId, "SELECTED")}
-                                  className={`text-xs flex items-center gap-1.5 ${
-                                    hasSelectedCarer
-                                      ? "!border-gray-700 !text-gray-500 !opacity-40 !cursor-not-allowed"
-                                      : "!border-emerald-500/40 !text-emerald-300 hover:!bg-emerald-500/15 font-bold"
-                                  }`}
+                                  onClick={() => handleUpdateStatus(carerProfileId, "ASSIGNED")}
+                                  className="text-xs !border-blue-500/40 !text-blue-300 hover:!bg-blue-500/15"
                                 >
-                                  <Check className="w-3.5 h-3.5" />
-                                  <span>{updatingId === carerProfileId ? "..." : "Approve as Primary"}</span>
+                                  {updatingId === carerProfileId ? "..." : "Assign"}
                                 </Button>
                               </>
-                            )}
-
-                            {/* Set as Preferred Backup Carer */}
-                            {!isSelected && (
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                fullWidth={false}
-                                disabled={updatingId === carerProfileId || isPreferredBackup}
-                                onClick={() => handleDesignateBackup(carerProfileId, carerName, app.carerProfile)}
-                                className="!border-amber-500/40 !text-amber-300 hover:!bg-amber-500/15 text-xs flex items-center gap-1 font-semibold"
-                                title="Designate this applicant as the Preferred Backup Carer"
-                              >
-                                <Shield className="w-3 h-3 text-amber-400" />
-                                <span>{isPreferredBackup ? "Designated Backup" : "Set as Backup"}</span>
-                              </Button>
-                            )}
-
+                            ) : (careRequestStatus === "CARER_SELECTED" || Boolean(placementId) || hasSelectedCarer) && !isSelected && !app.isAssignedByAdmin ? (
+                              isCurrentTargetBackup ? (
+                                <div className="flex items-center gap-1.5">
+                                  <span className="text-xs font-bold text-amber-300 px-3 py-1.5 rounded-lg border border-amber-500/30 bg-amber-500/15 flex items-center gap-1">
+                                    <Shield className="w-3.5 h-3.5 text-amber-400" />
+                                    {targetPriority === 2 ? "2nd Backup" : "Preferred Backup"}
+                                  </span>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    fullWidth={false}
+                                    disabled={updatingId === carerProfileId}
+                                    onClick={() => handleRemoveBackup(carerProfileId, carerName)}
+                                    className="!border-rose-500/30 !text-rose-400 hover:!bg-rose-500/10 text-xs"
+                                    title="Remove this backup carer assignment"
+                                  >
+                                    {updatingId === carerProfileId ? "..." : "Remove"}
+                                  </Button>
+                                </div>
+                              ) : (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  fullWidth={false}
+                                  disabled={updatingId === carerProfileId}
+                                  onClick={() => handleDesignateBackup(carerProfileId, carerName, app.carerProfile)}
+                                  className="text-xs flex items-center gap-1 font-semibold !border-amber-500/40 !text-amber-300 hover:!bg-amber-500/15"
+                                  title={`Designate this applicant as the ${targetPriority === 2 ? "2nd Choice" : "1st Choice Preferred"} Backup Carer`}
+                                >
+                                  <Shield className="w-3 h-3 text-amber-400" />
+                                  <span>{targetPriority === 2 ? "Set as 2nd Backup" : "Set as Backup"}</span>
+                                </Button>
+                              )
+                            ) : null}
                             {/* View Carer Details */}
                             <Button
                               variant="ghost-gold"
@@ -522,13 +649,25 @@ export default function AdminApplicationsModal({
                     filteredInterest.map((carer: any, idx: number) => {
                       const carerProfileId = carer.carerProfileId || carer.id;
                       const carerName =
-                        `${carer.firstName || ""} ${carer.lastName || ""} ${carer.name || ""}`.trim() ||
-                        "Shortlisted Carer";
+                        (
+                          carer.user
+                            ? `${carer.user.firstName || ""} ${carer.user.lastName || ""}`
+                            : (carer.firstName || carer.lastName)
+                              ? `${carer.firstName || ""} ${carer.lastName || ""}`
+                              : carer.name || ""
+                        ).trim() || "Shortlisted Carer";
                       const isSelected =
                         selectedCarerProfileId === carerProfileId ||
-                        carer.isSelected;
-                      const isPreferredBackup =
-                        designatedBackupCarerId === carerProfileId;
+                        carer.isSelected ||
+                        (primaryCarerProfileId && carerProfileId === primaryCarerProfileId);
+                      const isCurrentTargetBackup =
+                        designatedBackupCarerId === carerProfileId ||
+                        currentTargetBackupId === carerProfileId;
+                      const isOtherBackup =
+                        targetPriority === 1
+                          ? carerProfileId === current2ndBackupId
+                          : carerProfileId === current1stBackupId;
+                      const isPreferredBackup = isCurrentTargetBackup;
                       const availability =
                         carer.availabilityStatus || carer.availability || "Available";
 
@@ -571,9 +710,7 @@ export default function AdminApplicationsModal({
                                   <h4 className="font-bold text-sm text-white truncate">
                                     {carerName}
                                   </h4>
-                                  <span className="text-[9px] font-bold text-rose-400 bg-rose-500/10 border border-rose-500/20 px-2 py-0.5 rounded uppercase tracking-wider flex items-center gap-1">
-                                    <Heart className="w-2.5 h-2.5 fill-rose-400" /> Shortlisted by Client
-                                  </span>
+                                
                                   {carer.isAssigned && (
                                     <span className="text-[9px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded uppercase tracking-wider">
                                       Assigned
@@ -608,58 +745,75 @@ export default function AdminApplicationsModal({
                               </div>
                             </div>
 
+
+
                             {/* Action Buttons */}
                             <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
-                              {/* Select as Primary */}
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                fullWidth={false}
-                                disabled={updatingId === carerProfileId || (hasSelectedCarer && !isSelected)}
-                                title={
-                                  hasSelectedCarer && !isSelected
-                                    ? "Another carer is currently selected as primary. You can designate this carer as Preferred Backup Carer."
-                                    : isSelected
-                                    ? "This carer is currently selected"
-                                    : "Select this carer as the Primary Carer and generate placement offer"
-                                }
-                                onClick={() => handleSelectFromInterestList(carerProfileId, carerName)}
-                                className={`text-xs flex items-center gap-1.5 ${
-                                  isSelected
-                                    ? "!border-emerald-500/40 !bg-emerald-500/20 !text-emerald-300 font-bold"
-                                    : hasSelectedCarer
-                                    ? "!border-gray-700 !text-gray-500 !opacity-40 !cursor-not-allowed"
-                                    : "!border-emerald-500/40 !text-emerald-300 hover:!bg-emerald-500/15 font-bold"
-                                }`}
-                              >
-                                <Check className="w-3.5 h-3.5" />
-                                <span>
-                                  {updatingId === carerProfileId
-                                    ? "..."
-                                    : isSelected
-                                    ? "Selected as Primary"
-                                    : "Select as Primary"}
+                              {carer.isAssigned ? (
+                                <span className="text-xs font-bold text-emerald-300 px-3 py-1.5 rounded-lg border border-emerald-500/20 bg-emerald-500/10 flex items-center gap-1">
+                                  <CheckCircle2 className="w-4 h-4" /> Selected by Admin
                                 </span>
-                              </Button>
-
-                              {/* Set as Preferred Backup Carer */}
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                fullWidth={false}
-                                disabled={updatingId === carerProfileId || isSelected || isPreferredBackup}
-                                onClick={() => handleDesignateBackup(carerProfileId, carerName, carer)}
-                                className={`text-xs flex items-center gap-1 font-semibold ${
-                                  isPreferredBackup
-                                    ? "!border-amber-500/40 !bg-amber-500/20 !text-amber-300"
-                                    : "!border-amber-500/40 !text-amber-300 hover:!bg-amber-500/15"
-                                }`}
-                                title="Designate this shortlisted carer as the Preferred Backup Carer"
-                              >
-                                <Shield className="w-3 h-3 text-amber-400" />
-                                <span>{isPreferredBackup ? "Designated Backup" : "Set as Backup"}</span>
-                              </Button>
-
+                              ) : isSelected ? (
+                                <span className="text-xs font-bold text-emerald-300 px-3 py-1.5 rounded-lg border border-emerald-500/20 bg-emerald-500/10 flex items-center gap-1">
+                                  <Check className="w-4 h-4" /> Selected as Primary
+                                </span>
+                              ) : careRequestStatus === "INFORM_CLIENT_TO_AVAILABLE_CARER" ? (
+                                <>
+                                  <Button
+                                    variant="primary"
+                                    size="sm"
+                                    fullWidth={false}
+                                    disabled={updatingId === carerProfileId || hasSelectedCarer}
+                                    onClick={() => handleSelectFromInterestList(carerProfileId, carerName)}
+                                    className="text-xs font-bold shadow-md shadow-gold/20"
+                                  >
+                                    {updatingId === carerProfileId ? "..." : "Approve"}
+                                  </Button>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    fullWidth={false}
+                                    disabled={updatingId === carerProfileId || hasSelectedCarer}
+                                    onClick={() => handleAssignFromInterestList(carerProfileId, carerName)}
+                                    className="text-xs !border-blue-500/40 !text-blue-300 hover:!bg-blue-500/15"
+                                  >
+                                    {updatingId === carerProfileId ? "..." : "Assign"}
+                                  </Button>
+                                </>
+                              ) : (careRequestStatus === "CARER_SELECTED" || Boolean(placementId) || hasSelectedCarer) && !isSelected && !carer.isAssigned ? (
+                                isCurrentTargetBackup ? (
+                                  <div className="flex items-center gap-1.5">
+                                    <span className="text-xs font-bold text-amber-300 px-3 py-1.5 rounded-lg border border-amber-500/30 bg-amber-500/15 flex items-center gap-1">
+                                      <Shield className="w-3.5 h-3.5 text-amber-400" />
+                                      {targetPriority === 2 ? "2nd Backup" : "Preferred Backup"}
+                                    </span>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      fullWidth={false}
+                                      disabled={updatingId === carerProfileId}
+                                      onClick={() => handleRemoveBackup(carerProfileId, carerName)}
+                                      className="!border-rose-500/30 !text-rose-400 hover:!bg-rose-500/10 text-xs"
+                                      title="Remove this backup carer assignment"
+                                    >
+                                      {updatingId === carerProfileId ? "..." : "Remove"}
+                                    </Button>
+                                  </div>
+                                ) : (
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    fullWidth={false}
+                                    disabled={updatingId === carerProfileId}
+                                    onClick={() => handleDesignateBackup(carerProfileId, carerName, carer)}
+                                    className="text-xs flex items-center gap-1 font-semibold !border-amber-500/40 !text-amber-300 hover:!bg-amber-500/15"
+                                    title={`Designate this shortlisted carer as the ${targetPriority === 2 ? "2nd Choice" : "1st Choice Preferred"} Backup Carer`}
+                                  >
+                                    <Shield className="w-3 h-3 text-amber-400" />
+                                    <span>{targetPriority === 2 ? "Set as 2nd Backup" : "Set as Backup"}</span>
+                                  </Button>
+                                )
+                              ) : null}
                               {/* View Carer Profile */}
                               <Button
                                 variant="ghost-gold"
@@ -676,7 +830,6 @@ export default function AdminApplicationsModal({
                               </Button>
                             </div>
                           </div>
-
                           {/* Specialties Pills & Bio Snippet */}
                           {(specialties.length > 0 || carer.summary || carer.bio) && (
                             <div className="pt-2 border-t border-gold-300/10 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
@@ -730,4 +883,6 @@ export default function AdminApplicationsModal({
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 }

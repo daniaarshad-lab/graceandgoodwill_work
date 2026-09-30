@@ -250,6 +250,9 @@ export interface AdminPlacementDetail {
   internalNotes: InternalNote[];
   preferredBackupCarerProfileId?: string | null;
   preferredBackupCarer?: any | null;
+  activeReliefCarer?: any | null;
+  backupCarers?: any[] | null;
+  leaveRequests?: any[] | null;
 }
 
 export interface CarerPayment {

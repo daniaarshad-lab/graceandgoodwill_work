@@ -424,6 +424,7 @@ export default function ClientRequests({
       {selectedRequestIdForApps && (
         <AdminApplicationsModal
           careRequestId={selectedRequestIdForApps}
+          careRequestStatus={requests.find((r) => r.id === selectedRequestIdForApps)?.status}
           clientProfileId={
             requests.find((r) => r.id === selectedRequestIdForApps)
               ?.clientProfileId ||

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Calendar,
   Clock,
@@ -34,6 +34,15 @@ export default function BookTimeOffModal({
   const [reason, setReason] = useState("Annual Leave / Holiday");
   const [notes, setNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -85,7 +94,7 @@ export default function BookTimeOffModal({
   const minDate = new Date().toISOString().split("T")[0];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-navy-950/80 p-4 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-navy-950/80 p-4 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="w-full max-w-lg rounded-2xl border border-gold-300/20 bg-navy-900 shadow-2xl p-6 relative space-y-5">
         <button
           onClick={onClose}
@@ -143,7 +152,7 @@ export default function BookTimeOffModal({
                 <Clock className="w-4 h-4 text-amber-400" /> Total Duration:
               </span>
               <span className="font-bold">
-                {dayCount} days ({dayCount - 1} nights relief required)
+                {dayCount} days
               </span>
             </div>
           )}
@@ -176,19 +185,6 @@ export default function BookTimeOffModal({
               rows={2}
               className="w-full rounded-xl border border-gold-300/20 bg-navy-950 px-3 py-2 text-xs text-gold-100 placeholder:text-gold-100/30 focus:border-gold outline-none"
             />
-          </div>
-
-          {/* Workflow preview notification */}
-          <div className="p-3 rounded-xl bg-navy-950/60 border border-gold-300/10 text-xs text-gold-100/70 space-y-1.5">
-            <div className="flex items-center gap-1.5 text-gold-200 font-semibold">
-              <Sparkles className="w-3.5 h-3.5 text-gold-400" />
-              <span>Relief Cover Dispatch Process:</span>
-            </div>
-            <p className="text-[11px] leading-relaxed">
-              Once submitted, your request will be flagged to Admin as <em>Pending Relief Cover</em>.
-              Our team will immediately offer these dates to the client's designated Preferred Backup
-              Carer.
-            </p>
           </div>
 
           <div className="flex justify-end gap-3 pt-3 border-t border-gold-300/10">

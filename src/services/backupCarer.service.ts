@@ -6,6 +6,7 @@ import {
   PlacementCarerRole,
   WithdrawalEligibility,
   PreferredBackupDesignation,
+  ConfirmedReliefAssignment,
 } from "@/types/backupCarer.types";
 
 const STORAGE_KEY_LEAVE_REQUESTS = "gg_backup_carer_leave_requests";
@@ -121,17 +122,44 @@ export const backupCarerService = {
   },
 
   /**
-   * Get all leave requests for a placement
+   * Get all leave requests for a placement (Works across Admin, Client, and Carer)
    */
   async getLeaveRequests(placementId: string): Promise<CarerLeaveRequest[]> {
+    // 1. Try Admin endpoint first
     try {
-      return await apiFetch(`/carer/placements/${placementId}/leave-requests`, {
+      const adminData = await apiFetch(`/admin/placements/${placementId}/leave-requests`, {
         method: "GET",
       });
+      if (Array.isArray(adminData)) return adminData;
     } catch {
-      const allLeaves = getLocalStore<CarerLeaveRequest[]>(STORAGE_KEY_LEAVE_REQUESTS, []);
-      return allLeaves.filter((l) => l.placementId === placementId);
+      // Continue
     }
+
+    // 2. Try Carer query endpoint
+    try {
+      const carerData = await apiFetch(`/carer/leave-requests?placementId=${placementId}`, {
+        method: "GET",
+      });
+      if (Array.isArray(carerData)) return carerData;
+    } catch {
+      // Continue
+    }
+
+    // 3. Try carer placement detail
+    try {
+      const detail = await apiFetch(`/carer/placements/${placementId}`, {
+        method: "GET",
+      });
+      if (detail && Array.isArray(detail.leaveRequests)) {
+        return detail.leaveRequests;
+      }
+    } catch {
+      // Continue
+    }
+
+    // 4. Local storage fallback
+    const allLeaves = getLocalStore<CarerLeaveRequest[]>(STORAGE_KEY_LEAVE_REQUESTS, []);
+    return allLeaves.filter((l) => l.placementId === placementId);
   },
 
   /**
@@ -139,9 +167,79 @@ export const backupCarerService = {
    */
   async getReliefOpportunities(): Promise<ReliefOffer[]> {
     try {
-      return await apiFetch("/carer/relief-offers", { method: "GET" });
+      const raw = await apiFetch("/carer/relief-opportunities", { method: "GET" });
+      // Backend returns PlacementCarerAssignment[] — normalize to ReliefOffer[]
+      if (Array.isArray(raw)) {
+        return raw.map((a: any) => ({
+          id: a.id,
+          placementId: a.placementId,
+          assignmentId: a.id,
+          leaveRequestId: a.leaveRequestId,
+          clientName: a.placement?.clientProfile?.user
+            ? `${a.placement.clientProfile.user.firstName} ${a.placement.clientProfile.user.lastName}`
+            : "Client",
+          clientProfilePhotoUrl: a.placement?.clientProfile?.profilePhotoUrl ?? null,
+          location: a.placement?.careRequest?.city ?? a.placement?.careRequest?.postcode ?? "UK",
+          startDate: a.startDate,
+          endDate: a.endDate,
+          nightsCount: a.startDate && a.endDate
+            ? Math.max(1, Math.round((new Date(a.endDate).getTime() - new Date(a.startDate).getTime()) / (1000 * 60 * 60 * 24)))
+            : 1,
+          dailyRate: a.dailyRate,
+          requirements: a.placement?.careRequest?.requirements,
+          status: a.status,
+          offeredAt: a.offerSentAt ?? a.createdAt,
+        }));
+      }
+      return [];
     } catch {
       return getLocalStore<ReliefOffer[]>(STORAGE_KEY_RELIEF_OFFERS, []);
+    }
+  },
+
+  /**
+   * Get confirmed (accepted) relief assignments — shown in Current & Upcoming tab
+   */
+  async getConfirmedReliefAssignments(): Promise<ConfirmedReliefAssignment[]> {
+    try {
+      const raw = await apiFetch("/carer/relief-confirmed", { method: "GET" });
+      if (Array.isArray(raw)) {
+        return raw.map((a: any) => {
+          const acceptedAt = a.acceptedAt ? new Date(a.acceptedAt) : null;
+          const contactReleaseAt = acceptedAt
+            ? new Date(acceptedAt.getTime() + 48 * 60 * 60 * 1000)
+            : null;
+          const contactReleased = contactReleaseAt ? new Date() >= contactReleaseAt : false;
+
+          return {
+            id: a.id,
+            assignmentId: a.id,
+            placementId: a.placementId,
+            clientName: a.placement?.clientProfile?.user
+              ? `${a.placement.clientProfile.user.firstName} ${a.placement.clientProfile.user.lastName}`
+              : "Client",
+            clientEmail: contactReleased ? (a.placement?.clientProfile?.user?.email ?? null) : null,
+            clientPhone: contactReleased ? (a.placement?.clientProfile?.user?.phoneNumber ?? null) : null,
+            location: a.placement?.careRequest?.city ?? a.placement?.careRequest?.postcode ?? "UK",
+            address: contactReleased ? (a.placement?.careRequest?.address ?? null) : null,
+            careCategory: a.placement?.careRequest?.careCategory,
+            requirements: a.placement?.careRequest?.requirements,
+            startDate: a.startDate,
+            endDate: a.endDate,
+            daysCount: a.startDate && a.endDate
+              ? Math.max(1, Math.round((new Date(a.endDate).getTime() - new Date(a.startDate).getTime()) / (1000 * 60 * 60 * 24)))
+              : 1,
+            dailyRate: a.dailyRate,
+            status: a.status,
+            acceptedAt: a.acceptedAt,
+            contactReleased,
+            contactReleaseAt: contactReleaseAt?.toISOString() ?? null,
+          };
+        });
+      }
+      return [];
+    } catch {
+      return [];
     }
   },
 
@@ -150,7 +248,7 @@ export const backupCarerService = {
    */
   async acceptReliefOffer(assignmentId: string): Promise<any> {
     try {
-      return await apiFetch(`/carer/relief-offers/${assignmentId}/accept`, {
+      return await apiFetch(`/carer/assignments/${assignmentId}/accept`, {
         method: "POST",
       });
     } catch {
@@ -170,7 +268,7 @@ export const backupCarerService = {
     reason?: string
   ): Promise<any> {
     try {
-      return await apiFetch(`/carer/relief-offers/${assignmentId}/decline`, {
+      return await apiFetch(`/carer/assignments/${assignmentId}/reject`, {
         method: "POST",
         body: JSON.stringify({ reason }),
       });
@@ -210,22 +308,141 @@ export const backupCarerService = {
     carerProfileId: string,
     metadata?: { clientName?: string; city?: string; careCategory?: any }
   ): Promise<any> {
-    try {
-      return await apiFetch(`/admin/placements/${placementId}/preferred-backup`, {
-        method: "PATCH",
-        body: JSON.stringify({ preferredBackupCarerProfileId: carerProfileId }),
-      });
-    } catch {
-      const map = getLocalStore<Record<string, any>>(STORAGE_KEY_BACKUP_CARERS, {});
-      map[placementId] = {
-        carerProfileId,
-        designatedAt: new Date().toISOString(),
-        clientName: metadata?.clientName,
-        city: metadata?.city,
-        careCategory: metadata?.careCategory,
-      };
-      setLocalStore(STORAGE_KEY_BACKUP_CARERS, map);
-      return { success: true, message: "Preferred backup carer updated." };
+    const payload = {
+      carerProfileId,
+      preferredBackupCarerProfileId: carerProfileId,
+    };
+
+    const isClientContext =
+      typeof window !== "undefined" &&
+      (window.location.pathname.startsWith("/client") ||
+        window.location.pathname.includes("/client/"));
+
+    let apiResult: any = null;
+
+    if (isClientContext) {
+      try {
+        apiResult = await apiFetch(`/client/placements/${placementId}/preferred-backup`, {
+          method: "POST",
+          body: JSON.stringify(payload),
+        });
+      } catch {
+        try {
+          apiResult = await apiFetch(`/admin/placements/${placementId}/preferred-backup`, {
+            method: "PATCH",
+            body: JSON.stringify(payload),
+          });
+        } catch {
+          // Handled below via fallback
+        }
+      }
+    } else {
+      try {
+        apiResult = await apiFetch(`/admin/placements/${placementId}/preferred-backup`, {
+          method: "PATCH",
+          body: JSON.stringify(payload),
+        });
+      } catch {
+        try {
+          apiResult = await apiFetch(`/client/placements/${placementId}/preferred-backup`, {
+            method: "POST",
+            body: JSON.stringify(payload),
+          });
+        } catch {
+          // Handled below via fallback
+        }
+      }
+    }
+
+    // Update local storage backup copy
+    const map = getLocalStore<Record<string, any>>(STORAGE_KEY_BACKUP_CARERS, {});
+    map[placementId] = {
+      carerProfileId,
+      designatedAt: new Date().toISOString(),
+      clientName: metadata?.clientName,
+      city: metadata?.city,
+      careCategory: metadata?.careCategory,
+    };
+    setLocalStore(STORAGE_KEY_BACKUP_CARERS, map);
+
+    return apiResult || { success: true, message: "Preferred backup carer updated." };
+  },
+
+  /**
+   * Designate a backup carer with priority (1 = 1st choice, 2 = 2nd choice)
+   */
+  async designateBackupCarer(
+    placementId: string,
+    carerProfileId: string,
+    priority: number = 1
+  ): Promise<any> {
+    const payload = { carerProfileId, priority };
+    const isClientContext =
+      typeof window !== "undefined" &&
+      (window.location.pathname.startsWith("/client") ||
+        window.location.pathname.includes("/client/"));
+
+    let res: any = null;
+    if (isClientContext) {
+      try {
+        res = await apiFetch(`/client/placements/${placementId}/backup-carers`, {
+          method: "POST",
+          body: JSON.stringify(payload),
+        });
+      } catch {
+        res = await apiFetch(`/admin/placements/${placementId}/backup-carers`, {
+          method: "POST",
+          body: JSON.stringify(payload),
+        });
+      }
+    } else {
+      try {
+        res = await apiFetch(`/admin/placements/${placementId}/backup-carers`, {
+          method: "POST",
+          body: JSON.stringify(payload),
+        });
+      } catch {
+        res = await apiFetch(`/client/placements/${placementId}/backup-carers`, {
+          method: "POST",
+          body: JSON.stringify(payload),
+        });
+      }
+    }
+    return res;
+  },
+
+  /**
+   * Remove a designated backup carer from placement
+   */
+  async removeBackupCarer(
+    placementId: string,
+    carerProfileId: string
+  ): Promise<any> {
+    const isClientContext =
+      typeof window !== "undefined" &&
+      (window.location.pathname.startsWith("/client") ||
+        window.location.pathname.includes("/client/"));
+
+    if (isClientContext) {
+      try {
+        return await apiFetch(`/client/placements/${placementId}/backup-carers/${carerProfileId}`, {
+          method: "DELETE",
+        });
+      } catch {
+        return await apiFetch(`/admin/placements/${placementId}/backup-carers/${carerProfileId}`, {
+          method: "DELETE",
+        });
+      }
+    } else {
+      try {
+        return await apiFetch(`/admin/placements/${placementId}/backup-carers/${carerProfileId}`, {
+          method: "DELETE",
+        });
+      } catch {
+        return await apiFetch(`/client/placements/${placementId}/backup-carers/${carerProfileId}`, {
+          method: "DELETE",
+        });
+      }
     }
   },
 
@@ -266,26 +483,64 @@ export const backupCarerService = {
   },
 
   /**
-   * Admin dispatches relief offer to preferred backup carer
+   * Admin Approves a Carer Leave Request
+   */
+  async approveLeaveRequest(
+    placementId: string,
+    leaveRequestId: string,
+    notes?: string
+  ): Promise<any> {
+    try {
+      return await apiFetch(`/admin/placements/${placementId}/leave-requests/${leaveRequestId}/approve`, {
+        method: "PATCH",
+        body: JSON.stringify({ notes }),
+      });
+    } catch {
+      // Local fallback
+      const leaves = getLocalStore<CarerLeaveRequest[]>(STORAGE_KEY_LEAVE_REQUESTS, []);
+      const updated = leaves.map((l) =>
+        l.id === leaveRequestId ? { ...l, adminNotes: notes || "Approved by Admin" } : l
+      );
+      setLocalStore(STORAGE_KEY_LEAVE_REQUESTS, updated);
+      return { success: true, message: "Leave approved successfully." };
+    }
+  },
+
+  /**
+   * Admin dispatches relief offer to a designated backup carer (1st or 2nd choice)
    */
   async dispatchReliefOfferToBackup(
     placementId: string,
     leaveRequestId: string,
-    backupCarerProfileId: string
+    backupCarerProfileId: string,
+    dailyRate?: number
   ): Promise<any> {
+    const payload = {
+      leaveRequestId,
+      carerProfileId: backupCarerProfileId,
+      backupCarerProfileId,
+      dailyRate,
+    };
     try {
-      return await apiFetch(`/admin/placements/${placementId}/dispatch-relief-offer`, {
+      return await apiFetch(`/admin/placements/${placementId}/offer-relief`, {
         method: "POST",
-        body: JSON.stringify({ leaveRequestId, backupCarerProfileId }),
+        body: JSON.stringify(payload),
       });
     } catch {
-      // Update local leave request status
-      const leaves = getLocalStore<CarerLeaveRequest[]>(STORAGE_KEY_LEAVE_REQUESTS, []);
-      const updated = leaves.map((l) =>
-        l.id === leaveRequestId ? { ...l, status: "OFFERED_TO_BACKUP" as const } : l
-      );
-      setLocalStore(STORAGE_KEY_LEAVE_REQUESTS, updated);
-      return { success: true, message: "Relief offer dispatched to preferred backup carer." };
+      try {
+        return await apiFetch(`/admin/placements/${placementId}/dispatch-relief-offer`, {
+          method: "POST",
+          body: JSON.stringify(payload),
+        });
+      } catch {
+        // Update local leave request status
+        const leaves = getLocalStore<CarerLeaveRequest[]>(STORAGE_KEY_LEAVE_REQUESTS, []);
+        const updated = leaves.map((l) =>
+          l.id === leaveRequestId ? { ...l, status: "OFFERED_TO_BACKUP" as const } : l
+        );
+        setLocalStore(STORAGE_KEY_LEAVE_REQUESTS, updated);
+        return { success: true, message: "Relief offer dispatched to backup carer." };
+      }
     }
   },
 

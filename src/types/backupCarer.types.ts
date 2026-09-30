@@ -21,6 +21,27 @@ export type LeaveStatus =
   | "CANCELLED"
   | "COMPLETED";
 
+export interface ConfirmedReliefAssignment {
+  id: string;
+  assignmentId: string;
+  placementId: string;
+  clientName: string;
+  clientEmail: string | null;
+  clientPhone: string | null;
+  location: string;
+  address: string | null;
+  careCategory?: string | string[];
+  requirements?: string;
+  startDate: string;
+  endDate: string;
+  daysCount: number;
+  dailyRate?: number | string | null;
+  status: string;
+  acceptedAt: string;
+  contactReleased: boolean;
+  contactReleaseAt: string | null;
+}
+
 export interface CarerMiniProfile {
   id: string;
   userId: string;

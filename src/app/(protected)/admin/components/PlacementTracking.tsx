@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import { ArrowRight, AlertTriangle, Lock, ShieldCheck } from "lucide-react";
 import { Placement, CarerApplication } from "../types/admin.types";
 import { UseAdminPortalReturn } from "../hooks/useAdminPortal";
@@ -24,6 +25,7 @@ export default function PlacementTracking({
   onReassignCarer,
   refreshPlacements,
 }: PlacementTrackingProps) {
+  const router = useRouter();
   const [filter, setFilter] = useState<
     | "All"
     | "PLACEMENT_STARTED"
@@ -285,7 +287,7 @@ export default function PlacementTracking({
                     <option value="CANCELLED">Cancelled</option>
                   </select>
                   <Button
-                    onClick={() => setDetailModalPlacementId(place.id)}
+                    onClick={() => router.push(`/placement/${place.id}`)}
                     variant="primary"
                     size="sm"
                     fullWidth={false}

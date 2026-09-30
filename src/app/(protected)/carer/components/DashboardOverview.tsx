@@ -35,9 +35,23 @@ export default function DashboardOverview({
     ]).then(([placements, offers, backups]) => {
       const primary = placements.filter(
         (p: any) =>
-          ["PLACEMENT_CONFIRMED", "PLACEMENT_STARTED", "ACTIVE", "ONGOING"].includes(p.status)
+          ["PLACEMENT_CONFIRMED", "PLACEMENT_STARTED", "ACTIVE", "ONGOING"].includes(p.status) &&
+          !p.isBackup &&
+          (p.carerProfileId === profile?.id || p.myRole === "PRIMARY_CARER")
       ).length;
-      const backup = backups.length;
+      const backupFromPlacements = placements.filter(
+        (p: any) =>
+          ["PLACEMENT_CONFIRMED", "PLACEMENT_STARTED", "ACTIVE", "ONGOING"].includes(p.status) &&
+          (p.isBackup ||
+            p.myRole === "PREFERRED_BACKUP_CARER" ||
+            p.myRole === "SECONDARY_BACKUP_CARER" ||
+            Boolean(p.roleTitle && p.roleTitle.toLowerCase().includes("backup")) ||
+            Boolean(p.carerProfileId && profile?.id && p.carerProfileId !== profile.id))
+      ).length;
+      const uniqueBackups = backups.filter(
+        (bp: any) => !placements.some((p: any) => p.id === bp.id || `backup-${p.id}` === bp.id)
+      ).length;
+      const backup = backupFromPlacements + uniqueBackups;
       const relief = offers.filter(
         (o: any) => o.status === "CONFIRMED" || o.status === "ACTIVE" || o.status === "COVERING"
       ).length;

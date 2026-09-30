@@ -145,7 +145,11 @@ export default function ShareSheet({
       return;
     }
 
-    window.location.href = `https://web.whatsapp.com/send?text=${encodedText}`;
+    window.open(
+      `https://web.whatsapp.com/send?text=${encodedText}`,
+      "_blank",
+      "noopener,noreferrer"
+    );
   };
 
   const handleShareEmail = () => {

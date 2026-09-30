@@ -77,10 +77,10 @@ export default function ShareSheet({
   })();
 
   // Dynamic carer naming - one source of truth
-  const source = (carerName?.trim() && carerName !== "Our carer") 
-    ? carerName.trim() 
+  const source = (carerName?.trim() && carerName !== "Our carer")
+    ? carerName.trim()
     : `${user?.firstName ?? ""} ${user?.lastName ?? ""}`.trim();
-    
+
   const nameParts = source.split(/\s+/).filter(Boolean);
   const firstName = nameParts.length > 0 ? nameParts[0] : "Our carer";
   const lastInitial = nameParts.length > 1 ? nameParts[nameParts.length - 1].charAt(0).toUpperCase() : "";
@@ -119,16 +119,33 @@ export default function ShareSheet({
     }
   };
 
+  // const handleShareWhatsApp = () => {
+  //   const text = buildShareMessage();
+  //   const isMobile = /iPhone|iPad|iPod|Android/i.test(typeof navigator !== 'undefined' ? navigator.userAgent : '');
+
+  //   // api.whatsapp.com avoids the wa.me redirect that sometimes corrupts emojis on desktop web
+  //   const targetUrl = isMobile
+  //     ? `whatsapp://send?text=${encodeURIComponent(text)}`
+  //     : `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+
+  //   window.open(targetUrl, "_blank");
+  // };
+
   const handleShareWhatsApp = () => {
     const text = buildShareMessage();
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(typeof navigator !== 'undefined' ? navigator.userAgent : '');
-    
-    // api.whatsapp.com avoids the wa.me redirect that sometimes corrupts emojis on desktop web
-    const targetUrl = isMobile
-      ? `whatsapp://send?text=${encodeURIComponent(text)}`
-      : `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+    const encodedText = encodeURIComponent(text);
 
-    window.open(targetUrl, "_blank");
+    const isMobile =
+      /iPhone|iPad|iPod|Android/i.test(
+        typeof navigator !== "undefined" ? navigator.userAgent : ""
+      );
+
+    if (isMobile) {
+      window.location.href = `whatsapp://send?text=${encodedText}`;
+      return;
+    }
+
+    window.location.href = `https://web.whatsapp.com/send?text=${encodedText}`;
   };
 
   const handleShareEmail = () => {
@@ -230,7 +247,7 @@ export default function ShareSheet({
               <Link2 className="w-3.5 h-3.5 stroke-[2.5]" />
               <span>{copiedLink ? "Copied!" : "Copy Link"}</span>
             </button>
-            
+
             {/* Copy Message Button */}
             <button
               id="copy-share-msg-btn"
@@ -269,8 +286,8 @@ export default function ShareSheet({
           >
             <div className="w-7 h-7 sm:w-[30px] sm:h-[30px] rounded-full bg-[#25D366] flex items-center justify-center text-white shadow-sm mb-1">
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
-                <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.116 1.532 5.847L0 24l6.302-1.508A11.933 11.933 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.89 0-3.66-.493-5.195-1.357l-.371-.221-3.742.895.928-3.647-.244-.385A9.944 9.944 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
+                <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.116 1.532 5.847L0 24l6.302-1.508A11.933 11.933 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.89 0-3.66-.493-5.195-1.357l-.371-.221-3.742.895.928-3.647-.244-.385A9.944 9.944 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z" />
               </svg>
             </div>
             <span className="text-[11.5px] sm:text-xs font-semibold text-white">WhatsApp</span>
@@ -293,7 +310,7 @@ export default function ShareSheet({
           >
             <div className="w-7 h-7 sm:w-[30px] sm:h-[30px] flex items-center justify-center text-[#ECCB76] mb-1">
               <svg className="w-5 h-5 sm:w-[22px] sm:h-[22px]" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
               </svg>
             </div>
             <span className="text-[11.5px] sm:text-xs font-semibold text-white">Email</span>
@@ -316,7 +333,7 @@ export default function ShareSheet({
           >
             <div className="w-7 h-7 sm:w-[30px] sm:h-[30px] flex items-center justify-center text-[#ECCB76] mb-1">
               <svg className="w-5 h-5 sm:w-[22px] sm:h-[22px]" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+                <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" />
               </svg>
             </div>
             <span className="text-[11.5px] sm:text-xs font-semibold text-white">Text / SMS</span>

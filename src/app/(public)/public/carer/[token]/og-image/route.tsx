@@ -2,15 +2,13 @@ import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
 
-export const size = { width: 1200, height: 630 };
-export const contentType = "image/png";
-
 interface Props {
   params: Promise<{ token: string }>;
 }
 
-export default async function Image({ params }: Props) {
+export async function GET(request: Request, { params }: Props) {
   const { token } = await params;
+  const size = { width: 1200, height: 630 };
 
   let displayName = "";
   let photoUrl: string | null = null;

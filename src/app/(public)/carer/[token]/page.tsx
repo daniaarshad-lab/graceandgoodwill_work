@@ -28,9 +28,8 @@ export async function generateMetadata(
     // Canonical URL for this profile is /public/carer/{id}
     const canonicalUrl = `${appUrl}/public/carer/${token}`;
 
-    // Point to the canonical opengraph-image served by Next.js convention file
-    // at /public/carer/[token]/opengraph-image (not /api/)
-    const ogImageUrl = `${appUrl}/public/carer/${token}/opengraph-image`;
+    // Point to the custom route handler that generates the PNG image
+    const ogImageUrl = `${appUrl}/public/carer/${token}/og-image?ext=.png`;
 
     return {
       title,

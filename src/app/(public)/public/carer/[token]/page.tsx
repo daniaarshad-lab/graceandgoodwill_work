@@ -12,6 +12,13 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { token } = await params;
 
+  const appUrl =
+    process.env.NEXT_PUBLIC_APP_URL ||
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    "https://graceandgoodwill.co.uk";
+  
+  const canonicalUrl = `${appUrl}/public/carer/${token}`;
+
   try {
     const profile = await shareableProfileService.getPublicProfile(token);
 
@@ -19,13 +26,6 @@ export async function generateMetadata(
 
     const firstName = profile.displayName ? profile.displayName.split(" ")[0] : "our carer";
     const description = `View ${firstName}'s experience, video, care skills, interests, languages and current availability.`;
-
-    const appUrl =
-      process.env.NEXT_PUBLIC_APP_URL ||
-      process.env.NEXT_PUBLIC_SITE_URL ||
-      "https://graceandgoodwill.co.uk";
-
-    const canonicalUrl = `${appUrl}/public/carer/${token}`;
 
     return {
       title,
@@ -45,11 +45,6 @@ export async function generateMetadata(
     };
   } catch {
     // Token is invalid or expired — do NOT expose any carer info
-    const appUrl =
-      process.env.NEXT_PUBLIC_APP_URL ||
-      process.env.NEXT_PUBLIC_SITE_URL ||
-      "https://graceandgoodwill.co.uk";
-
     return {
       title: "Link Expired | Grace & Goodwill",
       description:
@@ -58,6 +53,7 @@ export async function generateMetadata(
         title: "Link Expired | Grace & Goodwill",
         description:
           "This shareable professional profile link is no longer active. Please contact Grace & Goodwill for more information.",
+        url: canonicalUrl,
         type: "website",
       },
       twitter: {

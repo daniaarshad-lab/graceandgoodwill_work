@@ -97,12 +97,7 @@ export default async function Image({ params }: Props) {
       const res = await fetch(photoUrl, { signal: AbortSignal.timeout(4000) });
       if (res.ok) {
         const buffer = await res.arrayBuffer();
-        const bytes = new Uint8Array(buffer);
-        let binary = "";
-        for (let i = 0; i < bytes.byteLength; i++) {
-          binary += String.fromCharCode(bytes[i]);
-        }
-        const base64 = btoa(binary);
+        const base64 = Buffer.from(buffer).toString("base64");
         const mime = res.headers.get("content-type") || "image/jpeg";
         carerPhotoData = `data:${mime};base64,${base64}`;
       }

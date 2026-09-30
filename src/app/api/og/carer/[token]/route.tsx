@@ -3,7 +3,6 @@ import { NextRequest } from "next/server";
 
 export const runtime = "edge";
 
-// Shared handler — used by both /api/og/carer/[token] and /api/og/carer/[token]/preview.png
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ token: string }> }
@@ -30,7 +29,7 @@ export async function GET(
       .replace(/\/+$/, "")
       .replace(/\/api\/?$/, "");
     const res = await fetch(`${apiBase}/api/public/carer/${token}`, {
-      signal: AbortSignal.timeout(5000),
+      signal: AbortSignal.timeout(4000),
       cache: "no-store",
     });
     if (res.ok) {
@@ -44,10 +43,9 @@ export async function GET(
     isValid = false;
   }
 
-  // Explicit headers so WhatsApp Web recognises it as an image
   const responseHeaders = {
     "Content-Type": "image/png",
-    "Cache-Control": "public, max-age=3600, s-maxage=3600",
+    "Cache-Control": "public, max-age=86400, s-maxage=86400",
   };
 
   if (!isValid) {
@@ -65,25 +63,6 @@ export async function GET(
       ),
       { ...size, headers: responseHeaders }
     );
-  }
-
-  // Edge-safe base64 encoding (no Buffer — uses btoa)
-  let carerPhotoData: string | null = null;
-  if (photoUrl) {
-    try {
-      const res = await fetch(photoUrl, { signal: AbortSignal.timeout(4000) });
-      if (res.ok) {
-        const buffer = await res.arrayBuffer();
-        const bytes = new Uint8Array(buffer);
-        let binary = "";
-        for (let i = 0; i < bytes.byteLength; i++) {
-          binary += String.fromCharCode(bytes[i]);
-        }
-        const base64 = btoa(binary);
-        const mime = res.headers.get("content-type") || "image/jpeg";
-        carerPhotoData = `data:${mime};base64,${base64}`;
-      }
-    } catch { carerPhotoData = null; }
   }
 
   const expLabel = experienceYears ? `${experienceYears}+ Years Experience` : "Professional Live-In Carer";
@@ -110,13 +89,13 @@ export async function GET(
           <div style={{ display: "flex", flexDirection: "column", gap: "7px" }}>
             <div style={{ width: "60px", height: "2px", background: "linear-gradient(90deg, #D4A043, transparent)", display: "flex", marginBottom: "3px" }} />
             <div style={{ fontSize: "26px", fontWeight: "bold", color: "#F8E090", display: "flex" }}>{displayName}</div>
-            <div style={{ fontSize: "15px", color: "rgba(255,255,255,0.5)", display: "flex" }}>{expLabel} - graceandgoodwill.co.uk</div>
+            <div style={{ fontSize: "15px", color: "rgba(255,255,255,0.5)", display: "flex" }}>{expLabel} · graceandgoodwill.co.uk</div>
           </div>
         </div>
         <div style={{ width: "340px", display: "flex", alignItems: "center", justifyContent: "center", padding: "40px 48px 40px 0", zIndex: 2 }}>
-          {carerPhotoData ? (
+          {photoUrl ? (
             <div style={{ width: "265px", height: "265px", borderRadius: "50%", overflow: "hidden", border: "4px solid #D4A043", boxShadow: "0 0 50px rgba(212,159,71,0.45)", display: "flex" }}>
-              <img src={carerPhotoData} alt={displayName} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              <img src={photoUrl} alt={displayName} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
             </div>
           ) : (
             <div style={{ width: "265px", height: "265px", borderRadius: "50%", border: "4px solid rgba(212,159,71,0.5)", background: "rgba(212,159,71,0.08)", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -130,4 +109,5 @@ export async function GET(
     { ...size, headers: responseHeaders }
   );
 }
+
 

@@ -27,11 +27,6 @@ export async function generateMetadata(
 
     const canonicalUrl = `${appUrl}/public/carer/${token}`;
 
-    // Explicitly set the og:image to our stable /api/og/carer/[token] route.
-    // This route returns a proper PNG image with Content-Type: image/png so
-    // WhatsApp Web can render the large preview card correctly.
-    const ogImageUrl = `${appUrl}/api/og/carer/${token}`;
-
     return {
       title,
       description,
@@ -41,21 +36,11 @@ export async function generateMetadata(
         url: canonicalUrl,
         siteName: profile.brandName || "Grace & Goodwill",
         type: "website",
-        images: [
-          {
-            url: ogImageUrl,
-            width: 1200,
-            height: 630,
-            alt: `${profile.displayName} | Professional Live-In Carer Profile`,
-            type: "image/png",
-          },
-        ],
       },
       twitter: {
         card: "summary_large_image",
         title,
         description,
-        images: [ogImageUrl],
       },
     };
   } catch {

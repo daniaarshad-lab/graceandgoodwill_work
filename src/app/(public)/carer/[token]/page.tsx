@@ -27,10 +27,15 @@ export async function generateMetadata(
 
     const canonicalUrl = `${appUrl}/carer/${token}`;
 
-    // Do NOT manually set images here — Next.js automatically uses the
-    // co-located opengraph-image.tsx with the correct hashed route URL.
-    // Manually specifying the URL causes 404 because Next.js appends a
-    // build hash to the actual route (e.g. opengraph-image-1cczym).
+    // Explicitly set the og:image to our stable /api/og/carer/[token]/preview.png route.
+    // WhatsApp's scraper reads og:image from <meta> tags in the HTML — the
+    // co-located opengraph-image.tsx auto-discovery uses a hashed filename
+    // (e.g. opengraph-image-1cczym) that WhatsApp cannot reliably resolve,
+    // causing no image to appear in the preview. This dedicated API route
+    // provides a predictable, cacheable URL that always works. 
+    // Appending `preview.png` ensures WhatsApp Web correctly recognizes it as an image.
+    const ogImageUrl = `${appUrl}/api/og/carer/${token}/preview.png`;
+
     return {
       title,
       description,
@@ -40,11 +45,21 @@ export async function generateMetadata(
         url: canonicalUrl,
         siteName: profile.brandName || "Grace & Goodwill",
         type: "website",
+        images: [
+          {
+            url: ogImageUrl,
+            width: 1200,
+            height: 630,
+            alt: `${profile.displayName} | Professional Live-In Carer Profile`,
+            type: "image/png",
+          },
+        ],
       },
       twitter: {
         card: "summary_large_image",
         title,
         description,
+        images: [ogImageUrl],
       },
     };
   } catch (error) {

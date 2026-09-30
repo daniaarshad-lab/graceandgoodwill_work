@@ -682,7 +682,7 @@ export default function PublicProfileClient({ token }: PublicProfileClientProps)
 
             {/* WhatsApp Button */}
             <a
-              href={`https://wa.me/447462931949?text=${encodeURIComponent(
+              href={`https://api.whatsapp.com/send?phone=447462931949&text=${encodeURIComponent(
                 `Hello Grace & Goodwill, I am interested in carer ${profile.displayName}.`,
               )}`}
               target="_blank"

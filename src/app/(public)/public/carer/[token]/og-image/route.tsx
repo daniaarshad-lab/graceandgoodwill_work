@@ -10,13 +10,12 @@ export async function GET(request: Request, { params }: Props) {
   const { token } = await params;
   const size = { width: 1200, height: 630 };
 
-  let displayName = "";
+  let displayName = "Our Carer";
   let photoUrl: string | null = null;
   let experienceYears: number | null = null;
   let isValid = false;
 
   try {
-    // Fetch directly from the backend API (same pattern as shareableProfile.service.ts)
     const apiBase = (
       process.env.NEXT_PUBLIC_API_URL ||
       process.env.NEXT_PUBLIC_SITE_URL ||
@@ -26,7 +25,7 @@ export async function GET(request: Request, { params }: Props) {
       .replace(/\/api\/?$/, "");
 
     const res = await fetch(`${apiBase}/api/public/carer/${token}`, {
-      signal: AbortSignal.timeout(4000),
+      signal: AbortSignal.timeout(2000),
       cache: "no-store",
     });
     if (res.ok) {
@@ -40,9 +39,16 @@ export async function GET(request: Request, { params }: Props) {
     isValid = false;
   }
 
+  // Privacy Logic: only First Name + Last Initial
+  const nameParts = displayName ? displayName.split(/\s+/).filter(Boolean) : [];
+  const firstName = nameParts.length > 0 ? nameParts[0] : "Our Carer";
+  const lastInitial = nameParts.length > 1 ? nameParts[nameParts.length - 1].charAt(0).toUpperCase() : "";
+  const safeName = lastInitial && !firstName.endsWith(".") ? `${firstName} ${lastInitial}.` : firstName;
+  const initialLetter = safeName.charAt(0).toUpperCase() || "O";
+
   const responseHeaders = {
     "Content-Type": "image/png",
-    "Cache-Control": "public, max-age=86400, s-maxage=86400",
+    "Cache-Control": "public, max-age=3600, s-maxage=31536000, immutable",
   };
 
   if (!isValid) {
@@ -62,45 +68,84 @@ export async function GET(request: Request, { params }: Props) {
     );
   }
 
-  const expLabel = experienceYears ? `${experienceYears}+ Years Experience` : "Professional Live-In Carer";
-
   return new ImageResponse(
     (
-      <div style={{ width: "1200px", height: "630px", display: "flex", position: "relative", overflow: "hidden", fontFamily: "Georgia, serif", background: "linear-gradient(145deg, #061410 0%, #091c13 30%, #0c2418 55%, #0e2d1e 75%, #071812 100%)" }}>
-        <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle, rgba(212,159,71,0.05) 1px, transparent 1px)", backgroundSize: "30px 30px", display: "flex" }} />
-        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at 75% 50%, rgba(10,60,35,0.45) 0%, transparent 65%)", display: "flex" }} />
-        <div style={{ position: "absolute", inset: "20px", border: "1.5px solid rgba(212,159,71,0.45)", borderRadius: "16px", display: "flex" }} />
-        <div style={{ position: "absolute", top: "20px", left: "20px", right: "20px", height: "4px", background: "linear-gradient(90deg, transparent, #D4A043, #F8E090, #D4A043, transparent)", borderRadius: "2px", display: "flex" }} />
-        <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "52px 48px 52px 52px", flex: 1, zIndex: 2 }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-            <div style={{ fontSize: "34px", fontWeight: "bold", color: "#D4A043", letterSpacing: "3px", display: "flex" }}>GRACE &amp; GOODWILL</div>
-            <div style={{ fontSize: "13px", color: "rgba(212,159,71,0.65)", letterSpacing: "3.5px", display: "flex" }}>CARE DEFINED BY INTEGRITY</div>
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-            <div style={{ fontSize: "66px", fontWeight: "bold", color: "#ffffff", lineHeight: 1.05, display: "flex", flexDirection: "column" }}>
-              <span style={{ display: "flex" }}>CARE YOU</span>
-              <span style={{ display: "flex" }}>CAN TRUST</span>
+      <div style={{ width: "1200px", height: "630px", display: "flex", position: "relative", overflow: "hidden", fontFamily: "sans-serif", background: "#060A16" }}>
+        {/* Subtle background gradient / noise */}
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 50% 0%, rgba(20,30,60,0.8) 0%, transparent 70%)", display: "flex" }} />
+        
+        {/* Thin Gold Line Accent at Top */}
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "6px", background: "linear-gradient(90deg, #D8A93E, #F8E090, #B8851E)", display: "flex" }} />
+
+        {/* Outer Border */}
+        <div style={{ position: "absolute", inset: "24px", border: "1px solid rgba(216,169,62,0.3)", borderRadius: "12px", display: "flex" }} />
+
+        {/* Content Container */}
+        <div style={{ display: "flex", flexDirection: "row", width: "100%", height: "100%", padding: "60px 50px", zIndex: 2 }}>
+          
+          {/* Left Column: Branding and Text */}
+          <div style={{ display: "flex", flexDirection: "column", flex: 1, justifyContent: "space-between" }}>
+            
+            {/* Top Left: Logo */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <div style={{ fontSize: "28px", fontWeight: 700, color: "#ECCB76", letterSpacing: "3px", display: "flex" }}>
+                GRACE &amp; GOODWILL
+              </div>
+              <div style={{ fontSize: "14px", fontWeight: 600, color: "rgba(236,203,118,0.7)", letterSpacing: "2px", display: "flex" }}>
+                CARE DEFINED BY INTEGRITY
+              </div>
             </div>
-            <div style={{ fontSize: "19px", color: "rgba(255,255,255,0.55)", display: "flex" }}>Live-in Care Matching Across the UK</div>
+
+            {/* Middle Left: Hero Text */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "16px", marginTop: "-20px" }}>
+              <div style={{ fontSize: "72px", fontWeight: 800, color: "#FFFFFF", lineHeight: 1.1, display: "flex", flexDirection: "column" }}>
+                <span style={{ display: "flex" }}>CARE YOU</span>
+                <span style={{ display: "flex" }}>CAN TRUST</span>
+              </div>
+              <div style={{ fontSize: "24px", fontWeight: 500, color: "rgba(255,255,255,0.7)", display: "flex" }}>
+                Live-in Care Matching Across the UK
+              </div>
+            </div>
+
+            {/* Bottom Left: Carer Info */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <div style={{ width: "80px", height: "3px", background: "#D8A93E", display: "flex", marginBottom: "8px" }} />
+              <div style={{ fontSize: "36px", fontWeight: 700, color: "#ECCB76", display: "flex" }}>
+                {safeName}
+              </div>
+              <div style={{ fontSize: "18px", color: "rgba(255,255,255,0.6)", display: "flex" }}>
+                Professional Live-In Carer Profile
+              </div>
+            </div>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: "7px" }}>
-            <div style={{ width: "60px", height: "2px", background: "linear-gradient(90deg, #D4A043, transparent)", display: "flex", marginBottom: "3px" }} />
-            <div style={{ fontSize: "26px", fontWeight: "bold", color: "#F8E090", display: "flex" }}>{displayName}</div>
-            <div style={{ fontSize: "15px", color: "rgba(255,255,255,0.5)", display: "flex" }}>{expLabel} · graceandgoodwill.co.uk</div>
+
+          {/* Right Column: Photo and Tagline */}
+          <div style={{ display: "flex", flexDirection: "column", width: "450px", alignItems: "flex-end", justifyContent: "space-between" }}>
+            
+            {/* Top Right: Empty space to balance */}
+            <div style={{ display: "flex", height: "40px" }} />
+
+            {/* Middle Right: Large Portrait */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", marginTop: "-40px" }}>
+              {photoUrl ? (
+                <div style={{ width: "380px", height: "380px", borderRadius: "190px", overflow: "hidden", border: "6px solid #D8A93E", display: "flex", boxShadow: "0 20px 40px rgba(0,0,0,0.5)" }}>
+                  <img src={photoUrl} alt={safeName} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                </div>
+              ) : (
+                <div style={{ width: "380px", height: "380px", borderRadius: "190px", border: "6px solid #D8A93E", background: "rgba(216,169,62,0.1)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 20px 40px rgba(0,0,0,0.5)" }}>
+                  <div style={{ fontSize: "140px", fontWeight: 700, color: "#D8A93E", display: "flex" }}>
+                    {initialLetter}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Bottom Right: Italic Tagline */}
+            <div style={{ fontSize: "22px", fontStyle: "italic", fontWeight: 400, color: "rgba(255,255,255,0.8)", display: "flex" }}>
+              People Make Brighter Tomorrows
+            </div>
           </div>
         </div>
-        <div style={{ width: "340px", display: "flex", alignItems: "center", justifyContent: "center", padding: "40px 48px 40px 0", zIndex: 2 }}>
-          {photoUrl ? (
-            <div style={{ width: "265px", height: "265px", borderRadius: "50%", overflow: "hidden", border: "4px solid #D4A043", boxShadow: "0 0 50px rgba(212,159,71,0.45)", display: "flex" }}>
-              <img src={photoUrl} alt={displayName} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-            </div>
-          ) : (
-            <div style={{ width: "265px", height: "265px", borderRadius: "50%", border: "4px solid rgba(212,159,71,0.5)", background: "rgba(212,159,71,0.08)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <div style={{ fontSize: "80px", display: "flex" }}>👤</div>
-            </div>
-          )}
-        </div>
-        <div style={{ position: "absolute", bottom: "20px", left: "20px", right: "20px", height: "4px", background: "linear-gradient(90deg, transparent, #D4A043, #F8E090, #D4A043, transparent)", borderRadius: "2px", display: "flex" }} />
       </div>
     ),
     { ...size, headers: responseHeaders }

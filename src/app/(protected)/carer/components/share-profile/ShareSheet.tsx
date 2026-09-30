@@ -6,12 +6,12 @@ import {
   Copy,
   Check,
   CalendarDays,
-  Mail,
   Share2,
   Lock,
   Users,
   RefreshCw,
   ChevronRight,
+  MessageSquare,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
@@ -51,60 +51,76 @@ export default function ShareSheet({
   renewing,
 }: ShareSheetProps) {
   const { user } = useAuth();
-  const [copied, setCopied] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
+  const [copiedMessage, setCopiedMessage] = useState(false);
 
   // Stable, clean share URL without query parameters (such as ?v=...)
   const rawShareUrl = shareUrl ? shareUrl.split("?")[0] : "";
   const cleanShareUrl = (() => {
     if (!rawShareUrl) return "";
-    // If running in browser and on an external host (e.g. ngrok tunnel), use current origin
-    if (
-      typeof window !== "undefined" &&
-      window.location.origin &&
-      !window.location.origin.includes("localhost") &&
-      !window.location.origin.includes("127.0.0.1")
-    ) {
-      return rawShareUrl.replace(/^https?:\/\/[^\/]+/, window.location.origin);
-    }
-    // If NEXT_PUBLIC_APP_URL is configured (e.g. ngrok tunnel during development)
-    const envAppUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL;
-    if (envAppUrl && !envAppUrl.includes("localhost") && !envAppUrl.includes("127.0.0.1")) {
-      return rawShareUrl.replace(/^https?:\/\/[^\/]+/, envAppUrl.replace(/\/+$/, ""));
+    // Only run rewrite logic in non-production environments (e.g. local ngrok)
+    if (process.env.NODE_ENV !== "production") {
+      if (
+        typeof window !== "undefined" &&
+        window.location.origin &&
+        !window.location.origin.includes("localhost") &&
+        !window.location.origin.includes("127.0.0.1")
+      ) {
+        return rawShareUrl.replace(/^https?:\/\/[^\/]+/, window.location.origin);
+      }
+      const envAppUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL;
+      if (envAppUrl && !envAppUrl.includes("localhost") && !envAppUrl.includes("127.0.0.1")) {
+        return rawShareUrl.replace(/^https?:\/\/[^\/]+/, envAppUrl.replace(/\/+$/, ""));
+      }
     }
     return rawShareUrl;
   })();
 
-  // Dynamic carer naming
-  const resolvedName =
-    carerName?.trim() ||
-    (user?.firstName ? `${user.firstName}${user.lastName ? ` ${user.lastName}` : ""}`.trim() : "") ||
-    "Our carer";
-
-  const nameParts = resolvedName.split(/\s+/).filter(Boolean);
-  const firstName = user?.firstName?.trim() || nameParts[0] || "Our carer";
-  const lastInitial = user?.lastName?.trim()
-    ? user.lastName.trim().charAt(0).toUpperCase()
-    : nameParts.length > 1
-    ? nameParts[nameParts.length - 1].charAt(0).toUpperCase()
-    : "";
+  // Dynamic carer naming - one source of truth
+  const source = (carerName?.trim() && carerName !== "Our carer") 
+    ? carerName.trim() 
+    : `${user?.firstName ?? ""} ${user?.lastName ?? ""}`.trim();
+    
+  const nameParts = source.split(/\s+/).filter(Boolean);
+  const firstName = nameParts.length > 0 ? nameParts[0] : "Our carer";
+  const lastInitial = nameParts.length > 1 ? nameParts[nameParts.length - 1].charAt(0).toUpperCase() : "";
   const formalName = lastInitial && !firstName.endsWith(".")
     ? `${firstName} ${lastInitial}.`
-    : resolvedName;
+    : (nameParts.length > 0 ? firstName : "Our carer");
+
+  const buildShareMessage = () => {
+    const linkIcon = String.fromCodePoint(0x1F517);
+    const phoneIcon = String.fromCodePoint(0x1F4DE);
+    const chatIcon = String.fromCodePoint(0x1F4AC);
+    const webIcon = String.fromCodePoint(0x1F310);
+
+    return `${formalName} has shared their professional live-in carer profile with you through Grace & Goodwill.\n\nView ${firstName}'s experience, introduction video, care skills, interests, languages and current availability using the secure link below.\n\n${linkIcon} ${cleanShareUrl}\n\nThis profile link is available for a limited period.\n\nIf you would like to discuss ${firstName}'s profile, check availability or talk to us about other live-in care options, the Grace & Goodwill team is here to help.\n\n${phoneIcon} Call: 020 4524 0108\n${chatIcon} WhatsApp: +44 7462 931949\n${webIcon} https://graceandgoodwill.co.uk`;
+  };
 
   const copyLink = async () => {
     try {
       await navigator.clipboard.writeText(cleanShareUrl);
-      setCopied(true);
+      setCopiedLink(true);
       showSuccessToast("Copied!", "Share link copied to clipboard.");
-      setTimeout(() => setCopied(false), 2500);
+      setTimeout(() => setCopiedLink(false), 2500);
     } catch {
       showErrorToast("Failed", "Could not copy link to clipboard.");
     }
   };
 
-  const handleShareWhatsApp = () => {
-    const text = `${formalName} has shared their professional live-in carer profile with you through Grace & Goodwill.\n\nView ${firstName}'s experience, introduction video, care skills, interests, languages and current availability using the secure link below.\n\n🔗 ${cleanShareUrl}\n\nThis profile link is available for a limited period.\n\nIf you would like to discuss ${firstName}'s profile, check their availability or talk to us about other live-in care options, the Grace & Goodwill team is here to help.\n\n📞 Call: 020 4524 0108\n💬 WhatsApp: +44 7462 931949\n🌐 graceandgoodwill.co.uk`;
+  const copyMessage = async () => {
+    try {
+      await navigator.clipboard.writeText(buildShareMessage());
+      setCopiedMessage(true);
+      showSuccessToast("Copied!", "Full message copied to clipboard.");
+      setTimeout(() => setCopiedMessage(false), 2500);
+    } catch {
+      showErrorToast("Failed", "Could not copy message to clipboard.");
+    }
+  };
 
+  const handleShareWhatsApp = () => {
+    const text = buildShareMessage();
     const isMobile = /iPhone|iPad|iPod|Android/i.test(typeof navigator !== 'undefined' ? navigator.userAgent : '');
     
     // api.whatsapp.com avoids the wa.me redirect that sometimes corrupts emojis on desktop web
@@ -116,24 +132,21 @@ export default function ShareSheet({
   };
 
   const handleShareEmail = () => {
+    const text = buildShareMessage();
     window.location.href = `mailto:?subject=${encodeURIComponent(
-      `${formalName} — Professional Live-In Carer Profile`,
-    )}&body=${encodeURIComponent(
-      `Hello,\n\nPlease find my professional carer profile here:\n${cleanShareUrl}\n\nKind regards,\n${formalName}`,
-    )}`;
+      `${formalName} — Professional Live-In Carer Profile`
+    )}&body=${encodeURIComponent(text)}`;
   };
 
   const handleShareSMS = () => {
-    window.location.href = `sms:?&body=${encodeURIComponent(
-      `My carer profile (Grace & Goodwill): ${cleanShareUrl}`,
-    )}`;
+    const text = buildShareMessage();
+    window.location.href = `sms:?&body=${encodeURIComponent(text)}`;
   };
 
   const handleShareSocial = async () => {
     if (typeof navigator !== "undefined" && navigator.share) {
       try {
-        const text = `${formalName} has shared their professional live-in carer profile with you through Grace & Goodwill.\n\nView ${firstName}'s experience, introduction video, care skills, interests, languages and current availability using the secure link below.\n\n🔗 ${cleanShareUrl}\n\nThis profile link is available for a limited period.\n\nIf you would like to discuss ${firstName}'s profile, check their availability or talk to us about other live-in care options, the Grace & Goodwill team is here to help.\n\n📞 Call: 020 4524 0108\n💬 WhatsApp: +44 7462 931949\n🌐 graceandgoodwill.co.uk`;
-        
+        const text = buildShareMessage();
         await navigator.share({
           title: `${formalName} – Professional Live-In Carer Profile`,
           text: text,
@@ -143,11 +156,7 @@ export default function ShareSheet({
         // Ignored if user dismissed share dialog
       }
     } else {
-      await copyLink();
-      showSuccessToast(
-        "Copied",
-        "Link copied — paste it into your social media post.",
-      );
+      await copyMessage();
     }
   };
 
@@ -203,22 +212,41 @@ export default function ShareSheet({
             </span>
           </div>
 
-          {/* Copy Link Button */}
-          <button
-            id="copy-share-link-btn"
-            type="button"
-            onClick={copyLink}
-            className="flex-shrink-0 flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm cursor-pointer shadow-md transition-all active:scale-95 hover:brightness-105"
-            style={{
-              background: "linear-gradient(135deg, #F8E090 0%, #D8A93E 50%, #B8851E 100%)",
-              color: "#0A1128",
-              border: "none",
-              boxShadow: "0 4px 15px rgba(216, 169, 62, 0.3)",
-            }}
-          >
-            <Copy className="w-4 h-4 stroke-[2.2]" />
-            <span>{copied ? "Copied!" : "Copy Link"}</span>
-          </button>
+          {/* Buttons Container */}
+          <div className="flex-shrink-0 flex items-center gap-2">
+            {/* Copy Link Button */}
+            <button
+              id="copy-share-link-btn"
+              type="button"
+              onClick={copyLink}
+              className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2.5 rounded-xl font-bold text-[11px] sm:text-xs cursor-pointer shadow-md transition-all active:scale-95 hover:brightness-105"
+              style={{
+                background: "linear-gradient(135deg, #F8E090 0%, #D8A93E 50%, #B8851E 100%)",
+                color: "#0A1128",
+                border: "none",
+                boxShadow: "0 4px 15px rgba(216, 169, 62, 0.2)",
+              }}
+            >
+              <Link2 className="w-3.5 h-3.5 stroke-[2.5]" />
+              <span>{copiedLink ? "Copied!" : "Copy Link"}</span>
+            </button>
+            
+            {/* Copy Message Button */}
+            <button
+              id="copy-share-msg-btn"
+              type="button"
+              onClick={copyMessage}
+              className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2.5 rounded-xl font-bold text-[11px] sm:text-xs cursor-pointer shadow-md transition-all active:scale-95 hover:bg-slate-700/50"
+              style={{
+                background: "rgba(30, 41, 59, 0.8)",
+                color: "#ECCB76",
+                border: "1px solid rgba(236, 203, 118, 0.3)",
+              }}
+            >
+              <MessageSquare className="w-3.5 h-3.5 stroke-[2.5]" />
+              <span>{copiedMessage ? "Copied!" : "Copy Msg"}</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -239,7 +267,7 @@ export default function ShareSheet({
               border: "1px solid rgba(201, 171, 82, 0.25)",
             }}
           >
-            <div className="w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-full bg-[#25D366] flex items-center justify-center text-white shadow-sm mb-1">
+            <div className="w-7 h-7 sm:w-[30px] sm:h-[30px] rounded-full bg-[#25D366] flex items-center justify-center text-white shadow-sm mb-1">
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
                 <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.116 1.532 5.847L0 24l6.302-1.508A11.933 11.933 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.89 0-3.66-.493-5.195-1.357l-.371-.221-3.742.895.928-3.647-.244-.385A9.944 9.944 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
@@ -263,8 +291,8 @@ export default function ShareSheet({
               border: "1px solid rgba(201, 171, 82, 0.25)",
             }}
           >
-            <div className="w-7 h-7 sm:w-7.5 sm:h-7.5 flex items-center justify-center text-[#ECCB76] mb-1">
-              <svg className="w-5 h-5 sm:w-5.5 sm:h-5.5" viewBox="0 0 24 24" fill="currentColor">
+            <div className="w-7 h-7 sm:w-[30px] sm:h-[30px] flex items-center justify-center text-[#ECCB76] mb-1">
+              <svg className="w-5 h-5 sm:w-[22px] sm:h-[22px]" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
               </svg>
             </div>
@@ -286,8 +314,8 @@ export default function ShareSheet({
               border: "1px solid rgba(201, 171, 82, 0.25)",
             }}
           >
-            <div className="w-7 h-7 sm:w-7.5 sm:h-7.5 flex items-center justify-center text-[#ECCB76] mb-1">
-              <svg className="w-5 h-5 sm:w-5.5 sm:h-5.5" viewBox="0 0 24 24" fill="currentColor">
+            <div className="w-7 h-7 sm:w-[30px] sm:h-[30px] flex items-center justify-center text-[#ECCB76] mb-1">
+              <svg className="w-5 h-5 sm:w-[22px] sm:h-[22px]" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
               </svg>
             </div>
@@ -309,8 +337,8 @@ export default function ShareSheet({
               border: "1px solid rgba(201, 171, 82, 0.25)",
             }}
           >
-            <div className="w-7 h-7 sm:w-7.5 sm:h-7.5 flex items-center justify-center text-blue-200 mb-1">
-              <Share2 className="w-4.5 h-4.5 stroke-[2]" />
+            <div className="w-7 h-7 sm:w-[30px] sm:h-[30px] flex items-center justify-center text-blue-200 mb-1">
+              <Share2 className="w-[18px] h-[18px] stroke-[2]" />
             </div>
             <span className="text-[11.5px] sm:text-xs font-semibold text-white">Social Media</span>
             <span className="text-[9.5px] sm:text-[10px] text-slate-400 flex items-center justify-center gap-0.5 mt-0.5">

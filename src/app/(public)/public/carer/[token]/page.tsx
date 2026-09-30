@@ -36,11 +36,13 @@ export async function generateMetadata(
         url: canonicalUrl,
         siteName: profile.brandName || "Grace & Goodwill",
         type: "website",
+        images: [{ url: `${appUrl}/website_logo.png`, width: 1200, height: 630 }],
       },
       twitter: {
         card: "summary_large_image",
         title,
         description,
+        images: [`${appUrl}/website_logo.png`],
       },
     };
   } catch {

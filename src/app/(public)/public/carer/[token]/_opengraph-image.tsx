@@ -105,6 +105,20 @@ export default async function Image({ params }: Props) {
       carerPhotoData = null;
     }
   }
+  
+  /* ── Fetch website logo as base64 ── */
+  let logoData: string | null = null;
+  try {
+    const res = await fetch(`${appUrl}/website_logo.png`, { signal: AbortSignal.timeout(4000) });
+    if (res.ok) {
+      const buffer = await res.arrayBuffer();
+      const base64 = Buffer.from(buffer).toString("base64");
+      const mime = res.headers.get("content-type") || "image/png";
+      logoData = `data:${mime};base64,${base64}`;
+    }
+  } catch {
+    logoData = null;
+  }
 
   /* ── Build experience label ── */
   const expLabel = experienceYears ? `${experienceYears}+ Years Experience` : "Professional Live-In Carer";
@@ -242,38 +256,42 @@ export default async function Image({ params }: Props) {
         >
           {/* Logo Knot + Brand Name & Strapline */}
           <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-            <svg width="48" height="48" viewBox="0 0 100 100" fill="none">
-              <defs>
-                <linearGradient id="goldKnot" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stopColor="#FFF2D6" />
-                  <stop offset="40%" stopColor="#E2BD6E" />
-                  <stop offset="80%" stopColor="#C8963E" />
-                  <stop offset="100%" stopColor="#8C6219" />
-                </linearGradient>
-              </defs>
-              <rect
-                x="18"
-                y="33"
-                width="64"
-                height="34"
-                rx="17"
-                stroke="url(#goldKnot)"
-                strokeWidth="8.5"
-                fill="none"
-                transform="rotate(-28 50 50)"
-              />
-              <rect
-                x="18"
-                y="33"
-                width="64"
-                height="34"
-                rx="17"
-                stroke="url(#goldKnot)"
-                strokeWidth="8.5"
-                fill="none"
-                transform="rotate(62 50 50)"
-              />
-            </svg>
+            {logoData ? (
+              <img src={logoData} width={52} height={52} style={{ objectFit: "contain" }} />
+            ) : (
+              <svg width="48" height="48" viewBox="0 0 100 100" fill="none">
+                <defs>
+                  <linearGradient id="goldKnot" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="#FFF2D6" />
+                    <stop offset="40%" stopColor="#E2BD6E" />
+                    <stop offset="80%" stopColor="#C8963E" />
+                    <stop offset="100%" stopColor="#8C6219" />
+                  </linearGradient>
+                </defs>
+                <rect
+                  x="18"
+                  y="33"
+                  width="64"
+                  height="34"
+                  rx="17"
+                  stroke="url(#goldKnot)"
+                  strokeWidth="8.5"
+                  fill="none"
+                  transform="rotate(-28 50 50)"
+                />
+                <rect
+                  x="18"
+                  y="33"
+                  width="64"
+                  height="34"
+                  rx="17"
+                  stroke="url(#goldKnot)"
+                  strokeWidth="8.5"
+                  fill="none"
+                  transform="rotate(62 50 50)"
+                />
+              </svg>
+            )}
 
             <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
               <div

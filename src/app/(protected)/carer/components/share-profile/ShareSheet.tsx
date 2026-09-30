@@ -103,7 +103,7 @@ export default function ShareSheet({
   };
 
   const handleShareWhatsApp = () => {
-    const text = `${formalName} has shared their professional live-in carer profile with you through Grace & Goodwill.\n\nView ${firstName}'s experience, introduction video, care skills, interests, languages and current availability using the secure link below.\n\n🔗 ${cleanShareUrl}\n\nThis profile link is available for a limited period.\n\nIf you would like to discuss ${firstName}'s profile, check availability or talk to us about other live-in care options, the Grace & Goodwill team is here to help.\n\n📞 Call: 020 4524 0108\n💬 WhatsApp: +44 7462 931949\n🌐 https://graceandgoodwill.co.uk`;
+    const text = `${formalName} has shared their professional live-in carer profile with you through Grace & Goodwill.\n\nView ${firstName}'s experience, introduction video, care skills, interests, languages and current availability using the secure link below.\n\n🔗 ${cleanShareUrl}\n\nThis profile link is available for a limited period.\n\nIf you would like to discuss ${firstName}'s profile, check their availability or talk to us about other live-in care options, the Grace & Goodwill team is here to help.\n\n📞 Call: 020 4524 0108\n💬 WhatsApp: +44 7462 931949\n🌐 graceandgoodwill.co.uk`;
 
     const isMobile = /iPhone|iPad|iPod|Android/i.test(typeof navigator !== 'undefined' ? navigator.userAgent : '');
     
@@ -132,7 +132,7 @@ export default function ShareSheet({
   const handleShareSocial = async () => {
     if (typeof navigator !== "undefined" && navigator.share) {
       try {
-        const text = `${formalName} has shared their professional live-in carer profile with you through Grace & Goodwill.\n\nView ${firstName}'s experience, introduction video, care skills, interests, languages and current availability using the secure link below.\n\n🔗 ${cleanShareUrl}\n\nThis profile link is available for a limited period.\n\nIf you would like to discuss ${firstName}'s profile, check availability or talk to us about other live-in care options, the Grace & Goodwill team is here to help.\n\n📞 Call: 020 4524 0108\n💬 WhatsApp: +44 7462 931949\n🌐 https://graceandgoodwill.co.uk`;
+        const text = `${formalName} has shared their professional live-in carer profile with you through Grace & Goodwill.\n\nView ${firstName}'s experience, introduction video, care skills, interests, languages and current availability using the secure link below.\n\n🔗 ${cleanShareUrl}\n\nThis profile link is available for a limited period.\n\nIf you would like to discuss ${firstName}'s profile, check their availability or talk to us about other live-in care options, the Grace & Goodwill team is here to help.\n\n📞 Call: 020 4524 0108\n💬 WhatsApp: +44 7462 931949\n🌐 graceandgoodwill.co.uk`;
         
         await navigator.share({
           title: `${formalName} – Professional Live-In Carer Profile`,

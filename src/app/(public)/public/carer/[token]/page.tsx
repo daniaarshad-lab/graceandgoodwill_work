@@ -27,9 +27,10 @@ export async function generateMetadata(
 
     const canonicalUrl = `${appUrl}/public/carer/${token}`;
 
-    // Temporarily using website_logo.png for og:image to verify WhatsApp 
-    // metadata rendering while the dynamic OG image route is debugged.
-    const ogImageUrl = `${appUrl}/website_logo.png`;
+    // Explicitly set the og:image to our stable /api/og/carer/[token] route.
+    // This route returns a proper PNG image with Content-Type: image/png so
+    // WhatsApp Web can render the large preview card correctly.
+    const ogImageUrl = `${appUrl}/api/og/carer/${token}`;
 
     return {
       title,

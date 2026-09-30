@@ -1,8 +1,9 @@
-﻿import { ImageResponse } from "next/og";
+import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
 
 export const runtime = "edge";
 
+// Shared handler — used by both /api/og/carer/[token] and /api/og/carer/[token]/preview.png
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ token: string }> }
@@ -30,6 +31,7 @@ export async function GET(
       .replace(/\/api\/?$/, "");
     const res = await fetch(`${apiBase}/api/public/carer/${token}`, {
       signal: AbortSignal.timeout(5000),
+      cache: "no-store",
     });
     if (res.ok) {
       const profile = await res.json();
@@ -42,30 +44,42 @@ export async function GET(
     isValid = false;
   }
 
+  // Explicit headers so WhatsApp Web recognises it as an image
+  const responseHeaders = {
+    "Content-Type": "image/png",
+    "Cache-Control": "public, max-age=3600, s-maxage=3600",
+  };
+
   if (!isValid) {
     return new ImageResponse(
       (
         <div style={{ width: "1200px", height: "630px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "linear-gradient(135deg, #0a0f1e 0%, #0d1a35 50%, #0a1228 100%)", fontFamily: "Georgia, serif" }}>
           <div style={{ position: "absolute", inset: "24px", border: "1.5px solid rgba(212,159,71,0.4)", borderRadius: "16px", display: "flex" }} />
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "16px" }}>
-            <div style={{ fontSize: "52px", color: "#D4A043", fontWeight: "bold", letterSpacing: "6px" }}>GRACE &amp; GOODWILL</div>
-            <div style={{ fontSize: "18px", color: "rgba(212,159,71,0.6)", letterSpacing: "4px" }}>Care Defined by Integrity</div>
-            <div style={{ fontSize: "28px", color: "#ffffff", opacity: 0.6 }}>This profile link has expired</div>
-            <div style={{ fontSize: "18px", color: "rgba(255,255,255,0.4)" }}>graceandgoodwill.co.uk</div>
+            <div style={{ fontSize: "52px", color: "#D4A043", fontWeight: "bold", letterSpacing: "6px", display: "flex" }}>GRACE &amp; GOODWILL</div>
+            <div style={{ fontSize: "18px", color: "rgba(212,159,71,0.6)", letterSpacing: "4px", display: "flex" }}>Care Defined by Integrity</div>
+            <div style={{ fontSize: "28px", color: "#ffffff", opacity: 0.6, display: "flex" }}>Professional Live-In Carer Profile</div>
+            <div style={{ fontSize: "18px", color: "rgba(255,255,255,0.4)", display: "flex" }}>graceandgoodwill.co.uk</div>
           </div>
         </div>
       ),
-      { ...size }
+      { ...size, headers: responseHeaders }
     );
   }
 
+  // Edge-safe base64 encoding (no Buffer — uses btoa)
   let carerPhotoData: string | null = null;
   if (photoUrl) {
     try {
       const res = await fetch(photoUrl, { signal: AbortSignal.timeout(4000) });
       if (res.ok) {
         const buffer = await res.arrayBuffer();
-        const base64 = Buffer.from(buffer).toString("base64");
+        const bytes = new Uint8Array(buffer);
+        let binary = "";
+        for (let i = 0; i < bytes.byteLength; i++) {
+          binary += String.fromCharCode(bytes[i]);
+        }
+        const base64 = btoa(binary);
         const mime = res.headers.get("content-type") || "image/jpeg";
         carerPhotoData = `data:${mime};base64,${base64}`;
       }
@@ -106,13 +120,14 @@ export async function GET(
             </div>
           ) : (
             <div style={{ width: "265px", height: "265px", borderRadius: "50%", border: "4px solid rgba(212,159,71,0.5)", background: "rgba(212,159,71,0.08)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <div style={{ fontSize: "80px", display: "flex" }}>Person</div>
+              <div style={{ fontSize: "80px", display: "flex" }}>👤</div>
             </div>
           )}
         </div>
         <div style={{ position: "absolute", bottom: "20px", left: "20px", right: "20px", height: "4px", background: "linear-gradient(90deg, transparent, #D4A043, #F8E090, #D4A043, transparent)", borderRadius: "2px", display: "flex" }} />
       </div>
     ),
-    { ...size }
+    { ...size, headers: responseHeaders }
   );
 }
+

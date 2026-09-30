@@ -27,12 +27,10 @@ export async function generateMetadata(
 
     const canonicalUrl = `${appUrl}/public/carer/${token}`;
 
-    // Explicitly set the og:image to our stable /api/og/carer/[token]/preview.png route.
-    // WhatsApp's scraper reads og:image from <meta> tags in the HTML — the
-    // co-located opengraph-image.tsx auto-discovery uses a hashed filename
-    // that WhatsApp cannot reliably resolve, causing no image to appear.
-    // This dedicated API route provides a predictable URL that always works.
-    const ogImageUrl = `${appUrl}/api/og/carer/${token}/preview.png`;
+    // Explicitly set the og:image to our stable /api/og/carer/[token] route.
+    // This route returns a proper PNG image with Content-Type: image/png so
+    // WhatsApp Web can render the large preview card correctly.
+    const ogImageUrl = `${appUrl}/api/og/carer/${token}`;
 
     return {
       title,

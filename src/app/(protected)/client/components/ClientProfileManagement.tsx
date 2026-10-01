@@ -8,6 +8,7 @@ import {
 } from "@/store/slices/clientSlice";
 import SectionCard from "./shared/SectionCard";
 import Input from "@/components/Input";
+import GoogleAddressAutocomplete from "@/components/GoogleAddressAutocomplete";
 import PhoneInput from "@/components/PhoneInput";
 import Button from "@/components/Button";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
@@ -154,11 +155,17 @@ export default function ClientProfileManagement() {
         </h4>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Input
+          <GoogleAddressAutocomplete
             label="Address"
             value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            placeholder="Enter full physical address"
+            onChange={(val) => setAddress(val)}
+            onAddressSelect={(parsed) => {
+              if (parsed.formattedAddress) setAddress(parsed.formattedAddress);
+              if (parsed.postcode) setPincode(parsed.postcode);
+              if (parsed.city) setCity(parsed.city);
+              if (parsed.state) setStateField(parsed.state);
+            }}
+            placeholder="Search address or postcode..."
             disabled={loading || isSaving}
           />
 

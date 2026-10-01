@@ -815,6 +815,12 @@ function CarerDashboardContent() {
                 setExperience={portal.setExperience}
                 address={portal.address}
                 setAddress={portal.setAddress}
+                city={portal.city}
+                setCity={portal.setCity}
+                postcode={portal.postcode}
+                setPostcode={portal.setPostcode}
+                setLatitude={portal.setLatitude}
+                setLongitude={portal.setLongitude}
                 bankName={portal.bankName}
                 setBankName={portal.setBankName}
                 accountName={portal.accountName}

@@ -39,7 +39,10 @@ export function useCarerPortal({
   const [specialties, setSpecialties] = useState("");
   const [experience, setExperience] = useState("");
   const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
   const [postcode, setPostcode] = useState("");
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
   const [canDrive, setCanDrive] = useState<"yes" | "no" | "">("");
   const [hasBusinessInsurance, setHasBusinessInsurance] = useState<
     "yes" | "no" | ""
@@ -96,7 +99,10 @@ export function useCarerPortal({
           "",
       );
       setAddress(actualProfile.address ?? p.address ?? "");
+      setCity(actualProfile.city ?? p.city ?? "");
       setPostcode(actualProfile.postcode ?? p.postcode ?? "");
+      setLatitude(actualProfile.latitude ?? p.latitude ?? null);
+      setLongitude(actualProfile.longitude ?? p.longitude ?? null);
 
       const canDriveVal = actualProfile.canDrive ?? p.canDrive;
       setCanDrive(
@@ -291,8 +297,11 @@ export function useCarerPortal({
           firstName,
           lastName,
           address,
+          city,
           postcode,
           pincode: postcode,
+          latitude,
+          longitude,
           dateOfBirth,
           emergencyContactName,
           emergencyContactNumber,
@@ -711,8 +720,14 @@ export function useCarerPortal({
     setExperience,
     address,
     setAddress,
+    city,
+    setCity,
     postcode,
     setPostcode,
+    latitude,
+    setLatitude,
+    longitude,
+    setLongitude,
     canDrive,
     setCanDrive,
     hasBusinessInsurance,

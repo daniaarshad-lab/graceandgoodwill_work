@@ -37,6 +37,10 @@ export function useClientPortal({ user }: UseClientPortalProps) {
   const [careStartDate, setCareStartDate] = useState("");
   const [careDuration, setCareDuration] = useState("");
   const [careAddress, setCareAddress] = useState("");
+  const [careCity, setCareCity] = useState("");
+  const [carePostcode, setCarePostcode] = useState("");
+  const [careLatitude, setCareLatitude] = useState<number | null>(null);
+  const [careLongitude, setCareLongitude] = useState<number | null>(null);
   const [careNotes, setCareNotes] = useState("");
   const [isOngoing, setIsOngoing] = useState(false);
   const [weeklyPayRange, setWeeklyPayRange] = useState<{
@@ -109,6 +113,10 @@ export function useClientPortal({ user }: UseClientPortalProps) {
     }
     const payload = {
       address: careAddress,
+      city: careCity,
+      postcode: carePostcode,
+      latitude: careLatitude,
+      longitude: careLongitude,
 
       careCategory: Array.isArray(careType)
         ? careType
@@ -204,6 +212,14 @@ export function useClientPortal({ user }: UseClientPortalProps) {
     setCareDuration,
     careAddress,
     setCareAddress,
+    careCity,
+    setCareCity,
+    carePostcode,
+    setCarePostcode,
+    careLatitude,
+    setCareLatitude,
+    careLongitude,
+    setCareLongitude,
     careNotes,
     setCareNotes,
     careErrors,

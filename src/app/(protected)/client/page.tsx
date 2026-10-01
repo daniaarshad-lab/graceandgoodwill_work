@@ -167,6 +167,12 @@ export default function ClientDashboard() {
               setDuration={portal.setCareDuration}
               address={portal.careAddress}
               setAddress={portal.setCareAddress}
+              city={portal.careCity}
+              setCity={portal.setCareCity}
+              postcode={portal.carePostcode}
+              setPostcode={portal.setCarePostcode}
+              setLatitude={portal.setCareLatitude}
+              setLongitude={portal.setCareLongitude}
               notes={portal.careNotes}
               setNotes={portal.setCareNotes}
               isOngoing={portal.isOngoing}

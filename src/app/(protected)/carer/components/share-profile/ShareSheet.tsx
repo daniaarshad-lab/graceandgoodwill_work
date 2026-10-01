@@ -219,8 +219,8 @@ export default function ShareSheet({
       <div
         className="rounded-2xl p-3 sm:p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
         style={{
-          background: "rgba(5, 36, 24, 0.85)",
-          border: "1px solid rgba(16, 185, 129, 0.35)",
+          background: "rgba(10, 18, 42, 0.65)",
+          border: "1px solid rgba(201, 171, 82, 0.25)",
         }}
       >
         {/* Left: Green Active Pill */}
@@ -229,7 +229,7 @@ export default function ShareSheet({
             <Check className="w-3.5 h-3.5 text-white stroke-[3]" />
           </div>
           <div className="text-xs sm:text-[12.5px]">
-            <span className="text-emerald-300 font-semibold">Active until:</span>{" "}
+            <span className="text-emerald-400 font-semibold">Active until:</span>{" "}
             <span className="text-white font-medium">{formattedExpiry}</span>
           </div>
         </div>
@@ -237,7 +237,7 @@ export default function ShareSheet({
         {/* Right: Calendar note */}
         <div className="flex items-center gap-2 sm:max-w-[280px]">
           <CalendarDays className="w-5 h-5 flex-shrink-0 text-[#ECCB76]" />
-          <p className="text-[10.5px] sm:text-[11px] text-emerald-100/90 leading-tight">
+          <p className="text-[10.5px] sm:text-[11px] text-slate-300 leading-tight">
             Your link will remain active for 1 month. You can generate a new link when the current one expires.
           </p>
         </div>
@@ -253,12 +253,12 @@ export default function ShareSheet({
           <div
             className="flex-1 min-w-0 flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl"
             style={{
-              background: "rgba(5, 36, 24, 0.85)",
-              border: "1px solid rgba(16, 185, 129, 0.4)",
+              background: "rgba(10, 18, 42, 0.65)",
+              border: "1px solid rgba(201, 171, 82, 0.35)",
             }}
           >
             <Link2 className="w-4 h-4 flex-shrink-0 text-[#ECCB76] stroke-[2.2]" />
-            <span className="text-xs sm:text-sm text-white font-mono truncate select-all">
+            <span className="text-xs sm:text-sm text-slate-200 font-mono truncate select-all">
               {cleanShareUrl}
             </span>
           </div>
@@ -312,10 +312,10 @@ export default function ShareSheet({
             id="share-via-whatsapp-btn"
             type="button"
             onClick={handleShareWhatsApp}
-            className="py-2.5 px-2 sm:py-2.5 sm:px-2 rounded-xl flex flex-col items-center justify-between text-center cursor-pointer transition-all hover:border-emerald-400/60 hover:bg-emerald-950/60 active:scale-[0.98]"
+            className="py-2.5 px-2 sm:py-2.5 sm:px-2 rounded-xl flex flex-col items-center justify-between text-center cursor-pointer transition-all hover:border-amber-400/50 hover:bg-slate-800/40 active:scale-[0.98]"
             style={{
-              background: "rgba(5, 36, 24, 0.85)",
-              border: "1px solid rgba(16, 185, 129, 0.35)",
+              background: "rgba(10, 18, 42, 0.65)",
+              border: "1px solid rgba(201, 171, 82, 0.25)",
             }}
           >
             <div className="w-7 h-7 sm:w-[30px] sm:h-[30px] rounded-full bg-[#25D366] flex items-center justify-center text-white shadow-sm mb-1">
@@ -325,7 +325,7 @@ export default function ShareSheet({
               </svg>
             </div>
             <span className="text-[11.5px] sm:text-xs font-semibold text-white">WhatsApp</span>
-            <span className="text-[9.5px] sm:text-[10px] text-emerald-200/80 flex items-center justify-center gap-0.5 mt-0.5">
+            <span className="text-[9.5px] sm:text-[10px] text-slate-400 flex items-center justify-center gap-0.5 mt-0.5">
               <span>Share via WhatsApp</span>
               <ChevronRight className="w-3.5 h-3.5 text-[#ECCB76] stroke-[2.5] flex-shrink-0" />
             </span>
@@ -336,10 +336,10 @@ export default function ShareSheet({
             id="share-via-email-btn"
             type="button"
             onClick={handleShareEmail}
-            className="py-2.5 px-2 sm:py-2.5 sm:px-2 rounded-xl flex flex-col items-center justify-between text-center cursor-pointer transition-all hover:border-emerald-400/60 hover:bg-emerald-950/60 active:scale-[0.98]"
+            className="py-2.5 px-2 sm:py-2.5 sm:px-2 rounded-xl flex flex-col items-center justify-between text-center cursor-pointer transition-all hover:border-amber-400/50 hover:bg-slate-800/40 active:scale-[0.98]"
             style={{
-              background: "rgba(5, 36, 24, 0.85)",
-              border: "1px solid rgba(16, 185, 129, 0.35)",
+              background: "rgba(10, 18, 42, 0.65)",
+              border: "1px solid rgba(201, 171, 82, 0.25)",
             }}
           >
             <div className="w-7 h-7 sm:w-[30px] sm:h-[30px] flex items-center justify-center text-[#ECCB76] mb-1">
@@ -348,7 +348,7 @@ export default function ShareSheet({
               </svg>
             </div>
             <span className="text-[11.5px] sm:text-xs font-semibold text-white">Email</span>
-            <span className="text-[9.5px] sm:text-[10px] text-emerald-200/80 flex items-center justify-center gap-0.5 mt-0.5">
+            <span className="text-[9.5px] sm:text-[10px] text-slate-400 flex items-center justify-center gap-0.5 mt-0.5">
               <span>Send via Email</span>
               <ChevronRight className="w-3.5 h-3.5 text-[#ECCB76] stroke-[2.5] flex-shrink-0" />
             </span>
@@ -359,10 +359,10 @@ export default function ShareSheet({
             id="share-via-sms-btn"
             type="button"
             onClick={handleShareSMS}
-            className="py-2.5 px-2 sm:py-2.5 sm:px-2 rounded-xl flex flex-col items-center justify-between text-center cursor-pointer transition-all hover:border-emerald-400/60 hover:bg-emerald-950/60 active:scale-[0.98]"
+            className="py-2.5 px-2 sm:py-2.5 sm:px-2 rounded-xl flex flex-col items-center justify-between text-center cursor-pointer transition-all hover:border-amber-400/50 hover:bg-slate-800/40 active:scale-[0.98]"
             style={{
-              background: "rgba(5, 36, 24, 0.85)",
-              border: "1px solid rgba(16, 185, 129, 0.35)",
+              background: "rgba(10, 18, 42, 0.65)",
+              border: "1px solid rgba(201, 171, 82, 0.25)",
             }}
           >
             <div className="w-7 h-7 sm:w-[30px] sm:h-[30px] flex items-center justify-center text-[#ECCB76] mb-1">
@@ -371,7 +371,7 @@ export default function ShareSheet({
               </svg>
             </div>
             <span className="text-[11.5px] sm:text-xs font-semibold text-white">Text / SMS</span>
-            <span className="text-[9.5px] sm:text-[10px] text-emerald-200/80 flex items-center justify-center gap-0.5 mt-0.5">
+            <span className="text-[9.5px] sm:text-[10px] text-slate-400 flex items-center justify-center gap-0.5 mt-0.5">
               <span>Send via SMS</span>
               <ChevronRight className="w-3.5 h-3.5 text-[#ECCB76] stroke-[2.5] flex-shrink-0" />
             </span>
@@ -382,17 +382,17 @@ export default function ShareSheet({
             id="share-via-social-btn"
             type="button"
             onClick={handleShareSocial}
-            className="py-2.5 px-2 sm:py-2.5 sm:px-2 rounded-xl flex flex-col items-center justify-between text-center cursor-pointer transition-all hover:border-emerald-400/60 hover:bg-emerald-950/60 active:scale-[0.98]"
+            className="py-2.5 px-2 sm:py-2.5 sm:px-2 rounded-xl flex flex-col items-center justify-between text-center cursor-pointer transition-all hover:border-amber-400/50 hover:bg-slate-800/40 active:scale-[0.98]"
             style={{
-              background: "rgba(5, 36, 24, 0.85)",
-              border: "1px solid rgba(16, 185, 129, 0.35)",
+              background: "rgba(10, 18, 42, 0.65)",
+              border: "1px solid rgba(201, 171, 82, 0.25)",
             }}
           >
             <div className="w-7 h-7 sm:w-[30px] sm:h-[30px] flex items-center justify-center text-blue-200 mb-1">
               <Share2 className="w-[18px] h-[18px] stroke-[2]" />
             </div>
             <span className="text-[11.5px] sm:text-xs font-semibold text-white">Social Media</span>
-            <span className="text-[9.5px] sm:text-[10px] text-emerald-200/80 flex items-center justify-center gap-0.5 mt-0.5">
+            <span className="text-[9.5px] sm:text-[10px] text-slate-400 flex items-center justify-center gap-0.5 mt-0.5">
               <span>Share on Social</span>
               <ChevronRight className="w-3.5 h-3.5 text-[#ECCB76] stroke-[2.5] flex-shrink-0" />
             </span>
@@ -404,10 +404,10 @@ export default function ShareSheet({
       <div
         className="rounded-2xl p-3.5 sm:p-4"
         style={{
-          background: "rgba(5, 36, 24, 0.85)",
-          border: "1.5px solid rgba(16, 185, 129, 0.45)",
+          background: "rgba(10, 18, 42, 0.55)",
+          border: "1.5px solid rgba(236, 203, 118, 0.6)",
           boxShadow:
-            "0 0 20px rgba(16, 185, 129, 0.15), inset 0 0 12px rgba(16, 185, 129, 0.05)",
+            "0 0 20px rgba(236, 203, 118, 0.25), inset 0 0 12px rgba(236, 203, 118, 0.08)",
         }}
       >
         <div className="flex items-start gap-3 sm:gap-3.5">

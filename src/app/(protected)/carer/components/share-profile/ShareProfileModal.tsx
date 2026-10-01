@@ -117,14 +117,14 @@ export default function ShareProfileModal({
     try {
       const data = await shareableProfileService.generateShareToken(true);
       setStatus(data);
-      
+
       // Warm up cache for crawlers (fire-and-forget)
       const tokenToWarm = data.token || (data.shareUrl ? data.shareUrl.split('/').pop()?.split('?')[0] : null);
       if (tokenToWarm) {
         const appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://graceandgoodwill.co.uk";
         const cleanAppUrl = appUrl.replace(/\/+$/, "");
-        fetch(`${cleanAppUrl}/public/carer/${tokenToWarm}`).catch(() => {});
-        fetch(`${cleanAppUrl}/public/carer/${tokenToWarm}/og-image?ext=.png`).catch(() => {});
+        fetch(`${cleanAppUrl}/public/carer/${tokenToWarm}`).catch(() => { });
+        fetch(`${cleanAppUrl}/public/carer/${tokenToWarm}/og-image?ext=.png`).catch(() => { });
       }
 
       showSuccessToast(
@@ -150,8 +150,8 @@ export default function ShareProfileModal({
       if (tokenToWarm) {
         const appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://graceandgoodwill.co.uk";
         const cleanAppUrl = appUrl.replace(/\/+$/, "");
-        fetch(`${cleanAppUrl}/public/carer/${tokenToWarm}`).catch(() => {});
-        fetch(`${cleanAppUrl}/public/carer/${tokenToWarm}/og-image?ext=.png`).catch(() => {});
+        fetch(`${cleanAppUrl}/public/carer/${tokenToWarm}`).catch(() => { });
+        fetch(`${cleanAppUrl}/public/carer/${tokenToWarm}/og-image?ext=.png`).catch(() => { });
       }
 
       showSuccessToast(

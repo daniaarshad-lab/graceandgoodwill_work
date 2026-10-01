@@ -228,7 +228,7 @@ export default function ShareProfileModal({
 
         {/* Right content panel */}
         <div
-          className="relative z-10 flex flex-col flex-1 min-w-0 bg-[linear-gradient(180deg,transparent_0%,transparent_200px,#070d1e_260px,#040815_100%)] md:bg-[linear-gradient(165deg,#0b152d_0%,#070d1e_65%,#040815_100%)]"
+          className="relative z-10 flex flex-col flex-1 min-w-0 min-h-0 bg-[linear-gradient(180deg,transparent_0%,transparent_200px,#070d1e_260px,#040815_100%)] md:bg-[linear-gradient(165deg,#0b152d_0%,#070d1e_65%,#040815_100%)]"
         >
           {/* Close Button */}
           <button
@@ -243,7 +243,7 @@ export default function ShareProfileModal({
 
           {/* Scrollable content inside the modal */}
           <div
-            className={`overflow-y-auto flex-1 custom-scrollbar ${isExpired ? "p-4 sm:p-5" : "p-5 sm:p-6"}`}
+            className={`overflow-y-auto flex-1 min-h-0 custom-scrollbar ${isExpired ? "p-4 sm:p-5" : "p-5 sm:p-6 pb-28 md:pb-6"}`}
             style={{
               scrollbarWidth: "thin",
               scrollbarColor: "rgba(201, 171, 82, 0.4) transparent",
@@ -329,11 +329,11 @@ export default function ShareProfileModal({
                             border: "1px solid rgba(201, 171, 82, 0.28)",
                           }}
                         >
-                          <div className="grid grid-cols-4 gap-x-2 gap-y-3">
+                          <div className="grid grid-cols-3 min-[430px]:grid-cols-4 gap-x-2 gap-y-3">
                             {PROFILE_ITEMS.map(({ icon: Icon, label }) => (
-                              <div key={label} className="flex flex-col items-start gap-1.5 min-w-0">
+                              <div key={label} className="flex flex-col items-start gap-1.5 min-w-0 w-full">
                                 <Icon className="w-4 h-4 flex-shrink-0 text-[#ECCB76] stroke-[1.8]" />
-                                <span className="text-[10px] sm:text-[11px] text-slate-200 leading-snug">
+                                <span className="text-[10px] sm:text-[11px] text-slate-200 leading-snug break-words w-full">
                                   {label}
                                 </span>
                               </div>

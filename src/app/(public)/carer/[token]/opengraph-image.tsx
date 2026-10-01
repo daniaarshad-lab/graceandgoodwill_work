@@ -35,7 +35,7 @@ export default async function Image({ params }: Props) {
 
     const res = await fetch(profileUrl, {
       signal: AbortSignal.timeout(4000),
-      cache: "no-store",
+      next: { revalidate: 300 },
     });
     if (res.ok) {
       const profile = await res.json();

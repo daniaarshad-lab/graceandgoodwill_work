@@ -34,8 +34,8 @@ export default async function Image({ params }: Props) {
       : `${apiBase}/api/public/carer/${token}`;
 
     const res = await fetch(profileUrl, {
-      signal: AbortSignal.timeout(4000),
-      cache: "no-store",
+      next: { revalidate: 300 },
+      signal: AbortSignal.timeout(10000),
     });
     if (res.ok) {
       const profile = await res.json();
@@ -50,7 +50,8 @@ export default async function Image({ params }: Props) {
 
   const responseHeaders = {
     "Content-Type": "image/png",
-    "Cache-Control": "public, max-age=86400, s-maxage=86400",
+    "Cache-Control":
+      "public, max-age=86400, s-maxage=86400, stale-while-revalidate=86400",
   };
 
   if (!isValid) {

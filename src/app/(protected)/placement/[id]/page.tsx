@@ -4,6 +4,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import PlacementDetailModal from "@/app/(protected)/client/components/PlacementDetailModal";
 import AdminPlacementDetailModal from "@/app/(protected)/admin/components/AdminPlacementDetailModal";
+import CarerPlacementDetailModal from "@/app/(protected)/carer/components/CarerPlacementDetailModal";
 import ThinSpinner from "@/components/ThinSpinner";
 
 export default function PlacementDetailsRoutePage() {
@@ -39,6 +40,22 @@ export default function PlacementDetailsRoutePage() {
             router.back();
           } else {
             router.push("/admin?tab=placements");
+          }
+        }}
+      />
+    );
+  }
+
+  if (user.role === "CARER") {
+    return (
+      <CarerPlacementDetailModal
+        placementId={placementId}
+        isPage={true}
+        onClose={() => {
+          if (typeof window !== "undefined" && window.history.length > 1) {
+            router.back();
+          } else {
+            router.push("/carer?tab=placements");
           }
         }}
       />

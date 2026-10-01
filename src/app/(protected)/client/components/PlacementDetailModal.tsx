@@ -35,7 +35,7 @@ interface PlacementDetailModalProps {
   isPage?: boolean;
 }
 
-type ClientPlacementTab = "arrangement" | "requirements" | "invoices";
+type ClientPlacementTab = "arrangement" | "schedule" | "requirements" | "invoices";
 
 export default function PlacementDetailModal({
   placementId,
@@ -248,6 +248,23 @@ export default function PlacementDetailModal({
           </button>
 
           <button
+            onClick={() => setActiveTab("schedule")}
+            className={`flex items-center gap-2 py-3.5 px-4 text-xs sm:text-sm font-bold border-b-2 transition-all whitespace-nowrap cursor-pointer ${
+              activeTab === "schedule"
+                ? "border-gold-DEFAULT text-gold-DEFAULT bg-gold-DEFAULT/5"
+                : "border-transparent text-gold-100/60 hover:text-gold-200"
+            }`}
+          >
+            <Calendar className="w-4 h-4" />
+            <span>Schedule & Holidays</span>
+            {placement.leaveRequests && placement.leaveRequests.length > 0 && (
+              <span className="px-1.5 py-0.5 rounded-full bg-gold-DEFAULT/20 text-gold-200 font-mono text-[10px] border border-gold-DEFAULT/30">
+                {placement.leaveRequests.length}
+              </span>
+            )}
+          </button>
+
+          <button
             onClick={() => setActiveTab("requirements")}
             className={`flex items-center gap-2 py-3.5 px-4 text-xs sm:text-sm font-bold border-b-2 transition-all whitespace-nowrap cursor-pointer ${
               activeTab === "requirements"
@@ -293,18 +310,6 @@ export default function PlacementDetailModal({
                     Your lead primary carer provides day-to-day care, while your preferred backup carer is briefed and ready for holiday relief.
                   </p>
                 </div>
-                <Button
-                  variant="primary"
-                  size="sm"
-                  onClick={() => {
-                    setBackupTargetPriority(1);
-                    setIsSelectBackupOpen(true);
-                  }}
-                  className="font-bold text-xs shrink-0"
-                >
-                  <Users className="w-3.5 h-3.5 mr-1.5" />
-                  {backupCarerName ? "Manage Backup Carers" : "Designate Backup Carer"}
-                </Button>
               </div>
 
               {/* Multi-Carer Arrangement Card (Primary, 1st Backup, 2nd Backup) */}
@@ -330,8 +335,42 @@ export default function PlacementDetailModal({
                   setIsSelectBackupOpen(true);
                 }}
               />
+            </div>
+          )}
 
-              {/* Upcoming Holiday & Relief Schedule Section */}
+          {/* TAB 2: SCHEDULE & HOLIDAYS (DEDICATED CONTINUITY & RELIEF SCHEDULE) */}
+          {activeTab === "schedule" && (
+            <div className="space-y-6">
+              {/* Placement Schedule Overview */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="p-4 rounded-xl border border-gold-300/15 bg-navy-900/60 shadow-lg space-y-1">
+                  <span className="text-[10px] uppercase font-bold tracking-wider text-gold-100/50 block">
+                    Placement Start Date
+                  </span>
+                  <div className="text-base font-bold text-white flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-gold-DEFAULT" />
+                    <span>{formatDate(placement.startDate || (placement as any).careRequest?.startDate)}</span>
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-xl border border-gold-300/15 bg-navy-900/60 shadow-lg space-y-1">
+                  <span className="text-[10px] uppercase font-bold tracking-wider text-gold-100/50 block">
+                    Placement Duration
+                  </span>
+                  <div className="text-base font-bold text-white flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-gold-DEFAULT" />
+                    <span>
+                      {placement.endDate
+                        ? `Until ${formatDate(placement.endDate)}`
+                        : placement.careRequest?.isOngoing
+                        ? "Ongoing Live-in Care"
+                        : "Ongoing"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Holiday Relief & Coverage Schedule Section */}
               <div className="p-6 rounded-2xl border border-gold-300/20 bg-gradient-to-br from-navy-900 to-navy-950 shadow-xl space-y-4">
                 <div className="flex items-center justify-between border-b border-gold-300/10 pb-3">
                   <div className="flex items-center gap-2.5">
@@ -350,8 +389,12 @@ export default function PlacementDetailModal({
                 </div>
 
                 {(!placement.leaveRequests || placement.leaveRequests.length === 0) ? (
-                  <div className="p-6 rounded-xl bg-navy-950/40 border border-gold-300/10 text-xs text-gold-100/60 text-center">
-                    No scheduled holiday or relief breaks recorded for this placement yet. When {primaryCarerName} requests time off, scheduled relief cover with {backupCarerName || "your preferred backup carer"} will appear here.
+                  <div className="p-8 rounded-xl bg-navy-950/40 border border-gold-300/10 text-xs text-gold-100/60 text-center space-y-2">
+                    <Plane className="w-8 h-8 text-gold-300/20 mx-auto" />
+                    <p className="font-semibold text-gold-200">No scheduled holiday or relief breaks recorded yet.</p>
+                    <p className="text-gold-100/50 max-w-md mx-auto">
+                      When {primaryCarerName} requests time off, scheduled relief cover with {backupCarerName || "your preferred backup carer"} will appear here automatically.
+                    </p>
                   </div>
                 ) : (
                   <div className="space-y-3">
@@ -362,7 +405,7 @@ export default function PlacementDetailModal({
                       return (
                         <div
                           key={req.id}
-                          className="p-4 rounded-xl border border-gold-300/15 bg-navy-950/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                          className="p-4 rounded-xl border border-gold-300/15 bg-navy-950/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm hover:border-gold-300/30 transition-all"
                         >
                           <div className="space-y-1">
                             <div className="flex items-center gap-2">
@@ -405,11 +448,11 @@ export default function PlacementDetailModal({
 
                           <div className="text-xs text-gold-100/70">
                             {isConfirmed ? (
-                              <span className="text-emerald-400 font-medium flex items-center gap-1">
-                                <CheckCircle2 className="w-3.5 h-3.5" /> Covered by {backupCarerName || "Preferred Backup Carer"}
+                              <span className="text-emerald-400 font-semibold flex items-center gap-1.5 bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/20">
+                                <CheckCircle2 className="w-4 h-4" /> Covered by {backupCarerName || "Preferred Backup Carer"}
                               </span>
                             ) : (
-                              <span className="text-amber-400/90 font-medium">
+                              <span className="text-amber-400/90 font-medium bg-amber-500/10 px-3 py-1.5 rounded-lg border border-amber-500/20">
                                 Coordination team arranging cover
                               </span>
                             )}

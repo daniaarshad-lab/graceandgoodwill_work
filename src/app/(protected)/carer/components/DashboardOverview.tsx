@@ -32,29 +32,56 @@ export default function DashboardOverview({
       carerService.getPlacements().catch(() => []),
       backupCarerService.getReliefOpportunities().catch(() => []),
       backupCarerService.getPreferredBackupPlacements(profile?.id).catch(() => []),
-    ]).then(([placements, offers, backups]) => {
+      backupCarerService.getConfirmedReliefAssignments().catch(() => []),
+    ]).then(([placements, offers, backups, confirmedRelief]) => {
       const primary = placements.filter(
         (p: any) =>
           ["PLACEMENT_CONFIRMED", "PLACEMENT_STARTED", "ACTIVE", "ONGOING"].includes(p.status) &&
           !p.isBackup &&
           (p.carerProfileId === profile?.id || p.myRole === "PRIMARY_CARER")
       ).length;
+
       const backupFromPlacements = placements.filter(
         (p: any) =>
           ["PLACEMENT_CONFIRMED", "PLACEMENT_STARTED", "ACTIVE", "ONGOING"].includes(p.status) &&
           (p.isBackup ||
+            p.preferredBackupCarerProfileId === profile?.id ||
+            p.backupCarers?.some((b: any) => b.carerProfileId === profile?.id) ||
             p.myRole === "PREFERRED_BACKUP_CARER" ||
             p.myRole === "SECONDARY_BACKUP_CARER" ||
             Boolean(p.roleTitle && p.roleTitle.toLowerCase().includes("backup")) ||
             Boolean(p.carerProfileId && profile?.id && p.carerProfileId !== profile.id))
       ).length;
+
       const uniqueBackups = backups.filter(
         (bp: any) => !placements.some((p: any) => p.id === bp.id || `backup-${p.id}` === bp.id)
       ).length;
       const backup = backupFromPlacements + uniqueBackups;
-      const relief = offers.filter(
+
+      const reliefAssignmentsCount = Array.isArray(confirmedRelief) ? confirmedRelief.length : 0;
+      const reliefPlacementsCount = placements.filter(
+        (p: any) =>
+          p.myRole === "ACTIVE_RELIEF_CARER" ||
+          p.activeReliefCarerProfileId === profile?.id ||
+          p.assignments?.some(
+            (a: any) =>
+              (a.role === "ACTIVE_RELIEF_CARER" || a.role === "RELIEF_CARER") &&
+              ["CONFIRMED", "IN_PROGRESS", "ACTIVE"].includes(a.status)
+          ) ||
+          p.leaveRequests?.some(
+            (l: any) =>
+              l.status === "COVER_CONFIRMED" &&
+              (l.offeredCarerProfileId === profile?.id ||
+                p.preferredBackupCarerProfileId === profile?.id ||
+                p.backupCarers?.some((b: any) => b.carerProfileId === profile?.id))
+          )
+      ).length;
+      const confirmedOffersCount = offers.filter(
         (o: any) => o.status === "CONFIRMED" || o.status === "ACTIVE" || o.status === "COVERING"
       ).length;
+
+      const relief = Math.max(reliefAssignmentsCount, reliefPlacementsCount, confirmedOffersCount);
+
       setRoleCounts({ primary, backup, relief });
     });
   }, [profile?.id]);

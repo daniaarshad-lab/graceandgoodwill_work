@@ -125,8 +125,20 @@ export default function CarerRolesCard({
         </div>
 
         {/* Role 3: Active Relief Carer */}
-        <div className="flex items-start gap-3.5 p-4 rounded-xl border border-blue-500/20 bg-blue-950/20 hover:border-blue-500/40 transition-all">
-          <div className="p-2.5 rounded-xl bg-blue-500/20 text-blue-400 border border-blue-500/30 shrink-0">
+        <div
+          className={`flex items-start gap-3.5 p-4 rounded-xl border transition-all ${
+            activeReliefCount > 0
+              ? "border-blue-500/30 bg-blue-950/30 shadow-md hover:border-blue-500/50"
+              : "border-blue-500/20 bg-blue-950/20 hover:border-blue-500/40"
+          }`}
+        >
+          <div
+            className={`p-2.5 rounded-xl border shrink-0 ${
+              activeReliefCount > 0
+                ? "bg-blue-500/25 text-blue-300 border-blue-500/40"
+                : "bg-blue-500/20 text-blue-400 border border-blue-500/30"
+            }`}
+          >
             <CalendarClock className="w-5 h-5" />
           </div>
           <div className="space-y-1 flex-1 min-w-0">
@@ -139,7 +151,7 @@ export default function CarerRolesCard({
                     : "bg-slate-700/40 text-slate-400 border border-slate-700/50"
                 }`}
               >
-                {activeReliefCount > 0 ? "Covering" : "Not Active"}
+                {activeReliefCount > 0 ? "Active" : "Not Active"}
               </span>
             </div>
             <p className="text-[11px] text-gold-100/70 leading-relaxed">
@@ -147,10 +159,10 @@ export default function CarerRolesCard({
             </p>
             <span
               className={`inline-block text-[10px] font-semibold pt-0.5 ${
-                activeReliefCount > 0 ? "text-blue-400" : "text-gold-100/40"
+                activeReliefCount > 0 ? "text-blue-400 font-bold" : "text-gold-100/40"
               }`}
             >
-              ● {activeReliefCount} active relief cover
+              ● {activeReliefCount} active relief {activeReliefCount === 1 ? "cover" : "covers"}
             </span>
           </div>
         </div>

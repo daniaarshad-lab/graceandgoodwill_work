@@ -52,7 +52,7 @@ export default function ShareSheet({
 }: ShareSheetProps) {
   const { user } = useAuth();
   const [copiedLink, setCopiedLink] = useState(false);
-  const [copiedMessage, setCopiedMessage] = useState(false);
+  // const [copiedMessage, setCopiedMessage] = useState(false);
 
   // Stable, clean share URL without query parameters (such as ?v=...)
   const rawShareUrl = shareUrl ? shareUrl.split("?")[0] : "";
@@ -108,16 +108,16 @@ export default function ShareSheet({
     }
   };
 
-  const copyMessage = async () => {
-    try {
-      await navigator.clipboard.writeText(buildShareMessage());
-      setCopiedMessage(true);
-      showSuccessToast("Copied!", "Full message copied to clipboard.");
-      setTimeout(() => setCopiedMessage(false), 2500);
-    } catch {
-      showErrorToast("Failed", "Could not copy message to clipboard.");
-    }
-  };
+  // const copyMessage = async () => {
+  //   try {
+  //     await navigator.clipboard.writeText(buildShareMessage());
+  //     setCopiedMessage(true);
+  //     showSuccessToast("Copied!", "Full message copied to clipboard.");
+  //     setTimeout(() => setCopiedMessage(false), 2500);
+  //   } catch {
+  //     showErrorToast("Failed", "Could not copy message to clipboard.");
+  //   }
+  // };
 
   // const handleShareWhatsApp = () => {
   //   const text = buildShareMessage();
@@ -164,20 +164,50 @@ export default function ShareSheet({
     window.location.href = `sms:?&body=${encodeURIComponent(text)}`;
   };
 
+  // const handleShareSocial = async () => {
+  //   if (typeof navigator !== "undefined" && navigator.share) {
+  //     try {
+  //       const text = buildShareMessage();
+  //       await navigator.share({
+  //         title: `${formalName} – Professional Live-In Carer Profile`,
+  //         text: text,
+  //         url: cleanShareUrl,
+  //       });
+  //     } catch {
+  //       // Ignored if user dismissed share dialog
+  //     }
+  //   } else {
+  //     await copyMessage();
+  //   }
+  // };
+
+
   const handleShareSocial = async () => {
     if (typeof navigator !== "undefined" && navigator.share) {
       try {
         const text = buildShareMessage();
+
         await navigator.share({
           title: `${formalName} – Professional Live-In Carer Profile`,
-          text: text,
+          text,
           url: cleanShareUrl,
         });
       } catch {
-        // Ignored if user dismissed share dialog
+        // User cancelled the share dialog
       }
     } else {
-      await copyMessage();
+      try {
+        await navigator.clipboard.writeText(buildShareMessage());
+        showSuccessToast(
+          "Copied!",
+          "Share message copied to clipboard."
+        );
+      } catch {
+        showErrorToast(
+          "Failed",
+          "Could not share or copy the profile message."
+        );
+      }
     }
   };
 
@@ -253,7 +283,7 @@ export default function ShareSheet({
             </button>
 
             {/* Copy Message Button */}
-            <button
+            {/* <button
               id="copy-share-msg-btn"
               type="button"
               onClick={copyMessage}
@@ -266,7 +296,7 @@ export default function ShareSheet({
             >
               <MessageSquare className="w-3.5 h-3.5 stroke-[2.5]" />
               <span>{copiedMessage ? "Copied!" : "Copy Msg"}</span>
-            </button>
+            </button> */}
           </div>
         </div>
       </div>

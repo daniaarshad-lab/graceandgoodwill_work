@@ -42,11 +42,7 @@ export default function ProtectedRoute({
 
         if (typeof window !== "undefined") {
           const currentTarget = window.location.pathname + window.location.search;
-          if (
-            currentTarget &&
-            !currentTarget.startsWith("/login") &&
-            !currentTarget.startsWith("/unauthorized")
-          ) {
+          if (currentTarget && !currentTarget.startsWith("/login")) {
             sessionStorage.setItem("auth_redirect", currentTarget);
           }
         }
@@ -60,20 +56,6 @@ export default function ProtectedRoute({
             .map((r) => r.toLowerCase())
             .includes(user.role.toLowerCase()))
       ) {
-        // If authenticated user visits a portal not for their role, redirect them to their own portal
-        if (user?.role) {
-          const userRole = user.role.toUpperCase();
-          if (userRole === "CARER") {
-            router.replace("/carer");
-            return;
-          } else if (userRole === "CLIENT") {
-            router.replace("/client");
-            return;
-          } else if (userRole === "ADMIN" || userRole === "SUPER_ADMIN") {
-            router.replace("/admin");
-            return;
-          }
-        }
         router.push("/unauthorized");
       }
     }

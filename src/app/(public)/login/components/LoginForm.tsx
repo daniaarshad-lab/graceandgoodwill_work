@@ -41,11 +41,10 @@ export default function LoginForm() {
         password,
       });
 
-      const userObj = response?.user || (response as any);
-      const role = userObj?.role?.toUpperCase();
+      const role = response.user?.role?.toUpperCase();
 
-      let route = "/";
-      if (role === "ADMIN" || role === "SUPER_ADMIN") {
+      let route = "/unauthorized";
+      if (role === "ADMIN") {
         route = "/admin";
       } else if (role === "CARER") {
         route = "/carer";

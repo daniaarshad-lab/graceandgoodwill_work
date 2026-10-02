@@ -328,6 +328,19 @@ export const adminService = {
     });
   },
 
+  async getCareRequestMatches(careRequestId: string, limit = 50, minScore = 0): Promise<any> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+    if (!token) throw new Error("No token found");
+
+    return apiFetch(`/matching/care-requests/${careRequestId}?limit=${limit}&minScore=${minScore}`, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  },
+
   async reviewInterestList(payload: {
     careRequestId: string;
     clientId: string;

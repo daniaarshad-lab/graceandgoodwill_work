@@ -34,8 +34,13 @@ export interface ClientRequest {
   clientName: string;
   careType: string; // e.g., "Live-in Care", "Hourly Care"
   location: string;
+  exactAddress?: string;
+  postcode?: string;
+  city?: string;
   urgency: "Standard" | "High" | "Emergency";
   startDate: string;
+  endDate?: string | null;
+  isOngoing?: boolean;
   notes: string;
   status:
     | "NEW_ENQUIRY"

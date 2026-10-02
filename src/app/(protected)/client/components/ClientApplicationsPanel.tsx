@@ -236,7 +236,11 @@ export default function ClientApplicationsPanel() {
                       </div>
                       <div className="flex items-center gap-1.5 shrink-0">
                         <Clock className="w-3.5 h-3.5 text-gold-200/40" />
-                        <span>{req.duration || "Ongoing"}</span>
+                        <span>
+                          {!req.isOngoing && req.endDate
+                            ? `Until ${formatDate(req.endDate)}`
+                            : req.duration || "Ongoing"}
+                        </span>
                       </div>
                       <div className="flex items-center gap-1.5 shrink-0">
                         <span

@@ -362,6 +362,8 @@ export default function PlacementDetailModal({
                     <span>
                       {placement.endDate
                         ? `Until ${formatDate(placement.endDate)}`
+                        : placement.careRequest?.endDate && !placement.careRequest?.isOngoing
+                        ? `Until ${formatDate(placement.careRequest.endDate)}`
                         : placement.careRequest?.isOngoing
                         ? "Ongoing Live-in Care"
                         : "Ongoing"}

@@ -125,15 +125,16 @@ const authSlice = createSlice({
         state.loading = false;
         state.isAuthenticated = true;
         state.token = action.payload.accessToken;
-        state.user = action.payload.user;
-        state.role = action.payload.user.role || null;
+        const user = action.payload.user || (action.payload as any);
+        state.user = user;
+        state.role = user?.role || null;
 
         if (typeof window !== "undefined") {
           localStorage.setItem("accessToken", action.payload.accessToken);
 
           localStorage.setItem("refreshToken", action.payload.refreshToken);
 
-          localStorage.setItem("user", JSON.stringify(action.payload.user));
+          localStorage.setItem("user", JSON.stringify(user));
         }
       },
     );
@@ -156,13 +157,14 @@ const authSlice = createSlice({
         state.loading = false;
         state.isAuthenticated = true;
         state.token = action.payload.accessToken;
-        state.user = action.payload.user;
-        state.role = action.payload.user.role || null;
+        const user = action.payload.user || (action.payload as any);
+        state.user = user;
+        state.role = user?.role || null;
 
         if (typeof window !== "undefined") {
           localStorage.setItem("accessToken", action.payload.accessToken);
           localStorage.setItem("refreshToken", action.payload.refreshToken);
-          localStorage.setItem("user", JSON.stringify(action.payload.user));
+          localStorage.setItem("user", JSON.stringify(user));
         }
       },
     );

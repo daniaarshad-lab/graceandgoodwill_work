@@ -66,10 +66,22 @@ function LoginPageContent() {
       if (
         targetDestination &&
         targetDestination.startsWith("/") &&
-        !targetDestination.startsWith("/login")
+        !targetDestination.startsWith("/login") &&
+        !targetDestination.startsWith("/unauthorized")
       ) {
-        router.push(targetDestination);
-        return;
+        const isTargetCarer = targetDestination.startsWith("/carer");
+        const isTargetClient = targetDestination.startsWith("/client");
+        const isTargetAdmin = targetDestination.startsWith("/admin");
+
+        if (
+          (role === "CARER" && isTargetCarer) ||
+          (role === "CLIENT" && isTargetClient) ||
+          ((role === "ADMIN" || role === "SUPER_ADMIN") && isTargetAdmin) ||
+          (!isTargetCarer && !isTargetClient && !isTargetAdmin)
+        ) {
+          router.push(targetDestination);
+          return;
+        }
       }
 
       if (role === "CLIENT") {

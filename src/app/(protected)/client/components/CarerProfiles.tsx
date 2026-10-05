@@ -27,18 +27,22 @@ const SafeImage = ({
   
   if (error || !src) return <>{fallback}</>;
 
+  const cleanSrc = src.trim();
   const API_BASE_URL =
     process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-  const imageSrc = src.startsWith("http")
-    ? src
-    : `${API_BASE_URL}${src.startsWith("/") ? "" : "/"}${src}`;
+  const imageSrc = cleanSrc.startsWith("http")
+    ? cleanSrc
+    : `${API_BASE_URL}${cleanSrc.startsWith("/") ? "" : "/"}${cleanSrc}`;
 
   return (
     <img
       src={imageSrc}
       alt={alt}
       className={`w-full h-full object-cover ${className || ""}`}
-      onError={() => setError(true)}
+      onError={() => {
+        console.error("SafeImage failed to load:", imageSrc);
+        setError(true);
+      }}
     />
   );
 };
@@ -116,26 +120,21 @@ export default function CarerProfiles({ carers }: CarerProfilesProps) {
                     className={`relative h-16 w-16 rounded-full border-2 shrink-0 shadow-soft overflow-hidden bg-navy-950 ${!carer.profilePhotoUrl ? carer.avatarBg : "border-gold-300/20"}`}
                   >
                     {carer.profilePhotoUrl ? (
-                      <>
-                        <div style={{ position: 'absolute', top: -20, left: 0, fontSize: 10, background: 'red', color: 'white', zIndex: 9999 }}>
-                          DEBUG: {carer.profilePhotoUrl.substring(0, 30)}...
-                        </div>
-                        <SafeImage
-                          src={carer.profilePhotoUrl}
-                          alt={carer.name}
-                          fallback={
-                            <div
-                              className={`h-full w-full flex items-center justify-center text-2xl font-bold ${carer.avatarBg}`}
-                            >
-                              {carer.name
-                                .split(" ")
-                                .map((n) => n.charAt(0))
-                                .join("")}
-                            </div>
-                          }
-                          className="object-cover"
-                        />
-                      </>
+                      <SafeImage
+                        src={carer.profilePhotoUrl}
+                        alt={carer.name}
+                        fallback={
+                          <div
+                            className={`h-full w-full flex items-center justify-center text-2xl font-bold ${carer.avatarBg}`}
+                          >
+                            {carer.name
+                              .split(" ")
+                              .map((n) => n.charAt(0))
+                              .join("")}
+                          </div>
+                        }
+                        className="object-cover"
+                      />
                     ) : (
                       <div
                         className={`h-full w-full flex items-center justify-center text-2xl font-bold ${carer.avatarBg}`}

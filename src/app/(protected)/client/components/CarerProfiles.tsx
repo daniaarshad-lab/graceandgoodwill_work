@@ -116,21 +116,26 @@ export default function CarerProfiles({ carers }: CarerProfilesProps) {
                     className={`relative h-16 w-16 rounded-full border-2 shrink-0 shadow-soft overflow-hidden bg-navy-950 ${!carer.profilePhotoUrl ? carer.avatarBg : "border-gold-300/20"}`}
                   >
                     {carer.profilePhotoUrl ? (
-                      <SafeImage
-                        src={carer.profilePhotoUrl}
-                        alt={carer.name}
-                        fallback={
-                          <div
-                            className={`h-full w-full flex items-center justify-center text-2xl font-bold ${carer.avatarBg}`}
-                          >
-                            {carer.name
-                              .split(" ")
-                              .map((n) => n.charAt(0))
-                              .join("")}
-                          </div>
-                        }
-                        className="object-cover"
-                      />
+                      <>
+                        <div style={{ position: 'absolute', top: -20, left: 0, fontSize: 10, background: 'red', color: 'white', zIndex: 9999 }}>
+                          DEBUG: {carer.profilePhotoUrl.substring(0, 30)}...
+                        </div>
+                        <SafeImage
+                          src={carer.profilePhotoUrl}
+                          alt={carer.name}
+                          fallback={
+                            <div
+                              className={`h-full w-full flex items-center justify-center text-2xl font-bold ${carer.avatarBg}`}
+                            >
+                              {carer.name
+                                .split(" ")
+                                .map((n) => n.charAt(0))
+                                .join("")}
+                            </div>
+                          }
+                          className="object-cover"
+                        />
+                      </>
                     ) : (
                       <div
                         className={`h-full w-full flex items-center justify-center text-2xl font-bold ${carer.avatarBg}`}

@@ -7,7 +7,7 @@ import { useAppSelector } from "@/store/hooks";
 import CarerRolesCard from "@/components/backup-carer/CarerRolesCard";
 import { carerService } from "@/services/carer/carer.service";
 import { backupCarerService } from "@/services/backupCarer.service";
-
+import Button from "@/components/Button";
 interface DashboardOverviewProps {
   applicationStatus: "pending" | "approved" | "rejected";
   complianceDocs: ComplianceDoc[];
@@ -139,18 +139,16 @@ export default function DashboardOverview({
         <p className="text-xs text-gold-100/60 leading-relaxed">
           Generate a secure, 30-minute shareable link to introduce your verified profile to prospective clients via WhatsApp, Email, or SMS.
         </p>
-        <button
+        <Button
           id="overview-share-profile-btn"
+          variant="primary"
+          size="custom"
           onClick={onShareClick || (() => setActiveTab("overview"))}
-          style={{
-            backgroundColor: "#b59469",
-            color: "#0A1128",
-          }}
-          className="w-full py-2.5 px-4 rounded-xl text-xs font-bold shadow-[0_4px_15px_rgba(212,175,55,0.3)] hover:brightness-110 transition flex items-center justify-center gap-2 cursor-pointer"
+          className="w-full py-2.5 px-4 gap-2 text-xs !font-medium"
         >
-          <span className="font-bold text-[#0A1128]">Share Profile</span>
-          <span className="text-xs text-[#0A1128]">→</span>
-        </button>
+          <span>Share Profile</span>
+          <span className="text-xs">→</span>
+        </Button>
       </SectionCard>
 
       {/* Profile completeness Quick Stats widget */}

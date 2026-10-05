@@ -53,7 +53,7 @@ export default function AuthenticatedHeader() {
   else if (pathname.startsWith("/client")) portalName = "Client Portal";
   else if (pathname.startsWith("/carer")) portalName = "Carer Portal";
 
-    const isClient = pathname.startsWith("/client") || user?.role?.toUpperCase() === "CLIENT";
+  const isClient = pathname.startsWith("/client") || user?.role?.toUpperCase() === "CLIENT";
   const clientStatus = (clientProfile?.status || (user as any)?.status || "").toUpperCase();
   const isClientPendingOrUnderReview =
     isClient &&
@@ -71,17 +71,21 @@ export default function AuthenticatedHeader() {
 
   const handleLogout = async () => {
     const rawRole = user?.role?.toUpperCase();
+
     const isUserAdmin = rawRole === "ADMIN" || rawRole === "SUPER_ADMIN" || pathname.startsWith("/admin");
     const isUserCarer = rawRole === "CARER" || pathname.startsWith("/carer");
 
+    // Tell ProtectedRoute this is an intentional logout so it doesn't
+    // store a stale redirect or race with our navigation below.
+    sessionStorage.setItem("auth_logging_out", String(Date.now()));
     await dispatch(logoutThunk());
 
     if (isUserAdmin) {
-      router.push(AUTH_ROUTES.login.admin);
+      router.replace(AUTH_ROUTES.login.admin);
     } else if (isUserCarer) {
-      router.push(AUTH_ROUTES.login.carer);
+      router.replace(AUTH_ROUTES.login.carer);
     } else {
-      router.push(AUTH_ROUTES.login.client);
+      router.replace(AUTH_ROUTES.login.client);
     }
   };
 

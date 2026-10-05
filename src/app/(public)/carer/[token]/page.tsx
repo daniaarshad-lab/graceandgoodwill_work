@@ -25,12 +25,12 @@ export async function generateMetadata(
       process.env.NEXT_PUBLIC_SITE_URL ||
       "https://graceandgoodwill.co.uk";
 
-    const canonicalUrl = `${appUrl}/carer/${token}`;
+    // Canonical URL for this profile is /public/carer/{id}
+    const canonicalUrl = `${appUrl}/public/carer/${token}`;
 
-    // Do NOT manually set images here — Next.js automatically uses the
-    // co-located opengraph-image.tsx with the correct hashed route URL.
-    // Manually specifying the URL causes 404 because Next.js appends a
-    // build hash to the actual route (e.g. opengraph-image-1cczym).
+    // Point to the custom route handler that generates the PNG image
+    const ogImageUrl = `${appUrl}/public/carer/${token}/og-image?ext=.png`;
+
     return {
       title,
       description,
@@ -40,11 +40,21 @@ export async function generateMetadata(
         url: canonicalUrl,
         siteName: profile.brandName || "Grace & Goodwill",
         type: "website",
+        images: [
+          {
+            url: ogImageUrl,
+            width: 1200,
+            height: 630,
+            alt: title,
+            type: "image/png",
+          },
+        ],
       },
       twitter: {
         card: "summary_large_image",
         title,
         description,
+        images: [ogImageUrl],
       },
     };
   } catch (error) {

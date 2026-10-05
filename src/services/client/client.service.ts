@@ -282,6 +282,24 @@ export const clientService = {
     return response;
   },
 
+  async getCarerById(carerId: string) {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    return apiFetch(`/client/carers/${carerId}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
   async getPlacements(): Promise<ClientPlacement[]> {
     const token =
       typeof window !== "undefined"

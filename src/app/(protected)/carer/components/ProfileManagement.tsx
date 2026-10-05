@@ -124,21 +124,17 @@ export default function ProfileManagement({
             Personal Profile Management
           </h3>
           <div className="flex items-center gap-3">
-            <button
+            <Button
               id="profile-section-share-btn"
-              type="button"
+              variant="primary"
+              size="custom"
               onClick={onShareClick || (() => setActiveTab("profile"))}
-              style={{
-                background: "linear-gradient(135deg, #F5D4A0 0%, #D4AF37 50%, #C99232 100%)",
-                color: "#0A1128",
-                border: "1px solid rgba(253, 230, 196, 0.5)",
-              }}
-              className="px-5 py-2.5 rounded-xl transition-all duration-300 flex items-center gap-2 text-sm font-bold shadow-[0_4px_15px_rgba(212,175,55,0.35)] hover:brightness-110 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
+              className="px-5 py-2.5 gap-2 text-sm !font-medium"
               title="Share Public Profile"
             >
-              <Share2 className="w-4 h-4 text-[#0A1128]" />
-              <span className="font-bold text-[#0A1128]">Share Profile</span>
-            </button>
+              <Share2 className="w-4 h-4" />
+              <span>Share Profile</span>
+            </Button>
             <button
             type="button"
             onClick={() => setIsEditing(!isEditing)}

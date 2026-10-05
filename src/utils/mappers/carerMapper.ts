@@ -41,7 +41,21 @@ export const mapCarerProfileToUICarer = (carer: any): Carer => {
     introVideoUrl: carer.introVideoUrl || null,
     location: location || "Location pending",
     qualifications: carer.qualifications || "Profile information pending",
-    profilePhotoUrl: carer.profilePhotoUrl || null,
+    profilePhotoUrl: (() => {
+      const url =
+        carer.profilePhotoUrl ||
+        carer.user?.profilePhotoUrl ||
+        carer.publicProfile?.profilePhotoUrl ||
+        carer.publicProfile?.photoUrl ||
+        carer.photoUrl ||
+        null;
+      if (typeof url === "string") {
+        return url
+          .replace("gracoanddoodwill", "graceanddoodwill")
+          .replace("graceandgoodwill", "graceanddoodwill");
+      }
+      return url;
+    })(),
     fullBiography: carer.bio || carer.summary || "Profile information pending",
     experienceDetails:
       carer.experience || carer.summary || "Profile information pending",

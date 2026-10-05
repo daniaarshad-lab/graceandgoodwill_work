@@ -39,12 +39,12 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://unvalidating-alaine-inconsiderately.ngrok-free.dev"),
+  metadataBase: new URL("https://graceandgoodwill.co.uk"),
   title: "Grace & Goodwill",
   description:
     "Grace & Goodwill care platform: elegant, trustworthy care coordination.",
   openGraph: {
-    url: "https://unvalidating-alaine-inconsiderately.ngrok-free.dev",
+    url: "https://graceandgoodwill.co.uk",
     siteName: "Grace & Goodwill",
     type: "website",
   },
@@ -66,16 +66,33 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
-              "@type": "Organization",
-              name: "Grace & Goodwill",
-              url: "https://graceandgoodwill.co.uk",
-              logo: "https://graceandgoodwill.co.uk/logo.png",
-              address: {
+              "@type": "LocalBusiness",
+              "name": "Grace & Goodwill",
+              "image": "https://graceandgoodwill.co.uk/website_logo.png",
+              "@id": "https://graceandgoodwill.co.uk/#localbusiness",
+              "url": "https://graceandgoodwill.co.uk/",
+              "telephone": "020 4524 0108",
+              "address": {
                 "@type": "PostalAddress",
-                addressLocality: "Gateshead",
-                addressCountry: "UK"
+                "streetAddress": "Hypoint, Saltmeadows Road,",
+                "addressLocality": "Gateshead",
+                "postalCode": "NE8 3AH",
+                "addressCountry": "GB"
               },
-              areaServed: "UK"
+              "openingHoursSpecification": {
+                "@type": "OpeningHoursSpecification",
+                "dayOfWeek": [
+                  "Monday",
+                  "Tuesday",
+                  "Wednesday",
+                  "Thursday",
+                  "Friday",
+                  "Saturday",
+                  "Sunday"
+                ],
+                "opens": "00:00",
+                "closes": "23:59"
+              }
             })
           }}
         />

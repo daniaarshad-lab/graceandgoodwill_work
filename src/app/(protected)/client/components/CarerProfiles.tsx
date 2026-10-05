@@ -23,14 +23,25 @@ const SafeImage = ({
   fallback: React.ReactNode;
   className?: string;
 }) => {
-  const [error, setError] = useState(false);
-  if (error) return <>{fallback}</>;
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  
+  if (errorMsg || !src) return <>{fallback}</>;
+
+  const cleanSrc = src.trim();
+  const API_BASE_URL =
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+  const imageSrc = cleanSrc.startsWith("http")
+    ? cleanSrc
+    : `${API_BASE_URL}${cleanSrc.startsWith("/") ? "" : "/"}${cleanSrc}`;
+
   return (
     <img
-      src={src}
+      src={imageSrc}
       alt={alt}
       className={`w-full h-full object-cover ${className || ""}`}
-      onError={() => setError(true)}
+      onError={(e) => {
+        setErrorMsg("Failed to load");
+      }}
     />
   );
 };

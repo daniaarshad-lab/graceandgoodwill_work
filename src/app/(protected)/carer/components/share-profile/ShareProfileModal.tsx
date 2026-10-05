@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import shareProfileBg from "@/assets/private/share-profile-bg.jpeg";
+import shareProfileMobileBg from "@/assets/private/shareProfile-m-bg.jpeg";
 import {
   X,
   Share2,
@@ -21,6 +22,7 @@ import {
   Link2,
   ArrowRight,
 } from "lucide-react";
+import Button from "@/components/Button";
 import shareableProfileService, {
   ShareTokenStatus,
 } from "@/services/carer/shareableProfile.service";
@@ -116,6 +118,16 @@ export default function ShareProfileModal({
     try {
       const data = await shareableProfileService.generateShareToken(true);
       setStatus(data);
+
+      // Warm up cache for crawlers (fire-and-forget)
+      const tokenToWarm = data.token || (data.shareUrl ? data.shareUrl.split('/').pop()?.split('?')[0] : null);
+      if (tokenToWarm) {
+        const appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://graceandgoodwill.co.uk";
+        const cleanAppUrl = appUrl.replace(/\/+$/, "");
+        fetch(`${cleanAppUrl}/public/carer/${tokenToWarm}`).catch(() => { });
+        fetch(`${cleanAppUrl}/public/carer/${tokenToWarm}/og-image?ext=.png`).catch(() => { });
+      }
+
       showSuccessToast(
         "Link Ready",
         "Your shareable profile link is now active.",
@@ -133,6 +145,16 @@ export default function ShareProfileModal({
     try {
       const data = await shareableProfileService.generateShareToken(true);
       setStatus(data);
+
+      // Warm up cache for crawlers (fire-and-forget)
+      const tokenToWarm = data.token || (data.shareUrl ? data.shareUrl.split('/').pop()?.split('?')[0] : null);
+      if (tokenToWarm) {
+        const appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://graceandgoodwill.co.uk";
+        const cleanAppUrl = appUrl.replace(/\/+$/, "");
+        fetch(`${cleanAppUrl}/public/carer/${tokenToWarm}`).catch(() => { });
+        fetch(`${cleanAppUrl}/public/carer/${tokenToWarm}/og-image?ext=.png`).catch(() => { });
+      }
+
       showSuccessToast(
         "Link Renewed",
         "A fresh share link has been generated.",
@@ -160,15 +182,29 @@ export default function ShareProfileModal({
       }}
     >
       <div
-        className="relative w-full max-w-4xl max-h-[92vh] flex flex-row rounded-3xl shadow-2xl overflow-hidden animate-[slideUp_0.25s_ease]"
+        className="relative w-full max-w-4xl max-h-[92vh] flex flex-col md:flex-row rounded-3xl shadow-2xl overflow-hidden animate-[slideUp_0.25s_ease]"
         style={{
           border: "2px solid rgba(201,171,82,0.75)",
           boxShadow: "0 25px 60px -15px rgba(0,0,0,0.85), 0 0 40px rgba(201,171,82,0.25), inset 0 0 0 1px rgba(201,171,82,0.15)",
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Left Image Panel */}
-        <div className="relative hidden md:flex md:w-[280px] lg:w-[300px] flex-shrink-0 flex-col justify-end overflow-hidden">
+        {/* Mobile Background Image (Mobile only) */}
+        <div className="absolute top-0 left-0 right-0 h-[280px] z-0 flex md:hidden">
+          <Image
+            src={shareProfileMobileBg}
+            alt="Share profile mobile background"
+            fill
+            className="object-cover object-top"
+            priority
+          />
+          {/* Dark gradient overlay for text readability over the background */}
+          <div className="absolute inset-0 bg-[#040815]/30" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#070d1e] via-[#070d1e]/20 to-transparent" />
+        </div>
+
+        {/* Left Image Panel (Desktop only) */}
+        <div className="relative hidden md:flex md:w-[280px] lg:w-[300px] flex-shrink-0 flex-col justify-end overflow-hidden z-10">
           <Image
             src={shareProfileBg}
             alt="Share profile background"
@@ -193,8 +229,7 @@ export default function ShareProfileModal({
 
         {/* Right content panel */}
         <div
-          className="relative flex flex-col flex-1 min-w-0"
-          style={{ background: "linear-gradient(165deg, #0b152d 0%, #070d1e 65%, #040815 100%)" }}
+          className="relative z-10 flex flex-col flex-1 min-w-0 min-h-0 bg-[linear-gradient(180deg,transparent_0%,transparent_200px,#070d1e_260px,#040815_100%)] md:bg-[linear-gradient(165deg,#0b152d_0%,#070d1e_65%,#040815_100%)]"
         >
           {/* Close Button */}
           <button
@@ -209,7 +244,7 @@ export default function ShareProfileModal({
 
           {/* Scrollable content inside the modal */}
           <div
-            className={`overflow-y-auto flex-1 custom-scrollbar ${isExpired ? "p-4 sm:p-5 pt-12" : "p-5 sm:p-6"}`}
+            className={`overflow-y-auto flex-1 min-h-0 custom-scrollbar ${isExpired ? "p-4 sm:p-5" : "p-5 sm:p-6 pb-28 md:pb-6"}`}
             style={{
               scrollbarWidth: "thin",
               scrollbarColor: "rgba(201, 171, 82, 0.4) transparent",
@@ -225,7 +260,7 @@ export default function ShareProfileModal({
               <>
                 {isExpired ? (
                   /* EXPIRED TOKEN STATE */
-                  <div className="flex flex-col items-center w-full py-4">
+                  <div className="flex flex-col items-center w-full pb-4">
                     <ExpiredProfileCard />
                   </div>
                 ) : status?.hasActiveToken && status.shareUrl ? (
@@ -275,7 +310,7 @@ export default function ShareProfileModal({
                         >
                           Share your professional<br />live-in carer profile
                         </h2>
-                        <p className="text-xs sm:text-[12.5px] mt-1.5 text-[#D8BA68] leading-normal">
+                        <p className="text-xs sm:text-[12.5px] mt-1.5 text-[#F5D4A099] leading-normal">
                           Use your shareable profile as a digital business card to showcase
                           your experience, skills and availability through Grace &amp; Goodwill.
                         </p>
@@ -295,11 +330,11 @@ export default function ShareProfileModal({
                             border: "1px solid rgba(201, 171, 82, 0.28)",
                           }}
                         >
-                          <div className="grid grid-cols-4 gap-x-2 gap-y-3">
+                          <div className="grid grid-cols-3 min-[430px]:grid-cols-4 gap-x-2 gap-y-3">
                             {PROFILE_ITEMS.map(({ icon: Icon, label }) => (
-                              <div key={label} className="flex flex-col items-start gap-1.5 min-w-0">
+                              <div key={label} className="flex flex-col items-start gap-1.5 min-w-0 w-full">
                                 <Icon className="w-4 h-4 flex-shrink-0 text-[#ECCB76] stroke-[1.8]" />
-                                <span className="text-[10px] sm:text-[11px] text-slate-200 leading-snug">
+                                <span className="text-[10px] sm:text-[11px] text-slate-200 leading-snug break-words w-full">
                                   {label}
                                 </span>
                               </div>
@@ -374,7 +409,7 @@ export default function ShareProfileModal({
                             </svg>
                           </div>
                           <div className="space-y-1">
-                            <p className="text-xs sm:text-[13px] font-semibold leading-snug text-[#ECCB76]">
+                            <p className="text-xs sm:text-[13px] font-semibold leading-snug text-[#F5D4A099]">
                               All enquiries and care requests generated through your shared profile
                               are directed through Grace &amp; Goodwill.
                             </p>
@@ -384,7 +419,7 @@ export default function ShareProfileModal({
                             </p>
                             <div className="flex items-center gap-1.5 pt-0.5">
                               <ShieldCheck className="w-3.5 h-3.5 flex-shrink-0 text-[#ECCB76]" />
-                              <p className="text-[10px] sm:text-[11px] text-[#ECCB76]/90">
+                              <p className="text-[10px] sm:text-[11px] text-[#F5D4A099]">
                                 We handle enquiries securely, so you can focus on what you do best caring.
                               </p>
                             </div>
@@ -439,17 +474,14 @@ export default function ShareProfileModal({
                       </label>
 
                       {/* Generate CTA Button */}
-                      <button
+                      <Button
                         id="confirm-generate-share-link-btn"
-                        type="button"
+                        variant="primary"
+                        size="custom"
                         onClick={handleGenerate}
                         disabled={generating}
-                        className="group w-full flex items-center justify-center gap-2 py-2.5 sm:py-2.5 px-4 rounded-xl text-xs sm:text-[13.5px] font-semibold tracking-[0.02em] transition-all duration-300 cursor-pointer shadow-md active:scale-[0.99] mt-1"
+                        className="mt-1 group w-full gap-2 text-xs sm:text-[13.5px] py-2.5 px-4 !font-medium"
                         style={{
-                          background: "linear-gradient(135deg, #F8E090 0%, #D8A93E 45%, #B8851E 100%)",
-                          color: "#0A1128",
-                          border: "none",
-                          boxShadow: "0 4px 18px rgba(216, 169, 62, 0.3)",
                           opacity: !consented && !generating ? 0.8 : 1,
                         }}
                       >
@@ -465,7 +497,7 @@ export default function ShareProfileModal({
                             <ArrowRight className="w-3.5 h-3.5 stroke-[2] transition-transform duration-200 group-hover:translate-x-0.5" />
                           </>
                         )}
-                      </button>
+                      </Button>
 
                       {/* Cancel link */}
                       {/* <button

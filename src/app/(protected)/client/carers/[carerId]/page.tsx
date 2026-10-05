@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchCarers } from "@/store/slices/clientSlice";
+import { clientService } from "@/services/client/client.service";
+import { mapCarerProfileToUICarer } from "@/utils/mappers/carerMapper";
 import { Carer } from "../../types/client-ui.types";
 import {
   ArrowLeft,
@@ -18,6 +20,7 @@ import {
 } from "lucide-react";
 import ReadOnlyAvailabilityCalendar from "@/components/ReadOnlyAvailabilityCalendar";
 import ThinSpinner from "@/components/ThinSpinner";
+import { storageService } from "@/services/storage.service";
 
 export default function CarerDetailsPage() {
   const { carerId } = useParams();
@@ -25,6 +28,8 @@ export default function CarerDetailsPage() {
   const dispatch = useAppDispatch();
   const { carers, loading } = useAppSelector((state) => state.client);
   const [carer, setCarer] = useState<Carer | null>(null);
+  const [directLoading, setDirectLoading] = useState(false);
+  const [fetchError, setFetchError] = useState(false);
 
   useEffect(() => {
     if (carers.length === 0 && !loading) {
@@ -34,14 +39,37 @@ export default function CarerDetailsPage() {
 
   useEffect(() => {
     if (carers.length > 0) {
-      const found = carers.find((c) => c.id === carerId);
+      const found = carers.find(
+        (c) =>
+          c.id === carerId ||
+          (c as any).userId === carerId ||
+          (c as any).carerProfileId === carerId,
+      );
       if (found) {
         setCarer(found);
+        return;
       }
     }
-  }, [carers, carerId]);
 
-  if (loading || (!carer && carers.length === 0)) {
+    if (!carer && typeof carerId === "string" && !loading) {
+      setDirectLoading(true);
+      clientService
+        .getCarerById(carerId)
+        .then((res) => {
+          if (res) {
+            setCarer(mapCarerProfileToUICarer(res));
+          }
+        })
+        .catch(() => {
+          setFetchError(true);
+        })
+        .finally(() => {
+          setDirectLoading(false);
+        });
+    }
+  }, [carers, carerId, loading]);
+
+  if (loading || directLoading || (!carer && !fetchError && carers.length === 0)) {
     return (
       <ThinSpinner
         fullScreen
@@ -75,8 +103,42 @@ export default function CarerDetailsPage() {
   if (!carer) return null;
 
   const SafeImage = ({ src, alt }: { src: string; alt: string }) => {
+    const [imgSrc, setImgSrc] = useState<string>(src);
     const [error, setError] = useState(false);
-    if (error) {
+
+    useEffect(() => {
+      let isMounted = true;
+      if (!src) {
+        setImgSrc("");
+        return;
+      }
+
+      // If it's a raw un-presigned S3 URL, fetch a signed URL on the fly
+      if (
+        src.includes(".amazonaws.com/") &&
+        !src.includes("X-Amz-Signature") &&
+        !src.includes("Signature=")
+      ) {
+        storageService
+          .getPresignedUrl(src)
+          .then((presigned) => {
+            if (isMounted && presigned) {
+              setImgSrc(presigned);
+            }
+          })
+          .catch(() => {
+            if (isMounted) setImgSrc(src);
+          });
+      } else {
+        setImgSrc(src);
+      }
+
+      return () => {
+        isMounted = false;
+      };
+    }, [src]);
+
+    if (error || !imgSrc) {
       return (
         <div
           className={`w-full h-full flex items-center justify-center text-4xl font-bold ${carer.avatarBg}`}
@@ -88,9 +150,16 @@ export default function CarerDetailsPage() {
         </div>
       );
     }
+
+    const API_BASE_URL =
+      process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+    const imageSrc = imgSrc.startsWith("http")
+      ? imgSrc
+      : `${API_BASE_URL}${imgSrc.startsWith("/") ? "" : "/"}${imgSrc}`;
+
     return (
       <img
-        src={src}
+        src={imageSrc}
         alt={alt}
         className="w-full h-full object-cover"
         onError={() => setError(true)}

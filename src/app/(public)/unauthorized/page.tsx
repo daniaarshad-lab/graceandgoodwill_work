@@ -4,6 +4,7 @@ import Link from "next/link";
 import CenteredLayout from "@/components/CenteredLayout";
 import Button from "@/components/Button";
 import { AlertTriangle } from "lucide-react";
+import { AUTH_ROUTES } from "@/lib/auth-routes";
 
 export default function UnauthorizedPage() {
   return (
@@ -34,7 +35,7 @@ export default function UnauthorizedPage() {
             </Link>
           </Button>
           <Button asChild variant="primary" className="w-full sm:w-auto">
-            <Link href="/login" prefetch={false}>
+            <Link href={AUTH_ROUTES.login.client} prefetch={false}>
               Login Page
             </Link>
           </Button>

@@ -8,7 +8,7 @@ export const AUTH_ROUTES = {
   login: {
     client: "/login?role=client",
     carer: "/login?role=carer",
-    admin: "/login/admin",
+    admin: "/login?role=admin",
   },
   register: {
     client: "/register?role=client",

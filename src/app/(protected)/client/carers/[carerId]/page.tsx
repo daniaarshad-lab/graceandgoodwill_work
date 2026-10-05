@@ -76,7 +76,8 @@ export default function CarerDetailsPage() {
 
   const SafeImage = ({ src, alt }: { src: string; alt: string }) => {
     const [error, setError] = useState(false);
-    if (error) {
+    
+    if (error || !src) {
       return (
         <div
           className={`w-full h-full flex items-center justify-center text-4xl font-bold ${carer.avatarBg}`}
@@ -88,9 +89,16 @@ export default function CarerDetailsPage() {
         </div>
       );
     }
+
+    const API_BASE_URL =
+      process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+    const imageSrc = src.startsWith("http")
+      ? src
+      : `${API_BASE_URL}${src.startsWith("/") ? "" : "/"}${src}`;
+
     return (
       <img
-        src={src}
+        src={imageSrc}
         alt={alt}
         className="w-full h-full object-cover"
         onError={() => setError(true)}

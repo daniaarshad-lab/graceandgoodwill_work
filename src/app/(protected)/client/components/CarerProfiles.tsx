@@ -24,10 +24,18 @@ const SafeImage = ({
   className?: string;
 }) => {
   const [error, setError] = useState(false);
-  if (error) return <>{fallback}</>;
+  
+  if (error || !src) return <>{fallback}</>;
+
+  const API_BASE_URL =
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+  const imageSrc = src.startsWith("http")
+    ? src
+    : `${API_BASE_URL}${src.startsWith("/") ? "" : "/"}${src}`;
+
   return (
     <img
-      src={src}
+      src={imageSrc}
       alt={alt}
       className={`w-full h-full object-cover ${className || ""}`}
       onError={() => setError(true)}

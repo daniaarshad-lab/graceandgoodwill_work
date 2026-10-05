@@ -163,9 +163,9 @@ export default function PortalHeader({ user }: PortalHeaderProps) {
         </div>
       </div>
 
-      <div className="mt-4 w-full md:w-auto md:mt-0">
+      {/* <div className="mt-4 w-full md:w-auto md:mt-0">
         <EmergencyButton href="/client/emergency-care" />
-      </div>
+      </div> */}
     </section>
   );
 }

@@ -558,14 +558,29 @@ export default function CarerPlacements() {
                                       Providing relief care: {reliefDatesStr || "Scheduled period"}
                                     </span>
                                   ) : (
-                                    <>
-                                      {new Date(place.startDate).toLocaleDateString("en-GB", {
-                                        day: "numeric",
-                                        month: "short",
-                                        year: "numeric",
-                                      })}{" "}
-                                      – {place.endDate ? new Date(place.endDate).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) : "Ongoing"}
-                                    </>
+                                    (() => {
+                                      const sDate = place.startDate || place.careRequest?.startDate;
+                                      const eDate = place.endDate || place.careRequest?.endDate;
+                                      return (
+                                        <>
+                                          {sDate
+                                            ? new Date(sDate).toLocaleDateString("en-GB", {
+                                                day: "numeric",
+                                                month: "short",
+                                                year: "numeric",
+                                              })
+                                            : "Flexible"}{" "}
+                                          –{" "}
+                                          {eDate
+                                            ? new Date(eDate).toLocaleDateString("en-GB", {
+                                                day: "numeric",
+                                                month: "short",
+                                                year: "numeric",
+                                              })
+                                            : "Ongoing"}
+                                        </>
+                                      );
+                                    })()
                                   )}
                                 </span>
                               </div>
@@ -808,7 +823,7 @@ export default function CarerPlacements() {
                               </div>
                             </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 text-xs text-gold-100/80 bg-navy-950/60 p-4 rounded-xl border border-gold-300/10">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 text-xs text-gold-100/80 bg-navy-950/60 p-4 rounded-xl border border-gold-300/10">
                               <div className="flex items-center gap-2">
                                 <Shield className="h-4 w-4 text-amber-400 shrink-0" />
                                 <div>
@@ -826,7 +841,38 @@ export default function CarerPlacements() {
                                   <span className="text-[10px] uppercase text-gold-100/40 block">
                                     Start Date
                                   </span>
-                                  <span>{new Date(place.startDate).toLocaleDateString("en-GB")}</span>
+                                  <span>
+                                    {(() => {
+                                      const sDate = place.startDate || place.careRequest?.startDate;
+                                      return sDate
+                                        ? new Date(sDate).toLocaleDateString("en-GB", {
+                                            day: "numeric",
+                                            month: "short",
+                                            year: "numeric",
+                                          })
+                                        : "Flexible";
+                                    })()}
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Calendar className="h-4 w-4 text-gold shrink-0" />
+                                <div>
+                                  <span className="text-[10px] uppercase text-gold-100/40 block">
+                                    End Date
+                                  </span>
+                                  <span>
+                                    {(() => {
+                                      const eDate = place.endDate || place.careRequest?.endDate;
+                                      return eDate
+                                        ? new Date(eDate).toLocaleDateString("en-GB", {
+                                            day: "numeric",
+                                            month: "short",
+                                            year: "numeric",
+                                          })
+                                        : "Ongoing";
+                                    })()}
+                                  </span>
                                 </div>
                               </div>
                               <div className="flex items-center gap-2">
@@ -841,16 +887,11 @@ export default function CarerPlacements() {
                                       if (req?.duration && req.duration !== "Standard Duration") {
                                         return req.duration;
                                       }
-                                      if (place.startDate && place.endDate) {
-                                        const start = new Date(place.startDate);
-                                        const end = new Date(place.endDate);
-                                        const diffDays = Math.ceil(Math.abs(end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
-                                        const weeks = Math.round(diffDays / 7);
-                                        return diffDays >= 7 ? `${weeks} ${weeks === 1 ? "Week" : "Weeks"} (${diffDays}d)` : `${diffDays} Days`;
-                                      }
-                                      if (req?.startDate && req?.endDate) {
-                                        const start = new Date(req.startDate);
-                                        const end = new Date(req.endDate);
+                                      const effectiveStart = place.startDate || req?.startDate;
+                                      const effectiveEnd = place.endDate || req?.endDate;
+                                      if (effectiveStart && effectiveEnd) {
+                                        const start = new Date(effectiveStart);
+                                        const end = new Date(effectiveEnd);
                                         const diffDays = Math.ceil(Math.abs(end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
                                         const weeks = Math.round(diffDays / 7);
                                         return diffDays >= 7 ? `${weeks} ${weeks === 1 ? "Week" : "Weeks"} (${diffDays}d)` : `${diffDays} Days`;

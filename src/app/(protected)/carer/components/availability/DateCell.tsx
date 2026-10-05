@@ -2,6 +2,7 @@
 
 import { memo } from "react";
 import { RANGE_COLORS } from "./colors";
+import { CalendarBooking } from "./types";
 
 export type RangePosition = "none" | "single" | "start" | "middle" | "end";
 
@@ -19,6 +20,7 @@ interface DateCellProps {
   colorIndex?: number;
   variant?: "solid" | "hollow";
   dateStr: string;
+  booking?: CalendarBooking;
   onMouseDown: (dateStr: string) => void;
   onMouseEnter: (dateStr: string) => void;
   onMouseUp: (dateStr: string) => void;
@@ -38,6 +40,7 @@ function DateCell({
   colorIndex = 0,
   variant = "solid",
   dateStr,
+  booking,
   onMouseDown,
   onMouseEnter,
   onMouseUp,
@@ -53,8 +56,8 @@ function DateCell({
     "relative flex items-center justify-center w-full transition-all duration-200 ease-out",
   ];
 
-  // Apply pseudo-element based horizontal ranges
-  if (!isOtherMonth && rangePosition !== "none" && rangePosition !== "single") {
+  // Apply pseudo-element based horizontal ranges (only for open availability when not booked)
+  if (!isOtherMonth && !booking && rangePosition !== "none" && rangePosition !== "single") {
     if (isSelected) {
       if (rangePosition === "start") containerClasses.push("range-start");
       else if (rangePosition === "end") containerClasses.push("range-end");
@@ -83,6 +86,22 @@ function DateCell({
     cellClasses.push(
       "text-gold-100/10 cursor-default bg-transparent rounded-full",
     );
+  } else if (booking) {
+    // ─── Active Placement / Leave Booking States ───
+    if (booking.type === "LEAVE") {
+      cellClasses.push(
+        "bg-purple-900/40 text-purple-200 border border-purple-400/50 font-bold rounded-xl cursor-pointer hover:border-purple-300 shadow-sm shadow-purple-950/40 hover:scale-105 active:scale-95",
+      );
+    } else if (booking.type === "BOOKED_ONGOING") {
+      cellClasses.push(
+        "bg-gradient-to-br from-amber-950/70 via-gold-950/50 to-navy-950 text-gold-200 border border-gold-400/60 font-bold rounded-xl cursor-pointer hover:border-gold-300 shadow-sm shadow-gold-500/10 hover:scale-105 active:scale-95",
+      );
+    } else {
+      // BOOKED_PLACEMENT or RELIEF_COVER
+      cellClasses.push(
+        "bg-gradient-to-br from-emerald-950/80 via-teal-950/60 to-navy-950 text-emerald-200 border border-emerald-400/60 font-bold rounded-xl cursor-pointer hover:border-emerald-300 shadow-sm shadow-emerald-500/10 hover:scale-105 active:scale-95",
+      );
+    }
   } else if (isDisabled) {
     cellClasses.push(
       "text-gold-100/20 cursor-not-allowed bg-transparent rounded-full",
@@ -151,6 +170,17 @@ function DateCell({
     );
   }
 
+  const tooltipTitle =
+    booking && !isOtherMonth
+      ? booking.type === "LEAVE"
+        ? `🏖️ Approved Leave: ${booking.leaveReason || "Time Off"}`
+        : booking.type === "BOOKED_ONGOING"
+          ? `✨ Booked: Ongoing Care with ${booking.clientName}`
+          : `📅 Booked: Placement with ${booking.clientName}`
+      : isToday
+        ? `Today (${dateStr})`
+        : `Day ${dayNumber}`;
+
   return (
     <div
       className={containerClasses.join(" ")}
@@ -171,11 +201,26 @@ function DateCell({
         disabled={isDisabled || isOtherMonth}
         className={cellClasses.join(" ")}
         aria-label={`Day ${dayNumber}`}
+        title={tooltipTitle}
       >
-        <span className="relative z-10">{dayNumber}</span>
+        <span className="relative z-10 flex flex-col items-center justify-center leading-none">
+          <span>{dayNumber}</span>
+          {booking && !isOtherMonth && (
+            <span
+              className={`w-1 h-1 rounded-full mt-0.5 ${
+                booking.type === "LEAVE"
+                  ? "bg-purple-400"
+                  : booking.type === "BOOKED_ONGOING"
+                    ? "bg-amber-400"
+                    : "bg-emerald-400"
+              }`}
+            />
+          )}
+        </span>
       </button>
     </div>
   );
 }
 
 export default memo(DateCell);
+

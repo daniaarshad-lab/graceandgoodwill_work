@@ -13,11 +13,13 @@ import {
 } from "../utils/date.utils";
 import { Info } from "lucide-react";
 
-import { LocalRange } from "./availability/types";
+import { LocalRange, CalendarBooking } from "./availability/types";
 import SectionCard from "./shared/SectionCard";
 import CalendarGrid from "./availability/CalendarGrid";
 import CalendarSkeleton from "./availability/CalendarSkeleton";
 import AvailabilitySummaryPanel from "./availability/AvailabilitySummaryPanel";
+import { carerService } from "@/services/carer/carer.service";
+import { getPlacementBookings } from "../utils/placementBookings.utils";
 
 function generateId() {
   return Math.random().toString(36).substring(2, 9);
@@ -32,6 +34,35 @@ export default function AvailabilitySchedule({
 }: AvailabilityScheduleProps) {
   const dispatch = useAppDispatch();
   const profile = useAppSelector((state) => state.carer.profile);
+
+  // Active placements and bookings for this carer
+  const [placements, setPlacements] = useState<any[]>([]);
+  const [placementsLoading, setPlacementsLoading] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+    setPlacementsLoading(true);
+    carerService
+      .getPlacements()
+      .then((res) => {
+        if (isMounted) setPlacements(Array.isArray(res) ? res : []);
+      })
+      .catch(() => {
+        if (isMounted) setPlacements([]);
+      })
+      .finally(() => {
+        if (isMounted) setPlacementsLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const bookingHelper = useMemo(
+    () => getPlacementBookings(placements),
+    [placements],
+  );
 
   // Server-synced dates — sanitized to avoid "undefined undefined NaN"
   const serverDates = useMemo<Set<string>>(() => {
@@ -94,17 +125,52 @@ export default function AvailabilitySchedule({
 
   // ─── Handlers ──────────────────────────────────────────────────────────────
 
+  const handleBookingClick = useCallback((booking: CalendarBooking) => {
+    const detail =
+      booking.type === "LEAVE"
+        ? `You have approved leave (${booking.leaveReason || "Time Off"}).`
+        : booking.type === "BOOKED_ONGOING"
+          ? `You have an active ongoing care commitment with ${booking.clientName}.`
+          : `You are booked on a care placement with ${booking.clientName}.`;
+    showErrorToast("Date Booked", detail);
+  }, []);
+
   const handleAddRange = useCallback((start: string, end: string) => {
+    const dates = expandRange(start, end);
+    const hasOverlap = dates.some((d) => bookingHelper.isDateBooked(d));
+    if (hasOverlap) {
+      showErrorToast(
+        "Overlap with Booking",
+        "Selected range overlaps with an active placement or approved leave. Please select open dates.",
+      );
+      setRangeStart(null);
+      setHoverDate(null);
+      return;
+    }
+
     setRanges((prev) => [
       ...prev,
       { id: generateId(), start, end, colorIndex: prev.length },
     ]);
     setRangeStart(null);
     setHoverDate(null);
-  }, []);
+  }, [bookingHelper]);
 
   const handleUpdateActiveRange = useCallback(
     (start: string, end: string) => {
+      const dates = expandRange(start, end);
+      const hasOverlap = dates.some((d) => bookingHelper.isDateBooked(d));
+      if (hasOverlap) {
+        showErrorToast(
+          "Overlap with Booking",
+          "Selected range overlaps with an active placement or approved leave. Please select open dates.",
+        );
+        setActiveEditRangeId(null);
+        setRangeStart(null);
+        setHoverDate(null);
+        return;
+      }
+
       setRanges((prev) =>
         prev.map((r) =>
           r.id === activeEditRangeId ? { ...r, start, end } : r,
@@ -114,7 +180,7 @@ export default function AvailabilitySchedule({
       setRangeStart(null);
       setHoverDate(null);
     },
-    [activeEditRangeId],
+    [activeEditRangeId, bookingHelper],
   );
 
   const handleEditRange = useCallback((id: string) => {
@@ -145,42 +211,51 @@ export default function AvailabilitySchedule({
         case "next2": {
           const end = new Date(today);
           end.setDate(end.getDate() + 1);
-          setRanges([
-            {
+          const raw = expandRange(todayStr, toISODateString(end));
+          const free = raw.filter((d) => !bookingHelper.isDateBooked(d));
+          const grouped = groupDatesIntoRanges(free);
+          setRanges(
+            grouped.map((r, i) => ({
               id: generateId(),
-              start: todayStr,
-              end: toISODateString(end),
-              colorIndex: 0,
-            },
-          ]);
+              start: r.start,
+              end: r.end,
+              colorIndex: i,
+            })),
+          );
           break;
         }
 
         case "next7": {
           const end = new Date(today);
           end.setDate(end.getDate() + 6);
-          setRanges([
-            {
+          const raw = expandRange(todayStr, toISODateString(end));
+          const free = raw.filter((d) => !bookingHelper.isDateBooked(d));
+          const grouped = groupDatesIntoRanges(free);
+          setRanges(
+            grouped.map((r, i) => ({
               id: generateId(),
-              start: todayStr,
-              end: toISODateString(end),
-              colorIndex: 0,
-            },
-          ]);
+              start: r.start,
+              end: r.end,
+              colorIndex: i,
+            })),
+          );
           break;
         }
 
         case "next30": {
           const end = new Date(today);
           end.setDate(end.getDate() + 29);
-          setRanges([
-            {
+          const raw = expandRange(todayStr, toISODateString(end));
+          const free = raw.filter((d) => !bookingHelper.isDateBooked(d));
+          const grouped = groupDatesIntoRanges(free);
+          setRanges(
+            grouped.map((r, i) => ({
               id: generateId(),
-              start: todayStr,
-              end: toISODateString(end),
-              colorIndex: 0,
-            },
-          ]);
+              start: r.start,
+              end: r.end,
+              colorIndex: i,
+            })),
+          );
           break;
         }
 
@@ -189,7 +264,7 @@ export default function AvailabilitySchedule({
           break;
       }
     },
-    [],
+    [bookingHelper],
   );
 
   const handleSave = useCallback(async () => {
@@ -233,8 +308,7 @@ export default function AvailabilitySchedule({
               Availability Calendar
             </h3>
             <p className="text-xs text-gold-100/45 mt-1">
-              Click a start date, then an end date to select a range. Click a
-              selected date to remove it.
+              Click a start date, then an end date to select open availability. Booked care placements and approved leave are shown directly on your schedule.
             </p>
           </div>
 
@@ -255,7 +329,7 @@ export default function AvailabilitySchedule({
             </div>
           </div>
 
-          {isProfileLoading || !isHydrated ? (
+          {isProfileLoading || !isHydrated || placementsLoading ? (
             <div className="flex-1">
               <CalendarSkeleton />
             </div>
@@ -270,6 +344,8 @@ export default function AvailabilitySchedule({
                 onSetRangeStart={setRangeStart}
                 hoverDate={hoverDate}
                 onSetHoverDate={setHoverDate}
+                getBookingForDate={bookingHelper.getBookingForDate}
+                onBookingClick={handleBookingClick}
               />
               {!isValid && (
                 <p className="text-red-500 text-xs font-semibold mt-4">
@@ -299,6 +375,7 @@ export default function AvailabilitySchedule({
               isSaving={isSaving}
               hasChanges={hasChanges}
               isValid={isValid}
+              activePlacements={bookingHelper.activePlacementsList}
             />
           )}
         </div>

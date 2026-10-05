@@ -1,7 +1,7 @@
 "use client";
 
-import { formatRangeDisplay } from "../../utils/date.utils";
-import { LocalRange } from "./types";
+import { formatRangeDisplay, formatDateDisplay } from "../../utils/date.utils";
+import { LocalRange, ActivePlacementSummary } from "./types";
 import { getRangeColor } from "./colors";
 import { Pencil } from "lucide-react";
 import ThinSpinner from "@/components/ThinSpinner";
@@ -16,6 +16,7 @@ interface AvailabilitySummaryPanelProps {
   isSaving: boolean;
   hasChanges: boolean;
   isValid: boolean;
+  activePlacements?: ActivePlacementSummary[];
 }
 
 export default function AvailabilitySummaryPanel({
@@ -28,6 +29,7 @@ export default function AvailabilitySummaryPanel({
   isSaving,
   hasChanges,
   isValid,
+  activePlacements = [],
 }: AvailabilitySummaryPanelProps) {
   const isEmpty = ranges.length === 0;
 
@@ -47,6 +49,73 @@ export default function AvailabilitySummaryPanel({
           </p>
         </div>
       </div>
+
+      {/* Active Placements / Bookings Section */}
+      {activePlacements && activePlacements.length > 0 && (
+        <div className="mb-4 space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-gold-300/70">
+              Active Bookings & Care
+            </span>
+            <span className="px-1.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[10px] font-bold text-emerald-300">
+              {activePlacements.length} {activePlacements.length === 1 ? "Placement" : "Placements"}
+            </span>
+          </div>
+
+          <div className="space-y-2 max-h-[160px] overflow-y-auto pr-1">
+            {activePlacements.map((p) => (
+              <div
+                key={p.id}
+                className="p-2.5 rounded-xl border border-gold-300/15 bg-navy-900/60 backdrop-blur-sm space-y-1.5"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-xs font-bold text-white truncate">
+                    {p.clientName}
+                  </span>
+                  <span
+                    className={`px-1.5 py-0.5 rounded text-[9px] font-bold tracking-wider uppercase ${
+                      p.isOngoing
+                        ? "bg-amber-500/20 text-amber-300 border border-amber-500/30"
+                        : "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                    }`}
+                  >
+                    {p.isOngoing ? "Ongoing" : "Fixed"}
+                  </span>
+                </div>
+
+                <div className="text-[11px] text-gold-200/70 flex items-center gap-1.5">
+                  <span
+                    className={`w-1.5 h-1.5 rounded-full ${
+                      p.isOngoing ? "bg-amber-400" : "bg-emerald-400"
+                    }`}
+                  />
+                  <span>
+                    {p.isOngoing
+                      ? `Started ${formatDateDisplay(p.startDate)} (Ongoing)`
+                      : `${formatDateDisplay(p.startDate)} → ${
+                          p.endDate ? formatDateDisplay(p.endDate) : "Ongoing"
+                        }`}
+                  </span>
+                </div>
+
+                {p.leavePeriods && p.leavePeriods.length > 0 && (
+                  <div className="pt-1 border-t border-gold-300/10 space-y-1">
+                    {p.leavePeriods.map((lp, idx) => (
+                      <div
+                        key={idx}
+                        className="text-[10px] text-purple-300 flex items-center justify-between"
+                      >
+                        <span>🏖️ Leave: {formatDateDisplay(lp.startDate)}</span>
+                        <span className="text-[9px] text-purple-400 font-medium">Cover Confirmed</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Quick Actions */}
       <div className="flex flex-wrap gap-1.5 mb-4">
@@ -195,6 +264,31 @@ export default function AvailabilitySummaryPanel({
             "Save Availability"
           )}
         </button>
+      </div>
+
+      {/* Calendar Legend */}
+      <div className="mt-4 pt-3 border-t border-gold-300/10">
+        <span className="text-[10px] font-bold uppercase tracking-wider text-gold-300/50 block mb-2">
+          Calendar Legend
+        </span>
+        <div className="grid grid-cols-2 gap-2 text-[10px] text-gold-100/70 font-medium">
+          <div className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#1b806a]" />
+            <span>Available (Open)</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-lg bg-emerald-950 border border-emerald-400/60" />
+            <span>Booked (Fixed)</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-lg bg-amber-950 border border-gold-400/60" />
+            <span>Booked (Ongoing)</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-lg bg-purple-900/40 border border-purple-400/50" />
+            <span>Approved Leave</span>
+          </div>
+        </div>
       </div>
     </div>
   );

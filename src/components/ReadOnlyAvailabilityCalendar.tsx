@@ -10,15 +10,18 @@ import {
 import CalendarGrid from "@/app/(protected)/carer/components/availability/CalendarGrid";
 import { getRangeColor } from "@/app/(protected)/carer/components/availability/colors";
 import { LocalRange } from "@/app/(protected)/carer/components/availability/types";
+import { getPlacementBookings } from "@/app/(protected)/carer/utils/placementBookings.utils";
 
 interface ReadOnlyAvailabilityCalendarProps {
   availability: string[] | undefined | null;
+  placements?: any[];
   wrapperClassName?: string;
   hideHeader?: boolean;
 }
 
 export default function ReadOnlyAvailabilityCalendar({
   availability,
+  placements,
   wrapperClassName,
   hideHeader,
 }: ReadOnlyAvailabilityCalendarProps) {
@@ -32,6 +35,13 @@ export default function ReadOnlyAvailabilityCalendar({
       colorIndex: i,
     }));
   }, [availability]);
+
+  const bookingHelper = useMemo(
+    () => getPlacementBookings(placements),
+    [placements],
+  );
+
+  const hasData = ranges.length > 0 || (placements && placements.length > 0);
 
   return (
     <div
@@ -49,7 +59,7 @@ export default function ReadOnlyAvailabilityCalendar({
       )}
 
       <div>
-        {ranges.length > 0 ? (
+        {hasData ? (
           <CalendarGrid
             ranges={ranges}
             activeEditRangeId={null}
@@ -60,6 +70,7 @@ export default function ReadOnlyAvailabilityCalendar({
             hoverDate={null}
             onSetHoverDate={() => {}}
             variant="hollow"
+            getBookingForDate={bookingHelper.getBookingForDate}
           />
         ) : (
           <div className="flex items-center justify-center h-full p-4 rounded-xl bg-navy-950/50 border border-gold-300/5 text-sm text-gold-100/50 text-center">

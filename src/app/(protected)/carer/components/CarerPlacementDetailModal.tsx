@@ -264,6 +264,39 @@ export default function CarerPlacementDetailModal({
 
   const formattedTitle = formatCareTitle(placement.careRequest?.careCategory);
 
+  const effectiveStartDate = placement.startDate || placement.careRequest?.startDate;
+  const effectiveEndDate = placement.endDate || placement.careRequest?.endDate;
+  const isOngoingCare =
+    !effectiveEndDate ||
+    Boolean(
+      placement.careRequest?.isOngoing ||
+      (placement.careRequest as any)?.durationCategory === "PERMANENT"
+    );
+
+  const durationText = (() => {
+    const req = placement.careRequest as any;
+    if (req?.duration && req.duration !== "Standard Duration") {
+      return req.duration;
+    }
+    if (effectiveStartDate && effectiveEndDate) {
+      const start = new Date(effectiveStartDate);
+      const end = new Date(effectiveEndDate);
+      const diffMs = end.getTime() - start.getTime();
+      if (diffMs > 0) {
+        const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+        const weeks = Math.round(diffDays / 7);
+        if (diffDays >= 7) {
+          return `${weeks} ${weeks === 1 ? "Week" : "Weeks"} (${diffDays} Days)`;
+        }
+        return `${diffDays} ${diffDays === 1 ? "Day" : "Days"}`;
+      }
+    }
+    if (isOngoingCare) {
+      return "Ongoing Live-in Care";
+    }
+    return "Ongoing";
+  })();
+
   const modalContent = (
     <div className="fixed top-[72px] inset-x-0 bottom-0 z-40 bg-navy-950 text-gold-100 flex flex-col overflow-hidden animate-fadeIn">
       {/* ========================================================= */}
@@ -326,18 +359,21 @@ export default function CarerPlacementDetailModal({
             </div>
           </div>
 
-          {/* Right: Quick Actions & Start Date */}
+          {/* Right: Quick Actions & Placement Dates */}
           <div className="flex items-center gap-2 self-start sm:self-auto shrink-0 flex-wrap justify-end">
-            {(placement.startDate || placement.careRequest?.startDate) && (
+            {effectiveStartDate && (
               <div
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gold-300/20 bg-navy-950/80 text-xs font-semibold text-gold-200 shadow-sm"
-                title="Placement Start Date"
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border border-gold-300/20 bg-navy-950/80 text-xs font-semibold text-gold-200 shadow-sm"
+                title="Placement Dates"
               >
-                <Calendar className="w-3.5 h-3.5 text-gold-DEFAULT" />
-                <span>
-                  Start Date:{" "}
-                  {formatDate(placement.startDate || placement.careRequest?.startDate)}
-                </span>
+                <Calendar className="w-3.5 h-3.5 text-gold-DEFAULT shrink-0" />
+                <span>Start: {formatDate(effectiveStartDate)}</span>
+                <span className="text-gold-300/40">•</span>
+                {effectiveEndDate ? (
+                  <span>End: {formatDate(effectiveEndDate)}</span>
+                ) : (
+                  <span className="text-teal-400 font-medium">Ongoing</span>
+                )}
               </div>
             )}
 
@@ -534,7 +570,7 @@ export default function CarerPlacementDetailModal({
               )}
 
               {/* Placement Quick Stats Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 <div className="p-5 rounded-2xl border border-gold-300/15 bg-navy-900/60 shadow-lg space-y-1">
                   <span className="text-[10px] uppercase font-bold tracking-wider text-gold-100/50 block">
                     Your Assigned Role
@@ -571,7 +607,19 @@ export default function CarerPlacementDetailModal({
                   </span>
                   <div className="text-sm font-bold text-white flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-gold-DEFAULT" />
-                    <span>{formatDate(placement.startDate || placement.careRequest?.startDate)}</span>
+                    <span>{formatDate(effectiveStartDate)}</span>
+                  </div>
+                </div>
+
+                <div className="p-5 rounded-2xl border border-gold-300/15 bg-navy-900/60 shadow-lg space-y-1">
+                  <span className="text-[10px] uppercase font-bold tracking-wider text-gold-100/50 block">
+                    Placement End Date
+                  </span>
+                  <div className="text-sm font-bold text-white flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-gold-DEFAULT" />
+                    <span>
+                      {effectiveEndDate ? formatDate(effectiveEndDate) : "Ongoing Live-in Care"}
+                    </span>
                   </div>
                 </div>
 
@@ -611,14 +659,26 @@ export default function CarerPlacementDetailModal({
           {activeTab === "schedule" && (
             <div className="space-y-6">
               {/* Schedule Overview Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="p-4 rounded-xl border border-gold-300/15 bg-navy-900/60 shadow-lg space-y-1">
                   <span className="text-[10px] uppercase font-bold tracking-wider text-gold-100/50 block">
                     Placement Start Date
                   </span>
                   <div className="text-base font-bold text-white flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-gold-DEFAULT" />
-                    <span>{formatDate(placement.startDate || placement.careRequest?.startDate)}</span>
+                    <span>{formatDate(effectiveStartDate)}</span>
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-xl border border-gold-300/15 bg-navy-900/60 shadow-lg space-y-1">
+                  <span className="text-[10px] uppercase font-bold tracking-wider text-gold-100/50 block">
+                    Placement End Date
+                  </span>
+                  <div className="text-base font-bold text-white flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-gold-DEFAULT" />
+                    <span>
+                      {effectiveEndDate ? formatDate(effectiveEndDate) : "Ongoing Live-in Care"}
+                    </span>
                   </div>
                 </div>
 
@@ -628,13 +688,7 @@ export default function CarerPlacementDetailModal({
                   </span>
                   <div className="text-base font-bold text-white flex items-center gap-2">
                     <Clock className="w-4 h-4 text-gold-DEFAULT" />
-                    <span>
-                      {placement.endDate
-                        ? `Until ${formatDate(placement.endDate)}`
-                        : placement.careRequest?.isOngoing
-                        ? "Ongoing Live-in Care"
-                        : "Ongoing"}
-                    </span>
+                    <span>{durationText}</span>
                   </div>
                 </div>
               </div>
@@ -903,13 +957,11 @@ export default function CarerPlacementDetailModal({
                         Schedule
                       </span>
                       <span className="text-white">
-                        {placement.startDate
-                          ? new Date(placement.startDate).toLocaleDateString()
-                          : "N/A"}
-                        {placement.endDate
-                          ? ` - ${new Date(placement.endDate).toLocaleDateString()}`
-                          : placement.careRequest?.isOngoing
-                          ? " (Ongoing Live-in)"
+                        {effectiveStartDate ? formatDate(effectiveStartDate) : "Flexible / TBD"}
+                        {effectiveEndDate
+                          ? ` – ${formatDate(effectiveEndDate)} (${durationText})`
+                          : isOngoingCare
+                          ? " (Ongoing Live-in Care)"
                           : ""}
                       </span>
                     </div>

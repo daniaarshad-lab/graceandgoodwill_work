@@ -28,6 +28,7 @@ export default function PortalTabs({
 }: PortalTabsProps) {
   const router = useRouter();
   const profile = useAppSelector((state) => state.client.profile);
+  const interestList = useAppSelector((state) => state.client.interestList);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -102,7 +103,7 @@ export default function PortalTabs({
     },
     {
       id: "interest-list" as TabType,
-      label: "Interest List ❤️",
+      label: `Interest List ❤️ (${interestList.length})`,
       href: "/client?tab=interest-list",
     },
     {

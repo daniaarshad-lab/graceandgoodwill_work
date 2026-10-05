@@ -4,6 +4,7 @@ import {
   fetchCarers,
   addToInterestList,
   removeFromInterestList,
+  fetchInterestList,
 } from "@/store/slices/clientSlice";
 import SectionCard from "./shared/SectionCard";
 import { Carer } from "../types/client-ui.types";
@@ -58,6 +59,7 @@ export default function CarerProfiles({ carers }: CarerProfilesProps) {
 
   useEffect(() => {
     dispatch(fetchCarers());
+    dispatch(fetchInterestList());
   }, [dispatch]);
 
   const handleWishlistToggle = async (carer: Carer) => {

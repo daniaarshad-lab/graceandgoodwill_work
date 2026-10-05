@@ -118,7 +118,7 @@ export const addToInterestList = createAsyncThunk<
   async (carerProfileId, { dispatch, rejectWithValue }) => {
     try {
       await clientService.addToInterestList(carerProfileId);
-      dispatch(fetchInterestList()); // Refresh interest list
+      await dispatch(fetchInterestList()).unwrap(); // Refresh interest list
     } catch (error: any) {
       return rejectWithValue(
         error?.message || "Failed to add to interest list",
@@ -153,7 +153,7 @@ export const removeFromInterestList = createAsyncThunk<
   async (carerProfileId, { dispatch, rejectWithValue }) => {
     try {
       await clientService.removeFromInterestList(carerProfileId);
-      dispatch(fetchInterestList()); // Refresh interest list
+      await dispatch(fetchInterestList()).unwrap(); // Refresh interest list
       return carerProfileId;
     } catch (error: any) {
       return rejectWithValue(

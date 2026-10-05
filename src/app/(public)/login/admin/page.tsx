@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -17,7 +17,7 @@ export default function AdminLoginPage() {
   const [errors, setErrors] = useState<LoginFormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const { login, isAuthenticated, user, isLoading: authLoading } = useAuth();
+  const { login, logout, isAuthenticated, user, isLoading: authLoading } = useAuth();
 
   useEffect(() => {
     if (isAuthenticated && user?.role) {
@@ -49,6 +49,9 @@ export default function AdminLoginPage() {
     setIsLoading(true);
 
     try {
+      // Clear any stale auth session before logging in
+      await logout();
+
       await login({
         email,
         password,

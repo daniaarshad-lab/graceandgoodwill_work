@@ -37,7 +37,7 @@ export default function ProtectedRoute({
         } else if (targetRole === "client") {
           loginUrl = "/login?role=client";
         } else if (targetRole === "admin") {
-          loginUrl = "/login/admin";
+          loginUrl = "/login?role=admin";
         }
 
         if (typeof window !== "undefined") {

@@ -48,6 +48,10 @@ function LoginPageContent() {
   const isCarer = currentRole === "carer";
   const isAdmin = currentRole === "admin";
 
+  console.log("ROLE FROM URL:", searchParams.get("role"));
+  console.log("CURRENT ROLE:", currentRole);
+  console.log("IS ADMIN:", isAdmin);
+
   useEffect(() => {
     if (isAuthenticated && user?.role) {
       const role = user.role.toUpperCase();
@@ -68,8 +72,16 @@ function LoginPageContent() {
         targetDestination.startsWith("/") &&
         !targetDestination.startsWith("/login")
       ) {
-        router.push(targetDestination);
-        return;
+        // Only follow the redirect if it matches the user's portal access
+        const isTargetValid =
+          ((role === "ADMIN" || role === "SUPER_ADMIN") && targetDestination.startsWith("/admin")) ||
+          (role === "CARER" && targetDestination.startsWith("/carer")) ||
+          (role === "CLIENT" && targetDestination.startsWith("/client"));
+
+        if (isTargetValid) {
+          router.push(targetDestination);
+          return;
+        }
       }
 
       if (role === "CLIENT") {
@@ -124,14 +136,14 @@ function LoginPageContent() {
   const pageTitle = isAdmin
     ? "Login as Admin"
     : isCarer
-    ? "Login as a Carer"
-    : "Login as a Client";
+      ? "Login as a Carer"
+      : "Login as a Client";
 
   const pageSubtitle = isAdmin
     ? "Login to your admin account to manage operations and placements."
     : isCarer
-    ? "Login to your carer account to manage onboarding and placements."
-    : "Login to continue accessing your care platform.";
+      ? "Login to your carer account to manage onboarding and placements."
+      : "Login to continue accessing your care platform.";
 
   return (
     <AuthSplitLayout title={pageTitle} subtitle={pageSubtitle}>

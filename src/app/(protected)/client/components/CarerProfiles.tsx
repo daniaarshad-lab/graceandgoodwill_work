@@ -25,16 +25,7 @@ const SafeImage = ({
 }) => {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   
-  if (errorMsg || !src) return (
-    <div className="relative h-full w-full">
-      {fallback}
-      {errorMsg && (
-        <div style={{ position: 'absolute', top: 0, left: 0, background: 'red', color: 'white', fontSize: '10px', zIndex: 999 }}>
-          ERR: {errorMsg}
-        </div>
-      )}
-    </div>
-  );
+  if (errorMsg || !src) return <>{fallback}</>;
 
   const cleanSrc = src.trim();
   const API_BASE_URL =

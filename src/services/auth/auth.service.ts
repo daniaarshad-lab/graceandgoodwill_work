@@ -41,10 +41,13 @@ export const authService = {
   },
 
   async logout(): Promise<void> {
+    if (typeof window === "undefined") return;
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
+    localStorage.removeItem("user");
     localStorage.removeItem("carer_onboarding_step");
     localStorage.removeItem("carer_onboarding_done");
+    sessionStorage.removeItem("auth_redirect");
   },
 
   async getMe() {

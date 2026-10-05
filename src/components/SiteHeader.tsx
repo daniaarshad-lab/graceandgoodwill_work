@@ -71,16 +71,17 @@ function SiteHeader() {
     const isUserAdmin = rawRole === "ADMIN" || rawRole === "SUPER_ADMIN" || pathname.startsWith("/admin");
     const isUserCarer = rawRole === "CARER" || pathname.startsWith("/carer");
 
+    sessionStorage.setItem("auth_logging_out", String(Date.now()));
     await dispatch(logoutThunk());
     setIsMobileMenuOpen(false);
     showSuccessToast("Logged out successfully");
 
     if (isUserAdmin) {
-      router.push(AUTH_ROUTES.login.admin);
+      router.replace(AUTH_ROUTES.login.admin);
     } else if (isUserCarer) {
-      router.push(AUTH_ROUTES.login.carer);
+      router.replace(AUTH_ROUTES.login.carer);
     } else {
-      router.push(AUTH_ROUTES.login.client);
+      router.replace(AUTH_ROUTES.login.client);
     }
   };
 

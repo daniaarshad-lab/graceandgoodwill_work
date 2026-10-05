@@ -21,6 +21,13 @@ export default function ProtectedRoute({
   useEffect(() => {
     if (!isLoading) {
       if (!isAuthenticated) {
+        // Intentional logout: the header navigates to the right login page.
+        if (
+          typeof window !== "undefined" &&
+          Date.now() - Number(sessionStorage.getItem("auth_logging_out") || 0) < 5000
+        ) {
+          return;
+        }
         let targetRole = "";
         if (allowedRoles && allowedRoles.length > 0) {
           targetRole = allowedRoles[0].toLowerCase();

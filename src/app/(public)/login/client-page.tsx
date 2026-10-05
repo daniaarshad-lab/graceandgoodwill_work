@@ -41,20 +41,43 @@ function LoginPageContent() {
   const [errors, setErrors] = useState<LoginFormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const { login, isAuthenticated, user, isLoading: authLoading } = useAuth();
+  const {
+    login,
+    logout,
+    isAuthenticated,
+    user,
+    isLoading: authLoading,
+  } = useAuth();
 
   const searchParams = useSearchParams();
   const currentRole = parseRole(searchParams.get("role") ?? undefined);
   const isCarer = currentRole === "carer";
   const isAdmin = currentRole === "admin";
 
-  console.log("ROLE FROM URL:", searchParams.get("role"));
-  console.log("CURRENT ROLE:", currentRole);
-  console.log("IS ADMIN:", isAdmin);
+  // Clear the "logging out" marker set by logout so protected routes work again.
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      sessionStorage.removeItem("auth_logging_out");
+    }
+  }, []);
 
   useEffect(() => {
+    if (authLoading) return;
     if (isAuthenticated && user?.role) {
       const role = user.role.toUpperCase();
+
+      const roleMatchesPortal =
+        currentRole === "admin"
+          ? role === "ADMIN" || role === "SUPER_ADMIN"
+          : role === currentRole.toUpperCase();
+
+      // Existing session belongs to a different portal: clear it and show
+      // the login form for the role requested in the URL.
+      if (!roleMatchesPortal) {
+        sessionStorage.removeItem("auth_redirect");
+        logout();
+        return;
+      }
 
       const redirectParam = searchParams.get("redirect");
       const storedRedirect =
@@ -94,7 +117,7 @@ function LoginPageContent() {
         router.push("/");
       }
     }
-  }, [isAuthenticated, user, router, searchParams]);
+  }, [isAuthenticated, user, router, searchParams, currentRole, authLoading, logout]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -111,6 +134,8 @@ function LoginPageContent() {
     setIsLoading(true);
 
     try {
+      // Always start from a clean session; backend validates role.
+      await logout();
       await login({
         email,
         password,

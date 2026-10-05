@@ -44,7 +44,7 @@ function Button({
 
   const variants = {
     primary:
-      "bg-[#b59469] text-navy-950 hover:bg-[#b59469] hover:text-white hover:-translate-y-[1px] hover:shadow-[0_8px_30px_rgba(160,128,84,0.24)] active:translate-y-0 active:shadow-none",
+      "bg-[#b59469] text-navy-950 hover:text-white hover:bg-[#a6865c] active:shadow-none",
     secondary:
       "bg-navy-900/90 border border-gold-muted/40 text-gold-100 hover:bg-gold-muted/15 hover:border-gold-muted/65 hover:text-white hover:-translate-y-[1px] hover:shadow-[0_8px_24px_rgba(160,128,84,0.14)] active:translate-y-0 active:shadow-none",
     outline:

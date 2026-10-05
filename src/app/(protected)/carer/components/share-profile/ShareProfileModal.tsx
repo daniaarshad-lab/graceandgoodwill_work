@@ -22,6 +22,7 @@ import {
   Link2,
   ArrowRight,
 } from "lucide-react";
+import Button from "@/components/Button";
 import shareableProfileService, {
   ShareTokenStatus,
 } from "@/services/carer/shareableProfile.service";
@@ -309,7 +310,7 @@ export default function ShareProfileModal({
                         >
                           Share your professional<br />live-in carer profile
                         </h2>
-                        <p className="text-xs sm:text-[12.5px] mt-1.5 text-[#D8BA68] leading-normal">
+                        <p className="text-xs sm:text-[12.5px] mt-1.5 text-[#F5D4A099] leading-normal">
                           Use your shareable profile as a digital business card to showcase
                           your experience, skills and availability through Grace &amp; Goodwill.
                         </p>
@@ -408,7 +409,7 @@ export default function ShareProfileModal({
                             </svg>
                           </div>
                           <div className="space-y-1">
-                            <p className="text-xs sm:text-[13px] font-semibold leading-snug text-[#ECCB76]">
+                            <p className="text-xs sm:text-[13px] font-semibold leading-snug text-[#F5D4A099]">
                               All enquiries and care requests generated through your shared profile
                               are directed through Grace &amp; Goodwill.
                             </p>
@@ -418,7 +419,7 @@ export default function ShareProfileModal({
                             </p>
                             <div className="flex items-center gap-1.5 pt-0.5">
                               <ShieldCheck className="w-3.5 h-3.5 flex-shrink-0 text-[#ECCB76]" />
-                              <p className="text-[10px] sm:text-[11px] text-[#ECCB76]/90">
+                              <p className="text-[10px] sm:text-[11px] text-[#F5D4A099]">
                                 We handle enquiries securely, so you can focus on what you do best caring.
                               </p>
                             </div>
@@ -473,17 +474,14 @@ export default function ShareProfileModal({
                       </label>
 
                       {/* Generate CTA Button */}
-                      <button
+                      <Button
                         id="confirm-generate-share-link-btn"
-                        type="button"
+                        variant="primary"
+                        size="custom"
                         onClick={handleGenerate}
                         disabled={generating}
-                        className="group w-full flex items-center justify-center gap-2 py-2.5 sm:py-2.5 px-4 rounded-xl text-xs sm:text-[13.5px] font-semibold tracking-[0.02em] transition-all duration-300 cursor-pointer shadow-md active:scale-[0.99] mt-1"
+                        className="mt-1 group w-full gap-2 text-xs sm:text-[13.5px] py-2.5 px-4 !font-medium"
                         style={{
-                          background: "linear-gradient(135deg, #F8E090 0%, #D8A93E 45%, #B8851E 100%)",
-                          color: "#0A1128",
-                          border: "none",
-                          boxShadow: "0 4px 18px rgba(216, 169, 62, 0.3)",
                           opacity: !consented && !generating ? 0.8 : 1,
                         }}
                       >
@@ -499,7 +497,7 @@ export default function ShareProfileModal({
                             <ArrowRight className="w-3.5 h-3.5 stroke-[2] transition-transform duration-200 group-hover:translate-x-0.5" />
                           </>
                         )}
-                      </button>
+                      </Button>
 
                       {/* Cancel link */}
                       {/* <button

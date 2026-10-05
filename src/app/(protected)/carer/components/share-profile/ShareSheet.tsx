@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
+import Button from "@/components/Button";
 
 interface ShareSheetProps {
   shareUrl: string;
@@ -266,21 +267,16 @@ export default function ShareSheet({
           {/* Buttons Container */}
           <div className="flex-shrink-0 flex items-center gap-2">
             {/* Copy Link Button */}
-            <button
+            <Button
               id="copy-share-link-btn"
-              type="button"
+              variant="primary"
+              size="custom"
               onClick={copyLink}
-              className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2.5 rounded-xl font-bold text-[11px] sm:text-xs cursor-pointer shadow-md transition-all active:scale-95 hover:brightness-105"
-              style={{
-                background: "linear-gradient(135deg, #F8E090 0%, #D8A93E 50%, #B8851E 100%)",
-                color: "#0A1128",
-                border: "none",
-                boxShadow: "0 4px 15px rgba(216, 169, 62, 0.2)",
-              }}
+              className="gap-1.5 px-3 sm:px-4 py-2.5 text-[11px] sm:text-xs !font-medium"
             >
               <Link2 className="w-3.5 h-3.5 stroke-[2.5]" />
               <span>{copiedLink ? "Copied!" : "Copy Link"}</span>
-            </button>
+            </Button>
 
             {/* Copy Message Button */}
             {/* <button
@@ -443,7 +439,7 @@ export default function ShareSheet({
             </svg>
           </div>
           <div className="space-y-1 flex-1">
-            <p className="text-xs sm:text-[13px] font-semibold leading-snug text-[#ECCB76]">
+            <p className="text-xs sm:text-[13px] font-semibold leading-snug text-[#F5D4A099]">
               All enquiries and care requests generated through your shared profile
               are directed through Grace &amp; Goodwill.
             </p>
@@ -472,22 +468,17 @@ export default function ShareSheet({
       </div>
 
       {/* 6. Generate New Link Button */}
-      <button
+      <Button
         id="renew-share-link-btn"
-        type="button"
+        variant="primary"
+        size="custom"
         onClick={onRenew}
         disabled={renewing}
-        className="w-full flex items-center justify-center gap-2 py-2.5 sm:py-2.5 px-4 rounded-xl text-xs sm:text-[13.5px] font-semibold tracking-[0.02em] transition-all duration-300 cursor-pointer shadow-md active:scale-[0.99] mt-2"
-        style={{
-          background: "linear-gradient(135deg, #F8E090 0%, #D8A93E 45%, #B8851E 100%)",
-          color: "#0A1128",
-          border: "none",
-          boxShadow: "0 4px 20px rgba(216, 169, 62, 0.35)",
-        }}
+        className="w-full gap-2 py-2.5 sm:py-2.5 px-4 text-xs sm:text-[13.5px] mt-2 !font-medium"
       >
         <RefreshCw className={`w-4 h-4 stroke-[2.2] ${renewing ? "animate-spin" : ""}`} />
         <span>{renewing ? "Generating New Link..." : "Generate New Link"}</span>
-      </button>
+      </Button>
     </div>
   );
 }

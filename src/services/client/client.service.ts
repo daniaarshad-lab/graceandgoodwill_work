@@ -339,7 +339,8 @@ export const clientService = {
         : null;
     if (!token) throw new Error("No token found");
 
-    return apiFetch(`/matching/care-requests/${careRequestId}?limit=${limit}&minScore=${minScore}`, {
+    const cleanId = String(careRequestId || "").replace(/^\/+/, "").trim();
+    return apiFetch(`/matching/care-requests/${cleanId}?limit=${limit}&minScore=${minScore}`, {
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
     });

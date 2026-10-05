@@ -23,9 +23,18 @@ const SafeImage = ({
   fallback: React.ReactNode;
   className?: string;
 }) => {
-  const [error, setError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   
-  if (error || !src) return <>{fallback}</>;
+  if (errorMsg || !src) return (
+    <div className="relative h-full w-full">
+      {fallback}
+      {errorMsg && (
+        <div style={{ position: 'absolute', top: 0, left: 0, background: 'red', color: 'white', fontSize: '10px', zIndex: 999 }}>
+          ERR: {errorMsg}
+        </div>
+      )}
+    </div>
+  );
 
   const cleanSrc = src.trim();
   const API_BASE_URL =
@@ -39,9 +48,8 @@ const SafeImage = ({
       src={imageSrc}
       alt={alt}
       className={`w-full h-full object-cover ${className || ""}`}
-      onError={() => {
-        console.error("SafeImage failed to load:", imageSrc);
-        setError(true);
+      onError={(e) => {
+        setErrorMsg("Failed to load");
       }}
     />
   );

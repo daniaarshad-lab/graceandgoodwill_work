@@ -128,6 +128,30 @@ export interface ClientPlacement {
   careRequest: CareRequest | null;
   hasSubmittedFeedback?: boolean;
   invoices?: Invoice[];
+  preferredBackupCarer?: {
+    id: string;
+    profilePhotoUrl?: string | null;
+    user?: {
+      id?: string;
+      firstName?: string;
+      lastName?: string;
+      email?: string;
+      phoneNumber?: string;
+    };
+  } | null;
+  activeReliefCarer?: {
+    id: string;
+    profilePhotoUrl?: string | null;
+    user?: {
+      id?: string;
+      firstName?: string;
+      lastName?: string;
+      email?: string;
+      phoneNumber?: string;
+    };
+  } | null;
+  leaveRequests?: any[];
+  backupCarers?: any[];
 }
 
 export interface Invoice {
@@ -208,8 +232,8 @@ export interface CareRequest {
   progress?: number;
 
   requestorName: string;
-  requestorEmail: string;
-  requestorPhone: string;
+  requestorEmail?: string;
+  requestorPhone?: string;
 
   startDate: string;
   duration: string;
@@ -218,18 +242,18 @@ export interface CareRequest {
 
   additionalNotes?: string | null;
 
-  shiftType: string;
+  shiftType?: string;
 
   postcode?: string | null;
   city?: string | null;
-  address: string;
+  address?: string;
 
-  careCategory: string;
-  requirements: string;
+  careCategory: string | string[];
+  requirements?: string;
   scheduleNotes?: string | null;
 
   status: string;
-  isEmergency: boolean;
+  isEmergency?: boolean;
 
   /** Whether this care request is for ongoing/permanent care */
   isOngoing?: boolean;
@@ -238,6 +262,9 @@ export interface CareRequest {
 
   createdAt: string;
   updatedAt: string;
+
+  placement?: { id: string; status?: string; startDate?: string } | null;
+  placementId?: string | null;
 }
 
 export interface CreateEnquiryPayload {

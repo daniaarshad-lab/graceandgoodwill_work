@@ -102,11 +102,6 @@ export default function PortalTabs({
       href: "/carer?tab=applications",
     },
     {
-      id: "history",
-      label: "Application History",
-      href: "/carer?tab=history",
-    },
-    {
       id: "placements",
       label: "Placements",
       href: "/carer?tab=placements",

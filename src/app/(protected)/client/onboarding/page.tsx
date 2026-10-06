@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import Input from "@/components/Input";
+import GoogleAddressAutocomplete from "@/components/GoogleAddressAutocomplete";
 import Button from "@/components/Button";
 import { CheckCircle, Phone, AlertCircle } from "lucide-react";
 
@@ -28,6 +29,9 @@ export default function ClientOnboardingPage() {
   const [isOngoing, setIsOngoing] = useState(false);
   const [carePostcode, setCarePostcode] = useState("");
   const [careAddress, setCareAddress] = useState("");
+  const [careCity, setCareCity] = useState("");
+  const [careLatitude, setCareLatitude] = useState<number | null>(null);
+  const [careLongitude, setCareLongitude] = useState<number | null>(null);
   const [careNote, setCareNote] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
@@ -100,6 +104,7 @@ export default function ClientOnboardingPage() {
       isOngoing,
       postcode: carePostcode,
       location: careAddress,
+      city: careCity,
       note: careNote,
     });
 
@@ -126,7 +131,11 @@ export default function ClientOnboardingPage() {
             : undefined,
         carePostcode: carePostcode.trim().toUpperCase(),
         careAddress: careAddress.trim(),
-      })
+        careCity: careCity.trim(),
+        city: careCity.trim(),
+        latitude: careLatitude,
+        longitude: careLongitude,
+      } as any)
     );
   };
 
@@ -351,8 +360,62 @@ export default function ClientOnboardingPage() {
                 </div>
               </div>
 
-              {/* Line 3: Postcode & Location */}
+              {/* Line 3: Location / Address */}
+              <div>
+                <GoogleAddressAutocomplete
+                  label={
+                    <span>
+                      Location <span className="text-red-400">*</span>
+                    </span>
+                  }
+                  placeholder="e.g. 10 Downing Street, London"
+                  value={careAddress}
+                  onChange={(val) => {
+                    setCareAddress(val);
+                    if (errors.careAddress) setErrors({ ...errors, careAddress: "" });
+                  }}
+                  onAddressSelect={(parsed) => {
+                    if (parsed.formattedAddress) {
+                      setCareAddress(parsed.formattedAddress);
+                      if (errors.careAddress) setErrors((prev) => ({ ...prev, careAddress: "" }));
+                    }
+                    if (parsed.city) {
+                      setCareCity(parsed.city);
+                      if (errors.careCity) setErrors((prev) => ({ ...prev, careCity: "" }));
+                    }
+                    if (parsed.postcode) {
+                      setCarePostcode(parsed.postcode);
+                      if (errors.carePostcode) setErrors((prev) => ({ ...prev, carePostcode: "" }));
+                    }
+                    if (parsed.lat !== undefined) {
+                      setCareLatitude(parsed.lat);
+                    }
+                    if (parsed.lng !== undefined) {
+                      setCareLongitude(parsed.lng);
+                    }
+                  }}
+                  error={errors.careAddress}
+                />
+              </div>
+
+              {/* Line 4: City & Postcode */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <Input
+                  label={
+                    <span>
+                      City / Town <span className="text-red-400">*</span>
+                    </span>
+                  }
+                  type="text"
+                  placeholder="e.g. London"
+                  value={careCity}
+                  onChange={(e) => {
+                    setCareCity(e.target.value);
+                    if (errors.careCity) setErrors({ ...errors, careCity: "" });
+                  }}
+                  error={errors.careCity}
+                />
+
                 <Input
                   label={
                     <span>
@@ -367,22 +430,6 @@ export default function ClientOnboardingPage() {
                     if (errors.carePostcode) setErrors({ ...errors, carePostcode: "" });
                   }}
                   error={errors.carePostcode}
-                />
-
-                <Input
-                  label={
-                    <span>
-                      Location <span className="text-red-400">*</span>
-                    </span>
-                  }
-                  type="text"
-                  placeholder="e.g. 10 Downing Street, London"
-                  value={careAddress}
-                  onChange={(e) => {
-                    setCareAddress(e.target.value);
-                    if (errors.careAddress) setErrors({ ...errors, careAddress: "" });
-                  }}
-                  error={errors.careAddress}
                 />
               </div>
 

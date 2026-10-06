@@ -122,6 +122,7 @@ export function validateClientOnboardingForm(data: {
   isOngoing: boolean;
   postcode: string;
   location: string;
+  city?: string;
   note: string;
 }) {
   const errors: Record<string, string> = {};
@@ -180,6 +181,10 @@ export function validateClientOnboardingForm(data: {
   const postcodeErr = validateUKPostcode(data.postcode);
   if (postcodeErr) {
     errors.carePostcode = postcodeErr;
+  }
+
+  if (data.city !== undefined && !data.city.trim()) {
+    errors.careCity = "City is required.";
   }
 
   if (!data.location.trim()) {

@@ -333,14 +333,32 @@ export const clientService = {
     });
   },
 
-  async getInterestList() {
+  async getInterestList(careRequestId?: string) {
     const token =
       typeof window !== "undefined"
         ? localStorage.getItem("accessToken")
         : null;
     if (!token) throw new Error("No token found");
 
-    return apiFetch("/client/interest-list", {
+    const url = careRequestId
+      ? `/client/interest-list?careRequestId=${careRequestId}`
+      : "/client/interest-list";
+
+    return apiFetch(url, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  },
+
+  async getCareRequestMatches(careRequestId: string, limit = 50, minScore = 0): Promise<any> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+    if (!token) throw new Error("No token found");
+
+    const cleanId = String(careRequestId || "").replace(/^\/+/, "").trim();
+    return apiFetch(`/matching/care-requests/${cleanId}?limit=${limit}&minScore=${minScore}`, {
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
     });

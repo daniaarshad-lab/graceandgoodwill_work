@@ -1,5 +1,6 @@
 import SectionCard from "./shared/SectionCard";
 import Input from "@/components/Input";
+import GoogleAddressAutocomplete from "@/components/GoogleAddressAutocomplete";
 import MultiSelect from "@/components/MultiSelect";
 import PhoneInput from "@/components/PhoneInput";
 import Button from "@/components/Button";
@@ -21,6 +22,12 @@ interface CareRequestFormProps {
   setDuration: (val: string) => void;
   address: string;
   setAddress: (val: string) => void;
+  city?: string;
+  setCity?: (val: string) => void;
+  postcode?: string;
+  setPostcode?: (val: string) => void;
+  setLatitude?: (val: number | null) => void;
+  setLongitude?: (val: number | null) => void;
   notes: string;
   setNotes: (val: string) => void;
   isOngoing: boolean;
@@ -58,6 +65,12 @@ export default function CareRequestForm({
   setDuration,
   address,
   setAddress,
+  city,
+  setCity,
+  postcode,
+  setPostcode,
+  setLatitude,
+  setLongitude,
   notes,
   setNotes,
   isOngoing,
@@ -234,13 +247,47 @@ export default function CareRequestForm({
           )}
         </div>
 
-        <Input
-          label="Care recipients home address"
+        <GoogleAddressAutocomplete
+          label="Care recipient's home address"
           value={address}
-          onChange={(e) => setAddress(e.target.value)}
-          placeholder="Enter full physical address where care will take place"
+          onChange={(val) => setAddress(val)}
+          onAddressSelect={(parsed) => {
+            if (parsed.formattedAddress) {
+              setAddress(parsed.formattedAddress);
+            }
+            if (parsed.city && setCity) {
+              setCity(parsed.city);
+            }
+            if (parsed.postcode && setPostcode) {
+              setPostcode(parsed.postcode);
+            }
+            if (parsed.lat !== undefined && setLatitude) {
+              setLatitude(parsed.lat);
+            }
+            if (parsed.lng !== undefined && setLongitude) {
+              setLongitude(parsed.lng);
+            }
+          }}
+          placeholder="Start typing an address or postcode..."
           error={errors.address}
         />
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Input
+            label="City / Town"
+            value={city || ""}
+            onChange={(e) => setCity && setCity(e.target.value)}
+            placeholder="e.g. London"
+            error={errors.city}
+          />
+          <Input
+            label="Postcode"
+            value={postcode || ""}
+            onChange={(e) => setPostcode && setPostcode(e.target.value)}
+            placeholder="e.g. SW1A 1AA"
+            error={errors.postcode}
+          />
+        </div>
 
         <div className="space-y-2">
           <label className="text-sm font-medium text-gold-200">

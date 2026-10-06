@@ -35,8 +35,13 @@ export interface ClientRequest {
   clientName: string;
   careType: string; // e.g., "Live-in Care", "Hourly Care"
   location: string;
+  exactAddress?: string;
+  postcode?: string;
+  city?: string;
   urgency: "Standard" | "High" | "Emergency";
   startDate: string;
+  endDate?: string | null;
+  isOngoing?: boolean;
   notes: string;
   status:
     | "NEW_ENQUIRY"
@@ -249,6 +254,11 @@ export interface AdminPlacementDetail {
   invoices: any[];
   carerPayments?: CarerPayment[];
   internalNotes: InternalNote[];
+  preferredBackupCarerProfileId?: string | null;
+  preferredBackupCarer?: any | null;
+  activeReliefCarer?: any | null;
+  backupCarers?: any[] | null;
+  leaveRequests?: any[] | null;
 }
 
 export interface CarerPayment {

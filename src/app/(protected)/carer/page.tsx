@@ -52,10 +52,6 @@ const MyApplications = dynamic(
   () => import("./components/MyApplications"),
   { ssr: false, loading: () => <LoadingFallback /> },
 );
-const ApplicationHistory = dynamic(
-  () => import("./components/ApplicationHistory"),
-  { ssr: false, loading: () => <LoadingFallback /> },
-);
 import ShareProfileModal from "./components/share-profile/ShareProfileModal";
 const ShareProfilePanel = dynamic(
   () => import("./components/share-profile/ShareProfilePanel"),
@@ -97,7 +93,9 @@ function CarerDashboardContent() {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
   useEffect(() => {
-    if (
+    if (tabParam === "history") {
+      setActiveTab("applications");
+    } else if (
       tabParam &&
       [
         "overview",
@@ -105,6 +103,7 @@ function CarerDashboardContent() {
         "compliance",
         "availability",
         "opportunities",
+        "applications",
         "placements",
         "membership",
         "agreements",
@@ -816,6 +815,12 @@ function CarerDashboardContent() {
                 setExperience={portal.setExperience}
                 address={portal.address}
                 setAddress={portal.setAddress}
+                city={portal.city}
+                setCity={portal.setCity}
+                postcode={portal.postcode}
+                setPostcode={portal.setPostcode}
+                setLatitude={portal.setLatitude}
+                setLongitude={portal.setLongitude}
                 bankName={portal.bankName}
                 setBankName={portal.setBankName}
                 accountName={portal.accountName}
@@ -874,8 +879,6 @@ function CarerDashboardContent() {
           {activeTab === "opportunities" && <PlacementOpportunities />}
 
           {activeTab === "applications" && <MyApplications />}
-
-          {activeTab === "history" && <ApplicationHistory />}
 
           {activeTab === "placements" && <CarerPlacements />}
 

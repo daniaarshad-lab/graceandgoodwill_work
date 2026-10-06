@@ -2,6 +2,7 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import { Pencil, Share2 } from "lucide-react";
 import SectionCard from "./shared/SectionCard";
 import Input from "@/components/Input";
+import GoogleAddressAutocomplete from "@/components/GoogleAddressAutocomplete";
 import PhoneInput from "@/components/PhoneInput";
 import Button from "@/components/Button";
 import { ComplianceDoc } from "../types/carer.types";
@@ -24,6 +25,12 @@ interface ProfileManagementProps {
   setExperience: (val: string) => void;
   address: string;
   setAddress: (val: string) => void;
+  city?: string;
+  setCity?: (val: string) => void;
+  postcode?: string;
+  setPostcode?: (val: string) => void;
+  setLatitude?: (val: number | null) => void;
+  setLongitude?: (val: number | null) => void;
   bankName?: string;
   setBankName?: (val: string) => void;
   accountName?: string;
@@ -69,6 +76,12 @@ export default function ProfileManagement({
   setExperience,
   address,
   setAddress,
+  city,
+  setCity,
+  postcode,
+  setPostcode,
+  setLatitude,
+  setLongitude,
   bankName,
   setBankName,
   accountName,
@@ -278,12 +291,49 @@ export default function ProfileManagement({
                 </p>
               </div>
               <div className="md:col-span-2">
-                <Input
+                <GoogleAddressAutocomplete
                   label="Home Address"
                   value={address}
-                  onChange={(e) => setAddress(e.target.value)}
+                  onChange={(val) => setAddress(val)}
+                  onAddressSelect={(parsed) => {
+                    if (parsed.formattedAddress) {
+                      setAddress(parsed.formattedAddress);
+                    }
+                    if (parsed.city && setCity) {
+                      setCity(parsed.city);
+                    }
+                    if (parsed.postcode && setPostcode) {
+                      setPostcode(parsed.postcode);
+                    }
+                    if (parsed.lat !== undefined && setLatitude) {
+                      setLatitude(parsed.lat);
+                    }
+                    if (parsed.lng !== undefined && setLongitude) {
+                      setLongitude(parsed.lng);
+                    }
+                  }}
                   placeholder="Enter full physical address"
                   error={errors.address}
+                  disabled={!isEditing}
+                />
+              </div>
+              <div>
+                <Input
+                  label="City / Town"
+                  value={city || ""}
+                  onChange={(e) => setCity && setCity(e.target.value)}
+                  placeholder="e.g. London"
+                  error={errors.city}
+                  disabled={!isEditing}
+                />
+              </div>
+              <div>
+                <Input
+                  label="Postcode"
+                  value={postcode || ""}
+                  onChange={(e) => setPostcode && setPostcode(e.target.value)}
+                  placeholder="e.g. SW1A 1AA"
+                  error={errors.postcode}
                   disabled={!isEditing}
                 />
               </div>

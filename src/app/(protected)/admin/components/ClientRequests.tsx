@@ -137,20 +137,23 @@ export default function ClientRequests({
                     }`}
                   >
                     <td className="p-4">
-                      <div className="flex flex-col">
-                        <span className="text-sm font-bold text-gold-200">
+                      <div className="flex flex-col gap-0.5 max-w-[280px]">
+                        <span className="text-sm font-bold text-gold-200 truncate" title={req.clientName}>
                           {req.clientName}
                         </span>
-                        <span className="text-xs text-gold-100/50">
-                          {req.location}
+                        <span
+                          className="text-xs text-gold-100/70 line-clamp-2 leading-relaxed"
+                          title={req.location}
+                        >
+                          📍 {req.location}
                         </span>
                       </div>
                     </td>
 
                     <td className="p-4">
-                      <div className="flex flex-col gap-1">
+                      <div className="flex flex-col gap-1.5">
                         <span
-                          className="text-xs font-medium text-gold-200 line-clamp-1 max-w-[200px]"
+                          className="text-xs font-medium text-gold-200 line-clamp-1 max-w-[220px]"
                           title={
                             Array.isArray(req.careType)
                               ? req.careType.join(", ")
@@ -161,9 +164,21 @@ export default function ClientRequests({
                             ? req.careType.join(", ")
                             : req.careType}
                         </span>
-                        <span className="text-[10px] text-gold-100/40 uppercase tracking-wide">
-                          Start: {req.startDate}
-                        </span>
+                        <div className="flex flex-wrap items-center gap-1.5 text-[10px] text-gold-100/60 font-mono">
+                          <span>
+                            START: <strong className="text-white">{req.startDate}</strong>
+                          </span>
+                          <span className="text-gold-100/30">•</span>
+                          {req.endDate && !req.isOngoing ? (
+                            <span>
+                              END: <strong className="text-white">{req.endDate}</strong>
+                            </span>
+                          ) : (
+                            <span className="px-1.5 py-0.2 rounded bg-amber-500/10 text-amber-300 border border-amber-500/20 text-[9px] font-sans font-semibold uppercase tracking-wider">
+                              Ongoing
+                            </span>
+                          )}
+                        </div>
                       </div>
                         {req.placement?.status === "REJECTED_BY_CARER" && (
                           <div className="mt-2 flex items-center justify-between gap-2 p-2 rounded-lg bg-rose-500/15 border border-rose-500/30 text-[11px] text-rose-300">
@@ -282,7 +297,7 @@ export default function ClientRequests({
                           size="sm"
                           className="!px-3 !py-1.5 !text-[11px] !rounded-lg whitespace-nowrap"
                         >
-                          View Applications
+                          View Applicants / Interest List
                         </Button>
 
                         <div className="relative group/menu inline-block">
@@ -374,29 +389,52 @@ export default function ClientRequests({
                         colSpan={5}
                         className="px-4 pb-4 pt-1 border-b border-gold-300/5"
                       >
-                        <div className="bg-navy-950/40 rounded-xl p-4 border border-gold-300/5 shadow-inner">
-                          <h5 className="text-[10px] font-bold uppercase tracking-wider text-gold-200/50 mb-2 flex items-center gap-2">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              strokeWidth={1.5}
-                              stroke="currentColor"
-                              className="w-4 h-4"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
-                              />
-                            </svg>
-                            Family Notes & Custom Needs
-                          </h5>
-                          <p className="text-xs text-gold-100/80 italic leading-relaxed whitespace-pre-wrap pl-6">
-                            {req.notes && req.notes.trim() !== ""
-                              ? req.notes
-                              : "No additional notes or custom needs provided by the family."}
-                          </p>
+                        <div className="bg-navy-950/40 rounded-xl p-4 border border-gold-300/5 shadow-inner space-y-3">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pb-3 border-b border-gold-300/10 text-xs">
+                            <div>
+                              <span className="text-[10px] uppercase font-bold text-gold-100/40 block mb-1">
+                                Exact Care Location:
+                              </span>
+                              <span className="text-gold-200 font-medium leading-relaxed">
+                                📍 {req.location || "Not specified"}
+                              </span>
+                            </div>
+                            <div>
+                              <span className="text-[10px] uppercase font-bold text-gold-100/40 block mb-1">
+                                Schedule & Dates:
+                              </span>
+                              <span className="text-gold-200 font-medium font-mono text-[11px]">
+                                Start: <strong className="text-white">{req.startDate}</strong>
+                                {" — "}
+                                End: <strong className="text-white">{req.endDate && !req.isOngoing ? req.endDate : "Ongoing"}</strong>
+                              </span>
+                            </div>
+                          </div>
+
+                          <div>
+                            <h5 className="text-[10px] font-bold uppercase tracking-wider text-gold-200/50 mb-2 flex items-center gap-2">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth={1.5}
+                                stroke="currentColor"
+                                className="w-4 h-4"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+                                />
+                              </svg>
+                              Family Notes & Custom Needs
+                            </h5>
+                            <p className="text-xs text-gold-100/80 italic leading-relaxed whitespace-pre-wrap pl-6">
+                              {req.notes && req.notes.trim() !== ""
+                                ? req.notes
+                                : "No additional notes or custom needs provided by the family."}
+                            </p>
+                          </div>
                         </div>
                       </td>
                     </tr>
@@ -424,9 +462,19 @@ export default function ClientRequests({
       {selectedRequestIdForApps && (
         <AdminApplicationsModal
           careRequestId={selectedRequestIdForApps}
+          careRequestStatus={requests.find((r) => r.id === selectedRequestIdForApps)?.status}
           clientProfileId={
             requests.find((r) => r.id === selectedRequestIdForApps)
-              ?.clientProfileId || ""
+              ?.clientProfileId ||
+            requests.find((r) => r.id === selectedRequestIdForApps)
+              ?.clientId ||
+            ""
+          }
+          clientName={
+            requests.find((r) => r.id === selectedRequestIdForApps)?.clientName
+          }
+          placementId={
+            (requests.find((r) => r.id === selectedRequestIdForApps) as any)?.placement?.id
           }
           onClose={() => setSelectedRequestIdForApps(null)}
           onStatusUpdated={refreshRequests}

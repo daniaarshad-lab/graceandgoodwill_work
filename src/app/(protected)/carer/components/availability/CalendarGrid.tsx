@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useMemo } from "react";
-import { LocalRange } from "./types";
+import { LocalRange, CalendarBooking } from "./types";
 import DateCell, { RangePosition } from "./DateCell";
 import {
   getDaysInMonth,
@@ -24,6 +24,8 @@ interface CalendarGridProps {
   hoverDate: string | null;
   onSetHoverDate: (dateStr: string | null) => void;
   variant?: "solid" | "hollow";
+  getBookingForDate?: (dateStr: string) => CalendarBooking | undefined;
+  onBookingClick?: (booking: CalendarBooking) => void;
 }
 
 interface GridCell {
@@ -42,6 +44,8 @@ export default function CalendarGrid({
   hoverDate,
   onSetHoverDate,
   variant = "solid",
+  getBookingForDate,
+  onBookingClick,
 }: CalendarGridProps) {
   const now = new Date();
   const [currentYear, setCurrentYear] = useState(now.getFullYear());
@@ -180,6 +184,16 @@ export default function CalendarGrid({
   // Date click handler — implements range selection
   const handleDateMouseDown = useCallback(
     (dateStr: string) => {
+      const booking = getBookingForDate?.(dateStr);
+      if (booking) {
+        onSetRangeStart(null);
+        onSetHoverDate(null);
+        if (onBookingClick) {
+          onBookingClick(booking);
+        }
+        return;
+      }
+
       if (rangeStart === null) {
         // First click: start range selection
         onSetRangeStart(dateStr);
@@ -195,6 +209,9 @@ export default function CalendarGrid({
       }
     },
     [
+      getBookingForDate,
+      onBookingClick,
+      onSetHoverDate,
       rangeStart,
       activeEditRangeId,
       onSetRangeStart,
@@ -332,6 +349,8 @@ export default function CalendarGrid({
             range &&
             range.id === activeEditRangeId;
 
+          const booking = getBookingForDate?.(cell.dateStr);
+
           return (
             <div
               key={cell.dateStr}
@@ -344,7 +363,7 @@ export default function CalendarGrid({
                 dayNumber={cell.dayNumber}
                 isSelected={isSelected}
                 isToday={cell.dateStr === todayStr}
-                isDisabled={!cell.isOtherMonth && cell.dateStr < todayStr}
+                isDisabled={!booking && !cell.isOtherMonth && cell.dateStr < todayStr}
                 isOtherMonth={cell.isOtherMonth}
                 isPreview={isPreview}
                 rangePosition={rangePosition}
@@ -353,6 +372,7 @@ export default function CalendarGrid({
                 colorIndex={range ? range.colorIndex : 0}
                 isEditing={isEditingThis}
                 variant={variant}
+                booking={booking}
                 onMouseDown={handleDateMouseDown}
                 onMouseEnter={handleDateMouseEnter}
                 onMouseUp={handleDateMouseUp}

@@ -1,8 +1,12 @@
+import { useState, useEffect } from "react";
 import SectionCard from "./shared/SectionCard";
 import StatusBadge from "./shared/StatusBadge";
 import { ComplianceDoc } from "../types/carer.types";
 import { groupDatesIntoRanges, formatRangeDisplay } from "../utils/date.utils";
 import { useAppSelector } from "@/store/hooks";
+import CarerRolesCard from "@/components/backup-carer/CarerRolesCard";
+import { carerService } from "@/services/carer/carer.service";
+import { backupCarerService } from "@/services/backupCarer.service";
 import Button from "@/components/Button";
 interface DashboardOverviewProps {
   applicationStatus: "pending" | "approved" | "rejected";
@@ -21,13 +25,82 @@ export default function DashboardOverview({
 }: DashboardOverviewProps) {
   const profile = useAppSelector((state) => state.carer.profile);
 
+  const [roleCounts, setRoleCounts] = useState({ primary: 0, backup: 0, relief: 0 });
+
+  useEffect(() => {
+    Promise.all([
+      carerService.getPlacements().catch(() => []),
+      backupCarerService.getReliefOpportunities().catch(() => []),
+      backupCarerService.getPreferredBackupPlacements(profile?.id).catch(() => []),
+      backupCarerService.getConfirmedReliefAssignments().catch(() => []),
+    ]).then(([placements, offers, backups, confirmedRelief]) => {
+      const primary = placements.filter(
+        (p: any) =>
+          ["PLACEMENT_CONFIRMED", "PLACEMENT_STARTED", "ACTIVE", "ONGOING"].includes(p.status) &&
+          !p.isBackup &&
+          (p.carerProfileId === profile?.id || p.myRole === "PRIMARY_CARER")
+      ).length;
+
+      const backupFromPlacements = placements.filter(
+        (p: any) =>
+          ["PLACEMENT_CONFIRMED", "PLACEMENT_STARTED", "ACTIVE", "ONGOING"].includes(p.status) &&
+          (p.isBackup ||
+            p.preferredBackupCarerProfileId === profile?.id ||
+            p.backupCarers?.some((b: any) => b.carerProfileId === profile?.id) ||
+            p.myRole === "PREFERRED_BACKUP_CARER" ||
+            p.myRole === "SECONDARY_BACKUP_CARER" ||
+            Boolean(p.roleTitle && p.roleTitle.toLowerCase().includes("backup")) ||
+            Boolean(p.carerProfileId && profile?.id && p.carerProfileId !== profile.id))
+      ).length;
+
+      const uniqueBackups = backups.filter(
+        (bp: any) => !placements.some((p: any) => p.id === bp.id || `backup-${p.id}` === bp.id)
+      ).length;
+      const backup = backupFromPlacements + uniqueBackups;
+
+      const reliefAssignmentsCount = Array.isArray(confirmedRelief) ? confirmedRelief.length : 0;
+      const reliefPlacementsCount = placements.filter(
+        (p: any) =>
+          p.myRole === "ACTIVE_RELIEF_CARER" ||
+          p.activeReliefCarerProfileId === profile?.id ||
+          p.assignments?.some(
+            (a: any) =>
+              (a.role === "ACTIVE_RELIEF_CARER" || a.role === "RELIEF_CARER") &&
+              ["CONFIRMED", "IN_PROGRESS", "ACTIVE"].includes(a.status)
+          ) ||
+          p.leaveRequests?.some(
+            (l: any) =>
+              l.status === "COVER_CONFIRMED" &&
+              (l.offeredCarerProfileId === profile?.id ||
+                p.preferredBackupCarerProfileId === profile?.id ||
+                p.backupCarers?.some((b: any) => b.carerProfileId === profile?.id))
+          )
+      ).length;
+      const confirmedOffersCount = offers.filter(
+        (o: any) => o.status === "CONFIRMED" || o.status === "ACTIVE" || o.status === "COVERING"
+      ).length;
+
+      const relief = Math.max(reliefAssignmentsCount, reliefPlacementsCount, confirmedOffersCount);
+
+      setRoleCounts({ primary, backup, relief });
+    });
+  }, [profile?.id]);
+
   const rejectedDocs = complianceDocs.filter(
     (doc) => doc.status === "failed" && doc.rejectionReason,
   );
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      {/* Application Review Status Badges Widget */}
+    <div className="space-y-6">
+      {/* Your Carer Roles - Grace & Goodwill Multi-Tier */}
+      <CarerRolesCard
+        primaryCount={roleCounts.primary}
+        backupCount={roleCounts.backup}
+        activeReliefCount={roleCounts.relief}
+      />
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Application Review Status Badges Widget */}
       <SectionCard className="md:col-span-2 space-y-6">
         <div className="flex justify-between items-center border-b border-gold-300/10 pb-4">
           <h3 className="text-lg font-bold text-gold-200">
@@ -162,5 +235,6 @@ export default function DashboardOverview({
         </div>
       </SectionCard>
     </div>
-  );
+  </div>
+);
 }

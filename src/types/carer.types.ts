@@ -205,6 +205,14 @@ export interface CarerPlacement {
     isEmergency?: boolean;
     additionalNotes?: string | null;
   } | null;
+  myRole?: string;
+  roleTitle?: string;
+  roleDescription?: string;
+  isBackup?: boolean;
+  backupPriority?: number | null;
+  preferredBackupCarerProfileId?: string | null;
+  backupCarers?: any[];
+  [key: string]: any;
 }
 
 export interface CarerPayment {

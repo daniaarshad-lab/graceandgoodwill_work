@@ -279,6 +279,29 @@ const mapBackendCareRequests = (careRequests: any[]): ClientRequest[] => {
       urgency = "High";
     }
 
+    // Exact location details
+    const exactAddress = (req.address || profile.careAddress || profile.address || "").trim();
+    const city = (req.city || profile.careCity || profile.city || "").trim();
+    const postcode = (req.postcode || profile.carePostcode || profile.postcode || "").trim();
+
+    // Composed exact location string
+    let locationStr = exactAddress;
+    if (!locationStr) {
+      locationStr = [city, postcode].filter(Boolean).join(", ") || "London";
+    } else {
+      if (postcode && !locationStr.toLowerCase().includes(postcode.toLowerCase())) {
+        locationStr = `${locationStr}, ${postcode}`;
+      }
+    }
+
+    const startDateStr = req.startDate
+      ? new Date(req.startDate).toISOString().split("T")[0]
+      : "As soon as possible";
+
+    const endDateStr = req.endDate
+      ? new Date(req.endDate).toISOString().split("T")[0]
+      : null;
+
     return {
       id: req.id,
       clientProfileId: req.clientProfileId || profile.id || req.clientId,
@@ -287,11 +310,14 @@ const mapBackendCareRequests = (careRequests: any[]): ClientRequest[] => {
         `${clientUser.firstName || ""} ${clientUser.lastName || ""}`.trim() ||
         "Unknown Client",
       careType: req.careCategory || "General Care",
-      location: req.city || profile.city || "London",
+      location: locationStr,
+      exactAddress,
+      city,
+      postcode,
       urgency,
-      startDate: req.startDate
-        ? new Date(req.startDate).toISOString().split("T")[0]
-        : "As soon as possible",
+      startDate: startDateStr,
+      endDate: endDateStr,
+      isOngoing: Boolean(req.isOngoing),
       notes:
         req.additionalNotes ||
         req.requirements ||

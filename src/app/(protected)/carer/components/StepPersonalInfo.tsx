@@ -2,6 +2,7 @@ import FullScreenLoader from "@/components/FullScreenLoader";
 import React, { useState } from "react";
 import SectionCard from "./shared/SectionCard";
 import Input from "@/components/Input";
+import GoogleAddressAutocomplete from "@/components/GoogleAddressAutocomplete";
 import PhoneInput from "@/components/PhoneInput";
 import Select from "@/components/Select";
 import Button from "@/components/Button";
@@ -59,8 +60,12 @@ export default function StepPersonalInfo({ portal, onNext, onBack }: Props) {
     setDateOfBirth,
     address,
     setAddress,
+    city,
+    setCity,
     postcode,
     setPostcode,
+    setLatitude,
+    setLongitude,
     emergencyContactName,
     setEmergencyContactName,
     emergencyContactNumber,
@@ -132,6 +137,9 @@ export default function StepPersonalInfo({ portal, onNext, onBack }: Props) {
     }
     if (!postcode?.trim()) {
       newErrors.postcode = "Postcode is required";
+    }
+    if (!city?.trim()) {
+      newErrors.city = "City is required";
     }
     if (!email?.trim()) {
       newErrors.email = "Email Address is required";
@@ -241,11 +249,10 @@ export default function StepPersonalInfo({ portal, onNext, onBack }: Props) {
             max={maxDate}
             error={errors.dateOfBirth}
           />
-          <Input
+          <GoogleAddressAutocomplete
             label="Address *"
             value={address}
-            onChange={(e) => {
-              const val = e.target.value;
+            onChange={(val) => {
               setAddress(val);
               if (val.trim()) {
                 setErrors((prev) => {
@@ -255,8 +262,57 @@ export default function StepPersonalInfo({ portal, onNext, onBack }: Props) {
                 });
               }
             }}
-            placeholder="Full Address"
+            onAddressSelect={(parsed) => {
+              if (parsed.formattedAddress) {
+                setAddress(parsed.formattedAddress);
+                setErrors((prev) => {
+                  const copy = { ...prev };
+                  delete copy.address;
+                  return copy;
+                });
+              }
+              if (parsed.city && setCity) {
+                setCity(parsed.city);
+                setErrors((prev) => {
+                  const copy = { ...prev };
+                  delete copy.city;
+                  return copy;
+                });
+              }
+              if (parsed.postcode) {
+                setPostcode(parsed.postcode);
+                setErrors((prev) => {
+                  const copy = { ...prev };
+                  delete copy.postcode;
+                  return copy;
+                });
+              }
+              if (parsed.lat !== undefined && setLatitude) {
+                setLatitude(parsed.lat);
+              }
+              if (parsed.lng !== undefined && setLongitude) {
+                setLongitude(parsed.lng);
+              }
+            }}
+            placeholder="Start typing an address or postcode..."
             error={errors.address}
+          />
+          <Input
+            label="City / Town *"
+            value={city || ""}
+            onChange={(e) => {
+              const val = e.target.value;
+              if (setCity) setCity(val);
+              if (val.trim()) {
+                setErrors((prev) => {
+                  const copy = { ...prev };
+                  delete copy.city;
+                  return copy;
+                });
+              }
+            }}
+            placeholder="e.g. London"
+            error={errors.city}
           />
           <div className="relative">
             <Input

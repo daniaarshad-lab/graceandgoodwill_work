@@ -148,15 +148,7 @@ export default function CarerProfiles({ carers }: CarerProfilesProps) {
                     )}
                   </div>
 
-                  <span
-                    className={`rounded-full px-2.5 py-0.5 text-[8px] font-bold uppercase tracking-wider ${
-                      carer.availability === "Available"
-                        ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                        : "bg-amber-500/10 text-amber-400 border border-amber-500/20"
-                    }`}
-                  >
-                    {carer.availability}
-                  </span>
+
                 </div>
 
                 <div>

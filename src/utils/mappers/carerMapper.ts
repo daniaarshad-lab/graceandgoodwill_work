@@ -36,7 +36,7 @@ export const mapCarerProfileToUICarer = (carer: any): Carer => {
           ? carer.careSpecialties
           : "Profile information pending",
     availability: availabilityStatus,
-    bio: carer.summary || carer.bio || "Profile information pending",
+    bio: carer.bio || "Profile information pending",
     avatarBg: "bg-amber-500/20 text-amber-300 border-amber-500/30",
     introVideoUrl: carer.introVideoUrl || null,
     location: location || "Location pending",
@@ -56,7 +56,7 @@ export const mapCarerProfileToUICarer = (carer: any): Carer => {
       }
       return url;
     })(),
-    fullBiography: carer.bio || carer.summary || "Profile information pending",
+    fullBiography: carer.summary || "Profile information pending",
     experienceDetails:
       carer.experience || carer.summary || "Profile information pending",
     availabilityDetails: Array.isArray(carer.availability)
@@ -74,5 +74,7 @@ export const mapCarerProfileToUICarer = (carer: any): Carer => {
         .filter(Boolean)
         .join(", ") || "",
     feedbacks: Array.isArray(carer.feedbacks) ? carer.feedbacks : [],
+    canDrive: !!carer.canDrive,
+    drivingPreferences: Array.isArray(carer.drivingPreferences) ? carer.drivingPreferences : [],
   };
 };

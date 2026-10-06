@@ -18,6 +18,8 @@ export interface Carer {
   email?: string;
   phone?: string;
   address?: string;
+  canDrive?: boolean;
+  drivingPreferences?: string[];
 }
 
 export interface CareRequest {

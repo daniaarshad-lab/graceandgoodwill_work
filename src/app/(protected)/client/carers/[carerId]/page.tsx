@@ -9,14 +9,14 @@ import { mapCarerProfileToUICarer } from "@/utils/mappers/carerMapper";
 import { Carer } from "../../types/client-ui.types";
 import {
   ArrowLeft,
-  MapPin,
-  Mail,
-  Phone,
   Heart,
   ShieldCheck,
   Star,
   Info,
   User,
+  Car,
+  Video,
+  Briefcase,
 } from "lucide-react";
 import ReadOnlyAvailabilityCalendar from "@/components/ReadOnlyAvailabilityCalendar";
 import ThinSpinner from "@/components/ThinSpinner";
@@ -167,6 +167,65 @@ export default function CarerDetailsPage() {
     );
   };
 
+  const SafeVideo = ({ src }: { src: string }) => {
+    const [videoSrc, setVideoSrc] = useState<string>(src);
+    const [error, setError] = useState(false);
+
+    useEffect(() => {
+      let isMounted = true;
+      if (!src) {
+        setVideoSrc("");
+        return;
+      }
+
+      if (
+        src.includes(".amazonaws.com/") &&
+        !src.includes("X-Amz-Signature") &&
+        !src.includes("Signature=")
+      ) {
+        storageService
+          .getPresignedUrl(src)
+          .then((presigned) => {
+            if (isMounted && presigned) {
+              setVideoSrc(presigned);
+            }
+          })
+          .catch(() => {
+            if (isMounted) setVideoSrc(src);
+          });
+      } else {
+        setVideoSrc(src);
+      }
+
+      return () => {
+        isMounted = false;
+      };
+    }, [src]);
+
+    if (error || !videoSrc) {
+      return (
+        <div className="w-full h-48 bg-navy-950 flex items-center justify-center text-gold-300/50 rounded-2xl border border-gold-300/10">
+          Video not available
+        </div>
+      );
+    }
+
+    const API_BASE_URL =
+      process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+    const finalSrc = videoSrc.startsWith("http")
+      ? videoSrc
+      : `${API_BASE_URL}${videoSrc.startsWith("/") ? "" : "/"}${videoSrc}`;
+
+    return (
+      <video
+        src={finalSrc}
+        controls
+        className="w-full rounded-2xl border border-gold-300/10 shadow-lg object-cover"
+        onError={() => setError(true)}
+      />
+    );
+  };
+
   const getInitials = () =>
     carer.name
       .split(" ")
@@ -189,86 +248,147 @@ export default function CarerDetailsPage() {
         >
           <ArrowLeft className="h-3.5 w-3.5" /> Back to Carers Directory
         </button>
+        {/* Main Grid Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start mt-4">
+          
+          {/* Left Column (Hero + Info Cards) */}
+          <div className="lg:col-span-2 flex flex-col gap-6">
+            
+            {/* Hero Section */}
+            <div className="relative rounded-3xl overflow-hidden bg-navy-900/50 backdrop-blur-xl border border-gold-300/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
+              <div className="absolute inset-0 bg-gradient-to-r from-navy-900/90 via-navy-900/60 to-transparent z-0" />
 
-        {/* Hero Section */}
-        <div className="relative rounded-3xl overflow-hidden bg-navy-900/50 backdrop-blur-xl border border-gold-300/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
-          <div className="absolute inset-0 bg-gradient-to-r from-navy-900 via-navy-900/80 to-transparent z-0" />
-
-          <div className="relative z-10 p-6 sm:p-8 flex flex-col md:flex-row items-center md:items-center gap-6">
-            {/* Avatar Profile */}
-            <div className="shrink-0 relative group">
-              <div className="absolute -inset-1 bg-gradient-to-tr from-gold-300 to-gold-600 rounded-full blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200" />
-              <div
-                className={`relative h-24 w-24 sm:h-32 sm:w-32 rounded-full border-4 border-navy-950 overflow-hidden shadow-2xl bg-navy-800 ${!carer.profilePhotoUrl ? carer.avatarBg : ""}`}
-              >
-                {carer.profilePhotoUrl ? (
-                  <SafeImage src={carer.profilePhotoUrl} alt={carer.name} />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-3xl font-bold text-white/90">
-                    {getInitials()}
+              <div className="relative z-10 p-8 flex flex-col md:flex-row items-center md:items-center gap-8">
+                {/* Avatar Profile */}
+                <div className="shrink-0 relative group">
+                  <div className="absolute -inset-1 bg-gradient-to-tr from-gold-300 to-gold-600 rounded-full blur opacity-30 transition duration-500" />
+                  <div
+                    className={`relative h-28 w-28 sm:h-32 sm:w-32 rounded-full border-[3px] border-navy-800 overflow-hidden shadow-2xl bg-navy-800 ${!carer.profilePhotoUrl ? carer.avatarBg : ""}`}
+                  >
+                    {carer.profilePhotoUrl ? (
+                      <SafeImage src={carer.profilePhotoUrl} alt={carer.name} />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-4xl font-bold text-white/90">
+                        {getInitials()}
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-              <div className="absolute bottom-2 right-2 bg-navy-950 p-1.5 rounded-full border border-gold-300/20 shadow-lg">
-                <ShieldCheck className="w-6 h-6 text-gold-300" />
+                  <div className="absolute bottom-2 right-2 bg-navy-900 p-2 rounded-full border border-gold-300/20 shadow-lg">
+                    <ShieldCheck className="w-5 h-5 text-gold-300" />
+                  </div>
+                </div>
+
+                {/* Title & Badges */}
+                <div className="flex-1 text-center md:text-left space-y-4">
+                  <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+                    {carer.name}
+                  </h1>
+
+                  <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
+                    {carer.experience && carer.experience !== "Profile information pending" && (
+                      <span className="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-bold border backdrop-blur-md shadow-sm bg-purple-500/10 text-purple-300 border-purple-500/20 shadow-purple-500/10">
+                        <Briefcase className="w-4 h-4 mr-2 text-purple-400" />
+                        {carer.experience}
+                      </span>
+                    )}
+                    {carer.canDrive && (
+                      <span className="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-bold border backdrop-blur-md shadow-sm bg-blue-500/10 text-blue-300 border-blue-500/20 shadow-blue-500/10">
+                        <Car className="w-4 h-4 mr-2 text-blue-400" />
+                        Driver
+                      </span>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Title & Badges */}
-            <div className="flex-1 text-center md:text-left space-y-4">
-              <div className="space-y-1">
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-gold-50 tracking-tight">
-                  {carer.name}
-                </h1>
-                <p className="text-sm text-gold-100/70 font-medium">
-                  {carer.specialties}
-                </p>
-              </div>
-
-              <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 pt-2">
-                <span
-                  className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border backdrop-blur-md shadow-sm
-                  ${
-                    carer.availability === "Available"
-                      ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/20 shadow-emerald-500/10"
-                      : "bg-amber-500/10 text-amber-300 border-amber-500/20 shadow-amber-500/10"
-                  }`}
-                >
-                  <span
-                    className={`w-1.5 h-1.5 rounded-full mr-2 ${carer.availability === "Available" ? "bg-emerald-400 animate-pulse" : "bg-amber-400"}`}
-                  />
-                  {carer.availability}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Two Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
-          {/* Main Content Column */}
-          <div className="lg:col-span-2 flex flex-col gap-8 h-full">
-            {/* Biography */}
-            <section className="bg-navy-900/40 backdrop-blur-md border border-gold-300/10 rounded-3xl p-8 shadow-xl relative overflow-hidden group hover:border-gold-300/20 transition-colors shrink-0">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-gold-300/5 rounded-full blur-[80px] -mr-32 -mt-32 pointer-events-none" />
-              <h2 className="text-lg font-bold text-gold-100 flex items-center mb-6">
-                <User className="w-5 h-5 mr-3 text-gold-300" /> Professional
-                Overview
+            {/* Professional Overview */}
+            <section className="bg-navy-900/40 backdrop-blur-md border border-gold-300/10 rounded-3xl p-8 shadow-xl relative overflow-hidden group hover:bg-navy-900/50 transition-colors shrink-0">
+              <h2 className="text-xl font-bold text-gold-50 flex items-center mb-5">
+                <User className="w-5 h-5 mr-3 text-gold-300" /> Professional Overview
               </h2>
               <div className="prose prose-invert prose-gold max-w-none">
-                <p className="text-slate-300 leading-relaxed whitespace-pre-line text-sm">
-                  {carer.fullBiography ||
-                    carer.bio ||
-                    "No professional overview provided."}
+                <p className="text-slate-300 leading-relaxed whitespace-pre-line text-[15px]">
+                  {carer.fullBiography !== "Profile information pending"
+                    ? carer.fullBiography
+                    : "No professional overview provided."}
+                </p>
+              </div>
+            </section>
+            {/* Care Specialties */}
+            {carer.specialties && carer.specialties !== "Profile information pending" && (
+              <section className="bg-navy-900/40 backdrop-blur-md border border-gold-300/10 rounded-3xl p-8 shadow-xl relative overflow-hidden group hover:bg-navy-900/50 transition-colors shrink-0">
+                <h2 className="text-xl font-bold text-gold-50 flex items-center mb-5">
+                  <Star className="w-5 h-5 mr-3 text-gold-300" /> Care Specialties
+                </h2>
+                <div className="flex flex-wrap gap-2.5">
+                  {carer.specialties.split(', ').map((specialty, idx) => (
+                    <span key={idx} className="inline-flex items-center px-4 py-2 rounded-xl text-sm font-medium bg-navy-950/60 border border-gold-300/20 text-gold-50 shadow-sm hover:border-gold-300/40 transition-colors">
+                      {specialty}
+                    </span>
+                  ))}
+                </div>
+              </section>
+            )}
+
+          </div>
+
+          {/* Sidebar (Right Column) */}
+          <div className="flex flex-col gap-6">
+            {/* Intro Video Card */}
+            {carer.introVideoUrl && (
+              <div className="bg-navy-900/60 backdrop-blur-md border border-gold-300/10 rounded-3xl p-6 shadow-xl shrink-0">
+                <h3 className="text-xl font-bold text-gold-50 flex items-center mb-5">
+                  <Video className="w-5 h-5 mr-3 text-gold-300" /> Introduction Video
+                </h3>
+                <SafeVideo src={carer.introVideoUrl} />
+              </div>
+            )}
+
+            {/* Schedule Card */}
+            <div className="bg-navy-900/40 backdrop-blur-xl border border-gold-300/10 rounded-[1.5rem] shadow-xl overflow-hidden shrink-0">
+               <ReadOnlyAvailabilityCalendar
+                availability={carer.rawAvailability}
+              />
+            </div>
+          </div>
+
+          {/* Full Width Grid for Bio and Driving */}
+          <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Short Bio */}
+            <section className="w-full bg-navy-900/40 backdrop-blur-md border border-gold-300/10 rounded-3xl p-8 shadow-xl relative overflow-hidden group hover:bg-navy-900/50 transition-colors">
+              <h2 className="text-xl font-bold text-gold-50 flex items-center mb-5">
+                <Info className="w-5 h-5 mr-3 text-gold-300" /> Biography
+              </h2>
+              <div className="prose prose-invert prose-gold max-w-none">
+                <p className="text-slate-300 leading-relaxed whitespace-pre-line text-[15px]">
+                  {carer.bio && carer.bio !== "Profile information pending"
+                    ? carer.bio
+                    : "No short bio provided."}
                 </p>
               </div>
             </section>
 
-            {/* Client Feedback */}
-            <section className="flex-1 bg-navy-900/40 backdrop-blur-md border border-gold-300/10 rounded-3xl p-8 shadow-xl relative overflow-hidden group hover:border-gold-300/20 transition-colors">
-              <h2 className="text-lg font-bold text-gold-100 flex items-center mb-6">
-                <Heart className="w-5 h-5 mr-3 text-gold-300" /> Client Feedback
-                & Reviews
+            {/* Driving Preferences */}
+            <section className="w-full bg-navy-900/40 backdrop-blur-md border border-gold-300/10 rounded-3xl p-8 shadow-xl relative overflow-hidden group hover:bg-navy-900/50 transition-colors">
+              <h2 className="text-xl font-bold text-gold-50 flex items-center mb-5">
+                <Car className="w-5 h-5 mr-3 text-gold-300" /> Driving Preferences
+              </h2>
+              <div className="prose prose-invert prose-gold max-w-none">
+                <p className="text-slate-300 leading-relaxed text-[15px]">
+                  {carer.drivingPreferences && carer.drivingPreferences.length > 0
+                    ? `Client has chosen ${carer.drivingPreferences.join(', ')} as their driving preferences.`
+                    : "No driving preferences have been specified."}
+                </p>
+              </div>
+            </section>
+          </div>
+
+          {/* Full Width Bottom Row (Client Feedback) */}
+          <div className="lg:col-span-3">
+            <section className="w-full bg-navy-900/40 backdrop-blur-md border border-gold-300/10 rounded-3xl p-8 shadow-xl relative overflow-hidden group hover:bg-navy-900/50 transition-colors">
+              <h2 className="text-xl font-bold text-gold-50 flex items-center mb-6">
+                <Heart className="w-5 h-5 mr-3 text-gold-300" /> Client Feedback & Reviews
               </h2>
 
               {!carer.feedbacks || carer.feedbacks.length === 0 ? (
@@ -279,39 +399,39 @@ export default function CarerDetailsPage() {
                   </p>
                 </div>
               ) : (
-                <div className="grid gap-4">
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {carer.feedbacks.map((fb, idx) => {
                     const clientName = `${fb.clientProfile?.user?.firstName || "Unknown"} ${fb.clientProfile?.user?.lastName || "Client"}`;
                     return (
                       <div
                         key={idx}
-                        className="bg-navy-950/50 rounded-2xl p-6 border border-gold-300/5 hover:border-gold-300/10 hover:bg-navy-900/50 transition-all duration-300 shadow-sm"
+                        className="bg-navy-950/50 rounded-2xl p-6 border border-gold-300/10 hover:border-gold-300/30 hover:bg-navy-900/40 transition-all duration-300 shadow-sm flex flex-col"
                       >
                         <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-4 gap-2">
                           <div className="flex items-center space-x-3">
-                            <div className="w-8 h-8 rounded-full bg-navy-800 border border-gold-300/20 flex items-center justify-center text-xs font-bold text-gold-100">
+                            <div className="w-10 h-10 rounded-full bg-navy-800 border border-gold-300/20 flex items-center justify-center text-sm font-bold text-gold-100 shrink-0">
                               {clientName
                                 .split(" ")
                                 .map((n) => n[0])
                                 .join("")}
                             </div>
-                            <span className="text-sm font-bold text-gold-50">
+                            <span className="text-sm font-bold text-gold-50 truncate max-w-[120px]">
                               {clientName}
                             </span>
                           </div>
-                          <div className="flex items-center space-x-1 bg-navy-900 px-3 py-1 rounded-full border border-gold-300/10">
+                          <div className="flex items-center space-x-1 bg-navy-900 px-3 py-1.5 rounded-full border border-gold-300/10 shadow-sm shrink-0">
                             {Array.from({ length: 5 }).map((_, i) => (
                               <Star
                                 key={i}
                                 className={`w-3.5 h-3.5 ${i < fb.rating ? "text-amber-400 fill-amber-400" : "text-gray-600 fill-gray-800"}`}
                               />
                             ))}
-                            <span className="text-xs font-bold text-gold-100/70 ml-1.5">
+                            <span className="text-xs font-bold text-gold-100/80 ml-1.5">
                               {fb.rating}.0
                             </span>
                           </div>
                         </div>
-                        <p className="text-slate-300/90 italic leading-relaxed text-sm">
+                        <p className="text-slate-300/90 italic leading-relaxed text-[15px] flex-1">
                           "{fb.message}"
                         </p>
                       </div>
@@ -320,67 +440,6 @@ export default function CarerDetailsPage() {
                 </div>
               )}
             </section>
-          </div>
-
-          {/* Sidebar */}
-          <div className="flex flex-col gap-8 h-full">
-            {/* Contact Card */}
-            <div className="bg-navy-900/60 backdrop-blur-md border border-gold-300/10 rounded-3xl p-6 shadow-lg shrink-0">
-              <h3 className="text-xs uppercase tracking-widest font-bold text-gold-300/70 mb-6">
-                Contact & Location
-              </h3>
-
-              <div className="space-y-5">
-                <div className="flex items-start space-x-4">
-                  <div className="p-2.5 rounded-xl bg-navy-950 border border-gold-300/10 text-gold-300 shrink-0 shadow-inner">
-                    <MapPin className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-semibold text-gold-100/50 uppercase tracking-wider mb-1">
-                      Location
-                    </p>
-                    <p className="text-sm text-gold-50 font-medium leading-tight">
-                      {carer.location || "Location hidden"}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="w-full h-px bg-gradient-to-r from-gold-300/0 via-gold-300/10 to-gold-300/0" />
-
-                <div className="flex items-start space-x-4">
-                  <div className="p-2.5 rounded-xl bg-navy-950 border border-gold-300/10 text-gold-300 shrink-0 shadow-inner">
-                    <Mail className="w-5 h-5" />
-                  </div>
-                  <div className="overflow-hidden">
-                    <p className="text-xs font-semibold text-gold-100/50 uppercase tracking-wider mb-1">
-                      Email
-                    </p>
-                    <p className="text-sm text-gold-50 font-medium truncate">
-                      {(carer as any).email || "Email hidden"}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-4">
-                  <div className="p-2.5 rounded-xl bg-navy-950 border border-gold-300/10 text-gold-300 shrink-0 shadow-inner">
-                    <Phone className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-semibold text-gold-100/50 uppercase tracking-wider mb-1">
-                      Phone
-                    </p>
-                    <p className="text-sm text-gold-50 font-medium leading-tight">
-                      {(carer as any).phone || "Phone hidden"}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Schedule Card */}
-            <ReadOnlyAvailabilityCalendar
-              availability={carer.rawAvailability}
-            />
           </div>
         </div>
       </div>

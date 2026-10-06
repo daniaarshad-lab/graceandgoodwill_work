@@ -281,9 +281,49 @@ export default function StepIdentityVerification({
     setErrors({});
     setIsLocalSaving(true);
 
+    let resolvedLat = portal.latitude;
+    let resolvedLng = portal.longitude;
+    let resolvedCity = city;
+
+    // Fallback: If latitude/longitude was not populated by Google Places, lookup UK postcode via postcodes.io
+    if (
+      (resolvedLat === null ||
+        resolvedLat === undefined ||
+        resolvedLng === null ||
+        resolvedLng === undefined) &&
+      postcodeTrimmed
+    ) {
+      try {
+        const res = await fetch(
+          `https://api.postcodes.io/postcodes/${encodeURIComponent(postcodeTrimmed)}`
+        );
+        const data = await res.json();
+        if (data.status === 200 && data.result) {
+          if (data.result.latitude !== undefined) {
+            resolvedLat = data.result.latitude;
+            if (setLatitude) setLatitude(resolvedLat);
+          }
+          if (data.result.longitude !== undefined) {
+            resolvedLng = data.result.longitude;
+            if (setLongitude) setLongitude(resolvedLng);
+          }
+          if (data.result.admin_district && !resolvedCity) {
+            resolvedCity = data.result.admin_district;
+            if (setCity) setCity(resolvedCity);
+          }
+        }
+      } catch (err) {
+        console.warn("Postcode geocode fallback error:", err);
+      }
+    }
+
     // Save Personal Information (backend step 2)
     const syntheticEvent = { preventDefault: () => { } } as React.FormEvent;
-    let success = await portal.handleSaveProfile(syntheticEvent, 2);
+    let success = await portal.handleSaveProfile(syntheticEvent, 2, {
+      city: resolvedCity,
+      latitude: resolvedLat,
+      longitude: resolvedLng,
+    });
     if (!success) {
       setIsLocalSaving(false);
       return;
@@ -484,7 +524,7 @@ export default function StepIdentityVerification({
                     <li
                       key={p}
                       className="px-4 py-2 text-sm text-gold-100 hover:bg-gold-DEFAULT/10 cursor-pointer"
-                      onClick={() => {
+                      onClick={async () => {
                         setPostcode(p);
                         setShowSuggestions(false);
                         setErrors((prev) => {
@@ -492,6 +532,25 @@ export default function StepIdentityVerification({
                           delete copy.postcode;
                           return copy;
                         });
+                        try {
+                          const res = await fetch(
+                            `https://api.postcodes.io/postcodes/${encodeURIComponent(p)}`
+                          );
+                          const data = await res.json();
+                          if (data.status === 200 && data.result) {
+                            if (data.result.latitude !== undefined && setLatitude) {
+                              setLatitude(data.result.latitude);
+                            }
+                            if (data.result.longitude !== undefined && setLongitude) {
+                              setLongitude(data.result.longitude);
+                            }
+                            if (data.result.admin_district && !city && setCity) {
+                              setCity(data.result.admin_district);
+                            }
+                          }
+                        } catch (err) {
+                          console.warn("Postcode suggestion lookup error:", err);
+                        }
                       }}
                     >
                       {p}

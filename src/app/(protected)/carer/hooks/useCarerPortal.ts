@@ -240,6 +240,7 @@ export function useCarerPortal({
   const handleSaveProfile = async (
     e?: React.FormEvent,
     step?: number,
+    extraPayload?: Record<string, any>,
   ): Promise<boolean> => {
     if (e) e.preventDefault();
 
@@ -249,12 +250,19 @@ export function useCarerPortal({
     try {
       if (step === 2) {
         const payload = {
+          firstName,
+          lastName,
           address,
+          city,
           postcode,
+          pincode: postcode,
+          latitude,
+          longitude,
           dateOfBirth,
           emergencyContactName,
           emergencyContactNumber,
           emergencyContactRelation,
+          ...extraPayload,
         };
         await dispatch(
           updateCarerProfile(personalPayloadCheck(payload)),
@@ -328,6 +336,7 @@ export function useCarerPortal({
             .split(",")
             .map((s) => s.trim())
             .filter(Boolean),
+          ...extraPayload,
         };
 
         await dispatch(

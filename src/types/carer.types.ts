@@ -30,6 +30,9 @@ export interface CarerProfile {
   city: string | null;
   state: string | null;
   address: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
+  maxTravelDistance?: number | null;
 
   careSpecialties: string | null;
 
@@ -63,6 +66,8 @@ export interface CarerProfile {
 }
 
 export interface UpdateCarerProfilePayload {
+  firstName?: string;
+  lastName?: string;
   bio?: string;
   experienceYears?: number;
   hourlyRate?: number;
@@ -70,6 +75,9 @@ export interface UpdateCarerProfilePayload {
   postcode?: string;
   city?: string;
   address?: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  maxTravelDistance?: number;
 
   availability?: string[];
 

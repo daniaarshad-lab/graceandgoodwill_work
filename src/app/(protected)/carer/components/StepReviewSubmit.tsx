@@ -31,6 +31,7 @@ export default function StepReviewSubmit({
     email,
     dateOfBirth,
     address,
+    city,
     postcode,
     emergencyContactName,
     emergencyContactNumber,
@@ -248,6 +249,14 @@ export default function StepReviewSubmit({
               </span>
               <span className="text-gold-50 font-medium break-words">
                 {phone}
+              </span>
+            </div>
+            <div>
+              <span className="text-gold-100/40 uppercase tracking-wider block mb-0.5">
+                City / Town
+              </span>
+              <span className="text-gold-50 font-medium break-words">
+                {city || "—"}
               </span>
             </div>
             <div>

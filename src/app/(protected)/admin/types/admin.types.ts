@@ -23,6 +23,7 @@ export interface CarerApplication {
   email: string;
   phone: string;
   registrationDate?: string;
+  profilePhotoUrl?: string | null;
 }
 
 export interface ClientRequest {

@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { CarerApplication } from "../types/admin.types";
 import StatusBadge from "./shared/StatusBadge";
 import Table, { TableColumn } from "./shared/Table";
+import Avatar from "./shared/Avatar";
 
 interface CarerApplicationsProps {
   carers: CarerApplication[];
@@ -210,12 +211,7 @@ export default function CarerApplications({
       sortable: true,
       render: (carer) => (
         <div className="flex items-center gap-3">
-          <div className="h-8 w-8 rounded-full bg-gold/10 flex items-center justify-center text-gold border border-gold/20 shrink-0 font-bold text-xs uppercase">
-            {carer.name
-              .split(" ")
-              .map((n) => n[0])
-              .join("")}
-          </div>
+          <Avatar src={carer.profilePhotoUrl} name={carer.name} />
           <div className="min-w-0">
             <span
               className="font-bold text-gold-200 truncate max-w-[150px] block"

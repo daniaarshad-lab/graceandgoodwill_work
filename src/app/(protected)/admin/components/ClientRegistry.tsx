@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { User, Mail, Phone, Calendar, ArrowUpRight } from "lucide-react";
 import StatusBadge from "./shared/StatusBadge";
 import Table, { TableColumn } from "./shared/Table";
+import Avatar from "./shared/Avatar";
 
 interface ClientDetailItem {
   id: string;
@@ -17,6 +18,7 @@ interface ClientDetailItem {
   weeklyFee: number;
   profileStatus: string;
   createdAt: string;
+  profilePhotoUrl?: string | null;
 }
 
 interface ClientRegistryProps {
@@ -58,12 +60,7 @@ export default function ClientRegistry({
       sortable: true,
       render: (client) => (
         <div className="flex items-center gap-3">
-          <div className="h-8 w-8 rounded-full bg-gold/10 flex items-center justify-center text-gold border border-gold/20 shrink-0 font-bold text-xs uppercase">
-            {client.name
-              .split(" ")
-              .map((n) => n[0])
-              .join("")}
-          </div>
+          <Avatar src={client.profilePhotoUrl} name={client.name} />
           <div className="min-w-0">
             <span
               className="truncate max-w-[150px] font-bold text-gold-200 block"

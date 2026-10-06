@@ -23,6 +23,7 @@ import { showSuccessToast } from "@/utils/toast";
 import InternalNotes from "../../components/shared/InternalNotes/InternalNotes";
 import UserAuditLogs from "../../components/shared/UserAuditLogs";
 import ThinSpinner from "@/components/ThinSpinner";
+import Avatar from "../../components/shared/Avatar";
 
 // Define strict types for client detail view
 interface ClientDetail {
@@ -44,6 +45,7 @@ interface ClientDetail {
   careEndDate?: string;
   carePostcode?: string;
   careAddress?: string;
+  profilePhotoUrl?: string | null;
   placementHistory: {
     startDate: string;
     carerName: string;
@@ -160,6 +162,11 @@ function ClientDetailsContent() {
           careEndDate: res.careEndDate || "",
           carePostcode: res.carePostcode || res.postcode || "",
           careAddress: res.careAddress || res.address || "",
+          profilePhotoUrl:
+            res.profilePhotoUrl ||
+            userObj.profilePhotoUrl ||
+            res.clientProfile?.profilePhotoUrl ||
+            null,
           placementHistory: history,
         });
 
@@ -406,12 +413,11 @@ function ClientDetailsContent() {
           </div>
 
           <div className="flex items-center gap-4 bg-navy-900/40 px-4 py-3 rounded-xl border border-gold-300/5">
-            <div className="h-10 w-10 rounded-full bg-gold/10 flex items-center justify-center text-gold border border-gold/20 font-bold uppercase">
-              {client.name
-                .split(" ")
-                .map((n) => n[0])
-                .join("")}
-            </div>
+            <Avatar
+              src={client.profilePhotoUrl}
+              name={client.name}
+              sizeClassName="h-10 w-10 text-sm"
+            />
             <div>
               <p className="text-sm font-bold text-gold-200">{client.name}</p>
               <div className="flex flex-wrap items-center gap-1.5 mt-0.5">

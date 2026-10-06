@@ -40,6 +40,7 @@ import InternalNotes from "../../components/shared/InternalNotes/InternalNotes";
 import UserAuditLogs from "../../components/shared/UserAuditLogs";
 import ThinSpinner from "@/components/ThinSpinner";
 import AdminUploadCarerDocumentModal from "@/app/(protected)/admin/components/AdminUploadCarerDocumentModal";
+import Avatar from "../../components/shared/Avatar";
 
 // Document categories are determined by the backend response
 
@@ -280,6 +281,11 @@ function CarerDetailsContent() {
   const carerName =
     `${carer.user?.firstName || carer.firstName || ""} ${carer.user?.lastName || carer.lastName || ""}`.trim() ||
     "Unknown";
+  const carerPhotoUrl =
+    profile.profilePhotoUrl ||
+    carer.profilePhotoUrl ||
+    carer.user?.profilePhotoUrl ||
+    null;
   // Registration date from real backend data
   const registrationDate =
     profile.createdAt || carer.user?.createdAt || carer.createdAt;
@@ -571,24 +577,16 @@ function CarerDetailsContent() {
           <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6 w-full lg:w-auto shrink-0">
             {/* Carer identity badge */}
             <div className="flex items-center gap-4 bg-navy-900/40 px-4 py-3 rounded-xl border border-gold-300/5 w-full md:w-auto">
-              <div className="h-10 w-10 shrink-0 rounded-full bg-gold/10 flex items-center justify-center text-gold border border-gold/20 font-bold uppercase">
-                {carerName
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")}
-              </div>
+              <Avatar
+                src={carerPhotoUrl}
+                name={carerName}
+                sizeClassName="h-10 w-10 text-sm"
+              />
               <div className="min-w-0">
                 <p className="text-sm font-bold text-gold-200 truncate">
                   {carerName}
                 </p>
                 <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
-                  <span
-                    className={`text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded ${getStatusBadgeStyles(
-                      carer.user?.status || carer.status,
-                    )}`}
-                  >
-                    {carer.user?.status || carer.status}
-                  </span>
                   <span
                     className={`text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded ${getStatusBadgeStyles(
                       dbsStatus,

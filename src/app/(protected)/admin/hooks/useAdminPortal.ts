@@ -110,6 +110,7 @@ const mapBackendClients = (backendClients: any[]): any[] => {
       profileStatus: profile.status || "PENDING",
 
       profileCreatedAt: profile.createdAt || client.createdAt,
+      profilePhotoUrl: profile.profilePhotoUrl || client.profilePhotoUrl || null,
     };
   });
 };
@@ -238,6 +239,7 @@ const mapBackendCarers = (backendCarers: any[]): CarerApplication[] => {
       email: carer.email || "No email",
       phone: carer.phoneNumber || profile.phone || "No phone listed",
       registrationDate: carer.createdAt || profile?.createdAt || new Date().toISOString(),
+      profilePhotoUrl: profile.profilePhotoUrl || carer.profilePhotoUrl || carer.user?.profilePhotoUrl || null,
     };
   });
 };

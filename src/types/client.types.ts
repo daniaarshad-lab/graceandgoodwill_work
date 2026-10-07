@@ -127,6 +127,7 @@ export interface ClientPlacement {
   };
   careRequest: CareRequest | null;
   hasSubmittedFeedback?: boolean;
+  feedbacks?: ClientFeedback[];
   invoices?: Invoice[];
   preferredBackupCarer?: {
     id: string;
@@ -172,12 +173,20 @@ export interface Invoice {
 export interface FeedbackPayload {
   rating: number;
   message: string;
+  carerProfileId?: string;
+}
+
+export interface UpdateFeedbackPayload {
+  rating: number;
+  message: string;
 }
 
 export interface ClientFeedback {
   id: string;
   rating: number;
   message: string;
+  isApproved?: boolean;
+  carerProfileId?: string;
   createdAt: string;
   placement?: {
     id: string;

@@ -1243,4 +1243,50 @@ export const adminService = {
       headers: { Authorization: `Bearer ${token}` },
     });
   },
+
+  async getFeedbacks(params?: {
+    status?: string;
+    carerProfileId?: string;
+    placementId?: string;
+  }): Promise<any[]> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+    if (!token) throw new Error("No token found");
+
+    const queryParams = new URLSearchParams();
+    if (params?.status) queryParams.append("status", params.status);
+    if (params?.carerProfileId) queryParams.append("carerProfileId", params.carerProfileId);
+    if (params?.placementId) queryParams.append("placementId", params.placementId);
+
+    const queryString = queryParams.toString();
+    const endpoint = queryString ? `/admin/feedbacks?${queryString}` : "/admin/feedbacks";
+
+    return apiFetch(endpoint, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  },
+
+  async updateFeedbackApproval(
+    feedbackId: string,
+    isApproved: boolean,
+    adminNotes?: string,
+  ): Promise<any> {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+    if (!token) throw new Error("No token found");
+
+    return apiFetch(`/admin/feedbacks/${feedbackId}/approval`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ isApproved, adminNotes }),
+    });
+  },
 };

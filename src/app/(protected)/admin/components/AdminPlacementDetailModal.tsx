@@ -29,6 +29,7 @@ import {
   PlayCircle,
   XCircle,
   Check,
+  Star,
 } from "lucide-react";
 import { adminService } from "@/services/admin/admin.service";
 import {
@@ -55,7 +56,13 @@ interface AdminPlacementDetailModalProps {
   timeline?: PlacementTimelineEvent[];
 }
 
-type TabType = "continuity" | "schedule" | "clinical" | "financials" | "notes";
+type TabType =
+  | "continuity"
+  | "schedule"
+  | "clinical"
+  | "financials"
+  | "notes"
+  | "reviews";
 
 function PaymentUpdateModal({
   payment,
@@ -185,7 +192,9 @@ export default function AdminPlacementDetailModal({
   const [backupTargetPriority, setBackupTargetPriority] = useState<number>(1);
   const [isPromoteBackupOpen, setIsPromoteBackupOpen] = useState(false);
   const [leaveRequests, setLeaveRequests] = useState<CarerLeaveRequest[]>([]);
-  const [dispatchingLeaveId, setDispatchingLeaveId] = useState<string | null>(null);
+  const [dispatchingLeaveId, setDispatchingLeaveId] = useState<string | null>(
+    null,
+  );
   const [approvingLeaveId, setApprovingLeaveId] = useState<string | null>(null);
   const [preferredBackupCarer, setPreferredBackupCarer] = useState<any>(null);
 
@@ -207,8 +216,8 @@ export default function AdminPlacementDetailModal({
         Array.isArray(leaves) && leaves.length > 0
           ? leaves
           : Array.isArray(data?.leaveRequests) && data.leaveRequests.length > 0
-          ? data.leaveRequests
-          : [];
+            ? data.leaveRequests
+            : [];
       setLeaveRequests(combinedLeaves);
       setBillingDetail(billing);
       if (billing && billing.weeklyFee) {
@@ -224,10 +233,12 @@ export default function AdminPlacementDetailModal({
   const handleDispatchRelief = async (
     leaveId: string,
     targetCarer: any,
-    targetRoleName: string
+    targetRoleName: string,
   ) => {
     if (!targetCarer?.id) {
-      toast.error(`Please assign a ${targetRoleName} before dispatching relief offers.`);
+      toast.error(
+        `Please assign a ${targetRoleName} before dispatching relief offers.`,
+      );
       return;
     }
     const targetName =
@@ -238,9 +249,11 @@ export default function AdminPlacementDetailModal({
       await backupCarerService.dispatchReliefOfferToBackup(
         placementId,
         leaveId,
-        targetCarer.id
+        targetCarer.id,
       );
-      toast.success(`Relief opportunity offer dispatched to ${targetName} (${targetRoleName})!`);
+      toast.success(
+        `Relief opportunity offer dispatched to ${targetName} (${targetRoleName})!`,
+      );
       setLeaveRequests((prev) =>
         prev.map((l) =>
           l.id === leaveId
@@ -254,8 +267,8 @@ export default function AdminPlacementDetailModal({
                   status: "OFFER_PENDING",
                 },
               }
-            : l
-        )
+            : l,
+        ),
       );
       await loadPlacement();
       if (onPlacementUpdated) onPlacementUpdated();
@@ -269,12 +282,16 @@ export default function AdminPlacementDetailModal({
   const handleApproveLeave = async (leaveId: string) => {
     setApprovingLeaveId(leaveId);
     try {
-      await backupCarerService.approveLeaveRequest(placementId, leaveId, "Approved by Admin");
+      await backupCarerService.approveLeaveRequest(
+        placementId,
+        leaveId,
+        "Approved by Admin",
+      );
       toast.success("Leave request approved successfully!");
       setLeaveRequests((prev) =>
         prev.map((l) =>
-          l.id === leaveId ? { ...l, adminNotes: "Approved by Admin" } : l
-        )
+          l.id === leaveId ? { ...l, adminNotes: "Approved by Admin" } : l,
+        ),
       );
       await loadPlacement();
       if (onPlacementUpdated) onPlacementUpdated();
@@ -292,7 +309,7 @@ export default function AdminPlacementDetailModal({
       toast.success(
         placement?.contactDetailsReleased
           ? "Contact details revoked from carer."
-          : "Contact details released to carer successfully."
+          : "Contact details released to carer successfully.",
       );
       await loadPlacement();
       if (onPlacementUpdated) {
@@ -308,14 +325,17 @@ export default function AdminPlacementDetailModal({
   const handlePauseBilling = async () => {
     if (
       !confirm(
-        "Are you sure you want to pause subscription billing collection for this placement?"
+        "Are you sure you want to pause subscription billing collection for this placement?",
       )
     )
       return;
     setActionLoading("pause-billing");
     try {
       await adminService.pausePlacementBilling(placementId);
-      showSuccessToast("Billing Paused", "Recurring weekly billing collection paused.");
+      showSuccessToast(
+        "Billing Paused",
+        "Recurring weekly billing collection paused.",
+      );
       await loadPlacement();
     } catch (err: any) {
       showErrorToast("Error", err.message || "Failed to pause billing.");
@@ -328,7 +348,10 @@ export default function AdminPlacementDetailModal({
     setActionLoading("resume-billing");
     try {
       await adminService.resumePlacementBilling(placementId);
-      showSuccessToast("Billing Resumed", "Recurring weekly billing collection resumed.");
+      showSuccessToast(
+        "Billing Resumed",
+        "Recurring weekly billing collection resumed.",
+      );
       await loadPlacement();
     } catch (err: any) {
       showErrorToast("Error", err.message || "Failed to resume billing.");
@@ -340,7 +363,7 @@ export default function AdminPlacementDetailModal({
   const handleCancelPlacement = async () => {
     if (
       !confirm(
-        "Are you sure you want to cancel this care placement and weekly subscription? A final prorated invoice will be generated automatically for the active days."
+        "Are you sure you want to cancel this care placement and weekly subscription? A final prorated invoice will be generated automatically for the active days.",
       )
     )
       return;
@@ -349,11 +372,11 @@ export default function AdminPlacementDetailModal({
       await adminService.updatePlacementStatus(
         placementId,
         "CANCELLED",
-        new Date().toISOString()
+        new Date().toISOString(),
       );
       showSuccessToast(
         "Placement Cancelled",
-        "Care placement and subscription cancelled successfully."
+        "Care placement and subscription cancelled successfully.",
       );
       await loadPlacement();
       if (onPlacementUpdated) onPlacementUpdated();
@@ -369,7 +392,10 @@ export default function AdminPlacementDetailModal({
     setActionLoading("update-fee");
     try {
       await adminService.updatePlacementWeeklyFee(placementId, overrideFee);
-      showSuccessToast("Fee Saved", "Agreed weekly fee overridden successfully.");
+      showSuccessToast(
+        "Fee Saved",
+        "Agreed weekly fee overridden successfully.",
+      );
       setIsEditingFee(false);
       await loadPlacement();
     } catch (err: any) {
@@ -386,7 +412,10 @@ export default function AdminPlacementDetailModal({
       showSuccessToast("Reminder Sent", "Payment reminder notification sent.");
       await loadPlacement();
     } catch (err: any) {
-      showErrorToast("Error", err.message || "Failed to send invoice reminder.");
+      showErrorToast(
+        "Error",
+        err.message || "Failed to send invoice reminder.",
+      );
     } finally {
       setActionLoading(null);
     }
@@ -395,7 +424,7 @@ export default function AdminPlacementDetailModal({
   const handlePrintInvoice = (
     inv: any,
     clientName: string,
-    clientEmail: string
+    clientEmail: string,
   ) => {
     const printWindow = window.open("", "_blank", "width=960,height=900");
     if (printWindow) {
@@ -585,15 +614,17 @@ export default function AdminPlacementDetailModal({
     null;
 
   const backup1Name = backup1
-    ? `${backup1.user?.firstName || backup1.firstName || ""} ${backup1.user?.lastName || backup1.lastName || ""}`.trim() || "1st Choice Backup"
+    ? `${backup1.user?.firstName || backup1.firstName || ""} ${backup1.user?.lastName || backup1.lastName || ""}`.trim() ||
+      "1st Choice Backup"
     : "";
   const backup2Name = backup2
-    ? `${backup2.user?.firstName || backup2.firstName || ""} ${backup2.user?.lastName || backup2.lastName || ""}`.trim() || "2nd Choice Backup"
+    ? `${backup2.user?.firstName || backup2.firstName || ""} ${backup2.user?.lastName || backup2.lastName || ""}`.trim() ||
+      "2nd Choice Backup"
     : "";
   const backupName = backup1Name;
 
   const pendingLeavesCount = leaveRequests.filter(
-    (l) => l.status === "PENDING_RELIEF" || l.status === "OFFERED_TO_BACKUP"
+    (l) => l.status === "PENDING_RELIEF" || l.status === "OFFERED_TO_BACKUP",
   ).length;
 
   // Timeline events: from props or synthesized from placement records
@@ -610,7 +641,9 @@ export default function AdminPlacementDetailModal({
             ? [
                 {
                   title: "Carer Accepted Placement",
-                  timestamp: new Date(placement.acceptedAt).toLocaleString("en-GB"),
+                  timestamp: new Date(placement.acceptedAt).toLocaleString(
+                    "en-GB",
+                  ),
                   description: `${primaryCarerName} accepted the care assignment.`,
                 },
               ]
@@ -620,7 +653,9 @@ export default function AdminPlacementDetailModal({
                 {
                   title: "Client Contact Details Released",
                   timestamp: placement.contactDetailsReleasedAt
-                    ? new Date(placement.contactDetailsReleasedAt).toLocaleString("en-GB")
+                    ? new Date(
+                        placement.contactDetailsReleasedAt,
+                      ).toLocaleString("en-GB")
                     : "Prior to start",
                   description:
                     "Direct client contact info unlocked for lead carer coordination.",
@@ -629,7 +664,9 @@ export default function AdminPlacementDetailModal({
             : []),
           {
             title: "Care Scheduled Start",
-            timestamp: new Date(placement.startDate).toLocaleDateString("en-GB"),
+            timestamp: new Date(placement.startDate).toLocaleDateString(
+              "en-GB",
+            ),
             description: `Official service start date for this care package.`,
           },
         ];
@@ -678,7 +715,7 @@ export default function AdminPlacementDetailModal({
                 <span className="text-[10px] uppercase font-bold tracking-wider text-gold-100/50">
                   Placement Workspace
                 </span>
-               
+
                 <span
                   className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider border ${
                     placement.status === "ACTIVE" ||
@@ -686,8 +723,8 @@ export default function AdminPlacementDetailModal({
                     placement.status === "CONFIRMED"
                       ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
                       : placement.status === "REJECTED_BY_CARER"
-                      ? "bg-rose-500/15 text-rose-400 border-rose-500/30"
-                      : "bg-gold-300/15 text-gold-200 border-gold-300/30"
+                        ? "bg-rose-500/15 text-rose-400 border-rose-500/30"
+                        : "bg-gold-300/15 text-gold-200 border-gold-300/30"
                   }`}
                 >
                   {placement.status.replace(/_/g, " ")}
@@ -712,7 +749,9 @@ export default function AdminPlacementDetailModal({
                 <Calendar className="w-3.5 h-3.5 text-gold-DEFAULT" />
                 <span>
                   Start Date:{" "}
-                  {formatDate(placement.startDate || placement.careRequest?.startDate)}
+                  {formatDate(
+                    placement.startDate || placement.careRequest?.startDate,
+                  )}
                 </span>
               </div>
             )}
@@ -750,8 +789,6 @@ export default function AdminPlacementDetailModal({
           </div>
         </div>
       </header>
-
-   
 
       {/* ========================================================= */}
       {/* 2. INTUITIVE TABBED NAVIGATION BAR                        */}
@@ -822,6 +859,24 @@ export default function AdminPlacementDetailModal({
             <MessageSquare className="w-4 h-4" />
             <span>Internal Notes</span>
           </button>
+
+          <button
+            onClick={() => setActiveTab("reviews")}
+            className={`flex items-center gap-2 py-3 px-4 text-xs sm:text-sm font-semibold border-b-2 transition-all whitespace-nowrap cursor-pointer ${
+              activeTab === "reviews"
+                ? "border-gold-DEFAULT text-gold-DEFAULT bg-gold-DEFAULT/5"
+                : "border-transparent text-gold-100/60 hover:text-gold-200"
+            }`}
+          >
+            <Star className="w-4 h-4" />
+            <span>Client Reviews</span>
+            {(placement as any).feedbacks &&
+              (placement as any).feedbacks.length > 0 && (
+                <span className="px-1.5 py-0.5 rounded-full bg-gold-DEFAULT/20 text-gold-200 font-mono text-[10px] border border-gold-DEFAULT/30">
+                  {(placement as any).feedbacks.length}
+                </span>
+              )}
+          </button>
         </div>
       </div>
 
@@ -835,13 +890,18 @@ export default function AdminPlacementDetailModal({
             <div className="p-4 rounded-xl bg-rose-500/15 border border-rose-500/30 text-xs text-rose-200 space-y-1.5 shadow-lg">
               <div className="flex items-center gap-2 text-rose-300 font-bold text-sm">
                 <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
-                <span>Placement Offer Declined by Carer ({primaryCarerName})</span>
+                <span>
+                  Placement Offer Declined by Carer ({primaryCarerName})
+                </span>
               </div>
               <p className="text-rose-300/90 text-xs pl-6">
-                <strong>Decline Reason:</strong> {placement.rejectionReason || "No specific reason provided."}
+                <strong>Decline Reason:</strong>{" "}
+                {placement.rejectionReason || "No specific reason provided."}
               </p>
               <p className="text-amber-300/80 text-[11px] pl-6">
-                <strong>Action Required:</strong> The care request status has been reverted back to <em>Under Review</em>. Please re-assign an alternative carer from the applicant pool.
+                <strong>Action Required:</strong> The care request status has
+                been reverted back to <em>Under Review</em>. Please re-assign an
+                alternative carer from the applicant pool.
               </p>
             </div>
           )}
@@ -860,7 +920,8 @@ export default function AdminPlacementDetailModal({
                       Unified Multi-Carer Continuity Arrangement
                     </h3>
                     <p className="text-xs text-gold-100/60 mt-0.5">
-                      Ensure zero care disruptions with active primary coverage and Preferred Backup Carer support.
+                      Ensure zero care disruptions with active primary coverage
+                      and Preferred Backup Carer support.
                     </p>
                   </div>
                   <Button
@@ -873,7 +934,9 @@ export default function AdminPlacementDetailModal({
                     className="font-bold text-xs"
                   >
                     <Users className="w-3.5 h-3.5 mr-1.5" />
-                    {backupName ? "Change Backup Carers" : "Designate Backup Carers"}
+                    {backupName
+                      ? "Change Backup Carers"
+                      : "Designate Backup Carers"}
                   </Button>
                 </div>
 
@@ -883,13 +946,18 @@ export default function AdminPlacementDetailModal({
                   backupCarers={placement.backupCarers || []}
                   activeReliefCarer={
                     leaveRequests.some((l) => l.status === "COVER_CONFIRMED")
-                      ? (placement.activeReliefCarer || preferredBackupCarer)
-                      : (placement.activeReliefCarer || null)
+                      ? placement.activeReliefCarer || preferredBackupCarer
+                      : placement.activeReliefCarer || null
                   }
                   activeReliefDates={(() => {
-                    const confirmedLeave = leaveRequests.find((l) => l.status === "COVER_CONFIRMED");
+                    const confirmedLeave = leaveRequests.find(
+                      (l) => l.status === "COVER_CONFIRMED",
+                    );
                     return confirmedLeave
-                      ? { startDate: confirmedLeave.startDate, endDate: confirmedLeave.endDate }
+                      ? {
+                          startDate: confirmedLeave.startDate,
+                          endDate: confirmedLeave.endDate,
+                        }
                       : undefined;
                   })()}
                   placementStartDate={placement.startDate}
@@ -954,7 +1022,9 @@ export default function AdminPlacementDetailModal({
                 </div>
                 <div className="shrink-0 flex items-center justify-end">
                   <Button
-                    variant={placement.contactDetailsReleased ? "outline" : "primary"}
+                    variant={
+                      placement.contactDetailsReleased ? "outline" : "primary"
+                    }
                     size="sm"
                     disabled={togglingContactRelease}
                     onClick={handleToggleContactRelease}
@@ -990,7 +1060,8 @@ export default function AdminPlacementDetailModal({
                       Chronological Milestone Audit
                     </h4>
                     <p className="text-xs text-gold-100/60 mt-0.5">
-                      Operational audit trail of all lifecycle events and admin approvals for this placement.
+                      Operational audit trail of all lifecycle events and admin
+                      approvals for this placement.
                     </p>
                   </div>
                 </div>
@@ -1050,7 +1121,8 @@ export default function AdminPlacementDetailModal({
                         Primary Carer Holiday & Leave Requests
                       </h4>
                       <p className="text-xs text-gold-100/60 mt-0.5">
-                        Manage primary carer absences and dispatch 1-click relief offers to the Preferred Backup Carer.
+                        Manage primary carer absences and dispatch 1-click
+                        relief offers to the Preferred Backup Carer.
                       </p>
                     </div>
                   </div>
@@ -1058,7 +1130,8 @@ export default function AdminPlacementDetailModal({
 
                 {leaveRequests.length === 0 ? (
                   <div className="p-8 rounded-xl bg-navy-950/40 border border-gold-300/10 text-xs text-gold-100/60 text-center">
-                    No holiday or time-off requests registered for this placement.
+                    No holiday or time-off requests registered for this
+                    placement.
                   </div>
                 ) : (
                   <div className="space-y-5">
@@ -1071,7 +1144,7 @@ export default function AdminPlacementDetailModal({
                       const isApproved = Boolean(
                         req.adminNotes?.toLowerCase().includes("approved") ||
                         req.status === "NO_COVER_NEEDED" ||
-                        req.status === "COVER_CONFIRMED"
+                        req.status === "COVER_CONFIRMED",
                       );
 
                       const reliefAssignmentCarerId =
@@ -1081,15 +1154,19 @@ export default function AdminPlacementDetailModal({
 
                       const isOfferedToBackup1 =
                         Boolean(backup1) &&
-                        ((isOffered && (!reliefAssignmentCarerId || reliefAssignmentCarerId === backup1?.id)) ||
+                        ((isOffered &&
+                          (!reliefAssignmentCarerId ||
+                            reliefAssignmentCarerId === backup1?.id)) ||
                           reliefAssignmentCarerId === backup1?.id);
 
                       const isOfferedToBackup2 =
                         Boolean(backup2) &&
-                        ((isOffered && reliefAssignmentCarerId === backup2?.id) ||
+                        ((isOffered &&
+                          reliefAssignmentCarerId === backup2?.id) ||
                           reliefAssignmentCarerId === backup2?.id);
 
-                      const reqCarer = ((req as any).carerProfile || placement.carerProfile) as any;
+                      const reqCarer = ((req as any).carerProfile ||
+                        placement.carerProfile) as any;
                       const reqCarerName =
                         `${reqCarer?.user?.firstName || reqCarer?.firstName || ""} ${reqCarer?.user?.lastName || reqCarer?.lastName || ""}`.trim() ||
                         primaryCarerName;
@@ -1100,17 +1177,25 @@ export default function AdminPlacementDetailModal({
                       const eDate = new Date(req.endDate);
                       const daysDiff = Math.max(
                         1,
-                        Math.round((eDate.getTime() - sDate.getTime()) / (1000 * 60 * 60 * 24)) + 1
+                        Math.round(
+                          (eDate.getTime() - sDate.getTime()) /
+                            (1000 * 60 * 60 * 24),
+                        ) + 1,
                       );
 
                       // Split reason and notes if formatted as "Reason: Notes"
                       const fullReasonText = req.reason || "Holiday / Time Off";
                       const parts = fullReasonText.split(":");
-                      const reasonCategory = parts.length > 1 ? parts[0].trim() : fullReasonText;
-                      const reasonNotes = parts.length > 1 ? parts.slice(1).join(":").trim() : "";
+                      const reasonCategory =
+                        parts.length > 1 ? parts[0].trim() : fullReasonText;
+                      const reasonNotes =
+                        parts.length > 1 ? parts.slice(1).join(":").trim() : "";
 
                       // Resolved relief carer if confirmed or assigned
-                      const reliefCarer = (req as any).reliefAssignment?.carerProfile || placement.activeReliefCarer || null;
+                      const reliefCarer =
+                        (req as any).reliefAssignment?.carerProfile ||
+                        placement.activeReliefCarer ||
+                        null;
                       const reliefCarerName = reliefCarer
                         ? `${reliefCarer.user?.firstName || reliefCarer.firstName || ""} ${reliefCarer.user?.lastName || reliefCarer.lastName || ""}`.trim()
                         : "";
@@ -1138,12 +1223,14 @@ export default function AdminPlacementDetailModal({
                                 <div className="flex items-center gap-3 text-xs text-gold-100/60 mt-0.5 flex-wrap">
                                   {reqCarerEmail && (
                                     <span className="flex items-center gap-1">
-                                      <Mail className="w-3 h-3 text-gold-DEFAULT" /> {reqCarerEmail}
+                                      <Mail className="w-3 h-3 text-gold-DEFAULT" />{" "}
+                                      {reqCarerEmail}
                                     </span>
                                   )}
                                   {reqCarerPhone && (
                                     <span className="flex items-center gap-1">
-                                      <Phone className="w-3 h-3 text-gold-DEFAULT" /> {reqCarerPhone}
+                                      <Phone className="w-3 h-3 text-gold-DEFAULT" />{" "}
+                                      {reqCarerPhone}
                                     </span>
                                   )}
                                 </div>
@@ -1157,10 +1244,10 @@ export default function AdminPlacementDetailModal({
                                   isConfirmed || isApproved
                                     ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/30"
                                     : isCancelled
-                                    ? "bg-rose-500/20 text-rose-300 border-rose-500/30"
-                                    : isOffered
-                                    ? "bg-blue-500/20 text-blue-300 border-blue-500/30"
-                                    : "bg-amber-500/20 text-amber-300 border-amber-500/30 animate-pulse"
+                                      ? "bg-rose-500/20 text-rose-300 border-rose-500/30"
+                                      : isOffered
+                                        ? "bg-blue-500/20 text-blue-300 border-blue-500/30"
+                                        : "bg-amber-500/20 text-amber-300 border-amber-500/30 animate-pulse"
                                 }`}
                               >
                                 <span
@@ -1168,17 +1255,17 @@ export default function AdminPlacementDetailModal({
                                     isConfirmed || isApproved
                                       ? "bg-emerald-400"
                                       : isCancelled
-                                      ? "bg-rose-400"
-                                      : isOffered
-                                      ? "bg-blue-400"
-                                      : "bg-amber-400"
+                                        ? "bg-rose-400"
+                                        : isOffered
+                                          ? "bg-blue-400"
+                                          : "bg-amber-400"
                                   }`}
                                 />
                                 {isConfirmed || isApproved
                                   ? "Approved"
                                   : isCancelled
-                                  ? "Declined"
-                                  : "Pending"}
+                                    ? "Declined"
+                                    : "Pending"}
                               </span>
                             </div>
                           </div>
@@ -1228,7 +1315,8 @@ export default function AdminPlacementDetailModal({
                                 <span className="text-[10px] uppercase block text-gold-100/60 font-semibold">
                                   Total Duration
                                 </span>
-                                {daysDiff} {daysDiff === 1 ? "Day" : "Days"} Absence
+                                {daysDiff} {daysDiff === 1 ? "Day" : "Days"}{" "}
+                                Absence
                               </div>
                             </div>
                           </div>
@@ -1262,7 +1350,9 @@ export default function AdminPlacementDetailModal({
                                 <div className="flex items-center gap-2.5">
                                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                                   <span>
-                                    Leave request approved by admin. You can dispatch relief cover below to a backup carer whenever needed.
+                                    Leave request approved by admin. You can
+                                    dispatch relief cover below to a backup
+                                    carer whenever needed.
                                   </span>
                                 </div>
                                 <span className="text-[11px] font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20 shrink-0">
@@ -1281,7 +1371,9 @@ export default function AdminPlacementDetailModal({
                                       Relief Cover Confirmed & Active
                                     </span>
                                     <span className="text-emerald-300/80">
-                                      {reliefCarerName || "Backup Carer"} accepted and is scheduled to cover this placement period.
+                                      {reliefCarerName || "Backup Carer"}{" "}
+                                      accepted and is scheduled to cover this
+                                      placement period.
                                     </span>
                                   </div>
                                 </div>
@@ -1300,7 +1392,9 @@ export default function AdminPlacementDetailModal({
                                     className="font-bold text-xs shrink-0 !border-emerald-500/40 !text-emerald-300 hover:!bg-emerald-500/15"
                                   >
                                     <Check className="w-3.5 h-3.5 mr-1 text-emerald-400" />
-                                    {approvingLeaveId === req.id ? "Approving..." : "Approve Leave"}
+                                    {approvingLeaveId === req.id
+                                      ? "Approving..."
+                                      : "Approve Leave"}
                                   </Button>
                                 )}
                               </div>
@@ -1316,7 +1410,9 @@ export default function AdminPlacementDetailModal({
                                       Dispatch Relief Offer to Backup Carer
                                     </h5>
                                     <p className="text-[11px] text-gold-100/60 mt-0.5">
-                                      Send a 1-click relief opportunity to either designated backup carer, or approve the leave directly.
+                                      Send a 1-click relief opportunity to
+                                      either designated backup carer, or approve
+                                      the leave directly.
                                     </p>
                                   </div>
 
@@ -1335,7 +1431,9 @@ export default function AdminPlacementDetailModal({
                                       className="font-bold text-xs shrink-0 !border-emerald-500/40 !text-emerald-300 hover:!bg-emerald-500/15"
                                     >
                                       <Check className="w-3.5 h-3.5 mr-1 text-emerald-400" />
-                                      {approvingLeaveId === req.id ? "Approving..." : "Approve Leave"}
+                                      {approvingLeaveId === req.id
+                                        ? "Approving..."
+                                        : "Approve Leave"}
                                     </Button>
                                   )}
                                 </div>
@@ -1349,7 +1447,9 @@ export default function AdminPlacementDetailModal({
                                         1st Choice Backup Carer
                                       </span>
                                       <span className="font-bold text-sm text-white block">
-                                        {backup1 ? backup1Name : "No 1st Backup Allocated"}
+                                        {backup1
+                                          ? backup1Name
+                                          : "No 1st Backup Allocated"}
                                       </span>
                                       <p className="text-[11px] text-gold-100/60">
                                         {backup1
@@ -1372,14 +1472,29 @@ export default function AdminPlacementDetailModal({
                                               Waiting for Acceptance
                                             </Button>
                                             <div className="flex items-center justify-between text-[10px] text-amber-200/70 px-1">
-                                              <span>Relief offer sent to {backup1Name.split(" ")[0]}</span>
+                                              <span>
+                                                Relief offer sent to{" "}
+                                                {backup1Name.split(" ")[0]}
+                                              </span>
                                               <button
                                                 type="button"
-                                                disabled={dispatchingLeaveId === `${req.id}-${backup1.id}`}
-                                                onClick={() => handleDispatchRelief(req.id, backup1, "1st Choice Backup")}
+                                                disabled={
+                                                  dispatchingLeaveId ===
+                                                  `${req.id}-${backup1.id}`
+                                                }
+                                                onClick={() =>
+                                                  handleDispatchRelief(
+                                                    req.id,
+                                                    backup1,
+                                                    "1st Choice Backup",
+                                                  )
+                                                }
                                                 className="text-amber-400 hover:text-amber-300 underline font-medium cursor-pointer"
                                               >
-                                                {dispatchingLeaveId === `${req.id}-${backup1.id}` ? "Re-sending..." : "Re-send Offer"}
+                                                {dispatchingLeaveId ===
+                                                `${req.id}-${backup1.id}`
+                                                  ? "Re-sending..."
+                                                  : "Re-send Offer"}
                                               </button>
                                             </div>
                                           </div>
@@ -1387,12 +1502,22 @@ export default function AdminPlacementDetailModal({
                                           <Button
                                             variant="primary"
                                             size="sm"
-                                            disabled={dispatchingLeaveId === `${req.id}-${backup1.id}`}
-                                            onClick={() => handleDispatchRelief(req.id, backup1, "1st Choice Backup")}
+                                            disabled={
+                                              dispatchingLeaveId ===
+                                              `${req.id}-${backup1.id}`
+                                            }
+                                            onClick={() =>
+                                              handleDispatchRelief(
+                                                req.id,
+                                                backup1,
+                                                "1st Choice Backup",
+                                              )
+                                            }
                                             className="w-full font-bold text-xs py-2 shadow-md shadow-gold/20"
                                           >
                                             <Send className="w-3.5 h-3.5 mr-1.5" />
-                                            {dispatchingLeaveId === `${req.id}-${backup1.id}`
+                                            {dispatchingLeaveId ===
+                                            `${req.id}-${backup1.id}`
                                               ? "Dispatching..."
                                               : `Send Relief Offer to ${backup1Name.split(" ")[0] || "1st Backup"}`}
                                           </Button>
@@ -1421,7 +1546,9 @@ export default function AdminPlacementDetailModal({
                                         2nd Choice Backup Carer
                                       </span>
                                       <span className="font-bold text-sm text-white block">
-                                        {backup2 ? backup2Name : "No 2nd Backup Allocated"}
+                                        {backup2
+                                          ? backup2Name
+                                          : "No 2nd Backup Allocated"}
                                       </span>
                                       <p className="text-[11px] text-gold-100/60">
                                         {backup2
@@ -1444,14 +1571,29 @@ export default function AdminPlacementDetailModal({
                                               Waiting for Acceptance
                                             </Button>
                                             <div className="flex items-center justify-between text-[10px] text-blue-200/70 px-1">
-                                              <span>Relief offer sent to {backup2Name.split(" ")[0]}</span>
+                                              <span>
+                                                Relief offer sent to{" "}
+                                                {backup2Name.split(" ")[0]}
+                                              </span>
                                               <button
                                                 type="button"
-                                                disabled={dispatchingLeaveId === `${req.id}-${backup2.id}`}
-                                                onClick={() => handleDispatchRelief(req.id, backup2, "2nd Choice Backup")}
+                                                disabled={
+                                                  dispatchingLeaveId ===
+                                                  `${req.id}-${backup2.id}`
+                                                }
+                                                onClick={() =>
+                                                  handleDispatchRelief(
+                                                    req.id,
+                                                    backup2,
+                                                    "2nd Choice Backup",
+                                                  )
+                                                }
                                                 className="text-blue-400 hover:text-blue-300 underline font-medium cursor-pointer"
                                               >
-                                                {dispatchingLeaveId === `${req.id}-${backup2.id}` ? "Re-sending..." : "Re-send Offer"}
+                                                {dispatchingLeaveId ===
+                                                `${req.id}-${backup2.id}`
+                                                  ? "Re-sending..."
+                                                  : "Re-send Offer"}
                                               </button>
                                             </div>
                                           </div>
@@ -1459,12 +1601,22 @@ export default function AdminPlacementDetailModal({
                                           <Button
                                             variant="outline"
                                             size="sm"
-                                            disabled={dispatchingLeaveId === `${req.id}-${backup2.id}`}
-                                            onClick={() => handleDispatchRelief(req.id, backup2, "2nd Choice Backup")}
+                                            disabled={
+                                              dispatchingLeaveId ===
+                                              `${req.id}-${backup2.id}`
+                                            }
+                                            onClick={() =>
+                                              handleDispatchRelief(
+                                                req.id,
+                                                backup2,
+                                                "2nd Choice Backup",
+                                              )
+                                            }
                                             className="w-full font-bold text-xs py-2 !border-blue-500/40 !text-blue-300 hover:!bg-blue-500/20"
                                           >
                                             <Send className="w-3.5 h-3.5 mr-1.5" />
-                                            {dispatchingLeaveId === `${req.id}-${backup2.id}`
+                                            {dispatchingLeaveId ===
+                                            `${req.id}-${backup2.id}`
                                               ? "Dispatching..."
                                               : `Send Relief Offer to ${backup2Name.split(" ")[0] || "2nd Backup"}`}
                                           </Button>
@@ -1504,7 +1656,8 @@ export default function AdminPlacementDetailModal({
                     4-Week Placement Schedule & Shift Coverage
                   </h4>
                   <p className="text-xs text-gold-100/60 mt-0.5">
-                    Visual timeline showing primary carer coverage shifts and scheduled relief handover periods.
+                    Visual timeline showing primary carer coverage shifts and
+                    scheduled relief handover periods.
                   </p>
                 </div>
 
@@ -1513,12 +1666,16 @@ export default function AdminPlacementDetailModal({
                   reliefCarerName={backupName || "Relief Carer"}
                   leaveStartDate={
                     leaveRequests.find(
-                      (l) => l.status === "COVER_CONFIRMED" || l.status === "OFFERED_TO_BACKUP"
+                      (l) =>
+                        l.status === "COVER_CONFIRMED" ||
+                        l.status === "OFFERED_TO_BACKUP",
                     )?.startDate
                   }
                   leaveEndDate={
                     leaveRequests.find(
-                      (l) => l.status === "COVER_CONFIRMED" || l.status === "OFFERED_TO_BACKUP"
+                      (l) =>
+                        l.status === "COVER_CONFIRMED" ||
+                        l.status === "OFFERED_TO_BACKUP",
                     )?.endDate
                   }
                 />
@@ -1538,7 +1695,8 @@ export default function AdminPlacementDetailModal({
                     Clinical Requirements & Placement Specifications
                   </h3>
                   <p className="text-xs text-gold-100/60 mt-0.5">
-                    Care conditions, daily support scope, and specific client care directives.
+                    Care conditions, daily support scope, and specific client
+                    care directives.
                   </p>
                 </div>
 
@@ -1550,7 +1708,8 @@ export default function AdminPlacementDetailModal({
                         Care Category
                       </span>
                       <span className="text-gold-100 font-semibold text-sm">
-                        {placement.careRequest?.careCategory || "24/7 Live-in Care"}
+                        {placement.careRequest?.careCategory ||
+                          "24/7 Live-in Care"}
                       </span>
                     </div>
 
@@ -1560,7 +1719,9 @@ export default function AdminPlacementDetailModal({
                       </span>
                       <span className="text-gold-100 font-semibold text-sm flex items-center gap-1.5">
                         <MapPin className="w-3.5 h-3.5 text-gold-DEFAULT" />
-                        {placement.careRequest?.city || placement.careRequest?.postcode || "London, UK"}
+                        {placement.careRequest?.city ||
+                          placement.careRequest?.postcode ||
+                          "London, UK"}
                       </span>
                     </div>
 
@@ -1575,7 +1736,9 @@ export default function AdminPlacementDetailModal({
                             : "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
                         }`}
                       >
-                        {placement.careRequest?.isEmergency ? "Emergency Case" : "Standard Placement"}
+                        {placement.careRequest?.isEmergency
+                          ? "Emergency Case"
+                          : "Standard Placement"}
                       </span>
                     </div>
 
@@ -1586,11 +1749,16 @@ export default function AdminPlacementDetailModal({
                       <div className="space-y-1 text-xs text-gold-100/80 mt-1">
                         <div className="flex items-center gap-2">
                           <Mail className="w-3.5 h-3.5 text-gold-100/50" />
-                          <span>{placement.clientProfile?.user?.email || "N/A"}</span>
+                          <span>
+                            {placement.clientProfile?.user?.email || "N/A"}
+                          </span>
                         </div>
                         <div className="flex items-center gap-2">
                           <Phone className="w-3.5 h-3.5 text-gold-100/50" />
-                          <span>{placement.clientProfile?.user?.phoneNumber || "N/A"}</span>
+                          <span>
+                            {placement.clientProfile?.user?.phoneNumber ||
+                              "N/A"}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -1625,7 +1793,8 @@ export default function AdminPlacementDetailModal({
                       Placement Financial & Billing Overview
                     </h3>
                     <p className="text-xs text-gold-100/60 mt-0.5">
-                      Monitor weekly rates, platform fees, billing subscription lifecycle, and outstanding balance.
+                      Monitor weekly rates, platform fees, billing subscription
+                      lifecycle, and outstanding balance.
                     </p>
                   </div>
 
@@ -1681,7 +1850,13 @@ export default function AdminPlacementDetailModal({
                       Daily Rate (Calc)
                     </span>
                     <span className="font-mono text-gold-100 text-base font-semibold">
-                      £{Number(billingDetail?.dailyRate || (billingDetail?.weeklyFee ? billingDetail.weeklyFee / 7 : 35.71)).toFixed(2)}
+                      £
+                      {Number(
+                        billingDetail?.dailyRate ||
+                          (billingDetail?.weeklyFee
+                            ? billingDetail.weeklyFee / 7
+                            : 35.71),
+                      ).toFixed(2)}
                     </span>
                   </div>
                   <div>
@@ -1697,7 +1872,10 @@ export default function AdminPlacementDetailModal({
                       Outstanding Balance
                     </span>
                     <span className="font-mono text-rose-400 text-base font-bold">
-                      £{Number(billingDetail?.outstandingBalance || 0).toFixed(2)}
+                      £
+                      {Number(billingDetail?.outstandingBalance || 0).toFixed(
+                        2,
+                      )}
                     </span>
                   </div>
                 </div>
@@ -1738,7 +1916,9 @@ export default function AdminPlacementDetailModal({
                     </span>
                     <span className="text-gold-100/80 font-mono text-xs">
                       {billingDetail?.nextBillingDate
-                        ? new Date(billingDetail.nextBillingDate).toLocaleDateString()
+                        ? new Date(
+                            billingDetail.nextBillingDate,
+                          ).toLocaleDateString()
                         : "N/A"}
                     </span>
                   </div>
@@ -1759,7 +1939,8 @@ export default function AdminPlacementDetailModal({
                       Override Agreed Weekly Fee
                     </span>
                     <p className="text-[11px] text-gold-100/60">
-                      Update the recurring weekly billing fee charged to this client for this placement.
+                      Update the recurring weekly billing fee charged to this
+                      client for this placement.
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
@@ -1783,7 +1964,9 @@ export default function AdminPlacementDetailModal({
                       onClick={handleUpdateWeeklyFee}
                       className="text-xs py-1.5 font-bold"
                     >
-                      {actionLoading === "update-fee" ? "Saving..." : "Save Fee"}
+                      {actionLoading === "update-fee"
+                        ? "Saving..."
+                        : "Save Fee"}
                     </Button>
                   </div>
                 </div>
@@ -1794,7 +1977,8 @@ export default function AdminPlacementDetailModal({
                 <div className="p-6 rounded-2xl border border-gold-300/20 bg-navy-900/60 shadow-xl flex flex-col">
                   <div className="flex items-center justify-between border-b border-gold-300/10 pb-4 mb-4">
                     <h3 className="text-base font-semibold text-gold-200 flex items-center gap-2">
-                      <DollarSign className="h-4 w-4 text-gold-DEFAULT" /> Generated Client Invoices
+                      <DollarSign className="h-4 w-4 text-gold-DEFAULT" />{" "}
+                      Generated Client Invoices
                     </h3>
                     <span className="text-xs text-gold-100/50">
                       {invoicesList.length} Total Records
@@ -1830,10 +2014,17 @@ export default function AdminPlacementDetailModal({
                                   : "Weekly Cycle"}
                               </td>
                               <td className="py-3 px-3 font-mono">
-                                £{Number(inv.subtotal || inv.total * 0.8).toFixed(2)}
+                                £
+                                {Number(
+                                  inv.subtotal || inv.total * 0.8,
+                                ).toFixed(2)}
                               </td>
                               <td className="py-3 px-3 font-mono text-gold-100/60">
-                                £{Number(inv.vat || (inv.subtotal ? inv.subtotal * 0.2 : 0)).toFixed(2)}
+                                £
+                                {Number(
+                                  inv.vat ||
+                                    (inv.subtotal ? inv.subtotal * 0.2 : 0),
+                                ).toFixed(2)}
                               </td>
                               <td className="py-3 px-3 font-mono font-semibold text-gold-DEFAULT">
                                 £{Number(inv.total).toFixed(2)}
@@ -1844,8 +2035,8 @@ export default function AdminPlacementDetailModal({
                                     inv.status === "PAID"
                                       ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
                                       : inv.status === "PENDING"
-                                      ? "bg-amber-500/15 text-amber-400 border border-amber-500/30"
-                                      : "bg-rose-500/15 text-rose-400 border border-rose-500/30"
+                                        ? "bg-amber-500/15 text-amber-400 border border-amber-500/30"
+                                        : "bg-rose-500/15 text-rose-400 border border-rose-500/30"
                                   }`}
                                 >
                                   {inv.status}
@@ -1854,7 +2045,13 @@ export default function AdminPlacementDetailModal({
                               <td className="py-3 px-3 text-right">
                                 <div className="flex items-center justify-end gap-2">
                                   <button
-                                    onClick={() => handlePrintInvoice(inv, clientName, clientEmail)}
+                                    onClick={() =>
+                                      handlePrintInvoice(
+                                        inv,
+                                        clientName,
+                                        clientEmail,
+                                      )
+                                    }
                                     className="p-1 rounded-lg hover:bg-gold-500/10 text-gold-DEFAULT hover:text-gold-200 transition-colors"
                                     title="Print or download invoice PDF"
                                   >
@@ -1862,8 +2059,12 @@ export default function AdminPlacementDetailModal({
                                   </button>
                                   {inv.status !== "PAID" && (
                                     <button
-                                      onClick={() => handleResendInvoice(inv.id)}
-                                      disabled={actionLoading === `resend-${inv.id}`}
+                                      onClick={() =>
+                                        handleResendInvoice(inv.id)
+                                      }
+                                      disabled={
+                                        actionLoading === `resend-${inv.id}`
+                                      }
                                       className="p-1 rounded-lg hover:bg-gold-500/10 text-gold-DEFAULT hover:text-gold-200 transition-colors"
                                       title="Send payment reminder email"
                                     >
@@ -1901,14 +2102,16 @@ export default function AdminPlacementDetailModal({
                 <div className="p-6 rounded-2xl border border-gold-300/20 bg-navy-900/60 shadow-xl flex flex-col">
                   <div className="flex items-center justify-between border-b border-gold-300/10 pb-4 mb-4">
                     <h3 className="text-base font-semibold text-gold-200 flex items-center gap-2">
-                      <DollarSign className="h-4 w-4 text-gold-DEFAULT" /> Carer Remuneration & Payments
+                      <DollarSign className="h-4 w-4 text-gold-DEFAULT" /> Carer
+                      Remuneration & Payments
                     </h3>
                     <span className="text-xs text-gold-100/50">
                       {placement.carerPayments?.length || 0} Total Records
                     </span>
                   </div>
 
-                  {placement.carerPayments && placement.carerPayments.length > 0 ? (
+                  {placement.carerPayments &&
+                  placement.carerPayments.length > 0 ? (
                     <div className="overflow-x-auto rounded-xl border border-gold-300/10 bg-navy-950/40">
                       <table className="w-full text-left border-collapse text-xs">
                         <thead>
@@ -1940,8 +2143,8 @@ export default function AdminPlacementDetailModal({
                                     payment.status === "PAID"
                                       ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
                                       : payment.status === "UNPAID"
-                                      ? "bg-amber-500/15 text-amber-400 border border-amber-500/30"
-                                      : "bg-rose-500/15 text-rose-400 border border-rose-500/30"
+                                        ? "bg-amber-500/15 text-amber-400 border border-amber-500/30"
+                                        : "bg-rose-500/15 text-rose-400 border border-rose-500/30"
                                   }`}
                                 >
                                   {payment.status}
@@ -1999,11 +2202,182 @@ export default function AdminPlacementDetailModal({
                   Internal Administrative Notes & Audit Records
                 </h3>
                 <p className="text-xs text-gold-100/60 mt-0.5">
-                  Private case notes, client preferences, and operational logs visible only to administrators.
+                  Private case notes, client preferences, and operational logs
+                  visible only to administrators.
                 </p>
               </div>
 
               <InternalNotes entityId={placement.id} entityType="PLACEMENT" />
+            </div>
+          )}
+
+          {/* TAB 6: CLIENT REVIEWS & MODERATION */}
+          {activeTab === "reviews" && (
+            <div className="p-6 rounded-2xl border border-gold-300/20 bg-navy-900/60 shadow-xl space-y-6">
+              <div className="border-b border-gold-300/10 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <h3 className="text-base font-semibold text-gold-200 flex items-center gap-2">
+                    <Star className="h-5 w-5 text-gold-DEFAULT fill-gold-DEFAULT" />
+                    Client Reviews &amp; Profile Display Moderation
+                  </h3>
+                  <p className="text-xs text-gold-100/60 mt-0.5">
+                    Reviews submitted by the client for this placement. Only
+                    reviews approved by Admin are displayed on the carer&apos;s
+                    public profile.
+                  </p>
+                </div>
+                <div className="text-xs font-mono text-gold-200 bg-gold-DEFAULT/10 border border-gold-DEFAULT/20 px-3 py-1.5 rounded-xl self-start sm:self-auto">
+                  {((placement as any).feedbacks || []).length} Total Reviews
+                </div>
+              </div>
+
+              {(placement as any).feedbacks &&
+              (placement as any).feedbacks.length > 0 ? (
+                <div className="space-y-4">
+                  {(placement as any).feedbacks.map((fb: any) => {
+                    const carerName =
+                      `${fb.carerProfile?.user?.firstName || ""} ${fb.carerProfile?.user?.lastName || ""}`.trim() ||
+                      "Assigned Carer";
+                    const isApproved = Boolean(fb.isApproved);
+                    const isPrimary =
+                      fb.carerProfileId === placement.carerProfileId;
+
+                    return (
+                      <div
+                        key={fb.id}
+                        className="p-5 rounded-xl border border-gold-300/15 bg-navy-950/60 flex flex-col lg:flex-row lg:items-center justify-between gap-4 shadow-sm"
+                      >
+                        <div className="space-y-2 min-w-0 flex-1">
+                          <div className="flex flex-wrap items-center gap-2.5">
+                            <span className="font-bold text-sm text-white">
+                              {carerName}
+                            </span>
+                            <span
+                              className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider border ${
+                                isPrimary
+                                  ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/30"
+                                  : "bg-amber-500/15 text-amber-300 border-amber-500/30"
+                              }`}
+                            >
+                              {isPrimary
+                                ? "Primary Carer"
+                                : "Relief / Backup Carer"}
+                            </span>
+
+                            <div className="flex items-center gap-1 ml-2">
+                              {[1, 2, 3, 4, 5].map((s: number) => (
+                                <Star
+                                  key={s}
+                                  className={`w-3.5 h-3.5 ${
+                                    s <= fb.rating
+                                      ? "text-amber-400 fill-amber-400"
+                                      : "text-slate-600"
+                                  }`}
+                                />
+                              ))}
+                              <span className="text-xs font-bold text-gold-200 ml-1">
+                                {fb.rating}.0
+                              </span>
+                            </div>
+                          </div>
+
+                          <p className="text-xs text-gold-100/90 italic bg-navy-900/50 p-3 rounded-lg border border-gold-300/10">
+                            &ldquo;{fb.message}&rdquo;
+                          </p>
+
+                          <div className="flex flex-wrap items-center gap-3 text-[11px] text-gold-100/50 pt-1">
+                            <span>
+                              Review by: <strong>{clientName}</strong> (
+                              {clientEmail})
+                            </span>
+                            <span>•</span>
+                            <span>
+                              Submitted:{" "}
+                              {new Date(fb.createdAt).toLocaleDateString(
+                                "en-GB",
+                                {
+                                  day: "numeric",
+                                  month: "short",
+                                  year: "numeric",
+                                },
+                              )}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Status & Moderation Action */}
+
+                        <div className="shrink-0 flex flex-col sm:flex-row lg:flex-col items-start lg:items-end gap-2.5 pt-2 lg:pt-0 border-t lg:border-t-0 border-gold-300/10">
+                          {isApproved && (
+                            <div
+                              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border bg-emerald-500/15 border-emerald-500/30 text-emerald-300`}
+                            >
+                              <CheckCircle2 className="w-3.5 h-3.5" />
+                              <span>Live on Carer Profile</span>
+                            </div>
+                          )}
+                          <button
+                            disabled={actionLoading === `fb-${fb.id}`}
+                            onClick={async () => {
+                              try {
+                                setActionLoading(`fb-${fb.id}`);
+                                await adminService.updateFeedbackApproval(
+                                  fb.id,
+                                  !isApproved,
+                                );
+                                toast.success(
+                                  !isApproved
+                                    ? "Review approved! It will now appear on the carer's profile."
+                                    : "Review hidden from carer profile.",
+                                );
+                                loadPlacement();
+                              } catch (err: any) {
+                                toast.error(
+                                  err.message ||
+                                    "Failed to update review status",
+                                );
+                              } finally {
+                                setActionLoading(null);
+                              }
+                            }}
+                            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-sm ${
+                              isApproved
+                                ? "bg-rose-950/40 border border-rose-500/30 text-rose-300 hover:bg-rose-900/40 hover:border-rose-500/50"
+                                : "bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/30 hover:border-emerald-500/60 shadow-emerald-950/50"
+                            }`}
+                          >
+                            {actionLoading === `fb-${fb.id}` ? (
+                              "Updating..."
+                            ) : isApproved ? (
+                              <>
+                                <XCircle className="w-3.5 h-3.5" />
+                                <span>Hide from carer Profile</span>
+                              </>
+                            ) : (
+                              <>
+                                <Check className="w-3.5 h-3.5" />
+                                <span>Approve to show in carer Profile</span>
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="p-10 rounded-xl border border-gold-300/10 bg-navy-950/30 text-center space-y-2">
+                  <Star className="w-8 h-8 text-gold-DEFAULT/40 mx-auto" />
+                  <h4 className="text-sm font-bold text-gold-100">
+                    No Reviews Submitted for this Placement
+                  </h4>
+                  <p className="text-xs text-gold-100/60 max-w-md mx-auto">
+                    The client has not yet submitted a review for the carers on
+                    this placement. Once submitted, they will appear here for
+                    Admin verification.
+                  </p>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -2027,12 +2401,23 @@ export default function AdminPlacementDetailModal({
       {isSelectBackupOpen && placement && (
         <AdminApplicationsModal
           placementId={placement.id}
-          careRequestId={placement.careRequestId || placement.careRequest?.id || null}
+          careRequestId={
+            placement.careRequestId || placement.careRequest?.id || null
+          }
           careRequestStatus={placement.careRequest?.status || "CARER_SELECTED"}
-          clientProfileId={placement.clientProfileId || (placement.clientProfile as any)?.id || ""}
+          clientProfileId={
+            placement.clientProfileId ||
+            (placement.clientProfile as any)?.id ||
+            ""
+          }
           clientName={clientName}
-          primaryCarerProfileId={placement.carerProfileId || (placement.carerProfile as any)?.id}
-          preferredBackupCarerId={placement.preferredBackupCarerProfileId || placement.preferredBackupCarer?.id}
+          primaryCarerProfileId={
+            placement.carerProfileId || (placement.carerProfile as any)?.id
+          }
+          preferredBackupCarerId={
+            placement.preferredBackupCarerProfileId ||
+            placement.preferredBackupCarer?.id
+          }
           backupCarers={placement.backupCarers || []}
           targetPriority={backupTargetPriority}
           initialTab="interest-list"

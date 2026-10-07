@@ -20,6 +20,7 @@ import {
   Heart,
   RefreshCw,
   Plane,
+  Star,
 } from "lucide-react";
 import Image from "next/image";
 import { clientService } from "@/services/client/client.service";
@@ -28,6 +29,7 @@ import Button from "@/components/Button";
 import ThinSpinner from "@/components/ThinSpinner";
 import CarerArrangementCard from "@/components/backup-carer/CarerArrangementCard";
 import ClientBackupCarerModal from "@/components/backup-carer/ClientBackupCarerModal";
+import PlacementReviewsSection from "@/components/placement/PlacementReviewsSection";
 
 interface PlacementDetailModalProps {
   placementId: string;
@@ -35,7 +37,7 @@ interface PlacementDetailModalProps {
   isPage?: boolean;
 }
 
-type ClientPlacementTab = "arrangement" | "schedule" | "requirements" | "invoices";
+type ClientPlacementTab = "arrangement" | "schedule" | "requirements" | "invoices" | "reviews";
 
 export default function PlacementDetailModal({
   placementId,
@@ -287,6 +289,23 @@ export default function PlacementDetailModal({
             <CreditCard className="w-4 h-4" />
             <span>Weekly Invoices & Statements</span>
           </button>
+
+          <button
+            onClick={() => setActiveTab("reviews")}
+            className={`flex items-center gap-2 py-3.5 px-4 text-xs sm:text-sm font-bold border-b-2 transition-all whitespace-nowrap cursor-pointer ${
+              activeTab === "reviews"
+                ? "border-gold-DEFAULT text-gold-DEFAULT bg-gold-DEFAULT/5"
+                : "border-transparent text-gold-100/60 hover:text-gold-200"
+            }`}
+          >
+            <Star className="w-4 h-4" />
+            <span>Carer Reviews & Feedback</span>
+            {placement.feedbacks && placement.feedbacks.length > 0 && (
+              <span className="px-1.5 py-0.5 rounded-full bg-gold-DEFAULT/20 text-gold-200 font-mono text-[10px] border border-gold-DEFAULT/30">
+                {placement.feedbacks.length}
+              </span>
+            )}
+          </button>
         </div>
       </div>
 
@@ -335,6 +354,29 @@ export default function PlacementDetailModal({
                   setIsSelectBackupOpen(true);
                 }}
               />
+
+              {/* Quick Reviews Banner */}
+              <div className="p-4 rounded-xl border border-gold-300/15 bg-navy-950/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-md">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 rounded-xl bg-gold-DEFAULT/10 border border-gold-DEFAULT/20 text-gold-DEFAULT shrink-0">
+                    <Star className="w-5 h-5 fill-gold-DEFAULT" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-white">Carer Reviews & Placement Feedback</h4>
+                    <p className="text-xs text-gold-100/60">
+                      Rate and review your primary and relief carers. Approved reviews are displayed on their professional profile.
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setActiveTab("reviews")}
+                  className="font-bold shrink-0 self-start sm:self-auto cursor-pointer text-xs"
+                >
+                  Manage Reviews ({(placement as any).feedbacks?.length || 0})
+                </Button>
+              </div>
             </div>
           )}
 
@@ -628,6 +670,21 @@ export default function PlacementDetailModal({
                 )}
               </div>
             </div>
+          )}
+
+          {/* TAB 5: CARER REVIEWS & FEEDBACK */}
+          {activeTab === "reviews" && (
+            <PlacementReviewsSection
+              placementId={placement.id}
+              primaryCarer={placement.carerProfile}
+              preferredBackupCarer={placement.preferredBackupCarer}
+              activeReliefCarer={placement.activeReliefCarer}
+              backupCarers={(placement as any).backupCarers || []}
+              feedbacks={(placement as any).feedbacks || []}
+              onReviewSubmitted={() => {
+                loadPlacement();
+              }}
+            />
           )}
         </div>
       </main>

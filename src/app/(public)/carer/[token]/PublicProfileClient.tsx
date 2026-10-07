@@ -14,6 +14,8 @@ import {
   ArrowRight,
   AlertCircle,
   X,
+  Star,
+  MessageSquare,
 } from "lucide-react";
 import shareableProfileService, {
   PublicCarerProfile,
@@ -650,6 +652,100 @@ export default function PublicProfileClient({ token }: PublicProfileClientProps)
             </p>
           </div>
         </section> */}
+
+        {/* Verified Client Reviews & Ratings Section */}
+        {profile.reviews && profile.reviews.length > 0 && (
+          <section className="bg-navy-900/40 border border-gold-300/10 rounded-3xl p-6 sm:p-8 backdrop-blur-md shadow-elegant space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gold-300/10 pb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-gold-DEFAULT/10 border border-gold-DEFAULT/20 flex items-center justify-center text-gold-DEFAULT">
+                  <Star className="w-5 h-5 fill-gold-DEFAULT" />
+                </div>
+                <div>
+                  <h2 className="text-lg sm:text-xl font-bold text-gold-50 font-serif">
+                    Client Reviews &amp; Testimonials
+                  </h2>
+                  <p className="text-xs text-gold-100/60">
+                    Verified feedback from families and clients supported by {profile.displayName}
+                  </p>
+                </div>
+              </div>
+
+              {profile.averageRating && (
+                <div className="flex items-center gap-2 bg-navy-800/80 border border-gold-300/20 px-3.5 py-2 rounded-2xl shrink-0 self-start sm:self-auto">
+                  <div className="flex items-center gap-1 text-amber-400">
+                    {[1, 2, 3, 4, 5].map((s) => (
+                      <Star
+                        key={s}
+                        className={`w-4 h-4 ${
+                          s <= Math.round(profile.averageRating || 5)
+                            ? "fill-amber-400 text-amber-400"
+                            : "text-slate-600"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <span className="text-sm font-bold text-white ml-1 font-mono">
+                    {profile.averageRating.toFixed(1)}
+                  </span>
+                  <span className="text-xs text-gold-100/50">
+                    ({profile.totalReviews || profile.reviews.length} {profile.reviews.length === 1 ? "review" : "reviews"})
+                  </span>
+                </div>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+              {profile.reviews.map((rev) => (
+                <div
+                  key={rev.id}
+                  className="rounded-2xl p-5 bg-navy-800/60 border border-gold-300/15 hover:border-gold-300/35 transition shadow-sm space-y-3 relative"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-gold-DEFAULT/15 border border-gold-DEFAULT/25 flex items-center justify-center text-gold-200 text-xs font-bold">
+                        {rev.clientFirstName ? rev.clientFirstName.charAt(0) : "C"}
+                      </div>
+                      <div>
+                        <span className="text-xs font-bold text-white block">
+                          {rev.clientFirstName}
+                        </span>
+                        <span className="text-[10px] text-emerald-400 font-semibold flex items-center gap-1">
+                          <CheckCircle2 className="w-3 h-3" /> Verified Client
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-1">
+                      {[1, 2, 3, 4, 5].map((s) => (
+                        <Star
+                          key={s}
+                          className={`w-3 h-3 ${
+                            s <= rev.rating
+                              ? "fill-amber-400 text-amber-400"
+                              : "text-slate-600"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-gold-100/80 italic leading-relaxed bg-navy-950/40 p-3 rounded-xl border border-gold-300/10">
+                    &ldquo;{rev.message}&rdquo;
+                  </p>
+
+                  <div className="text-[10px] text-gold-100/40 text-right">
+                    {new Date(rev.createdAt).toLocaleDateString("en-GB", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* ── Contact Grace & Goodwill Section ─────────────────────── */}
         <section className="bg-gradient-to-b from-navy-900/60 to-navy-950/80 border border-gold-300/15 rounded-3xl p-6 sm:p-10 backdrop-blur-md shadow-2xl text-center space-y-6">

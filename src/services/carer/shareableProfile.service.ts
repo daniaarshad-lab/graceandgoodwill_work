@@ -19,6 +19,14 @@ export interface AvailabilityRange {
   totalDays?: number;
 }
 
+export interface PublicCarerReview {
+  id: string;
+  rating: number;
+  message: string;
+  createdAt: string;
+  clientFirstName: string;
+}
+
 export interface PublicCarerProfile {
   displayName: string;
   photoUrl?: string;
@@ -33,6 +41,9 @@ export interface PublicCarerProfile {
   brandName: string;
   isActive?: boolean;
   expiresAt?: string;
+  reviews?: PublicCarerReview[];
+  averageRating?: number | null;
+  totalReviews?: number;
 }
 
 export interface AvailabilityDay {

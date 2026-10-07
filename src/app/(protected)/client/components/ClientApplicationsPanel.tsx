@@ -176,7 +176,7 @@ export default function ClientApplicationsPanel() {
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 border-b border-gold-300/10 pb-4">
           <div className="max-w-2xl">
             <h3 className="text-xl font-bold text-gold-200">
-              Care Requests & Applications
+              Care Requests
             </h3>
             <p className="text-xs text-gold-100/50 mt-1 leading-relaxed">
               View the status of your care requests, review and select primary carers, and designate your Preferred Backup Carer.
@@ -212,11 +212,10 @@ export default function ClientApplicationsPanel() {
             {clientManagedRequests.map((req) => (
               <div
                 key={req.id}
-                className={`rounded-2xl border transition-all duration-300 overflow-hidden ${
-                  selectedRequestId === req.id
-                    ? "border-gold-300/30 bg-navy-900/80 shadow-[0_4px_20px_rgba(0,0,0,0.2)]"
-                    : "border-gold-300/10 bg-navy-900/40 hover:border-gold-300/20 hover:bg-navy-900/60"
-                }`}
+                className={`rounded-2xl border transition-all duration-300 overflow-hidden ${selectedRequestId === req.id
+                  ? "border-gold-300/30 bg-navy-900/80 shadow-[0_4px_20px_rgba(0,0,0,0.2)]"
+                  : "border-gold-300/10 bg-navy-900/40 hover:border-gold-300/20 hover:bg-navy-900/60"
+                  }`}
               >
                 {/* Request Header */}
                 <div
@@ -244,15 +243,14 @@ export default function ClientApplicationsPanel() {
                       </div>
                       <div className="flex items-center gap-1.5 shrink-0">
                         <span
-                          className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${
-                            req.status === "ACTIVE"
-                              ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                              : req.status === "CARER_SELECTED"
-                                ? "bg-amber-500/15 text-amber-300 border border-amber-500/30"
-                                : req.status === "FULFILLED"
-                                  ? "bg-blue-500/10 text-blue-400 border border-blue-500/20"
-                                  : "bg-gold-500/10 text-gold-400 border border-gold-500/20"
-                          }`}
+                          className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${req.status === "ACTIVE"
+                            ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                            : req.status === "CARER_SELECTED"
+                              ? "bg-amber-500/15 text-amber-300 border border-amber-500/30"
+                              : req.status === "FULFILLED"
+                                ? "bg-blue-500/10 text-blue-400 border border-blue-500/20"
+                                : "bg-gold-500/10 text-gold-400 border border-gold-500/20"
+                            }`}
                         >
                           {req.status}
                         </span>
@@ -353,15 +351,14 @@ export default function ClientApplicationsPanel() {
                             return (
                               <div
                                 key={app.id}
-                                className={`flex items-start justify-between rounded-xl bg-navy-900 border p-4 transition-colors ${
-                                  app.status === "SELECTED"
-                                    ? "border-emerald-500/30 bg-emerald-950/10"
-                                    : "border-gold-300/5 hover:border-gold-300/15"
-                                }`}
+                                className={`flex items-start justify-between rounded-xl bg-navy-900 border p-4 transition-colors ${app.status === "SELECTED"
+                                  ? "border-emerald-500/30 bg-emerald-950/10"
+                                  : "border-gold-300/5 hover:border-gold-300/15"
+                                  }`}
                               >
                                 <div className="flex items-start gap-4">
                                   {appAny.carer?.profilePhotoUrl ||
-                                  appAny.carerProfile?.profilePhotoUrl ? (
+                                    appAny.carerProfile?.profilePhotoUrl ? (
                                     <img
                                       src={
                                         appAny.carer?.profilePhotoUrl ||
@@ -397,17 +394,16 @@ export default function ClientApplicationsPanel() {
                                         Applied: {formatDate(app.createdAt)}
                                       </span>
                                       <span
-                                        className={`px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${
-                                          app.status === "PENDING"
-                                            ? "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20"
-                                            : app.status === "SHORTLISTED"
-                                              ? "bg-blue-500/10 text-blue-400 border border-blue-500/20"
-                                              : app.status === "ACCEPTED" ||
-                                                  app.status === "APPROVED" ||
-                                                  app.status === "SELECTED"
-                                                ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                                                : "bg-red-500/10 text-red-400 border border-red-500/20"
-                                        }`}
+                                        className={`px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${app.status === "PENDING"
+                                          ? "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20"
+                                          : app.status === "SHORTLISTED"
+                                            ? "bg-blue-500/10 text-blue-400 border border-blue-500/20"
+                                            : app.status === "ACCEPTED" ||
+                                              app.status === "APPROVED" ||
+                                              app.status === "SELECTED"
+                                              ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                                              : "bg-red-500/10 text-red-400 border border-red-500/20"
+                                          }`}
                                       >
                                         {app.status}
                                       </span>
@@ -482,11 +478,10 @@ export default function ClientApplicationsPanel() {
                                             ? "A carer is already selected. You can set other applicants as a Backup Carer."
                                             : "Approve application as primary carer"
                                         }
-                                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                                          hasSelectedCarer
-                                            ? "bg-navy-950/60 text-gold-100/30 border border-gold-300/10 cursor-not-allowed opacity-50"
-                                            : "bg-gold text-navy-950 hover:bg-gold-200 cursor-pointer"
-                                        }`}
+                                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${hasSelectedCarer
+                                          ? "bg-navy-950/60 text-gold-100/30 border border-gold-300/10 cursor-not-allowed opacity-50"
+                                          : "bg-gold text-navy-950 hover:bg-gold-200 cursor-pointer"
+                                          }`}
                                       >
                                         {isSubmitting === app.id
                                           ? "..."

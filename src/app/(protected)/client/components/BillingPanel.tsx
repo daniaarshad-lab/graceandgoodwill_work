@@ -321,11 +321,10 @@ export default function ClientBillingPage() {
                     <td>
                       <strong>${isReg ? "Lifetime Matching Platform Access" : "Live-in Care Weekly Placement Service"}</strong><br/>
                       <span style="font-size: 12px; color: #64748b;">
-                        ${
-                          isReg
-                            ? "One-off registration fee covering onboarding, profiling, and lifetime matched access."
-                            : `Weekly recurring placement cycle: ${new Date(inv.billingPeriodStart).toLocaleDateString()} to ${new Date(inv.billingPeriodEnd).toLocaleDateString()}`
-                        }
+                        ${isReg
+          ? "One-off registration fee covering onboarding, profiling, and lifetime matched access."
+          : `Weekly recurring placement cycle: ${new Date(inv.billingPeriodStart).toLocaleDateString()} to ${new Date(inv.billingPeriodEnd).toLocaleDateString()}`
+        }
                       </span>
                     </td>
                     <td style="text-align: right;">£${Number(inv.subtotal || Number(inv.total) / 1.2).toFixed(2)}</td>
@@ -507,11 +506,11 @@ export default function ClientBillingPage() {
           <div className="bg-navy-900/60 border border-navy-800 rounded-2xl p-6 shadow-soft flex flex-col justify-between">
             <div>
               <h2 className="text-lg font-bold text-white uppercase tracking-wider mb-4">
-                Placement Weekly Subscription
+                Placement Weekly
               </h2>
               <p className="text-slate-300 text-sm leading-relaxed mb-6">
                 Once we match you with a carer and confirm the placement, you
-                must set up your weekly recurring subscription. Weekly fees are
+                must set up your weekly recurring. Weekly fees are
                 collected in advance every 7 days via Direct Debit (GoCardless).
               </p>
             </div>

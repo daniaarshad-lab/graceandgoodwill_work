@@ -164,7 +164,7 @@ export default function HomePage() {
           <div className="relative group">
             <div className="absolute inset-0 bg-gold-400/5 rounded-[2rem] blur-xl group-hover:bg-gold-400/10 transition-colors duration-500"></div>
             <div className="relative bg-navy-900/60 border border-gold-300/15 p-8 sm:p-10 rounded-[2rem] shadow-elegant backdrop-blur-md space-y-6">
-              <h3 className="text-lg font-semibold text-gold-100">Depending On The Profile, You Can Explore:</h3>
+              <h3 className="text-lg font-semibold text-gold-100 text-center">You Can Explore:</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
                 {["Profile photograph", "Introduction video", "Biography", "Care experience", "Skills and training", "Location", "Hobbies and interests", "Languages", "Driving status", "Availability", "Preferred placements", "Other relevant information"].map((item) => (
                   <div key={item} className="flex items-start gap-3">

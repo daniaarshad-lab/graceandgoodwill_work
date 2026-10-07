@@ -90,7 +90,7 @@ export const faqs: FAQItem[] = [
   {
     category: "Costs and Funding",
     question: "How much does live-in care cost?",
-    answer: "Costs vary depending on the individual carer’s rates and the level of support required. Because you agree arrangements directly with the independent carer, this can often be more cost-effective than traditional agency managed services or residential care."
+    answer: "The cost of live-in care depends on the individual’s circumstances and the level of support required. Grace & Goodwill provides clear pricing information before a family decides whether they would like to proceed, so clients understand the expected cost from the outset."
   },
   {
     category: "Costs and Funding",

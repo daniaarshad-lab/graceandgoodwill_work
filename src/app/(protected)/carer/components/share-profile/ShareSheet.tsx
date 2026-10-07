@@ -272,7 +272,8 @@ export default function ShareSheet({
               variant="primary"
               size="custom"
               onClick={copyLink}
-              className="gap-1.5 px-3 sm:px-4 py-2.5 text-[11px] sm:text-xs !font-medium"
+              className="gap-1.5 px-3 sm:px-4 py-2.5 text-[11px] sm:text-xs !font-medium border-0"
+              style={{ backgroundImage: "linear-gradient(to right, rgb(201, 170, 99), rgb(220, 194, 122), rgb(184, 142, 60))", color: "#0D1B3D" }}
             >
               <Link2 className="w-3.5 h-3.5 stroke-[2.5]" />
               <span>{copiedLink ? "Copied!" : "Copy Link"}</span>
@@ -474,7 +475,8 @@ export default function ShareSheet({
         size="custom"
         onClick={onRenew}
         disabled={renewing}
-        className="w-full gap-2 py-2.5 sm:py-2.5 px-4 text-xs sm:text-[13.5px] mt-2 !font-medium"
+        className="w-full gap-2 py-2.5 sm:py-2.5 px-4 text-xs sm:text-[13.5px] mt-2 !font-medium border-0"
+        style={{ backgroundImage: "linear-gradient(to right, rgb(201, 170, 99), rgb(220, 194, 122), rgb(184, 142, 60))", color: "#0D1B3D" }}
       >
         <RefreshCw className={`w-4 h-4 stroke-[2.2] ${renewing ? "animate-spin" : ""}`} />
         <span>{renewing ? "Generating New Link..." : "Generate New Link"}</span>

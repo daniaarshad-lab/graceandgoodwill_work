@@ -480,9 +480,11 @@ export default function ShareProfileModal({
                         size="custom"
                         onClick={handleGenerate}
                         disabled={generating}
-                        className="mt-1 group w-full gap-2 text-xs sm:text-[13.5px] py-2.5 px-4 !font-medium"
+                        className="mt-1 group w-full gap-2 text-xs sm:text-[13.5px] py-2.5 px-4 !font-medium border-0"
                         style={{
                           opacity: !consented && !generating ? 0.8 : 1,
+                          backgroundImage: "linear-gradient(to right, rgb(201, 170, 99), rgb(220, 194, 122), rgb(184, 142, 60))",
+                          color: "#0D1B3D",
                         }}
                       >
                         {generating ? (

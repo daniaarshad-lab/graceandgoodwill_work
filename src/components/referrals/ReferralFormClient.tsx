@@ -12,8 +12,8 @@ interface ReferralFormClientProps {
   onSubmit: (data: {
     firstName: string;
     lastName: string;
-    email: string;
-    phone?: string;
+    email?: string;
+    phone: string;
   }) => Promise<boolean>;
   submitting: boolean;
   hidePhone?: boolean;
@@ -44,9 +44,11 @@ export default function ReferralFormClient({
       tempErrors.lastName = lastNameError;
     }
 
-    const emailError = validateEmail(email);
-    if (emailError) {
-      tempErrors.email = emailError;
+    if (email.trim()) {
+      const emailError = validateEmail(email);
+      if (emailError) {
+        tempErrors.email = emailError;
+      }
     }
 
     if (!hidePhone) {
@@ -126,8 +128,8 @@ export default function ReferralFormClient({
     const payload = {
       firstName: firstName.trim(),
       lastName: lastName.trim(),
-      email: email.trim(),
-      ...(hidePhone ? {} : { phone: phone.trim() }),
+      ...(email.trim() ? { email: email.trim() } : {}),
+      phone: phone.trim(),
     };
 
     const success = await onSubmit(payload);
@@ -163,6 +165,12 @@ export default function ReferralFormClient({
 
           {/* Form Fields */}
           <div className="space-y-5">
+            <div className="rounded-2xl p-4 bg-navy-950/50 border border-gold-300/20 shadow-inner">
+              <p className="text-sm text-gold-100/90 font-medium leading-relaxed">
+                Please tell us the name of the friend you would like to refer to us.
+              </p>
+            </div>
+            
             <div className="grid gap-4 sm:grid-cols-2">
               <Input
                 label="First Name *"
@@ -184,7 +192,7 @@ export default function ReferralFormClient({
             </div>
 
             <Input
-              label="Email Address *"
+              label="Email Address (Optional)"
               type="email"
               placeholder="e.g. eleanor.v@example.com"
               value={email}

@@ -79,14 +79,16 @@ function CarerReferralsContent() {
   const handleClientReferralSubmit = async (data: {
     firstName: string;
     lastName: string;
-    email: string;
-    phone?: string;
+    email?: string;
+    phone: string;
   }): Promise<boolean> => {
     try {
       const formData = new FormData();
       formData.append("firstName", data.firstName);
       formData.append("lastName", data.lastName);
-      formData.append("email", data.email);
+      if (data.email) {
+        formData.append("email", data.email);
+      }
       formData.append("phoneNumber", data.phone || "");
       formData.append("role", "CLIENT");
 

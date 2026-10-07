@@ -219,11 +219,11 @@ export default function ShareProfileModal({
           <div className="absolute right-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-[rgba(201,171,82,0.5)] to-transparent" />
           {/* Bottom italic tagline */}
           <div className="relative z-10 p-6 pb-12 w-full flex items-center justify-center gap-2.5 sm:gap-3">
-            <div className="h-px w-6 sm:w-8 shrink-0 bg-gradient-to-r from-transparent to-[#d49f47b3]" />
-            <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.25em] whitespace-nowrap" style={{ color: "#d49f47b3" }}>
+            <div className="h-px w-6 sm:w-8 shrink-0 bg-gradient-to-r from-transparent to-[#B59469]" />
+            <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.25em] whitespace-nowrap" style={{ color: "#B59469" }}>
               Care You Can Trust
             </span>
-            <div className="h-px w-6 sm:w-8 shrink-0 bg-gradient-to-l from-transparent to-[#d49f47b3]" />
+            <div className="h-px w-6 sm:w-8 shrink-0 bg-gradient-to-l from-transparent to-[#B59469]" />
           </div>
         </div>
 

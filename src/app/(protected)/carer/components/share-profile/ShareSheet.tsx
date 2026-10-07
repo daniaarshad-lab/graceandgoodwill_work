@@ -450,7 +450,7 @@ export default function ShareSheet({
             <div className="h-px w-full my-2 bg-amber-400/20" />
             <div className="flex items-center gap-2 pt-0.5">
               <Lock className="w-3.5 h-3.5 flex-shrink-0 text-[#ECCB76]" />
-              <p className="text-[10px] sm:text-[11px] text-[#ECCB76]/90">
+              <p className="text-[10px] sm:text-[11px] text-[#F5D4A099]">
                 <span className="font-semibold text-white">Your personal details remain private.</span> No personal contact details, home address or compliance documents will be shown.
               </p>
             </div>

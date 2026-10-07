@@ -451,12 +451,12 @@ export default function ShareProfileModal({
                           <div
                             className="w-[18px] h-[18px] sm:w-5 sm:h-5 flex items-center justify-center transition-all duration-200"
                             style={{
-                              backgroundColor: consented ? "#EAB308" : "transparent",
+                              backgroundColor: consented ? "#b59469" : "transparent",
                               border: consented
-                                ? "2px solid #EAB308"
+                                ? "2px solid #b59469"
                                 : "1.8px solid rgba(201, 171, 82, 0.75)",
                               borderRadius: "4px",
-                              boxShadow: consented ? "0 0 10px rgba(234,179,8,0.5)" : "none",
+                              boxShadow: consented ? "0 0 10px rgba(181,148,105,0.5)" : "none",
                             }}
                           >
                             {consented && (

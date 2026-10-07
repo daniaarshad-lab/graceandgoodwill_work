@@ -17,6 +17,7 @@ import {
   Car,
   Video,
   Briefcase,
+  X,
 } from "lucide-react";
 import ReadOnlyAvailabilityCalendar from "@/components/ReadOnlyAvailabilityCalendar";
 import ThinSpinner from "@/components/ThinSpinner";
@@ -30,6 +31,7 @@ export default function CarerDetailsPage() {
   const [carer, setCarer] = useState<Carer | null>(null);
   const [directLoading, setDirectLoading] = useState(false);
   const [fetchError, setFetchError] = useState(false);
+  const [isSpecialtiesModalOpen, setIsSpecialtiesModalOpen] = useState(false);
 
   useEffect(() => {
     if (carers.length === 0 && !loading) {
@@ -280,7 +282,7 @@ export default function CarerDetailsPage() {
 
                 {/* Title & Badges */}
                 <div className="flex-1 text-center md:text-left space-y-4">
-                  <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+                  <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
                     {carer.name}
                   </h1>
 
@@ -308,7 +310,7 @@ export default function CarerDetailsPage() {
                 <User className="w-5 h-5 mr-3 text-gold-300" /> Professional Overview
               </h2>
               <div className="prose prose-invert prose-gold max-w-none">
-                <p className="text-slate-300 leading-relaxed whitespace-pre-line text-[15px]">
+                <p className="text-slate-300 leading-relaxed whitespace-pre-line text-[15px] line-clamp-5">
                   {carer.fullBiography !== "Profile information pending"
                     ? carer.fullBiography
                     : "No professional overview provided."}
@@ -322,11 +324,19 @@ export default function CarerDetailsPage() {
                   <Star className="w-5 h-5 mr-3 text-gold-300" /> Care Specialties
                 </h2>
                 <div className="flex flex-wrap gap-2.5">
-                  {carer.specialties.split(', ').map((specialty, idx) => (
+                  {carer.specialties.split(', ').slice(0, 5).map((specialty, idx) => (
                     <span key={idx} className="inline-flex items-center px-4 py-2 rounded-xl text-sm font-medium bg-navy-950/60 border border-gold-300/20 text-gold-50 shadow-sm hover:border-gold-300/40 transition-colors">
                       {specialty}
                     </span>
                   ))}
+                  {carer.specialties.split(', ').length > 5 && (
+                    <button 
+                      onClick={() => setIsSpecialtiesModalOpen(true)}
+                      className="inline-flex items-center px-4 py-2 rounded-xl text-sm font-bold bg-gold-500/10 border border-gold-500/30 text-gold-400 shadow-sm hover:bg-gold-500/20 transition-colors cursor-pointer"
+                    >
+                      +{carer.specialties.split(', ').length - 5} View More
+                    </button>
+                  )}
                 </div>
               </section>
             )}
@@ -443,6 +453,38 @@ export default function CarerDetailsPage() {
           </div>
         </div>
       </div>
+
+      {/* Specialties Modal */}
+      {isSpecialtiesModalOpen && carer?.specialties && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div 
+            className="absolute inset-0 bg-navy-950/80 backdrop-blur-sm cursor-pointer" 
+            onClick={() => setIsSpecialtiesModalOpen(false)} 
+          />
+          <div className="relative bg-navy-900 border border-gold-300/20 rounded-3xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between p-6 border-b border-white/5">
+              <h2 className="text-xl font-bold text-gold-50 flex items-center">
+                <Star className="w-5 h-5 mr-3 text-gold-300" /> All Care Specialties
+              </h2>
+              <button 
+                onClick={() => setIsSpecialtiesModalOpen(false)}
+                className="p-2 rounded-full hover:bg-white/5 text-slate-400 hover:text-white transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto">
+              <div className="flex flex-wrap gap-3">
+                {carer.specialties.split(', ').map((specialty, idx) => (
+                  <span key={idx} className="inline-flex items-center px-4 py-2 rounded-xl text-sm font-medium bg-navy-950/60 border border-gold-300/20 text-gold-50 shadow-sm">
+                    {specialty}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

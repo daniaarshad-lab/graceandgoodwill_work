@@ -273,7 +273,7 @@ export default function ShareProfileModal({
                       >
                         Your profile is ready to share
                       </h2>
-                      <p className="text-xs sm:text-[12.5px] mt-1.5 text-[#D8BA68] leading-normal">
+                      <p className="text-xs sm:text-[12.5px] mt-1.5 text-[#F5D4A099] leading-normal">
                         Use your profile as a digital business card and help more prospective clients,
                         families and professional contacts discover your experience, skills and availability.
                       </p>

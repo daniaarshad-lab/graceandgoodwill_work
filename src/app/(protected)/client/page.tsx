@@ -5,6 +5,8 @@ import { useSearchParams, useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { useAuth } from "@/contexts/AuthContext";
 import { useClientPortal } from "./hooks/useClientPortal";
+import { useAppDispatch } from "@/store/hooks";
+import { fetchInterestList } from "@/store/slices/clientSlice";
 
 import PortalHeader from "./components/PortalHeader";
 import PortalTabs, { TabType } from "./components/PortalTabs";
@@ -74,6 +76,12 @@ export default function ClientDashboard() {
     params.set("tab", tab);
     router.push(`/client?${params.toString()}`);
   };
+
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(fetchInterestList());
+  }, [dispatch]);
 
   useEffect(() => {
     if (

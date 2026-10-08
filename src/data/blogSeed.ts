@@ -26,7 +26,7 @@ const AUTHOR_COMMS = {
 export const blogSeedPosts: BlogPost[] = [
   {
     id: "post-choosing-live-in-carer",
-    slug: "what-is-live-in-care",
+    slug: "what-is-live-in-care-a-guide-to-care-at-home-for-families",
     title: "What Is Live-in Care? A Guide to Care at Home for Families",
     excerpt:
       "There is not always one obvious moment when a family realises that someone they love needs more support. For some people, live-in care can offer an alternative to leaving the home they know...",
@@ -248,7 +248,7 @@ export const blogSeedPosts: BlogPost[] = [
   },
   {
     id: "post-live-in-care-vs-care-home",
-    slug: "live-in-care-vs-care-home",
+    slug: "live-in-care-vs-a-care-home-which-is-right-for-your-family",
     title: "Live-in Care vs a Care Home: Which Is Right for Your Family?",
     excerpt:
       "Deciding whether someone you love should remain at home with support or move into a care home can be one of the most difficult decisions a family has to make.",
@@ -480,7 +480,7 @@ export const blogSeedPosts: BlogPost[] = [
   },
   {
     id: "post-live-in-care-dementia",
-    slug: "live-in-care-for-dementia",
+    slug: "live-in-care-for-dementia-supporting-someone-to-remain-at-home",
     title: "Live-in Care for Dementia: Supporting Someone to Remain at Home",
     excerpt:
       "A diagnosis of dementia can change everyday life not only for the person diagnosed, but for the whole family around them. For some people, live-in care may provide a way to remain in familiar surroundings.",
@@ -730,7 +730,7 @@ export const blogSeedPosts: BlogPost[] = [
   },
   {
     id: "post-live-in-care-parkinsons",
-    slug: "live-in-care-for-parkinsons",
+    slug: "live-in-care-for-parkinson-s-disease-support-at-home-for-greater-independence",
     title: "Live-in Care for Parkinson’s Disease: Support at Home for Greater Independence",
     excerpt: "Living with Parkinson’s disease can affect everyday life in many different ways. For some people, live-in care can provide a way to receive more consistent support while continuing to live in familiar surroundings.",
     content: `<p>Living with Parkinson’s disease can affect everyday life in many different ways.</p>
@@ -967,7 +967,7 @@ export const blogSeedPosts: BlogPost[] = [
   },
   {
     id: "post-live-in-care-after-stroke",
-    slug: "live-in-care-after-a-stroke",
+    slug: "live-in-care-after-a-stroke-support-at-home-during-recovery",
     title: "Live-in Care After a Stroke: Support at Home During Recovery",
     excerpt: "A stroke can change everyday life very suddenly. For some people, live-in care can provide more consistent support during recovery while allowing them to return to familiar surroundings.",
     content: `<p>A stroke can change everyday life very suddenly.</p>
@@ -1205,7 +1205,7 @@ export const blogSeedPosts: BlogPost[] = [
   },
   {
     id: "post-live-in-care-for-ms",
-    slug: "live-in-care-for-multiple-sclerosis",
+    slug: "live-in-care-for-multiple-sclerosis-support-at-home-for-everyday-independence",
     title: "Live-in Care for Multiple Sclerosis: Support at Home for Everyday Independence",
     excerpt: "Multiple sclerosis can affect everyday life in very different ways. For some people, live-in care can provide practical support while helping them remain in control of their own life.",
     content: `<p>Multiple sclerosis can affect everyday life in very different ways.</p>
@@ -1438,7 +1438,7 @@ export const blogSeedPosts: BlogPost[] = [
   },
   {
     id: "post-live-in-care-for-cerebral-palsy",
-    slug: "live-in-care-for-cerebral-palsy",
+    slug: "live-in-care-for-cerebral-palsy-supporting-independence-at-home",
     title: "Live-in Care for Cerebral Palsy: Supporting Independence at Home",
     excerpt: "For an adult living with cerebral palsy, needing physical support does not mean losing the right to independence, privacy or control over everyday life.",
     content: `<p>For an adult living with cerebral palsy, needing physical support does not mean losing the right to independence, privacy or control over everyday life.</p>
@@ -1691,7 +1691,7 @@ export const blogSeedPosts: BlogPost[] = [
   },
   {
     id: "post-live-in-care-after-abi",
-    slug: "live-in-care-after-acquired-brain-injury",
+    slug: "live-in-care-after-an-acquired-brain-injury-support-at-home",
     title: "Live-in Care After an Acquired Brain Injury: Support at Home",
     excerpt: "For some people, live-in care can provide consistent practical support while allowing them to remain in their own home and continue working towards greater independence.",
     content: `<p>An acquired brain injury can change life suddenly and, in some cases, permanently.</p>
@@ -1938,7 +1938,7 @@ export const blogSeedPosts: BlogPost[] = [
   },
   {
     id: "post-live-in-care-after-spinal-cord-injury",
-    slug: "live-in-care-after-spinal-cord-injury",
+    slug: "live-in-care-after-a-spinal-cord-injury-support-for-independent-living-at-home",
     title: "Live-in Care After a Spinal Cord Injury: Support for Independent Living at Home",
     excerpt: "For some people, live-in support can provide practical assistance while allowing them to continue living in familiar surroundings and directing their own life.",
     content: `<p>A spinal cord injury can change many practical aspects of everyday life.</p>
@@ -2199,7 +2199,7 @@ export const blogSeedPosts: BlogPost[] = [
   },
   {
     id: "post-live-in-care-for-neurological-conditions",
-    slug: "live-in-care-for-neurological-conditions",
+    slug: "live-in-care-for-neurological-conditions-support-at-home",
     title: "Live-in Care for Neurological Conditions: Support at Home",
     excerpt: "Living with a neurological condition can affect everyday life in ways that are very different from one person to another. Live-in care can provide more consistent practical support while helping them remain within their own home.",
     content: `<p>Living with a neurological condition can affect everyday life in ways that are very different from one person to another.</p>
@@ -2456,7 +2456,7 @@ export const blogSeedPosts: BlogPost[] = [
   },
   {
     id: "post-live-in-care-for-older-people",
-    slug: "live-in-care-for-older-people",
+    slug: "live-in-care-for-older-people-support-to-stay-at-home-safely-and-independently",
     title: "Live-in Care for Older People: Support to Stay at Home Safely and Independently",
     excerpt: "For some older people, live-in care can provide more consistent support while allowing them to remain in the home they know.",
     content: `<p>As parents and relatives get older, families often notice changes gradually.</p>
@@ -2769,7 +2769,7 @@ export const blogSeedPosts: BlogPost[] = [
   },
   {
     id: "post-live-in-care-complex-long-term",
-    slug: "live-in-care-complex-long-term",
+    slug: "live-in-care-for-complex-and-long-term-support-needs-at-home",
     title: "Live-in Care for Complex and Long-Term Support Needs at Home",
     excerpt: "For some individuals, live-in care can provide more consistent everyday support while allowing them to remain in familiar surroundings and retain greater control over their routine.",
     content: `<p>Some people need support for a few weeks.</p>
@@ -3052,7 +3052,7 @@ export const blogSeedPosts: BlogPost[] = [
   },
   {
     id: "post-live-in-care-physical-disabilities-mobility",
-    slug: "live-in-care-physical-disabilities-mobility",
+    slug: "live-in-care-for-physical-disabilities-and-mobility-needs-at-home",
     title: "Live-in Care for Physical Disabilities and Mobility Needs at Home",
     excerpt: "Discover how live-in care can support adults with physical disabilities or mobility needs to remain at home, maintain independence and receive practical everyday support.",
     content: `<p>Needing physical help does not mean wanting somebody else to take control of your life.</p>
@@ -3363,7 +3363,7 @@ export const blogSeedPosts: BlogPost[] = [
   },
   {
     id: "post-emergency-live-in-care-short-notice",
-    slug: "emergency-live-in-care-short-notice",
+    slug: "emergency-live-in-care-finding-a-carer-at-short-notice",
     title: "Emergency Live-in Care: Finding a Carer at Short Notice",
     excerpt: "For some families, urgent live-in care can provide an option when more consistent support is needed quickly.",
     content: `<p>Care needs do not always arrive with weeks of notice.</p>
@@ -3634,7 +3634,7 @@ export const blogSeedPosts: BlogPost[] = [
   },
   {
     id: "post-live-in-care-after-hospital-discharge",
-    slug: "live-in-care-after-hospital-discharge",
+    slug: "live-in-care-after-hospital-discharge-support-for-a-safe-return-home",
     title: "Live-in Care After Hospital Discharge: Support for a Safe Return Home",
     excerpt: "For some people, live-in care can provide practical support during the transition home and help make the first days or weeks feel more manageable.",
     content: `<p>Coming home from hospital is often something a person and their family have been waiting for.</p>
@@ -3938,7 +3938,7 @@ export const blogSeedPosts: BlogPost[] = [
   },
   {
     id: "post-respite-live-in-care-family-carers",
-    slug: "respite-live-in-care-family-carers",
+    slug: "respite-live-in-care-giving-family-carers-time-to-rest",
     title: "Respite Live-in Care: Giving Family Carers Time to Rest",
     excerpt: "Learn how respite live-in care can support a loved one at home while giving family carers time to rest, recover or manage other responsibilities.",
     content: `<h2>What is respite live-in care?</h2>
@@ -4211,7 +4211,7 @@ export const blogSeedPosts: BlogPost[] = [
   },
   {
     id: "post-companionship-live-in-support-older-people",
-    slug: "companionship-live-in-support-older-people",
+    slug: "companionship-and-live-in-support-for-older-people-living-alone",
     title: "Companionship and Live-in Support for Older People Living Alone",
     excerpt: "Discover how companionship and live-in support can help an older person living alone feel more connected, supported and confident while remaining at home.",
     content: `<p>Sometimes an older person does not need someone constantly doing things for them.</p>
@@ -4528,7 +4528,7 @@ export const blogSeedPosts: BlogPost[] = [
   },
   {
     id: "post-what-does-a-live-in-carer-do",
-    slug: "what-does-a-live-in-carer-do",
+    slug: "what-does-a-live-in-carer-do-a-guide-for-families",
     title: "What Does a Live-in Carer Do? A Guide for Families",
     excerpt: "Wondering what a live-in carer actually does? Learn how live-in carers may support daily routines, mobility, meals, companionship and independence at home.",
     content: `<p>If you have never arranged live-in care before, it is completely reasonable to wonder what having a carer living in the home actually means.</p>
@@ -4868,7 +4868,7 @@ export const blogSeedPosts: BlogPost[] = [
   },
   {
     id: "post-how-to-choose-the-right-live-in-carer",
-    slug: "how-to-choose-the-right-live-in-carer",
+    slug: "how-to-choose-the-right-live-in-carer-for-someone-you-love",
     title: "How to Choose the Right Live-in Carer for Someone You Love",
     excerpt: "Learn how to choose the right live-in carer by considering experience, personality, compatibility, communication, availability and the person’s individual needs.",
     content: `<p>Choosing a live-in carer can feel like a very personal decision.</p>
@@ -5244,7 +5244,7 @@ export const blogSeedPosts: BlogPost[] = [
   },
   {
     id: "post-live-in-care-motor-neurone-disease",
-    slug: "live-in-care-motor-neurone-disease",
+    slug: "live-in-care-for-motor-neurone-disease-support-as-needs-change",
     title: "Live-in Care for Motor Neurone Disease: Support as Needs Change",
     excerpt: "Learn how live-in care for motor neurone disease can support mobility, communication, daily routines and independence as someone’s needs change at home.",
     content: `<p>A diagnosis of motor neurone disease can bring enormous uncertainty.</p>
@@ -5536,7 +5536,7 @@ export const blogSeedPosts: BlogPost[] = [
   },
   {
     id: "post-live-in-care-huntingtons-disease",
-    slug: "live-in-care-huntingtons-disease",
+    slug: "live-in-care-for-huntington-s-disease-support-at-home-as-needs-change",
     title: "Live-in Care for Huntington’s Disease: Support at Home as Needs Change",
     excerpt: "Learn how live-in care for Huntington’s disease can support daily routines, mobility, communication and independence while helping someone remain at home.",
     content: `<p>Huntington’s disease can affect everyday life in several ways at once.</p>
@@ -5833,7 +5833,7 @@ export const blogSeedPosts: BlogPost[] = [
   },
   {
     id: "post-live-in-support-for-epilepsy",
-    slug: "live-in-support-for-epilepsy",
+    slug: "live-in-support-for-epilepsy-when-someone-needs-more-help-at-home",
     title: "Live-in Support for Epilepsy: When Someone Needs More Help at Home",
     excerpt: "Learn when someone living with epilepsy may benefit from more support at home, including help with daily routines, safety, independence and seizure care plans.",
     content: `<p>Living with epilepsy does not automatically mean someone needs a carer.</p>
@@ -6172,7 +6172,7 @@ export const blogSeedPosts: BlogPost[] = [
   },
   {
     id: "post-live-in-care-arthritis-mobility-problems",
-    slug: "live-in-care-arthritis-mobility-problems",
+    slug: "live-in-care-for-arthritis-and-severe-mobility-problems-at-home",
     title: "Live-in Care for Arthritis and Severe Mobility Problems at Home",
     excerpt: "Learn how live-in care can support someone with arthritis, joint pain or severe mobility problems to remain at home with greater comfort and independence.",
     content: `<p>Arthritis can make everyday life far more difficult than people sometimes realise.</p>
@@ -6454,7 +6454,7 @@ export const blogSeedPosts: BlogPost[] = [
   },
   {
     id: "post-live-in-care-osteoporosis-repeated-falls",
-    slug: "live-in-care-osteoporosis-repeated-falls",
+    slug: "live-in-care-for-osteoporosis-and-repeated-falls-at-home",
     title: "Live-in Care for Osteoporosis and Repeated Falls at Home",
     excerpt: "Learn how live-in care can support someone with osteoporosis, repeated falls or reduced confidence to remain at home with practical everyday support.",
     content: `<p>A fall can change much more than mobility.</p>
@@ -6760,7 +6760,7 @@ export const blogSeedPosts: BlogPost[] = [
   },
   {
     id: "post-how-much-does-live-in-care-cost",
-    slug: "how-much-does-live-in-care-cost",
+    slug: "how-much-does-live-in-care-cost-in-the-uk-grace-goodwill-pricing-guide",
     title: "How Much Does Live-In Care Cost in the UK? Grace & Goodwill Pricing Guide",
     excerpt: "Live-in care with Grace & Goodwill starts from £1,350 per week. The final cost depends on the level of support required, the client's circumstances, location and the experience needed from the carer.",
     content: `<p>Live-in care with Grace &amp; Goodwill starts from £1,350 per week. The final cost depends on the level of support required, the client’s circumstances, location and the experience needed from the carer.</p>
@@ -6854,7 +6854,7 @@ export const blogSeedPosts: BlogPost[] = [
   },
   {
     id: "post-how-we-assess-and-vet-carers",
-    slug: "how-we-assess-and-vet-carers",
+    slug: "how-we-assess-and-vet-carers-before-they-join-grace-goodwill",
     title: "How We Assess and Vet Carers Before They Join Grace & Goodwill",
     excerpt: "Choosing someone to support you or a loved one at home is a significant decision. Experience and documentation matter, but they do not always tell you enough about the person behind the profile.",
     content: `<p>Choosing someone to support you or a loved one at home is a significant decision.</p>
@@ -6935,7 +6935,7 @@ export const blogSeedPosts: BlogPost[] = [
   ,
   {
     id: "post-how-to-choose-live-in-carer",
-    slug: "how-to-choose-the-right-live-in-carer",
+    slug: "how-to-choose-the-right-live-in-carer-8-questions-to-ask",
     title: "How to Choose the Right Live-In Carer | 8 Questions to Ask",
     excerpt: "Choosing the right live-in carer is about experience, personality, communication and compatibility. Discover 8 important questions families should ask before deciding.",
     content: `<p>Choosing a live-in carer is about much more than finding someone with the right experience.</p>

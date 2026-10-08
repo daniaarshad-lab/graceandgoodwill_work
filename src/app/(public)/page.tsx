@@ -266,7 +266,7 @@ export default function HomePage() {
               </div>
               <div className="pt-8 mt-auto">
                 <Button asChild variant="outline" size="sm" fullWidth>
-                  <Link href="/dementia-live-in-care">Explore Dementia Live-in Care</Link>
+                  <Link href="/dementia-and-alzheimers-live-in-care">Explore Dementia Live-in Care</Link>
                 </Button>
               </div>
             </div>

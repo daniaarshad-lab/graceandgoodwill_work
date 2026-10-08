@@ -340,7 +340,7 @@ export default function ServicesPage() {
                 <p>For someone living with dementia, familiar surroundings and routines may be particularly important.</p>
                 <p>Families can browse carers with relevant dementia experience and decide who they would like to consider.</p>
               </div>
-              <Link href="/dementia-live-in-care" className="inline-flex w-full justify-center items-center rounded-xl bg-gold-400/10 border border-gold-400/30 px-4 py-3 text-sm font-medium text-gold-200 transition-colors hover:bg-gold-400/20 hover:text-gold-100">
+              <Link href="/dementia-and-alzheimers-live-in-care" className="inline-flex w-full justify-center items-center rounded-xl bg-gold-400/10 border border-gold-400/30 px-4 py-3 text-sm font-medium text-gold-200 transition-colors hover:bg-gold-400/20 hover:text-gold-100">
                 Dementia Live-in Care
               </Link>
             </div>

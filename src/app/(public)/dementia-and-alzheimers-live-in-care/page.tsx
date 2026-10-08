@@ -6,7 +6,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   alternates: {
-    canonical: `/dementia-live-in-care`,
+    canonical: `/dementia-and-alzheimers-live-in-care`,
   },
   title: "Dementia and Alzheimer's Live-in Care | Grace & Goodwill",
   description: "Live-in care can allow somebody living with dementia to continue living safely in their own familiar home with expert support.",

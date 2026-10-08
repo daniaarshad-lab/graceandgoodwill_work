@@ -89,7 +89,7 @@ export default function WhatIsLiveInCarePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 relative z-10">
             {[
               { text: "Older adults who want to remain at home", link: "/long-term-live-in-care" },
-              { text: "People living with dementia or Alzheimer’s disease", link: "/dementia-live-in-care" },
+              { text: "People living with dementia or Alzheimer’s disease", link: "/dementia-and-alzheimers-live-in-care" },
               { text: "Adults with physical disabilities", link: "/disability-live-in-support" },
               { text: "People living with neurological conditions", link: "/brain-injury-live-in-care" },
               { text: "People recovering following illness, surgery or hospital treatment", link: "/hospital-discharge-live-in-care" },

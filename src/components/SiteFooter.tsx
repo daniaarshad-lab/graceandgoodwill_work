@@ -51,7 +51,7 @@ const navColumns = [
       { label: "Hospital Discharge Support", href: "/hospital-discharge-live-in-care" },
       { label: "Live-in Care After Stroke", href: "/live-in-care-after-stroke" },
       { label: "Recovery Support at Home", href: "/convalescent-care-at-home" },
-      { label: "Dementia Live-in Care", href: "/dementia-live-in-care" },
+      { label: "Dementia Live-in Care", href: "/dementia-and-alzheimers-live-in-care" },
       { label: "Respite Live-in Care", href: "/respite-live-in-care" },
       { label: "Brain Injury Support", href: "/brain-injury-live-in-care" },
       { label: "Spinal Injury Support", href: "/spinal-injury-live-in-care" },

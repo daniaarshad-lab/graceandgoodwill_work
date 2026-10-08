@@ -46,17 +46,25 @@ export default function CompanionshipLiveInCarePage() {
         </div>
 
         {/* Hero Image Section */}
-        <div className="relative w-full max-w-7xl mx-auto mb-16 px-4">
-          <div className="absolute top-0 left-0 w-24 h-24 md:w-32 md:h-32 border-t-2 border-l-2 border-gold-400/30 rounded-tl-[3rem] pointer-events-none -mt-4 -ml-2"></div>
-          <div className="absolute bottom-0 right-0 w-24 h-24 md:w-32 md:h-32 border-b-2 border-r-2 border-gold-400/30 rounded-br-[3rem] pointer-events-none -mb-4 -mr-2"></div>
-          <div className="relative z-10 rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-gold-300/20 bg-navy-950/40 group">
+        <div className="relative w-full max-w-4xl mx-auto mb-16 px-4 py-4 md:px-8 md:py-8">
+          <div className="absolute top-0 left-0 w-32 h-32 md:w-48 md:h-48 border-t border-l border-gold-300/40 rounded-tl-[3rem] pointer-events-none"></div>
+          <div className="absolute bottom-0 right-0 w-32 h-32 md:w-48 md:h-48 border-b border-r border-gold-300/40 rounded-br-[3rem] pointer-events-none"></div>
+          <div className="relative z-10 rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-gold-300/20 bg-navy-950/40 group aspect-[16/9]">
+            <div className="absolute inset-0 z-0">
+              <Image
+                src={companionshipImg}
+                alt="Background"
+                className="w-full h-full object-cover blur-xl opacity-50 scale-110"
+                placeholder="blur"
+              />
+            </div>
             <Image
               src={companionshipImg}
               alt="Live-in Companionship Care"
-              className="w-full h-auto aspect-[16/9] object-cover group-hover:scale-105 transition-transform duration-[2s]"
+              className="relative z-10 w-full h-full object-contain transform transition-transform duration-[2s] group-hover:scale-105"
               placeholder="blur"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-navy-950/80 via-navy-950/5 to-transparent pointer-events-none" />
+            <div className="absolute inset-0 z-20 bg-gradient-to-t from-navy-950/80 via-navy-950/5 to-transparent pointer-events-none" />
           </div>
         </div>
 

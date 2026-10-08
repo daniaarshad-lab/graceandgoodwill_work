@@ -207,15 +207,11 @@ export default function ClientBackupCarerModal({
               </span>
               <span className="text-[10px] font-bold uppercase tracking-wider text-amber-300 bg-amber-500/10 px-2.5 py-0.5 rounded-full border border-amber-500/25 flex items-center gap-1">
                 <Shield className="w-3 h-3 text-amber-400" />
-                {targetPriority === 2
-                  ? "Designating 2nd Choice Backup"
-                  : "Designating 1st Choice Preferred Backup"}
+                Designating Preferred Backup
               </span>
             </div>
             <h3 className="text-xl font-bold text-white mt-1">
-              {targetPriority === 2
-                ? "Choose 2nd Choice Backup Carer"
-                : "Choose Preferred Backup Carer"}
+              Choose Preferred Backup Carer
             </h3>
             <p className="text-xs text-gold-100/60 mt-0.5">
               Select from your interest list or applicants. Zero extra charge.
@@ -408,8 +404,6 @@ export default function ClientBackupCarerModal({
                                   <span>
                                     {updatingId === carerProfileId
                                       ? "Saving..."
-                                      : targetPriority === 2
-                                      ? "Set as 2nd Backup"
                                       : "Set as Preferred Backup"}
                                   </span>
                                 </Button>
@@ -526,7 +520,7 @@ export default function ClientBackupCarerModal({
                                 <div className="flex items-center gap-1.5">
                                   <span className="text-xs font-bold text-amber-300 px-3 py-1.5 rounded-lg border border-amber-500/30 bg-amber-500/15 flex items-center gap-1">
                                     <Shield className="w-3.5 h-3.5 text-amber-400" />
-                                    {targetPriority === 2 ? "2nd Backup" : "Preferred Backup"}
+                                    Preferred Backup
                                   </span>
                                   <Button
                                     variant="outline"
@@ -554,8 +548,6 @@ export default function ClientBackupCarerModal({
                                   <span>
                                     {updatingId === carerProfileId
                                       ? "Saving..."
-                                      : targetPriority === 2
-                                      ? "Set as 2nd Backup"
                                       : "Set as Preferred Backup"}
                                   </span>
                                 </Button>
@@ -659,9 +651,7 @@ export default function ClientBackupCarerModal({
                                 <div className="flex items-center gap-1.5">
                                   <span className="text-xs font-bold text-amber-300 px-3 py-1.5 rounded-lg border border-amber-500/30 bg-amber-500/15 flex items-center gap-1">
                                     <Shield className="w-3.5 h-3.5 text-amber-400" />
-                                    {targetPriority === 2
-                                      ? "2nd Backup"
-                                      : "Preferred Backup"}
+                                    Preferred Backup
                                   </span>
                                   <Button
                                     variant="outline"
@@ -697,8 +687,6 @@ export default function ClientBackupCarerModal({
                                   <span>
                                     {updatingId === carerProfileId
                                       ? "Saving..."
-                                      : targetPriority === 2
-                                      ? "Set as 2nd Backup"
                                       : "Set as Preferred Backup"}
                                   </span>
                                 </Button>

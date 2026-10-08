@@ -105,7 +105,7 @@ export default function PlacementReviewsSection({
         availableCarers.push({
           id: profile.id,
           name: getCarerName(profile, `Backup Carer (Priority ${bc.priority || 1})`),
-          role: bc.priority === 1 ? "1st Choice Relief Carer" : "2nd Choice Relief Carer",
+          role: bc.priority === 1 ? "Preferred Relief Carer" : "Secondary Relief Carer",
           profilePhotoUrl: profile.profilePhotoUrl,
         });
         seenCarerIds.add(profile.id);

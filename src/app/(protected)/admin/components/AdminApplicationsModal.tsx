@@ -287,8 +287,8 @@ export default function AdminApplicationsModal({
       }
       setDesignatedBackupCarerId(carerProfileId);
       showSuccessToast(
-        `${targetPriority === 2 ? "2nd Choice Backup" : "Preferred Backup"} Carer Designated!`,
-        `${carerName} is now designated as the ${targetPriority === 2 ? "2nd Choice Secondary" : "1st Choice Preferred"} Backup Carer. Zero extra charge.`
+        "Preferred Backup Carer Designated!",
+        `${carerName} is now designated as the Preferred Backup Carer. Zero extra charge.`
       );
 
       if (onBackupSelected) {
@@ -318,7 +318,7 @@ export default function AdminApplicationsModal({
       setDesignatedBackupCarerId(null);
       showSuccessToast(
         "Backup Carer Removed",
-        `${carerName} removed from ${targetPriority === 2 ? "2nd Choice" : "1st Choice Preferred"} Backup Carer role.`
+        `${carerName} removed from Preferred Backup Carer role.`
       );
       await loadAll();
       if (onStatusUpdated) onStatusUpdated();
@@ -349,7 +349,7 @@ export default function AdminApplicationsModal({
               {placementId && (
                 <span className="text-[10px] font-bold uppercase tracking-wider text-amber-300 bg-amber-500/10 px-2.5 py-0.5 rounded-full border border-amber-500/25 flex items-center gap-1">
                   <Shield className="w-3 h-3 text-amber-400" />
-                  {targetPriority === 2 ? "Designating 2nd Choice Backup" : "Designating 1st Choice Preferred Backup"}
+                  Designating Preferred Backup
                 </span>
               )}
               {clientName && (
@@ -360,7 +360,7 @@ export default function AdminApplicationsModal({
             </div>
             <h3 className="text-xl font-bold text-white mt-1">
               {placementId
-                ? `Designate ${targetPriority === 2 ? "2nd Choice" : "1st Choice Preferred"} Backup Carer`
+                ? "Designate Preferred Backup Carer"
                 : "Candidates, Applicants & Client Interest List"}
             </h3>
             <p className="text-xs text-gold-100/60 mt-0.5">
@@ -636,10 +636,10 @@ export default function AdminApplicationsModal({
                                     disabled={updatingId === carerProfileId}
                                     onClick={() => handleDesignateBackup(carerProfileId, carerName, app.carerProfile)}
                                     className="text-xs flex items-center gap-1 font-semibold !border-amber-500/40 !text-amber-300 hover:!bg-amber-500/15"
-                                    title={`Designate this applicant as the ${targetPriority === 2 ? "2nd Choice" : "1st Choice Preferred"} Backup Carer`}
+                                    title="Designate this applicant as the Preferred Backup Carer"
                                   >
                                     <Shield className="w-3 h-3 text-amber-400" />
-                                    <span>{targetPriority === 2 ? "Set as 2nd Backup" : "Set as Backup"}</span>
+                                    <span>Set as Preferred Backup</span>
                                   </Button>
                                 )
                               ) : null}
@@ -845,10 +845,10 @@ export default function AdminApplicationsModal({
                                     disabled={updatingId === carerProfileId}
                                     onClick={() => handleDesignateBackup(carerProfileId, carerName, carer)}
                                     className="text-xs flex items-center gap-1 font-semibold !border-amber-500/40 !text-amber-300 hover:!bg-amber-500/15"
-                                    title={`Designate this shortlisted carer as the ${targetPriority === 2 ? "2nd Choice" : "1st Choice Preferred"} Backup Carer`}
+                                    title="Designate this shortlisted carer as the Preferred Backup Carer"
                                   >
                                     <Shield className="w-3 h-3 text-amber-400" />
-                                    <span>{targetPriority === 2 ? "Set as 2nd Backup" : "Set as Backup"}</span>
+                                    <span>Set as Preferred Backup</span>
                                   </Button>
                                 )
                               ) : null}
@@ -1085,10 +1085,10 @@ export default function AdminApplicationsModal({
                                     disabled={updatingId === carerProfileId}
                                     onClick={() => handleDesignateBackup(carerProfileId, carerName, carer)}
                                     className="text-xs flex items-center gap-1 font-semibold !border-amber-500/40 !text-amber-300 hover:!bg-amber-500/15"
-                                    title={`Designate this matched carer as the ${targetPriority === 2 ? "2nd Choice" : "1st Choice Preferred"} Backup Carer`}
+                                    title="Designate this matched carer as the Preferred Backup Carer"
                                   >
                                     <Shield className="w-3 h-3 text-amber-400" />
-                                    <span>{targetPriority === 2 ? "Set as 2nd Backup" : "Set as Backup"}</span>
+                                    <span>Set as Preferred Backup</span>
                                   </Button>
                                 )
                               ) : null}

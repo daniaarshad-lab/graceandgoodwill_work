@@ -68,6 +68,7 @@ export interface CarerLeaveRequest {
   startDate: string;
   endDate: string;
   reason?: string | null;
+  handoverNotes?: string | null;
   status: LeaveStatus;
   reliefAssignmentId?: string | null;
   adminNotes?: string | null;
@@ -142,6 +143,14 @@ export interface UnifiedPlacement {
   endDate?: string | null;
   contactDetailsReleased?: boolean;
   contactDetailsReleasedAt?: string | null;
+
+  handoverNotes?: string | null;
+  handoverCompletedAt?: string | null;
+  handoverCompletedById?: string | null;
+  departureTime?: string | null;
+  carerDepartedAt?: string | null;
+  carerDepartedById?: string | null;
+  handoverRemindersSent?: any;
 
   assignments?: PlacementCarerAssignment[];
   leaveRequests?: CarerLeaveRequest[];

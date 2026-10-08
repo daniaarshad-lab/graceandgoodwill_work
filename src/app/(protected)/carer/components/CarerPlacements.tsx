@@ -704,8 +704,8 @@ export default function CarerPlacements() {
                                 }
                                 className="text-xs !border-amber-500/30 !text-amber-300 hover:!bg-amber-500/10"
                               >
-                                <Plane className="w-3.5 h-3.5 mr-1 text-amber-400" />
-                                Book Holiday / Time Off
+                                <Calendar className="w-3.5 h-3.5 mr-1 text-amber-400" />
+                                Report Unavailability / Arrange Relief Cover
                               </Button>
                             )}
 
@@ -1123,9 +1123,9 @@ export default function CarerPlacements() {
                   <div className="w-12 h-12 rounded-full bg-gold-300/10 text-gold-300 flex items-center justify-center mx-auto">
                     <Users className="w-6 h-6" />
                   </div>
-                  <h5 className="text-sm font-bold text-white">No preferred Backup Designations</h5>
+                  <h5 className="text-sm font-bold text-white">No Preferred Backup Designations</h5>
                   <p className="text-xs text-gold-100/60 max-w-sm mx-auto leading-relaxed">
-                    When clients select you as their preferred or secondary backup carer for continuity of care, they will appear here on your standby roster.
+                    When clients select you as their preferred backup carer for continuity of care, they will appear here on your standby roster.
                   </p>
                 </div>
               ) : (
@@ -1135,42 +1135,23 @@ export default function CarerPlacements() {
                       ? `${place.clientProfile.user.firstName || "Client"} ${place.clientProfile.user.lastName || ""}`.trim()
                       : place.clientName || "Client";
                     const locationStr = place.careRequest?.city || place.careRequest?.postcode || place.city || place.postcode || "London, UK";
-                    const isSecondBackup =
-                      place.backupPriority === 2 ||
-                      place.backupCarers?.some((b: any) => b.carerProfileId === profile?.id && b.priority === 2);
-                    const roleTitle = isSecondBackup ? "2nd Choice Backup Carer" : "1st Choice Preferred Backup";
+                    const roleTitle = "Preferred Relief/Backup Carer";
 
                     return (
                       <div
                         key={place.id}
-                        className={`p-5 rounded-2xl border shadow-lg space-y-4 transition-all ${
-                          isSecondBackup
-                            ? "border-blue-500/25 bg-gradient-to-br from-navy-900 via-navy-900 to-blue-950/20 hover:border-blue-500/40"
-                            : "border-amber-500/25 bg-gradient-to-br from-navy-900 via-navy-900 to-amber-950/20 hover:border-amber-500/40"
-                        }`}
+                        className="p-5 rounded-2xl border shadow-lg space-y-4 transition-all border-amber-500/25 bg-gradient-to-br from-navy-900 via-navy-900 to-amber-950/20 hover:border-amber-500/40"
                       >
                         {/* Header row with Client and Role Badge */}
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gold-300/10 pb-4">
                           <div className="flex items-center gap-3.5">
-                            <div
-                              className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-sm shrink-0 ${
-                                isSecondBackup
-                                  ? "bg-blue-500/20 text-blue-300 border border-blue-500/30"
-                                  : "bg-amber-500/20 text-amber-300 border border-amber-500/30"
-                              }`}
-                            >
-                              <Users className={`w-5 h-5 ${isSecondBackup ? "text-blue-400" : "text-amber-400"}`} />
+                            <div className="w-12 h-12 rounded-full flex items-center justify-center font-bold text-sm shrink-0 bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                              <Users className="w-5 h-5 text-amber-400" />
                             </div>
                             <div>
                               <div className="flex items-center gap-2">
                                 <h4 className="text-base font-bold text-white">{clientName}</h4>
-                                <span
-                                  className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase border ${
-                                    isSecondBackup
-                                      ? "bg-blue-500/15 text-blue-300 border-blue-500/30"
-                                      : "bg-amber-500/15 text-amber-300 border-amber-500/30"
-                                  }`}
-                                >
+                                <span className="text-[9px] font-bold px-2 py-0.5 rounded-full uppercase border bg-amber-500/15 text-amber-300 border-amber-500/30">
                                   {roleTitle}
                                 </span>
                               </div>
@@ -1187,17 +1168,11 @@ export default function CarerPlacements() {
 
                           {/* Standby Status Badge */}
                           <div className="flex items-center gap-2 self-start sm:self-center">
-                            <div
-                              className={`flex items-center gap-2 p-2 rounded-xl border text-xs ${
-                                isSecondBackup
-                                  ? "bg-blue-950/40 border-blue-500/30 text-blue-300"
-                                  : "bg-amber-950/40 border-amber-500/30 text-amber-300"
-                              }`}
-                            >
+                            <div className="flex items-center gap-2 p-2 rounded-xl border text-xs bg-amber-950/40 border-amber-500/30 text-amber-300">
                               <Shield className="w-4 h-4 shrink-0" />
                               <div>
                                 <span className="font-bold block">
-                                  {isSecondBackup ? "2nd Backup Roster" : "1st Backup Roster"}
+                                  Preferred Relief Roster
                                 </span>
                                 <span className="text-[10px] opacity-80">
                                   Standby • Zero Extra Charge
@@ -1208,22 +1183,14 @@ export default function CarerPlacements() {
                         </div>
 
                         {/* Preferred Backup Explanation Notice */}
-                        <div
-                          className={`p-3.5 rounded-xl border flex items-start gap-2.5 text-xs leading-relaxed ${
-                            isSecondBackup
-                              ? "bg-blue-500/10 border-blue-500/25 text-blue-200/90"
-                              : "bg-amber-500/10 border-amber-500/25 text-amber-200/90"
-                          }`}
-                        >
-                          <Info className={`w-4 h-4 shrink-0 mt-0.5 ${isSecondBackup ? "text-blue-400" : "text-amber-400"}`} />
+                        <div className="p-3.5 rounded-xl border flex items-start gap-2.5 text-xs leading-relaxed bg-amber-500/10 border-amber-500/25 text-amber-200/90">
+                          <Info className="w-4 h-4 shrink-0 mt-0.5 text-amber-400" />
                           <div className="space-y-0.5">
                             <p className="font-bold text-xs">
-                              {isSecondBackup
-                                ? "You are selected as 2nd choice backup safety net"
-                                : "You are selected as preferred 1st choice backup"}
+                              You are designated as preferred relief/backup carer
                             </p>
                             <p className="text-[11px] opacity-80">
-                              Dates will be offered in your Offers tab when the primary carer requests holiday or emergency leave. You can accept or decline dates when offered.
+                              Dates will be offered in your Offers tab when the primary carer reports planned unavailability. You can accept or decline dates when offered.
                             </p>
                           </div>
                         </div>
@@ -1250,10 +1217,10 @@ export default function CarerPlacements() {
                           </div>
                           <div>
                             <span className="text-[10px] uppercase text-gold-100/40 font-bold block mb-0.5">
-                              Designation Priority
+                              Designation Role
                             </span>
-                            <span className={isSecondBackup ? "text-blue-300 font-semibold" : "text-amber-300 font-semibold"}>
-                              {isSecondBackup ? "2nd Choice Backup" : "1st Choice Preferred Backup"}
+                            <span className="text-amber-300 font-semibold">
+                              Preferred Relief/Backup Carer
                             </span>
                           </div>
                         </div>

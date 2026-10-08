@@ -24,6 +24,12 @@ import {
   Phone,
   Mail,
   CalendarClock,
+  LogOut,
+  Info,
+  Save,
+  ArrowRight,
+  ClipboardList,
+  Plus,
 } from "lucide-react";
 import { carerService } from "@/services/carer/carer.service";
 import { backupCarerService } from "@/services/backupCarer.service";
@@ -31,6 +37,7 @@ import { useAppSelector } from "@/store/hooks";
 import Button from "@/components/Button";
 import ThinSpinner from "@/components/ThinSpinner";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
+import HandoverNotesManager from "@/components/backup-carer/HandoverNotesManager";
 
 interface CarerPlacementDetailModalProps {
   placementId: string;
@@ -40,7 +47,7 @@ interface CarerPlacementDetailModalProps {
   isPage?: boolean;
 }
 
-type CarerPlacementTab = "overview" | "schedule" | "requirements" | "payments";
+type CarerPlacementTab = "overview" | "schedule" | "handover" | "requirements" | "payments";
 
 export default function CarerPlacementDetailModal({
   placementId,
@@ -59,6 +66,16 @@ export default function CarerPlacementDetailModal({
   const [paymentsLoading, setPaymentsLoading] = useState(false);
   const [paymentsError, setPaymentsError] = useState<string | null>(null);
   const [accepting, setAccepting] = useState(false);
+
+  // Departure Confirmation State
+  const [showDepartureConfirm, setShowDepartureConfirm] = useState(false);
+  const [isConfirmingDeparture, setIsConfirmingDeparture] = useState(false);
+
+  // Leave Request Cancellation State
+  const [cancellingLeaveId, setCancellingLeaveId] = useState<string | null>(null);
+
+  // Target Leave Request for Handover Tab Redirection
+  const [targetHandoverLeaveId, setTargetHandoverLeaveId] = useState<string | null>(null);
 
   // Hook must be called unconditionally at top of component
   const { profile } = useAppSelector((state) => state.carer);
@@ -150,6 +167,39 @@ export default function CarerPlacementDetailModal({
       showErrorToast("Error", err.message || "Failed to accept placement.");
     } finally {
       setAccepting(false);
+    }
+  };
+
+  const handleConfirmDeparture = async () => {
+    setIsConfirmingDeparture(true);
+    try {
+      await backupCarerService.confirmPlacementDeparture(placementId);
+      showSuccessToast(
+        "Departure Confirmed",
+        "Your departure has been recorded. The Grace & Goodwill team has been notified."
+      );
+      setShowDepartureConfirm(false);
+      await loadPlacement();
+    } catch (err: any) {
+      showErrorToast("Error", err.message || "Failed to confirm departure.");
+    } finally {
+      setIsConfirmingDeparture(false);
+    }
+  };
+
+  const handleCancelLeave = async (leaveId: string) => {
+    if (!window.confirm("Are you sure you want to cancel this planned unavailability request?")) {
+      return;
+    }
+    setCancellingLeaveId(leaveId);
+    try {
+      await backupCarerService.cancelLeaveRequest(leaveId);
+      showSuccessToast("Request Cancelled", "Your unavailability request has been cancelled.");
+      await loadPlacement();
+    } catch (err: any) {
+      showErrorToast("Error", err.message || "Failed to cancel unavailability request.");
+    } finally {
+      setCancellingLeaveId(null);
     }
   };
 
@@ -273,6 +323,33 @@ export default function CarerPlacementDetailModal({
       (placement.careRequest as any)?.durationCategory === "PERMANENT"
     );
 
+  const primaryCarer = placement.carerProfile;
+  const primaryCarerName = primaryCarer
+    ? `${primaryCarer.user?.firstName || primaryCarer.firstName || ""} ${
+        primaryCarer.user?.lastName || primaryCarer.lastName || ""
+      }`.trim() || "Primary Carer"
+    : "Primary Carer";
+
+  const parsedCustomHandoverNotes: any[] = (() => {
+    if (!placement?.handoverNotes) return [];
+    const raw = placement.handoverNotes.trim();
+    if (raw.startsWith("[") && raw.endsWith("]")) {
+      try {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) return parsed;
+      } catch {
+        return [];
+      }
+    }
+    return [];
+  })();
+
+  const totalHandoverNotesCount = (() => {
+    const leaveNotesCount = (placement?.leaveRequests || []).filter((r: any) => Boolean(r.handoverNotes)).length;
+    const customCount = parsedCustomHandoverNotes.length;
+    return Math.max(leaveNotesCount, customCount);
+  })();
+
   const durationText = (() => {
     const req = placement.careRequest as any;
     if (req?.duration && req.duration !== "Standard Duration") {
@@ -377,6 +454,36 @@ export default function CarerPlacementDetailModal({
               </div>
             )}
 
+            {/* Carer Permanent Departure Confirmation */}
+            {!isPendingOffer && !isRejected && (
+              placement.carerDepartedAt ? (
+                <div
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/15 text-emerald-300 text-xs font-semibold shadow-sm"
+                  title="Placement Departure Confirmed"
+                >
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>
+                    Departed{" "}
+                    {new Date(placement.carerDepartedAt).toLocaleDateString("en-GB", {
+                      day: "numeric",
+                      month: "short",
+                    })}
+                  </span>
+                </div>
+              ) : (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowDepartureConfirm(true)}
+                  className="!border-amber-500/40 !text-amber-300 hover:!bg-amber-500/15 text-xs font-semibold flex items-center gap-1.5"
+                  title="Confirm physical departure after permanently finishing placement"
+                >
+                  <LogOut className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Confirm I Have Left the Placement</span>
+                </Button>
+              )
+            )}
+
             {isPendingOffer && (
               <div className="flex items-center gap-2">
                 <Button
@@ -439,10 +546,30 @@ export default function CarerPlacementDetailModal({
             }`}
           >
             <Calendar className="w-4 h-4" />
-            <span>Schedule & Holidays</span>
+            <span>Relief Cover Schedule</span>
             {placement.leaveRequests && placement.leaveRequests.length > 0 && (
               <span className="px-1.5 py-0.5 rounded-full bg-gold-DEFAULT/20 text-gold-200 font-mono text-[10px] border border-gold-DEFAULT/30">
                 {placement.leaveRequests.length}
+              </span>
+            )}
+          </button>
+
+          <button
+            onClick={() => {
+              setTargetHandoverLeaveId(null);
+              setActiveTab("handover");
+            }}
+            className={`flex items-center gap-2 py-3.5 px-4 text-xs sm:text-sm font-bold border-b-2 transition-all whitespace-nowrap cursor-pointer ${
+              activeTab === "handover"
+                ? "border-gold-DEFAULT text-gold-DEFAULT bg-gold-DEFAULT/5"
+                : "border-transparent text-gold-100/60 hover:text-gold-200"
+            }`}
+          >
+            <ClipboardList className="w-4 h-4" />
+            <span>Handover Notes</span>
+            {totalHandoverNotesCount > 0 && (
+              <span className="px-1.5 py-0.5 rounded-full bg-gold-DEFAULT/20 text-gold-200 font-mono text-[10px] border border-gold-DEFAULT/30">
+                {totalHandoverNotesCount}
               </span>
             )}
           </button>
@@ -456,7 +583,7 @@ export default function CarerPlacementDetailModal({
             }`}
           >
             <FileText className="w-4 h-4" />
-            <span>Care Plan & Client Profile</span>
+            <span>Care Needs & Client Profile</span>
           </button>
 
           <button
@@ -693,21 +820,21 @@ export default function CarerPlacementDetailModal({
                 </div>
               </div>
 
-              {/* Booked Holidays & Leave Requests Section */}
+              {/* Unavailability & Relief Cover Section */}
               <div className="p-6 rounded-2xl border border-gold-300/20 bg-gradient-to-br from-navy-900 to-navy-950 shadow-xl space-y-4">
                 <div className="flex items-center justify-between border-b border-gold-300/10 pb-3">
                   <div className="flex items-center gap-2.5">
                     <div className="p-2 rounded-xl bg-blue-500/20 text-blue-400">
-                      <Plane className="w-5 h-5" />
+                      <Calendar className="w-5 h-5" />
                     </div>
                     <div>
                       <h4 className="text-base font-bold text-gold-200">
-                        Booked Holidays & Leave Requests
+                        Unavailability & Relief Cover
                       </h4>
                       <p className="text-xs text-gold-100/60 mt-0.5">
                         {isModalBackup
                           ? "Relief dates scheduled for this placement."
-                          : "Scheduled time off and confirmed relief coverage."}
+                          : "Scheduled planned unavailability and relief coverage."}
                       </p>
                     </div>
                   </div>
@@ -724,10 +851,10 @@ export default function CarerPlacementDetailModal({
                   </div>
                 ) : !placement.leaveRequests || placement.leaveRequests.length === 0 ? (
                   <div className="p-8 rounded-xl bg-navy-950/40 border border-gold-300/10 text-xs text-gold-100/60 text-center space-y-2">
-                    <Plane className="w-8 h-8 text-gold-300/20 mx-auto" />
-                    <p className="font-semibold text-gold-200">No holiday or time-off requests booked yet.</p>
+                    <Calendar className="w-8 h-8 text-gold-300/20 mx-auto" />
+                    <p className="font-semibold text-gold-200">No unavailability periods recorded yet.</p>
                     <p className="text-gold-100/50 max-w-md mx-auto">
-                      Whenever you need time away, submit a holiday request on your placement card and relief cover will be arranged.
+                      Whenever you need time away, report planned unavailability on your placement card and relief cover will be arranged.
                     </p>
                   </div>
                 ) : (
@@ -736,88 +863,222 @@ export default function CarerPlacementDetailModal({
                       const isConfirmed = req.status === "COVER_CONFIRMED";
                       const isOffered = req.status === "OFFERED_TO_BACKUP";
                       const isPending = req.status === "PENDING_RELIEF";
+                      const isCancelled = req.status === "CANCELLED";
                       const isApproved = Boolean(
                         req.adminNotes?.toLowerCase().includes("approved") ||
                         req.status === "NO_COVER_NEEDED"
                       );
+                      const canCancel = (isPending || isOffered) && !isCancelled;
 
                       return (
                         <div
                           key={req.id}
-                          className="p-4 rounded-xl border border-gold-300/15 bg-navy-950/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm hover:border-gold-300/30 transition-all"
+                          className="p-4 sm:p-5 rounded-2xl border border-gold-300/15 bg-navy-950/60 space-y-3 shadow-sm hover:border-gold-300/30 transition-all"
                         >
-                          <div className="space-y-1">
-                            <div className="flex items-center gap-2">
-                              <span className="font-bold text-white text-sm">
-                                {req.reason || "Holiday Leave"}
-                              </span>
-                              <span
-                                className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
-                                  isConfirmed || isApproved
-                                    ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                          {/* Top Row: Title, Dates, and Top-Right Cancel Button / Confirmed Status */}
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-1">
+                            <div className="space-y-1 min-w-0">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="font-bold text-white text-sm sm:text-base">
+                                  {req.reason || "Planned Unavailability"}
+                                </span>
+                                <span
+                                  className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
+                                    isConfirmed || isApproved
+                                      ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                                      : isOffered
+                                      ? "bg-blue-500/20 text-blue-300 border border-blue-500/30"
+                                      : isPending
+                                      ? "bg-amber-500/20 text-amber-300 border border-amber-500/30"
+                                      : "bg-slate-700/40 text-slate-400 border border-slate-600/30"
+                                  }`}
+                                >
+                                  {isConfirmed
+                                    ? "Relief Cover Confirmed"
+                                    : isApproved
+                                    ? "Approved"
                                     : isOffered
-                                    ? "bg-blue-500/20 text-blue-300 border border-blue-500/30"
+                                    ? "Pending Backup Confirmation"
                                     : isPending
-                                    ? "bg-amber-500/20 text-amber-300 border border-amber-500/30"
-                                    : "bg-slate-700/40 text-slate-400 border border-slate-600/30"
-                                }`}
-                              >
-                                {isConfirmed
-                                  ? "Approved • Cover Confirmed"
-                                  : isApproved
-                                  ? "Approved"
-                                  : isOffered
-                                  ? "Pending Backup Confirmation"
-                                  : isPending
-                                  ? "Pending Admin Review"
-                                  : req.status === "CANCELLED"
-                                  ? "Declined"
-                                  : "Pending"}
-                              </span>
+                                    ? "Awaiting Relief Cover"
+                                    : isCancelled
+                                    ? "Declined / Cancelled"
+                                    : "Pending"}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-2 text-xs text-gold-100/70">
+                                <Calendar className="w-3.5 h-3.5 text-gold-DEFAULT shrink-0" />
+                                <span>
+                                  {new Date(req.startDate).toLocaleDateString("en-GB", {
+                                    day: "numeric",
+                                    month: "short",
+                                    year: "numeric",
+                                  })}{" "}
+                                  –{" "}
+                                  {new Date(req.endDate).toLocaleDateString("en-GB", {
+                                    day: "numeric",
+                                    month: "short",
+                                    year: "numeric",
+                                  })}
+                                </span>
+                              </div>
                             </div>
-                            <div className="flex items-center gap-2 text-xs text-gold-100/70">
-                              <Calendar className="w-3.5 h-3.5 text-gold-DEFAULT" />
-                              <span>
-                                {new Date(req.startDate).toLocaleDateString("en-GB", {
-                                  day: "numeric",
-                                  month: "short",
-                                  year: "numeric",
-                                })}{" "}
-                                –{" "}
-                                {new Date(req.endDate).toLocaleDateString("en-GB", {
-                                  day: "numeric",
-                                  month: "short",
-                                  year: "numeric",
-                                })}
-                              </span>
+
+                            {/* Top Right Action & Status Area */}
+                            <div className="flex items-center gap-2.5 shrink-0 self-start sm:self-center">
+                              {isConfirmed ? (
+                                <span className="text-emerald-400 font-semibold flex items-center gap-1.5 bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/20 text-xs whitespace-nowrap">
+                                  <CheckCircle2 className="w-4 h-4 shrink-0" /> Relief Confirmed
+                                </span>
+                              ) : isApproved ? (
+                                <span className="text-emerald-400 font-semibold flex items-center gap-1.5 bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/20 text-xs whitespace-nowrap">
+                                  <CheckCircle2 className="w-4 h-4 shrink-0" /> Approved
+                                </span>
+                              ) : isOffered ? (
+                                <span className="text-blue-400 font-medium flex items-center gap-1.5 bg-blue-500/10 px-3 py-1.5 rounded-lg border border-blue-500/20 text-xs whitespace-nowrap">
+                                  ⏳ Awaiting backup response
+                                </span>
+                              ) : isCancelled ? (
+                                <span className="text-slate-400 font-medium flex items-center gap-1.5 bg-slate-800/40 px-3 py-1.5 rounded-lg border border-slate-700/30 text-xs whitespace-nowrap">
+                                  Cancelled
+                                </span>
+                              ) : null}
+
+                              {canCancel && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleCancelLeave(req.id)}
+                                  disabled={cancellingLeaveId === req.id}
+                                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-300 hover:text-rose-200 hover:bg-rose-500/20 bg-rose-500/10 px-3 py-1.5 rounded-lg border border-rose-500/30 transition-all cursor-pointer disabled:opacity-50 whitespace-nowrap shadow-sm hover:scale-[1.02]"
+                                  title="Cancel this leave request"
+                                >
+                                  {cancellingLeaveId === req.id ? (
+                                    <ThinSpinner className="w-3.5 h-3.5 animate-spin text-rose-400" />
+                                  ) : (
+                                    <XCircle className="w-3.5 h-3.5 text-rose-400" />
+                                  )}
+                                  <span>Cancel Request</span>
+                                </button>
+                              )}
                             </div>
                           </div>
 
-                          <div className="text-xs text-gold-100/70">
-                            {isConfirmed ? (
-                              <span className="text-emerald-400 font-semibold flex items-center gap-1.5 bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/20">
-                                <CheckCircle2 className="w-4 h-4" /> Relief Confirmed
-                              </span>
-                            ) : isApproved ? (
-                              <span className="text-emerald-400 font-semibold flex items-center gap-1.5 bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/20">
-                                <CheckCircle2 className="w-4 h-4" /> Approved by Admin
-                              </span>
-                            ) : isOffered ? (
-                              <span className="text-blue-400 font-medium bg-blue-500/10 px-3 py-1.5 rounded-lg border border-blue-500/20">
-                                ⏳ Awaiting backup carer response
-                              </span>
-                            ) : (
-                              <span className="text-amber-400/90 font-medium bg-amber-500/10 px-3 py-1.5 rounded-lg border border-amber-500/20">
-                                Awaiting admin review
-                              </span>
-                            )}
-                          </div>
+                          {/* Beautiful Individual Leave Handover Directives Display */}
+                          {(() => {
+                            const matchingHandover = parsedCustomHandoverNotes.find((n: any) => n.leaveRequestId === req.id);
+                            const handoverText = matchingHandover?.notes || req.handoverNotes;
+                            const isComplete = Boolean(matchingHandover?.isComplete);
+
+                            if (handoverText) {
+                              return (
+                                <div className="mt-2 p-4 rounded-xl border border-gold-300/20 bg-gradient-to-br from-navy-900/90 to-navy-950/90 space-y-3 shadow-inner">
+                                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-gold-300/10">
+                                    <div className="flex items-center gap-2">
+                                      <FileText className="w-4 h-4 text-gold-DEFAULT shrink-0" />
+                                      <span className="text-xs font-bold text-gold-200">
+                                        Handover Directives & Instructions
+                                      </span>
+                                    </div>
+                                    {isComplete ? (
+                                      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 shrink-0">
+                                        <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                                        Handover Verified Complete
+                                      </span>
+                                    ) : (
+                                      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500/15 text-amber-300 border border-amber-500/30 shrink-0">
+                                        <Clock className="w-3 h-3 text-amber-400" />
+                                        Pending Completion
+                                      </span>
+                                    )}
+                                  </div>
+
+                                  <div className="text-xs text-gold-100/90 bg-navy-950/80 p-3 rounded-lg border border-gold-300/10 break-words break-all whitespace-pre-wrap leading-relaxed max-w-full">
+                                    {handoverText}
+                                  </div>
+
+                                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 text-[11px] text-gold-100/70 border-t border-gold-300/10">
+                                    <div className="flex items-center gap-3 flex-wrap">
+                                      <span>
+                                        Added by <strong className="text-white">{matchingHandover?.authorName || primaryCarerName}</strong>
+                                      </span>
+                                      {(matchingHandover?.updatedAt || req.updatedAt) && (
+                                        <span className="text-gold-100/50">
+                                          Updated: {new Date(matchingHandover?.updatedAt || req.updatedAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
+                                        </span>
+                                      )}
+                                    </div>
+
+                                    <div className="flex items-center gap-2 flex-wrap">
+                                      <p className="text-[11px] text-amber-300/80 italic hidden lg:block">
+                                        To edit or mark complete, review in Handover Notes tab:
+                                      </p>
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          setTargetHandoverLeaveId(req.id);
+                                          setActiveTab("handover");
+                                        }}
+                                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-gold-DEFAULT/15 hover:bg-gold-DEFAULT/25 text-gold-200 border border-gold-DEFAULT/30 transition-all cursor-pointer shadow-sm hover:scale-[1.02]"
+                                      >
+                                        <span>Go to Handover Notes</span>
+                                        <ArrowRight className="w-3.5 h-3.5" />
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            }
+
+                            return (
+                              <div className="mt-2.5 p-3 rounded-xl border border-dashed border-gold-300/15 bg-navy-900/30 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-gold-100/60">
+                                <div className="flex items-center gap-2">
+                                  <Info className="w-3.5 h-3.5 text-gold-100/40 shrink-0" />
+                                  <span>No handover note recorded yet for this leave period.</span>
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setTargetHandoverLeaveId(req.id);
+                                    setActiveTab("handover");
+                                  }}
+                                  className="inline-flex items-center gap-1 text-xs text-gold-DEFAULT hover:underline font-semibold cursor-pointer shrink-0"
+                                >
+                                  <Plus className="w-3 h-3" /> Add Handover Note
+                                </button>
+                              </div>
+                            );
+                          })()}
                         </div>
                       );
                     })}
                   </div>
                 )}
               </div>
+            </div>
+          )}
+
+          {/* TAB 3: DEDICATED HANDOVER NOTES TAB */}
+          {activeTab === "handover" && (
+            <div className="space-y-6">
+              <HandoverNotesManager
+                placement={placement}
+                currentUserName={
+                  profile
+                    ? `${(profile as any).user?.firstName || (profile as any).firstName || ""}`.trim() +
+                      ((profile as any).user?.lastName || (profile as any).lastName
+                        ? ` ${(profile as any).user?.lastName || (profile as any).lastName}`.trim()
+                        : "") || "Carer"
+                    : "Carer"
+                }
+                currentUserRole={
+                  placement.activeReliefCarerProfileId === profile?.id ||
+                  placement.myRole === "ACTIVE_RELIEF_CARER"
+                    ? "Relief Carer"
+                    : "Primary Carer"
+                }
+                targetLeaveRequestId={targetHandoverLeaveId}
+                onHandoverUpdated={loadPlacement}
+              />
             </div>
           )}
 
@@ -1077,6 +1338,65 @@ export default function CarerPlacementDetailModal({
           )}
         </div>
       </main>
+
+      {/* Permanent Departure Confirmation Dialog */}
+      {showDepartureConfirm && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-navy-950/80 p-4 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="w-full max-w-md rounded-2xl border border-amber-500/30 bg-navy-900 shadow-2xl p-6 relative space-y-4">
+            <button
+              onClick={() => setShowDepartureConfirm(false)}
+              disabled={isConfirmingDeparture}
+              className="absolute right-4 top-4 rounded-full p-2 text-gold-100/60 hover:bg-gold-300/10 hover:text-gold-200 transition-colors cursor-pointer"
+            >
+              <X className="h-5 w-5" />
+            </button>
+
+            <div className="flex items-center gap-3">
+              <div className="p-3 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                <LogOut className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-white">Confirm Placement Departure</h3>
+                <p className="text-xs text-gold-100/60">
+                  Client: <span className="text-gold-200 font-semibold">{clientName}</span>
+                </p>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-xl border border-amber-500/20 bg-amber-500/10 space-y-2 text-xs text-amber-200">
+              <p className="font-semibold text-amber-300">
+                Are you sure you want to confirm your departure?
+              </p>
+              <p className="text-amber-100/80 leading-relaxed">
+                Please only confirm once you have permanently completed your placement, finished your handover, and physically left the client&apos;s home.
+              </p>
+              <p className="text-[11px] text-amber-200/70 pt-1 border-t border-amber-500/20">
+                Note: This does not affect your ability to submit travel or placement expenses, which remain accessible for up to 30 days.
+              </p>
+            </div>
+
+            <div className="flex justify-end gap-3 pt-2">
+              <Button
+                variant="ghost-gold"
+                size="sm"
+                onClick={() => setShowDepartureConfirm(false)}
+                disabled={isConfirmingDeparture}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={handleConfirmDeparture}
+                disabled={isConfirmingDeparture}
+                className="font-bold shadow-md shadow-amber-500/20 !bg-amber-600 hover:!bg-amber-500 !text-white"
+              >
+                {isConfirmingDeparture ? "Confirming..." : "Yes, Confirm Departure"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 

@@ -4,11 +4,9 @@ import { useState, useEffect } from "react";
 import {
   Calendar,
   Clock,
-  Plane,
+  FileText,
+  Info,
   X,
-  Sparkles,
-  AlertCircle,
-  CheckCircle2,
 } from "lucide-react";
 import Button from "@/components/Button";
 import { backupCarerService } from "@/services/backupCarer.service";
@@ -31,7 +29,6 @@ export default function BookTimeOffModal({
 }: BookTimeOffModalProps) {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [reason, setReason] = useState("Annual Leave / Holiday");
   const [notes, setNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -71,21 +68,21 @@ export default function BookTimeOffModal({
 
     setIsSubmitting(true);
     try {
-      const fullReason = notes.trim() ? `${reason}: ${notes.trim()}` : reason;
       await backupCarerService.bookLeaveRequest(placementId, {
         startDate,
         endDate,
-        reason: fullReason,
+        reason: "Planned Unavailability",
+        handoverNotes: notes.trim() || undefined,
       });
 
       showSuccessToast(
-        "Time-off Request Submitted",
-        "Your holiday dates have been recorded. Our team will offer relief cover to the preferred backup carer."
+        "Unavailability Recorded",
+        "Your unavailability dates have been recorded. Our coordination team will arrange relief cover."
       );
       if (onLeaveBooked) onLeaveBooked();
       onClose();
     } catch (err: any) {
-      showErrorToast("Error", err.message || "Failed to book time off.");
+      showErrorToast("Error", err.message || "Failed to submit unavailability.");
     } finally {
       setIsSubmitting(false);
     }
@@ -94,32 +91,36 @@ export default function BookTimeOffModal({
   const minDate = new Date().toISOString().split("T")[0];
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-navy-950/80 p-4 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="w-full max-w-lg rounded-2xl border border-gold-300/20 bg-navy-900 shadow-2xl p-6 relative space-y-5">
-        <button
-          onClick={onClose}
-          className="absolute right-4 top-4 rounded-full p-2 text-gold-100/60 hover:bg-gold-300/10 hover:text-gold-200 transition-colors cursor-pointer"
-        >
-          <X className="h-5 w-5" />
-        </button>
-
-        <div className="flex items-center gap-3">
-          <div className="p-3 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
-            <Plane className="w-6 h-6" />
+    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-navy-950/80 p-3 sm:p-4 backdrop-blur-sm animate-in fade-in duration-200 overflow-hidden">
+      <div className="w-full max-w-2xl max-h-[90vh] flex flex-col rounded-2xl border border-gold-300/20 bg-navy-900 shadow-2xl relative overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center justify-between p-4 sm:p-5 border-b border-gold-300/10 shrink-0 bg-navy-900">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
+              <Calendar className="w-5 h-5 sm:w-6 sm:h-6" />
+            </div>
+            <div>
+              <h3 className="text-base sm:text-lg font-bold text-white">Report Unavailability / Arrange Relief Cover</h3>
+              <p className="text-xs text-gold-100/60">
+                Placement: <span className="text-gold-200 font-semibold">{clientName}</span>
+              </p>
+            </div>
           </div>
-          <div>
-            <h3 className="text-xl font-bold text-white">Book Holiday / Time Off</h3>
-            <p className="text-xs text-gold-100/60">
-              Placement: <span className="text-gold-200 font-semibold">{clientName}</span>
-            </p>
-          </div>
+          <button
+            onClick={onClose}
+            type="button"
+            className="rounded-full p-2 text-gold-100/60 hover:bg-gold-300/10 hover:text-gold-200 transition-colors cursor-pointer"
+          >
+            <X className="h-5 w-5" />
+          </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Scrollable Form Body */}
+        <form id="timeoff-form" onSubmit={handleSubmit} className="flex-1 min-h-0 overflow-y-auto p-5 sm:p-6 space-y-5 custom-scrollbar">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-gold-200 uppercase tracking-wider block">
-                Start Date (First Day Off)
+                Start Date (First Day Unavailable)
               </label>
               <input
                 type="date"
@@ -133,7 +134,7 @@ export default function BookTimeOffModal({
 
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-gold-200 uppercase tracking-wider block">
-                End Date (Last Day Off)
+                End Date (Last Day Unavailable)
               </label>
               <input
                 type="date"
@@ -157,57 +158,79 @@ export default function BookTimeOffModal({
             </div>
           )}
 
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-gold-200 uppercase tracking-wider block">
-              Reason
-            </label>
-            <select
-              value={reason}
-              onChange={(e) => setReason(e.target.value)}
-              className="w-full rounded-xl border border-gold-300/20 bg-navy-950 px-3 py-2 text-xs text-gold-100 focus:border-gold outline-none"
-            >
-              <option value="Annual Leave / Holiday">Annual Leave / Holiday</option>
-              <option value="Family / Personal Commitment">Family / Personal Commitment</option>
-              <option value="Medical / Dental Appointment">Medical / Dental Appointment</option>
-              <option value="Rest / Rotation Break">Rest / Rotation Break</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
+          {/* Handover Information Card */}
+          <div className="p-4 sm:p-5 rounded-2xl border border-gold-300/20 bg-gradient-to-br from-navy-900 to-navy-950 shadow-lg space-y-4">
+            <div className="flex items-center gap-2.5 border-b border-gold-300/10 pb-3">
+              <div className="p-2 rounded-xl bg-gold-500/20 text-gold-300">
+                <FileText className="w-4 h-4" />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-gold-200">
+                  Handover Information
+                </h4>
+                <p className="text-[11px] text-gold-100/60 mt-0.5">
+                  Practical information for the incoming carer to maintain continuity of support.
+                </p>
+              </div>
+            </div>
 
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-gold-200 uppercase tracking-wider block">
-              Handover Notes / Specific Instructions (Optional)
-            </label>
-            <textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="Any helpful handover points for the relief carer or care team..."
-              rows={2}
-              className="w-full rounded-xl border border-gold-300/20 bg-navy-950 px-3 py-2 text-xs text-gold-100 placeholder:text-gold-100/30 focus:border-gold outline-none"
-            />
-          </div>
+            {/* Guidance callout box */}
+            <div className="p-3.5 rounded-xl border border-gold-300/15 bg-navy-950/70 space-y-2 text-xs text-gold-100/80">
+              <div className="flex items-center gap-2 font-semibold text-gold-200 text-xs">
+                <Info className="w-3.5 h-3.5 text-gold-DEFAULT shrink-0" />
+                <span>To help the incoming carer maintain continuity of support, you may wish to include:</span>
+              </div>
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1.5 text-[11px] text-gold-100/70 pl-2 list-disc list-inside">
+                <li>Any recent changes in the client&apos;s health, mobility or general wellbeing</li>
+                <li>Any recent falls, hospital visits or significant incidents</li>
+                <li>Medication-related information or recent changes to be aware of</li>
+                <li>Changes to routine, preferences or behaviour</li>
+                <li>Upcoming appointments or commitments</li>
+                <li>Mobility equipment or practical household information</li>
+                <li>Relevant risks or concerns</li>
+                <li>Anything else that may help maintain continuity of support</li>
+              </ul>
+            </div>
 
-          <div className="flex justify-end gap-3 pt-3 border-t border-gold-300/10">
-            <Button
-              variant="ghost-gold"
-              size="sm"
-              type="button"
-              onClick={onClose}
-              disabled={isSubmitting}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="primary"
-              size="sm"
-              type="submit"
-              disabled={isSubmitting || !startDate || !endDate}
-              className="font-bold shadow-md shadow-gold/20"
-            >
-              {isSubmitting ? "Submitting..." : "Submit Holiday Request"}
-            </Button>
+            {/* Textarea */}
+            <div className="space-y-1.5">
+              <textarea
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Enter handover details, routines, medication notes, or practical instructions here..."
+                rows={4}
+                className="w-full rounded-xl border border-gold-300/20 bg-navy-950 px-3.5 py-2.5 text-xs text-gold-100 placeholder:text-gold-100/30 focus:border-gold outline-none resize-y"
+              />
+            </div>
+
+            <p className="text-[11px] text-gold-100/50">
+              Please ensure handover details are provided so the incoming relief carer has clear context.
+            </p>
           </div>
         </form>
+
+        {/* Sticky Footer */}
+        <div className="flex justify-end gap-3 p-4 sm:px-6 border-t border-gold-300/10 bg-navy-950/80 shrink-0">
+          <Button
+            variant="ghost-gold"
+            size="sm"
+            type="button"
+            onClick={onClose}
+            disabled={isSubmitting}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="primary"
+            size="sm"
+            type="submit"
+            form="timeoff-form"
+            disabled={isSubmitting || !startDate || !endDate}
+            className="font-bold shadow-md shadow-gold/20"
+          >
+            {isSubmitting ? "Submitting..." : "Submit Unavailability"}
+          </Button>
+        </div>
       </div>
     </div>
   );

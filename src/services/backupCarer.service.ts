@@ -94,7 +94,7 @@ export const backupCarerService = {
    */
   async bookLeaveRequest(
     placementId: string,
-    payload: { startDate: string; endDate: string; reason?: string }
+    payload: { startDate: string; endDate: string; reason?: string; handoverNotes?: string }
   ): Promise<CarerLeaveRequest> {
     try {
       return await apiFetch(`/carer/placements/${placementId}/leave-requests`, {
@@ -109,7 +109,8 @@ export const backupCarerService = {
         carerProfileId: "current-carer",
         startDate: payload.startDate,
         endDate: payload.endDate,
-        reason: payload.reason || "Holiday / Rest Break",
+        reason: payload.reason || "Planned Unavailability",
+        handoverNotes: payload.handoverNotes || null,
         status: "PENDING_RELIEF",
         requestedAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -118,6 +119,63 @@ export const backupCarerService = {
       const existing = getLocalStore<CarerLeaveRequest[]>(STORAGE_KEY_LEAVE_REQUESTS, []);
       setLocalStore(STORAGE_KEY_LEAVE_REQUESTS, [newLeave, ...existing]);
       return newLeave;
+    }
+  },
+
+  /**
+   * Cancel an upcoming leave request
+   */
+  async cancelLeaveRequest(leaveRequestId: string): Promise<any> {
+    try {
+      return await apiFetch(`/carer/leave-requests/${leaveRequestId}`, {
+        method: "DELETE",
+      });
+    } catch (err) {
+      console.warn("Failed to cancel leave request on backend, fallback locally", err);
+      const existing = getLocalStore<CarerLeaveRequest[]>(STORAGE_KEY_LEAVE_REQUESTS, []);
+      const updated = existing.map((l) =>
+        l.id === leaveRequestId ? { ...l, status: "CANCELLED" as any } : l
+      );
+      setLocalStore(STORAGE_KEY_LEAVE_REQUESTS, updated);
+      return { success: true };
+    }
+  },
+
+  /**
+   * Update Handover Information and/or mark handover as complete
+   */
+  async updatePlacementHandover(
+    placementId: string,
+    payload: {
+      handoverNotes?: string;
+      leaveHandoverNotes?: string;
+      markAsComplete?: boolean;
+      departureTime?: string;
+      leaveRequestId?: string;
+    }
+  ): Promise<any> {
+    try {
+      return await apiFetch(`/carer/placements/${placementId}/handover`, {
+        method: "PATCH",
+        body: JSON.stringify(payload),
+      });
+    } catch (err) {
+      console.warn("Failed to update handover on backend, fallback locally", err);
+      return { success: true, ...payload };
+    }
+  },
+
+  /**
+   * Confirm Carer Has Physically Left the Placement Permanently
+   */
+  async confirmPlacementDeparture(placementId: string): Promise<any> {
+    try {
+      return await apiFetch(`/carer/placements/${placementId}/confirm-departure`, {
+        method: "POST",
+      });
+    } catch (err) {
+      console.warn("Failed to confirm departure on backend, fallback locally", err);
+      return { success: true, carerDepartedAt: new Date().toISOString() };
     }
   },
 

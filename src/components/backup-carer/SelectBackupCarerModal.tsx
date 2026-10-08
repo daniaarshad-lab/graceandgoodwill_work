@@ -291,18 +291,16 @@ export default function SelectBackupCarerModal({
       await backupCarerService.designateBackupCarer(
         placementId,
         targetCarerId,
-        activePriority
+        1
       );
 
       showSuccessToast(
-        `${activePriority === 1 ? "1st Choice" : "2nd Choice"} Backup Carer Designated`,
-        `${chosen.name} has been set as the ${
-          activePriority === 1 ? "1st Choice Preferred" : "2nd Choice Secondary"
-        } Backup Carer for ${clientName}. Zero extra fees.`
+        "Preferred Backup Carer Designated",
+        `${chosen.name} has been set as the Preferred Backup Carer for ${clientName}. Zero extra fees.`
       );
 
       if (onBackupSelected) {
-        onBackupSelected(chosen, activePriority);
+        onBackupSelected(chosen, 1);
       }
       setSelectedCarerId("");
       onClose();
@@ -313,12 +311,10 @@ export default function SelectBackupCarerModal({
     }
   };
 
-  const handleRemoveExisting = async (carerProfileId: string, priority: number) => {
+  const handleRemoveExisting = async (carerProfileId: string) => {
     if (
       !confirm(
-        `Are you sure you want to remove this ${
-          priority === 1 ? "1st Choice" : "2nd Choice"
-        } Backup Carer?`
+        "Are you sure you want to remove this Preferred Backup Carer?"
       )
     ) {
       return;
@@ -329,10 +325,10 @@ export default function SelectBackupCarerModal({
       await backupCarerService.removeBackupCarer(placementId, carerProfileId);
       showSuccessToast(
         "Backup Carer Removed",
-        `${priority === 1 ? "1st Choice" : "2nd Choice"} Backup Carer removed successfully.`
+        "Preferred Backup Carer removed successfully. You can select another backup carer below."
       );
       if (onBackupRemoved) {
-        onBackupRemoved(carerProfileId, priority);
+        onBackupRemoved(carerProfileId, 1);
       }
     } catch (err: any) {
       showErrorToast("Error", err.message || "Failed to remove backup carer.");
@@ -359,7 +355,7 @@ export default function SelectBackupCarerModal({
           </div>
           <div>
             <h3 className="text-xl font-bold text-white">
-              Designate Backup Carer (Up to 2)
+              Designate Preferred Backup Carer
             </h3>
             <p className="text-xs text-gold-100/60">
               Placement: <span className="text-gold-200 font-semibold">{clientName}</span>
@@ -367,75 +363,32 @@ export default function SelectBackupCarerModal({
           </div>
         </div>
 
-        {/* Priority Slot Selection Tabs (1st Choice vs 2nd Choice) */}
-        <div className="grid grid-cols-2 gap-2 p-1 rounded-xl bg-navy-950/80 border border-gold-300/15 shrink-0">
-          <button
-            type="button"
-            onClick={() => {
-              setActivePriority(1);
-              setSelectedCarerId("");
-            }}
-            className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-              activePriority === 1
-                ? "bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-md"
-                : "text-gold-100/60 hover:text-gold-100 border border-transparent"
-            }`}
-          >
-            <Shield className="w-3.5 h-3.5" />
-            <span>1st Choice (Preferred)</span>
-            {backup1 && (
-              <span className="w-2 h-2 rounded-full bg-emerald-400 ml-1" title="Allocated" />
-            )}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => {
-              setActivePriority(2);
-              setSelectedCarerId("");
-            }}
-            className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-              activePriority === 2
-                ? "bg-blue-500/20 text-blue-300 border border-blue-500/40 shadow-md"
-                : "text-gold-100/60 hover:text-gold-100 border border-transparent"
-            }`}
-          >
-            <Shield className="w-3.5 h-3.5" />
-            <span>2nd Choice (Secondary)</span>
-            {backup2 && (
-              <span className="w-2 h-2 rounded-full bg-emerald-400 ml-1" title="Allocated" />
-            )}
-          </button>
-        </div>
-
-        {/* Currently Allocated Carer Card for this Slot */}
-        {currentForActivePriority ? (
+        {/* Currently Allocated Preferred Backup Carer Card */}
+        {backup1 ? (
           <div className="p-3 rounded-xl bg-navy-950/70 border border-amber-500/30 flex items-center justify-between gap-3 shrink-0">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center justify-center font-bold text-sm shrink-0 overflow-hidden">
-                {currentForActivePriority.profilePhotoUrl ? (
+                {backup1.profilePhotoUrl ? (
                   <img
-                    src={currentForActivePriority.profilePhotoUrl}
+                    src={backup1.profilePhotoUrl}
                     alt="Current Backup"
                     className="w-full h-full rounded-full object-cover"
                   />
                 ) : (
-                  getCarerDisplayName(currentForActivePriority).charAt(0) || "B"
+                  getCarerDisplayName(backup1).charAt(0) || "B"
                 )}
               </div>
               <div className="space-y-0.5">
                 <div className="flex items-center gap-2">
                   <span className="font-bold text-sm text-white">
-                    {getCarerDisplayName(currentForActivePriority)}
+                    {getCarerDisplayName(backup1)}
                   </span>
                   <span className="px-2 py-0.2 rounded-full text-[9px] font-bold uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                    Currently Assigned
+                    Currently Assigned Preferred Backup
                   </span>
                 </div>
                 <p className="text-[11px] text-gold-100/60">
-                  {activePriority === 1
-                    ? "First in line when primary carer is on leave"
-                    : "Second in line if first choice is unavailable"}
+                  Client&apos;s preferred relief person. If rejected or unavailable, select another carer below to replace.
                 </p>
               </div>
             </div>
@@ -445,14 +398,12 @@ export default function SelectBackupCarerModal({
               size="sm"
               onClick={() =>
                 handleRemoveExisting(
-                  currentForActivePriority.carerProfileId ||
-                    currentForActivePriority.id,
-                  activePriority
+                  backup1.carerProfileId || backup1.id
                 )
               }
-              disabled={isRemovingId === (currentForActivePriority.carerProfileId || currentForActivePriority.id)}
+              disabled={isRemovingId === (backup1.carerProfileId || backup1.id)}
               className="text-xs !border-rose-500/30 !text-rose-400 hover:!bg-rose-500/10 shrink-0"
-              title="Remove this backup carer from this slot"
+              title="Remove this backup carer"
             >
               <Trash2 className="w-3.5 h-3.5 mr-1" />
               Remove
@@ -462,11 +413,8 @@ export default function SelectBackupCarerModal({
           <div className="p-2.5 rounded-xl bg-gold-300/5 border border-gold-300/15 text-xs text-gold-100/70 flex items-center gap-2 shrink-0">
             <Sparkles className="w-4 h-4 text-gold-DEFAULT shrink-0" />
             <span>
-              Select a carer below to assign as your{" "}
-              <strong className="text-white">
-                {activePriority === 1 ? "1st Choice Preferred" : "2nd Choice Secondary"}
-              </strong>{" "}
-              Backup Carer. Zero extra fees.
+              Select a carer below to designate as your{" "}
+              <strong className="text-white">Preferred Backup Carer</strong>. Zero extra fees.
             </span>
           </div>
         )}
@@ -728,7 +676,7 @@ export default function SelectBackupCarerModal({
         {/* Modal Actions */}
         <div className="flex justify-between items-center pt-3 border-t border-gold-300/10 shrink-0">
           <p className="text-[11px] text-gold-100/50">
-            {activePriority === 1 ? "Configuring 1st Choice" : "Configuring 2nd Choice"}
+            Designating Preferred Backup Carer
           </p>
 
           <div className="flex items-center gap-2.5">
@@ -750,7 +698,7 @@ export default function SelectBackupCarerModal({
             >
               {isSubmitting
                 ? "Assigning..."
-                : `Confirm as ${activePriority === 1 ? "1st Choice" : "2nd Choice"}`}
+                : "Confirm as Preferred Backup Carer"}
             </Button>
           </div>
         </div>

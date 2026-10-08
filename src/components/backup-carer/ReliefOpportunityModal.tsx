@@ -261,7 +261,7 @@ export default function ReliefOpportunityModal({
             <p className="text-xs text-gold-100/80 leading-relaxed">
               A relief placement opportunity is available for a client where you are designated as the{" "}
               <strong className="text-amber-300">Preferred Relief/Backup Carer</strong>. The primary
-              carer will be taking approved annual leave.
+              carer has reported planned unavailability and requested relief cover.
             </p>
 
             {/* Client & Placement Details Card */}

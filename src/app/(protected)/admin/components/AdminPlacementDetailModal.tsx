@@ -48,6 +48,7 @@ import PromoteBackupModal from "@/components/backup-carer/PromoteBackupModal";
 import AdminApplicationsModal from "./AdminApplicationsModal";
 import { backupCarerService } from "@/services/backupCarer.service";
 import { CarerLeaveRequest } from "@/types/backupCarer.types";
+import HandoverNotesManager from "@/components/backup-carer/HandoverNotesManager";
 
 interface AdminPlacementDetailModalProps {
   placementId: string;
@@ -287,7 +288,7 @@ export default function AdminPlacementDetailModal({
         leaveId,
         "Approved by Admin",
       );
-      toast.success("Leave request approved successfully!");
+      toast.success("Relief cover confirmed successfully!");
       setLeaveRequests((prev) =>
         prev.map((l) =>
           l.id === leaveId ? { ...l, adminNotes: "Approved by Admin" } : l,
@@ -296,7 +297,7 @@ export default function AdminPlacementDetailModal({
       await loadPlacement();
       if (onPlacementUpdated) onPlacementUpdated();
     } catch (err: any) {
-      toast.error(err.message || "Failed to approve leave request");
+      toast.error(err.message || "Failed to confirm relief cover");
     } finally {
       setApprovingLeaveId(null);
     }
@@ -609,17 +610,9 @@ export default function AdminPlacementDetailModal({
     placement.preferredBackupCarer ||
     preferredBackupCarer ||
     null;
-  const backup2 =
-    placement.backupCarers?.find((b: any) => b.priority === 2)?.carerProfile ||
-    null;
-
   const backup1Name = backup1
     ? `${backup1.user?.firstName || backup1.firstName || ""} ${backup1.user?.lastName || backup1.lastName || ""}`.trim() ||
-      "1st Choice Backup"
-    : "";
-  const backup2Name = backup2
-    ? `${backup2.user?.firstName || backup2.firstName || ""} ${backup2.user?.lastName || backup2.lastName || ""}`.trim() ||
-      "2nd Choice Backup"
+      "Preferred Relief/Backup Carer"
     : "";
   const backupName = backup1Name;
 
@@ -816,7 +809,7 @@ export default function AdminPlacementDetailModal({
             }`}
           >
             <Calendar className="w-4 h-4" />
-            <span>Schedule & Holiday Relief</span>
+            <span>Relief Cover Schedule</span>
             {pendingLeavesCount > 0 && (
               <span className="px-1.5 py-0.5 rounded-full bg-amber-500 text-navy-950 font-black text-[9px] animate-pulse">
                 {pendingLeavesCount}
@@ -833,7 +826,7 @@ export default function AdminPlacementDetailModal({
             }`}
           >
             <FileText className="w-4 h-4" />
-            <span>Clinical Care Plan</span>
+            <span>Care Needs</span>
           </button>
 
           <button
@@ -935,8 +928,8 @@ export default function AdminPlacementDetailModal({
                   >
                     <Users className="w-3.5 h-3.5 mr-1.5" />
                     {backupName
-                      ? "Change Backup Carers"
-                      : "Designate Backup Carers"}
+                      ? "Change Backup Carer"
+                      : "Designate Preferred Backup"}
                   </Button>
                 </div>
 
@@ -1118,11 +1111,11 @@ export default function AdminPlacementDetailModal({
                     </div>
                     <div>
                       <h4 className="text-base font-bold text-gold-200">
-                        Primary Carer Holiday & Leave Requests
+                        Primary Carer Unavailability & Relief Cover
                       </h4>
                       <p className="text-xs text-gold-100/60 mt-0.5">
-                        Manage primary carer absences and dispatch 1-click
-                        relief offers to the Preferred Backup Carer.
+                        Manage primary carer planned unavailability and arrange
+                        relief cover with the Preferred Relief/Backup Carer.
                       </p>
                     </div>
                   </div>
@@ -1130,7 +1123,7 @@ export default function AdminPlacementDetailModal({
 
                 {leaveRequests.length === 0 ? (
                   <div className="p-8 rounded-xl bg-navy-950/40 border border-gold-300/10 text-xs text-gold-100/60 text-center">
-                    No holiday or time-off requests registered for this
+                    No unavailability periods recorded for this
                     placement.
                   </div>
                 ) : (
@@ -1158,12 +1151,6 @@ export default function AdminPlacementDetailModal({
                           (!reliefAssignmentCarerId ||
                             reliefAssignmentCarerId === backup1?.id)) ||
                           reliefAssignmentCarerId === backup1?.id);
-
-                      const isOfferedToBackup2 =
-                        Boolean(backup2) &&
-                        ((isOffered &&
-                          reliefAssignmentCarerId === backup2?.id) ||
-                          reliefAssignmentCarerId === backup2?.id);
 
                       const reqCarer = ((req as any).carerProfile ||
                         placement.carerProfile) as any;
@@ -1381,7 +1368,7 @@ export default function AdminPlacementDetailModal({
                                 {isApproved ? (
                                   <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 shrink-0">
                                     <Check className="w-3.5 h-3.5 text-emerald-400" />
-                                    Leave Approved
+                                    Relief Cover Confirmed
                                   </span>
                                 ) : (
                                   <Button
@@ -1393,14 +1380,14 @@ export default function AdminPlacementDetailModal({
                                   >
                                     <Check className="w-3.5 h-3.5 mr-1 text-emerald-400" />
                                     {approvingLeaveId === req.id
-                                      ? "Approving..."
-                                      : "Approve Leave"}
+                                      ? "Confirming..."
+                                      : "Confirm Relief Cover"}
                                   </Button>
                                 )}
                               </div>
                             )}
 
-                            {/* Pending Relief Dispatch Options (Buttons for 1st Backup, 2nd Backup, and Approve Leave) */}
+                            {/* Pending Relief Dispatch Options (Dispatch to Preferred Backup, or Confirm Relief Cover) */}
                             {!isConfirmed && (
                               <div className="p-5 rounded-2xl bg-navy-950/60 border border-gold-300/15 space-y-4">
                                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gold-300/10 pb-3">
@@ -1411,16 +1398,16 @@ export default function AdminPlacementDetailModal({
                                     </h5>
                                     <p className="text-[11px] text-gold-100/60 mt-0.5">
                                       Send a 1-click relief opportunity to
-                                      either designated backup carer, or approve
-                                      the leave directly.
+                                      either designated backup carer, or confirm
+                                      relief cover directly.
                                     </p>
                                   </div>
 
-                                  {/* Approve Leave Button */}
+                                  {/* Confirm Relief Cover Button */}
                                   {isApproved ? (
                                     <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 shrink-0">
                                       <Check className="w-3.5 h-3.5 text-emerald-400" />
-                                      Leave Approved
+                                      Relief Cover Confirmed
                                     </span>
                                   ) : (
                                     <Button
@@ -1432,69 +1419,61 @@ export default function AdminPlacementDetailModal({
                                     >
                                       <Check className="w-3.5 h-3.5 mr-1 text-emerald-400" />
                                       {approvingLeaveId === req.id
-                                        ? "Approving..."
-                                        : "Approve Leave"}
+                                        ? "Confirming..."
+                                        : "Confirm Relief Cover"}
                                     </Button>
                                   )}
                                 </div>
 
-                                {/* Two Backup Carer Option Cards */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-                                  {/* Option 1: 1st Choice Preferred Backup Carer */}
-                                  <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-950/15 flex flex-col justify-between gap-3">
-                                    <div className="space-y-1">
-                                      <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider block">
-                                        1st Choice Backup Carer
-                                      </span>
-                                      <span className="font-bold text-sm text-white block">
-                                        {backup1
-                                          ? backup1Name
-                                          : "No 1st Backup Allocated"}
-                                      </span>
-                                      <p className="text-[11px] text-gold-100/60">
-                                        {backup1
-                                          ? "Designated preferred carer for first-priority relief"
-                                          : "Assign candidate from your pool as 1st backup"}
-                                      </p>
-                                    </div>
+                                {/* Preferred Backup Carer Dispatch Card */}
+                                <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-950/15 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                  <div className="space-y-1">
+                                    <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider block">
+                                      Preferred Relief / Backup Carer
+                                    </span>
+                                    <span className="font-bold text-sm text-white block">
+                                      {backup1
+                                        ? backup1Name
+                                        : "No Preferred Backup Allocated"}
+                                    </span>
+                                    <p className="text-[11px] text-gold-100/60">
+                                      {backup1
+                                        ? "Designated preferred carer for relief coverage. If declined, you can choose another backup carer."
+                                        : "Assign candidate from your pool as preferred backup to send relief offer."}
+                                    </p>
+                                  </div>
 
-                                    <div className="pt-2 border-t border-amber-500/15">
-                                      {backup1 ? (
-                                        isOfferedToBackup1 ? (
-                                          <div className="space-y-1.5">
+                                  <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
+                                    {backup1 ? (
+                                      <>
+                                        {isOfferedToBackup1 ? (
+                                          <div className="space-y-1 text-right">
                                             <Button
                                               variant="outline"
                                               size="sm"
                                               disabled
-                                              className="w-full font-bold text-xs py-2 !border-amber-500/50 !bg-amber-500/15 !text-amber-300 opacity-95 cursor-default flex items-center justify-center gap-1.5"
+                                              className="font-bold text-xs py-2 !border-amber-500/50 !bg-amber-500/15 !text-amber-300 opacity-95 cursor-default flex items-center justify-center gap-1.5"
                                             >
                                               <Clock className="w-3.5 h-3.5 text-amber-400" />
                                               Waiting for Acceptance
                                             </Button>
-                                            <div className="flex items-center justify-between text-[10px] text-amber-200/70 px-1">
-                                              <span>
-                                                Relief offer sent to{" "}
-                                                {backup1Name.split(" ")[0]}
-                                              </span>
+                                            <div className="flex items-center justify-end gap-2 text-[10px] text-amber-200/70">
+                                              <span>Offer sent</span>
                                               <button
                                                 type="button"
-                                                disabled={
-                                                  dispatchingLeaveId ===
-                                                  `${req.id}-${backup1.id}`
-                                                }
+                                                disabled={dispatchingLeaveId === `${req.id}-${backup1.id}`}
                                                 onClick={() =>
                                                   handleDispatchRelief(
                                                     req.id,
                                                     backup1,
-                                                    "1st Choice Backup",
+                                                    "Preferred Relief/Backup Carer",
                                                   )
                                                 }
                                                 className="text-amber-400 hover:text-amber-300 underline font-medium cursor-pointer"
                                               >
-                                                {dispatchingLeaveId ===
-                                                `${req.id}-${backup1.id}`
+                                                {dispatchingLeaveId === `${req.id}-${backup1.id}`
                                                   ? "Re-sending..."
-                                                  : "Re-send Offer"}
+                                                  : "Re-send"}
                                               </button>
                                             </div>
                                           </div>
@@ -1502,140 +1481,49 @@ export default function AdminPlacementDetailModal({
                                           <Button
                                             variant="primary"
                                             size="sm"
-                                            disabled={
-                                              dispatchingLeaveId ===
-                                              `${req.id}-${backup1.id}`
-                                            }
+                                            disabled={dispatchingLeaveId === `${req.id}-${backup1.id}`}
                                             onClick={() =>
                                               handleDispatchRelief(
                                                 req.id,
                                                 backup1,
-                                                "1st Choice Backup",
+                                                "Preferred Relief/Backup Carer",
                                               )
                                             }
-                                            className="w-full font-bold text-xs py-2 shadow-md shadow-gold/20"
+                                            className="font-bold text-xs py-2 shadow-md shadow-gold/20"
                                           >
                                             <Send className="w-3.5 h-3.5 mr-1.5" />
-                                            {dispatchingLeaveId ===
-                                            `${req.id}-${backup1.id}`
+                                            {dispatchingLeaveId === `${req.id}-${backup1.id}`
                                               ? "Dispatching..."
-                                              : `Send Relief Offer to ${backup1Name.split(" ")[0] || "1st Backup"}`}
+                                              : `Send Relief Offer to ${backup1Name.split(" ")[0] || "Preferred Backup"}`}
                                           </Button>
-                                        )
-                                      ) : (
+                                        )}
                                         <Button
-                                          variant="outline"
+                                          variant="ghost-gold"
                                           size="sm"
                                           onClick={() => {
                                             setBackupTargetPriority(1);
                                             setIsSelectBackupOpen(true);
                                           }}
-                                          className="w-full font-bold text-xs py-2 border-amber-500/40 text-amber-300 hover:bg-amber-500/10"
+                                          className="text-xs text-gold-100/70 hover:text-gold-200"
+                                          title="Select another carer as preferred backup"
                                         >
-                                          <UserPlus className="w-3.5 h-3.5 mr-1.5" />
-                                          + Assign 1st Backup
+                                          Choose Another
                                         </Button>
-                                      )}
-                                    </div>
-                                  </div>
-
-                                  {/* Option 2: 2nd Choice Secondary Backup Carer */}
-                                  <div className="p-4 rounded-xl border border-blue-500/30 bg-blue-950/15 flex flex-col justify-between gap-3">
-                                    <div className="space-y-1">
-                                      <span className="text-[10px] font-bold text-blue-400 uppercase tracking-wider block">
-                                        2nd Choice Backup Carer
-                                      </span>
-                                      <span className="font-bold text-sm text-white block">
-                                        {backup2
-                                          ? backup2Name
-                                          : "No 2nd Backup Allocated"}
-                                      </span>
-                                      <p className="text-[11px] text-gold-100/60">
-                                        {backup2
-                                          ? "Secondary backup safety net if 1st choice is unavailable"
-                                          : "Assign candidate from your pool as 2nd backup"}
-                                      </p>
-                                    </div>
-
-                                    <div className="pt-2 border-t border-blue-500/15">
-                                      {backup2 ? (
-                                        isOfferedToBackup2 ? (
-                                          <div className="space-y-1.5">
-                                            <Button
-                                              variant="outline"
-                                              size="sm"
-                                              disabled
-                                              className="w-full font-bold text-xs py-2 !border-blue-500/50 !bg-blue-500/15 !text-blue-300 opacity-95 cursor-default flex items-center justify-center gap-1.5"
-                                            >
-                                              <Clock className="w-3.5 h-3.5 text-blue-400" />
-                                              Waiting for Acceptance
-                                            </Button>
-                                            <div className="flex items-center justify-between text-[10px] text-blue-200/70 px-1">
-                                              <span>
-                                                Relief offer sent to{" "}
-                                                {backup2Name.split(" ")[0]}
-                                              </span>
-                                              <button
-                                                type="button"
-                                                disabled={
-                                                  dispatchingLeaveId ===
-                                                  `${req.id}-${backup2.id}`
-                                                }
-                                                onClick={() =>
-                                                  handleDispatchRelief(
-                                                    req.id,
-                                                    backup2,
-                                                    "2nd Choice Backup",
-                                                  )
-                                                }
-                                                className="text-blue-400 hover:text-blue-300 underline font-medium cursor-pointer"
-                                              >
-                                                {dispatchingLeaveId ===
-                                                `${req.id}-${backup2.id}`
-                                                  ? "Re-sending..."
-                                                  : "Re-send Offer"}
-                                              </button>
-                                            </div>
-                                          </div>
-                                        ) : (
-                                          <Button
-                                            variant="outline"
-                                            size="sm"
-                                            disabled={
-                                              dispatchingLeaveId ===
-                                              `${req.id}-${backup2.id}`
-                                            }
-                                            onClick={() =>
-                                              handleDispatchRelief(
-                                                req.id,
-                                                backup2,
-                                                "2nd Choice Backup",
-                                              )
-                                            }
-                                            className="w-full font-bold text-xs py-2 !border-blue-500/40 !text-blue-300 hover:!bg-blue-500/20"
-                                          >
-                                            <Send className="w-3.5 h-3.5 mr-1.5" />
-                                            {dispatchingLeaveId ===
-                                            `${req.id}-${backup2.id}`
-                                              ? "Dispatching..."
-                                              : `Send Relief Offer to ${backup2Name.split(" ")[0] || "2nd Backup"}`}
-                                          </Button>
-                                        )
-                                      ) : (
-                                        <Button
-                                          variant="outline"
-                                          size="sm"
-                                          onClick={() => {
-                                            setBackupTargetPriority(2);
-                                            setIsSelectBackupOpen(true);
-                                          }}
-                                          className="w-full font-bold text-xs py-2 border-blue-500/40 text-blue-300 hover:bg-blue-500/10"
-                                        >
-                                          <UserPlus className="w-3.5 h-3.5 mr-1.5" />
-                                          + Assign 2nd Backup
-                                        </Button>
-                                      )}
-                                    </div>
+                                      </>
+                                    ) : (
+                                      <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => {
+                                          setBackupTargetPriority(1);
+                                          setIsSelectBackupOpen(true);
+                                        }}
+                                        className="font-bold text-xs py-2 border-amber-500/40 text-amber-300 hover:bg-amber-500/10"
+                                      >
+                                        <UserPlus className="w-3.5 h-3.5 mr-1.5" />
+                                        + Assign Preferred Backup
+                                      </Button>
+                                    )}
                                   </div>
                                 </div>
                               </div>
@@ -1647,6 +1535,15 @@ export default function AdminPlacementDetailModal({
                   </div>
                 )}
               </div>
+
+              {/* Handover Information & Multi-Carer Notes Timeline */}
+              <HandoverNotesManager
+                placement={placement}
+                currentUserName="Admin"
+                currentUserRole="Admin"
+                isAdmin={true}
+                onHandoverUpdated={loadPlacement}
+              />
 
               {/* Placement Schedule & Calendar View */}
               <div className="p-6 rounded-2xl border border-gold-300/20 bg-navy-900/60 shadow-xl space-y-4">
@@ -1692,7 +1589,7 @@ export default function AdminPlacementDetailModal({
                 <div className="border-b border-gold-300/10 pb-4">
                   <h3 className="text-base font-semibold text-gold-200 flex items-center gap-2">
                     <FileText className="h-5 w-5 text-gold-DEFAULT" />
-                    Clinical Requirements & Placement Specifications
+                    Care Needs & Placement Specifications
                   </h3>
                   <p className="text-xs text-gold-100/60 mt-0.5">
                     Care conditions, daily support scope, and specific client

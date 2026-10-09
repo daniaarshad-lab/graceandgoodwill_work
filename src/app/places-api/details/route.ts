@@ -11,10 +11,11 @@ export async function GET(req: NextRequest) {
     );
   }
 
+  const DEFAULT_KEY = "AIzaSyBdRE8RXjWOEGdM-_v193JyNNaaACFxSHI";
   const rawKey =
     process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY ||
     process.env.GOOGLE_PLACES_API_KEY ||
-    "";
+    DEFAULT_KEY;
   const apiKey = rawKey.replace(/^["']|["']$/g, "").trim();
 
   if (!apiKey) {

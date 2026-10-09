@@ -68,7 +68,7 @@ export default function GoogleAddressAutocomplete({
       try {
         const country = countryRestrictions?.[0] || "gb";
         const res = await fetch(
-          `/api/places/autocomplete?input=${encodeURIComponent(
+          `/places-api/autocomplete?input=${encodeURIComponent(
             query.trim()
           )}&country=${encodeURIComponent(country)}`
         );
@@ -121,7 +121,7 @@ export default function GoogleAddressAutocomplete({
 
     try {
       const res = await fetch(
-        `/api/places/details?placeId=${encodeURIComponent(suggestion.placeId)}`
+        `/places-api/details?placeId=${encodeURIComponent(suggestion.placeId)}`
       );
 
       if (!res.ok) {

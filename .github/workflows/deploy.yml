@@ -69,7 +69,7 @@ jobs:
         run: |
           cat <<EOF > .env
           NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
-          NEXT_PUBLIC_GOOGLE_PLACES_API_KEY=${{ secrets.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY || 'AIzaSyBdRE8RXjWOEGdM-_v193JyNNaaACFxSHI' }}
+          NEXT_PUBLIC_GOOGLE_PLACES_API_KEY=${{ secrets.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY}}
           EOF
 
       - name: Build & Push Frontend Docker Image

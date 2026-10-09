@@ -96,6 +96,39 @@ export default function RootLayout({
             })
           }}
         />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "@id": "https://graceandgoodwill.co.uk/#organization",
+              "name": "Grace & Goodwill",
+              "url": "https://graceandgoodwill.co.uk/",
+              "logo": "https://graceandgoodwill.co.uk/website_logo.png",
+              "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "Hypoint, Saltmeadows Road",
+                "addressLocality": "Gateshead",
+                "postalCode": "NE8 3AH",
+                "addressCountry": "GB"
+              },
+              "areaServed": {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              "sameAs": [
+                "https://www.facebook.com/GraceandGoodwillLiveinCareService",
+                "https://x.com/gracegoodwilluk",
+                "https://www.instagram.com/graceandgoodwill",
+                "https://youtube.com/@graceandgoodwill",
+                "https://www.linkedin.com/company/graceandgoodwill/",
+                "https://uk.pinterest.com/graceandgoodwill/",
+                "https://www.tiktok.com/@graceandgoodwill"
+              ]
+            })
+          }}
+        />
       </head>
       <body
         suppressHydrationWarning

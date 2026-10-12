@@ -31,8 +31,8 @@ export function loadGooglePlacesScript(apiKey?: string): Promise<void> {
     return Promise.resolve();
   }
 
-  const DEFAULT_KEY = "AIzaSyBdRE8RXjWOEGdM-_v193JyNNaaACFxSHI";
-  const key = apiKey || process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY || DEFAULT_KEY;
+
+  const key = process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY 
   if (!key) {
     return Promise.reject(
       new Error("NEXT_PUBLIC_GOOGLE_PLACES_API_KEY is not defined in environment variables")

@@ -19,11 +19,9 @@ export default async function Image({ params }: Props) {
 
   let displayName = "";
   let photoUrl: string | null = null;
-  let experienceYears: number | null = null;
   let isValid = false;
 
   try {
-    // NEXT_PUBLIC_API_URL is e.g. https://graceandgoodwill.co.uk/api
     const apiBase = (
       process.env.NEXT_PUBLIC_API_URL ||
       "https://graceandgoodwill.co.uk/api"
@@ -41,7 +39,6 @@ export default async function Image({ params }: Props) {
       const profile = await res.json();
       displayName = profile.displayName || "";
       photoUrl = profile.photoUrl || null;
-      experienceYears = profile.experienceYears ?? null;
       isValid = true;
     }
   } catch {
@@ -62,7 +59,7 @@ export default async function Image({ params }: Props) {
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "16px" }}>
             <div style={{ fontSize: "52px", color: "#D4A043", fontWeight: "bold", letterSpacing: "6px", display: "flex" }}>GRACE &amp; GOODWILL</div>
             <div style={{ fontSize: "18px", color: "rgba(212,159,71,0.6)", letterSpacing: "4px", display: "flex" }}>Care Defined by Integrity</div>
-            <div style={{ fontSize: "28px", color: "#ffffff", opacity: 0.6, display: "flex" }}>Professional Live-In Carer Profile</div>
+            <div style={{ fontSize: "28px", color: "#ffffff", opacity: 0.6, display: "flex" }}>This profile link has expired</div>
             <div style={{ fontSize: "18px", color: "rgba(255,255,255,0.4)", display: "flex" }}>graceandgoodwill.co.uk</div>
           </div>
         </div>
@@ -71,48 +68,132 @@ export default async function Image({ params }: Props) {
     );
   }
 
-  const expLabel = experienceYears ? `${experienceYears}+ Years Experience` : "Professional Live-In Carer";
+  // Fetch background image
+  let bgData: ArrayBuffer | null = null;
+  try {
+    const bgRes = await fetch(`${appUrl}/bg-share-wp.jpeg`, { signal: AbortSignal.timeout(5000) });
+    if (bgRes.ok) bgData = await bgRes.arrayBuffer();
+  } catch { /* ignore */ }
+
+  // Fetch logo
+  let logoData: ArrayBuffer | null = null;
+  try {
+    const logoRes = await fetch(`${appUrl}/website_logo.png`, { signal: AbortSignal.timeout(5000) });
+    if (logoRes.ok) logoData = await logoRes.arrayBuffer();
+  } catch { /* ignore */ }
+
+  const firstName = displayName.split(" ")[0] || "Carer";
 
   return new ImageResponse(
     (
-      <div style={{ width: "1200px", height: "630px", display: "flex", position: "relative", overflow: "hidden", fontFamily: "Georgia, serif", background: "linear-gradient(145deg, #061410 0%, #091c13 30%, #0c2418 55%, #0e2d1e 75%, #071812 100%)" }}>
-        <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle, rgba(212,159,71,0.05) 1px, transparent 1px)", backgroundSize: "30px 30px", display: "flex" }} />
-        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at 75% 50%, rgba(10,60,35,0.45) 0%, transparent 65%)", display: "flex" }} />
-        <div style={{ position: "absolute", inset: "20px", border: "1.5px solid rgba(212,159,71,0.45)", borderRadius: "16px", display: "flex" }} />
-        <div style={{ position: "absolute", top: "20px", left: "20px", right: "20px", height: "4px", background: "linear-gradient(90deg, transparent, #D4A043, #F8E090, #D4A043, transparent)", borderRadius: "2px", display: "flex" }} />
-        <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "52px 48px 52px 52px", flex: 1, zIndex: 2 }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-            <div style={{ fontSize: "34px", fontWeight: "bold", color: "#D4A043", letterSpacing: "3px", display: "flex" }}>GRACE &amp; GOODWILL</div>
-            <div style={{ fontSize: "13px", color: "rgba(212,159,71,0.65)", letterSpacing: "3.5px", display: "flex" }}>CARE DEFINED BY INTEGRITY</div>
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-            <div style={{ fontSize: "66px", fontWeight: "bold", color: "#ffffff", lineHeight: 1.05, display: "flex", flexDirection: "column" }}>
-              <span style={{ display: "flex" }}>CARE YOU</span>
-              <span style={{ display: "flex" }}>CAN TRUST</span>
+      <div
+        style={{
+          width: "1200px",
+          height: "630px",
+          display: "flex",
+          position: "relative",
+          overflow: "hidden",
+          fontFamily: "Georgia, serif",
+        }}
+      >
+        {/* Background image */}
+        {bgData ? (
+          <img
+            src={bgData as any}
+            width={1200}
+            height={630}
+            style={{ position: "absolute", top: 0, left: 0, width: "1200px", height: "630px", objectFit: "cover" }}
+          />
+        ) : (
+          <div style={{ position: "absolute", top: 0, left: 0, width: "1200px", height: "630px", background: "linear-gradient(135deg, #0a1628 0%, #0d1e3a 50%, #0a1228 100%)", display: "flex" }} />
+        )}
+
+        {/* Dark overlay for text readability on the left side */}
+        <div style={{ position: "absolute", top: 0, left: 0, width: "750px", height: "630px", background: "linear-gradient(to right, rgba(10,18,40,0.92) 0%, rgba(10,18,40,0.85) 60%, rgba(10,18,40,0.3) 100%)", display: "flex" }} />
+
+        {/* Content container */}
+        <div style={{ position: "absolute", top: 0, left: 0, width: "1200px", height: "630px", display: "flex", flexDirection: "row" }}>
+
+          {/* Left side */}
+          <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", width: "720px", padding: "48px 0 0 56px" }}>
+
+            {/* Logo + brand name */}
+            <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+              {logoData ? (
+                <img src={logoData as any} width={56} height={56} style={{ objectFit: "contain" }} />
+              ) : (
+                <div style={{ width: "56px", height: "56px", backgroundColor: "rgba(212,159,71,0.2)", borderRadius: "8px", display: "flex" }} />
+              )}
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                <div style={{ fontSize: "22px", color: "#D4A043", fontWeight: "bold", letterSpacing: "3.5px", display: "flex" }}>GRACE &amp; GOODWILL</div>
+                <div style={{ fontSize: "11px", color: "rgba(212,159,71,0.7)", letterSpacing: "3px", marginTop: "2px", display: "flex" }}>CARE DEFINED BY INTEGRITY</div>
+              </div>
             </div>
-            <div style={{ fontSize: "19px", color: "rgba(255,255,255,0.55)", display: "flex" }}>Live-in Care Matching Across the UK</div>
+
+            {/* Middle section */}
+            <div style={{ display: "flex", flexDirection: "column", marginTop: "24px" }}>
+              <div style={{ width: "50px", height: "2px", background: "linear-gradient(90deg, #D4A043, rgba(212,159,71,0.3))", marginBottom: "16px", display: "flex" }} />
+
+              <div style={{ fontSize: "16px", color: "rgba(212,159,71,0.75)", letterSpacing: "4px", marginBottom: "20px", display: "flex" }}>CARE YOU CAN TRUST</div>
+
+              <div style={{ fontSize: "68px", color: "#ffffff", fontWeight: "bold", lineHeight: 1.05, marginBottom: "12px", display: "flex" }}>{displayName}</div>
+
+              <div style={{ display: "flex", fontSize: "22px", color: "rgba(255,255,255,0.7)", marginBottom: "18px" }}>
+                <span style={{ display: "flex" }}>Professional Live-in Carer with </span>
+                <span style={{ color: "#D4A043", fontWeight: "bold", marginLeft: "6px", display: "flex" }}>Grace &amp; Goodwill</span>
+              </div>
+
+              <div style={{ fontSize: "16px", color: "rgba(255,255,255,0.5)", lineHeight: 1.5, maxWidth: "580px", display: "flex" }}>
+                View experience, video, skills, spoken languages, availability and more.
+              </div>
+            </div>
+
+            {/* Bottom: Contact details */}
+            <div style={{ display: "flex", alignItems: "center", gap: "40px", marginTop: "24px", paddingBottom: "44px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                <div style={{ fontSize: "11px", color: "rgba(212,159,71,0.6)", letterSpacing: "1px", display: "flex" }}>Call our office</div>
+                <div style={{ fontSize: "16px", color: "#ffffff", fontWeight: "600", display: "flex" }}>020 4524 0108</div>
+              </div>
+              <div style={{ width: "1px", height: "30px", backgroundColor: "rgba(212,159,71,0.3)", display: "flex" }} />
+              <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                <div style={{ fontSize: "11px", color: "rgba(212,159,71,0.6)", letterSpacing: "1px", display: "flex" }}>WhatsApp us</div>
+                <div style={{ fontSize: "16px", color: "#ffffff", fontWeight: "600", display: "flex" }}>+44 7462 931949</div>
+              </div>
+              <div style={{ width: "1px", height: "30px", backgroundColor: "rgba(212,159,71,0.3)", display: "flex" }} />
+              <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                <div style={{ fontSize: "11px", color: "rgba(212,159,71,0.6)", letterSpacing: "1px", display: "flex" }}>Visit our website</div>
+                <div style={{ fontSize: "16px", color: "#D4A043", fontWeight: "600", display: "flex" }}>graceandgoodwill.co.uk</div>
+              </div>
+            </div>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: "7px" }}>
-            <div style={{ width: "60px", height: "2px", background: "linear-gradient(90deg, #D4A043, transparent)", display: "flex", marginBottom: "3px" }} />
-            <div style={{ fontSize: "26px", fontWeight: "bold", color: "#F8E090", display: "flex" }}>{displayName}</div>
-            <div style={{ fontSize: "15px", color: "rgba(255,255,255,0.5)", display: "flex" }}>{expLabel} · graceandgoodwill.co.uk</div>
+
+          {/* Right side: Carer photo */}
+          <div style={{ display: "flex", width: "480px", height: "100%", justifyContent: "center", alignItems: "center" }}>
+            <div style={{ position: "absolute", width: "340px", height: "340px", borderRadius: "50%", border: "1px solid rgba(212,159,71,0.15)", display: "flex" }} />
+            <div style={{
+              width: "290px",
+              height: "290px",
+              borderRadius: "50%",
+              overflow: "hidden",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              border: "4px solid #D4A043",
+              backgroundColor: "rgba(255,255,255,0.05)",
+              boxShadow: "0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(212,159,71,0.15)",
+            }}>
+              {photoUrl ? (
+                <img src={photoUrl} alt={displayName} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              ) : (
+                <div style={{ width: "290px", height: "290px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <div style={{ fontSize: "80px", display: "flex" }}>👤</div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-        <div style={{ width: "340px", display: "flex", alignItems: "center", justifyContent: "center", padding: "40px 48px 40px 0", zIndex: 2 }}>
-          {photoUrl ? (
-            <div style={{ width: "265px", height: "265px", borderRadius: "50%", overflow: "hidden", border: "4px solid #D4A043", boxShadow: "0 0 50px rgba(212,159,71,0.45)", display: "flex" }}>
-              <img src={photoUrl} alt={displayName} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-            </div>
-          ) : (
-            <div style={{ width: "265px", height: "265px", borderRadius: "50%", border: "4px solid rgba(212,159,71,0.5)", background: "rgba(212,159,71,0.08)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <div style={{ fontSize: "80px", display: "flex" }}>👤</div>
-            </div>
-          )}
-        </div>
-        <div style={{ position: "absolute", bottom: "20px", left: "20px", right: "20px", height: "4px", background: "linear-gradient(90deg, transparent, #D4A043, #F8E090, #D4A043, transparent)", borderRadius: "2px", display: "flex" }} />
       </div>
     ),
     { ...size, headers: responseHeaders }
   );
 }
-

@@ -1,6 +1,6 @@
 import React from "react";
 
-import { getCategoryLabel } from "@/data/blogCategories";
+import { getBlogSchema } from "@/data/blogSchemas";
 import type { BlogPost } from "@/types/blog.types";
 
 const SITE_URL = "https://graceandgoodwill.co.uk";
@@ -15,32 +15,7 @@ interface BlogJsonLdProps {
  */
 export default function BlogJsonLd({ post }: BlogJsonLdProps) {
   const url = `${SITE_URL}/blog/${post.slug}`;
-
-  const articleSchema = {
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    headline: post.title,
-    description: post.seoDescription || post.excerpt,
-    image: [`${SITE_URL}${post.featuredImageUrl}`],
-    datePublished: post.publishedAt ?? post.createdAt,
-    dateModified: post.updatedAt,
-    author: {
-      "@type": "Person",
-      name: post.author.name,
-      jobTitle: post.author.role,
-    },
-    publisher: {
-      "@type": "Organization",
-      name: "Grace & Goodwill",
-      logo: {
-        "@type": "ImageObject",
-        url: `${SITE_URL}/website_logo.png`,
-      },
-    },
-    mainEntityOfPage: { "@type": "WebPage", "@id": url },
-    articleSection: getCategoryLabel(post.categorySlug),
-    keywords: post.tags.join(", "),
-  };
+  const articleSchema = getBlogSchema(post);
 
   const breadcrumbSchema = {
     "@context": "https://schema.org",

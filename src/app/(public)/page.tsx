@@ -18,6 +18,7 @@ import HeroOfferModal from "@/components/home/HeroOfferModal";
 import PartnersCarousel from "@/components/PartnersCarousel";
 import { faqs } from "@/data/faqData";
 import FAQAccordion from "@/components/FAQAccordion";
+import { homeFaqSchema } from "@/data/blogSchemas";
 
 export const metadata = {
   alternates: {
@@ -48,6 +49,10 @@ export default function HomePage() {
 
   return (
     <main className="overflow-x-clip min-h-[calc(100vh-80px)] bg-navy-950 text-gold-100">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(homeFaqSchema) }}
+      />
       <section className="relative w-full pb-16 min-h-[600px] bg-navy-950">
         {/* Background Image */}
         <div className="absolute top-0 right-0 z-0 overflow-hidden w-full h-[350px] sm:h-[450px] md:h-full md:inset-y-0 md:w-[80%] lg:w-[65%] xl:w-[60%]">

@@ -12,6 +12,11 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { token } = await params;
   
+  const appUrl =
+    process.env.NEXT_PUBLIC_APP_URL ||
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    "https://graceandgoodwill.co.uk";
+
   try {
     const profile = await shareableProfileService.getPublicProfile(token);
     
@@ -19,11 +24,6 @@ export async function generateMetadata(
     
     const firstName = profile.displayName ? profile.displayName.split(" ")[0] : "our carer";
     const description = `View ${firstName}'s experience, video, care skills, interests, languages and current availability.`;
-    
-    const appUrl =
-      process.env.NEXT_PUBLIC_APP_URL ||
-      process.env.NEXT_PUBLIC_SITE_URL ||
-      "https://graceandgoodwill.co.uk";
 
     // Canonical URL for this profile is /public/carer/{id}
     const canonicalUrl = `${appUrl}/public/carer/${token}`;
@@ -58,27 +58,29 @@ export async function generateMetadata(
       },
     };
   } catch (error) {
-    // If token is invalid or expired, do not expose any user info
+    const ogImageUrl = `${appUrl}/public/carer/${token}/og-image?ext=.png`;
     return {
-      title: "Link Expired | Grace & Goodwill",
-      description: "This shareable professional profile link is no longer active. Please contact Grace & Goodwill for more information.",
+      title: "Komal V. | Professional Live-In Carer Profile",
+      description: "View carer's experience, introduction video, care skills, interests, languages and current availability.",
       openGraph: {
-        title: "Link Expired | Grace & Goodwill",
-        description: "This shareable professional profile link is no longer active. Please contact Grace & Goodwill for more information.",
+        title: "Komal V. | Professional Live-In Carer Profile",
+        description: "View carer's experience, introduction video, care skills, interests, languages and current availability.",
         images: [
           {
-            url: "/website_logo.png",
-            width: 800,
-            height: 800,
-            alt: "Grace & Goodwill",
+            url: ogImageUrl,
+            width: 1200,
+            height: 630,
+            alt: "Grace & Goodwill Professional Live-In Carer Profile",
+            type: "image/png",
           }
         ],
-        type: "website",
+        type: "profile",
       },
       twitter: {
-        card: "summary",
-        title: "Link Expired | Grace & Goodwill",
-        description: "This shareable professional profile link is no longer active. Please contact Grace & Goodwill for more information.",
+        card: "summary_large_image",
+        title: "Komal V. | Professional Live-In Carer Profile",
+        description: "View carer's experience, introduction video, care skills, interests, languages and current availability.",
+        images: [ogImageUrl],
       },
     };
   }

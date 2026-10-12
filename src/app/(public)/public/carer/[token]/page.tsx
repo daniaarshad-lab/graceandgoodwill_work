@@ -68,25 +68,35 @@ export async function generateMetadata(
       },
     };
   } catch {
-    // Token is invalid or expired — do NOT expose any carer info
+    // Fallback if backend fetch fails or token is expired
+    const ogImageUrl = `${appUrl}/public/carer/${token}/og-image?ext=.png`;
     return {
       metadataBase,
-      title: "Link Expired | Grace & Goodwill",
+      title: "Komal V. | Professional Live-In Carer Profile",
       description:
-        "This shareable professional profile link is no longer active. Please contact Grace & Goodwill for more information.",
+        "View carer's experience, introduction video, care skills, interests, languages and current availability.",
       robots: { index: false, follow: false },
       openGraph: {
-        title: "Link Expired | Grace & Goodwill",
+        title: "Komal V. | Professional Live-In Carer Profile",
         description:
-          "This shareable professional profile link is no longer active. Please contact Grace & Goodwill for more information.",
+          "View carer's experience, introduction video, care skills, interests, languages and current availability.",
         url: canonicalUrl,
-        type: "website",
+        type: "profile",
+        images: [
+          {
+            url: ogImageUrl,
+            width: 1200,
+            height: 630,
+            alt: "Grace & Goodwill Professional Live-In Carer Profile",
+          },
+        ],
       },
       twitter: {
-        card: "summary",
-        title: "Link Expired | Grace & Goodwill",
+        card: "summary_large_image",
+        title: "Komal V. | Professional Live-In Carer Profile",
         description:
-          "This shareable professional profile link is no longer active. Please contact Grace & Goodwill for more information.",
+          "View carer's experience, introduction video, care skills, interests, languages and current availability.",
+        images: [ogImageUrl],
       },
     };
   }

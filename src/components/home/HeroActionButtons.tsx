@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { User, Bell, ArrowRight } from "lucide-react";
+import { User, Bell, ArrowRight, ChevronRight } from "lucide-react";
 
 // Professional, clean WhatsApp fill icon (Standard recognizable WhatsApp logo)
 const WhatsAppIcon = ({ className }: { className?: string }) => (
@@ -87,15 +87,25 @@ export default function HeroActionButtons() {
         </Link>
 
         {/* Item 2 */}
-        <Link href="/emergency-care" className="flex items-center gap-4 w-full bg-[#0d1b3e]/70 backdrop-blur-md border border-[#D4AF7A]/30 text-white px-5 py-3.5 rounded-full hover:bg-white/5 transition-colors shadow-sm">
-          <Bell className="w-5 h-5 text-[#D4AF7A] shrink-0" strokeWidth={1.5} />
-          <span className="font-[400] text-[14px]">Emergency live-in care 24/7</span>
+        <Link href="/emergency-care" className="group flex items-center justify-between w-full bg-[#0d1b3e]/70 backdrop-blur-md border border-[#D4AF7A]/30 text-white pl-5 pr-3 py-2.5 rounded-full hover:bg-white/5 transition-colors shadow-sm">
+          <div className="flex items-center gap-3.5">
+            <Bell className="w-5 h-5 text-[#D4AF7A] shrink-0" strokeWidth={1.5} />
+            <span className="font-[400] text-[14px]">Emergency live-in care 24/7</span>
+          </div>
+          <div className="w-8 h-8 rounded-full border border-[#D4AF7A]/50 flex items-center justify-center shrink-0 group-hover:border-[#D4AF7A] group-hover:bg-[#D4AF7A]/10 transition-colors">
+            <ChevronRight className="w-4 h-4 text-[#D4AF7A]" strokeWidth={1.8} />
+          </div>
         </Link>
 
         {/* Item 3 */}
-        <a href="https://wa.me/447462931949" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 w-full bg-[#0d1b3e]/70 backdrop-blur-md border border-[#D4AF7A]/30 text-white px-5 py-3.5 rounded-full hover:bg-white/5 transition-colors shadow-sm">
-          <WhatsAppIcon className="w-5 h-5 text-[#00E676] shrink-0" />
-          <span className="font-[400] text-[14px]">WhatsApp us</span>
+        <a href="https://wa.me/447462931949" target="_blank" rel="noopener noreferrer" className="group flex items-center justify-between w-full bg-[#0d1b3e]/70 backdrop-blur-md border border-[#D4AF7A]/30 text-white pl-5 pr-3 py-2.5 rounded-full hover:bg-white/5 transition-colors shadow-sm">
+          <div className="flex items-center gap-3.5">
+            <WhatsAppIcon className="w-5 h-5 text-[#00E676] shrink-0" />
+            <span className="font-[400] text-[14px]">WhatsApp us</span>
+          </div>
+          <div className="w-8 h-8 rounded-full border border-[#D4AF7A]/50 flex items-center justify-center shrink-0 group-hover:border-[#D4AF7A] group-hover:bg-[#D4AF7A]/10 transition-colors">
+            <ChevronRight className="w-4 h-4 text-[#D4AF7A]" strokeWidth={1.8} />
+          </div>
         </a>
 
       </div>

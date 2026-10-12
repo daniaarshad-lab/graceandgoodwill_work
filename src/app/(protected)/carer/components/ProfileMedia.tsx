@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import SectionCard from "./shared/SectionCard";
 import {
   Camera,
@@ -78,7 +79,10 @@ export default function ProfileMedia({
   const [updateReason, setUpdateReason] = useState("");
   const [updateReasonError, setUpdateReasonError] = useState("");
 
+  const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
+    setMounted(true);
     fetchRequests();
   }, []);
 
@@ -152,6 +156,25 @@ export default function ProfileMedia({
     setUpdateReason("");
     setUpdateReasonError("");
   };
+
+  // Lock body scroll and handle Escape key when modal is open
+  useEffect(() => {
+    if (!modalOpen) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && !isSubmitting) {
+        handleCloseModal();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [modalOpen, isSubmitting]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -349,29 +372,46 @@ export default function ProfileMedia({
       </SectionCard>
 
       {/* Upload Modal */}
-      {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-navy-950/80 backdrop-blur-sm">
-          <div className="relative w-full max-w-xl bg-navy-900 border border-gold-300/20 rounded-2xl shadow-2xl p-6 sm:p-8 transform transition-all">
-            <button
-              onClick={handleCloseModal}
-              className="absolute top-4 right-4 text-gold-100/50 hover:text-gold-100 transition-colors"
+      {modalOpen && mounted && typeof document !== "undefined" &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 bg-navy-950/80 backdrop-blur-sm animate-in fade-in duration-200"
+            onClick={(e) => {
+              if (e.target === e.currentTarget && !isSubmitting) {
+                handleCloseModal();
+              }
+            }}
+          >
+            <div
+              className="relative w-full max-w-xl max-h-[85vh] flex flex-col bg-navy-900 border border-gold-300/20 rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200"
+              onClick={(e) => e.stopPropagation()}
             >
-              <X className="w-5 h-5" />
-            </button>
+              {/* Modal Header */}
+              <div className="relative p-6 pb-4 text-center flex flex-col items-center flex-shrink-0 border-b border-gold-300/10">
+                <button
+                  type="button"
+                  onClick={handleCloseModal}
+                  disabled={isSubmitting}
+                  className="absolute top-4 right-4 p-2 rounded-full text-gold-100/50 hover:text-gold-100 hover:bg-gold-500/10 transition-colors cursor-pointer"
+                  aria-label="Close modal"
+                >
+                  <X className="w-5 h-5" />
+                </button>
 
-            <div className="flex flex-col items-center text-center">
-              <div className="w-12 h-12 rounded-full bg-gold-500/10 flex items-center justify-center mb-4">
-                <Upload className="w-6 h-6 text-gold-DEFAULT" />
+                <div className="w-12 h-12 rounded-full bg-gold-500/10 flex items-center justify-center mb-3">
+                  <Upload className="w-6 h-6 text-gold-DEFAULT" />
+                </div>
+                <h3 className="text-xl font-serif text-gold-50 mb-2">
+                  Update Profile Media
+                </h3>
+                <p className="text-xs sm:text-sm text-gold-100/70 leading-relaxed max-w-md">
+                  Please upload your new profile picture and/or introduction
+                  video. An admin will review and approve your request.
+                </p>
               </div>
-              <h3 className="text-xl font-serif text-gold-50 mb-3">
-                Update Profile Media
-              </h3>
-              <p className="text-sm text-gold-100/70 leading-relaxed mb-6">
-                Please upload your new profile picture and/or introduction
-                video. An admin will review and approve your request.
-              </p>
 
-              <div className="w-full text-left space-y-6 mb-8">
+              {/* Modal Scrollable Body */}
+              <div className="overflow-y-auto flex-1 p-6 space-y-6 overscroll-contain">
                 {/* Photo Upload */}
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gold-200">
@@ -467,7 +507,8 @@ export default function ProfileMedia({
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-3 w-full">
+              {/* Modal Footer */}
+              <div className="p-4 sm:p-6 pt-3 flex flex-col sm:flex-row gap-3 border-t border-gold-300/10 flex-shrink-0 bg-navy-900/60">
                 <Button
                   variant="outline"
                   className="w-full"
@@ -486,9 +527,9 @@ export default function ProfileMedia({
                 </Button>
               </div>
             </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </>
   );
 }

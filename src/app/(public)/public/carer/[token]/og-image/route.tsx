@@ -36,8 +36,30 @@ function getLogoBase64(): string {
   return cachedLogoBase64;
 }
 
+// In-memory cache for rendered image buffers (keyed by token)
+const imageCache = new Map<
+  string,
+  { buffer: Buffer; expiresAt: number; contentType: string }
+>();
+
 export async function GET(request: Request, { params }: Props) {
   const { token } = await params;
+
+  // Check in-memory cache for instant (<10ms) crawler response
+  const now = Date.now();
+  const cached = imageCache.get(token);
+  if (cached && cached.expiresAt > now) {
+    return new Response(new Uint8Array(cached.buffer), {
+      status: 200,
+      headers: {
+        "Content-Type": cached.contentType,
+        "Content-Length": String(cached.buffer.byteLength),
+        "Cache-Control": "public, max-age=3600, s-maxage=86400, stale-while-revalidate=86400",
+        "X-Cache": "HIT",
+      },
+    });
+  }
+
   const size = { width: 1200, height: 630 };
 
   const bgBase64 = getBgBase64();
@@ -638,22 +660,31 @@ export async function GET(request: Request, { params }: Props) {
   );
 
   const arrayBuffer = await imgResponse.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
 
-  return new Response(arrayBuffer, {
+  // Store in in-memory cache for 1 hour
+  if (carerPhotoData || !photoUrl) {
+    imageCache.set(token, {
+      buffer,
+      expiresAt: now + 3600_000,
+      contentType: "image/png",
+    });
+  }
+
+  return new Response(new Uint8Array(buffer), {
     status: 200,
     headers: {
       ...responseHeaders,
-      "Content-Length": String(arrayBuffer.byteLength),
+      "Content-Length": String(buffer.byteLength),
+      "X-Cache": "MISS",
     },
   });
 }
 
-export async function HEAD() {
+export async function HEAD(request: Request, { params }: Props) {
+  const getResponse = await GET(request, { params });
   return new Response(null, {
-    status: 200,
-    headers: {
-      "Content-Type": "image/png",
-      "Cache-Control": "public, max-age=3600, s-maxage=86400, stale-while-revalidate=86400",
-    },
+    status: getResponse.status,
+    headers: getResponse.headers,
   });
 }

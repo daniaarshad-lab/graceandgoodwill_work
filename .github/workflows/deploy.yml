@@ -65,27 +65,25 @@ jobs:
           echo "Calculated Version: $NEW_TAG"
           echo "tag=$NEW_TAG" >> $GITHUB_OUTPUT
 
-      - name: Create .env file
-        run: |
-          cat <<EOF > .env
-          NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
-          NEXT_PUBLIC_GOOGLE_PLACES_API_KEY=${{ secrets.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY}}
-          EOF
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Build & Push Frontend Docker Image
         id: build-image
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ steps.version.outputs.tag }}
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}:${{ steps.version.outputs.tag }}
+            ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Set Image URI Output
+        id: set-output
         run: |
-          docker build -t ${{ secrets.ECR_REPOSITORY }} .
-          docker tag ${{ secrets.ECR_REPOSITORY }}:latest $ECR_REGISTRY/${{ secrets.ECR_REPOSITORY }}:$IMAGE_TAG
-          docker tag ${{ secrets.ECR_REPOSITORY }}:latest $ECR_REGISTRY/${{ secrets.ECR_REPOSITORY }}:latest
-            
-          docker push $ECR_REGISTRY/${{ secrets.ECR_REPOSITORY }}:$IMAGE_TAG
-          docker push $ECR_REGISTRY/${{ secrets.ECR_REPOSITORY }}:latest
-          
-          echo "image_uri=$ECR_REGISTRY/${{ secrets.ECR_REPOSITORY }}:$IMAGE_TAG" >> $GITHUB_OUTPUT
+          echo "image_uri=${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}:${{ steps.version.outputs.tag }}" >> $GITHUB_OUTPUT
 
       - name: Download Current Task Definition
         run: |
@@ -99,8 +97,8 @@ jobs:
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: task-definition.json
-          container-name: care_management_fe  # Matches "name": "care_management_fe" in your JSON screenshot perfectly
-          image: ${{ steps.build-image.outputs.image_uri }}
+          container-name: care_management_fe
+          image: ${{ steps.set-output.outputs.image_uri }}
 
       - name: Deploy Updated Task Definition to ECS Service
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2

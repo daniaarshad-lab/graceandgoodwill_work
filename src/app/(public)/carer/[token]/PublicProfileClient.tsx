@@ -236,7 +236,7 @@ export default function PublicProfileClient({ token }: PublicProfileClientProps)
       } catch (err: any) {
         setError(
           err.message ||
-            "This share link has expired or does not exist. For security, share links remain valid for 30 minutes.",
+            "This share link has expired or is no longer active. Please request a new link from the carer.",
         );
       } finally {
         setLoading(false);

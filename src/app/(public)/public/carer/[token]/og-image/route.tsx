@@ -9,28 +9,41 @@ interface Props {
   params: Promise<{ token: string }>;
 }
 
+let cachedBgBase64: string | null = null;
+let cachedLogoBase64: string | null = null;
+
+function getBgBase64(): string {
+  if (cachedBgBase64 !== null) return cachedBgBase64;
+  try {
+    const bgBuffer = fs.readFileSync(path.join(process.cwd(), "public", "bg-share-wp.jpeg"));
+    cachedBgBase64 = `data:image/jpeg;base64,${bgBuffer.toString("base64")}`;
+  } catch (err) {
+    console.error("Failed to load bg-share-wp.jpeg:", err);
+    cachedBgBase64 = "";
+  }
+  return cachedBgBase64;
+}
+
+function getLogoBase64(): string {
+  if (cachedLogoBase64 !== null) return cachedLogoBase64;
+  try {
+    const logoBuffer = fs.readFileSync(path.join(process.cwd(), "public", "website_logo.png"));
+    cachedLogoBase64 = `data:image/png;base64,${logoBuffer.toString("base64")}`;
+  } catch (err) {
+    console.error("Failed to load website_logo.png:", err);
+    cachedLogoBase64 = "";
+  }
+  return cachedLogoBase64;
+}
+
 export async function GET(request: Request, { params }: Props) {
   const { token } = await params;
   const size = { width: 1200, height: 630 };
 
-  // Read local assets synchronously for 100% reliability
-  let bgBase64 = "";
-  let logoBase64 = "";
-  try {
-    const bgBuffer = fs.readFileSync(path.join(process.cwd(), "public", "bg-share-wp.jpeg"));
-    bgBase64 = `data:image/jpeg;base64,${bgBuffer.toString("base64")}`;
-  } catch (err) {
-    console.error("Failed to load bg-share-wp.jpeg:", err);
-  }
+  const bgBase64 = getBgBase64();
+  const logoBase64 = getLogoBase64();
 
-  try {
-    const logoBuffer = fs.readFileSync(path.join(process.cwd(), "public", "website_logo.png"));
-    logoBase64 = `data:image/png;base64,${logoBuffer.toString("base64")}`;
-  } catch (err) {
-    console.error("Failed to load website_logo.png:", err);
-  }
-
-  let displayName = "Our Carer";
+  let displayName = "Grace & Goodwill Carer";
   let photoUrl: string | null = null;
 
   try {
@@ -46,8 +59,9 @@ export async function GET(request: Request, { params }: Props) {
       .replace(/\/+$/, "")
       .replace(/\/api\/?$/, "");
 
+    // 2500ms timeout so crawler doesn't timeout before receiving response
     const res = await fetch(`${apiBase}/api/public/carer/${token}`, {
-      signal: AbortSignal.timeout(4000),
+      signal: AbortSignal.timeout(2500),
       cache: "no-store",
     });
 
@@ -61,17 +75,22 @@ export async function GET(request: Request, { params }: Props) {
   }
 
   // Format privacy name: First Name + Last Initial (e.g. Komal V.)
-  const nameParts = displayName ? displayName.split(/\s+/).filter(Boolean) : [];
-  const firstName = nameParts.length > 0 ? nameParts[0] : "Our Carer";
-  const lastInitial = nameParts.length > 1 ? nameParts[nameParts.length - 1].charAt(0).toUpperCase() : "";
-  const safeName = lastInitial && !firstName.endsWith(".") ? `${firstName} ${lastInitial}.` : firstName;
-  const initialLetter = safeName.charAt(0).toUpperCase() || "C";
+  let safeName = "Grace & Goodwill Carer";
+  let initialLetter = "G";
 
-  // Pre-fetch carer photo if available
+  if (displayName && displayName !== "Our Carer" && displayName !== "Grace & Goodwill Carer") {
+    const nameParts = displayName.split(/\s+/).filter(Boolean);
+    const firstName = nameParts.length > 0 ? nameParts[0] : "Carer";
+    const lastInitial = nameParts.length > 1 ? nameParts[nameParts.length - 1].charAt(0).toUpperCase() : "";
+    safeName = lastInitial && !firstName.endsWith(".") ? `${firstName} ${lastInitial}.` : firstName;
+    initialLetter = safeName.charAt(0).toUpperCase() || "C";
+  }
+
+  // Pre-fetch carer photo if available (2500ms timeout)
   let carerPhotoData: string | null = null;
   if (photoUrl) {
     try {
-      const photoRes = await fetch(photoUrl, { signal: AbortSignal.timeout(4000) });
+      const photoRes = await fetch(photoUrl, { signal: AbortSignal.timeout(2500) });
       if (photoRes.ok) {
         const buffer = await photoRes.arrayBuffer();
         const b64 = Buffer.from(buffer).toString("base64");
@@ -83,9 +102,15 @@ export async function GET(request: Request, { params }: Props) {
     }
   }
 
+  // Cache response for 1 day, unless photo was present but temporarily timed out
+  const cacheControl =
+    photoUrl && !carerPhotoData
+      ? "no-cache, no-store, must-revalidate"
+      : "public, max-age=3600, s-maxage=86400, stale-while-revalidate=86400";
+
   const responseHeaders = {
     "Content-Type": "image/png",
-    "Cache-Control": "public, max-age=3600, s-maxage=86400, stale-while-revalidate=86400",
+    "Cache-Control": cacheControl,
   };
 
   return new ImageResponse(

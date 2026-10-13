@@ -143,7 +143,7 @@ export default function ShareProfileModal({
   const handleRenew = async () => {
     setGenerating(true);
     try {
-      const data = await shareableProfileService.generateShareToken(true);
+      const data = await shareableProfileService.generateShareToken(true, true);
       setStatus(data);
 
       // Warm up cache for crawlers (fire-and-forget)

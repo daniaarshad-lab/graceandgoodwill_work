@@ -20,9 +20,13 @@ export async function generateMetadata(
   try {
     const profile = await shareableProfileService.getPublicProfile(token);
     
-    const title = `${profile.displayName} | Professional Live-In Carer Profile`;
-    
-    const firstName = profile.displayName ? profile.displayName.split(" ")[0] : "our carer";
+    // Privacy Logic: only First Name + Last Initial
+    const nameParts = profile.displayName ? profile.displayName.split(/\s+/).filter(Boolean) : [];
+    const firstName = nameParts.length > 0 ? nameParts[0] : "Our Carer";
+    const lastInitial = nameParts.length > 1 ? nameParts[nameParts.length - 1].charAt(0).toUpperCase() : "";
+    const safeName = lastInitial && !firstName.endsWith(".") ? `${firstName} ${lastInitial}.` : firstName;
+
+    const title = `${safeName} | Professional Live-In Carer Profile`;
     const description = `View ${firstName}'s experience, video, care skills, interests, languages and current availability.`;
 
     // Canonical URL for this profile is /public/carer/{id}
@@ -59,18 +63,23 @@ export async function generateMetadata(
     };
   } catch (error) {
     const ogImageUrl = `${appUrl}/public/carer/${token}/og-image?ext=.png`;
+    const fallbackTitle = "Professional Live-In Carer Profile | Grace & Goodwill";
+    const fallbackDescription =
+      "View professional live-in carer experience, introductory video, care skills, languages and current availability through Grace & Goodwill.";
+
     return {
-      title: "Komal V. | Professional Live-In Carer Profile",
-      description: "View carer's experience, introduction video, care skills, interests, languages and current availability.",
+      title: fallbackTitle,
+      description: fallbackDescription,
       openGraph: {
-        title: "Komal V. | Professional Live-In Carer Profile",
-        description: "View carer's experience, introduction video, care skills, interests, languages and current availability.",
+        title: fallbackTitle,
+        description: fallbackDescription,
+        siteName: "Grace & Goodwill",
         images: [
           {
             url: ogImageUrl,
             width: 1200,
             height: 630,
-            alt: "Grace & Goodwill Professional Live-In Carer Profile",
+            alt: fallbackTitle,
             type: "image/png",
           }
         ],
@@ -78,8 +87,8 @@ export async function generateMetadata(
       },
       twitter: {
         card: "summary_large_image",
-        title: "Komal V. | Professional Live-In Carer Profile",
-        description: "View carer's experience, introduction video, care skills, interests, languages and current availability.",
+        title: fallbackTitle,
+        description: fallbackDescription,
         images: [ogImageUrl],
       },
     };

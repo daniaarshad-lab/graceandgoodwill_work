@@ -9,7 +9,7 @@ import ConsentModal from "./ConsentModal";
 import ShareSheet from "./ShareSheet";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 
-const TOKEN_TTL = 30 * 60; // 30 min in seconds
+const TOKEN_TTL = 30 * 24 * 60 * 60; // 30 days in seconds
 
 export default function ShareProfilePanel() {
   const { user } = useAuth();
@@ -74,7 +74,7 @@ export default function ShareProfilePanel() {
       const secs = data.expiresInSeconds ?? TOKEN_TTL;
       setSecondsLeft(secs);
       startCountdown(secs);
-      showSuccessToast("Link Ready", "Your shareable profile link is active for 30 minutes.");
+      showSuccessToast("Link Ready", "Your shareable profile link is active for 30 days.");
     } catch (err: any) {
       showErrorToast("Failed", err.message || "Could not generate share link.");
     } finally {
@@ -86,12 +86,12 @@ export default function ShareProfilePanel() {
   const handleRenew = async () => {
     setGenerating(true);
     try {
-      const data = await shareableProfileService.generateShareToken(true);
+      const data = await shareableProfileService.generateShareToken(true, true);
       setStatus(data);
       const secs = data.expiresInSeconds ?? TOKEN_TTL;
       setSecondsLeft(secs);
       startCountdown(secs);
-      showSuccessToast("Link Renewed", "A fresh 30-minute link has been generated.");
+      showSuccessToast("Link Renewed", "Your share link has been renewed for 30 days.");
     } catch (err: any) {
       showErrorToast("Failed", err.message || "Could not renew link.");
     } finally {

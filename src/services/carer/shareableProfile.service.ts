@@ -53,10 +53,10 @@ export interface AvailabilityDay {
 }
 
 const shareableProfileService = {
-  async generateShareToken(consentGiven: boolean): Promise<ShareTokenStatus> {
+  async generateShareToken(consentGiven: boolean, renew = false): Promise<ShareTokenStatus> {
     return apiFetch("/carer/profile/share-token", {
       method: "POST",
-      body: JSON.stringify({ consentGiven }),
+      body: JSON.stringify({ consentGiven, renew }),
     });
   },
 

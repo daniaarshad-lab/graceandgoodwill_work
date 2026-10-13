@@ -57,6 +57,7 @@ export async function generateMetadata(
             width: 1200,
             height: 630,
             alt: title,
+            type: "image/png",
           },
         ],
       },
@@ -68,34 +69,37 @@ export async function generateMetadata(
       },
     };
   } catch {
-    // Fallback if backend fetch fails or token is expired
+    // Fallback if backend fetch fails or token is expired — use generic Grace & Goodwill metadata
     const ogImageUrl = `${appUrl}/public/carer/${token}/og-image?ext=.png`;
+    const fallbackTitle = "Professional Live-In Carer Profile | Grace & Goodwill";
+    const fallbackDescription =
+      "View professional live-in carer experience, introductory video, care skills, languages and current availability through Grace & Goodwill.";
+
     return {
       metadataBase,
-      title: "Komal V. | Professional Live-In Carer Profile",
-      description:
-        "View carer's experience, introduction video, care skills, interests, languages and current availability.",
+      title: fallbackTitle,
+      description: fallbackDescription,
       robots: { index: false, follow: false },
       openGraph: {
-        title: "Komal V. | Professional Live-In Carer Profile",
-        description:
-          "View carer's experience, introduction video, care skills, interests, languages and current availability.",
+        title: fallbackTitle,
+        description: fallbackDescription,
         url: canonicalUrl,
+        siteName: "Grace & Goodwill",
         type: "profile",
         images: [
           {
             url: ogImageUrl,
             width: 1200,
             height: 630,
-            alt: "Grace & Goodwill Professional Live-In Carer Profile",
+            alt: fallbackTitle,
+            type: "image/png",
           },
         ],
       },
       twitter: {
         card: "summary_large_image",
-        title: "Komal V. | Professional Live-In Carer Profile",
-        description:
-          "View carer's experience, introduction video, care skills, interests, languages and current availability.",
+        title: fallbackTitle,
+        description: fallbackDescription,
         images: [ogImageUrl],
       },
     };

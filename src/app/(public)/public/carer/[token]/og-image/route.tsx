@@ -113,7 +113,7 @@ export async function GET(request: Request, { params }: Props) {
     "Cache-Control": cacheControl,
   };
 
-  return new ImageResponse(
+  const imgResponse = new ImageResponse(
     (
       <div
         style={{
@@ -571,7 +571,7 @@ export async function GET(request: Request, { params }: Props) {
             </div>
           </div>
 
-          {/* Contact 3: Visit our website */}
+          {/* Contact 3: Visit website */}
           <div
             style={{
               display: "flex",
@@ -636,4 +636,24 @@ export async function GET(request: Request, { params }: Props) {
     ),
     { ...size, headers: responseHeaders }
   );
+
+  const arrayBuffer = await imgResponse.arrayBuffer();
+
+  return new Response(arrayBuffer, {
+    status: 200,
+    headers: {
+      ...responseHeaders,
+      "Content-Length": String(arrayBuffer.byteLength),
+    },
+  });
+}
+
+export async function HEAD() {
+  return new Response(null, {
+    status: 200,
+    headers: {
+      "Content-Type": "image/png",
+      "Cache-Control": "public, max-age=3600, s-maxage=86400, stale-while-revalidate=86400",
+    },
+  });
 }

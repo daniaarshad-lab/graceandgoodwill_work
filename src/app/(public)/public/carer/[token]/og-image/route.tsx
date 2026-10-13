@@ -2,6 +2,7 @@ import React from "react";
 import { ImageResponse } from "next/og";
 import fs from "fs";
 import path from "path";
+import sharp from "sharp";
 
 export const runtime = "nodejs";
 
@@ -44,10 +45,18 @@ const imageCache = new Map<
 
 export async function GET(request: Request, { params }: Props) {
   const { token } = await params;
+  const { searchParams } = new URL(request.url);
+  const isJpeg =
+    searchParams.get("format") === "jpeg" ||
+    searchParams.get("format") === "jpg" ||
+    searchParams.get("ext") === ".jpg" ||
+    searchParams.get("ext") === ".jpeg";
+  const targetContentType = isJpeg ? "image/jpeg" : "image/png";
+  const cacheKey = `${token}:${targetContentType}`;
 
   // Check in-memory cache for instant (<10ms) crawler response
   const now = Date.now();
-  const cached = imageCache.get(token);
+  const cached = imageCache.get(cacheKey);
   if (cached && cached.expiresAt > now) {
     return new Response(new Uint8Array(cached.buffer), {
       status: 200,
@@ -660,14 +669,33 @@ export async function GET(request: Request, { params }: Props) {
   );
 
   const arrayBuffer = await imgResponse.arrayBuffer();
-  const buffer = Buffer.from(arrayBuffer);
+  const rawBuffer = Buffer.from(arrayBuffer);
+
+  // Compress using sharp to keep payload well under WhatsApp's 300 KB limit (< 250 KB)
+  let buffer: Buffer = rawBuffer;
+  let finalContentType = "image/png";
+
+  try {
+    if (isJpeg) {
+      buffer = await sharp(rawBuffer).jpeg({ quality: 90, mozjpeg: true }).toBuffer();
+      finalContentType = "image/jpeg";
+    } else {
+      // 8-bit palette quantization shrinks 1200x630 PNG from ~639 KB down to ~135 KB while preserving crisp text & branding
+      buffer = await sharp(rawBuffer)
+        .png({ palette: true, quality: 90, compressionLevel: 9 })
+        .toBuffer();
+      finalContentType = "image/png";
+    }
+  } catch (err) {
+    console.warn("Failed to compress OG image with sharp, serving raw buffer:", err);
+  }
 
   // Store in in-memory cache for 1 hour
   if (carerPhotoData || !photoUrl) {
-    imageCache.set(token, {
+    imageCache.set(cacheKey, {
       buffer,
       expiresAt: now + 3600_000,
-      contentType: "image/png",
+      contentType: finalContentType,
     });
   }
 
@@ -675,6 +703,7 @@ export async function GET(request: Request, { params }: Props) {
     status: 200,
     headers: {
       ...responseHeaders,
+      "Content-Type": finalContentType,
       "Content-Length": String(buffer.byteLength),
       "X-Cache": "MISS",
     },

@@ -1,3 +1,6 @@
+# syntax=docker/dockerfile:1
+
+# Stage 1: Dependencies installation
 FROM node:20-alpine AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
@@ -10,6 +13,14 @@ RUN --mount=type=cache,target=/root/.npm \
 # Stage 2: Next.js build
 FROM node:20-alpine AS builder
 WORKDIR /app
+
+# Accept build arguments for client-side environment variables
+ARG NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_GOOGLE_PLACES_API_KEY
+
+# Set them as environment variables during build time so Next.js can inline them
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_GOOGLE_PLACES_API_KEY=$NEXT_PUBLIC_GOOGLE_PLACES_API_KEY
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .

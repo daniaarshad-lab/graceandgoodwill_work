@@ -39,6 +39,53 @@ function getLogoBase64(): string {
   return cachedLogoBase64;
 }
 
+/* ── Google Fonts loader for Satori (next/og ImageResponse) ── */
+let cachedCormorantSemiBold: ArrayBuffer | null = null;
+let cachedMontserratMedium: ArrayBuffer | null = null;
+let cachedMontserratSemiBold: ArrayBuffer | null = null;
+
+async function loadGoogleFont(family: string, weight: number): Promise<ArrayBuffer> {
+  const url = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(family)}:wght@${weight}`;
+  const cssRes = await fetch(url, {
+    headers: {
+      // Old Safari User-Agent ensures Google Fonts returns TTF format which Satori supports (WOFF2 is not supported by Satori)
+      "User-Agent":
+        "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_8; de-at) AppleWebKit/533.21.1 (KHTML, like Gecko) Version/5.0.5 Safari/533.21.1",
+    },
+    signal: AbortSignal.timeout(4000),
+  });
+  const css = await cssRes.text();
+  const fontUrlMatch = css.match(/src:\s*url\(([^)]+)\)/);
+  if (!fontUrlMatch?.[1]) throw new Error(`Could not extract font URL for ${family}:${weight}`);
+  const fontRes = await fetch(fontUrlMatch[1], { signal: AbortSignal.timeout(4000) });
+  return fontRes.arrayBuffer();
+}
+
+async function getCormorantSemiBold(): Promise<ArrayBuffer> {
+  if (cachedCormorantSemiBold) return cachedCormorantSemiBold;
+  cachedCormorantSemiBold = await loadGoogleFont("Cormorant Garamond", 600);
+  return cachedCormorantSemiBold;
+}
+
+async function getMontserratMedium(): Promise<ArrayBuffer> {
+  if (cachedMontserratMedium) return cachedMontserratMedium;
+  cachedMontserratMedium = await loadGoogleFont("Montserrat", 500);
+  return cachedMontserratMedium;
+}
+
+async function getMontserratSemiBold(): Promise<ArrayBuffer> {
+  if (cachedMontserratSemiBold) return cachedMontserratSemiBold;
+  cachedMontserratSemiBold = await loadGoogleFont("Montserrat", 600);
+  return cachedMontserratSemiBold;
+}
+
+/* ── Brand colour constants (warm champagne / antique gold palette) ── */
+const GOLD_PRIMARY = "#D4AF6A"; // Warm champagne gold
+const GOLD_DARK = "#B99150"; // Antique gold
+const GOLD_LIGHT = "#E8D09A"; // Soft champagne
+const NAVY_BG = "#09142B"; // Deep midnight navy
+const CREAM_BG = "#F8F5EE"; // Warm ivory
+
 export default async function Image({ params }: Props) {
   const { token } = await params;
 
@@ -104,6 +151,28 @@ export default async function Image({ params }: Props) {
     }
   }
 
+  // Load custom fonts for Satori (best-effort; falls back to system serif/sans-serif)
+  let fonts: { name: string; data: ArrayBuffer; weight: 400 | 500 | 600 | 700; style: "normal" }[] = [];
+  try {
+    const [cormorant600, montserrat500, montserrat600] = await Promise.all([
+      getCormorantSemiBold(),
+      getMontserratMedium(),
+      getMontserratSemiBold(),
+    ]);
+    fonts = [
+      { name: "Cormorant Garamond", data: cormorant600, weight: 600, style: "normal" as const },
+      { name: "Montserrat", data: montserrat500, weight: 500, style: "normal" as const },
+      { name: "Montserrat", data: montserrat600, weight: 600, style: "normal" as const },
+    ];
+  } catch (err) {
+    console.warn("Could not load Google Fonts for OG image, using system fallbacks:", err);
+  }
+
+  /* ── Layout measurements (1200 × 630) ── */
+  const FOOTER_H = 165; // taller footer for readable contacts
+  const WAVE_H = 55; // curved gold transition height
+  const NAVY_H = 630 - FOOTER_H; // 465px — navy content zone
+
   return new ImageResponse(
     (
       <div
@@ -113,8 +182,8 @@ export default async function Image({ params }: Props) {
           display: "flex",
           position: "relative",
           overflow: "hidden",
-          fontFamily: "Georgia, serif",
-          backgroundColor: "#070E20",
+          fontFamily: "'Montserrat', 'Inter', system-ui, sans-serif",
+          backgroundColor: NAVY_BG,
         }}
       >
         {/* Background Image: bg-share-wp.jpeg */}
@@ -141,145 +210,162 @@ export default async function Image({ params }: Props) {
             top: 0,
             left: 0,
             width: "820px",
-            height: "515px",
+            height: `${NAVY_H}px`,
             background:
-              "linear-gradient(90deg, rgba(6, 13, 30, 0.96) 0%, rgba(6, 13, 30, 0.90) 50%, rgba(6, 13, 30, 0.40) 80%, transparent 100%)",
+              `linear-gradient(90deg, rgba(9,20,43,0.97) 0%, rgba(9,20,43,0.92) 55%, rgba(9,20,43,0.45) 82%, transparent 100%)`,
             display: "flex",
           }}
         />
 
-        {/* Top-Left: Grace & Goodwill Brand Logo + Centered Strapline */}
+        {/* ── Top-Left: Logo + "GRACE & GOODWILL" + strapline ── */}
         <div
           style={{
             position: "absolute",
-            top: "32px",
-            left: "60px",
+            top: "28px",
+            left: "52px",
             display: "flex",
-            flexDirection: "column",
+            flexDirection: "row",
             alignItems: "center",
           }}
         >
+          {/* Logo icon */}
           {logoBase64 ? (
             <img
               src={logoBase64}
-              width={62}
-              height={62}
+              width={90}
+              height={90}
               style={{ objectFit: "contain", display: "flex" }}
             />
           ) : (
             <div
               style={{
-                width: "62px",
-                height: "62px",
-                backgroundColor: "rgba(212,175,55,0.2)",
+                width: "90px",
+                height: "90px",
+                backgroundColor: `rgba(212,175,106,0.2)`,
                 borderRadius: "12px",
                 display: "flex",
               }}
             />
           )}
 
-          <div
-            style={{
-              fontSize: "22px",
-              fontWeight: "bold",
-              color: "#E2BA55",
-              letterSpacing: "4px",
-              marginTop: "8px",
-              display: "flex",
-            }}
-          >
-            GRACE &amp; GOODWILL
-          </div>
-
+          {/* Company name + strapline stacked to the right of icon */}
           <div
             style={{
               display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              marginTop: "4px",
+              flexDirection: "column",
+              marginLeft: "16px",
             }}
           >
             <div
               style={{
-                width: "24px",
-                height: "1px",
-                backgroundColor: "rgba(226, 186, 85, 0.65)",
+                fontSize: "26px",
+                fontWeight: 600,
+                color: GOLD_PRIMARY,
+                letterSpacing: "5px",
                 display: "flex",
-              }}
-            />
-            <span
-              style={{
-                fontSize: "10px",
-                color: "#E2BA55",
-                letterSpacing: "2.5px",
-                fontWeight: "600",
-                display: "flex",
+                fontFamily: "'Montserrat', sans-serif",
               }}
             >
-              CARE DEFINED BY INTEGRITY
-            </span>
+              GRACE &amp; GOODWILL
+            </div>
+
             <div
               style={{
-                width: "24px",
-                height: "1px",
-                backgroundColor: "rgba(226, 186, 85, 0.65)",
                 display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                marginTop: "5px",
               }}
-            />
+            >
+              <div
+                style={{
+                  width: "28px",
+                  height: "1px",
+                  backgroundColor: `rgba(212,175,106,0.6)`,
+                  display: "flex",
+                }}
+              />
+              <span
+                style={{
+                  fontSize: "12px",
+                  color: GOLD_LIGHT,
+                  letterSpacing: "3px",
+                  fontWeight: 500,
+                  display: "flex",
+                  fontFamily: "'Montserrat', sans-serif",
+                }}
+              >
+                CARE DEFINED BY INTEGRITY
+              </span>
+              <div
+                style={{
+                  width: "28px",
+                  height: "1px",
+                  backgroundColor: `rgba(212,175,106,0.6)`,
+                  display: "flex",
+                }}
+              />
+            </div>
           </div>
         </div>
 
-        {/* Middle-Left: Carer Details */}
+        {/* ── Middle-Left: "CARE YOU CAN TRUST" + Carer name + role + description ── */}
         <div
           style={{
             position: "absolute",
-            top: "192px",
-            left: "60px",
-            width: "660px",
+            top: "142px",
+            left: "52px",
+            width: "650px",
             display: "flex",
             flexDirection: "column",
           }}
         >
-          {/* Discreet Tagline */}
+          {/* "CARE YOU CAN TRUST" tagline */}
           <div
             style={{
-              fontSize: "15px",
-              color: "#D4AF37",
-              letterSpacing: "4.5px",
-              fontWeight: "600",
+              fontSize: "18px",
+              color: GOLD_PRIMARY,
+              letterSpacing: "5px",
+              fontWeight: 600,
               marginBottom: "8px",
               display: "flex",
+              fontFamily: "'Montserrat', sans-serif",
             }}
           >
             CARE YOU CAN TRUST
           </div>
 
-          {/* Carer Name */}
+          {/* Carer Name — large, elegant serif */}
           <div
             style={{
-              fontSize: "68px",
-              fontWeight: "bold",
+              fontSize: "66px",
+              fontWeight: 600,
               color: "#FFFFFF",
               lineHeight: 1.05,
               marginBottom: "12px",
               display: "flex",
+              fontFamily: "'Cormorant Garamond', Georgia, serif",
             }}
           >
             {safeName}
           </div>
 
-          {/* Role with Brand */}
+          {/* Professional role with brand highlight */}
           <div
             style={{
               display: "flex",
+              flexDirection: "row",
               alignItems: "center",
-              fontSize: "22px",
-              marginBottom: "14px",
+              flexWrap: "wrap",
+              fontSize: "23px",
+              marginBottom: "12px",
+              fontFamily: "'Montserrat', sans-serif",
             }}
           >
             <span
               style={{
-                color: "rgba(255, 255, 255, 0.88)",
+                color: "rgba(255, 255, 255, 0.92)",
+                fontWeight: 500,
                 display: "flex",
               }}
             >
@@ -287,8 +373,8 @@ export default async function Image({ params }: Props) {
             </span>
             <span
               style={{
-                color: "#E2BA55",
-                fontWeight: "bold",
+                color: GOLD_PRIMARY,
+                fontWeight: 600,
                 marginLeft: "8px",
                 display: "flex",
               }}
@@ -297,28 +383,30 @@ export default async function Image({ params }: Props) {
             </span>
           </div>
 
-          {/* Subtle description preview */}
+          {/* Description preview */}
           <div
             style={{
-              fontSize: "16px",
-              color: "rgba(255, 255, 255, 0.55)",
+              fontSize: "17px",
+              color: "rgba(255, 255, 255, 0.65)",
               lineHeight: 1.45,
               maxWidth: "560px",
+              fontWeight: 500,
               display: "flex",
+              fontFamily: "'Montserrat', sans-serif",
             }}
           >
             View experience, video, skills, spoken languages, availability and more.
           </div>
         </div>
 
-        {/* Right Side: Circular Carer Photo with Rich Gold Border */}
+        {/* ── Right Side: Circular Carer Photo with Gold Border ── */}
         <div
           style={{
             position: "absolute",
-            top: "65px",
-            right: "110px",
-            width: "310px",
-            height: "310px",
+            top: "50px",
+            right: "90px",
+            width: "320px",
+            height: "320px",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -328,10 +416,10 @@ export default async function Image({ params }: Props) {
           <div
             style={{
               position: "absolute",
-              width: "330px",
-              height: "330px",
-              borderRadius: "165px",
-              border: "1px solid rgba(226, 186, 85, 0.25)",
+              width: "340px",
+              height: "340px",
+              borderRadius: "170px",
+              border: `1.5px solid rgba(212,175,106,0.30)`,
               display: "flex",
             }}
           />
@@ -339,12 +427,12 @@ export default async function Image({ params }: Props) {
           {/* Portrait Container */}
           <div
             style={{
-              width: "300px",
-              height: "300px",
-              borderRadius: "150px",
+              width: "310px",
+              height: "310px",
+              borderRadius: "155px",
               overflow: "hidden",
-              border: "6px solid #D4AF37",
-              boxShadow: "0 20px 50px rgba(0,0,0,0.6), 0 0 40px rgba(212,175,55,0.25)",
+              border: `6px solid ${GOLD_PRIMARY}`,
+              boxShadow: `0 20px 50px rgba(0,0,0,0.6), 0 0 40px rgba(212,175,106,0.25)`,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -354,8 +442,8 @@ export default async function Image({ params }: Props) {
             {carerPhotoData ? (
               <img
                 src={carerPhotoData}
-                width={300}
-                height={300}
+                width={310}
+                height={310}
                 style={{
                   width: "100%",
                   height: "100%",
@@ -370,15 +458,16 @@ export default async function Image({ params }: Props) {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  backgroundColor: "rgba(226, 186, 85, 0.15)",
+                  backgroundColor: `rgba(212,175,106,0.15)`,
                 }}
               >
                 <span
                   style={{
-                    fontSize: "110px",
-                    color: "#E2BA55",
-                    fontWeight: "bold",
+                    fontSize: "120px",
+                    color: GOLD_PRIMARY,
+                    fontWeight: 600,
                     display: "flex",
+                    fontFamily: "'Cormorant Garamond', Georgia, serif",
                   }}
                 >
                   {initialLetter}
@@ -388,60 +477,67 @@ export default async function Image({ params }: Props) {
           </div>
         </div>
 
-        {/* Golden Wave Transition Ribbon above bottom bar */}
+        {/* ── Curved Gold & Cream Transition between navy and footer ── */}
         <div
           style={{
             position: "absolute",
-            bottom: "118px",
+            bottom: `${FOOTER_H - 8}px`,
             left: 0,
             width: "1200px",
-            height: "44px",
+            height: `${WAVE_H}px`,
             display: "flex",
           }}
         >
           <svg
             width="1200"
-            height="44"
-            viewBox="0 0 1200 44"
+            height={WAVE_H}
+            viewBox={`0 0 1200 ${WAVE_H}`}
             fill="none"
-            style={{ width: "1200px", height: "44px", display: "flex" }}
+            style={{ width: "1200px", height: `${WAVE_H}px`, display: "flex" }}
           >
-            {/* Smooth curved cream background layer */}
+            {/* Cream fill beneath the curve */}
             <path
-              d="M0,44 L0,24 Q320,6 660,26 T1200,10 L1200,44 Z"
-              fill="#FAF7F2"
+              d={`M0,${WAVE_H} L0,30 Q200,8 480,28 Q760,48 1000,18 Q1100,10 1200,14 L1200,${WAVE_H} Z`}
+              fill={CREAM_BG}
             />
-            {/* Lower golden accent glow ribbon */}
+            {/* Soft gold glow ribbon (wider, lower opacity) */}
             <path
-              d="M0,28 Q320,10 660,30 T1200,14"
-              stroke="rgba(212, 175, 55, 0.35)"
-              strokeWidth="6"
+              d="M0,34 Q200,12 480,32 Q760,52 1000,22 Q1100,14 1200,18"
+              stroke={`rgba(185,145,80,0.30)`}
+              strokeWidth="8"
               fill="none"
             />
-            {/* Primary Golden swoosh ribbon stroke */}
+            {/* Primary gold ribbon stroke */}
             <path
-              d="M0,24 Q320,6 660,26 T1200,10"
-              stroke="#D4AF37"
+              d="M0,30 Q200,8 480,28 Q760,48 1000,18 Q1100,10 1200,14"
+              stroke={GOLD_PRIMARY}
               strokeWidth="3.5"
+              fill="none"
+            />
+            {/* Light champagne highlight above the gold */}
+            <path
+              d="M0,27 Q200,5 480,25 Q760,45 1000,15 Q1100,7 1200,11"
+              stroke={`rgba(232,208,154,0.35)`}
+              strokeWidth="1.5"
               fill="none"
             />
           </svg>
         </div>
 
-        {/* Bottom Contact Bar (Off-white / Warm Cream #FAF7F2) */}
+        {/* ── Bottom Contact Footer (Warm Ivory) ── */}
         <div
           style={{
             position: "absolute",
             bottom: 0,
             left: 0,
             width: "1200px",
-            height: "120px",
-            backgroundColor: "#FAF7F2",
+            height: `${FOOTER_H}px`,
+            backgroundColor: CREAM_BG,
             display: "flex",
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "space-around",
-            padding: "0 60px",
+            padding: "0 50px",
           }}
         >
           {/* Contact 1: Call our office */}
@@ -454,11 +550,11 @@ export default async function Image({ params }: Props) {
           >
             <div
               style={{
-                width: "52px",
-                height: "52px",
-                borderRadius: "26px",
+                width: "58px",
+                height: "58px",
+                borderRadius: "29px",
                 backgroundColor: "#EFE5D2",
-                border: "1.5px solid #DECBB1",
+                border: `2px solid ${GOLD_LIGHT}`,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -466,12 +562,12 @@ export default async function Image({ params }: Props) {
               }}
             >
               <svg
-                width="24"
-                height="24"
+                width="28"
+                height="28"
                 viewBox="0 0 24 24"
                 fill="none"
-                stroke="#7A5619"
-                strokeWidth="2.2"
+                stroke={GOLD_DARK}
+                strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               >
@@ -481,21 +577,23 @@ export default async function Image({ params }: Props) {
             <div style={{ display: "flex", flexDirection: "column" }}>
               <span
                 style={{
-                  fontSize: "13px",
+                  fontSize: "18px",
                   color: "#6D6355",
                   fontWeight: 500,
                   display: "flex",
+                  fontFamily: "'Montserrat', sans-serif",
                 }}
               >
                 Call our office
               </span>
               <span
                 style={{
-                  fontSize: "19px",
+                  fontSize: "23px",
                   color: "#181512",
-                  fontWeight: "bold",
-                  marginTop: "2px",
+                  fontWeight: 600,
+                  marginTop: "3px",
                   display: "flex",
+                  fontFamily: "'Montserrat', sans-serif",
                 }}
               >
                 020 4524 0108
@@ -513,11 +611,11 @@ export default async function Image({ params }: Props) {
           >
             <div
               style={{
-                width: "52px",
-                height: "52px",
-                borderRadius: "26px",
+                width: "58px",
+                height: "58px",
+                borderRadius: "29px",
                 backgroundColor: "#EFE5D2",
-                border: "1.5px solid #DECBB1",
+                border: `2px solid ${GOLD_LIGHT}`,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -525,12 +623,12 @@ export default async function Image({ params }: Props) {
               }}
             >
               <svg
-                width="24"
-                height="24"
+                width="28"
+                height="28"
                 viewBox="0 0 24 24"
                 fill="none"
-                stroke="#7A5619"
-                strokeWidth="2.2"
+                stroke={GOLD_DARK}
+                strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               >
@@ -540,21 +638,23 @@ export default async function Image({ params }: Props) {
             <div style={{ display: "flex", flexDirection: "column" }}>
               <span
                 style={{
-                  fontSize: "13px",
+                  fontSize: "18px",
                   color: "#6D6355",
                   fontWeight: 500,
                   display: "flex",
+                  fontFamily: "'Montserrat', sans-serif",
                 }}
               >
                 WhatsApp us
               </span>
               <span
                 style={{
-                  fontSize: "19px",
+                  fontSize: "23px",
                   color: "#181512",
-                  fontWeight: "bold",
-                  marginTop: "2px",
+                  fontWeight: 600,
+                  marginTop: "3px",
                   display: "flex",
+                  fontFamily: "'Montserrat', sans-serif",
                 }}
               >
                 +44 7462 931949
@@ -572,11 +672,11 @@ export default async function Image({ params }: Props) {
           >
             <div
               style={{
-                width: "52px",
-                height: "52px",
-                borderRadius: "26px",
+                width: "58px",
+                height: "58px",
+                borderRadius: "29px",
                 backgroundColor: "#EFE5D2",
-                border: "1.5px solid #DECBB1",
+                border: `2px solid ${GOLD_LIGHT}`,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -584,12 +684,12 @@ export default async function Image({ params }: Props) {
               }}
             >
               <svg
-                width="24"
-                height="24"
+                width="28"
+                height="28"
                 viewBox="0 0 24 24"
                 fill="none"
-                stroke="#7A5619"
-                strokeWidth="2.2"
+                stroke={GOLD_DARK}
+                strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               >
@@ -601,21 +701,23 @@ export default async function Image({ params }: Props) {
             <div style={{ display: "flex", flexDirection: "column" }}>
               <span
                 style={{
-                  fontSize: "13px",
+                  fontSize: "18px",
                   color: "#6D6355",
                   fontWeight: 500,
                   display: "flex",
+                  fontFamily: "'Montserrat', sans-serif",
                 }}
               >
                 Visit our website
               </span>
               <span
                 style={{
-                  fontSize: "19px",
+                  fontSize: "21px",
                   color: "#181512",
-                  fontWeight: "bold",
-                  marginTop: "2px",
+                  fontWeight: 600,
+                  marginTop: "3px",
                   display: "flex",
+                  fontFamily: "'Montserrat', sans-serif",
                 }}
               >
                 graceandgoodwill.co.uk
@@ -625,6 +727,9 @@ export default async function Image({ params }: Props) {
         </div>
       </div>
     ),
-    { ...size }
+    {
+      ...size,
+      fonts: fonts.length > 0 ? fonts : undefined,
+    }
   );
 }

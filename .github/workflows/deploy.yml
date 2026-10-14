@@ -37,7 +37,6 @@ jobs:
           context: .
           push: true
           build-args: |
-            NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
             NEXT_PUBLIC_GOOGLE_PLACES_API_KEY=${{ secrets.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY }}
           tags: ${{ env.ECR_REGISTRY }}/${{ env.FRONTEND_REPO }}:latest
           cache-from: type=gha
@@ -50,11 +49,17 @@ jobs:
             --document-name "AWS-RunShellScript" \
             --comment "Redeploying Frontend Container" \
             --parameters commands="[
+              \"mkdir -p /opt/care\",
+              \"cd /opt/care\",
+              \"cat << 'EOF' > /opt/care/.env.frontend
+          FRONTEND_URL=${{ secrets.FRONTEND_URL }}
+          FRONTEND_RESET_URL=${{ secrets.FRONTEND_RESET_URL }}
+          EOF\",
               \"aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ env.ECR_REGISTRY }}\",
               \"docker pull ${{ env.ECR_REGISTRY }}/${{ env.FRONTEND_REPO }}:latest\",
               \"docker stop care_frontend 2>/dev/null || true\",
               \"docker rm care_frontend 2>/dev/null || true\",
-              \"docker run -d --name care_frontend --restart always -p 127.0.0.1:3000:3000 ${{ env.ECR_REGISTRY }}/${{ env.FRONTEND_REPO }}:latest\",
+              \"docker run -d --name care_frontend --restart always -p 127.0.0.1:3000:3000 --env-file /opt/care/.env.frontend ${{ env.ECR_REGISTRY }}/${{ env.FRONTEND_REPO }}:latest\",
               \"docker image prune -af --filter until=24h\"
             ]" \
             --region ${{ env.AWS_REGION }}

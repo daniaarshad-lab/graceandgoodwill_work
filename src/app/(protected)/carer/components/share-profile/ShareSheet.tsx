@@ -91,11 +91,8 @@ export default function ShareSheet({
 
   const buildShareMessage = () => {
     const linkIcon = String.fromCodePoint(0x1F517);
-    const phoneIcon = String.fromCodePoint(0x1F4DE);
-    const chatIcon = String.fromCodePoint(0x1F4AC);
-    const webIcon = String.fromCodePoint(0x1F310);
 
-    return `${formalName} has shared their professional live-in carer profile with you through Grace & Goodwill.\n\nView ${firstName}'s experience, introduction video, care skills, interests, languages and current availability using the secure link below.\n\n${linkIcon} ${cleanShareUrl}\n\nThis profile link is available for a limited period.\n\nIf you would like to discuss ${firstName}'s profile, check availability or talk to us about other live-in care options, the Grace & Goodwill team is here to help.\n\n${phoneIcon} Call: 020 4524 0108\n${chatIcon} WhatsApp: +44 7462 931949\n${webIcon} https://graceandgoodwill.co.uk`;
+    return `${formalName} has shared their professional live-in carer profile with you through Grace & Goodwill.\n\nView ${firstName}'s experience, introduction video, care skills, interests, languages and current availability using the secure link below.\n\n${linkIcon} ${cleanShareUrl}\n\nThis profile link is available for a limited period.`;
   };
 
   const copyLink = async () => {

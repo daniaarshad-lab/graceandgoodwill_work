@@ -38,7 +38,7 @@ export async function generateMetadata(
 
     const title = `${safeName} | Professional Live-In Carer Profile`;
     const description = `View ${firstName}'s experience, video, care skills, interests, languages and current availability.`;
-    const ogImageUrl = `${appUrl}/public/carer/${token}/og-image?ext=.png`;
+    const ogImageUrl = `${appUrl}/public/carer/${token}/og-image?ext=.jpg`;
 
     return {
       metadataBase,
@@ -50,7 +50,7 @@ export async function generateMetadata(
         description,
         url: canonicalUrl,
         siteName: profile.brandName || "Grace & Goodwill",
-        type: "profile",
+        type: "website",
         images: [
           {
             url: ogImageUrl,
@@ -58,7 +58,7 @@ export async function generateMetadata(
             width: 1200,
             height: 630,
             alt: title,
-            type: "image/png",
+            type: "image/jpeg",
           },
         ],
       },
@@ -71,7 +71,7 @@ export async function generateMetadata(
     };
   } catch {
     // Fallback if backend fetch fails or token is expired — use generic Grace & Goodwill metadata
-    const ogImageUrl = `${appUrl}/public/carer/${token}/og-image?ext=.png`;
+    const ogImageUrl = `${appUrl}/public/carer/${token}/og-image?ext=.jpg`;
     const fallbackTitle = "Professional Live-In Carer Profile | Grace & Goodwill";
     const fallbackDescription =
       "View professional live-in carer experience, introductory video, care skills, languages and current availability through Grace & Goodwill.";
@@ -86,7 +86,7 @@ export async function generateMetadata(
         description: fallbackDescription,
         url: canonicalUrl,
         siteName: "Grace & Goodwill",
-        type: "profile",
+        type: "website",
         images: [
           {
             url: ogImageUrl,
@@ -94,7 +94,7 @@ export async function generateMetadata(
             width: 1200,
             height: 630,
             alt: fallbackTitle,
-            type: "image/png",
+            type: "image/jpeg",
           },
         ],
       },

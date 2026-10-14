@@ -33,7 +33,7 @@ export async function generateMetadata(
     const canonicalUrl = `${appUrl}/public/carer/${token}`;
 
     // Point to the custom route handler that generates the PNG image
-    const ogImageUrl = `${appUrl}/public/carer/${token}/og-image?ext=.png`;
+    const ogImageUrl = `${appUrl}/public/carer/${token}/og-image?ext=.jpg`;
 
     return {
       title,
@@ -51,7 +51,7 @@ export async function generateMetadata(
             width: 1200,
             height: 630,
             alt: title,
-            type: "image/png",
+            type: "image/jpeg",
           },
         ],
       },
@@ -63,7 +63,7 @@ export async function generateMetadata(
       },
     };
   } catch (error) {
-    const ogImageUrl = `${appUrl}/public/carer/${token}/og-image?ext=.png`;
+    const ogImageUrl = `${appUrl}/public/carer/${token}/og-image?ext=.jpg`;
     const fallbackTitle = "Professional Live-In Carer Profile | Grace & Goodwill";
     const fallbackDescription =
       "View professional live-in carer experience, introductory video, care skills, languages and current availability through Grace & Goodwill.";
@@ -82,10 +82,10 @@ export async function generateMetadata(
             width: 1200,
             height: 630,
             alt: fallbackTitle,
-            type: "image/png",
+            type: "image/jpeg",
           }
         ],
-        type: "profile",
+        type: "website",
       },
       twitter: {
         card: "summary_large_image",

@@ -157,20 +157,20 @@ export default function ClientOnboardingPage() {
 
             <div className="space-y-4">
               <h1 className="text-2xl font-bold text-gold-200">
-                Application Received
+                Care Enquiry Received
               </h1>
               <div className="h-px w-16 bg-gold-DEFAULT/30 mx-auto" />
               <div className="space-y-4 text-sm text-gold-100/80 leading-relaxed px-2">
                 <p>
-                  Thank you for completing your details and for choosing Grace & Goodwill.
+                  Thank you for choosing Grace &amp; Goodwill.
                 </p>
                 <p>
-                  One of our team members will call you as soon as possible to guide you through the next steps and answer any questions you may have.
+                  We have successfully received your details. A member of our team will call you as soon as possible to discuss your care requirements, explain the next steps and answer any questions you may have.
                 </p>
                 <div className="py-2 my-2 flex items-start justify-center gap-3">
                   <span className="text-xl leading-none drop-shadow-[0_0_12px_rgba(247,215,116,0.8)] animate-pulse shrink-0 mt-0.5">🚨</span>
                   <p className="text-sm font-medium text-gold-100/90 text-center">
-                    If your request is urgent, please use one of the options below to speak to us straight away:
+                    If your enquiry is urgent, please use one of the options below to speak to us straight away:
                   </p>
                 </div>
               </div>

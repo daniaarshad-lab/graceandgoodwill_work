@@ -194,9 +194,9 @@ export function validateClientOnboardingForm(data: {
   }
 
   if (!data.note.trim()) {
-    errors.careNote = "Note is required.";
+    errors.careNote = "Care Requirements & Additional Information is required.";
   } else if (data.note.trim().length < 10) {
-    errors.careNote = "Note must be at least 10 characters.";
+    errors.careNote = "Care Requirements & Additional Information must be at least 10 characters.";
   }
 
   return errors;

@@ -433,14 +433,14 @@ export default function ClientOnboardingPage() {
                 />
               </div>
 
-              {/* Note Field (at the bottom) */}
+              {/* Care Requirements & Additional Information Field (at the bottom) */}
               <div className="space-y-2">
                 <label className="text-sm font-medium text-gold-200/90 tracking-wide">
-                  Note <span className="text-red-400">*</span>
+                  Care Requirements &amp; Additional Information <span className="text-red-400">*</span>
                 </label>
                 <div className="relative">
                   <textarea
-                    placeholder="Please provide any details or specific requirements (minimum 10 characters)..."
+                    placeholder="Please briefly tell us about your care needs or those of your loved one, including any specific requirements or additional information we should know."
                     value={careNote}
                     onChange={(e) => {
                       setCareNote(e.target.value);

@@ -221,10 +221,10 @@ export default async function Image({ params }: Props) {
         <div
           style={{
             position: "absolute",
-            top: "28px",
-            left: "52px",
+            top: "22px",
+            left: "64px",
             display: "flex",
-            flexDirection: "row",
+            flexDirection: "column",
             alignItems: "center",
           }}
         >
@@ -232,15 +232,15 @@ export default async function Image({ params }: Props) {
           {logoBase64 ? (
             <img
               src={logoBase64}
-              width={90}
-              height={90}
+              width={82}
+              height={82}
               style={{ objectFit: "contain", display: "flex" }}
             />
           ) : (
             <div
               style={{
-                width: "90px",
-                height: "90px",
+                width: "82px",
+                height: "82px",
                 backgroundColor: `rgba(212,175,106,0.2)`,
                 borderRadius: "12px",
                 display: "flex",
@@ -248,84 +248,78 @@ export default async function Image({ params }: Props) {
             />
           )}
 
-          {/* Company name + strapline stacked to the right of icon */}
+          {/* Company name centered under icon */}
+          <div
+            style={{
+              fontSize: "28px",
+              fontWeight: 600,
+              color: GOLD_PRIMARY,
+              letterSpacing: "5.5px",
+              marginTop: "8px",
+              display: "flex",
+              fontFamily: "'Montserrat', sans-serif",
+            }}
+          >
+            GRACE &amp; GOODWILL
+          </div>
+
+          {/* Strapline with gold divider lines */}
           <div
             style={{
               display: "flex",
-              flexDirection: "column",
-              marginLeft: "16px",
+              alignItems: "center",
+              gap: "8px",
+              marginTop: "4px",
             }}
           >
             <div
               style={{
-                fontSize: "26px",
-                fontWeight: 600,
-                color: GOLD_PRIMARY,
-                letterSpacing: "5px",
+                width: "30px",
+                height: "1px",
+                backgroundColor: `rgba(212,175,106,0.6)`,
+                display: "flex",
+              }}
+            />
+            <span
+              style={{
+                fontSize: "13px",
+                color: GOLD_LIGHT,
+                letterSpacing: "3px",
+                fontWeight: 500,
                 display: "flex",
                 fontFamily: "'Montserrat', sans-serif",
               }}
             >
-              GRACE &amp; GOODWILL
-            </div>
-
+              CARE DEFINED BY INTEGRITY
+            </span>
             <div
               style={{
+                width: "30px",
+                height: "1px",
+                backgroundColor: `rgba(212,175,106,0.6)`,
                 display: "flex",
-                alignItems: "center",
-                gap: "10px",
-                marginTop: "5px",
               }}
-            >
-              <div
-                style={{
-                  width: "28px",
-                  height: "1px",
-                  backgroundColor: `rgba(212,175,106,0.6)`,
-                  display: "flex",
-                }}
-              />
-              <span
-                style={{
-                  fontSize: "12px",
-                  color: GOLD_LIGHT,
-                  letterSpacing: "3px",
-                  fontWeight: 500,
-                  display: "flex",
-                  fontFamily: "'Montserrat', sans-serif",
-                }}
-              >
-                CARE DEFINED BY INTEGRITY
-              </span>
-              <div
-                style={{
-                  width: "28px",
-                  height: "1px",
-                  backgroundColor: `rgba(212,175,106,0.6)`,
-                  display: "flex",
-                }}
-              />
-            </div>
+            />
           </div>
         </div>
 
-        {/* ── Middle-Left: "CARE YOU CAN TRUST" + Carer name + role + description ── */}
+        {/* ── Middle-Left: "CARE YOU CAN TRUST" + Carer name + role ── */}
         <div
           style={{
             position: "absolute",
-            top: "142px",
-            left: "52px",
-            width: "650px",
+            top: "188px",
+            left: "64px",
+            width: "600px",
             display: "flex",
             flexDirection: "column",
           }}
         >
-          {/* "CARE YOU CAN TRUST" tagline */}
+          {/* "CARE YOU CAN TRUST" tagline (Client spec: 19–21 px, Montserrat SemiBold) */}
           <div
             style={{
-              fontSize: "18px",
+              fontSize: "20px",
               color: GOLD_PRIMARY,
-              letterSpacing: "5px",
+              letterSpacing: "4.5px",
               fontWeight: 600,
               marginBottom: "8px",
               display: "flex",
@@ -335,14 +329,14 @@ export default async function Image({ params }: Props) {
             CARE YOU CAN TRUST
           </div>
 
-          {/* Carer Name — large, elegant serif */}
+          {/* Carer Name — large, elegant serif (Client spec: 65–72 px, Cormorant Garamond SemiBold) */}
           <div
             style={{
-              fontSize: "66px",
+              fontSize: "70px",
               fontWeight: 600,
               color: "#FFFFFF",
               lineHeight: 1.05,
-              marginBottom: "12px",
+              marginBottom: "10px",
               display: "flex",
               fontFamily: "'Cormorant Garamond', Georgia, serif",
             }}
@@ -350,16 +344,14 @@ export default async function Image({ params }: Props) {
             {safeName}
           </div>
 
-          {/* Professional role with brand highlight */}
+          {/* Professional role (Client spec: 25–28 px, Montserrat Medium) */}
           <div
             style={{
               display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              flexWrap: "wrap",
-              fontSize: "23px",
-              marginBottom: "12px",
+              flexDirection: "column",
+              fontSize: "26px",
               fontFamily: "'Montserrat', sans-serif",
+              lineHeight: 1.25,
             }}
           >
             <span
@@ -375,27 +367,12 @@ export default async function Image({ params }: Props) {
               style={{
                 color: GOLD_PRIMARY,
                 fontWeight: 600,
-                marginLeft: "8px",
+                marginTop: "2px",
                 display: "flex",
               }}
             >
               Grace &amp; Goodwill
             </span>
-          </div>
-
-          {/* Description preview */}
-          <div
-            style={{
-              fontSize: "17px",
-              color: "rgba(255, 255, 255, 0.65)",
-              lineHeight: 1.45,
-              maxWidth: "560px",
-              fontWeight: 500,
-              display: "flex",
-              fontFamily: "'Montserrat', sans-serif",
-            }}
-          >
-            View experience, video, skills, spoken languages, availability and more.
           </div>
         </div>
 
@@ -403,10 +380,10 @@ export default async function Image({ params }: Props) {
         <div
           style={{
             position: "absolute",
-            top: "50px",
-            right: "90px",
-            width: "320px",
-            height: "320px",
+            top: "35px",
+            right: "75px",
+            width: "360px",
+            height: "360px",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -416,9 +393,9 @@ export default async function Image({ params }: Props) {
           <div
             style={{
               position: "absolute",
-              width: "340px",
-              height: "340px",
-              borderRadius: "170px",
+              width: "376px",
+              height: "376px",
+              borderRadius: "188px",
               border: `1.5px solid rgba(212,175,106,0.30)`,
               display: "flex",
             }}
@@ -427,9 +404,9 @@ export default async function Image({ params }: Props) {
           {/* Portrait Container */}
           <div
             style={{
-              width: "310px",
-              height: "310px",
-              borderRadius: "155px",
+              width: "340px",
+              height: "340px",
+              borderRadius: "170px",
               overflow: "hidden",
               border: `6px solid ${GOLD_PRIMARY}`,
               boxShadow: `0 20px 50px rgba(0,0,0,0.6), 0 0 40px rgba(212,175,106,0.25)`,
@@ -442,8 +419,8 @@ export default async function Image({ params }: Props) {
             {carerPhotoData ? (
               <img
                 src={carerPhotoData}
-                width={310}
-                height={310}
+                width={340}
+                height={340}
                 style={{
                   width: "100%",
                   height: "100%",

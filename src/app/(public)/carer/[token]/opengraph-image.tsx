@@ -180,10 +180,10 @@ export default async function Image({ params }: Props) {
 
           <div
             style={{
-              fontSize: "22px",
-              fontWeight: "bold",
-              color: "#E2BA55",
-              letterSpacing: "4px",
+              fontSize: "28px",
+              fontWeight: 600,
+              color: "#D4AF6A",
+              letterSpacing: "5.5px",
               marginTop: "8px",
               display: "flex",
             }}
@@ -201,18 +201,18 @@ export default async function Image({ params }: Props) {
           >
             <div
               style={{
-                width: "24px",
+                width: "30px",
                 height: "1px",
-                backgroundColor: "rgba(226, 186, 85, 0.65)",
+                backgroundColor: "rgba(212, 175, 106, 0.6)",
                 display: "flex",
               }}
             />
             <span
               style={{
-                fontSize: "10px",
-                color: "#E2BA55",
-                letterSpacing: "2.5px",
-                fontWeight: "600",
+                fontSize: "13px",
+                color: "#E8D09A",
+                letterSpacing: "3px",
+                fontWeight: 500,
                 display: "flex",
               }}
             >
@@ -220,9 +220,9 @@ export default async function Image({ params }: Props) {
             </span>
             <div
               style={{
-                width: "24px",
+                width: "30px",
                 height: "1px",
-                backgroundColor: "rgba(226, 186, 85, 0.65)",
+                backgroundColor: "rgba(212, 175, 106, 0.6)",
                 display: "flex",
               }}
             />
@@ -233,9 +233,9 @@ export default async function Image({ params }: Props) {
         <div
           style={{
             position: "absolute",
-            top: "192px",
-            left: "60px",
-            width: "660px",
+            top: "188px",
+            left: "64px",
+            width: "600px",
             display: "flex",
             flexDirection: "column",
           }}
@@ -243,10 +243,10 @@ export default async function Image({ params }: Props) {
           {/* Discreet Tagline */}
           <div
             style={{
-              fontSize: "15px",
-              color: "#D4AF37",
+              fontSize: "20px",
+              color: "#D4AF6A",
               letterSpacing: "4.5px",
-              fontWeight: "600",
+              fontWeight: 600,
               marginBottom: "8px",
               display: "flex",
             }}
@@ -257,11 +257,11 @@ export default async function Image({ params }: Props) {
           {/* Carer Name */}
           <div
             style={{
-              fontSize: "68px",
-              fontWeight: "bold",
+              fontSize: "70px",
+              fontWeight: 600,
               color: "#FFFFFF",
               lineHeight: 1.05,
-              marginBottom: "12px",
+              marginBottom: "10px",
               display: "flex",
             }}
           >
@@ -272,14 +272,15 @@ export default async function Image({ params }: Props) {
           <div
             style={{
               display: "flex",
-              alignItems: "center",
-              fontSize: "22px",
-              marginBottom: "14px",
+              flexDirection: "column",
+              fontSize: "26px",
+              lineHeight: 1.25,
             }}
           >
             <span
               style={{
-                color: "rgba(255, 255, 255, 0.88)",
+                color: "rgba(255, 255, 255, 0.92)",
+                fontWeight: 500,
                 display: "flex",
               }}
             >
@@ -287,27 +288,14 @@ export default async function Image({ params }: Props) {
             </span>
             <span
               style={{
-                color: "#E2BA55",
-                fontWeight: "bold",
-                marginLeft: "8px",
+                color: "#D4AF6A",
+                fontWeight: 600,
+                marginTop: "2px",
                 display: "flex",
               }}
             >
               Grace &amp; Goodwill
             </span>
-          </div>
-
-          {/* Subtle description preview */}
-          <div
-            style={{
-              fontSize: "16px",
-              color: "rgba(255, 255, 255, 0.55)",
-              lineHeight: 1.45,
-              maxWidth: "560px",
-              display: "flex",
-            }}
-          >
-            View experience, video, skills, spoken languages, availability and more.
           </div>
         </div>
 
@@ -315,10 +303,10 @@ export default async function Image({ params }: Props) {
         <div
           style={{
             position: "absolute",
-            top: "65px",
-            right: "110px",
-            width: "310px",
-            height: "310px",
+            top: "35px",
+            right: "75px",
+            width: "360px",
+            height: "360px",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -328,10 +316,10 @@ export default async function Image({ params }: Props) {
           <div
             style={{
               position: "absolute",
-              width: "330px",
-              height: "330px",
-              borderRadius: "165px",
-              border: "1px solid rgba(226, 186, 85, 0.25)",
+              width: "376px",
+              height: "376px",
+              borderRadius: "188px",
+              border: "1.5px solid rgba(212, 175, 106, 0.30)",
               display: "flex",
             }}
           />
@@ -339,12 +327,12 @@ export default async function Image({ params }: Props) {
           {/* Portrait Container */}
           <div
             style={{
-              width: "300px",
-              height: "300px",
-              borderRadius: "150px",
+              width: "340px",
+              height: "340px",
+              borderRadius: "170px",
               overflow: "hidden",
-              border: "6px solid #D4AF37",
-              boxShadow: "0 20px 50px rgba(0,0,0,0.6), 0 0 40px rgba(212,175,55,0.25)",
+              border: "6px solid #D4AF6A",
+              boxShadow: "0 20px 50px rgba(0,0,0,0.6), 0 0 40px rgba(212,175,106,0.25)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -354,8 +342,8 @@ export default async function Image({ params }: Props) {
             {carerPhotoData ? (
               <img
                 src={carerPhotoData}
-                width={300}
-                height={300}
+                width={340}
+                height={340}
                 style={{
                   width: "100%",
                   height: "100%",

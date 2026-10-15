@@ -298,13 +298,18 @@ function CarerDetailsContent() {
 
   // Compute Experience
   const expYears =
-    profile.experienceYears ||
-    carer.experienceYears ||
-    carer.user?.experienceYears;
+    profile.experienceYears !== undefined && profile.experienceYears !== null
+      ? profile.experienceYears
+      : carer.experienceYears !== undefined && carer.experienceYears !== null
+        ? carer.experienceYears
+        : carer.user?.experienceYears;
   const expStr =
     profile.experience || carer.experience || carer.user?.experience;
   const displayExperience =
-    expStr || (expYears ? `${expYears} Years` : "No experience listed");
+    expStr ||
+    (expYears !== undefined && expYears !== null
+      ? `${expYears} Year${expYears === 1 ? "" : "s"}`
+      : "No experience listed");
 
   // Compute Biography
   const bioSource =

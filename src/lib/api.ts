@@ -8,6 +8,43 @@ if (API_URL.endsWith("/")) {
   API_URL = API_URL.slice(0, -1);
 }
 
+export function getAuthToken(): string | null {
+  if (typeof window === "undefined") return null;
+
+  try {
+    const localToken =
+      localStorage.getItem("accessToken") ||
+      localStorage.getItem("token") ||
+      localStorage.getItem("auth_token");
+    if (localToken) return localToken;
+
+    const sessionToken =
+      sessionStorage.getItem("accessToken") ||
+      sessionStorage.getItem("token") ||
+      sessionStorage.getItem("auth_token");
+    if (sessionToken) return sessionToken;
+
+    if (typeof document !== "undefined" && document.cookie) {
+      const match = document.cookie.match(
+        /(?:^|;\s*)(?:accessToken|token|auth_token)=([^;]+)/,
+      );
+      if (match) return decodeURIComponent(match[1]);
+    }
+  } catch (err) {
+    console.error("Error retrieving auth token:", err);
+  }
+
+  return null;
+}
+
+export function getRequiredAuthToken(): string {
+  const token = getAuthToken();
+  if (!token) {
+    throw new Error("No token found");
+  }
+  return token;
+}
+
 export async function apiFetch(endpoint: string, options: RequestInit = {}) {
   const { headers: callerHeaders, ...restOptions } = options;
 
@@ -15,11 +52,8 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}) {
   // multipart boundary), so we only inject the JSON header for all other calls.
   const isFormData = restOptions.body instanceof FormData;
 
-  // Inject Authorization token if present in localStorage and not explicitly set by caller
-  const token =
-    typeof window !== "undefined"
-      ? localStorage.getItem("accessToken") || localStorage.getItem("token")
-      : null;
+  // Inject Authorization token if present and not explicitly set by caller
+  const token = getAuthToken();
   const authHeader: Record<string, string> = {};
   if (
     token &&

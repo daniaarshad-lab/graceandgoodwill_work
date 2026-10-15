@@ -1,4 +1,4 @@
-import { apiFetch } from "@/lib/api";
+import { apiFetch, getRequiredAuthToken } from "@/lib/api";
 import {
   ClientProfile,
   CreateCareRequestPayload,
@@ -15,14 +15,7 @@ import {
 
 export const clientService = {
   async getProfile(): Promise<ClientProfile> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-
-    if (!token) {
-      throw new Error("No token found");
-    }
+    const token = getRequiredAuthToken();
 
     return apiFetch("/client/profile", {
       method: "GET",
@@ -35,14 +28,7 @@ export const clientService = {
   async updateProfile(
     payload: UpdateClientProfilePayload,
   ): Promise<ClientProfile> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-
-    if (!token) {
-      throw new Error("No token found");
-    }
+    const token = getRequiredAuthToken();
 
     return apiFetch("/client/profile", {
       method: "PUT",
@@ -58,14 +44,7 @@ export const clientService = {
     careRequestId: string,
     carerProfileId: string,
   ): Promise<any> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-
-    if (!token) {
-      throw new Error("No token found");
-    }
+    const token = getRequiredAuthToken();
 
     return apiFetch("/client/matches", {
       method: "POST",
@@ -77,13 +56,7 @@ export const clientService = {
   },
 
   async uploadProfilePhoto(file: File): Promise<ClientProfile> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-    if (!token) {
-      throw new Error("No token found");
-    }
+    const token = getRequiredAuthToken();
 
     const formData = new FormData();
     formData.append("photo", file);
@@ -97,14 +70,7 @@ export const clientService = {
     });
   },
   async createCareRequest(payload: CreateCareRequestPayload): Promise<any> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-
-    if (!token) {
-      throw new Error("No token found");
-    }
+    const token = getRequiredAuthToken();
 
     return apiFetch("/client/care-request", {
       method: "POST",
@@ -116,14 +82,7 @@ export const clientService = {
   },
 
   async getCareRequests(): Promise<CareRequest[]> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-
-    if (!token) {
-      throw new Error("No token found");
-    }
+    const token = getRequiredAuthToken();
 
     return apiFetch("/client/care-requests", {
       method: "GET",
@@ -134,14 +93,7 @@ export const clientService = {
   },
 
   async createEnquiry(payload: CreateEnquiryPayload): Promise<any> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-
-    if (!token) {
-      throw new Error("No token found");
-    }
+    const token = getRequiredAuthToken();
 
     return apiFetch("/client/enquiry", {
       method: "POST",
@@ -156,11 +108,7 @@ export const clientService = {
     placementId: string,
     payload: FeedbackPayload,
   ): Promise<ClientFeedback> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-    if (!token) throw new Error("No token found");
+    const token = getRequiredAuthToken();
 
     return apiFetch(`/client/placements/${placementId}/feedback`, {
       method: "POST",
@@ -175,11 +123,7 @@ export const clientService = {
     feedbackId: string,
     payload: UpdateFeedbackPayload,
   ): Promise<ClientFeedback> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-    if (!token) throw new Error("No token found");
+    const token = getRequiredAuthToken();
 
     return apiFetch(`/client/feedbacks/${feedbackId}`, {
       method: "PATCH",
@@ -191,11 +135,7 @@ export const clientService = {
   },
 
   async getClientFeedbacks(): Promise<ClientFeedback[]> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-    if (!token) throw new Error("No token found");
+    const token = getRequiredAuthToken();
 
     return apiFetch("/client/feedbacks", {
       method: "GET",
@@ -206,14 +146,7 @@ export const clientService = {
   },
 
   async getEnquiries() {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-
-    if (!token) {
-      throw new Error("No token found");
-    }
+    const token = getRequiredAuthToken();
 
     return apiFetch("/client/enquiry", {
       method: "GET",
@@ -224,14 +157,7 @@ export const clientService = {
   },
 
   async getEnquiryById(id: string) {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-
-    if (!token) {
-      throw new Error("No token found");
-    }
+    const token = getRequiredAuthToken();
 
     return apiFetch(`/client/enquiry/${id}`, {
       method: "GET",
@@ -242,14 +168,7 @@ export const clientService = {
   },
 
   async sendEnquiryMessage(enquiryId: string, message: string) {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-
-    if (!token) {
-      throw new Error("No token found");
-    }
+    const token = getRequiredAuthToken();
 
     return apiFetch(`/client/enquiry/${enquiryId}/message`, {
       method: "POST",
@@ -266,14 +185,7 @@ export const clientService = {
   async getCareRequestApplications(
     careRequestId: string,
   ): Promise<CareRequestApplication[]> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-
-    if (!token) {
-      throw new Error("No token found");
-    }
+    const token = getRequiredAuthToken();
 
     return apiFetch(`/client/care-requests/${careRequestId}/applications`, {
       method: "GET",
@@ -284,14 +196,7 @@ export const clientService = {
   },
 
   async getCarers() {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-
-    if (!token) {
-      throw new Error("No token found");
-    }
+    const token = getRequiredAuthToken();
 
     const response = await apiFetch("/client/carers", {
       method: "GET",
@@ -303,14 +208,7 @@ export const clientService = {
   },
 
   async getCarerById(carerId: string) {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-
-    if (!token) {
-      throw new Error("No token found");
-    }
+    const token = getRequiredAuthToken();
 
     return apiFetch(`/client/carers/${carerId}`, {
       method: "GET",
@@ -321,14 +219,7 @@ export const clientService = {
   },
 
   async getPlacements(): Promise<ClientPlacement[]> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-
-    if (!token) {
-      throw new Error("No token found");
-    }
+    const token = getRequiredAuthToken();
 
     return apiFetch("/client/placements", {
       method: "GET",
@@ -339,11 +230,7 @@ export const clientService = {
   },
 
   async getPlacementDetail(placementId: string): Promise<ClientPlacement> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-    if (!token) throw new Error("No token found");
+    const token = getRequiredAuthToken();
 
     return apiFetch(`/client/placements/${placementId}`, {
       method: "GET",
@@ -354,11 +241,7 @@ export const clientService = {
   },
 
   async getInterestList(careRequestId?: string) {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-    if (!token) throw new Error("No token found");
+    const token = getRequiredAuthToken();
 
     const url = careRequestId
       ? `/client/interest-list?careRequestId=${careRequestId}`
@@ -371,11 +254,7 @@ export const clientService = {
   },
 
   async getCareRequestMatches(careRequestId: string, limit = 50, minScore = 0): Promise<any> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-    if (!token) throw new Error("No token found");
+    const token = getRequiredAuthToken();
 
     const cleanId = String(careRequestId || "").replace(/^\/+/, "").trim();
     return apiFetch(`/matching/care-requests/${cleanId}?limit=${limit}&minScore=${minScore}`, {
@@ -385,11 +264,7 @@ export const clientService = {
   },
 
   async addToInterestList(carerProfileId: string) {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-    if (!token) throw new Error("No token found");
+    const token = getRequiredAuthToken();
 
     return apiFetch("/client/interest-list", {
       method: "POST",
@@ -399,11 +274,7 @@ export const clientService = {
   },
 
   async reorderInterestList(carerProfileIds: string[]) {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-    if (!token) throw new Error("No token found");
+    const token = getRequiredAuthToken();
 
     return apiFetch("/client/interest-list/reorder", {
       method: "PUT",
@@ -413,11 +284,7 @@ export const clientService = {
   },
 
   async removeFromInterestList(carerProfileId: string) {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-    if (!token) throw new Error("No token found");
+    const token = getRequiredAuthToken();
 
     return apiFetch(`/client/interest-list/${carerProfileId}`, {
       method: "DELETE",
@@ -426,11 +293,7 @@ export const clientService = {
   },
 
   async getInvoices(): Promise<any[]> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-    if (!token) throw new Error("No token found");
+    const token = getRequiredAuthToken();
 
     return apiFetch("/client/invoices", {
       method: "GET",
@@ -444,11 +307,7 @@ export const clientService = {
     immediateServiceConsent?: boolean,
     lossOfRightToCancelConsent?: boolean,
   ): Promise<{ url: string }> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-    if (!token) throw new Error("No token found");
+    const token = getRequiredAuthToken();
 
     return apiFetch("/client/billing/lifetime-fee/checkout", {
       method: "POST",
@@ -466,11 +325,7 @@ export const clientService = {
   },
 
   async verifyLifetimeFee(billingRequestId: string): Promise<any> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-    if (!token) throw new Error("No token found");
+    const token = getRequiredAuthToken();
 
     return apiFetch("/client/billing/lifetime-fee/verify", {
       method: "POST",
@@ -487,11 +342,7 @@ export const clientService = {
     successUrl: string,
     cancelUrl: string,
   ): Promise<{ url: string }> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-    if (!token) throw new Error("No token found");
+    const token = getRequiredAuthToken();
 
     return apiFetch(`/client/placements/${placementId}/subscribe`, {
       method: "POST",
@@ -507,11 +358,7 @@ export const clientService = {
     placementId: string,
     billingRequestId: string,
   ): Promise<any> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-    if (!token) throw new Error("No token found");
+    const token = getRequiredAuthToken();
 
     return apiFetch(`/client/placements/${placementId}/verify-mandate`, {
       method: "POST",
@@ -524,11 +371,7 @@ export const clientService = {
   },
 
   async approveApplication(applicationId: string): Promise<any> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-    if (!token) throw new Error("No token found");
+    const token = getRequiredAuthToken();
 
     return apiFetch(`/client/applications/${applicationId}/approve`, {
       method: "PATCH",
@@ -540,11 +383,7 @@ export const clientService = {
   },
 
   async rejectApplication(applicationId: string, reason: string): Promise<any> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-    if (!token) throw new Error("No token found");
+    const token = getRequiredAuthToken();
 
     return apiFetch(`/client/applications/${applicationId}/reject`, {
       method: "PATCH",
@@ -571,11 +410,7 @@ export const clientService = {
   },
 
   async getPlacementFeedbacks(placementId: string): Promise<any> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-    if (!token) throw new Error("No token found");
+    const token = getRequiredAuthToken();
 
     return apiFetch(`/client/placements/${placementId}/feedbacks`, {
       method: "GET",

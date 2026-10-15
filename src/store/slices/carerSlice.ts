@@ -195,15 +195,40 @@ export const updateCarerAvailability = createAsyncThunk<
 
 export const uploadCarerDocument = createAsyncThunk<
   CarerDocument,
-  { file: File; category: string; type: string },
+  {
+    file: File;
+    category: string;
+    type: string;
+    options?: {
+      replaceExisting?: boolean;
+      documentId?: string;
+      expiryDate?: string;
+      dbsCertificateNumber?: string;
+    };
+  },
   { rejectValue: string }
 >(
   "carer/uploadDocument",
-  async ({ file, category, type }, { rejectWithValue }) => {
+  async ({ file, category, type, options }, { rejectWithValue }) => {
     try {
-      return await carerService.uploadDocument(file, category, type);
+      return await carerService.uploadDocument(file, category, type, options);
     } catch (error: any) {
       return rejectWithValue(error?.message || "Failed to upload document");
+    }
+  },
+);
+
+export const uploadCarerDocumentsMulti = createAsyncThunk<
+  any,
+  { files: File[]; category?: string; type?: string },
+  { rejectValue: string }
+>(
+  "carer/uploadDocumentsMulti",
+  async ({ files, category, type }, { rejectWithValue }) => {
+    try {
+      return await carerService.uploadDocumentsMulti(files, category, type);
+    } catch (error: any) {
+      return rejectWithValue(error?.message || "Failed to upload documents");
     }
   },
 );

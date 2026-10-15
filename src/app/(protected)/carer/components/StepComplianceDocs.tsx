@@ -40,6 +40,10 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
       type: DocumentFileType.PROFESSIONAL_REFERENCE_2,
       label: "Professional Reference 2 *",
     },
+    {
+      type: DocumentFileType.CV_RESUME,
+      label: "Curriculum Vitae (CV) *",
+    },
   ];
 
   const missingDocs = requiredDocs.filter((docItem) => {
@@ -114,27 +118,40 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
           </p>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          <DocUploadRow
-            label="Enhanced DBS Certificate *"
-            description="Please upload a clear, full-page scan or photo of your official certificate."
-            type={DocumentFileType.ENHANCED_DBS_CERTIFICATE}
-            portal={portal}
-            isMissing={
-              submitted &&
-              (() => {
-                const doc = complianceDocs.find(
-                  (d: ComplianceDoc) =>
-                    d.type === DocumentFileType.ENHANCED_DBS_CERTIFICATE,
-                );
-                const isStaged =
-                  !!selectedFiles[
-                  DocumentFileType.ENHANCED_DBS_CERTIFICATE.toLowerCase()
-                  ];
-                return !doc && !isStaged;
-              })()
-            }
-          />
+        <div className="space-y-4 mb-6">
+          <h4 className="text-md font-semibold text-gold-100 flex items-center justify-between border-b border-gold-300/10 pb-2">
+            <span>Enhanced DBS Certificate <span className="text-red-400">*</span></span>
+            <span className="text-[11px] font-normal text-gold-100/50">Accommodates certificate & verification check confirmation</span>
+          </h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <DocUploadRow
+              label="Upload Document 1: Enhanced DBS Certificate *"
+              description="Please upload a clear, full-page scan or photo of your official certificate."
+              type={DocumentFileType.ENHANCED_DBS_CERTIFICATE}
+              portal={portal}
+              isMissing={
+                submitted &&
+                (() => {
+                  const doc = complianceDocs.find(
+                    (d: ComplianceDoc) =>
+                      d.type === DocumentFileType.ENHANCED_DBS_CERTIFICATE,
+                  );
+                  const isStaged =
+                    !!selectedFiles[
+                    DocumentFileType.ENHANCED_DBS_CERTIFICATE.toLowerCase()
+                    ];
+                  return !doc && !isStaged;
+                })()
+              }
+            />
+
+            <DocUploadRow
+              label="Upload Supporting Document 2: DBS Verification / Check Confirmation"
+              description="Upload confirmation of online check or supporting DBS verification."
+              type={DocumentFileType.ENHANCED_DBS_SUPPORTING}
+              portal={portal}
+            />
+          </div>
 
           <div className="p-4 rounded-xl border border-gold-300/10 bg-navy-950/40 flex flex-col justify-between transition-all">
             <div>
@@ -167,49 +184,62 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <DocUploadRow
-            label="Professional Reference 1 *"
-            type={DocumentFileType.PROFESSIONAL_REFERENCE_1}
-            portal={portal}
-            isMissing={
-              submitted &&
-              (() => {
-                const doc = complianceDocs.find(
-                  (d: ComplianceDoc) =>
-                    d.type === DocumentFileType.PROFESSIONAL_REFERENCE_1,
-                );
-                const isStaged =
-                  !!selectedFiles[
-                  DocumentFileType.PROFESSIONAL_REFERENCE_1.toLowerCase()
-                  ];
-                return !doc && !isStaged;
-              })()
-            }
-          />
-          <DocUploadRow
-            label="Professional Reference 2 *"
-            type={DocumentFileType.PROFESSIONAL_REFERENCE_2}
-            portal={portal}
-            isMissing={
-              submitted &&
-              (() => {
-                const doc = complianceDocs.find(
-                  (d: ComplianceDoc) =>
-                    d.type === DocumentFileType.PROFESSIONAL_REFERENCE_2,
-                );
-                const isStaged =
-                  !!selectedFiles[
-                  DocumentFileType.PROFESSIONAL_REFERENCE_2.toLowerCase()
-                  ];
-                return !doc && !isStaged;
-              })()
-            }
-          />
+        <div className="space-y-4 pt-4 border-t border-gold-300/10">
+          <h4 className="text-md font-semibold text-gold-100 flex items-center justify-between border-b border-gold-300/10 pb-2">
+            <span>Professional References <span className="text-red-400">*</span></span>
+            <span className="text-[11px] font-normal text-gold-100/50">Accommodates references & verification confirmation</span>
+          </h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <DocUploadRow
+              label="Professional Reference 1 *"
+              type={DocumentFileType.PROFESSIONAL_REFERENCE_1}
+              portal={portal}
+              isMissing={
+                submitted &&
+                (() => {
+                  const doc = complianceDocs.find(
+                    (d: ComplianceDoc) =>
+                      d.type === DocumentFileType.PROFESSIONAL_REFERENCE_1,
+                  );
+                  const isStaged =
+                    !!selectedFiles[
+                    DocumentFileType.PROFESSIONAL_REFERENCE_1.toLowerCase()
+                    ];
+                  return !doc && !isStaged;
+                })()
+              }
+            />
+            <DocUploadRow
+              label="Professional Reference 2 *"
+              type={DocumentFileType.PROFESSIONAL_REFERENCE_2}
+              portal={portal}
+              isMissing={
+                submitted &&
+                (() => {
+                  const doc = complianceDocs.find(
+                    (d: ComplianceDoc) =>
+                      d.type === DocumentFileType.PROFESSIONAL_REFERENCE_2,
+                  );
+                  const isStaged =
+                    !!selectedFiles[
+                    DocumentFileType.PROFESSIONAL_REFERENCE_2.toLowerCase()
+                    ];
+                  return !doc && !isStaged;
+                })()
+              }
+            />
+            <div className="md:col-span-2">
+              <DocUploadRow
+                label="Reference Verification Confirmation (Optional Supporting Evidence)"
+                type={DocumentFileType.PROFESSIONAL_REFERENCE_SUPPORTING}
+                portal={portal}
+              />
+            </div>
+          </div>
         </div>
 
-        <div className="pt-6 pb-2">
-          <h4 className="text-lg font-semibold text-gold-200 mb-4">
+        <div className="pt-6 pb-2 border-t border-gold-300/10">
+          <h4 className="text-md font-semibold text-gold-200 mb-4">
             Additional References (Optional)
           </h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -236,8 +266,40 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
           </button>
         </div>
 
+        {/* CV and Employment History (Dual Documents) */}
         <div className="space-y-4 pt-4 border-t border-gold-300/10">
-          <div className="space-y-2">
+          <h4 className="text-md font-semibold text-gold-100 flex items-center justify-between border-b border-gold-300/10 pb-2">
+            <span>CV & Employment History <span className="text-red-400">*</span></span>
+            <span className="text-[11px] font-normal text-gold-100/50">Accommodates CV & supporting employment documentation</span>
+          </h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <DocUploadRow
+              label="Upload Document 1: Curriculum Vitae (CV) *"
+              type={DocumentFileType.CV_RESUME}
+              portal={portal}
+              isMissing={
+                submitted &&
+                (() => {
+                  const doc = complianceDocs.find(
+                    (d: ComplianceDoc) =>
+                      d.type === DocumentFileType.CV_RESUME,
+                  );
+                  const isStaged =
+                    !!selectedFiles[
+                    DocumentFileType.CV_RESUME.toLowerCase()
+                    ];
+                  return !doc && !isStaged;
+                })()
+              }
+            />
+            <DocUploadRow
+              label="Upload Supporting Document 2: Supporting Employment Documentation"
+              type={DocumentFileType.CV_SUPPORTING}
+              portal={portal}
+            />
+          </div>
+
+          <div className="space-y-2 pt-2">
             <label className="text-sm font-medium text-gold-200">
               Employment History (Last 5 Years) *
             </label>

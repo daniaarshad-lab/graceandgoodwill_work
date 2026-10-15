@@ -9,7 +9,9 @@ import {
   User,
   Briefcase,
   Video,
+  Calendar,
 } from "lucide-react";
+import { formatDateArrayToRanges } from "@/utils/dateRangeFormatter";
 
 interface Props {
   portal: any;
@@ -143,9 +145,32 @@ export default function StepReviewSubmit({
       "Business Insurance Certificate (required for driving preferences)",
     );
   }
-  if (!bio || !experience || !specialties) {
+  // Experience validation (mandatory number between 0 and 99)
+  const parsedExp = parseInt(experience, 10);
+  const hasValidExperience =
+    experience !== undefined &&
+    experience !== null &&
+    experience !== "" &&
+    !isNaN(parsedExp) &&
+    parsedExp >= 0 &&
+    parsedExp <= 99;
+
+  // Availability validation (mandatory)
+  const carerAvailability: string[] = Array.isArray(portal.profile?.availability)
+    ? portal.profile.availability
+    : Array.isArray(portal.actualProfile?.availability)
+      ? portal.actualProfile.availability
+      : [];
+  const hasAvailability = carerAvailability.length > 0;
+
+  if (!bio || !hasValidExperience || !specialties) {
     missingItems.push(
-      "Professional Profile details (Bio, Experience, Specialties)",
+      "Professional Profile details (Bio, Years of Care Experience, Specialties)",
+    );
+  }
+  if (!hasAvailability) {
+    missingItems.push(
+      "Availability Schedule (at least one available date range must be configured)",
     );
   }
   if (!trainingComplete) {
@@ -532,6 +557,54 @@ export default function StepReviewSubmit({
                   </span>
                 </div>
               </div>
+            </div>
+          </div>
+        </SectionCard>
+
+        {/* Section: Availability Schedule */}
+        <SectionCard className="p-6 border border-gold-300/10 bg-navy-900/30 space-y-4 md:col-span-2">
+          <div className="flex items-center gap-3 border-b border-gold-300/10 pb-3">
+            <Calendar className="w-5 h-5 text-gold-300" />
+            <h4 className="text-md font-bold text-gold-100 uppercase tracking-wide">
+              Availability Schedule
+            </h4>
+          </div>
+          <div className="space-y-3.5 text-xs">
+            <div className="flex justify-between items-center bg-navy-950/20 p-2.5 rounded-lg border border-gold-300/5">
+              <span className="text-gold-100/80 font-medium">
+                Availability Status
+              </span>
+              {hasAvailability ? (
+                <span className="text-green-400 font-bold flex items-center gap-1">
+                  <Check className="w-3.5 h-3.5" /> Configured ({carerAvailability.length} day{carerAvailability.length === 1 ? "" : "s"})
+                </span>
+              ) : (
+                <span className="text-red-400 font-bold flex items-center gap-1">
+                  <AlertCircle className="w-3.5 h-3.5" /> Incomplete / Missing
+                </span>
+              )}
+            </div>
+
+            <div>
+              <span className="text-[11px] font-bold text-gold-200 uppercase tracking-wider block mb-2">
+                Configured Available Ranges
+              </span>
+              {hasAvailability ? (
+                <div className="flex flex-wrap gap-2">
+                  {formatDateArrayToRanges(carerAvailability).map((rangeStr, idx) => (
+                    <span
+                      key={idx}
+                      className="text-xs font-semibold text-gold bg-navy-950 px-3 py-1.5 rounded-lg border border-gold-300/20 shadow-sm"
+                    >
+                      {rangeStr}
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-xs text-red-400/90 italic">
+                  No availability dates currently registered. Availability is compulsory for placement matching.
+                </p>
+              )}
             </div>
           </div>
         </SectionCard>

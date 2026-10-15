@@ -1,4 +1,4 @@
-﻿export enum FileCategory {
+export enum FileCategory {
   IDENTITY = "IDENTITY",
   RIGHT_TO_WORK = "RIGHT_TO_WORK",
   COMPLIANCE = "COMPLIANCE",
@@ -17,7 +17,9 @@ export enum DocumentFileType {
   DRIVING_LICENCE_FRONT = "DRIVING_LICENCE_FRONT",
   DRIVING_LICENCE_BACK = "DRIVING_LICENCE_BACK",
   PROOF_OF_ADDRESS = "PROOF_OF_ADDRESS",
+  PROOF_OF_ADDRESS_SUPPORTING = "PROOF_OF_ADDRESS_SUPPORTING",
   RIGHT_TO_WORK = "RIGHT_TO_WORK",
+  RIGHT_TO_WORK_SUPPORTING = "RIGHT_TO_WORK_SUPPORTING",
   NATIONAL_INSURANCE_PROOF = "NATIONAL_INSURANCE_PROOF",
 
   // Mandatory Training
@@ -33,14 +35,19 @@ export enum DocumentFileType {
 
   // Compliance
   ENHANCED_DBS_CERTIFICATE = "ENHANCED_DBS_CERTIFICATE",
+  ENHANCED_DBS_SUPPORTING = "ENHANCED_DBS_SUPPORTING",
   CV_RESUME = "CV_RESUME",
+  CV_SUPPORTING = "CV_SUPPORTING",
   PROFESSIONAL_REFERENCE_1 = "PROFESSIONAL_REFERENCE_1",
   PROFESSIONAL_REFERENCE_2 = "PROFESSIONAL_REFERENCE_2",
+  PROFESSIONAL_REFERENCE_SUPPORTING = "PROFESSIONAL_REFERENCE_SUPPORTING",
   ADDITIONAL_REFERENCE = "ADDITIONAL_REFERENCE",
 
   // Insurance
   PUBLIC_LIABILITY_INSURANCE = "PUBLIC_LIABILITY_INSURANCE",
+  PUBLIC_LIABILITY_SUPPORTING = "PUBLIC_LIABILITY_SUPPORTING",
   PROFESSIONAL_INDEMNITY_INSURANCE = "PROFESSIONAL_INDEMNITY_INSURANCE",
+  PROFESSIONAL_INDEMNITY_SUPPORTING = "PROFESSIONAL_INDEMNITY_SUPPORTING",
   BUSINESS_INSURANCE = "BUSINESS_INSURANCE",
 
   // Additional Training (Step 8)
@@ -67,7 +74,11 @@ export const DocumentFileTypeLabels: Record<string, string> = {
   [DocumentFileType.DRIVING_LICENCE_FRONT]: "Driving Licence (Front)",
   [DocumentFileType.DRIVING_LICENCE_BACK]: "Driving Licence (Back)",
   [DocumentFileType.PROOF_OF_ADDRESS]: "Proof of Address",
+  [DocumentFileType.PROOF_OF_ADDRESS_SUPPORTING]:
+    "Proof of Address (Supporting Evidence)",
   [DocumentFileType.RIGHT_TO_WORK]: "Right to Work in the UK",
+  [DocumentFileType.RIGHT_TO_WORK_SUPPORTING]:
+    "Right to Work (Home Office / GOV.UK Verification)",
   [DocumentFileType.NATIONAL_INSURANCE_PROOF]:
     "Proof of National Insurance Number",
 
@@ -86,15 +97,24 @@ export const DocumentFileTypeLabels: Record<string, string> = {
 
   // Compliance
   [DocumentFileType.ENHANCED_DBS_CERTIFICATE]: "Enhanced DBS Certificate",
-  [DocumentFileType.CV_RESUME]: "CV / Resume",
+  [DocumentFileType.ENHANCED_DBS_SUPPORTING]:
+    "Enhanced DBS (Verification / Check Confirmation)",
+  [DocumentFileType.CV_RESUME]: "CV / Employment History",
+  [DocumentFileType.CV_SUPPORTING]: "CV (Supporting Employment Documentation)",
   [DocumentFileType.PROFESSIONAL_REFERENCE_1]: "Professional Reference 1",
   [DocumentFileType.PROFESSIONAL_REFERENCE_2]: "Professional Reference 2",
+  [DocumentFileType.PROFESSIONAL_REFERENCE_SUPPORTING]:
+    "Professional Reference (Verification Confirmation)",
   [DocumentFileType.ADDITIONAL_REFERENCE]: "Additional Reference",
 
   // Insurance
   [DocumentFileType.PUBLIC_LIABILITY_INSURANCE]: "Public Liability Insurance",
+  [DocumentFileType.PUBLIC_LIABILITY_SUPPORTING]:
+    "Public Liability (Policy Schedule / Supporting Doc)",
   [DocumentFileType.PROFESSIONAL_INDEMNITY_INSURANCE]:
     "Professional Indemnity Insurance",
+  [DocumentFileType.PROFESSIONAL_INDEMNITY_SUPPORTING]:
+    "Professional Indemnity (Supporting Policy Doc)",
   [DocumentFileType.BUSINESS_INSURANCE]: "Business Use Insurance Cover",
 
   // Additional Training (Step 8)

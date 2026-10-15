@@ -25,9 +25,10 @@ export const mapCarerProfileToUICarer = (carer: any): Carer => {
   return {
     id: carer.id,
     name: `${carer.firstName || carer.user?.firstName || "Profile information pending"} ${carer.lastName || carer.user?.lastName || ""}`.trim(),
-    experience: carer.experienceYears
-      ? `${carer.experienceYears} Years`
-      : "Profile information pending",
+    experience:
+      carer.experienceYears !== undefined && carer.experienceYears !== null
+        ? `${carer.experienceYears} Years`
+        : "Profile information pending",
     specialties:
       Array.isArray(carer.careSpecialties) && carer.careSpecialties.length > 0
         ? carer.careSpecialties.join(", ")

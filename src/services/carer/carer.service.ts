@@ -1,4 +1,4 @@
-import { apiFetch } from "@/lib/api";
+import { apiFetch, getRequiredAuthToken } from "@/lib/api";
 import {
   CarerProfile,
   UpdateCarerProfilePayload,
@@ -7,14 +7,7 @@ import {
 
 export const carerService = {
   async getProfile(): Promise<CarerProfile> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-
-    if (!token) {
-      throw new Error("No token found");
-    }
+    const token = getRequiredAuthToken();
 
     return apiFetch("/carer/profile", {
       method: "GET",
@@ -27,14 +20,7 @@ export const carerService = {
   async updateProfile(
     payload: UpdateCarerProfilePayload,
   ): Promise<CarerProfile> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-
-    if (!token) {
-      throw new Error("No token found");
-    }
+    const token = getRequiredAuthToken();
 
     return apiFetch("/carer/profile", {
       method: "PATCH",
@@ -45,21 +31,37 @@ export const carerService = {
     });
   },
 
-  async uploadDocument(file: File, category: string, type: string) {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-
-    if (!token) {
-      throw new Error("No token found");
-    }
+  async uploadDocument(
+    file: File,
+    category: string,
+    type: string,
+    options?: {
+      replaceExisting?: boolean;
+      documentId?: string;
+      expiryDate?: string;
+      dbsCertificateNumber?: string;
+    },
+  ) {
+    const token = getRequiredAuthToken();
 
     const formData = new FormData();
 
     formData.append("file", file);
-    formData.append("category", category);
-    formData.append("type", type);
+    if (category) formData.append("category", category);
+    if (type) formData.append("type", type);
+
+    if (options?.replaceExisting !== undefined) {
+      formData.append("replaceExisting", options.replaceExisting ? "true" : "false");
+    }
+    if (options?.documentId) {
+      formData.append("documentId", options.documentId);
+    }
+    if (options?.expiryDate) {
+      formData.append("expiryDate", options.expiryDate);
+    }
+    if (options?.dbsCertificateNumber) {
+      formData.append("dbsCertificateNumber", options.dbsCertificateNumber);
+    }
 
     return apiFetch("/carer/profile/document", {
       method: "POST",
@@ -69,15 +71,31 @@ export const carerService = {
       body: formData,
     });
   },
-  async uploadDocuments(files: Record<string, File>) {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
 
-    if (!token) {
-      throw new Error("No token found");
-    }
+  async uploadDocumentsMulti(
+    files: File[],
+    category?: string,
+    type?: string,
+  ) {
+    const token = getRequiredAuthToken();
+
+    const formData = new FormData();
+    files.forEach((file) => {
+      formData.append("files", file);
+    });
+    if (category) formData.append("category", category);
+    if (type) formData.append("type", type);
+
+    return apiFetch("/carer/profile/documents/multi", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+  },
+  async uploadDocuments(files: Record<string, File>) {
+    const token = getRequiredAuthToken();
 
     const formData = new FormData();
     Object.entries(files).forEach(([key, file]) => {
@@ -121,43 +139,129 @@ export const carerService = {
     files: Record<string, File>,
     textFields?: Record<string, string>,
   ) {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-
-    if (!token) {
-      throw new Error("No token found");
-    }
-
+    const token = getRequiredAuthToken();
     const formData = new FormData();
+
+    // Strictly map and filter fields for the specific step endpoint
     Object.entries(files).forEach(([key, file]) => {
-      let mappedKey = key;
-      if (mappedKey === "national_insurance_proof") mappedKey = "ni_proof";
-      if (mappedKey === "driving_licence") mappedKey = "drivers_license";
+      const lowerKey = key.toLowerCase();
 
-      // Insurance documents mappings
-      if (mappedKey === "public_liability_insurance") {
-        mappedKey = step === 2 ? "business_insurance" : "public_liability";
+      if (step === 2) {
+        // Step 2: Identity, Right to Work & Vehicle Insurance
+        if (lowerKey === "passport") {
+          formData.append("passport", file);
+        } else if (lowerKey === "driving_licence_front") {
+          formData.append("driving_licence_front", file);
+        } else if (lowerKey === "driving_licence_back") {
+          formData.append("driving_licence_back", file);
+        } else if (
+          lowerKey === "driving_licence" ||
+          lowerKey === "drivers_license"
+        ) {
+          formData.append("drivers_license", file);
+        } else if (lowerKey === "proof_of_address") {
+          formData.append("proof_of_address", file);
+        } else if (lowerKey === "proof_of_address_supporting") {
+          formData.append("proof_of_address", file);
+        } else if (lowerKey === "right_to_work") {
+          formData.append("right_to_work", file);
+        } else if (lowerKey === "right_to_work_supporting") {
+          formData.append("right_to_work", file);
+        } else if (
+          lowerKey === "national_insurance_proof" ||
+          lowerKey === "ni_proof"
+        ) {
+          formData.append("ni_proof", file);
+        } else if (
+          lowerKey === "business_insurance" ||
+          lowerKey === "business_insurance_certificate"
+        ) {
+          formData.append("business_insurance", file);
+        }
+      } else if (step === 5) {
+        // Step 5: Mandatory Care Training
+        const trainingMap: Record<string, string> = {
+          safeguarding_adults: "safeguarding_adults",
+          moving_and_handling: "moving_and_handling",
+          medication_administration: "medication_administration",
+          basic_life_support_first_aid: "basic_life_support",
+          basic_life_support: "basic_life_support",
+          infection_prevention_and_control: "infection_prevention",
+          infection_prevention: "infection_prevention",
+          health_and_safety: "health_and_safety",
+          fire_safety: "fire_safety",
+          food_hygiene: "food_hygiene",
+          gdpr_data_protection: "gdpr",
+          gdpr: "gdpr",
+        };
+        const mapped = trainingMap[lowerKey];
+        if (mapped) {
+          formData.append(mapped, file);
+        }
+      } else if (step === 6) {
+        // Step 6: Compliance & DBS & References & CV
+        if (
+          lowerKey === "enhanced_dbs_certificate" ||
+          lowerKey === "enhanced_dbs"
+        ) {
+          formData.append("enhanced_dbs", file);
+        } else if (lowerKey === "enhanced_dbs_supporting") {
+          formData.append("enhanced_dbs", file);
+        } else if (lowerKey === "cv_resume" || lowerKey === "cv") {
+          formData.append("cv", file);
+        } else if (lowerKey === "cv_supporting") {
+          formData.append("cv", file);
+        } else if (
+          lowerKey === "professional_reference_1" ||
+          lowerKey === "reference_1"
+        ) {
+          formData.append("reference_1", file);
+        } else if (
+          lowerKey === "professional_reference_2" ||
+          lowerKey === "reference_2"
+        ) {
+          formData.append("reference_2", file);
+        } else if (
+          lowerKey === "professional_reference_supporting" ||
+          lowerKey === "reference_supporting"
+        ) {
+          formData.append("reference_1", file);
+        } else if (lowerKey.startsWith("additional_reference")) {
+          formData.append("additional_reference", file);
+        }
+      } else if (step === 7) {
+        // Step 7: Insurance Documents
+        if (
+          lowerKey === "public_liability_insurance" ||
+          lowerKey === "public_liability"
+        ) {
+          formData.append("public_liability", file);
+        } else if (lowerKey === "public_liability_supporting") {
+          formData.append("public_liability", file);
+        } else if (
+          lowerKey === "professional_indemnity_insurance" ||
+          lowerKey === "professional_indemnity"
+        ) {
+          formData.append("professional_indemnity", file);
+        } else if (lowerKey === "professional_indemnity_supporting") {
+          formData.append("professional_indemnity", file);
+        }
+      } else if (step === 8) {
+        // Step 8: Additional Qualifications
+        const qualKeys = [
+          "nvq_2",
+          "nvq_3",
+          "nvq_4",
+          "nursing_qualification",
+          "university_qualification",
+          "dementia_training",
+          "end_of_life_care",
+          "other_relevant",
+        ];
+        if (qualKeys.includes(lowerKey)) {
+          formData.append(lowerKey, file);
+        }
       }
-      if (mappedKey === "professional_indemnity_insurance") {
-        mappedKey = "professional_indemnity";
-      }
-
-      // Training documents mappings
-      if (mappedKey === "basic_life_support_first_aid")
-        mappedKey = "basic_life_support";
-      if (mappedKey === "infection_prevention_and_control")
-        mappedKey = "infection_prevention";
-      if (mappedKey === "gdpr_data_protection") mappedKey = "gdpr";
-
-      // Compliance documents mappings
-      if (mappedKey === "enhanced_dbs_certificate") mappedKey = "enhanced_dbs";
-      if (mappedKey === "cv_resume") mappedKey = "cv";
-      if (mappedKey === "professional_reference_1") mappedKey = "reference_1";
-      if (mappedKey === "professional_reference_2") mappedKey = "reference_2";
-
-      formData.append(mappedKey, file);
     });
 
     if (textFields) {
@@ -178,14 +282,7 @@ export const carerService = {
   },
 
   async getDocuments() {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-
-    if (!token) {
-      throw new Error("No token found");
-    }
+    const token = getRequiredAuthToken();
 
     return apiFetch("/carer/profile/documents", {
       method: "GET",
@@ -198,14 +295,7 @@ export const carerService = {
   async updateAvailability(
     payload: UpdateAvailabilityPayload,
   ): Promise<CarerProfile> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-
-    if (!token) {
-      throw new Error("No token found");
-    }
+    const token = getRequiredAuthToken();
 
     return apiFetch("/carer/profile/availability", {
       method: "PUT",
@@ -217,14 +307,7 @@ export const carerService = {
   },
 
   async deleteDocument(id: string): Promise<void> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-
-    if (!token) {
-      throw new Error("No token found");
-    }
+    const token = getRequiredAuthToken();
 
     return apiFetch(`/carer/profile/document/${id}`, {
       method: "DELETE",
@@ -234,14 +317,7 @@ export const carerService = {
     });
   },
   async updateDocument(id: string, file: File, category: string) {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-
-    if (!token) {
-      throw new Error("No token found");
-    }
+    const token = getRequiredAuthToken();
 
     const formData = new FormData();
     formData.append("file", file);
@@ -275,14 +351,7 @@ export const carerService = {
       formData.append("hasConsented", String(hasConsented));
     }
 
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-
-    if (!token) {
-      throw new Error("No token found");
-    }
+    const token = getRequiredAuthToken();
 
     return apiFetch("/carer/profile/media", {
       method: "PUT",
@@ -299,11 +368,7 @@ export const carerService = {
     video?: File,
     updateReason?: string,
   ): Promise<any> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-    if (!token) throw new Error("No token found");
+    const token = getRequiredAuthToken();
 
     const formData = new FormData();
     if (photo) formData.append("photo", photo);
@@ -319,11 +384,7 @@ export const carerService = {
 
   /** GET /carer/profile-updates — get all previous profile update requests */
   async getProfileUpdateRequests(): Promise<any[]> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-    if (!token) throw new Error("No token found");
+    const token = getRequiredAuthToken();
 
     return apiFetch("/carer/profile-updates", {
       method: "GET",
@@ -332,14 +393,7 @@ export const carerService = {
   },
 
   async updateStep2(payload: any): Promise<CarerProfile> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-
-    if (!token) {
-      throw new Error("No token found");
-    }
+    const token = getRequiredAuthToken();
 
     const formData = new FormData();
     if (payload.canDrive !== undefined && payload.canDrive !== "") {
@@ -378,14 +432,7 @@ export const carerService = {
   },
 
   async updateStep3(payload: any): Promise<CarerProfile> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-
-    if (!token) {
-      throw new Error("No token found");
-    }
+    const token = getRequiredAuthToken();
 
     return apiFetch("/carer/profile/step-3", {
       method: "POST",
@@ -398,14 +445,7 @@ export const carerService = {
   },
 
   async updateStep10(payload: any): Promise<CarerProfile> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-
-    if (!token) {
-      throw new Error("No token found");
-    }
+    const token = getRequiredAuthToken();
 
     return apiFetch("/carer/profile/step-10", {
       method: "POST",
@@ -418,14 +458,7 @@ export const carerService = {
   },
 
   async updateStep11(payload: any): Promise<CarerProfile> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-
-    if (!token) {
-      throw new Error("No token found");
-    }
+    const token = getRequiredAuthToken();
 
     return apiFetch("/carer/profile/step-11", {
       method: "POST",
@@ -438,14 +471,7 @@ export const carerService = {
   },
 
   async submitProfile(): Promise<any> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-
-    if (!token) {
-      throw new Error("No token found");
-    }
+    const token = getRequiredAuthToken();
 
     return apiFetch("/carer/profile/submit", {
       method: "POST",
@@ -457,14 +483,7 @@ export const carerService = {
 
   /** GET /carer/care-requests — list all available placement opportunities */
   async getCareRequests(): Promise<any[]> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-
-    if (!token) {
-      throw new Error("No token found");
-    }
+    const token = getRequiredAuthToken();
 
     return apiFetch("/carer/care-requests", {
       method: "GET",
@@ -476,14 +495,7 @@ export const carerService = {
 
   /** GET /carer/care-request/:id — get full placement details */
   async getCareRequestById(id: string): Promise<any> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-
-    if (!token) {
-      throw new Error("No token found");
-    }
+    const token = getRequiredAuthToken();
 
     return apiFetch(`/carer/care-request/${id}`, {
       method: "GET",
@@ -495,14 +507,7 @@ export const carerService = {
 
   /** POST /carer/care-requests/:id/apply — apply to a care request */
   async applyToCareRequest(id: string): Promise<any> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-
-    if (!token) {
-      throw new Error("No token found");
-    }
+    const token = getRequiredAuthToken();
 
     return apiFetch(`/carer/care-requests/${id}/apply`, {
       method: "POST",
@@ -513,14 +518,7 @@ export const carerService = {
   },
 
   async getCarerApplications(): Promise<any[]> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-
-    if (!token) {
-      throw new Error("No token found");
-    }
+    const token = getRequiredAuthToken();
 
     return apiFetch("/carer/applications", {
       method: "GET",
@@ -531,14 +529,7 @@ export const carerService = {
   },
 
   async getCarerApplicationHistory(): Promise<any[]> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-
-    if (!token) {
-      throw new Error("No token found");
-    }
+    const token = getRequiredAuthToken();
 
     return apiFetch("/carer/applications/history", {
       method: "GET",
@@ -549,11 +540,7 @@ export const carerService = {
   },
 
   async getSubscriptionInfo(): Promise<any> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-    if (!token) throw new Error("No token found");
+    const token = getRequiredAuthToken();
     return apiFetch("/carer/subscription", {
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
@@ -565,11 +552,7 @@ export const carerService = {
     successUrl: string,
     cancelUrl: string,
   ): Promise<any> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-    if (!token) throw new Error("No token found");
+    const token = getRequiredAuthToken();
     return apiFetch("/carer/subscription/checkout", {
       method: "POST",
       headers: {
@@ -581,11 +564,7 @@ export const carerService = {
   },
 
   async createPortalSession(returnUrl: string): Promise<any> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-    if (!token) throw new Error("No token found");
+    const token = getRequiredAuthToken();
     return apiFetch("/carer/subscription/portal", {
       method: "POST",
       headers: {
@@ -597,11 +576,7 @@ export const carerService = {
   },
 
   async cancelSubscription(): Promise<any> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-    if (!token) throw new Error("No token found");
+    const token = getRequiredAuthToken();
     return apiFetch("/carer/subscription/cancel", {
       method: "POST",
       headers: { Authorization: `Bearer ${token}` },
@@ -609,11 +584,7 @@ export const carerService = {
   },
 
   async getSubscriptionInvoices(): Promise<any[]> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-    if (!token) throw new Error("No token found");
+    const token = getRequiredAuthToken();
     return apiFetch("/carer/subscription/invoices", {
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
@@ -621,11 +592,7 @@ export const carerService = {
   },
 
   async saveStep9Plan(tier: string): Promise<any> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-    if (!token) throw new Error("No token found");
+    const token = getRequiredAuthToken();
     return apiFetch("/carer/profile/step-9", {
       method: "POST",
       headers: {
@@ -637,11 +604,7 @@ export const carerService = {
   },
 
   async getPlacements(): Promise<any[]> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-    if (!token) throw new Error("No token found");
+    const token = getRequiredAuthToken();
     return apiFetch("/carer/placements", {
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
@@ -649,11 +612,7 @@ export const carerService = {
   },
 
   async getPlacementDetail(placementId: string): Promise<any> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-    if (!token) throw new Error("No token found");
+    const token = getRequiredAuthToken();
     return apiFetch(`/carer/placements/${placementId}`, {
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
@@ -661,11 +620,7 @@ export const carerService = {
   },
 
   async getPlacementPayments(placementId: string): Promise<any[]> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-    if (!token) throw new Error("No token found");
+    const token = getRequiredAuthToken();
     return apiFetch(`/carer/placements/${placementId}/payments`, {
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
@@ -673,11 +628,7 @@ export const carerService = {
   },
 
   async acceptPlacement(placementId: string): Promise<any> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-    if (!token) throw new Error("No token found");
+    const token = getRequiredAuthToken();
     return apiFetch(`/carer/placements/${placementId}/accept`, {
       method: "POST",
       headers: { Authorization: `Bearer ${token}` },
@@ -685,11 +636,7 @@ export const carerService = {
   },
 
   async rejectPlacement(placementId: string, reason?: string): Promise<any> {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-    if (!token) throw new Error("No token found");
+    const token = getRequiredAuthToken();
     return apiFetch(`/carer/placements/${placementId}/reject`, {
       method: "POST",
       headers: {

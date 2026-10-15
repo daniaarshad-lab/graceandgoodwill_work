@@ -70,27 +70,68 @@ export default function StepInsuranceDocs({ portal, onNext, onBack }: Props) {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-6">
-          <div className="space-y-2">
-            <div
-              className={`transition-all rounded-xl border ${submitted && errors.publicLiability
-                  ? "border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]"
-                  : "border-transparent"
-                }`}
-            >
-              <DocUploadRow
-                label="Public Liability Insurance *"
-                type={DocumentFileType.PUBLIC_LIABILITY_INSURANCE}
-                portal={portal}
-              />
+        <div className="space-y-6">
+          {/* Public Liability Insurance (Dual Documents) */}
+          <div className="space-y-3">
+            <h4 className="text-md font-semibold text-gold-100 flex items-center justify-between border-b border-gold-300/10 pb-2">
+              <span>Public Liability Insurance <span className="text-red-400">*</span></span>
+              <span className="text-[11px] font-normal text-gold-100/50">Requires original certificate & supporting schedule</span>
+            </h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <div
+                  className={`transition-all rounded-xl border ${
+                    submitted && errors.publicLiability
+                      ? "border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]"
+                      : "border-transparent"
+                  }`}
+                >
+                  <DocUploadRow
+                    label="Upload Document 1: Insurance Certificate *"
+                    type={DocumentFileType.PUBLIC_LIABILITY_INSURANCE}
+                    portal={portal}
+                  />
+                </div>
+                {submitted && errors.publicLiability && (
+                  <p className="text-xs text-red-500 font-semibold px-1">
+                    {errors.publicLiability}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <DocUploadRow
+                  label="Upload Supporting Document 2: Policy Schedule"
+                  type={DocumentFileType.PUBLIC_LIABILITY_SUPPORTING}
+                  portal={portal}
+                />
+              </div>
             </div>
-            {submitted && errors.publicLiability && (
-              <p className="text-xs text-red-500 font-semibold px-1">
-                {errors.publicLiability}
-              </p>
-            )}
           </div>
 
+          {/* Professional Indemnity Insurance (Dual Documents - Optional) */}
+          <div className="space-y-3 pt-4 border-t border-gold-300/10">
+            <h4 className="text-md font-semibold text-gold-100 flex items-center justify-between border-b border-gold-300/10 pb-2">
+              <span>Professional Indemnity Insurance <span className="text-gold-100/40 text-xs font-normal">(Where Applicable)</span></span>
+              <span className="text-[11px] font-normal text-gold-100/50">Accommodates certificate & supporting policy details</span>
+            </h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <DocUploadRow
+                  label="Upload Document 1: Insurance Certificate"
+                  type={DocumentFileType.PROFESSIONAL_INDEMNITY_INSURANCE}
+                  portal={portal}
+                />
+              </div>
+              <div>
+                <DocUploadRow
+                  label="Upload Supporting Document 2: Supporting Documentation"
+                  type={DocumentFileType.PROFESSIONAL_INDEMNITY_SUPPORTING}
+                  portal={portal}
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </SectionCard>
 

@@ -76,7 +76,7 @@ import StepVideoIntro from "./components/StepVideoIntro";
 import StepDeclaration from "./components/StepDeclaration";
 import StepPaymentDetails from "./components/StepPaymentDetails";
 import StepReviewSubmit from "./components/StepReviewSubmit";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, AlertCircle } from "lucide-react";
 import { DocumentFileType } from "@/types/document.types";
 import { agreementsService } from "@/services/agreements/agreements.service";
 import FullScreenLoader from "@/components/FullScreenLoader";
@@ -216,7 +216,10 @@ function CarerDashboardContent() {
             // Step 4: Professional Info
             if (
               !ap.summary ||
-              !ap.experienceYears ||
+              ap.experienceYears === undefined ||
+              ap.experienceYears === null ||
+              isNaN(ap.experienceYears) ||
+              ap.experienceYears < 0 ||
               !ap.careSpecialties?.length
             ) {
               return 4;
@@ -456,8 +459,22 @@ function CarerDashboardContent() {
     }
     if (!identityValid) missing.push("Identity Verification");
 
-    if (!bio || !experience || !specialties)
-      missing.push("Professional Information");
+    const parsedExp = parseInt(experience, 10);
+    const hasValidExperience =
+      experience !== undefined &&
+      experience !== null &&
+      experience !== "" &&
+      !isNaN(parsedExp) &&
+      parsedExp >= 0 &&
+      parsedExp <= 99;
+
+    if (!bio || !hasValidExperience || !specialties)
+      missing.push("Professional Information (Years of Experience, Bio, Specialties)");
+
+    const carerAvail = actualProfile?.availability || profile?.availability || [];
+    if (!Array.isArray(carerAvail) || carerAvail.length === 0) {
+      missing.push("Availability Schedule (At least one available date range)");
+    }
 
     const requiredTraining = [
       DocumentFileType.SAFEGUARDING_ADULTS,
@@ -781,6 +798,57 @@ function CarerDashboardContent() {
           onShareClick={() => setIsShareModalOpen(true)}
         />
 
+        {/* Incomplete Carer Profile Mandatory Information Alert */}
+        {(() => {
+          const exp = actualProfile?.experienceYears ?? profile?.experienceYears;
+          const avail = actualProfile?.availability ?? profile?.availability ?? [];
+          const missingExp =
+            exp === undefined || exp === null || isNaN(Number(exp)) || Number(exp) < 0;
+          const missingAvail = !Array.isArray(avail) || avail.length === 0;
+
+          if (!missingExp && !missingAvail) return null;
+
+          return (
+            <div className="p-5 rounded-2xl bg-amber-950/20 border border-amber-500/30 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+                <div className="space-y-1">
+                  <h4 className="text-sm font-bold text-amber-300">
+                    Mandatory Profile Information Required
+                  </h4>
+                  <p className="text-xs text-gold-100/70 leading-relaxed">
+                    To comply with Grace & Goodwill standards and enable placement matching, please complete your{" "}
+                    {missingExp && missingAvail
+                      ? "Years of Care Experience and Availability Schedule"
+                      : missingExp
+                        ? "Years of Care Experience"
+                        : "Availability Schedule"}
+                    .
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2.5 shrink-0">
+                {missingExp && (
+                  <button
+                    onClick={() => setActiveTab("profile")}
+                    className="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30 hover:bg-amber-500/30 transition-colors"
+                  >
+                    Set Experience
+                  </button>
+                )}
+                {missingAvail && (
+                  <button
+                    onClick={() => setActiveTab("availability")}
+                    className="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-gold/20 text-gold-300 border border-gold/30 hover:bg-gold/30 transition-colors"
+                  >
+                    Set Availability
+                  </button>
+                )}
+              </div>
+            </div>
+          );
+        })()}
+
         <PortalTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
         <div className="transition-all duration-500">
@@ -867,6 +935,7 @@ function CarerDashboardContent() {
               deletingDocumentId={deletingDocumentId}
               isOnboarding={false}
               handleUpdateDoc={portal.handleUpdateDoc}
+              handleUploadNewDoc={portal.handleUploadNewDoc}
               setPreviewDoc={portal.setPreviewDoc}
               setDocToDelete={portal.setDocToDelete}
             />

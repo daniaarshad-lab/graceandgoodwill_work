@@ -104,6 +104,13 @@ export default async function Image({ params }: Props) {
     }
   }
 
+  /* ------------------------------------------------------------------ */
+  /*  Brand colour palette (from spec §7.1)                             */
+  /*  Gold:  #D4AF6A (primary) / #B99150 (dark) / #E8D09A (light)      */
+  /*  Navy:  #09142B                                                     */
+  /*  Ivory: #F8F5EE                                                     */
+  /* ------------------------------------------------------------------ */
+
   return new ImageResponse(
     (
       <div
@@ -114,10 +121,10 @@ export default async function Image({ params }: Props) {
           position: "relative",
           overflow: "hidden",
           fontFamily: "Georgia, serif",
-          backgroundColor: "#070E20",
+          backgroundColor: "#09142B",
         }}
       >
-        {/* Background Image: bg-share-wp.jpeg */}
+        {/* Background Image – shifted right to reduce blank navy on left */}
         {bgBase64 ? (
           <img
             src={bgBase64}
@@ -134,43 +141,46 @@ export default async function Image({ params }: Props) {
           />
         ) : null}
 
-        {/* Deep navy vignette on left side for text clarity */}
+        {/* Navy overlay – lighter, covering only the left content area */}
         <div
           style={{
             position: "absolute",
             top: 0,
             left: 0,
-            width: "820px",
-            height: "515px",
+            width: "700px",
+            height: "490px",
             background:
-              "linear-gradient(90deg, rgba(6, 13, 30, 0.96) 0%, rgba(6, 13, 30, 0.90) 50%, rgba(6, 13, 30, 0.40) 80%, transparent 100%)",
+              "linear-gradient(90deg, rgba(9,20,43,0.95) 0%, rgba(9,20,43,0.88) 55%, rgba(9,20,43,0.35) 85%, transparent 100%)",
             display: "flex",
           }}
         />
 
-        {/* Top-Left: Grace & Goodwill Brand Logo + Centered Strapline */}
+        {/* ============================================================ */}
+        {/*  TOP-LEFT: Logo + brand name + strapline                     */}
+        {/* ============================================================ */}
         <div
           style={{
             position: "absolute",
-            top: "32px",
-            left: "60px",
+            top: "28px",
+            left: "48px",
             display: "flex",
-            flexDirection: "column",
+            flexDirection: "row",
             alignItems: "center",
           }}
         >
+          {/* Original G&G gold knot logo – larger for legibility */}
           {logoBase64 ? (
             <img
               src={logoBase64}
-              width={62}
-              height={62}
+              width={72}
+              height={72}
               style={{ objectFit: "contain", display: "flex" }}
             />
           ) : (
             <div
               style={{
-                width: "62px",
-                height: "62px",
+                width: "72px",
+                height: "72px",
                 backgroundColor: "rgba(212,175,55,0.2)",
                 borderRadius: "12px",
                 display: "flex",
@@ -180,106 +190,117 @@ export default async function Image({ params }: Props) {
 
           <div
             style={{
-              fontSize: "28px",
-              fontWeight: 600,
-              color: "#D4AF6A",
-              letterSpacing: "5.5px",
-              marginTop: "8px",
               display: "flex",
+              flexDirection: "column",
+              marginLeft: "16px",
             }}
           >
-            GRACE &amp; GOODWILL
-          </div>
-
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              marginTop: "4px",
-            }}
-          >
+            {/* Brand name */}
             <div
               style={{
-                width: "30px",
-                height: "1px",
-                backgroundColor: "rgba(212, 175, 106, 0.6)",
-                display: "flex",
-              }}
-            />
-            <span
-              style={{
-                fontSize: "13px",
-                color: "#E8D09A",
-                letterSpacing: "3px",
-                fontWeight: 500,
+                fontSize: "24px",
+                fontWeight: 700,
+                color: "#D4AF6A",
+                letterSpacing: "4px",
                 display: "flex",
               }}
             >
-              CARE DEFINED BY INTEGRITY
-            </span>
+              GRACE &amp; GOODWILL
+            </div>
+
+            {/* Strapline – larger and more readable */}
             <div
               style={{
-                width: "30px",
-                height: "1px",
-                backgroundColor: "rgba(212, 175, 106, 0.6)",
                 display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                marginTop: "4px",
               }}
-            />
+            >
+              <div
+                style={{
+                  width: "24px",
+                  height: "1px",
+                  backgroundColor: "rgba(212,175,106,0.5)",
+                  display: "flex",
+                }}
+              />
+              <span
+                style={{
+                  fontSize: "12px",
+                  color: "#E8D09A",
+                  letterSpacing: "3px",
+                  fontWeight: 500,
+                  display: "flex",
+                }}
+              >
+                CARE DEFINED BY INTEGRITY
+              </span>
+              <div
+                style={{
+                  width: "24px",
+                  height: "1px",
+                  backgroundColor: "rgba(212,175,106,0.5)",
+                  display: "flex",
+                }}
+              />
+            </div>
           </div>
         </div>
 
-        {/* Middle-Left: Carer Details */}
+        {/* ============================================================ */}
+        {/*  LEFT CONTENT: Trust line  +  Carer Name  +  Description     */}
+        {/* ============================================================ */}
         <div
           style={{
             position: "absolute",
-            top: "188px",
-            left: "64px",
-            width: "600px",
+            top: "145px",
+            left: "52px",
+            width: "580px",
             display: "flex",
             flexDirection: "column",
           }}
         >
-          {/* Discreet Tagline */}
+          {/* "CARE YOU CAN TRUST" — prominent trust line (spec: 19–21px) */}
           <div
             style={{
               fontSize: "20px",
               color: "#D4AF6A",
-              letterSpacing: "4.5px",
-              fontWeight: 600,
-              marginBottom: "8px",
+              letterSpacing: "5px",
+              fontWeight: 700,
+              marginBottom: "12px",
               display: "flex",
             }}
           >
             CARE YOU CAN TRUST
           </div>
 
-          {/* Carer Name */}
+          {/* Carer Name — large and bold (spec: 65–72px) */}
           <div
             style={{
-              fontSize: "70px",
-              fontWeight: 600,
+              fontSize: "68px",
+              fontWeight: 700,
               color: "#FFFFFF",
-              lineHeight: 1.05,
-              marginBottom: "10px",
+              lineHeight: 1.08,
+              marginBottom: "14px",
               display: "flex",
             }}
           >
             {safeName}
           </div>
 
-          {/* Role with Brand */}
+          {/* Professional description (spec: 25–28px) */}
           <div
             style={{
               display: "flex",
               flexDirection: "column",
-              fontSize: "26px",
-              lineHeight: 1.25,
+              lineHeight: 1.3,
             }}
           >
             <span
               style={{
-                color: "rgba(255, 255, 255, 0.92)",
+                fontSize: "26px",
+                color: "rgba(255,255,255,0.92)",
                 fontWeight: 500,
                 display: "flex",
               }}
@@ -288,9 +309,10 @@ export default async function Image({ params }: Props) {
             </span>
             <span
               style={{
+                fontSize: "26px",
                 color: "#D4AF6A",
-                fontWeight: 600,
-                marginTop: "2px",
+                fontWeight: 700,
+                marginTop: "4px",
                 display: "flex",
               }}
             >
@@ -299,14 +321,16 @@ export default async function Image({ params }: Props) {
           </div>
         </div>
 
-        {/* Right Side: Circular Carer Photo with Rich Gold Border */}
+        {/* ============================================================ */}
+        {/*  RIGHT: Circular Carer Portrait with gold border             */}
+        {/* ============================================================ */}
         <div
           style={{
             position: "absolute",
-            top: "35px",
-            right: "75px",
-            width: "360px",
-            height: "360px",
+            top: "50px",
+            right: "70px",
+            width: "340px",
+            height: "340px",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -316,23 +340,23 @@ export default async function Image({ params }: Props) {
           <div
             style={{
               position: "absolute",
-              width: "376px",
-              height: "376px",
-              borderRadius: "188px",
-              border: "1.5px solid rgba(212, 175, 106, 0.30)",
+              width: "356px",
+              height: "356px",
+              borderRadius: "178px",
+              border: "1.5px solid rgba(212,175,106,0.25)",
               display: "flex",
             }}
           />
 
-          {/* Portrait Container */}
+          {/* Portrait container – gold border */}
           <div
             style={{
-              width: "340px",
-              height: "340px",
-              borderRadius: "170px",
+              width: "320px",
+              height: "320px",
+              borderRadius: "160px",
               overflow: "hidden",
-              border: "6px solid #D4AF6A",
-              boxShadow: "0 20px 50px rgba(0,0,0,0.6), 0 0 40px rgba(212,175,106,0.25)",
+              border: "5px solid #D4AF6A",
+              boxShadow: "0 16px 44px rgba(0,0,0,0.55), 0 0 30px rgba(212,175,106,0.20)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -342,8 +366,8 @@ export default async function Image({ params }: Props) {
             {carerPhotoData ? (
               <img
                 src={carerPhotoData}
-                width={340}
-                height={340}
+                width={320}
+                height={320}
                 style={{
                   width: "100%",
                   height: "100%",
@@ -358,12 +382,12 @@ export default async function Image({ params }: Props) {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  backgroundColor: "rgba(226, 186, 85, 0.15)",
+                  backgroundColor: "rgba(226,186,85,0.15)",
                 }}
               >
                 <span
                   style={{
-                    fontSize: "110px",
+                    fontSize: "100px",
                     color: "#E2BA55",
                     fontWeight: "bold",
                     display: "flex",
@@ -376,11 +400,13 @@ export default async function Image({ params }: Props) {
           </div>
         </div>
 
-        {/* Golden Wave Transition Ribbon above bottom bar */}
+        {/* ============================================================ */}
+        {/*  Curved gold / cream separator ribbon                        */}
+        {/* ============================================================ */}
         <div
           style={{
             position: "absolute",
-            bottom: "118px",
+            bottom: "138px",
             left: 0,
             width: "1200px",
             height: "44px",
@@ -397,16 +423,16 @@ export default async function Image({ params }: Props) {
             {/* Smooth curved cream background layer */}
             <path
               d="M0,44 L0,24 Q320,6 660,26 T1200,10 L1200,44 Z"
-              fill="#FAF7F2"
+              fill="#F8F5EE"
             />
             {/* Lower golden accent glow ribbon */}
             <path
               d="M0,28 Q320,10 660,30 T1200,14"
-              stroke="rgba(212, 175, 55, 0.35)"
+              stroke="rgba(212,175,55,0.35)"
               strokeWidth="6"
               fill="none"
             />
-            {/* Primary Golden swoosh ribbon stroke */}
+            {/* Primary golden swoosh stroke */}
             <path
               d="M0,24 Q320,6 660,26 T1200,10"
               stroke="#D4AF37"
@@ -416,20 +442,23 @@ export default async function Image({ params }: Props) {
           </svg>
         </div>
 
-        {/* Bottom Contact Bar (Off-white / Warm Cream #FAF7F2) */}
+        {/* ============================================================ */}
+        {/*  Bottom Contact Bar – taller ivory bar with bigger text      */}
+        {/*  (spec: labels 17–19px, numbers 22–24px, website 20–22px)   */}
+        {/* ============================================================ */}
         <div
           style={{
             position: "absolute",
             bottom: 0,
             left: 0,
             width: "1200px",
-            height: "120px",
-            backgroundColor: "#FAF7F2",
+            height: "142px",
+            backgroundColor: "#F8F5EE",
             display: "flex",
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "space-around",
-            padding: "0 60px",
+            padding: "0 50px",
           }}
         >
           {/* Contact 1: Call our office */}
@@ -450,7 +479,7 @@ export default async function Image({ params }: Props) {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                marginRight: "16px",
+                marginRight: "14px",
               }}
             >
               <svg
@@ -469,7 +498,7 @@ export default async function Image({ params }: Props) {
             <div style={{ display: "flex", flexDirection: "column" }}>
               <span
                 style={{
-                  fontSize: "13px",
+                  fontSize: "18px",
                   color: "#6D6355",
                   fontWeight: 500,
                   display: "flex",
@@ -479,8 +508,8 @@ export default async function Image({ params }: Props) {
               </span>
               <span
                 style={{
-                  fontSize: "19px",
-                  color: "#181512",
+                  fontSize: "23px",
+                  color: "#09142B",
                   fontWeight: "bold",
                   marginTop: "2px",
                   display: "flex",
@@ -509,7 +538,7 @@ export default async function Image({ params }: Props) {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                marginRight: "16px",
+                marginRight: "14px",
               }}
             >
               <svg
@@ -528,7 +557,7 @@ export default async function Image({ params }: Props) {
             <div style={{ display: "flex", flexDirection: "column" }}>
               <span
                 style={{
-                  fontSize: "13px",
+                  fontSize: "18px",
                   color: "#6D6355",
                   fontWeight: 500,
                   display: "flex",
@@ -538,8 +567,8 @@ export default async function Image({ params }: Props) {
               </span>
               <span
                 style={{
-                  fontSize: "19px",
-                  color: "#181512",
+                  fontSize: "23px",
+                  color: "#09142B",
                   fontWeight: "bold",
                   marginTop: "2px",
                   display: "flex",
@@ -568,7 +597,7 @@ export default async function Image({ params }: Props) {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                marginRight: "16px",
+                marginRight: "14px",
               }}
             >
               <svg
@@ -589,7 +618,7 @@ export default async function Image({ params }: Props) {
             <div style={{ display: "flex", flexDirection: "column" }}>
               <span
                 style={{
-                  fontSize: "13px",
+                  fontSize: "18px",
                   color: "#6D6355",
                   fontWeight: 500,
                   display: "flex",
@@ -599,8 +628,8 @@ export default async function Image({ params }: Props) {
               </span>
               <span
                 style={{
-                  fontSize: "19px",
-                  color: "#181512",
+                  fontSize: "22px",
+                  color: "#09142B",
                   fontWeight: "bold",
                   marginTop: "2px",
                   display: "flex",

@@ -168,10 +168,10 @@ export default async function Image({ params }: Props) {
     console.warn("Could not load Google Fonts for OG image, using system fallbacks:", err);
   }
 
-  /* ── Layout measurements (1200 × 630) ── */
-  const FOOTER_H = 205; // increased cream footer box height for maximum vertical space and visibility
-  const WAVE_H = 180; // ultra-thick luxury curved gold ribbon transition height
-  const NAVY_H = 425; // navy content zone
+  /* ── Layout measurements (1200 × 630, perfectly balanced like mockup) ── */
+  const FOOTER_H = 150; // elegant balanced cream footer height
+  const WAVE_H = 120; // smooth luxury curved gold ribbon transition height
+  const NAVY_H = 480; // navy content zone
 
   return new ImageResponse(
     (
@@ -307,7 +307,7 @@ export default async function Image({ params }: Props) {
         <div
           style={{
             position: "absolute",
-            top: "165px",
+            top: "185px",
             left: "64px",
             width: "600px",
             display: "flex",
@@ -454,15 +454,16 @@ export default async function Image({ params }: Props) {
           </div>
         </div>
 
-        {/* ── Ultra-Thick Luxury Curved Gold & Cream Separator Ribbon ── */}
+        {/* ── Luxury Curved Gold Ribbon Divider & Transition (Matches Reference Mockup) ── */}
         <div
           style={{
             position: "absolute",
-            bottom: `${FOOTER_H - 15}px`,
+            bottom: `${FOOTER_H - 1}px`,
             left: 0,
             width: "1200px",
             height: `${WAVE_H}px`,
             display: "flex",
+            zIndex: 10,
           }}
         >
           <svg
@@ -472,67 +473,40 @@ export default async function Image({ params }: Props) {
             fill="none"
             style={{ width: "1200px", height: `${WAVE_H}px`, display: "flex" }}
           >
-            {/* 1. Warm ivory foundation smoothly extending beneath all ribbons into footer */}
+            {/* 1. Warm ivory foundation smoothly extending beneath ribbon into footer */}
             <path
-              d="M 0,105 C 220,118 420,112 620,90 C 760,70 880,48 980,48 C 1070,48 1140,64 1200,78 L 1200,180 L 0,180 Z"
+              d={`M 0,75 C 340,89 640,87 880,49 C 1000,31 1120,41 1200,55 L 1200,${WAVE_H} L 0,${WAVE_H} Z`}
               fill={CREAM_BG}
             />
 
-            {/* 2. Secondary wide gold ribbon swoosh (sweeps boldly under portrait from center to right) */}
+            {/* 2. Soft antique bronze shadow under ribbon for realistic depth */}
             <path
-              d="M 480,108 C 650,92 820,74 980,74 C 1080,74 1140,90 1200,106 L 1200,165 C 1140,145 1070,128 980,128 C 820,128 650,146 480,156 Z"
-              fill="#B99150"
-            />
-            {/* Secondary swoosh inner champagne highlight stroke */}
-            <path
-              d="M 480,114 C 650,98 820,80 980,80 C 1080,80 1140,96 1200,112"
-              stroke="#E8D09A"
-              strokeWidth="5"
-              fill="none"
-            />
-            {/* Secondary swoosh bottom definition stroke */}
-            <path
-              d="M 480,156 C 650,146 820,128 980,128 C 1070,128 1140,145 1200,165"
-              stroke="#8B6628"
-              strokeWidth="4"
-              fill="none"
+              d="M 0,68 C 340,82 640,80 880,42 C 1000,24 1120,34 1200,48 L 1200,60 C 1120,46 1000,36 880,54 C 640,92 340,94 0,80 Z"
+              fill="#9E7330"
+              opacity="0.45"
             />
 
-            {/* 3. Primary ultra-thick luxury gold ribbon body (spans entire 1200px width, 52px-55px thick) */}
+            {/* 3. Primary continuous metallic gold ribbon (single smooth flowing stroke) */}
             <path
-              d="M 0,95 C 220,108 420,104 620,80 C 760,60 880,42 980,42 C 1070,42 1140,58 1200,72 L 1200,125 C 1140,108 1070,95 980,95 C 880,95 760,115 620,132 C 420,154 220,158 0,148 Z"
+              d="M 0,52 C 340,66 640,64 880,26 C 1000,8 1120,18 1200,32 L 1200,56 C 1120,42 1000,32 880,50 C 640,88 340,90 0,76 Z"
               fill={GOLD_PRIMARY}
             />
 
-            {/* 4. Radiant champagne metallic highlight along primary ribbon crest */}
+            {/* 4. Delicate warm champagne gold sheen along top crest */}
             <path
-              d="M 0,95 C 220,108 420,104 620,80 C 760,60 880,42 980,42 C 1070,42 1140,58 1200,72"
-              stroke="#FFF3D6"
-              strokeWidth="6"
+              d="M 0,52 C 340,66 640,64 880,26 C 1000,8 1120,18 1200,32"
+              stroke="#F5E4B8"
+              strokeWidth="2"
+              strokeOpacity="0.8"
               fill="none"
             />
 
-            {/* 5. Middle warm champagne luster accent inside primary ribbon */}
+            {/* 5. Rich gold definition contour line along bottom of ribbon */}
             <path
-              d="M 0,118 C 220,130 420,126 620,102 C 760,82 880,65 980,65 C 1070,65 1140,80 1200,95"
-              stroke="#E8D09A"
-              strokeWidth="4.5"
-              fill="none"
-            />
-
-            {/* 6. Lower warm gold luster accent inside primary ribbon */}
-            <path
-              d="M 0,132 C 220,142 420,138 620,116 C 760,98 880,80 980,80 C 1070,80 1140,94 1200,110"
-              stroke="#F5DEAB"
-              strokeWidth="3"
-              fill="none"
-            />
-
-            {/* 7. Rich antique gold bottom contour line */}
-            <path
-              d="M 0,148 C 220,158 420,154 620,132 C 760,115 880,95 980,95 C 1070,95 1140,108 1200,125"
-              stroke="#8E6726"
-              strokeWidth="4"
+              d="M 0,76 C 340,90 640,88 880,50 C 1000,32 1120,42 1200,56"
+              stroke="#8B6324"
+              strokeWidth="2"
+              strokeOpacity="0.65"
               fill="none"
             />
           </svg>
@@ -551,13 +525,13 @@ export default async function Image({ params }: Props) {
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "space-between",
-            padding: "0 24px",
+            padding: "0 36px",
           }}
         >
           {/* Contact 1: Call our office */}
           <div
             style={{
-              width: "350px",
+              width: "310px",
               display: "flex",
               flexDirection: "row",
               alignItems: "center",
@@ -567,26 +541,26 @@ export default async function Image({ params }: Props) {
           >
             <div
               style={{
-                width: "68px",
-                height: "68px",
-                borderRadius: "34px",
-                minWidth: "68px",
-                backgroundColor: "#EDE3CC",
-                border: `3px solid ${GOLD_PRIMARY}`,
+                width: "58px",
+                height: "58px",
+                borderRadius: "29px",
+                minWidth: "58px",
+                backgroundColor: "#EFE5D2",
+                border: `2px solid ${GOLD_PRIMARY}`,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 marginRight: "14px",
-                boxShadow: "0 4px 14px rgba(185, 145, 80, 0.2)",
+                boxShadow: "0 2px 8px rgba(185, 145, 80, 0.15)",
               }}
             >
               <svg
-                width="34"
-                height="34"
+                width="28"
+                height="28"
                 viewBox="0 0 24 24"
                 fill="none"
-                stroke="#7A561E"
-                strokeWidth="2.5"
+                stroke="#8C6527"
+                strokeWidth="2.2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               >
@@ -596,9 +570,9 @@ export default async function Image({ params }: Props) {
             <div style={{ display: "flex", flexDirection: "column" }}>
               <span
                 style={{
-                  fontSize: "20px",
-                  color: "#453826",
-                  fontWeight: 600,
+                  fontSize: "17px",
+                  color: "#6D6355",
+                  fontWeight: 500,
                   display: "flex",
                   fontFamily: "'Montserrat', sans-serif",
                 }}
@@ -607,8 +581,8 @@ export default async function Image({ params }: Props) {
               </span>
               <span
                 style={{
-                  fontSize: "27px",
-                  color: "#0A0806",
+                  fontSize: "23px",
+                  color: "#181512",
                   fontWeight: 700,
                   marginTop: "2px",
                   display: "flex",
@@ -623,10 +597,10 @@ export default async function Image({ params }: Props) {
           {/* Vertical gold divider */}
           <div
             style={{
-              width: "2px",
-              height: "85px",
+              width: "1.5px",
+              height: "65px",
               backgroundColor: GOLD_PRIMARY,
-              opacity: 0.55,
+              opacity: 0.45,
               display: "flex",
               flexShrink: 0,
             }}
@@ -635,7 +609,7 @@ export default async function Image({ params }: Props) {
           {/* Contact 2: WhatsApp us */}
           <div
             style={{
-              width: "365px",
+              width: "330px",
               display: "flex",
               flexDirection: "row",
               alignItems: "center",
@@ -645,26 +619,26 @@ export default async function Image({ params }: Props) {
           >
             <div
               style={{
-                width: "68px",
-                height: "68px",
-                borderRadius: "34px",
-                minWidth: "68px",
-                backgroundColor: "#EDE3CC",
-                border: `3px solid ${GOLD_PRIMARY}`,
+                width: "58px",
+                height: "58px",
+                borderRadius: "29px",
+                minWidth: "58px",
+                backgroundColor: "#EFE5D2",
+                border: `2px solid ${GOLD_PRIMARY}`,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 marginRight: "14px",
-                boxShadow: "0 4px 14px rgba(185, 145, 80, 0.2)",
+                boxShadow: "0 2px 8px rgba(185, 145, 80, 0.15)",
               }}
             >
               <svg
-                width="34"
-                height="34"
+                width="28"
+                height="28"
                 viewBox="0 0 24 24"
                 fill="none"
-                stroke="#7A561E"
-                strokeWidth="2.5"
+                stroke="#8C6527"
+                strokeWidth="2.2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               >
@@ -674,9 +648,9 @@ export default async function Image({ params }: Props) {
             <div style={{ display: "flex", flexDirection: "column" }}>
               <span
                 style={{
-                  fontSize: "20px",
-                  color: "#453826",
-                  fontWeight: 600,
+                  fontSize: "17px",
+                  color: "#6D6355",
+                  fontWeight: 500,
                   display: "flex",
                   fontFamily: "'Montserrat', sans-serif",
                 }}
@@ -685,8 +659,8 @@ export default async function Image({ params }: Props) {
               </span>
               <span
                 style={{
-                  fontSize: "27px",
-                  color: "#0A0806",
+                  fontSize: "23px",
+                  color: "#181512",
                   fontWeight: 700,
                   marginTop: "2px",
                   display: "flex",
@@ -701,10 +675,10 @@ export default async function Image({ params }: Props) {
           {/* Vertical gold divider */}
           <div
             style={{
-              width: "2px",
-              height: "85px",
+              width: "1.5px",
+              height: "65px",
               backgroundColor: GOLD_PRIMARY,
-              opacity: 0.55,
+              opacity: 0.45,
               display: "flex",
               flexShrink: 0,
             }}
@@ -713,7 +687,7 @@ export default async function Image({ params }: Props) {
           {/* Contact 3: Visit our website */}
           <div
             style={{
-              width: "385px",
+              width: "350px",
               display: "flex",
               flexDirection: "row",
               alignItems: "center",
@@ -723,26 +697,26 @@ export default async function Image({ params }: Props) {
           >
             <div
               style={{
-                width: "68px",
-                height: "68px",
-                borderRadius: "34px",
-                minWidth: "68px",
-                backgroundColor: "#EDE3CC",
-                border: `3px solid ${GOLD_PRIMARY}`,
+                width: "58px",
+                height: "58px",
+                borderRadius: "29px",
+                minWidth: "58px",
+                backgroundColor: "#EFE5D2",
+                border: `2px solid ${GOLD_PRIMARY}`,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 marginRight: "14px",
-                boxShadow: "0 4px 14px rgba(185, 145, 80, 0.2)",
+                boxShadow: "0 2px 8px rgba(185, 145, 80, 0.15)",
               }}
             >
               <svg
-                width="34"
-                height="34"
+                width="28"
+                height="28"
                 viewBox="0 0 24 24"
                 fill="none"
-                stroke="#7A561E"
-                strokeWidth="2.5"
+                stroke="#8C6527"
+                strokeWidth="2.2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               >
@@ -754,9 +728,9 @@ export default async function Image({ params }: Props) {
             <div style={{ display: "flex", flexDirection: "column" }}>
               <span
                 style={{
-                  fontSize: "20px",
-                  color: "#453826",
-                  fontWeight: 600,
+                  fontSize: "17px",
+                  color: "#6D6355",
+                  fontWeight: 500,
                   display: "flex",
                   fontFamily: "'Montserrat', sans-serif",
                 }}
@@ -765,8 +739,8 @@ export default async function Image({ params }: Props) {
               </span>
               <span
                 style={{
-                  fontSize: "23px",
-                  color: "#0A0806",
+                  fontSize: "21px",
+                  color: "#181512",
                   fontWeight: 700,
                   marginTop: "2px",
                   display: "flex",

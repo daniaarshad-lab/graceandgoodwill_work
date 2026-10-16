@@ -210,7 +210,7 @@ export async function GET(request: Request, { params }: Props) {
 
   /* ── Layout measurements (1200 × 630) ── */
   const FOOTER_H = 155; // footer for contacts
-  const WAVE_H = 110; // thick luxury curved gold ribbon transition height
+  const WAVE_H = 180; // ultra-thick luxury curved gold ribbon transition height
   const NAVY_H = 475; // navy content zone
 
   const imgResponse = new ImageResponse(
@@ -494,11 +494,11 @@ export async function GET(request: Request, { params }: Props) {
           </div>
         </div>
 
-        {/* ── Thick Luxury Curved Gold & Cream Separator Ribbon ── */}
+        {/* ── Ultra-Thick Luxury Curved Gold & Cream Separator Ribbon ── */}
         <div
           style={{
             position: "absolute",
-            bottom: `${FOOTER_H - 5}px`,
+            bottom: `${FOOTER_H - 15}px`,
             left: 0,
             width: "1200px",
             height: `${WAVE_H}px`,
@@ -512,52 +512,67 @@ export async function GET(request: Request, { params }: Props) {
             fill="none"
             style={{ width: "1200px", height: `${WAVE_H}px`, display: "flex" }}
           >
-            {/* 1. Warm ivory foundation beneath the wave */}
+            {/* 1. Warm ivory foundation smoothly extending beneath all ribbons into footer */}
             <path
-              d="M 0,60 C 220,68 420,64 620,46 C 760,34 880,12 990,12 C 1070,12 1140,26 1200,40 L 1200,110 L 0,110 Z"
+              d="M 0,105 C 220,118 420,112 620,90 C 760,70 880,48 980,48 C 1070,48 1140,64 1200,78 L 1200,180 L 0,180 Z"
               fill={CREAM_BG}
             />
 
-            {/* 2. Secondary accent gold ribbon (flowing lower swoosh under portrait on right) */}
+            {/* 2. Secondary wide gold ribbon swoosh (sweeps boldly under portrait from center to right) */}
             <path
-              d="M 680,56 C 780,46 880,32 980,32 C 1070,32 1140,44 1200,56 L 1200,86 C 1140,72 1070,60 980,60 C 880,60 780,72 680,80 Z"
+              d="M 480,108 C 650,92 820,74 980,74 C 1080,74 1140,90 1200,106 L 1200,165 C 1140,145 1070,128 980,128 C 820,128 650,146 480,156 Z"
               fill="#B99150"
             />
-            {/* Secondary accent inner highlight */}
+            {/* Secondary swoosh inner champagne highlight stroke */}
             <path
-              d="M 680,58 C 780,48 880,34 980,34 C 1070,34 1140,46 1200,58"
+              d="M 480,114 C 650,98 820,80 980,80 C 1080,80 1140,96 1200,112"
               stroke="#E8D09A"
-              strokeWidth="3"
+              strokeWidth="5"
               fill="none"
             />
-
-            {/* 3. Primary thick luxury gold ribbon body (spans entire width, 24px-32px thick) */}
+            {/* Secondary swoosh bottom definition stroke */}
             <path
-              d="M 0,48 C 220,56 420,52 620,34 C 760,22 880,0 990,0 C 1070,0 1140,14 1200,28 L 1200,56 C 1140,42 1070,28 990,28 C 880,28 760,48 620,62 C 420,80 220,84 0,76 Z"
-              fill={GOLD_PRIMARY}
-            />
-
-            {/* 4. Top radiant champagne metallic highlight along primary ribbon crest */}
-            <path
-              d="M 0,48 C 220,56 420,52 620,34 C 760,22 880,0 990,0 C 1070,0 1140,14 1200,28"
-              stroke="#FFF1D0"
+              d="M 480,156 C 650,146 820,128 980,128 C 1070,128 1140,145 1200,165"
+              stroke="#8B6628"
               strokeWidth="4"
               fill="none"
             />
 
-            {/* 5. Middle warm champagne accent stroke inside the ribbon */}
+            {/* 3. Primary ultra-thick luxury gold ribbon body (spans entire 1200px width, 52px-55px thick) */}
             <path
-              d="M 0,62 C 220,70 420,66 620,48 C 760,35 880,14 990,14 C 1070,14 1140,28 1200,42"
-              stroke="#E8D09A"
-              strokeWidth="2.5"
+              d="M 0,95 C 220,108 420,104 620,80 C 760,60 880,42 980,42 C 1070,42 1140,58 1200,72 L 1200,125 C 1140,108 1070,95 980,95 C 880,95 760,115 620,132 C 420,154 220,158 0,148 Z"
+              fill={GOLD_PRIMARY}
+            />
+
+            {/* 4. Radiant champagne metallic highlight along primary ribbon crest */}
+            <path
+              d="M 0,95 C 220,108 420,104 620,80 C 760,60 880,42 980,42 C 1070,42 1140,58 1200,72"
+              stroke="#FFF3D6"
+              strokeWidth="6"
               fill="none"
             />
 
-            {/* 6. Rich antique gold bottom contour line */}
+            {/* 5. Middle warm champagne luster accent inside primary ribbon */}
             <path
-              d="M 0,76 C 220,84 420,80 620,62 C 760,48 880,28 990,28 C 1070,28 1140,42 1200,56"
-              stroke="#967132"
-              strokeWidth="2.5"
+              d="M 0,118 C 220,130 420,126 620,102 C 760,82 880,65 980,65 C 1070,65 1140,80 1200,95"
+              stroke="#E8D09A"
+              strokeWidth="4.5"
+              fill="none"
+            />
+
+            {/* 6. Lower warm gold luster accent inside primary ribbon */}
+            <path
+              d="M 0,132 C 220,142 420,138 620,116 C 760,98 880,80 980,80 C 1070,80 1140,94 1200,110"
+              stroke="#F5DEAB"
+              strokeWidth="3"
+              fill="none"
+            />
+
+            {/* 7. Rich antique gold bottom contour line */}
+            <path
+              d="M 0,148 C 220,158 420,154 620,132 C 760,115 880,95 980,95 C 1070,95 1140,108 1200,125"
+              stroke="#8E6726"
+              strokeWidth="4"
               fill="none"
             />
           </svg>

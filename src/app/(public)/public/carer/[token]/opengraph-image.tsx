@@ -169,9 +169,9 @@ export default async function Image({ params }: Props) {
   }
 
   /* ── Layout measurements (1200 × 630) ── */
-  const FOOTER_H = 155; // footer for contacts
+  const FOOTER_H = 185; // increased footer height for maximum contact legibility
   const WAVE_H = 180; // ultra-thick luxury curved gold ribbon transition height
-  const NAVY_H = 475; // navy content zone
+  const NAVY_H = 445; // navy content zone
 
   return new ImageResponse(
     (
@@ -550,8 +550,8 @@ export default async function Image({ params }: Props) {
             display: "flex",
             flexDirection: "row",
             alignItems: "center",
-            justifyContent: "space-around",
-            padding: "0 50px",
+            justifyContent: "center",
+            padding: "0 28px",
           }}
         >
           {/* Contact 1: Call our office */}
@@ -560,28 +560,31 @@ export default async function Image({ params }: Props) {
               display: "flex",
               flexDirection: "row",
               alignItems: "center",
+              flex: 1,
+              justifyContent: "center",
             }}
           >
             <div
               style={{
-                width: "58px",
-                height: "58px",
-                borderRadius: "29px",
-                backgroundColor: "#EFE5D2",
-                border: `2px solid ${GOLD_LIGHT}`,
+                width: "82px",
+                height: "82px",
+                borderRadius: "41px",
+                backgroundColor: "#EDE3CC",
+                border: `3.5px solid ${GOLD_PRIMARY}`,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 marginRight: "16px",
+                boxShadow: "0 4px 14px rgba(185, 145, 80, 0.22)",
               }}
             >
               <svg
-                width="28"
-                height="28"
+                width="44"
+                height="44"
                 viewBox="0 0 24 24"
                 fill="none"
-                stroke={GOLD_DARK}
-                strokeWidth="2"
+                stroke="#7A561E"
+                strokeWidth="2.7"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               >
@@ -591,9 +594,9 @@ export default async function Image({ params }: Props) {
             <div style={{ display: "flex", flexDirection: "column" }}>
               <span
                 style={{
-                  fontSize: "18px",
-                  color: "#6D6355",
-                  fontWeight: 500,
+                  fontSize: "22px",
+                  color: "#382F22",
+                  fontWeight: 600,
                   display: "flex",
                   fontFamily: "'Montserrat', sans-serif",
                 }}
@@ -602,9 +605,9 @@ export default async function Image({ params }: Props) {
               </span>
               <span
                 style={{
-                  fontSize: "23px",
-                  color: "#181512",
-                  fontWeight: 600,
+                  fontSize: "30px",
+                  color: "#0A0806",
+                  fontWeight: 700,
                   marginTop: "3px",
                   display: "flex",
                   fontFamily: "'Montserrat', sans-serif",
@@ -615,34 +618,48 @@ export default async function Image({ params }: Props) {
             </div>
           </div>
 
+          {/* Vertical gold divider */}
+          <div
+            style={{
+              width: "2.5px",
+              height: "92px",
+              backgroundColor: GOLD_PRIMARY,
+              opacity: 0.65,
+              display: "flex",
+            }}
+          />
+
           {/* Contact 2: WhatsApp us */}
           <div
             style={{
               display: "flex",
               flexDirection: "row",
               alignItems: "center",
+              flex: 1,
+              justifyContent: "center",
             }}
           >
             <div
               style={{
-                width: "58px",
-                height: "58px",
-                borderRadius: "29px",
-                backgroundColor: "#EFE5D2",
-                border: `2px solid ${GOLD_LIGHT}`,
+                width: "82px",
+                height: "82px",
+                borderRadius: "41px",
+                backgroundColor: "#EDE3CC",
+                border: `3.5px solid ${GOLD_PRIMARY}`,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 marginRight: "16px",
+                boxShadow: "0 4px 14px rgba(185, 145, 80, 0.22)",
               }}
             >
               <svg
-                width="28"
-                height="28"
+                width="44"
+                height="44"
                 viewBox="0 0 24 24"
                 fill="none"
-                stroke={GOLD_DARK}
-                strokeWidth="2"
+                stroke="#7A561E"
+                strokeWidth="2.7"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               >
@@ -652,9 +669,9 @@ export default async function Image({ params }: Props) {
             <div style={{ display: "flex", flexDirection: "column" }}>
               <span
                 style={{
-                  fontSize: "18px",
-                  color: "#6D6355",
-                  fontWeight: 500,
+                  fontSize: "22px",
+                  color: "#382F22",
+                  fontWeight: 600,
                   display: "flex",
                   fontFamily: "'Montserrat', sans-serif",
                 }}
@@ -663,9 +680,9 @@ export default async function Image({ params }: Props) {
               </span>
               <span
                 style={{
-                  fontSize: "23px",
-                  color: "#181512",
-                  fontWeight: 600,
+                  fontSize: "30px",
+                  color: "#0A0806",
+                  fontWeight: 700,
                   marginTop: "3px",
                   display: "flex",
                   fontFamily: "'Montserrat', sans-serif",
@@ -676,34 +693,48 @@ export default async function Image({ params }: Props) {
             </div>
           </div>
 
+          {/* Vertical gold divider */}
+          <div
+            style={{
+              width: "2.5px",
+              height: "92px",
+              backgroundColor: GOLD_PRIMARY,
+              opacity: 0.65,
+              display: "flex",
+            }}
+          />
+
           {/* Contact 3: Visit our website */}
           <div
             style={{
               display: "flex",
               flexDirection: "row",
               alignItems: "center",
+              flex: 1,
+              justifyContent: "center",
             }}
           >
             <div
               style={{
-                width: "58px",
-                height: "58px",
-                borderRadius: "29px",
-                backgroundColor: "#EFE5D2",
-                border: `2px solid ${GOLD_LIGHT}`,
+                width: "82px",
+                height: "82px",
+                borderRadius: "41px",
+                backgroundColor: "#EDE3CC",
+                border: `3.5px solid ${GOLD_PRIMARY}`,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 marginRight: "16px",
+                boxShadow: "0 4px 14px rgba(185, 145, 80, 0.22)",
               }}
             >
               <svg
-                width="28"
-                height="28"
+                width="44"
+                height="44"
                 viewBox="0 0 24 24"
                 fill="none"
-                stroke={GOLD_DARK}
-                strokeWidth="2"
+                stroke="#7A561E"
+                strokeWidth="2.7"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               >
@@ -715,9 +746,9 @@ export default async function Image({ params }: Props) {
             <div style={{ display: "flex", flexDirection: "column" }}>
               <span
                 style={{
-                  fontSize: "18px",
-                  color: "#6D6355",
-                  fontWeight: 500,
+                  fontSize: "22px",
+                  color: "#382F22",
+                  fontWeight: 600,
                   display: "flex",
                   fontFamily: "'Montserrat', sans-serif",
                 }}
@@ -726,9 +757,9 @@ export default async function Image({ params }: Props) {
               </span>
               <span
                 style={{
-                  fontSize: "21px",
-                  color: "#181512",
-                  fontWeight: 600,
+                  fontSize: "26px",
+                  color: "#0A0806",
+                  fontWeight: 700,
                   marginTop: "3px",
                   display: "flex",
                   fontFamily: "'Montserrat', sans-serif",

@@ -645,14 +645,19 @@ export const adminService = {
     });
   },
 
-  async approveClient(id: string): Promise<any> {
+  async approveClient(
+    id: string,
+    payload?: { weeklyFee?: number; explanation?: string },
+  ): Promise<any> {
     const token = getRequiredAuthToken();
 
     return apiFetch(`/admin/clients/${id}/approve`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
+      body: JSON.stringify(payload || {}),
     });
   },
 

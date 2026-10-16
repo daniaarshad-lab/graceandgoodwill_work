@@ -248,6 +248,29 @@ export function useCarerPortal({
     setIsProfileSaving(true);
 
     try {
+      if (!step) {
+        const parsed = parseInt(experience, 10);
+        if (
+          experience === undefined ||
+          experience === null ||
+          experience === "" ||
+          isNaN(parsed) ||
+          parsed < 0 ||
+          parsed > 99
+        ) {
+          setProfileErrors((prev) => ({
+            ...prev,
+            experience: "Years of Care Experience must be a valid number between 0 and 99.",
+          }));
+          setIsProfileSaving(false);
+          showErrorToast(
+            "Validation Error",
+            "Please provide valid years of care experience (0-99).",
+          );
+          return false;
+        }
+      }
+
       if (step === 2) {
         const payload = {
           firstName,
@@ -627,14 +650,12 @@ export function useCarerPortal({
     }
   };
 
-  const handleUpdateDoc = async (
-    id: string,
+  const handleUploadNewDoc = async (
+    file: File,
+    category: string,
     type: string,
-    e: React.ChangeEvent<HTMLInputElement>,
+    options?: { replaceExisting?: boolean; documentId?: string; expiryDate?: string; dbsCertificateNumber?: string },
   ) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
     const allowedTypes = [
       "application/pdf",
       "image/png",
@@ -664,35 +685,78 @@ export function useCarerPortal({
       return;
     }
 
-    const categoryMap: Record<string, string> = {
-      "Driver's License": "DRIVERS_LICENSE",
-      "Criminal Record Check": "CRIMINAL_RECORD_CHECK",
-      "Dementia Support Certificate": "DEMENTIA_SUPPORT",
-      "Business Insurance Certificate": "BUSINESS_INSURANCE",
-      "Mandatory Care Certificate": "CARE_CERTIFICATE",
-      DRIVERS_LICENSE: "DRIVERS_LICENSE",
-      CRIMINAL_RECORD_CHECK: "CRIMINAL_RECORD_CHECK",
-      DEMENTIA_SUPPORT: "DEMENTIA_SUPPORT",
-      BUSINESS_INSURANCE: "BUSINESS_INSURANCE",
-      CARE_CERTIFICATE: "CARE_CERTIFICATE",
-    };
-
-    const category = categoryMap[type] || type;
-
     try {
-      await dispatch(updateCarerDocument({ id, file, category })).unwrap();
+      await dispatch(
+        uploadCarerDocument({
+          file,
+          category,
+          type,
+          options: {
+            replaceExisting: options?.replaceExisting ?? false,
+            documentId: options?.documentId,
+            expiryDate: options?.expiryDate,
+            dbsCertificateNumber: options?.dbsCertificateNumber,
+          },
+        }),
+      ).unwrap();
+
       showSuccessToast(
-        "Document Replaced",
-        `Document "${file.name}" replaced successfully!`,
+        "Document Uploaded",
+        `Document "${file.name}" uploaded successfully for verification.`,
       );
       dispatch(fetchCarerDocuments());
     } catch (error: any) {
       const errorMsg =
         typeof error === "string"
           ? error
-          : error?.message || "Failed to replace document.";
-      showErrorToast("Replace Failed", errorMsg);
+          : error?.message || "Failed to upload document.";
+      showErrorToast("Upload Failed", errorMsg);
     }
+  };
+
+  const handleUpdateDoc = async (
+    id: string,
+    type: string,
+    e: React.ChangeEvent<HTMLInputElement>,
+    categoryName?: string,
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Reset input so carer can re-select if needed
+    e.target.value = "";
+
+    const categoryMap: Record<string, string> = {
+      "Driver's License": "IDENTITY",
+      "Criminal Record Check": "COMPLIANCE",
+      "Dementia Support Certificate": "ADDITIONAL_TRAINING",
+      "Business Insurance Certificate": "INSURANCE",
+      "Mandatory Care Certificate": "MANDATORY_TRAINING",
+      DRIVERS_LICENSE: "IDENTITY",
+      DRIVING_LICENCE_FRONT: "IDENTITY",
+      DRIVING_LICENCE_BACK: "IDENTITY",
+      CRIMINAL_RECORD_CHECK: "COMPLIANCE",
+      ENHANCED_DBS_CERTIFICATE: "COMPLIANCE",
+      ENHANCED_DBS_SUPPORTING: "COMPLIANCE",
+      RIGHT_TO_WORK: "IDENTITY",
+      RIGHT_TO_WORK_SUPPORTING: "IDENTITY",
+      PUBLIC_LIABILITY_INSURANCE: "INSURANCE",
+      PUBLIC_LIABILITY_SUPPORTING: "INSURANCE",
+      PROFESSIONAL_INDEMNITY_INSURANCE: "INSURANCE",
+      PROFESSIONAL_INDEMNITY_SUPPORTING: "INSURANCE",
+      PROFESSIONAL_REFERENCE_1: "COMPLIANCE",
+      PROFESSIONAL_REFERENCE_2: "COMPLIANCE",
+      PROFESSIONAL_REFERENCE_SUPPORTING: "COMPLIANCE",
+      CV_RESUME: "COMPLIANCE",
+      CV_SUPPORTING: "COMPLIANCE",
+      PROOF_OF_ADDRESS: "IDENTITY",
+      PROOF_OF_ADDRESS_SUPPORTING: "IDENTITY",
+    };
+
+    const category = categoryName || categoryMap[type] || "COMPLIANCE";
+
+    // Use append workflow (replaceExisting: false) so previous records are retained in history
+    await handleUploadNewDoc(file, category, type, { replaceExisting: false, documentId: id });
   };
 
   const submitProfile = async (): Promise<boolean> => {
@@ -796,6 +860,7 @@ export function useCarerPortal({
     selectedFiles,
     handleDeleteDoc,
     handleUpdateDoc,
+    handleUploadNewDoc,
     submitProfile,
     profile,
     introVideoUrl: profile?.introVideoUrl || null,

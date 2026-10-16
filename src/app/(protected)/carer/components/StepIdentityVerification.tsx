@@ -730,45 +730,55 @@ export default function StepIdentityVerification({
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <div
-                  className={`transition-all rounded-xl border ${submitted && docErrors.proofOfAddress ? "border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]" : "border-transparent"}`}
-                >
-                  <DocUploadRow
-                    label="Proof of Address (issued within last 3 months) *"
-                    type={DocumentFileType.PROOF_OF_ADDRESS}
-                    portal={portal}
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <div
+                    className={`transition-all rounded-xl border ${submitted && docErrors.proofOfAddress ? "border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]" : "border-transparent"}`}
                   >
-                    <div className="mt-2">
-                      <p className="text-gold-100/80 mb-1.5 font-medium">
-                        Accepted Proof of Address Documents:
-                      </p>
-                      <ul className="list-disc pl-4 space-y-1 text-gold-100/60">
-                        <li>Utility Bill (Gas, Electricity or Water)</li>
-                        <li>Council Tax Bill</li>
-                        <li>Bank Statement</li>
-                        <li>Credit Card Statement</li>
-                        <li>HMRC Letter</li>
-                        <li>Tenancy Agreement</li>
-                        <li>Mortgage Statement</li>
-                      </ul>
-                    </div>
-                  </DocUploadRow>
+                    <DocUploadRow
+                      label="Upload Document 1: Proof of Address (issued within last 3 months) *"
+                      type={DocumentFileType.PROOF_OF_ADDRESS}
+                      portal={portal}
+                    >
+                      <div className="mt-2">
+                        <p className="text-gold-100/80 mb-1.5 font-medium">
+                          Accepted Proof of Address Documents:
+                        </p>
+                        <ul className="list-disc pl-4 space-y-1 text-gold-100/60">
+                          <li>Utility Bill (Gas, Electricity or Water)</li>
+                          <li>Council Tax Bill</li>
+                          <li>Bank Statement</li>
+                          <li>Credit Card Statement</li>
+                          <li>HMRC Letter</li>
+                          <li>Tenancy Agreement</li>
+                          <li>Mortgage Statement</li>
+                        </ul>
+                      </div>
+                    </DocUploadRow>
+                  </div>
+                  {submitted && docErrors.proofOfAddress && (
+                    <p className="text-xs text-red-500 font-semibold px-1">
+                      {docErrors.proofOfAddress}
+                    </p>
+                  )}
                 </div>
-                {submitted && docErrors.proofOfAddress && (
-                  <p className="text-xs text-red-500 font-semibold px-1">
-                    {docErrors.proofOfAddress}
-                  </p>
-                )}
+
+                <div>
+                  <DocUploadRow
+                    label="Upload Supporting Document 2: Additional Supporting Evidence (Optional)"
+                    type={DocumentFileType.PROOF_OF_ADDRESS_SUPPORTING}
+                    portal={portal}
+                  />
+                </div>
               </div>
 
-              <div className="space-y-6">
+              <div className="space-y-4">
                 <div className="space-y-2">
                   <div
                     className={`transition-all rounded-xl border ${submitted && docErrors.rightToWork ? "border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]" : "border-transparent"}`}
                   >
                     <DocUploadRow
-                      label="Right to Work in the UK *"
+                      label="Upload Document 1: Right to Work in the UK (Original Evidence) *"
                       type={DocumentFileType.RIGHT_TO_WORK}
                       portal={portal}
                     />
@@ -780,7 +790,15 @@ export default function StepIdentityVerification({
                   )}
                 </div>
 
-                <div className="space-y-2">
+                <div>
+                  <DocUploadRow
+                    label="Upload Supporting Document 2: GOV.UK / Home Office Verification Confirmation (Optional)"
+                    type={DocumentFileType.RIGHT_TO_WORK_SUPPORTING}
+                    portal={portal}
+                  />
+                </div>
+
+                <div className="space-y-2 pt-2">
                   <div
                     className={`transition-all rounded-xl border ${submitted && docErrors.niProof ? "border-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.15)]" : "border-transparent"}`}
                   >

@@ -258,8 +258,39 @@ export default function CarerApplications({
       key: "availability",
       sortable: true,
       render: (carer) => {
-        const ext = getCarerExtendedDetails(carer.id);
-        return <StatusBadge status={ext.availabilityStatus} />;
+        const avail = carer.availability || "Not configured";
+        let badgeStatus = "Available";
+        if (avail === "Unavailable" || avail === "UNAVAILABLE") {
+          badgeStatus = "Unavailable";
+        } else if (
+          avail === "Not configured" ||
+          avail === "N/A" ||
+          avail === "Pending"
+        ) {
+          badgeStatus = "Pending";
+        } else if (avail.toLowerCase().includes("limited")) {
+          badgeStatus = "Limited Availability";
+        } else {
+          badgeStatus = "Available";
+        }
+
+        return (
+          <div className="flex flex-col">
+            <StatusBadge status={badgeStatus} />
+            {avail !== "Available" &&
+              avail !== "Unavailable" &&
+              avail !== "Not configured" &&
+              avail !== "N/A" &&
+              avail !== "Pending" && (
+                <span
+                  className="text-[11px] text-gold-100/60 mt-0.5 truncate max-w-[150px]"
+                  title={avail}
+                >
+                  {avail}
+                </span>
+              )}
+          </div>
+        );
       },
     },
     {

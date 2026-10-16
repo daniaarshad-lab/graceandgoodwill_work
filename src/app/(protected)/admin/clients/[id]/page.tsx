@@ -17,6 +17,8 @@ import {
   CheckCircle,
   Heart,
   FileText,
+  UserCheck,
+  ShieldAlert,
 } from "lucide-react";
 import { adminService } from "@/services/admin/admin.service";
 import { showSuccessToast } from "@/utils/toast";
@@ -24,6 +26,15 @@ import InternalNotes from "../../components/shared/InternalNotes/InternalNotes";
 import UserAuditLogs from "../../components/shared/UserAuditLogs";
 import ThinSpinner from "@/components/ThinSpinner";
 import Avatar from "../../components/shared/Avatar";
+import ClientApprovalModal from "../../components/ClientApprovalModal";
+
+interface FeeHistoryItem {
+  previousFee: number | null;
+  newFee: number;
+  updatedById?: string | null;
+  updatedByName?: string;
+  updatedAt: string;
+}
 
 // Define strict types for client detail view
 interface ClientDetail {
@@ -51,6 +62,13 @@ interface ClientDetail {
     carerName: string;
     status: string; // Active, Matched, Completed
   }[];
+  // Administrator accountability & fee history
+  approvedById?: string | null;
+  approvedByName?: string | null;
+  approvedAt?: string | null;
+  approvalExceptionReason?: string | null;
+  approvalExceptionNotified?: boolean;
+  weeklyFeeHistory?: FeeHistoryItem[];
 }
 
 export default function ClientDetailsPage() {
@@ -83,6 +101,7 @@ function ClientDetailsContent() {
   const [savingFee, setSavingFee] = useState(false);
   const [savingCarerPay, setSavingCarerPay] = useState(false);
   const [approvingClient, setApprovingClient] = useState(false);
+  const [showApprovalModal, setShowApprovalModal] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
 
   async function loadClientData() {
@@ -168,6 +187,12 @@ function ClientDetailsContent() {
             res.clientProfile?.profilePhotoUrl ||
             null,
           placementHistory: history,
+          approvedById: res.approvedById || null,
+          approvedByName: res.approvedByName || null,
+          approvedAt: res.approvedAt || null,
+          approvalExceptionReason: res.approvalExceptionReason || null,
+          approvalExceptionNotified: Boolean(res.approvalExceptionNotified),
+          weeklyFeeHistory: Array.isArray(res.weeklyFeeHistory) ? res.weeklyFeeHistory : [],
         });
 
         // Set initial weekly fee input values
@@ -251,26 +276,24 @@ function ClientDetailsContent() {
     }
   };
 
-  // Action to approve client
-  const handleApproveClient = async () => {
-    setValidationError(null);
-    if (!client || client.agreedWeeklyFee <= 0) {
-      setValidationError(
-        "Weekly fee must be set and saved before approving the client.",
-      );
-      return;
-    }
+  // Action to confirm client approval from modal
+  const handleConfirmApproval = async (payload: {
+    weeklyFee?: number;
+    explanation?: string;
+  }) => {
     setApprovingClient(true);
+    setValidationError(null);
     try {
-      await adminService.approveClient(id);
+      await adminService.approveClient(id, payload);
       showSuccessToast(
         "Client Approved",
         "The client account has been successfully approved.",
       );
+      setShowApprovalModal(false);
       await loadClientData();
     } catch (err: any) {
       console.error(err);
-      setValidationError(err.message || "Failed to approve client.");
+      throw err;
     } finally {
       setApprovingClient(false);
     }
@@ -527,13 +550,9 @@ function ClientDetailsContent() {
                 {/* Approve Client action button */}
                 {client.status !== "APPROVED" && (
                   <button
-                    onClick={handleApproveClient}
-                    disabled={
-                      approvingClient ||
-                      !client.agreedWeeklyFee ||
-                      client.agreedWeeklyFee <= 0
-                    }
-                    className="w-full mt-4 px-4 py-2.5 text-xs font-bold text-navy-950 bg-gold hover:bg-gold-200 disabled:opacity-40 rounded-xl transition duration-300 flex items-center justify-center gap-1.5 cursor-pointer disabled:cursor-not-allowed"
+                    onClick={() => setShowApprovalModal(true)}
+                    disabled={approvingClient}
+                    className="w-full mt-4 px-4 py-2.5 text-xs font-bold text-navy-950 bg-gold hover:bg-gold-200 disabled:opacity-40 rounded-xl transition duration-300 flex items-center justify-center gap-1.5 cursor-pointer disabled:cursor-not-allowed shadow-md"
                   >
                     {approvingClient ? (
                       <ThinSpinner size="xs" spinnerClassName="border-navy-950 shrink-0" className="inline-flex flex-row space-y-0" />
@@ -542,6 +561,81 @@ function ClientDetailsContent() {
                     )}
                     Approve Client
                   </button>
+                )}
+              </div>
+            </div>
+
+            {/* ADMINISTRATOR ACCOUNTABILITY CARD */}
+            <div className="rounded-2xl border border-gold-300/10 bg-navy-900/60 p-6 shadow-soft backdrop-blur-md space-y-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-gold-200/50 border-b border-gold-300/5 pb-3 flex items-center justify-between">
+                <span className="flex items-center gap-1.5">
+                  <UserCheck className="h-4 w-4 text-gold/70" />
+                  Administrator Accountability
+                </span>
+                {client.status === "APPROVED" && (
+                  <span className="px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+                    Verified Approval
+                  </span>
+                )}
+              </h3>
+
+              <div className="space-y-3 text-xs">
+                {client.approvedByName ? (
+                  <>
+                    <div className="flex items-center justify-between">
+                      <span className="text-gold-100/50">Approved by:</span>
+                      <span className="font-bold text-gold-200">{client.approvedByName}</span>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <span className="text-gold-100/50">Approval Date & Time:</span>
+                      <span className="font-mono text-gold-100/80">
+                        {client.approvedAt
+                          ? new Date(client.approvedAt).toLocaleString("en-GB", {
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })
+                          : "Recorded"}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <span className="text-gold-100/50">Agreed Weekly Fee:</span>
+                      <span className="font-mono font-bold text-gold">
+                        {client.agreedWeeklyFee && client.agreedWeeklyFee > 0
+                          ? `£${client.agreedWeeklyFee.toLocaleString("en-GB", {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            })}`
+                          : "No Fee Recorded"}
+                      </span>
+                    </div>
+
+                    {client.approvalExceptionReason && (
+                      <div className="mt-3 p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/25 space-y-2">
+                        <div className="flex items-center gap-1.5 text-amber-300 font-bold text-[11px]">
+                          <ShieldAlert className="h-3.5 w-3.5 text-amber-400" />
+                          <span>Approval Exception Recorded</span>
+                        </div>
+                        <p className="text-[11px] text-amber-100/90 italic leading-relaxed">
+                          “{client.approvalExceptionReason}”
+                        </p>
+                        <div className="pt-2 border-t border-amber-500/20 flex items-center gap-1.5 text-[10px] text-emerald-300 font-medium">
+                          <CheckCircle className="h-3 w-3 text-emerald-400 flex-shrink-0" />
+                          <span>Exception recorded & Super Admin (aurea@graceandgoodwill.co.uk) notified</span>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="py-2 text-center text-gold-100/40 text-xs italic">
+                    {client.status === "APPROVED"
+                      ? "Approved prior to accountability tracking"
+                      : "Pending administrative approval"}
+                  </div>
                 )}
               </div>
             </div>
@@ -686,6 +780,50 @@ function ClientDetailsContent() {
                     </button>
                   </div>
                 </div>
+
+                {/* Weekly Fee Revision History */}
+                {client.weeklyFeeHistory && client.weeklyFeeHistory.length > 0 && (
+                  <div className="pt-4 border-t border-gold-300/10 space-y-2.5">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-gold-200/60 block flex items-center gap-1.5">
+                      <History className="h-3.5 w-3.5 text-gold/60" />
+                      Weekly Fee Revision History
+                    </span>
+                    <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                      {client.weeklyFeeHistory.map((rev, idx) => (
+                        <div
+                          key={`fee-rev-${idx}`}
+                          className="p-2.5 rounded-xl bg-navy-950/60 border border-gold-300/5 text-[11px] space-y-1"
+                        >
+                          <div className="flex justify-between items-center">
+                            <span className="font-semibold text-gold-200">
+                              £{rev.previousFee !== null && rev.previousFee !== undefined ? rev.previousFee.toLocaleString("en-GB", { minimumFractionDigits: 2 }) : "0.00"}
+                              {" → "}
+                              <span className="text-gold font-bold">
+                                £{rev.newFee.toLocaleString("en-GB", { minimumFractionDigits: 2 })}
+                              </span>
+                            </span>
+                            <span className="font-mono text-[9px] text-gold-100/40">
+                              {new Date(rev.updatedAt).toLocaleDateString("en-GB", {
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric",
+                              })}
+                            </span>
+                          </div>
+                          <div className="text-[10px] text-gold-100/50 flex justify-between">
+                            <span>Changed by: {rev.updatedByName || "Administrator"}</span>
+                            <span className="font-mono">
+                              {new Date(rev.updatedAt).toLocaleTimeString("en-GB", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 <div className="rounded-xl bg-navy-950/50 p-3 border border-gold-300/5">
                   <p className="text-[10px] text-gold-100/40 italic leading-relaxed">
@@ -940,6 +1078,22 @@ function ClientDetailsContent() {
             subtitle={`Activity and governance audit history for ${client.name}`}
           />
         </section>
+
+        {/* CLIENT APPROVAL MODAL */}
+        {showApprovalModal && client && (
+          <ClientApprovalModal
+            client={{
+              id: client.id,
+              name: client.name,
+              email: client.email,
+              phone: client.phone,
+              agreedWeeklyFee: client.agreedWeeklyFee,
+            }}
+            onConfirm={handleConfirmApproval}
+            onCancel={() => setShowApprovalModal(false)}
+            isApproving={approvingClient}
+          />
+        )}
       </div>
     </main>
   );

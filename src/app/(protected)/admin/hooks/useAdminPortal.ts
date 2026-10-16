@@ -8,6 +8,7 @@ import {
 } from "../types/admin.types";
 import { getDocumentFileLabel } from "@/types/document.types";
 import { adminService } from "@/services/admin/admin.service";
+import { formatDateArrayToRanges } from "@/utils/dateRangeFormatter";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { toast } from "sonner";
 import {
@@ -149,18 +150,28 @@ const mapBackendCarers = (backendCarers: any[]): CarerApplication[] => {
     });
 
     let availabilityStr = "Not configured";
-    if (profile.availability) {
-      if (typeof profile.availability === "string") {
-        availabilityStr = profile.availability;
-      } else if (Array.isArray(profile.availability)) {
-        const activeDays = profile.availability
-          .filter((d: any) => d.enabled)
-          .map((d: any) => {
-            const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-            return dayNames[d.dayOfWeek] || `Day ${d.dayOfWeek}`;
-          });
-        if (activeDays.length > 0) {
-          availabilityStr = `Active days: ${activeDays.join(", ")}`;
+    const availData = profile.availability ?? carer.availability;
+    if (availData) {
+      if (typeof availData === "string") {
+        availabilityStr = availData;
+      } else if (Array.isArray(availData) && availData.length > 0) {
+        if (typeof availData[0] === "string") {
+          const ranges = formatDateArrayToRanges(availData);
+          availabilityStr =
+            ranges.length > 0
+              ? ranges.slice(0, 2).join(", ") +
+                (ranges.length > 2 ? ` (+${ranges.length - 2} more)` : "")
+              : "Available";
+        } else if (typeof availData[0] === "object") {
+          const activeDays = availData
+            .filter((d: any) => d.enabled)
+            .map((d: any) => {
+              const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+              return dayNames[d.dayOfWeek] || `Day ${d.dayOfWeek}`;
+            });
+          if (activeDays.length > 0) {
+            availabilityStr = `Active days: ${activeDays.join(", ")}`;
+          }
         }
       }
     }
@@ -219,6 +230,13 @@ const mapBackendCarers = (backendCarers: any[]): CarerApplication[] => {
       };
     }
 
+    const expYears =
+      profile.experienceYears !== undefined && profile.experienceYears !== null
+        ? profile.experienceYears
+        : carer.experienceYears !== undefined && carer.experienceYears !== null
+          ? carer.experienceYears
+          : null;
+
     return {
       id: carer.id,
       carerProfileId: profile.id,
@@ -227,9 +245,7 @@ const mapBackendCarers = (backendCarers: any[]): CarerApplication[] => {
       name: `${carer.firstName || "Unknown"} ${carer.lastName || ""}`.trim(),
       experience:
         profile.experience ||
-        (profile.experienceYears
-          ? `${profile.experienceYears} Years`
-          : "No experience listed"),
+        (expYears !== null ? `${expYears} Years` : "No experience listed"),
       city: profile.city || "Unknown",
       dbsStatus,
       specialties: specialtiesList,

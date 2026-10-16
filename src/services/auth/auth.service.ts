@@ -16,9 +16,13 @@ export const authService = {
       method: "POST",
       body,
     });
-    if (data.accessToken) {
-      localStorage.setItem("accessToken", data.accessToken);
-      localStorage.setItem("refreshToken", data.refreshToken);
+    const token = data.accessToken || (data as any).token;
+    if (token) {
+      localStorage.setItem("accessToken", token);
+      localStorage.setItem("token", token);
+      if (data.refreshToken) {
+        localStorage.setItem("refreshToken", data.refreshToken);
+      }
     }
     return data;
   },
@@ -33,9 +37,13 @@ export const authService = {
       method: "POST",
       body,
     });
-    if (data.accessToken) {
-      localStorage.setItem("accessToken", data.accessToken);
-      localStorage.setItem("refreshToken", data.refreshToken);
+    const token = data.accessToken || (data as any).token;
+    if (token) {
+      localStorage.setItem("accessToken", token);
+      localStorage.setItem("token", token);
+      if (data.refreshToken) {
+        localStorage.setItem("refreshToken", data.refreshToken);
+      }
     }
     return data;
   },
@@ -43,6 +51,7 @@ export const authService = {
   async logout(): Promise<void> {
     if (typeof window === "undefined") return;
     localStorage.removeItem("accessToken");
+    localStorage.removeItem("token");
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("user");
     localStorage.removeItem("carer_onboarding_step");

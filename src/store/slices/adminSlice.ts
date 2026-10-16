@@ -539,10 +539,21 @@ const adminSlice = createSlice({
     });
     builder.addCase(fetchAdminCarers.fulfilled, (state, action) => {
       state.carers.loading = false;
-      state.carers.items = action.payload.items || [];
-      state.carers.totalItems = action.payload.total || 0;
-      state.carers.totalPages = Math.ceil(
-        (action.payload.total || 0) / state.carers.limit,
+      const payload: any = action.payload || {};
+      const items = Array.isArray(payload)
+        ? payload
+        : payload.items || payload.carers || payload.data || [];
+      const total =
+        typeof payload.total === "number"
+          ? payload.total
+          : typeof payload.totalItems === "number"
+            ? payload.totalItems
+            : items.length;
+      state.carers.items = items;
+      state.carers.totalItems = total;
+      state.carers.totalPages = Math.max(
+        1,
+        Math.ceil(total / (state.carers.limit || 10)),
       );
     });
     builder.addCase(fetchAdminCarers.rejected, (state, action) => {
@@ -557,10 +568,21 @@ const adminSlice = createSlice({
     });
     builder.addCase(fetchAdminCareRequests.fulfilled, (state, action) => {
       state.careRequests.loading = false;
-      state.careRequests.items = action.payload.items || [];
-      state.careRequests.totalItems = action.payload.total || 0;
-      state.careRequests.totalPages = Math.ceil(
-        (action.payload.total || 0) / state.careRequests.limit,
+      const payload: any = action.payload || {};
+      const items = Array.isArray(payload)
+        ? payload
+        : payload.items || payload.careRequests || payload.data || [];
+      const total =
+        typeof payload.total === "number"
+          ? payload.total
+          : typeof payload.totalItems === "number"
+            ? payload.totalItems
+            : items.length;
+      state.careRequests.items = items;
+      state.careRequests.totalItems = total;
+      state.careRequests.totalPages = Math.max(
+        1,
+        Math.ceil(total / (state.careRequests.limit || 10)),
       );
     });
     builder.addCase(fetchAdminCareRequests.rejected, (state, action) => {
@@ -578,10 +600,21 @@ const adminSlice = createSlice({
       fetchAdminEmergencyCareRequests.fulfilled,
       (state, action) => {
         state.emergencyCareRequests.loading = false;
-        state.emergencyCareRequests.items = action.payload.items || [];
-        state.emergencyCareRequests.totalItems = action.payload.total || 0;
-        state.emergencyCareRequests.totalPages = Math.ceil(
-          (action.payload.total || 0) / state.emergencyCareRequests.limit,
+        const payload: any = action.payload || {};
+        const items = Array.isArray(payload)
+          ? payload
+          : payload.items || payload.emergencyCareRequests || payload.data || [];
+        const total =
+          typeof payload.total === "number"
+            ? payload.total
+            : typeof payload.totalItems === "number"
+              ? payload.totalItems
+              : items.length;
+        state.emergencyCareRequests.items = items;
+        state.emergencyCareRequests.totalItems = total;
+        state.emergencyCareRequests.totalPages = Math.max(
+          1,
+          Math.ceil(total / (state.emergencyCareRequests.limit || 10)),
         );
       },
     );
@@ -613,10 +646,21 @@ const adminSlice = createSlice({
     });
     builder.addCase(fetchAdminClients.fulfilled, (state, action) => {
       state.clients.loading = false;
-      state.clients.items = action.payload.items || [];
-      state.clients.totalItems = action.payload.total || 0;
-      state.clients.totalPages = Math.ceil(
-        (action.payload.total || 0) / state.clients.limit,
+      const payload: any = action.payload || {};
+      const items = Array.isArray(payload)
+        ? payload
+        : payload.items || payload.clients || payload.data || [];
+      const total =
+        typeof payload.total === "number"
+          ? payload.total
+          : typeof payload.totalItems === "number"
+            ? payload.totalItems
+            : items.length;
+      state.clients.items = items;
+      state.clients.totalItems = total;
+      state.clients.totalPages = Math.max(
+        1,
+        Math.ceil(total / (state.clients.limit || 10)),
       );
     });
     builder.addCase(fetchAdminClients.rejected, (state, action) => {

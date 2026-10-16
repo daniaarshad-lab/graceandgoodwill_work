@@ -128,10 +128,14 @@ const authSlice = createSlice({
         state.user = action.payload.user;
         state.role = action.payload.user.role || null;
 
-        if (typeof window !== "undefined") {
-          localStorage.setItem("accessToken", action.payload.accessToken);
+        const authToken = action.payload.accessToken || (action.payload as any).token;
+        if (typeof window !== "undefined" && authToken) {
+          localStorage.setItem("accessToken", authToken);
+          localStorage.setItem("token", authToken);
 
-          localStorage.setItem("refreshToken", action.payload.refreshToken);
+          if (action.payload.refreshToken) {
+            localStorage.setItem("refreshToken", action.payload.refreshToken);
+          }
 
           localStorage.setItem("user", JSON.stringify(action.payload.user));
         }
@@ -155,13 +159,17 @@ const authSlice = createSlice({
       (state, action: PayloadAction<AuthResponse>) => {
         state.loading = false;
         state.isAuthenticated = true;
-        state.token = action.payload.accessToken;
+        state.token = action.payload.accessToken || (action.payload as any).token;
         state.user = action.payload.user;
         state.role = action.payload.user.role || null;
 
-        if (typeof window !== "undefined") {
-          localStorage.setItem("accessToken", action.payload.accessToken);
-          localStorage.setItem("refreshToken", action.payload.refreshToken);
+        const regToken = action.payload.accessToken || (action.payload as any).token;
+        if (typeof window !== "undefined" && regToken) {
+          localStorage.setItem("accessToken", regToken);
+          localStorage.setItem("token", regToken);
+          if (action.payload.refreshToken) {
+            localStorage.setItem("refreshToken", action.payload.refreshToken);
+          }
           localStorage.setItem("user", JSON.stringify(action.payload.user));
         }
       },

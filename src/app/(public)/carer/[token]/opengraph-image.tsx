@@ -39,6 +39,53 @@ function getLogoBase64(): string {
   return cachedLogoBase64;
 }
 
+/* ── Google Fonts loader for Satori (next/og ImageResponse) ── */
+let cachedCormorantSemiBold: ArrayBuffer | null = null;
+let cachedMontserratMedium: ArrayBuffer | null = null;
+let cachedMontserratSemiBold: ArrayBuffer | null = null;
+
+async function loadGoogleFont(family: string, weight: number): Promise<ArrayBuffer> {
+  const url = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(family)}:wght@${weight}`;
+  const cssRes = await fetch(url, {
+    headers: {
+      // Old Safari User-Agent ensures Google Fonts returns TTF format which Satori supports (WOFF2 is not supported by Satori)
+      "User-Agent":
+        "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_8; de-at) AppleWebKit/533.21.1 (KHTML, like Gecko) Version/5.0.5 Safari/533.21.1",
+    },
+    signal: AbortSignal.timeout(4000),
+  });
+  const css = await cssRes.text();
+  const fontUrlMatch = css.match(/src:\s*url\(([^)]+)\)/);
+  if (!fontUrlMatch?.[1]) throw new Error(`Could not extract font URL for ${family}:${weight}`);
+  const fontRes = await fetch(fontUrlMatch[1], { signal: AbortSignal.timeout(4000) });
+  return fontRes.arrayBuffer();
+}
+
+async function getCormorantSemiBold(): Promise<ArrayBuffer> {
+  if (cachedCormorantSemiBold) return cachedCormorantSemiBold;
+  cachedCormorantSemiBold = await loadGoogleFont("Cormorant Garamond", 600);
+  return cachedCormorantSemiBold;
+}
+
+async function getMontserratMedium(): Promise<ArrayBuffer> {
+  if (cachedMontserratMedium) return cachedMontserratMedium;
+  cachedMontserratMedium = await loadGoogleFont("Montserrat", 500);
+  return cachedMontserratMedium;
+}
+
+async function getMontserratSemiBold(): Promise<ArrayBuffer> {
+  if (cachedMontserratSemiBold) return cachedMontserratSemiBold;
+  cachedMontserratSemiBold = await loadGoogleFont("Montserrat", 600);
+  return cachedMontserratSemiBold;
+}
+
+/* ── Brand colour palette (from spec §7.1) ── */
+const GOLD_PRIMARY = "#D4AF6A"; // Warm champagne gold
+const GOLD_DARK = "#B99150";    // Antique gold
+const GOLD_LIGHT = "#E8D09A";   // Soft champagne
+const NAVY_BG = "#09142B";      // Deep midnight navy
+const CREAM_BG = "#F8F5EE";     // Warm ivory
+
 export default async function Image({ params }: Props) {
   const { token } = await params;
 
@@ -104,12 +151,27 @@ export default async function Image({ params }: Props) {
     }
   }
 
-  /* ------------------------------------------------------------------ */
-  /*  Brand colour palette (from spec §7.1)                             */
-  /*  Gold:  #D4AF6A (primary) / #B99150 (dark) / #E8D09A (light)      */
-  /*  Navy:  #09142B                                                     */
-  /*  Ivory: #F8F5EE                                                     */
-  /* ------------------------------------------------------------------ */
+  // Load custom fonts for Satori (best-effort; falls back to system serif/sans-serif)
+  let fonts: { name: string; data: ArrayBuffer; weight: 400 | 500 | 600 | 700; style: "normal" }[] = [];
+  try {
+    const [cormorant600, montserrat500, montserrat600] = await Promise.all([
+      getCormorantSemiBold(),
+      getMontserratMedium(),
+      getMontserratSemiBold(),
+    ]);
+    fonts = [
+      { name: "Cormorant Garamond", data: cormorant600, weight: 600, style: "normal" as const },
+      { name: "Montserrat", data: montserrat500, weight: 500, style: "normal" as const },
+      { name: "Montserrat", data: montserrat600, weight: 600, style: "normal" as const },
+    ];
+  } catch (err) {
+    console.warn("Could not load Google Fonts for OG image, using system fallbacks:", err);
+  }
+
+  /* ── Layout measurements (1200 × 630) ── */
+  const FOOTER_H = 165;  // taller footer for readable contacts
+  const WAVE_H = 55;     // curved gold transition height
+  const NAVY_H = 630 - FOOTER_H; // 465px — navy content zone
 
   return new ImageResponse(
     (
@@ -120,11 +182,11 @@ export default async function Image({ params }: Props) {
           display: "flex",
           position: "relative",
           overflow: "hidden",
-          fontFamily: "Georgia, serif",
-          backgroundColor: "#09142B",
+          fontFamily: "'Montserrat', 'Inter', system-ui, sans-serif",
+          backgroundColor: NAVY_BG,
         }}
       >
-        {/* Background Image – shifted right to reduce blank navy on left */}
+        {/* Background Image: bg-share-wp.jpeg */}
         {bgBase64 ? (
           <img
             src={bgBase64}
@@ -141,166 +203,160 @@ export default async function Image({ params }: Props) {
           />
         ) : null}
 
-        {/* Navy overlay – lighter, covering only the left content area */}
+        {/* Deep navy vignette on left side for text clarity */}
         <div
           style={{
             position: "absolute",
             top: 0,
             left: 0,
-            width: "700px",
-            height: "490px",
+            width: "820px",
+            height: `${NAVY_H}px`,
             background:
-              "linear-gradient(90deg, rgba(9,20,43,0.95) 0%, rgba(9,20,43,0.88) 55%, rgba(9,20,43,0.35) 85%, transparent 100%)",
+              `linear-gradient(90deg, rgba(9,20,43,0.97) 0%, rgba(9,20,43,0.92) 55%, rgba(9,20,43,0.45) 82%, transparent 100%)`,
             display: "flex",
           }}
         />
 
-        {/* ============================================================ */}
-        {/*  TOP-LEFT: Logo + brand name + strapline                     */}
-        {/* ============================================================ */}
+        {/* ── Top-Left: Logo + "GRACE & GOODWILL" + strapline ── */}
         <div
           style={{
             position: "absolute",
-            top: "28px",
-            left: "48px",
+            top: "22px",
+            left: "64px",
             display: "flex",
-            flexDirection: "row",
+            flexDirection: "column",
             alignItems: "center",
           }}
         >
-          {/* Original G&G gold knot logo – larger for legibility */}
+          {/* Logo icon */}
           {logoBase64 ? (
             <img
               src={logoBase64}
-              width={72}
-              height={72}
+              width={82}
+              height={82}
               style={{ objectFit: "contain", display: "flex" }}
             />
           ) : (
             <div
               style={{
-                width: "72px",
-                height: "72px",
-                backgroundColor: "rgba(212,175,55,0.2)",
+                width: "82px",
+                height: "82px",
+                backgroundColor: `rgba(212,175,106,0.2)`,
                 borderRadius: "12px",
                 display: "flex",
               }}
             />
           )}
 
+          {/* Company name centered under icon */}
+          <div
+            style={{
+              fontSize: "28px",
+              fontWeight: 600,
+              color: GOLD_PRIMARY,
+              letterSpacing: "5.5px",
+              marginTop: "8px",
+              display: "flex",
+              fontFamily: "'Montserrat', sans-serif",
+            }}
+          >
+            GRACE &amp; GOODWILL
+          </div>
+
+          {/* Strapline with gold divider lines */}
           <div
             style={{
               display: "flex",
-              flexDirection: "column",
-              marginLeft: "16px",
+              alignItems: "center",
+              gap: "8px",
+              marginTop: "4px",
             }}
           >
-            {/* Brand name */}
             <div
               style={{
-                fontSize: "24px",
-                fontWeight: 700,
-                color: "#D4AF6A",
-                letterSpacing: "4px",
+                width: "30px",
+                height: "1px",
+                backgroundColor: `rgba(212,175,106,0.6)`,
                 display: "flex",
               }}
+            />
+            <span
+              style={{
+                fontSize: "13px",
+                color: GOLD_LIGHT,
+                letterSpacing: "3px",
+                fontWeight: 500,
+                display: "flex",
+                fontFamily: "'Montserrat', sans-serif",
+              }}
             >
-              GRACE &amp; GOODWILL
-            </div>
-
-            {/* Strapline – larger and more readable */}
+              CARE DEFINED BY INTEGRITY
+            </span>
             <div
               style={{
+                width: "30px",
+                height: "1px",
+                backgroundColor: `rgba(212,175,106,0.6)`,
                 display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                marginTop: "4px",
               }}
-            >
-              <div
-                style={{
-                  width: "24px",
-                  height: "1px",
-                  backgroundColor: "rgba(212,175,106,0.5)",
-                  display: "flex",
-                }}
-              />
-              <span
-                style={{
-                  fontSize: "12px",
-                  color: "#E8D09A",
-                  letterSpacing: "3px",
-                  fontWeight: 500,
-                  display: "flex",
-                }}
-              >
-                CARE DEFINED BY INTEGRITY
-              </span>
-              <div
-                style={{
-                  width: "24px",
-                  height: "1px",
-                  backgroundColor: "rgba(212,175,106,0.5)",
-                  display: "flex",
-                }}
-              />
-            </div>
+            />
           </div>
         </div>
 
-        {/* ============================================================ */}
-        {/*  LEFT CONTENT: Trust line  +  Carer Name  +  Description     */}
-        {/* ============================================================ */}
+        {/* ── Middle-Left: "CARE YOU CAN TRUST" + Carer name + role ── */}
         <div
           style={{
             position: "absolute",
-            top: "145px",
-            left: "52px",
-            width: "580px",
+            top: "188px",
+            left: "64px",
+            width: "600px",
             display: "flex",
             flexDirection: "column",
           }}
         >
-          {/* "CARE YOU CAN TRUST" — prominent trust line (spec: 19–21px) */}
+          {/* "CARE YOU CAN TRUST" tagline (Spec: 19–21 px, Montserrat SemiBold) */}
           <div
             style={{
               fontSize: "20px",
-              color: "#D4AF6A",
-              letterSpacing: "5px",
-              fontWeight: 700,
-              marginBottom: "12px",
+              color: GOLD_PRIMARY,
+              letterSpacing: "4.5px",
+              fontWeight: 600,
+              marginBottom: "8px",
               display: "flex",
+              fontFamily: "'Montserrat', sans-serif",
             }}
           >
             CARE YOU CAN TRUST
           </div>
 
-          {/* Carer Name — large and bold (spec: 65–72px) */}
+          {/* Carer Name — large, elegant serif (Spec: 65–72 px, Cormorant Garamond SemiBold) */}
           <div
             style={{
-              fontSize: "68px",
-              fontWeight: 700,
+              fontSize: "70px",
+              fontWeight: 600,
               color: "#FFFFFF",
-              lineHeight: 1.08,
-              marginBottom: "14px",
+              lineHeight: 1.05,
+              marginBottom: "10px",
               display: "flex",
+              fontFamily: "'Cormorant Garamond', Georgia, serif",
             }}
           >
             {safeName}
           </div>
 
-          {/* Professional description (spec: 25–28px) */}
+          {/* Professional role (Spec: 25–28 px, Montserrat Medium) */}
           <div
             style={{
               display: "flex",
               flexDirection: "column",
-              lineHeight: 1.3,
+              fontSize: "26px",
+              fontFamily: "'Montserrat', sans-serif",
+              lineHeight: 1.25,
             }}
           >
             <span
               style={{
-                fontSize: "26px",
-                color: "rgba(255,255,255,0.92)",
+                color: "rgba(255, 255, 255, 0.92)",
                 fontWeight: 500,
                 display: "flex",
               }}
@@ -309,10 +365,9 @@ export default async function Image({ params }: Props) {
             </span>
             <span
               style={{
-                fontSize: "26px",
-                color: "#D4AF6A",
-                fontWeight: 700,
-                marginTop: "4px",
+                color: GOLD_PRIMARY,
+                fontWeight: 600,
+                marginTop: "2px",
                 display: "flex",
               }}
             >
@@ -321,16 +376,14 @@ export default async function Image({ params }: Props) {
           </div>
         </div>
 
-        {/* ============================================================ */}
-        {/*  RIGHT: Circular Carer Portrait with gold border             */}
-        {/* ============================================================ */}
+        {/* ── Right Side: Circular Carer Photo with Gold Border ── */}
         <div
           style={{
             position: "absolute",
-            top: "50px",
-            right: "70px",
-            width: "340px",
-            height: "340px",
+            top: "35px",
+            right: "75px",
+            width: "360px",
+            height: "360px",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -340,23 +393,23 @@ export default async function Image({ params }: Props) {
           <div
             style={{
               position: "absolute",
-              width: "356px",
-              height: "356px",
-              borderRadius: "178px",
-              border: "1.5px solid rgba(212,175,106,0.25)",
+              width: "376px",
+              height: "376px",
+              borderRadius: "188px",
+              border: `1.5px solid rgba(212,175,106,0.30)`,
               display: "flex",
             }}
           />
 
-          {/* Portrait container – gold border */}
+          {/* Portrait Container */}
           <div
             style={{
-              width: "320px",
-              height: "320px",
-              borderRadius: "160px",
+              width: "340px",
+              height: "340px",
+              borderRadius: "170px",
               overflow: "hidden",
-              border: "5px solid #D4AF6A",
-              boxShadow: "0 16px 44px rgba(0,0,0,0.55), 0 0 30px rgba(212,175,106,0.20)",
+              border: `6px solid ${GOLD_PRIMARY}`,
+              boxShadow: `0 20px 50px rgba(0,0,0,0.6), 0 0 40px rgba(212,175,106,0.25)`,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -366,8 +419,8 @@ export default async function Image({ params }: Props) {
             {carerPhotoData ? (
               <img
                 src={carerPhotoData}
-                width={320}
-                height={320}
+                width={340}
+                height={340}
                 style={{
                   width: "100%",
                   height: "100%",
@@ -382,15 +435,16 @@ export default async function Image({ params }: Props) {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  backgroundColor: "rgba(226,186,85,0.15)",
+                  backgroundColor: `rgba(212,175,106,0.15)`,
                 }}
               >
                 <span
                   style={{
-                    fontSize: "100px",
-                    color: "#E2BA55",
-                    fontWeight: "bold",
+                    fontSize: "120px",
+                    color: GOLD_PRIMARY,
+                    fontWeight: 600,
                     display: "flex",
+                    fontFamily: "'Cormorant Garamond', Georgia, serif",
                   }}
                 >
                   {initialLetter}
@@ -400,64 +454,66 @@ export default async function Image({ params }: Props) {
           </div>
         </div>
 
-        {/* ============================================================ */}
-        {/*  Curved gold / cream separator ribbon                        */}
-        {/* ============================================================ */}
+        {/* ── Curved Gold & Cream Transition between navy and footer ── */}
         <div
           style={{
             position: "absolute",
-            bottom: "138px",
+            bottom: `${FOOTER_H - 8}px`,
             left: 0,
             width: "1200px",
-            height: "44px",
+            height: `${WAVE_H}px`,
             display: "flex",
           }}
         >
           <svg
             width="1200"
-            height="44"
-            viewBox="0 0 1200 44"
+            height={WAVE_H}
+            viewBox={`0 0 1200 ${WAVE_H}`}
             fill="none"
-            style={{ width: "1200px", height: "44px", display: "flex" }}
+            style={{ width: "1200px", height: `${WAVE_H}px`, display: "flex" }}
           >
-            {/* Smooth curved cream background layer */}
+            {/* Cream fill beneath the curve */}
             <path
-              d="M0,44 L0,24 Q320,6 660,26 T1200,10 L1200,44 Z"
-              fill="#F8F5EE"
+              d={`M0,${WAVE_H} L0,30 Q200,8 480,28 Q760,48 1000,18 Q1100,10 1200,14 L1200,${WAVE_H} Z`}
+              fill={CREAM_BG}
             />
-            {/* Lower golden accent glow ribbon */}
+            {/* Soft gold glow ribbon (wider, lower opacity) */}
             <path
-              d="M0,28 Q320,10 660,30 T1200,14"
-              stroke="rgba(212,175,55,0.35)"
-              strokeWidth="6"
+              d="M0,34 Q200,12 480,32 Q760,52 1000,22 Q1100,14 1200,18"
+              stroke={`rgba(185,145,80,0.30)`}
+              strokeWidth="8"
               fill="none"
             />
-            {/* Primary golden swoosh stroke */}
+            {/* Primary gold ribbon stroke */}
             <path
-              d="M0,24 Q320,6 660,26 T1200,10"
-              stroke="#D4AF37"
+              d="M0,30 Q200,8 480,28 Q760,48 1000,18 Q1100,10 1200,14"
+              stroke={GOLD_PRIMARY}
               strokeWidth="3.5"
+              fill="none"
+            />
+            {/* Light champagne highlight above the gold */}
+            <path
+              d="M0,27 Q200,5 480,25 Q760,45 1000,15 Q1100,7 1200,11"
+              stroke={`rgba(232,208,154,0.35)`}
+              strokeWidth="1.5"
               fill="none"
             />
           </svg>
         </div>
 
-        {/* ============================================================ */}
-        {/*  Bottom Contact Bar – taller ivory bar with bigger text      */}
-        {/*  (spec: labels 17–19px, numbers 22–24px, website 20–22px)   */}
-        {/* ============================================================ */}
+        {/* ── Bottom Contact Footer (Warm Ivory) ── */}
         <div
           style={{
             position: "absolute",
             bottom: 0,
             left: 0,
             width: "1200px",
-            height: "142px",
-            backgroundColor: "#F8F5EE",
+            height: `${FOOTER_H}px`,
+            backgroundColor: CREAM_BG,
             display: "flex",
             flexDirection: "row",
             alignItems: "center",
-            justifyContent: "space-around",
+            justifyContent: "center",
             padding: "0 50px",
           }}
         >
@@ -467,28 +523,30 @@ export default async function Image({ params }: Props) {
               display: "flex",
               flexDirection: "row",
               alignItems: "center",
+              flex: 1,
+              justifyContent: "center",
             }}
           >
             <div
               style={{
-                width: "52px",
-                height: "52px",
-                borderRadius: "26px",
+                width: "58px",
+                height: "58px",
+                borderRadius: "29px",
                 backgroundColor: "#EFE5D2",
-                border: "1.5px solid #DECBB1",
+                border: `2px solid ${GOLD_LIGHT}`,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                marginRight: "14px",
+                marginRight: "16px",
               }}
             >
               <svg
-                width="24"
-                height="24"
+                width="28"
+                height="28"
                 viewBox="0 0 24 24"
                 fill="none"
-                stroke="#7A5619"
-                strokeWidth="2.2"
+                stroke={GOLD_DARK}
+                strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               >
@@ -502,6 +560,7 @@ export default async function Image({ params }: Props) {
                   color: "#6D6355",
                   fontWeight: 500,
                   display: "flex",
+                  fontFamily: "'Montserrat', sans-serif",
                 }}
               >
                 Call our office
@@ -509,10 +568,11 @@ export default async function Image({ params }: Props) {
               <span
                 style={{
                   fontSize: "23px",
-                  color: "#09142B",
-                  fontWeight: "bold",
-                  marginTop: "2px",
+                  color: "#181512",
+                  fontWeight: 600,
+                  marginTop: "3px",
                   display: "flex",
+                  fontFamily: "'Montserrat', sans-serif",
                 }}
               >
                 020 4524 0108
@@ -520,34 +580,47 @@ export default async function Image({ params }: Props) {
             </div>
           </div>
 
+          {/* Vertical gold divider */}
+          <div
+            style={{
+              width: "2px",
+              height: "70px",
+              backgroundColor: GOLD_PRIMARY,
+              opacity: 0.45,
+              display: "flex",
+            }}
+          />
+
           {/* Contact 2: WhatsApp us */}
           <div
             style={{
               display: "flex",
               flexDirection: "row",
               alignItems: "center",
+              flex: 1,
+              justifyContent: "center",
             }}
           >
             <div
               style={{
-                width: "52px",
-                height: "52px",
-                borderRadius: "26px",
+                width: "58px",
+                height: "58px",
+                borderRadius: "29px",
                 backgroundColor: "#EFE5D2",
-                border: "1.5px solid #DECBB1",
+                border: `2px solid ${GOLD_LIGHT}`,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                marginRight: "14px",
+                marginRight: "16px",
               }}
             >
               <svg
-                width="24"
-                height="24"
+                width="28"
+                height="28"
                 viewBox="0 0 24 24"
                 fill="none"
-                stroke="#7A5619"
-                strokeWidth="2.2"
+                stroke={GOLD_DARK}
+                strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               >
@@ -561,6 +634,7 @@ export default async function Image({ params }: Props) {
                   color: "#6D6355",
                   fontWeight: 500,
                   display: "flex",
+                  fontFamily: "'Montserrat', sans-serif",
                 }}
               >
                 WhatsApp us
@@ -568,10 +642,11 @@ export default async function Image({ params }: Props) {
               <span
                 style={{
                   fontSize: "23px",
-                  color: "#09142B",
-                  fontWeight: "bold",
-                  marginTop: "2px",
+                  color: "#181512",
+                  fontWeight: 600,
+                  marginTop: "3px",
                   display: "flex",
+                  fontFamily: "'Montserrat', sans-serif",
                 }}
               >
                 +44 7462 931949
@@ -579,34 +654,47 @@ export default async function Image({ params }: Props) {
             </div>
           </div>
 
+          {/* Vertical gold divider */}
+          <div
+            style={{
+              width: "2px",
+              height: "70px",
+              backgroundColor: GOLD_PRIMARY,
+              opacity: 0.45,
+              display: "flex",
+            }}
+          />
+
           {/* Contact 3: Visit our website */}
           <div
             style={{
               display: "flex",
               flexDirection: "row",
               alignItems: "center",
+              flex: 1,
+              justifyContent: "center",
             }}
           >
             <div
               style={{
-                width: "52px",
-                height: "52px",
-                borderRadius: "26px",
+                width: "58px",
+                height: "58px",
+                borderRadius: "29px",
                 backgroundColor: "#EFE5D2",
-                border: "1.5px solid #DECBB1",
+                border: `2px solid ${GOLD_LIGHT}`,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                marginRight: "14px",
+                marginRight: "16px",
               }}
             >
               <svg
-                width="24"
-                height="24"
+                width="28"
+                height="28"
                 viewBox="0 0 24 24"
                 fill="none"
-                stroke="#7A5619"
-                strokeWidth="2.2"
+                stroke={GOLD_DARK}
+                strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               >
@@ -622,17 +710,19 @@ export default async function Image({ params }: Props) {
                   color: "#6D6355",
                   fontWeight: 500,
                   display: "flex",
+                  fontFamily: "'Montserrat', sans-serif",
                 }}
               >
                 Visit our website
               </span>
               <span
                 style={{
-                  fontSize: "22px",
-                  color: "#09142B",
-                  fontWeight: "bold",
-                  marginTop: "2px",
+                  fontSize: "21px",
+                  color: "#181512",
+                  fontWeight: 600,
+                  marginTop: "3px",
                   display: "flex",
+                  fontFamily: "'Montserrat', sans-serif",
                 }}
               >
                 graceandgoodwill.co.uk
@@ -642,6 +732,9 @@ export default async function Image({ params }: Props) {
         </div>
       </div>
     ),
-    { ...size }
+    {
+      ...size,
+      fonts: fonts.length > 0 ? fonts : undefined,
+    }
   );
 }

@@ -354,7 +354,7 @@ export async function GET(request: Request, { params }: Props) {
             flexDirection: "column",
           }}
         >
-          {/* "CARE YOU CAN TRUST" tagline (Client spec: 19–21 px, Montserrat SemiBold) */}
+          {/* "CARE YOU CAN TRUST" tagline (Spec: 19–21 px, Montserrat SemiBold) */}
           <div
             style={{
               fontSize: "20px",
@@ -369,7 +369,7 @@ export async function GET(request: Request, { params }: Props) {
             CARE YOU CAN TRUST
           </div>
 
-          {/* Carer Name — large, elegant serif (Client spec: 65–72 px, Cormorant Garamond SemiBold) */}
+          {/* Carer Name — large, elegant serif (Spec: 65–72 px, Cormorant Garamond SemiBold) */}
           <div
             style={{
               fontSize: "70px",
@@ -384,7 +384,7 @@ export async function GET(request: Request, { params }: Props) {
             {safeName}
           </div>
 
-          {/* Professional role (Client spec: 25–28 px, Montserrat Medium) */}
+          {/* Professional role (Spec: 25–28 px, Montserrat Medium) */}
           <div
             style={{
               display: "flex",
@@ -553,7 +553,7 @@ export async function GET(request: Request, { params }: Props) {
             display: "flex",
             flexDirection: "row",
             alignItems: "center",
-            justifyContent: "space-around",
+            justifyContent: "center",
             padding: "0 50px",
           }}
         >
@@ -563,6 +563,8 @@ export async function GET(request: Request, { params }: Props) {
               display: "flex",
               flexDirection: "row",
               alignItems: "center",
+              flex: 1,
+              justifyContent: "center",
             }}
           >
             <div
@@ -618,12 +620,25 @@ export async function GET(request: Request, { params }: Props) {
             </div>
           </div>
 
+          {/* Vertical gold divider */}
+          <div
+            style={{
+              width: "2px",
+              height: "70px",
+              backgroundColor: GOLD_PRIMARY,
+              opacity: 0.45,
+              display: "flex",
+            }}
+          />
+
           {/* Contact 2: WhatsApp us */}
           <div
             style={{
               display: "flex",
               flexDirection: "row",
               alignItems: "center",
+              flex: 1,
+              justifyContent: "center",
             }}
           >
             <div
@@ -679,12 +694,25 @@ export async function GET(request: Request, { params }: Props) {
             </div>
           </div>
 
+          {/* Vertical gold divider */}
+          <div
+            style={{
+              width: "2px",
+              height: "70px",
+              backgroundColor: GOLD_PRIMARY,
+              opacity: 0.45,
+              display: "flex",
+            }}
+          />
+
           {/* Contact 3: Visit our website */}
           <div
             style={{
               display: "flex",
               flexDirection: "row",
               alignItems: "center",
+              flex: 1,
+              justifyContent: "center",
             }}
           >
             <div

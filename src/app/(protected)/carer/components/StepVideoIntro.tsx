@@ -136,9 +136,9 @@ export default function StepVideoIntro({
       const exactDuration = video.duration;
       const duration = Math.round(exactDuration);
 
-      if (duration < 45 || duration > 60) {
+      if (duration < 30 || duration > 60) {
         setVideoSelectionError(
-          `Your video duration is ${duration} seconds. It must be between 45 seconds and 60 seconds (1 minute) maximum.`,
+          `Your video duration is ${duration} seconds. It must be between 30 seconds and 60 seconds (1 minute) maximum.`,
         );
         setVideoFile(null);
         if (videoInputRef.current) videoInputRef.current.value = "";
@@ -330,11 +330,11 @@ export default function StepVideoIntro({
           >
             <div className="text-center mb-8 flex flex-col justify-end">
               <h4 className="text-sm font-semibold text-gold-50">
-                Upload Video Introduction (Maximum 1 minute)*
+                Upload Video Introduction (30 to 60 seconds)*
               </h4>
               <p className="text-xs text-gold-100/60 mt-2">
-                Videos longer than 1 minute should not be accepted by the
-                system.
+                Video duration must be between 30 and 60 seconds (maximum 1
+                minute).
               </p>
             </div>
 

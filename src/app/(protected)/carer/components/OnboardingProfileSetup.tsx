@@ -130,10 +130,10 @@ export default function OnboardingProfileSetup({
       const exactDuration = video.duration;
       const duration = Math.round(exactDuration);
 
-      if (duration < 45 || duration > 60) {
+      if (duration < 30 || duration > 60) {
         showErrorToast(
           "Invalid Video Duration",
-          `Your video duration is ${duration} seconds. It must be between 45 seconds and 60 seconds (1 minute) maximum.`,
+          `Your video duration is ${duration} seconds. It must be between 30 seconds and 60 seconds (1 minute) maximum.`,
         );
         if (videoInputRef.current) videoInputRef.current.value = "";
         return;
@@ -323,8 +323,8 @@ export default function OnboardingProfileSetup({
                 <br />
                 Supported formats: MP4, WebM, OGG and QuickTime.
                 <br />
-                Video length must be exactly{" "}
-                <strong className="text-gold-300">45 to 60 seconds</strong>.
+                Video length must be between{" "}
+                <strong className="text-gold-300">30 to 60 seconds</strong>.
               </p>
             </div>
             {(videoUploaded || existingVideoUrl) && (

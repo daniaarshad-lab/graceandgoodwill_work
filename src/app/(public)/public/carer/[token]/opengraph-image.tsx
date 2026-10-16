@@ -380,10 +380,10 @@ export default async function Image({ params }: Props) {
         <div
           style={{
             position: "absolute",
-            top: "35px",
+            top: "16px",
             right: "75px",
-            width: "360px",
-            height: "360px",
+            width: "344px",
+            height: "344px",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -393,9 +393,9 @@ export default async function Image({ params }: Props) {
           <div
             style={{
               position: "absolute",
-              width: "376px",
-              height: "376px",
-              borderRadius: "188px",
+              width: "356px",
+              height: "356px",
+              borderRadius: "178px",
               border: `1.5px solid rgba(212,175,106,0.30)`,
               display: "flex",
             }}
@@ -404,9 +404,9 @@ export default async function Image({ params }: Props) {
           {/* Portrait Container */}
           <div
             style={{
-              width: "340px",
-              height: "340px",
-              borderRadius: "170px",
+              width: "330px",
+              height: "330px",
+              borderRadius: "165px",
               overflow: "hidden",
               border: `6px solid ${GOLD_PRIMARY}`,
               boxShadow: `0 20px 50px rgba(0,0,0,0.6), 0 0 40px rgba(212,175,106,0.25)`,
@@ -419,8 +419,8 @@ export default async function Image({ params }: Props) {
             {carerPhotoData ? (
               <img
                 src={carerPhotoData}
-                width={340}
-                height={340}
+                width={330}
+                height={330}
                 style={{
                   width: "100%",
                   height: "100%",

@@ -471,11 +471,6 @@ function CarerDashboardContent() {
     if (!bio || !hasValidExperience || !specialties)
       missing.push("Professional Information (Years of Experience, Bio, Specialties)");
 
-    const carerAvail = actualProfile?.availability || profile?.availability || [];
-    if (!Array.isArray(carerAvail) || carerAvail.length === 0) {
-      missing.push("Availability Schedule (At least one available date range)");
-    }
-
     const requiredTraining = [
       DocumentFileType.SAFEGUARDING_ADULTS,
       DocumentFileType.MOVING_AND_HANDLING,

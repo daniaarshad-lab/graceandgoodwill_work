@@ -10,6 +10,7 @@ import {
   Briefcase,
   Video,
   Calendar,
+  Info,
 } from "lucide-react";
 import { formatDateArrayToRanges } from "@/utils/dateRangeFormatter";
 
@@ -155,7 +156,7 @@ export default function StepReviewSubmit({
     parsedExp >= 0 &&
     parsedExp <= 99;
 
-  // Availability validation (mandatory)
+  // Availability (configurable in dashboard post-onboarding)
   const carerAvailability: string[] = Array.isArray(portal.profile?.availability)
     ? portal.profile.availability
     : Array.isArray(portal.actualProfile?.availability)
@@ -166,11 +167,6 @@ export default function StepReviewSubmit({
   if (!bio || !hasValidExperience || !specialties) {
     missingItems.push(
       "Professional Profile details (Bio, Years of Care Experience, Specialties)",
-    );
-  }
-  if (!hasAvailability) {
-    missingItems.push(
-      "Availability Schedule (at least one available date range must be configured)",
     );
   }
   if (!trainingComplete) {
@@ -579,8 +575,8 @@ export default function StepReviewSubmit({
                   <Check className="w-3.5 h-3.5" /> Configured ({carerAvailability.length} day{carerAvailability.length === 1 ? "" : "s"})
                 </span>
               ) : (
-                <span className="text-red-400 font-bold flex items-center gap-1">
-                  <AlertCircle className="w-3.5 h-3.5" /> Incomplete / Missing
+                <span className="text-amber-400/90 font-medium flex items-center gap-1">
+                  <Info className="w-3.5 h-3.5" /> Configurable in dashboard
                 </span>
               )}
             </div>
@@ -601,8 +597,8 @@ export default function StepReviewSubmit({
                   ))}
                 </div>
               ) : (
-                <p className="text-xs text-red-400/90 italic">
-                  No availability dates currently registered. Availability is compulsory for placement matching.
+                <p className="text-xs text-gold-100/60 leading-relaxed">
+                  No availability dates currently registered. You can configure your available dates and schedule from your dashboard after submitting your profile.
                 </p>
               )}
             </div>

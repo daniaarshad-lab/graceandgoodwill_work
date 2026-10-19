@@ -300,6 +300,9 @@ export const uploadProfileMedia = createAsyncThunk<
   { rejectValue: string }
 >("carer/uploadProfileMedia", async ({ photo, video, hasConsented }, { rejectWithValue }) => {
   try {
+    if (!photo && !video) {
+      throw new Error("No photo or video files selected for upload");
+    }
     return await carerService.uploadProfileMedia(photo, video, hasConsented);
   } catch (error: any) {
     return rejectWithValue(

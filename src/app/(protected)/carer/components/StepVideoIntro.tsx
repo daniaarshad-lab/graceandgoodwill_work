@@ -42,14 +42,20 @@ export default function StepVideoIntro({
 
   const [isSubmittingMedia, setIsSubmittingMedia] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const initialConsent = profile?.declarations?.mediaVisibilityConsent ?? false;
+  const initialConsent =
+    profile?.declarations?.mediaVisibilityConsent ??
+    profile?.hasMediaConsent ??
+    false;
   const [hasConsented, setHasConsented] = useState(initialConsent);
 
   React.useEffect(() => {
-    if (profile?.declarations?.mediaVisibilityConsent !== undefined) {
-      setHasConsented(profile.declarations.mediaVisibilityConsent);
+    const consent =
+      profile?.declarations?.mediaVisibilityConsent ??
+      profile?.hasMediaConsent;
+    if (consent !== undefined) {
+      setHasConsented(Boolean(consent));
     }
-  }, [profile?.declarations?.mediaVisibilityConsent]);
+  }, [profile?.declarations?.mediaVisibilityConsent, profile?.hasMediaConsent]);
 
   const photoInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
@@ -170,13 +176,28 @@ export default function StepVideoIntro({
   const uploadMedia = async (): Promise<boolean> => {
     setIsSubmittingMedia(true);
     try {
-      await dispatch(
-        uploadProfileMedia({
-          photo: photoFile || undefined,
-          video: videoFile || undefined,
-          hasConsented: hasConsented,
-        }),
-      ).unwrap();
+      if (photoFile || videoFile) {
+        await dispatch(
+          uploadProfileMedia({
+            photo: photoFile || undefined,
+            video: videoFile || undefined,
+            hasConsented: hasConsented,
+          }),
+        ).unwrap();
+      }
+
+      if (hasConsented !== initialConsent) {
+        await dispatch(
+          updateCarerProfile({
+            hasMediaConsent: hasConsented,
+            declarations: {
+              ...(profile?.declarations || {}),
+              mediaVisibilityConsent: hasConsented,
+            },
+          }),
+        ).unwrap();
+      }
+
       showSuccessToast("Success", "Profile media saved successfully!");
       return true;
     } catch (err: unknown) {

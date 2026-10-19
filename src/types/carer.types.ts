@@ -109,9 +109,7 @@ export interface UpdateCarerProfilePayload {
   drivingPreferences?: string[];
   dbsUpdateServiceNumber?: string;
   employmentHistory?: any;
-  declarations?: any;
   onboardingStep?: number;
-  hasMediaConsent?: boolean;
 }
 
 /** Array of ISO date strings sent to PUT /carer/profile/availability */

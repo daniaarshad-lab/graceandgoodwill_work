@@ -12,7 +12,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { uploadProfileMedia, updateCarerProfile } from "@/store/slices/carerSlice";
+import { uploadProfileMedia } from "@/store/slices/carerSlice";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 
 interface Props {
@@ -42,20 +42,16 @@ export default function StepVideoIntro({
 
   const [isSubmittingMedia, setIsSubmittingMedia] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const initialConsent =
-    profile?.declarations?.mediaVisibilityConsent ??
-    profile?.hasMediaConsent ??
-    false;
-  const [hasConsented, setHasConsented] = useState(initialConsent);
+  const hasExistingMedia = Boolean(
+    profile?.profilePhotoUrl && profile?.introVideoUrl,
+  );
+  const [hasConsented, setHasConsented] = useState(hasExistingMedia);
 
   React.useEffect(() => {
-    const consent =
-      profile?.declarations?.mediaVisibilityConsent ??
-      profile?.hasMediaConsent;
-    if (consent !== undefined) {
-      setHasConsented(Boolean(consent));
+    if (profile?.profilePhotoUrl && profile?.introVideoUrl) {
+      setHasConsented(true);
     }
-  }, [profile?.declarations?.mediaVisibilityConsent, profile?.hasMediaConsent]);
+  }, [profile?.profilePhotoUrl, profile?.introVideoUrl]);
 
   const photoInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
@@ -174,29 +170,18 @@ export default function StepVideoIntro({
   };
 
   const uploadMedia = async (): Promise<boolean> => {
+    if (!photoFile && !videoFile) {
+      return true;
+    }
     setIsSubmittingMedia(true);
     try {
-      if (photoFile || videoFile) {
-        await dispatch(
-          uploadProfileMedia({
-            photo: photoFile || undefined,
-            video: videoFile || undefined,
-            hasConsented: hasConsented,
-          }),
-        ).unwrap();
-      }
-
-      if (hasConsented !== initialConsent) {
-        await dispatch(
-          updateCarerProfile({
-            hasMediaConsent: hasConsented,
-            declarations: {
-              ...(profile?.declarations || {}),
-              mediaVisibilityConsent: hasConsented,
-            },
-          }),
-        ).unwrap();
-      }
+      await dispatch(
+        uploadProfileMedia({
+          photo: photoFile || undefined,
+          video: videoFile || undefined,
+          hasConsented: hasConsented,
+        }),
+      ).unwrap();
 
       showSuccessToast("Success", "Profile media saved successfully!");
       return true;
@@ -545,16 +530,17 @@ export default function StepVideoIntro({
             }
             setIsSubmittingMedia(true);
 
-            if (photoFile || videoFile || hasConsented !== initialConsent) {
+            if (photoFile || videoFile) {
               const success = await uploadMedia();
               if (!success) {
                 setIsSubmittingMedia(false);
                 return;
               }
             } else {
-              // Small delay for smooth UI feedback if no changes were made
-              await new Promise((resolve) => setTimeout(resolve, 600));
+              // Smooth UI feedback when media is already uploaded
+              await new Promise((resolve) => setTimeout(resolve, 300));
             }
+            setIsSubmittingMedia(false);
             onNext();
           }}
           disabled={isSubmittingMedia}

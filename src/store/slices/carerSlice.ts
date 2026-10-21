@@ -416,6 +416,28 @@ const carerSlice = createSlice({
         (state, action: PayloadAction<CarerProfile>) => {
           state.loading = false;
           state.profile = action.payload;
+          const p = action.payload as any;
+          const profileDocs = Array.isArray(p?.documents)
+            ? p.documents
+            : Array.isArray(p?.carerProfile?.documents)
+              ? p.carerProfile.documents
+              : Array.isArray(p?.complianceDocuments)
+                ? p.complianceDocuments
+                : [];
+          if (profileDocs.length > 0) {
+            profileDocs.forEach((doc: any) => {
+              if (doc && (doc.id || doc.fileName || doc.fileType)) {
+                const idx = state.documents.findIndex(
+                  (d) => (doc.id && d.id === doc.id) || (doc.fileType && d.fileType === doc.fileType && d.fileName === doc.fileName)
+                );
+                if (idx >= 0) {
+                  state.documents[idx] = { ...state.documents[idx], ...doc };
+                } else {
+                  state.documents.push(doc);
+                }
+              }
+            });
+          }
         },
       )
       .addCase(fetchCarerProfile.rejected, (state, action) => {
@@ -493,9 +515,17 @@ const carerSlice = createSlice({
       })
       .addCase(
         fetchCarerDocuments.fulfilled,
-        (state, action: PayloadAction<CarerDocument[]>) => {
+        (state, action: PayloadAction<any>) => {
           state.documentsLoading = false;
-          state.documents = action.payload;
+          const payload = action.payload;
+          const docList = Array.isArray(payload)
+            ? payload
+            : Array.isArray(payload?.documents)
+              ? payload.documents
+              : Array.isArray(payload?.data)
+                ? payload.data
+                : [];
+          state.documents = docList;
         },
       )
       .addCase(fetchCarerDocuments.rejected, (state, action) => {
@@ -509,9 +539,19 @@ const carerSlice = createSlice({
       })
       .addCase(
         uploadCarerDocument.fulfilled,
-        (state, action: PayloadAction<CarerDocument>) => {
+        (state, action: PayloadAction<any>) => {
           state.uploadingDocument = false;
-          state.documents.push(action.payload);
+          const doc = action.payload?.document || action.payload?.data || action.payload;
+          if (doc && (doc.id || doc.fileName || doc.fileType)) {
+            const existingIdx = state.documents.findIndex(
+              (d) => (doc.id && d.id === doc.id) || (doc.fileType && d.fileType === doc.fileType && d.fileName === doc.fileName)
+            );
+            if (existingIdx >= 0) {
+              state.documents[existingIdx] = { ...state.documents[existingIdx], ...doc };
+            } else {
+              state.documents.unshift(doc);
+            }
+          }
         },
       )
       .addCase(uploadCarerDocument.rejected, (state, action) => {
@@ -523,8 +563,25 @@ const carerSlice = createSlice({
         state.batchUploading = true;
         state.error = null;
       })
-      .addCase(uploadCarerDocuments.fulfilled, (state) => {
+      .addCase(uploadCarerDocuments.fulfilled, (state, action: PayloadAction<any>) => {
         state.batchUploading = false;
+        const payload = action.payload;
+        const newDocs = Array.isArray(payload)
+          ? payload
+          : Array.isArray(payload?.documents)
+            ? payload.documents
+            : Array.isArray(payload?.data)
+              ? payload.data
+              : [];
+        if (newDocs.length > 0) {
+          newDocs.forEach((doc: any) => {
+            if (doc && doc.id) {
+              const idx = state.documents.findIndex((d) => d.id === doc.id);
+              if (idx >= 0) state.documents[idx] = { ...state.documents[idx], ...doc };
+              else state.documents.unshift(doc);
+            }
+          });
+        }
       })
       .addCase(uploadCarerDocuments.rejected, (state, action) => {
         state.batchUploading = false;
@@ -535,8 +592,25 @@ const carerSlice = createSlice({
         state.batchUploading = true;
         state.error = null;
       })
-      .addCase(uploadCarerStepDocuments.fulfilled, (state) => {
+      .addCase(uploadCarerStepDocuments.fulfilled, (state, action: PayloadAction<any>) => {
         state.batchUploading = false;
+        const payload = action.payload;
+        const newDocs = Array.isArray(payload)
+          ? payload
+          : Array.isArray(payload?.documents)
+            ? payload.documents
+            : Array.isArray(payload?.data)
+              ? payload.data
+              : [];
+        if (newDocs.length > 0) {
+          newDocs.forEach((doc: any) => {
+            if (doc && doc.id) {
+              const idx = state.documents.findIndex((d) => d.id === doc.id);
+              if (idx >= 0) state.documents[idx] = { ...state.documents[idx], ...doc };
+              else state.documents.unshift(doc);
+            }
+          });
+        }
       })
       .addCase(uploadCarerStepDocuments.rejected, (state, action) => {
         state.batchUploading = false;

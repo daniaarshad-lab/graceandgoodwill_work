@@ -153,6 +153,7 @@ function CarerDashboardContent() {
     documents,
     loading,
     documentsLoading,
+    uploadingDocument,
     batchUploading,
     deletingDocumentId,
   } = useAppSelector((state) => state.carer);
@@ -774,6 +775,13 @@ function CarerDashboardContent() {
             }
           }}
         />
+
+        {/* Global Document Upload Overlay Loader */}
+        <FullScreenLoader
+          isVisible={portal.isUploadingDoc || uploadingDocument || batchUploading}
+          message={portal.uploadingDocLabel ? `Uploading ${portal.uploadingDocLabel}...` : "Uploading document for verification..."}
+          isOverlay={true}
+        />
       </main>
     );
   }
@@ -967,6 +975,13 @@ function CarerDashboardContent() {
         isOpen={isShareModalOpen}
         onClose={() => setIsShareModalOpen(false)}
         carerName={user ? [user.firstName, user.lastName].filter(Boolean).join(" ") : undefined}
+      />
+
+      {/* Global Document Upload Overlay Loader */}
+      <FullScreenLoader
+        isVisible={portal.isUploadingDoc || uploadingDocument || batchUploading}
+        message={portal.uploadingDocLabel ? `Uploading ${portal.uploadingDocLabel}...` : "Uploading document for verification..."}
+        isOverlay={true}
       />
     </main>
   );

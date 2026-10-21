@@ -10,7 +10,7 @@ import SectionCard from "./shared/SectionCard";
 import { Carer } from "../types/client-ui.types";
 import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
-import { Heart, User } from "lucide-react";
+import { Heart, User, ShieldCheck } from "lucide-react";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 
 const SafeImage = ({
@@ -147,8 +147,12 @@ export default function CarerProfiles({ carers }: CarerProfilesProps) {
                       </div>
                     )}
                   </div>
-
-
+                  {carer.isDbsVerified && (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 shadow-sm">
+                      <ShieldCheck className="w-3 h-3 text-emerald-400" />
+                      Vetted Carer
+                    </span>
+                  )}
                 </div>
 
                 <div>

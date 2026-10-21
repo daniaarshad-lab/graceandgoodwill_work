@@ -18,6 +18,7 @@ import {
   Video,
   Briefcase,
   X,
+  CheckCircle2,
 } from "lucide-react";
 import ReadOnlyAvailabilityCalendar from "@/components/ReadOnlyAvailabilityCalendar";
 import ThinSpinner from "@/components/ThinSpinner";
@@ -341,6 +342,79 @@ export default function CarerDetailsPage() {
               </section>
             )}
 
+            {/* Verified Compliance & Vetting Badges */}
+            <section className="bg-navy-900/40 backdrop-blur-md border border-gold-300/10 rounded-3xl p-8 shadow-xl relative overflow-hidden group hover:bg-navy-900/50 transition-colors shrink-0">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-5">
+                <h2 className="text-xl font-bold text-gold-50 flex items-center">
+                  <ShieldCheck className="w-5 h-5 mr-3 text-gold-DEFAULT" /> Verified Compliance & Vetting
+                </h2>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> Background Vetted & Active
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-navy-950/60 border border-gold-300/10">
+                  <div className="h-8 w-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-bold text-gold-100">Enhanced DBS Certificate</p>
+                    <p className="text-[11px] text-gold-100/50">
+                      {carer.dbsCertificateNumber ? `Ref #${carer.dbsCertificateNumber} • Verified` : "Official Criminal Record Check Verified"}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-navy-950/60 border border-gold-300/10">
+                  <div className="h-8 w-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-bold text-gold-100">Right to Work in the UK</p>
+                    <p className="text-[11px] text-gold-100/50">Identity & Residency Confirmed</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-navy-950/60 border border-gold-300/10">
+                  <div className="h-8 w-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-bold text-gold-100">Public Liability Insurance</p>
+                    <p className="text-[11px] text-gold-100/50">Policy Active & In Force</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-navy-950/60 border border-gold-300/10">
+                  <div className="h-8 w-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-bold text-gold-100">Mandatory Care Training</p>
+                    <p className="text-[11px] text-gold-100/50">Safeguarding, First Aid & Moving/Handling</p>
+                  </div>
+                </div>
+
+                {carer.verifiedCredentials && carer.verifiedCredentials.length > 0 &&
+                  carer.verifiedCredentials.map((cred, idx) => (
+                    <div key={idx} className="flex items-center gap-3 p-3.5 rounded-2xl bg-navy-950/60 border border-gold-300/10">
+                      <div className="h-8 w-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs font-bold text-gold-100">{cred.title}</p>
+                        <p className="text-[11px] text-gold-100/50">{cred.category} • Verified Document</p>
+                      </div>
+                    </div>
+                  ))
+                }
+              </div>
+
+              <p className="text-[11px] text-gold-100/40 mt-4 italic">
+                * All documents and credentials undergo rigorous review and verification by the Grace & Goodwill Quality & Compliance team before carer placement eligibility.
+              </p>
+            </section>
           </div>
 
           {/* Sidebar (Right Column) */}

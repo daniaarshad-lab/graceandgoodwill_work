@@ -413,28 +413,32 @@ function CarerDetailsContent() {
   let dbsStatus = "Pending";
   // Robustly extract documents from various possible backend paths
   const extractDocuments = () => {
-    if (Array.isArray(profile.documents) && profile.documents.length > 0)
-      return profile.documents;
-    if (Array.isArray(carer.documents) && carer.documents.length > 0)
-      return carer.documents;
-    if (
-      Array.isArray(carer.complianceDocuments) &&
-      carer.complianceDocuments.length > 0
-    )
-      return carer.complianceDocuments;
-    if (
-      Array.isArray(profile.complianceDocuments) &&
-      profile.complianceDocuments.length > 0
-    )
-      return profile.complianceDocuments;
-    if (Array.isArray(carer.complianceDocs) && carer.complianceDocs.length > 0)
-      return carer.complianceDocs;
-    if (
-      Array.isArray(profile.complianceDocs) &&
-      profile.complianceDocs.length > 0
-    )
-      return profile.complianceDocs;
-    return profile.documents || carer.documents || [];
+    if (!carer) return [];
+    const profile = carer.carerProfile || {};
+    const sources = [
+      profile.documents,
+      carer.documents,
+      carer.complianceDocuments,
+      profile.complianceDocuments,
+      carer.complianceDocs,
+      profile.complianceDocs,
+    ];
+    const map = new Map<string, any>();
+    sources.forEach((src) => {
+      if (Array.isArray(src)) {
+        src.forEach((doc: any) => {
+          if (doc && (doc.id || doc.fileUrl || doc.fileName || doc.fileType || doc.type)) {
+            const key = doc.id || `${doc.fileType || doc.type || "doc"}_${doc.fileName || ""}_${doc.createdAt || ""}`;
+            if (!map.has(key)) {
+              map.set(key, doc);
+            } else {
+              map.set(key, { ...map.get(key), ...doc });
+            }
+          }
+        });
+      }
+    });
+    return Array.from(map.values());
   };
 
   const rawDocs = extractDocuments();

@@ -20,6 +20,14 @@ export interface Carer {
   address?: string;
   canDrive?: boolean;
   drivingPreferences?: string[];
+  verifiedCredentials?: {
+    title: string;
+    category: string;
+    verified: boolean;
+    expiryDate?: string | null;
+  }[];
+  isDbsVerified?: boolean;
+  dbsCertificateNumber?: string | null;
 }
 
 export interface CareRequest {

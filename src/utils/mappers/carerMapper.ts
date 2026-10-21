@@ -77,5 +77,79 @@ export const mapCarerProfileToUICarer = (carer: any): Carer => {
     feedbacks: Array.isArray(carer.feedbacks) ? carer.feedbacks : [],
     canDrive: !!carer.canDrive,
     drivingPreferences: Array.isArray(carer.drivingPreferences) ? carer.drivingPreferences : [],
+    isDbsVerified: Boolean(
+      carer.dbsStatus === "VERIFIED" ||
+      carer.dbsStatus === "Approved" ||
+      carer.isDbsVerified ||
+      (Array.isArray(carer.documents) && carer.documents.some((d: any) =>
+        (d.fileType === "ENHANCED_DBS_CERTIFICATE" || d.type === "ENHANCED_DBS_CERTIFICATE") &&
+        (d.status === "VERIFIED" || d.status === "APPROVED")
+      ))
+    ),
+    dbsCertificateNumber: carer.dbsCertificateNumber || carer.carerProfile?.dbsCertificateNumber || null,
+    verifiedCredentials: (() => {
+      const docs: any[] = [
+        ...(Array.isArray(carer.documents) ? carer.documents : []),
+        ...(Array.isArray(carer.complianceDocuments) ? carer.complianceDocuments : []),
+        ...(Array.isArray(carer.carerProfile?.documents) ? carer.carerProfile.documents : []),
+      ];
+
+      const credMap = new Map<string, { title: string; category: string; verified: boolean; expiryDate?: string | null }>();
+
+      docs.forEach((d: any) => {
+        const type = (d.fileType || d.type || "").toUpperCase();
+        const status = (d.status || "").toUpperCase();
+        const isVerified = status === "VERIFIED" || status === "APPROVED";
+
+        let title = "";
+        let category = "Compliance";
+
+        if (type.includes("DBS")) {
+          title = "Enhanced DBS Clearance";
+          category = "Vetting";
+        } else if (type.includes("PUBLIC_LIABILITY")) {
+          title = "Public Liability Insurance";
+          category = "Insurance";
+        } else if (type.includes("PROFESSIONAL_INDEMNITY")) {
+          title = "Professional Indemnity Insurance";
+          category = "Insurance";
+        } else if (type.includes("RIGHT_TO_WORK")) {
+          title = "Right to Work in the UK";
+          category = "Legal";
+        } else if (type.includes("SAFEGUARDING")) {
+          title = "Safeguarding Adults";
+          category = "Training";
+        } else if (type.includes("MOVING_AND_HANDLING")) {
+          title = "Moving & Handling";
+          category = "Training";
+        } else if (type.includes("FIRST_AID") || type.includes("BASIC_LIFE_SUPPORT")) {
+          title = "First Aid & Basic Life Support";
+          category = "Training";
+        } else if (type.includes("MEDICATION")) {
+          title = "Medication Administration";
+          category = "Training";
+        } else if (type.includes("INFECTION")) {
+          title = "Infection Control";
+          category = "Training";
+        } else if (type.includes("FOOD_HYGIENE")) {
+          title = "Food Hygiene";
+          category = "Training";
+        } else if (type.includes("DEMENTIA")) {
+          title = "Dementia Care Specialist";
+          category = "Specialist";
+        }
+
+        if (title && isVerified) {
+          credMap.set(title, {
+            title,
+            category,
+            verified: true,
+            expiryDate: d.expiryDate || null,
+          });
+        }
+      });
+
+      return Array.from(credMap.values());
+    })(),
   };
 };

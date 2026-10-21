@@ -14,6 +14,7 @@ import {
   updateCarerDocument,
   uploadCarerDocuments,
   fetchCarerDocuments,
+  fetchCarerProfile,
   uploadCarerStepDocuments,
   submitCarerProfile,
 } from "@/store/slices/carerSlice";
@@ -202,32 +203,77 @@ export function useCarerPortal({
   const [membershipActive] = useState(true);
   const [membershipExpiry] = useState("");
 
-  // Compliance documents — derived from Redux documents state
-  const complianceDocs: ComplianceDoc[] = documents.map((doc) => ({
-    id: doc.id,
-    name: doc.fileType ? getDocumentFileLabel(doc.fileType) : doc.fileName,
-    type: doc.fileType,
-    fileType: doc.fileType,
-    category: doc.fileCategory,
-    uploadDate: doc.createdAt,
-    status:
-      doc.status === "VERIFIED"
-        ? "verified"
-        : doc.status === "FAILED" || doc.status === "REJECTED"
-          ? "failed"
-          : "pending",
-    size: `${(doc.fileSize / (1024 * 1024)).toFixed(1)} MB`,
-    previewUrl: doc.fileUrl,
-    fileKey: doc.fileKey,
-    fileUrl: doc.fileUrl,
-    rejectionReason: doc.rejectionReason,
-    expiryDate: doc.expiryDate,
-    dbsCertificateNumber: doc?.dbsCertificateNumber,
-    isExpired: doc.isExpired,
-  }));
+  // Compliance documents — merge Redux documents, profile.documents, and complianceDocuments robustly
+  const allRawDocs = (() => {
+    const map = new Map<string, any>();
+    const sources = [
+      documents,
+      (documents as any)?.documents,
+      (documents as any)?.data,
+      (profile as any)?.documents,
+      (profile as any)?.carerProfile?.documents,
+      (profile as any)?.complianceDocuments,
+      (profile as any)?.carerProfile?.complianceDocuments,
+    ];
+
+    sources.forEach((src) => {
+      if (Array.isArray(src)) {
+        src.forEach((doc: any) => {
+          if (doc && (doc.id || doc.fileUrl || doc.fileName || doc.fileType || doc.type)) {
+            const key = doc.id || `${doc.fileType || doc.type}_${doc.fileName || ""}_${doc.createdAt || ""}`;
+            if (!map.has(key)) {
+              map.set(key, doc);
+            } else {
+              map.set(key, { ...map.get(key), ...doc });
+            }
+          }
+        });
+      }
+    });
+
+    return Array.from(map.values());
+  })();
+
+  const complianceDocs: ComplianceDoc[] = allRawDocs.map((doc: any) => {
+    const rawType = doc.fileType || doc.type || "";
+    const rawCategory = doc.fileCategory || doc.category || "";
+    const rawName = doc.fileName || doc.name || (rawType ? getDocumentFileLabel(rawType) : "Document");
+    const rawStatus = (doc.status || "PENDING").toString().toUpperCase();
+
+    const formattedSize = typeof doc.fileSize === "number"
+      ? `${(doc.fileSize / (1024 * 1024)).toFixed(1)} MB`
+      : typeof doc.size === "string"
+        ? doc.size
+        : "1.0 MB";
+
+    return {
+      id: doc.id || `doc-${Math.random()}`,
+      name: rawType ? getDocumentFileLabel(rawType) : rawName,
+      type: rawType,
+      fileType: rawType,
+      category: rawCategory,
+      uploadDate: doc.createdAt || doc.uploadDate || new Date().toISOString(),
+      status:
+        rawStatus === "VERIFIED" || rawStatus === "APPROVED"
+          ? "verified"
+          : rawStatus === "FAILED" || rawStatus === "REJECTED"
+            ? "failed"
+            : "pending",
+      size: formattedSize,
+      previewUrl: doc.fileUrl || doc.previewUrl || "",
+      fileKey: doc.fileKey,
+      fileUrl: doc.fileUrl || doc.previewUrl || "",
+      rejectionReason: doc.rejectionReason,
+      expiryDate: doc.expiryDate,
+      dbsCertificateNumber: doc?.dbsCertificateNumber,
+      isExpired: doc.isExpired,
+    };
+  });
 
   const [uploadingDocType, setUploadingDocType] = useState<string | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploadingDoc, setIsUploadingDoc] = useState(false);
+  const [uploadingDocLabel, setUploadingDocLabel] = useState<string>("");
   const [previewDoc, setPreviewDoc] = useState<ComplianceDoc | null>(null);
 
   const [docToDelete, setDocToDelete] = useState<string | null>(null);
@@ -589,6 +635,7 @@ export function useCarerPortal({
       }
       setSelectedFiles({});
       dispatch(fetchCarerDocuments());
+      dispatch(fetchCarerProfile());
       return true;
     } catch (error: any) {
       showErrorToast(
@@ -609,6 +656,7 @@ export function useCarerPortal({
       );
       setSelectedFiles({});
       dispatch(fetchCarerDocuments());
+      dispatch(fetchCarerProfile());
       return true;
     } catch (error: any) {
       showErrorToast("Upload Failed", error || "Failed to upload documents.");
@@ -685,6 +733,9 @@ export function useCarerPortal({
       return;
     }
 
+    setIsUploadingDoc(true);
+    setUploadingDocType(type);
+    setUploadingDocLabel(file.name);
     try {
       await dispatch(
         uploadCarerDocument({
@@ -705,12 +756,17 @@ export function useCarerPortal({
         `Document "${file.name}" uploaded successfully for verification.`,
       );
       dispatch(fetchCarerDocuments());
+      dispatch(fetchCarerProfile());
     } catch (error: any) {
       const errorMsg =
         typeof error === "string"
           ? error
           : error?.message || "Failed to upload document.";
       showErrorToast("Upload Failed", errorMsg);
+    } finally {
+      setIsUploadingDoc(false);
+      setUploadingDocType(null);
+      setUploadingDocLabel("");
     }
   };
 
@@ -861,6 +917,8 @@ export function useCarerPortal({
     handleDeleteDoc,
     handleUpdateDoc,
     handleUploadNewDoc,
+    isUploadingDoc,
+    uploadingDocLabel,
     submitProfile,
     profile,
     introVideoUrl: profile?.introVideoUrl || null,

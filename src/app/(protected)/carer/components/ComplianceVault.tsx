@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import Button from "@/components/Button";
 import ThinSpinner from "@/components/ThinSpinner";
+import FullScreenLoader from "@/components/FullScreenLoader";
 
 interface ComplianceVaultProps {
   complianceDocs: ComplianceDoc[];
@@ -468,6 +469,8 @@ export default function ComplianceVault({
   const [expandedHistorySlots, setExpandedHistorySlots] = useState<
     Record<string, boolean>
   >({});
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadingDocLabel, setUploadingDocLabel] = useState<string>("");
 
   const toggleHistory = (slotKey: string) => {
     setExpandedHistorySlots((prev) => ({
@@ -509,22 +512,28 @@ export default function ComplianceVault({
   }, [complianceDocs]);
 
   // Handle direct file selection for a slot
-  const handleSlotFileSelected = (
+  const handleSlotFileSelected = async (
     slot: SlotDefinition,
     e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (handleUploadNewDoc) {
-      handleUploadNewDoc(file, slot.category, slot.fileType, {
-        replaceExisting: false,
-      });
-    } else {
-      handleUpdateDoc("", slot.fileType, e, slot.category);
+    setIsUploading(true);
+    setUploadingDocLabel(slot.slotTitle || file.name);
+    try {
+      if (handleUploadNewDoc) {
+        await handleUploadNewDoc(file, slot.category, slot.fileType, {
+          replaceExisting: false,
+        });
+      } else {
+        await handleUpdateDoc("", slot.fileType, e, slot.category);
+      }
+    } finally {
+      setIsUploading(false);
+      setUploadingDocLabel("");
+      e.target.value = "";
     }
-
-    e.target.value = "";
   };
 
   const filteredCategories = CATEGORY_DEFINITIONS.filter((cat) => {
@@ -533,7 +542,13 @@ export default function ComplianceVault({
   });
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
+    <div className="space-y-6 max-w-7xl mx-auto relative">
+      {/* Uploading Custom Loader Overlay */}
+      <FullScreenLoader
+        isVisible={isUploading}
+        message={`Uploading ${uploadingDocLabel || "document"}...`}
+        isOverlay={true}
+      />
       {/* Onboarding Navigation Row */}
       {isOnboarding && (
         <div className="flex justify-between items-center w-full pb-2">
@@ -847,6 +862,7 @@ export default function ComplianceVault({
                                 type="file"
                                 accept=".pdf,.png,.jpg,.jpeg"
                                 className="hidden"
+                                disabled={isUploading}
                                 onChange={(e) =>
                                   handleSlotFileSelected(slot, e)
                                 }
@@ -858,13 +874,14 @@ export default function ComplianceVault({
                         {/* Upload Replacement Control */}
                         {currentDoc && (
                           <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-gold-300/5">
-                            <label className="cursor-pointer inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-navy-900 hover:bg-navy-800 border border-gold-300/15 text-gold-200 text-[11px] font-medium transition-colors">
+                            <label className={`cursor-pointer inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-navy-900 hover:bg-navy-800 border border-gold-300/15 text-gold-200 text-[11px] font-medium transition-colors ${isUploading ? "opacity-50 pointer-events-none" : ""}`}>
                               <Upload className="w-3 h-3 text-gold-300" />
                               Upload Replacement / New Version
                               <input
                                 type="file"
                                 accept=".pdf,.png,.jpg,.jpeg"
                                 className="hidden"
+                                disabled={isUploading}
                                 onChange={(e) =>
                                   handleSlotFileSelected(slot, e)
                                 }

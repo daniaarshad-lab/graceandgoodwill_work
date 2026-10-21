@@ -439,7 +439,7 @@ export default function StepPersonalInfo({ portal, onNext, onBack }: Props) {
         </div>
 
         <div className="pt-6 mt-6 border-t border-gold-300/10">
-          <h4 className="text-lg font-semibold text-gold-200 mb-4">
+          <h4 className="text-sm font-semibold text-gold-200 mb-4">
             Emergency Contact Details *
           </h4>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

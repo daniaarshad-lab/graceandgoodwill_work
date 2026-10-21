@@ -596,7 +596,7 @@ export default function StepIdentityVerification({
           </div>
 
           <div className="pt-6 mt-6 border-t border-gold-300/10">
-            <h4 className="text-lg font-semibold text-gold-200 mb-4">
+            <h4 className="text-sm font-semibold text-gold-200 mb-4">
               Emergency Contact Details *
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -831,7 +831,7 @@ export default function StepIdentityVerification({
 
             {hasDrivingLicence && (
               <div className="mt-6 p-5 rounded-xl border border-gold-300/20 bg-navy-900/50">
-                <h4 className="text-md font-semibold text-gold-100 mb-2">
+                <h4 className="text-sm font-semibold text-gold-100 mb-2">
                   Driving Preferences
                 </h4>
                 <p className="text-xs text-gold-100/60 mb-4">

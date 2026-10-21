@@ -73,7 +73,7 @@ export default function StepInsuranceDocs({ portal, onNext, onBack }: Props) {
         <div className="space-y-6">
           {/* Public Liability Insurance (Dual Documents) */}
           <div className="space-y-3">
-            <h4 className="text-md font-semibold text-gold-100 flex items-center justify-between border-b border-gold-300/10 pb-2">
+            <h4 className="text-sm font-semibold text-gold-100 flex items-center justify-between border-b border-gold-300/10 pb-2">
               <span>Public Liability Insurance <span className="text-red-400">*</span></span>
               <span className="text-[11px] font-normal text-gold-100/50">Requires original certificate & supporting schedule</span>
             </h4>
@@ -111,7 +111,7 @@ export default function StepInsuranceDocs({ portal, onNext, onBack }: Props) {
 
           {/* Professional Indemnity Insurance (Dual Documents - Optional) */}
           <div className="space-y-3 pt-4 border-t border-gold-300/10">
-            <h4 className="text-md font-semibold text-gold-100 flex items-center justify-between border-b border-gold-300/10 pb-2">
+            <h4 className="text-sm font-semibold text-gold-100 flex items-center justify-between border-b border-gold-300/10 pb-2">
               <span>Professional Indemnity Insurance <span className="text-gold-100/40 text-xs font-normal">(Where Applicable)</span></span>
               <span className="text-[11px] font-normal text-gold-100/50">Accommodates certificate & supporting policy details</span>
             </h4>

@@ -119,7 +119,7 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
         )}
 
         <div className="space-y-4 mb-6">
-          <h4 className="text-md font-semibold text-gold-100 flex items-center justify-between border-b border-gold-300/10 pb-2">
+          <h4 className="text-sm font-semibold text-gold-100 flex items-center justify-between border-b border-gold-300/10 pb-2">
             <span>Enhanced DBS Certificate <span className="text-red-400">*</span></span>
             <span className="text-[11px] font-normal text-gold-100/50">Accommodates certificate & verification check confirmation</span>
           </h4>
@@ -185,7 +185,7 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
         </div>
 
         <div className="space-y-4 pt-4 border-t border-gold-300/10">
-          <h4 className="text-md font-semibold text-gold-100 flex items-center justify-between border-b border-gold-300/10 pb-2">
+          <h4 className="text-sm font-semibold text-gold-100 flex items-center justify-between border-b border-gold-300/10 pb-2">
             <span>Professional References <span className="text-red-400">*</span></span>
             <span className="text-[11px] font-normal text-gold-100/50">Accommodates references & verification confirmation</span>
           </h4>
@@ -239,7 +239,7 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
         </div>
 
         <div className="pt-6 pb-2 border-t border-gold-300/10">
-          <h4 className="text-md font-semibold text-gold-200 mb-4">
+          <h4 className="text-sm font-semibold text-gold-200 mb-4">
             Additional References (Optional)
           </h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -268,7 +268,7 @@ export default function StepComplianceDocs({ portal, onNext, onBack }: Props) {
 
         {/* CV and Employment History (Dual Documents) */}
         <div className="space-y-4 pt-4 border-t border-gold-300/10">
-          <h4 className="text-md font-semibold text-gold-100 flex items-center justify-between border-b border-gold-300/10 pb-2">
+          <h4 className="text-sm font-semibold text-gold-100 flex items-center justify-between border-b border-gold-300/10 pb-2">
             <span>CV & Employment History <span className="text-red-400">*</span></span>
             <span className="text-[11px] font-normal text-gold-100/50">Accommodates CV & supporting employment documentation</span>
           </h4>

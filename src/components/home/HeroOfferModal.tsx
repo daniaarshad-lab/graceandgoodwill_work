@@ -96,7 +96,7 @@ export default function HeroOfferModal() {
             <div className="flex flex-col items-center gap-2 sm:gap-3 mt-1 sm:mt-2">
               <Button asChild fullWidth className="!rounded-full font-serif">
                 <Link
-                  href="/register"
+                  href="/register?role=client"
                   onClick={() => setIsOpen(false)}
                   className="flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 text-[14px] sm:text-[15px]"
                 >

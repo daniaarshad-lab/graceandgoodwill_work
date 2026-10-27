@@ -2,12 +2,35 @@ import { useState } from "react";
 import SectionCard from "./shared/SectionCard";
 import ClientCarerAccommodationSection, {
   ClientAccommPhotoItem,
+  CLIENT_SOLE_OCCUPANCY_BEDROOM,
 } from "./ClientCarerAccommodationSection";
 import Input from "@/components/Input";
 import GoogleAddressAutocomplete from "@/components/GoogleAddressAutocomplete";
 import MultiSelect from "@/components/MultiSelect";
 import PhoneInput from "@/components/PhoneInput";
 import Button from "@/components/Button";
+
+const MOBILITY_OPTIONS = [
+  "Independent (no aid)",
+  "Independent (with aid)",
+  "Requires support",
+  "Wheelchair user",
+  "Unable to walk, requires full assistance",
+  "Bedbound, requires full support with mobility and repositioning",
+];
+
+const PERSONAL_CARE_OPTIONS = [
+  "Washing / bathing",
+  "Dressing",
+  "Toileting",
+  "Continence care",
+  "Oral care",
+  "Hair care",
+  "Shaving",
+  "Hearing aid assistance",
+  "Nail care",
+  "Other – please specify",
+];
 
 interface CareRequestFormProps {
   fullName: string;
@@ -82,22 +105,41 @@ export default function CareRequestForm({
   onSubmit,
   setActiveTab,
 }: CareRequestFormProps) {
+  const [mobilityLevel, setMobilityLevel] = useState<string>("Requires support");
+  const [mobilityDetails, setMobilityDetails] = useState<string>("");
+  const [personalCare, setPersonalCare] = useState<string[]>([]);
+  const [personalCareDetails, setPersonalCareDetails] = useState<string>("");
+
   const [hasPrivateBedroom, setHasPrivateBedroom] = useState<boolean>(true);
+  const [multipleCarersInHousehold, setMultipleCarersInHousehold] =
+    useState<boolean>(false);
+  const [bedroomType, setBedroomType] = useState<string>(
+    CLIENT_SOLE_OCCUPANCY_BEDROOM,
+  );
   const [bathroomType, setBathroomType] = useState<string>("Private bathroom");
   const [bathroomOther, setBathroomOther] = useState<string>("");
   const [showerType, setShowerType] = useState<string>("Private");
   const [showerOther, setShowerOther] = useState<string>("");
   const [accommPhotos, setAccommPhotos] = useState<ClientAccommPhotoItem[]>([]);
   // Never preselected: false by default
-  const [photoConsentConfirmed, setPhotoConsentConfirmed] = useState<boolean>(false);
+  const [photoConsentConfirmed, setPhotoConsentConfirmed] =
+    useState<boolean>(false);
   const [accommError, setAccommError] = useState<string | null>(null);
+
+  const togglePersonalCareOption = (option: string) => {
+    setPersonalCare((prev) =>
+      prev.includes(option)
+        ? prev.filter((item) => item !== option)
+        : [...prev, option],
+    );
+  };
 
   const handleFormSubmit = (e: React.FormEvent) => {
     setAccommError(null);
     if (!hasPrivateBedroom) {
       e.preventDefault();
       setAccommError(
-        "Please confirm that the live-in carer will have their own private bedroom.",
+        "Please confirm that the live-in carer will have their own private bedroom for the duration of the placement.",
       );
       return;
     }
@@ -122,7 +164,7 @@ export default function CareRequestForm({
           comparing qualifications, experience, specialist skills and
           availability before creating your own shortlist. Explore at your own
           pace while benefiting from verified profiles and the support of Grace
-          & Goodwill whenever you need assistance.
+          &amp; Goodwill whenever you need assistance.
         </p>
       </div>
 
@@ -135,7 +177,6 @@ export default function CareRequestForm({
             placeholder="Enter full name"
             error={errors.fullName}
           />
-
           <Input
             label="Contact Email"
             value={email}
@@ -144,7 +185,6 @@ export default function CareRequestForm({
             type="email"
             error={errors.email}
           />
-
           <PhoneInput
             label="Contact Phone"
             value={phone}
@@ -234,7 +274,84 @@ export default function CareRequestForm({
             </label>
           </div>
         </div>
-        
+
+        {/* Mobility & Personal Care Requirements */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {/* Mobility */}
+          <div className="rounded-xl border border-gold-300/15 bg-navy-950/60 p-4 space-y-3">
+            <div>
+              <h4 className="text-sm font-semibold text-gold-200">Mobility</h4>
+              <p className="text-xs text-gold-100/60 mt-0.5">
+                Select the client&apos;s current mobility level and provide any
+                transfer, repositioning or specialist equipment details.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {MOBILITY_OPTIONS.map((option) => {
+                const selected = mobilityLevel === option;
+                return (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => setMobilityLevel(option)}
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors cursor-pointer text-left ${
+                      selected
+                        ? "bg-gold-DEFAULT/20 border-gold-DEFAULT text-gold-100"
+                        : "bg-navy-950 border-gray-300/20 text-gold-100/75 hover:border-gold-300/50"
+                    }`}
+                  >
+                    {option}
+                  </button>
+                );
+              })}
+            </div>
+            <textarea
+              rows={3}
+              value={mobilityDetails}
+              onChange={(e) => setMobilityDetails(e.target.value)}
+              placeholder="Additional mobility details (e.g. assistance with transfers, repositioning, hoist or specialist moving and handling equipment)..."
+              className="w-full rounded-xl border border-gray-300/20 bg-navy-950 px-3.5 py-2.5 text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 text-xs"
+            />
+          </div>
+
+          {/* Personal Care Requirements */}
+          <div className="rounded-xl border border-gold-300/15 bg-navy-950/60 p-4 space-y-3">
+            <div>
+              <h4 className="text-sm font-semibold text-gold-200">
+                Personal Care Requirements
+              </h4>
+              <p className="text-xs text-gold-100/60 mt-0.5">
+                Support required with (select all that apply)
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {PERSONAL_CARE_OPTIONS.map((option) => {
+                const selected = personalCare.includes(option);
+                return (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => togglePersonalCareOption(option)}
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors cursor-pointer ${
+                      selected
+                        ? "bg-gold-DEFAULT/20 border-gold-DEFAULT text-gold-100"
+                        : "bg-navy-950 border-gray-300/20 text-gold-100/75 hover:border-gold-300/50"
+                    }`}
+                  >
+                    {option}
+                  </button>
+                );
+              })}
+            </div>
+            <textarea
+              rows={3}
+              value={personalCareDetails}
+              onChange={(e) => setPersonalCareDetails(e.target.value)}
+              placeholder="Add further personal care details where necessary..."
+              className="w-full rounded-xl border border-gray-300/20 bg-navy-950 px-3.5 py-2.5 text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 text-xs"
+            />
+          </div>
+        </div>
 
         <div className="space-y-2">
           <label className="text-sm font-medium text-gold-200">
@@ -312,6 +429,10 @@ export default function CareRequestForm({
         <ClientCarerAccommodationSection
           hasPrivateBedroom={hasPrivateBedroom}
           setHasPrivateBedroom={setHasPrivateBedroom}
+          multipleCarersInHousehold={multipleCarersInHousehold}
+          setMultipleCarersInHousehold={setMultipleCarersInHousehold}
+          bedroomType={bedroomType}
+          setBedroomType={setBedroomType}
           bathroomType={bathroomType}
           setBathroomType={setBathroomType}
           bathroomOther={bathroomOther}

@@ -47,6 +47,8 @@ import {
   getAccommodationApprovalStatus,
   getAccommodationPhotoItems,
   hasPendingAccommodationPhotos,
+  SHARED_CARER_BEDROOM,
+  SOLE_OCCUPANCY_BEDROOM,
   usePlatformStore,
 } from '@/data/care-platform/platformStore';
 import { CarerAccommodationView } from './CarerAccommodationView';
@@ -192,6 +194,8 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
     'Independent (with aid)',
     'Requires support',
     'Wheelchair user',
+    'Unable to walk, requires full assistance',
+    'Bedbound, requires full support with mobility and repositioning',
   ];
 
   const allPersonalCareOptions = [
@@ -202,29 +206,29 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
     'Oral care',
     'Hair care',
     'Shaving',
+    'Hearing aid assistance',
+    'Nail care',
     'Other – please specify',
   ];
 
-  const bedroomOptions = [
-    'Private bedroom',
-    'Shared with client',
-    'Shared with household',
-    'Other – please specify',
-  ];
+  const bedroomOptions = currentReq.accommodation.multipleCarersInHousehold
+    ? [SOLE_OCCUPANCY_BEDROOM, SHARED_CARER_BEDROOM]
+    : [SOLE_OCCUPANCY_BEDROOM];
 
   const bathroomOptions = [
     'Private bathroom',
     'Ensuite bathroom',
     'Shared bathroom with client',
     'Shared bathroom with household',
-    'Other – please specify',
+    'Other, please specify',
   ];
 
   const showerOptions = [
     'Private',
+    'En-suite',
     'Shared with client',
     'Shared with household',
-    'Other – please specify',
+    'Other, please specify',
   ];
 
   const toggleCondition = (item: string) => {
@@ -249,9 +253,15 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
     const matchedIdx = VETTED_CARERS.findIndex((c) => c.name === req.assignedCarerName);
     setSelectedCarerIdx(matchedIdx >= 0 ? matchedIdx : 0);
     setMarkAsEmergency(req.isEmergency);
+    const isBedroomValid =
+      req.accommodation.bedroomType === SOLE_OCCUPANCY_BEDROOM ||
+      req.accommodation.bedroomType === 'Private bedroom' ||
+      (Boolean(req.accommodation.multipleCarersInHousehold) &&
+        req.accommodation.bedroomType === SHARED_CARER_BEDROOM &&
+        Boolean(req.accommodation.bothCarersAgreedSharedBedroom));
     setAdminConfirmedAccommodation(
       req.accommodation.privateBedroomConfirmed &&
-        req.accommodation.bedroomType === 'Private bedroom' &&
+        isBedroomValid &&
         !hasPendingAccommodationPhotos(req.accommodation)
     );
     setConfirmModalRequest(req);
@@ -260,7 +270,19 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
   const handleFinalisePlacement = () => {
     if (!confirmModalRequest) return;
     if (!confirmModalRequest.accommodation.privateBedroomConfirmed) {
-      triggerToast('Compulsory: Private bedroom must be confirmed before finalising placement.');
+      triggerToast(
+        'Compulsory: Please confirm that the live-in carer will have their own private bedroom for the duration of the placement.'
+      );
+      return;
+    }
+    if (
+      confirmModalRequest.accommodation.bedroomType === SHARED_CARER_BEDROOM &&
+      (!confirmModalRequest.accommodation.multipleCarersInHousehold ||
+        !confirmModalRequest.accommodation.bothCarersAgreedSharedBedroom)
+    ) {
+      triggerToast(
+        'Shared bedroom with another live-in carer requires multiple carers in the household and explicit agreement from both carers before confirming.'
+      );
       return;
     }
     if (hasPendingAccommodationPhotos(confirmModalRequest.accommodation)) {
@@ -479,7 +501,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
 
       {/* Confirmation Banner when a Care Request has just been finalised into Placements */}
       {recentlyConfirmedPlacementId && (
-        <div className="relative z-20 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 flex flex-wrap items-center justify-between gap-3 shadow-sm">
+        <div className="relative z-20 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 flex flex-wrap items-center justify-between gap-3 shadow-2xs">
           <div className="flex items-center gap-2.5 text-xs sm:text-sm text-emerald-900 font-medium">
             <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
             <span>
@@ -556,7 +578,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                   setActiveTab('accommodation');
                   setViewMode('detail');
                 }}
-                className="px-4 py-2 rounded-xl bg-[#C8A464] hover:bg-[#B89352] text-white text-xs font-semibold shadow-sm transition-colors inline-flex items-center gap-1.5 cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-[#C8A464] hover:bg-[#B89352] text-white text-xs font-semibold shadow-xs transition-colors inline-flex items-center gap-1.5 cursor-pointer"
               >
                 <span>Open Doris Care Request</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -594,7 +616,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                       items.map((req) => (
                         <div
                           key={req.id}
-                          className="bg-white rounded-xl border border-[#EAE2D2] p-3.5 shadow-sm hover:border-[#C5A059] transition-all flex flex-col gap-2.5"
+                          className="bg-white rounded-xl border border-[#EAE2D2] p-3.5 shadow-2xs hover:border-[#C5A059] transition-all flex flex-col gap-2.5"
                         >
                           <div className="flex items-start justify-between gap-2">
                             <div
@@ -739,7 +761,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                       onClick={() => setSelectedRequestId(r.id)}
                       className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
                         r.id === currentReq.id
-                          ? 'bg-[#0A1629] text-white shadow-sm'
+                          ? 'bg-[#0A1629] text-white shadow-2xs'
                           : 'bg-white border border-[#E6DEC8] text-[#475569] hover:border-[#C5A059]'
                       }`}
                     >
@@ -780,7 +802,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
               <img
                 src={currentReq.avatar}
                 alt={currentReq.displayTitle}
-                className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover ring-4 ring-white border border-[#E5DEC9] shadow-sm shrink-0"
+                className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover ring-4 ring-white border border-[#E5DEC9] shadow-xs shrink-0"
               />
               <div>
                 <div className="flex flex-wrap items-center gap-2.5">
@@ -810,14 +832,14 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
             <div className="flex flex-wrap items-center gap-2.5 self-start md:self-center">
               <button
                 onClick={() => setViewMode('carer-form')}
-                className="px-4 py-2.5 rounded-xl bg-[#FAF5EE] border border-[#DFD0B4] text-xs sm:text-sm font-semibold text-[#0A1629] hover:border-[#C5A059] hover:bg-[#F3E9D7] transition-colors inline-flex items-center gap-2 shadow-sm cursor-pointer"
+                className="px-4 py-2.5 rounded-xl bg-[#FAF5EE] border border-[#DFD0B4] text-xs sm:text-sm font-semibold text-[#0A1629] hover:border-[#C5A059] hover:bg-[#F3E9D7] transition-colors inline-flex items-center gap-2 shadow-2xs cursor-pointer"
               >
                 <BedDouble className="w-4 h-4 text-[#B88E3E]" />
                 <span>Client Carer Accommodation Form</span>
               </button>
               <button
                 onClick={() => triggerToast(`Draft saved for ${currentReq.displayTitle}`)}
-                className="px-4 py-2.5 rounded-xl bg-white border border-[#E2D9C8] text-xs sm:text-sm font-semibold text-[#1E293B] hover:bg-[#FAF6EE] transition-colors inline-flex items-center gap-2 shadow-sm cursor-pointer"
+                className="px-4 py-2.5 rounded-xl bg-white border border-[#E2D9C8] text-xs sm:text-sm font-semibold text-[#1E293B] hover:bg-[#FAF6EE] transition-colors inline-flex items-center gap-2 shadow-2xs cursor-pointer"
               >
                 <FileText className="w-4 h-4 text-[#8C6D2B]" />
                 <span>Save Draft</span>
@@ -825,7 +847,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
               {portalRoleView === 'admin' && (
                 <button
                   onClick={() => openConfirmModal(currentReq)}
-                  className="px-5 py-2.5 rounded-xl bg-[#C8A464] hover:bg-[#B89352] text-white text-xs sm:text-sm font-semibold transition-colors inline-flex items-center gap-2 shadow-sm cursor-pointer"
+                  className="px-5 py-2.5 rounded-xl bg-[#C8A464] hover:bg-[#B89352] text-white text-xs sm:text-sm font-semibold transition-colors inline-flex items-center gap-2 shadow-xs cursor-pointer"
                 >
                   <span>
                     {currentReq.stage === 'Finalised' ? 'Update Confirmed Placement' : 'Confirm & Proceed'}
@@ -837,7 +859,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
           </div>
 
           {/* 5-Tab Bar matching image_34c66094.png */}
-          <div className="bg-white rounded-xl border border-[#EAE2D2] px-3 sm:px-5 overflow-x-auto shadow-sm">
+          <div className="bg-white rounded-xl border border-[#EAE2D2] px-3 sm:px-5 overflow-x-auto shadow-2xs">
             <div className="flex items-center gap-4 sm:gap-8 min-w-max">
               {[
                 { id: 'overview', label: 'Overview', icon: FileText },
@@ -876,7 +898,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
               {/* LEFT COLUMN (6 cols): Medical Conditions, Mobility, Personal Care Requirements */}
               <div className="lg:col-span-6 space-y-5">
                 {/* 1. Medical Conditions */}
-                <div className="bg-white rounded-2xl border border-[#EAE2D2] p-5 shadow-sm">
+                <div className="bg-white rounded-2xl border border-[#EAE2D2] p-5 shadow-2xs">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2.5">
                       <Heart className="w-4 h-4 text-[#C8A464]" />
@@ -919,7 +941,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                 </div>
 
                 {/* 2. Mobility */}
-                <div className="bg-white rounded-2xl border border-[#EAE2D2] p-5 shadow-sm">
+                <div className="bg-white rounded-2xl border border-[#EAE2D2] p-5 shadow-2xs">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2.5">
                       <Accessibility className="w-4 h-4 text-[#C8A464]" />
@@ -969,6 +991,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                         <textarea
                           rows={4}
                           value={currentReq.mobilityDetails}
+                          placeholder="Explain mobility requirements, including transfers, repositioning, or specialist moving and handling equipment..."
                           onChange={(e) =>
                             updateCareRequest(currentReq.id, (prev) => ({
                               ...prev,
@@ -987,7 +1010,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                 </div>
 
                 {/* 3. Personal Care Requirements */}
-                <div className="bg-white rounded-2xl border border-[#EAE2D2] p-5 shadow-sm">
+                <div className="bg-white rounded-2xl border border-[#EAE2D2] p-5 shadow-2xs">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2.5">
                       <User className="w-4 h-4 text-[#C8A464]" />
@@ -1030,6 +1053,20 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                           );
                         })}
                       </div>
+                      {currentReq.personalCare.includes('Other – please specify') && (
+                        <input
+                          type="text"
+                          value={currentReq.personalCareOtherDetails || ''}
+                          onChange={(e) =>
+                            updateCareRequest(currentReq.id, (prev) => ({
+                              ...prev,
+                              personalCareOtherDetails: e.target.value,
+                            }))
+                          }
+                          placeholder="Please specify additional personal care requirements..."
+                          className="w-full mt-2.5 px-3 py-2 rounded-xl border border-[#DFD5C2] bg-[#FAF7F2] text-xs text-[#0A1629] focus:outline-none focus:border-[#C8A464]"
+                        />
+                      )}
                     </div>
 
                     <div className="sm:col-span-5">
@@ -1038,6 +1075,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                         <textarea
                           rows={4}
                           value={currentReq.personalCareNotes}
+                          placeholder="Add further personal care details..."
                           onChange={(e) =>
                             updateCareRequest(currentReq.id, (prev) => ({
                               ...prev,
@@ -1059,7 +1097,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
               {/* RIGHT COLUMN (6 cols): Carer Accommodation, Bedroom, Bathroom, Photos */}
               <div className="lg:col-span-6 space-y-5">
                 {/* 1. Carer Accommodation (Compulsory Requirements + Live Approval Status) */}
-                <div className="bg-white rounded-2xl border border-[#EAE2D2] p-5 shadow-sm">
+                <div className="bg-white rounded-2xl border border-[#EAE2D2] p-5 shadow-2xs">
                   <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5">
                     <div className="flex flex-wrap items-center gap-2.5">
                       <Home className="w-4 h-4 text-[#C8A464]" />
@@ -1111,7 +1149,8 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                       className="w-4 h-4 accent-[#2F5233] rounded cursor-pointer"
                     />
                     <span className="text-xs font-semibold text-[#1B3B22]">
-                      I confirm that the live-in carer will have their own private bedroom. *
+                      I confirm that the live-in carer will have their own private bedroom for the
+                      duration of the placement. *
                     </span>
                   </label>
 
@@ -1159,52 +1198,131 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                 </div>
 
                 {/* 2. Bedroom Arrangements */}
-                <div className="bg-white rounded-2xl border border-[#EAE2D2] p-5 shadow-sm">
-                  <div className="flex items-center justify-between mb-2.5">
+                <div className="bg-white rounded-2xl border border-[#EAE2D2] p-5 shadow-2xs space-y-3">
+                  <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
                       <BedDouble className="w-4 h-4 text-[#C8A464]" />
                       <h3 className="text-[15px] font-bold text-[#0A1629]">Bedroom Arrangements</h3>
                     </div>
-                    <span className="inline-flex items-center gap-1 text-xs text-[#64748B]">
+                    <button
+                      type="button"
+                      onClick={() => setViewMode('carer-form')}
+                      className="inline-flex items-center gap-1 text-xs text-[#64748B] hover:text-[#0A1629] cursor-pointer"
+                    >
                       <Edit2 className="w-3.5 h-3.5" />
                       <span>Edit</span>
-                    </span>
+                    </button>
                   </div>
 
-                  <p className="text-xs text-[#64748B] mb-3">Bedroom provided for live-in carer</p>
+                  <p className="text-xs text-[#64748B]">
+                    Bedroom provided for live-in carer (sharing a bedroom with the client or other
+                    household members is not permitted)
+                  </p>
+
+                  {/* Household multiple-carers toggle governing second bedroom option */}
+                  <label className="flex items-center gap-2.5 text-xs text-[#334155] cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={Boolean(currentReq.accommodation.multipleCarersInHousehold)}
+                      onChange={(e) => {
+                        const checked = e.target.checked;
+                        updateCareRequest(currentReq.id, (prev) => ({
+                          ...prev,
+                          accommodation: {
+                            ...prev.accommodation,
+                            multipleCarersInHousehold: checked,
+                            bedroomType: checked
+                              ? prev.accommodation.bedroomType
+                              : SOLE_OCCUPANCY_BEDROOM,
+                            bothCarersAgreedSharedBedroom: checked
+                              ? prev.accommodation.bothCarersAgreedSharedBedroom
+                              : false,
+                          },
+                        }));
+                      }}
+                      className="w-4 h-4 accent-[#0A1629] rounded cursor-pointer"
+                    />
+                    <span>Multiple carers are accommodated within the same household</span>
+                  </label>
 
                   <div className="flex flex-wrap gap-2">
                     {bedroomOptions.map((opt) => {
-                      const isSelected = currentReq.accommodation.bedroomType === opt;
+                      const isSelected =
+                        currentReq.accommodation.bedroomType === opt ||
+                        (opt === SOLE_OCCUPANCY_BEDROOM &&
+                          currentReq.accommodation.bedroomType === 'Private bedroom');
                       return (
                         <button
                           key={opt}
+                          type="button"
                           onClick={() =>
                             updateCareRequest(currentReq.id, (prev) => ({
                               ...prev,
                               accommodation: {
                                 ...prev.accommodation,
                                 bedroomType: opt,
-                                privateBedroomConfirmed: opt === 'Private bedroom',
+                                privateBedroomConfirmed: true,
+                                bothCarersAgreedSharedBedroom:
+                                  opt === SHARED_CARER_BEDROOM
+                                    ? prev.accommodation.bothCarersAgreedSharedBedroom
+                                    : false,
                               },
                             }))
                           }
-                          className={`px-3.5 py-1.5 rounded-full text-xs font-medium inline-flex items-center gap-1.5 transition-all cursor-pointer border ${
+                          className={`px-3.5 py-1.5 rounded-full text-xs font-medium inline-flex items-center gap-1.5 text-left transition-all cursor-pointer border ${
                             isSelected
                               ? 'bg-[#FDF4E3] border-[#E4C994] text-[#7C5819]'
                               : 'bg-white border-[#E5E0D5] text-[#475569] hover:border-[#C8A464]'
                           }`}
                         >
-                          {isSelected && <Check className="w-3.5 h-3.5 text-[#B88E3E]" />}
+                          {isSelected && <Check className="w-3.5 h-3.5 text-[#B88E3E] shrink-0" />}
                           <span>{opt}</span>
                         </button>
                       );
                     })}
                   </div>
+
+                  {currentReq.accommodation.bedroomType === SHARED_CARER_BEDROOM && (
+                    <div className="rounded-xl bg-[#FAF6EE] border border-[#E6D7B9] p-3 space-y-2 text-xs text-[#475569]">
+                      <p className="leading-relaxed">
+                        If a shared bedroom with another live-in carer is proposed,{' '}
+                        <strong className="text-[#0A1629]">
+                          both carers must explicitly agree to the arrangement before the placement
+                          is confirmed
+                        </strong>
+                        . Neither carer should be expected or required to share accommodation
+                        without their consent.
+                      </p>
+                      {portalRoleView === 'admin' && (
+                        <label className="flex items-start gap-2 pt-1 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={Boolean(
+                              currentReq.accommodation.bothCarersAgreedSharedBedroom
+                            )}
+                            onChange={(e) =>
+                              updateCareRequest(currentReq.id, (prev) => ({
+                                ...prev,
+                                accommodation: {
+                                  ...prev.accommodation,
+                                  bothCarersAgreedSharedBedroom: e.target.checked,
+                                },
+                              }))
+                            }
+                            className="mt-0.5 w-4 h-4 accent-[#0A1629] rounded cursor-pointer"
+                          />
+                          <span className="font-semibold text-[#0A1629]">
+                            Both live-in carers have explicitly agreed to share this bedroom prior
+                            to placement confirmation. *
+                          </span>
+                        </label>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {/* 3. Bathroom Arrangements + Compulsory Helpful Tips Wording */}
-                <div className="bg-white rounded-2xl border border-[#EAE2D2] p-5 shadow-sm">
+                <div className="bg-white rounded-2xl border border-[#EAE2D2] p-5 shadow-2xs">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2.5">
                       <Shield className="w-4 h-4 text-[#C8A464]" />
@@ -1220,12 +1338,17 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {/* Left: Bathroom arrangements */}
+                    {/* Left: Bathroom Arrangements */}
                     <div>
-                      <p className="text-xs text-[#64748B] mb-2.5">Bathroom arrangements</p>
+                      <p className="text-xs font-medium text-[#64748B] mb-2.5">
+                        Bathroom Arrangements
+                      </p>
                       <div className="space-y-2">
                         {bathroomOptions.map((opt) => {
-                          const isSelected = currentReq.accommodation.bathroomType === opt;
+                          const isSelected =
+                            currentReq.accommodation.bathroomType === opt ||
+                            (opt === 'Other, please specify' &&
+                              currentReq.accommodation.bathroomType === 'Other – please specify');
                           return (
                             <button
                               key={opt}
@@ -1253,15 +1376,38 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                             </button>
                           );
                         })}
+                        {(currentReq.accommodation.bathroomType === 'Other, please specify' ||
+                          currentReq.accommodation.bathroomType === 'Other – please specify') && (
+                          <input
+                            type="text"
+                            value={currentReq.accommodation.bathroomOtherDetails || ''}
+                            onChange={(e) =>
+                              updateCareRequest(currentReq.id, (prev) => ({
+                                ...prev,
+                                accommodation: {
+                                  ...prev.accommodation,
+                                  bathroomOtherDetails: e.target.value,
+                                },
+                              }))
+                            }
+                            placeholder="Please specify bathroom arrangement..."
+                            className="w-full mt-2 px-3 py-1.5 rounded-xl border border-[#DFD5C2] bg-[#FAF7F2] text-xs text-[#0A1629] focus:outline-none focus:border-[#C8A464]"
+                          />
+                        )}
                       </div>
                     </div>
 
-                    {/* Right: Shower/bathing arrangements */}
+                    {/* Right: Shower Arrangements */}
                     <div>
-                      <p className="text-xs text-[#64748B] mb-2.5">Shower/bathing arrangements</p>
+                      <p className="text-xs font-medium text-[#64748B] mb-2.5">
+                        Shower Arrangements
+                      </p>
                       <div className="space-y-2">
                         {showerOptions.map((opt) => {
-                          const isSelected = currentReq.accommodation.showerType === opt;
+                          const isSelected =
+                            currentReq.accommodation.showerType === opt ||
+                            (opt === 'Other, please specify' &&
+                              currentReq.accommodation.showerType === 'Other – please specify');
                           return (
                             <button
                               key={opt}
@@ -1289,6 +1435,24 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                             </button>
                           );
                         })}
+                        {(currentReq.accommodation.showerType === 'Other, please specify' ||
+                          currentReq.accommodation.showerType === 'Other – please specify') && (
+                          <input
+                            type="text"
+                            value={currentReq.accommodation.showerOtherDetails || ''}
+                            onChange={(e) =>
+                              updateCareRequest(currentReq.id, (prev) => ({
+                                ...prev,
+                                accommodation: {
+                                  ...prev.accommodation,
+                                  showerOtherDetails: e.target.value,
+                                },
+                              }))
+                            }
+                            placeholder="Please specify shower arrangement..."
+                            className="w-full mt-2 px-3 py-1.5 rounded-xl border border-[#DFD5C2] bg-[#FAF7F2] text-xs text-[#0A1629] focus:outline-none focus:border-[#C8A464]"
+                          />
+                        )}
                       </div>
                     </div>
                   </div>
@@ -1304,7 +1468,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                   const rejectedCount = photoItems.filter((p) => p.status === 'rejected').length;
 
                   return (
-                    <div className="bg-white rounded-2xl border border-[#EAE2D2] p-5 shadow-sm space-y-4">
+                    <div className="bg-white rounded-2xl border border-[#EAE2D2] p-5 shadow-2xs space-y-4">
                       <div className="flex flex-wrap items-start justify-between gap-2">
                         <div>
                           <div className="flex items-center gap-2.5">
@@ -1414,7 +1578,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                                   <button
                                     type="button"
                                     onClick={() => handleRemovePhotoItem(item.id)}
-                                    className="absolute top-2 right-2 w-6 h-6 rounded-md bg-white/90 hover:bg-rose-600 text-[#475569] hover:text-white flex items-center justify-center shadow-sm transition-colors cursor-pointer"
+                                    className="absolute top-2 right-2 w-6 h-6 rounded-md bg-white/90 hover:bg-rose-600 text-[#475569] hover:text-white flex items-center justify-center shadow-xs transition-colors cursor-pointer"
                                     title="Remove photograph"
                                   >
                                     <Trash2 className="w-3.5 h-3.5" />
@@ -1566,7 +1730,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                 })()}
 
                 {/* 5. Helpful tips Card — Exact Original Layout with Updated Compulsory Bathroom Wording */}
-                <div className="bg-[#FAF7F2] rounded-2xl p-5 border border-[#EAE3D4] shadow-sm space-y-3">
+                <div className="bg-[#FAF7F2] rounded-2xl p-5 border border-[#EAE3D4] shadow-xs space-y-3">
                   <div className="flex items-center gap-2 pb-2 border-b border-[#E8DEC9]">
                     <CheckCircle2 className="w-4 h-4 text-[#B88E3E]" />
                     <h4 className="text-xs font-bold text-[#0A1629]">Helpful tips</h4>
@@ -1613,7 +1777,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
           {activeTab === 'overview' && (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
               <div className="lg:col-span-8 space-y-5">
-                <div className="bg-white rounded-2xl border border-[#EAE2D2] p-5 shadow-sm space-y-4">
+                <div className="bg-white rounded-2xl border border-[#EAE2D2] p-5 shadow-2xs space-y-4">
                   <h3 className="font-serif text-lg font-bold text-[#0A1629]">
                     Client Overview &amp; Live-in Care Arrangement
                   </h3>
@@ -1647,7 +1811,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                             }
                             className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer ${
                               selected
-                                ? 'bg-[#FDF4E3] border-[#C8A464] shadow-sm'
+                                ? 'bg-[#FDF4E3] border-[#C8A464] shadow-2xs'
                                 : 'bg-white border-[#EAE2D2] hover:border-[#C8A464]'
                             }`}
                           >
@@ -1699,7 +1863,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
               </div>
 
               <div className="lg:col-span-4 space-y-5">
-                <div className="bg-white rounded-2xl border border-[#EAE2D2] p-5 shadow-sm space-y-3">
+                <div className="bg-white rounded-2xl border border-[#EAE2D2] p-5 shadow-2xs space-y-3">
                   <h3 className="text-sm font-bold text-[#0A1629]">
                     {portalRoleView === 'client'
                       ? 'Your Contact & Care Request Details'
@@ -1741,7 +1905,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                 </div>
 
                 {/* Agreed Grace & Goodwill Client Fee & Client Care Agreement Summary (Zero Carer Payout Shown) */}
-                <div className="bg-white rounded-2xl border border-[#EAE2D2] p-5 shadow-sm space-y-3.5">
+                <div className="bg-white rounded-2xl border border-[#EAE2D2] p-5 shadow-2xs space-y-3.5">
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
                       <Coins className="w-4 h-4 text-[#C8A464]" />
@@ -1817,15 +1981,55 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
 
           {/* ── TAB 2: HEALTH & SUPPORT ── */}
           {activeTab === 'health' && (
-            <div className="bg-white rounded-2xl border border-[#EAE2D2] p-5 shadow-sm space-y-4">
+            <div className="bg-white rounded-2xl border border-[#EAE2D2] p-5 shadow-2xs space-y-5">
               <h3 className="font-serif text-lg font-bold text-[#0A1629]">
-                Medical, Medication &amp; Mobility Summary
+                Medical, Medication, Mobility &amp; Personal Care Summary
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                 <div className="p-4 rounded-xl bg-[#FAF7F2] border border-[#EAE2D2] space-y-1.5">
                   <div className="font-bold text-[#0A1629]">Main Medical Conditions</div>
                   <div className="text-[#475569]">{currentReq.conditions.join(', ') || 'None recorded'}</div>
                   <div className="text-[#64748B] pt-1">{currentReq.conditionsNotes}</div>
+                </div>
+                <div className="p-4 rounded-xl bg-[#FAF7F2] border border-[#EAE2D2] space-y-2">
+                  <div className="font-bold text-[#0A1629]">Mobility</div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {allMobilityLevels.map((lvl) => {
+                      const isSelected = currentReq.mobilityLevel === lvl;
+                      return (
+                        <button
+                          key={lvl}
+                          type="button"
+                          onClick={() =>
+                            updateCareRequest(currentReq.id, (prev) => ({
+                              ...prev,
+                              mobilityLevel: lvl,
+                            }))
+                          }
+                          className={`px-2.5 py-1 rounded-full text-[11.5px] font-medium inline-flex items-center gap-1 border transition-all cursor-pointer ${
+                            isSelected
+                              ? 'bg-[#FDF4E3] border-[#E4C994] text-[#7C5819]'
+                              : 'bg-white border-[#E5E0D5] text-[#475569] hover:border-[#C8A464]'
+                          }`}
+                        >
+                          {isSelected && <Check className="w-3 h-3 text-[#B88E3E]" />}
+                          <span>{lvl}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <textarea
+                    rows={2}
+                    value={currentReq.mobilityDetails}
+                    placeholder="Explain mobility requirements, including transfers, repositioning, or specialist moving and handling equipment..."
+                    onChange={(e) =>
+                      updateCareRequest(currentReq.id, (prev) => ({
+                        ...prev,
+                        mobilityDetails: e.target.value,
+                      }))
+                    }
+                    className="w-full rounded-xl border border-[#DFD5C2] bg-white p-2.5 text-xs text-[#334155] focus:outline-none focus:border-[#C8A464]"
+                  />
                 </div>
                 <div className="p-4 rounded-xl bg-[#FAF7F2] border border-[#EAE2D2] space-y-1.5">
                   <div className="font-bold text-[#0A1629]">Medication Support</div>
@@ -1836,9 +2040,28 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                   <div className="text-[#475569]">{currentReq.aids.join(', ')}</div>
                   <div className="text-[#64748B] pt-1">{currentReq.aidsNotes}</div>
                 </div>
-                <div className="p-4 rounded-xl bg-[#FAF7F2] border border-[#EAE2D2] space-y-1.5">
-                  <div className="font-bold text-[#0A1629]">Personal Care Support</div>
-                  <div className="text-[#475569]">{currentReq.personalCare.join(', ')}</div>
+                <div className="p-4 rounded-xl bg-[#FAF7F2] border border-[#EAE2D2] space-y-2 md:col-span-2">
+                  <div className="font-bold text-[#0A1629]">Personal Care Requirements</div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {allPersonalCareOptions.map((item) => {
+                      const isSelected = currentReq.personalCare.includes(item);
+                      return (
+                        <button
+                          key={item}
+                          type="button"
+                          onClick={() => togglePersonalCare(item)}
+                          className={`px-2.5 py-1 rounded-full text-[11.5px] font-medium inline-flex items-center gap-1 border transition-all cursor-pointer ${
+                            isSelected
+                              ? 'bg-[#FDF4E3] border-[#E4C994] text-[#7C5819]'
+                              : 'bg-white border-[#E5E0D5] text-[#475569] hover:border-[#C8A464]'
+                          }`}
+                        >
+                          {isSelected && <Check className="w-3 h-3 text-[#B88E3E]" />}
+                          <span>{item}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
                   <div className="text-[#64748B] pt-1">{currentReq.personalCareNotes}</div>
                 </div>
               </div>
@@ -1847,7 +2070,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
 
           {/* ── TAB 4: LIFESTYLE & PREFERENCES ── */}
           {activeTab === 'lifestyle' && (
-            <div className="bg-white rounded-2xl border border-[#EAE2D2] p-5 shadow-sm space-y-4">
+            <div className="bg-white rounded-2xl border border-[#EAE2D2] p-5 shadow-2xs space-y-4">
               <h3 className="font-serif text-lg font-bold text-[#0A1629]">
                 Household, Lifestyle &amp; Carer Safety Disclosures
               </h3>
@@ -1886,7 +2109,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
 
           {/* ── TAB 5: NOTES & ACTIVITY (Workflow Stage Control) ── */}
           {activeTab === 'activity' && (
-            <div className="bg-white rounded-2xl border border-[#EAE2D2] p-5 shadow-sm space-y-4">
+            <div className="bg-white rounded-2xl border border-[#EAE2D2] p-5 shadow-2xs space-y-4">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <h3 className="font-serif text-lg font-bold text-[#0A1629]">
@@ -1944,7 +2167,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
           MODAL: CONFIRM ACCOMMODATION & FINALISE PLACEMENT -> PLACEMENTS ROSTER
       ═══════════════════════════════════════════════════════════════════════════ */}
       {confirmModalRequest && (
-        <div className="fixed inset-0 z-50 bg-[#0A1629]/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-[#0A1629]/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl border border-[#E5DEC9] max-w-lg w-full p-6 shadow-2xl space-y-4">
             <div className="flex items-start justify-between gap-3">
               <div>
@@ -2063,8 +2286,45 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
               <p className="text-[11.5px] text-[#475569]">
                 Bedroom: <strong>{confirmModalRequest.accommodation.bedroomType}</strong> &bull;
                 Bathroom: <strong>{confirmModalRequest.accommodation.bathroomType}</strong> &bull;
-                Shower/Bath: <strong>{confirmModalRequest.accommodation.showerType}</strong>
+                Shower: <strong>{confirmModalRequest.accommodation.showerType}</strong>
               </p>
+              {confirmModalRequest.accommodation.bedroomType === SHARED_CARER_BEDROOM && (
+                <label className="flex items-start gap-2.5 pt-1 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={Boolean(
+                      confirmModalRequest.accommodation.bothCarersAgreedSharedBedroom
+                    )}
+                    onChange={(e) => {
+                      const checked = e.target.checked;
+                      setConfirmModalRequest((prev) =>
+                        prev
+                          ? {
+                              ...prev,
+                              accommodation: {
+                                ...prev.accommodation,
+                                bothCarersAgreedSharedBedroom: checked,
+                              },
+                            }
+                          : prev
+                      );
+                      updateCareRequest(confirmModalRequest.id, (prev) => ({
+                        ...prev,
+                        accommodation: {
+                          ...prev.accommodation,
+                          bothCarersAgreedSharedBedroom: checked,
+                        },
+                      }));
+                    }}
+                    className="mt-0.5 w-4 h-4 accent-[#0A1629] cursor-pointer"
+                  />
+                  <span className="text-[11.5px] font-semibold text-[#0A1629]">
+                    Both live-in carers have explicitly agreed to the shared bedroom arrangement
+                    before placement confirmation (neither carer is required to share without
+                    consent).
+                  </span>
+                </label>
+              )}
               <label className="flex items-start gap-2.5 pt-1 cursor-pointer">
                 <input
                   type="checkbox"
@@ -2073,8 +2333,9 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                   className="mt-0.5 w-4 h-4 accent-[#0A1629] cursor-pointer"
                 />
                 <span className="text-[11.5px] font-medium text-[#0A1629]">
-                  Administrator confirms the live-in carer has a private bedroom and access to a
-                  fully equipped bathroom (toilet, washbasin, and shower or bathtub).
+                  Administrator confirms the live-in carer will have their own private bedroom for
+                  the duration of the placement and access to a fully equipped bathroom (toilet,
+                  washbasin, and shower or bathtub).
                 </span>
               </label>
             </div>
@@ -2116,7 +2377,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
           LIGHTBOX MODAL: ADMIN PHOTOGRAPH PRIVACY INSPECTION
       ═══════════════════════════════════════════════════════════════════════════ */}
       {previewPhotoItem && (
-        <div className="fixed inset-0 z-50 bg-[#0A1629]/75 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-[#0A1629]/75 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl border border-[#E5DEC9] max-w-2xl w-full overflow-hidden shadow-2xl">
             <div className="px-5 py-3.5 border-b border-[#EFE8DC] flex items-center justify-between gap-3">
               <div>
@@ -2192,7 +2453,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
           (Strictly shows ONLY Agreed Grace & Goodwill Client Fee — Zero Carer Pay)
       ═══════════════════════════════════════════════════════════════════════════ */}
       {showClientAgreementPreview && (
-        <div className="fixed inset-0 z-50 bg-[#0A1629]/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-[#0A1629]/70 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl border border-[#E5DEC9] max-w-xl w-full overflow-hidden shadow-2xl">
             <div className="px-6 py-4 bg-[#0A1629] text-white flex items-center justify-between gap-3">
               <div>

@@ -37,9 +37,15 @@ export interface AccommodationPhotoItem {
   reviewedAt?: string;
 }
 
+export const SOLE_OCCUPANCY_BEDROOM = 'Private bedroom (sole occupancy)';
+export const SHARED_CARER_BEDROOM =
+  'Shared bedroom with another live-in carer, subject to both carers’ agreement';
+
 export interface AccommodationDetails {
   privateBedroomConfirmed: boolean;
   bedroomType: string;
+  multipleCarersInHousehold?: boolean;
+  bothCarersAgreedSharedBedroom?: boolean;
   bedroomOtherDetails?: string;
   bathroomType: string;
   bathroomOtherDetails?: string;
@@ -181,6 +187,7 @@ export interface CareRequestRecord {
   aids: string[];
   aidsNotes: string;
   personalCare: string[];
+  personalCareOtherDetails?: string;
   personalCareNotes: string;
   medicationSupport: string;
   pets: string;
@@ -357,7 +364,11 @@ export function buildConciseCareNeeds(params: {
   let mobilityNeed = '';
   const hasExplicitMobility = rawConditions.some((c) => c.toLowerCase().includes('mobility'));
   if (!hasExplicitMobility) {
-    if (mobilityLevel === 'Requires support') {
+    if (mobilityLevel === 'Bedbound, requires full support with mobility and repositioning') {
+      mobilityNeed = 'Bedbound Mobility & Repositioning';
+    } else if (mobilityLevel === 'Unable to walk, requires full assistance') {
+      mobilityNeed = 'Full Mobility Assistance';
+    } else if (mobilityLevel === 'Requires support') {
       mobilityNeed = 'Limited Mobility';
     } else if (mobilityLevel === 'Wheelchair user') {
       mobilityNeed = 'Wheelchair Mobility';
@@ -532,7 +543,7 @@ const INITIAL_PLACEMENTS: PlacementRecord[] = [
       'To support Doris to live comfortably and safely at home, maintaining her dignity, independence and quality of life, with support for daily activities, personal care and companionship.',
     accommodation: {
       privateBedroomConfirmed: true,
-      bedroomType: 'Private bedroom',
+      bedroomType: SOLE_OCCUPANCY_BEDROOM,
       bathroomType: 'Private bathroom',
       showerType: 'Private',
       householdNotes: 'Spacious ground-accessible guest bedroom with Wi-Fi, desk and garden view. Fully equipped private bathroom with toilet, washbasin and walk-in shower.',
@@ -683,7 +694,7 @@ const INITIAL_PLACEMENTS: PlacementRecord[] = [
       'Safe urgent transition home, mobility reassurance and daily personal care routines.',
     accommodation: {
       privateBedroomConfirmed: true,
-      bedroomType: 'Private bedroom',
+      bedroomType: SOLE_OCCUPANCY_BEDROOM,
       bathroomType: 'Shared bathroom with client',
       showerType: 'Shared with client',
       householdNotes: 'Private double bedroom upstairs; fully equipped bathroom with toilet, washbasin and shower.',
@@ -764,7 +775,7 @@ const INITIAL_PLACEMENTS: PlacementRecord[] = [
     careGoals: 'Maintain timed medication schedule and safe household mobility while family is away.',
     accommodation: {
       privateBedroomConfirmed: true,
-      bedroomType: 'Private bedroom',
+      bedroomType: SOLE_OCCUPANCY_BEDROOM,
       bathroomType: 'Ensuite bathroom',
       showerType: 'Private',
       householdNotes: 'Private bedroom with ensuite toilet, washbasin and shower.',
@@ -838,7 +849,7 @@ const INITIAL_PLACEMENTS: PlacementRecord[] = [
     careGoals: 'Support safe independent living and confidence outdoors.',
     accommodation: {
       privateBedroomConfirmed: true,
-      bedroomType: 'Private bedroom',
+      bedroomType: SOLE_OCCUPANCY_BEDROOM,
       bathroomType: 'Private bathroom',
       showerType: 'Private',
       householdNotes: 'First-floor private carer bedroom and dedicated bathroom with bathtub and shower.',
@@ -907,7 +918,7 @@ const INITIAL_PLACEMENTS: PlacementRecord[] = [
     careGoals: 'Consistent diabetic meal routines, companionship and safe outdoor walks.',
     accommodation: {
       privateBedroomConfirmed: true,
-      bedroomType: 'Private bedroom',
+      bedroomType: SOLE_OCCUPANCY_BEDROOM,
       bathroomType: 'Shared bathroom with client',
       showerType: 'Shared with client',
       householdNotes: 'Comfortable guest bedroom; full bathroom with toilet, washbasin and bathtub.',
@@ -975,7 +986,7 @@ const INITIAL_PLACEMENTS: PlacementRecord[] = [
     careGoals: 'Safe respite cover and companionship.',
     accommodation: {
       privateBedroomConfirmed: true,
-      bedroomType: 'Private bedroom',
+      bedroomType: SOLE_OCCUPANCY_BEDROOM,
       bathroomType: 'Private bathroom',
       showerType: 'Private',
       householdNotes: 'Private guest room and downstairs shower room.',
@@ -1047,7 +1058,7 @@ const INITIAL_PLACEMENTS: PlacementRecord[] = [
     careGoals: 'Immediate safe continuity of care in Arthur’s own home.',
     accommodation: {
       privateBedroomConfirmed: true,
-      bedroomType: 'Private bedroom',
+      bedroomType: SOLE_OCCUPANCY_BEDROOM,
       bathroomType: 'Ensuite bathroom',
       showerType: 'Private',
       householdNotes: 'Ground-floor private bedroom with ensuite toilet, washbasin and shower.',
@@ -1132,7 +1143,7 @@ const INITIAL_CARE_REQUESTS: CareRequestRecord[] = [
     interests: ['Gardening', 'Music', 'Reading'],
     accommodation: {
       privateBedroomConfirmed: true,
-      bedroomType: 'Private bedroom',
+      bedroomType: SOLE_OCCUPANCY_BEDROOM,
       bathroomType: 'Private bathroom',
       showerType: 'Private',
       householdNotes:
@@ -1244,7 +1255,7 @@ const INITIAL_CARE_REQUESTS: CareRequestRecord[] = [
     interests: ['History', 'Gardening', 'Reading'],
     accommodation: {
       privateBedroomConfirmed: true,
-      bedroomType: 'Private bedroom',
+      bedroomType: SOLE_OCCUPANCY_BEDROOM,
       bathroomType: 'Private bathroom',
       showerType: 'Private',
       householdNotes:
@@ -1306,7 +1317,7 @@ const INITIAL_CARE_REQUESTS: CareRequestRecord[] = [
     interests: ['Classical music', 'Birdwatching', 'Crosswords'],
     accommodation: {
       privateBedroomConfirmed: true,
-      bedroomType: 'Private bedroom',
+      bedroomType: SOLE_OCCUPANCY_BEDROOM,
       bathroomType: 'Ensuite bathroom',
       showerType: 'Private',
       householdNotes: 'Private guest suite with ensuite toilet, washbasin and bathtub/shower.',
@@ -1367,7 +1378,7 @@ const INITIAL_CARE_REQUESTS: CareRequestRecord[] = [
     interests: ['Literature', 'Radio 4', 'Garden birds'],
     accommodation: {
       privateBedroomConfirmed: true,
-      bedroomType: 'Private bedroom',
+      bedroomType: SOLE_OCCUPANCY_BEDROOM,
       bathroomType: 'Shared bathroom with client',
       showerType: 'Shared with client',
       householdNotes:

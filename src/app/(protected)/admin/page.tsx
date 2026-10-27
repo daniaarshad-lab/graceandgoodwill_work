@@ -6,6 +6,8 @@ import { useAdminPortal, AdminTabType } from "./hooks/useAdminPortal";
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
 import ThinSpinner from "@/components/ThinSpinner";
+import Link from "next/link";
+import { PlatformStoreProvider } from "@/data/care-platform/platformStore";
 
 const AdminTabLoadingFallback = () => (
   <div className="flex flex-col items-center justify-center py-20 min-h-[300px]">
@@ -72,6 +74,28 @@ const ProfileUpdateRequests = dynamic(
 const BlogPostsTab = dynamic(() => import("./components/blog/BlogPostsTab"), {
   ssr: false,
 });
+const PlacementsStudioView = dynamic(
+  () =>
+    import("@/components/care-platform/PlacementsView").then(
+      (m) => m.PlacementsView,
+    ),
+  { ssr: false, loading: () => <AdminTabLoadingFallback /> },
+);
+const CarerAccommodationAdminView = dynamic(
+  () =>
+    import("@/components/care-platform/DeclarationsView").then(
+      (m) => m.DeclarationsView,
+    ),
+  { ssr: false, loading: () => <AdminTabLoadingFallback /> },
+);
+const HealthConditionsMasterView = dynamic(
+  () =>
+    import("@/components/care-platform/HealthConditionsView").then(
+      (m) => m.HealthConditionsView,
+    ),
+  { ssr: false, loading: () => <AdminTabLoadingFallback /> },
+);
+
 
 export default function AdminDashboard() {
   return (
@@ -158,6 +182,9 @@ function AdminDashboardContent() {
     clients: "Client Registry",
     requests: "Client Requests",
     placements: "Tracking & Overrides",
+    "placements-dashboard": "Placements Dashboard",
+    "carer-accommodation": "Carer Accommodation",
+    "master-libraries": "Master Libraries",
     emergency: "Emergency Triage",
     "emergency-requests": "Emergency Care Requests",
     billing: "Billing & Invoices",
@@ -170,7 +197,8 @@ function AdminDashboardContent() {
     <main className="h-[calc(100vh-72px)] bg-navy-950 pt-4 pb-6 text-gold-100 flex flex-col">
       <div className="container-wrapper flex-1 flex flex-col min-h-0">
         {/* --- NAVIGATION TABS BAR --- */}
-        <div className="shrink-0 z-40 border-b border-gold-300/10 mb-6 pt-2">
+        <div className="shrink-0 z-40 border-b border-gold-300/10 mb-6 pt-2 flex items-center justify-between gap-3">
+          <div className="flex-1 min-w-0">
           <nav
             ref={scrollRef}
             className="flex flex-nowrap items-center gap-1 pb-1 overflow-x-auto overflow-y-hidden admin-tabs-nav"
@@ -210,6 +238,13 @@ function AdminDashboardContent() {
                 );
               })}
           </nav>
+          </div>
+          <Link
+            href="/admin/care-platform"
+            className="shrink-0 mb-1 px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#DFC289] to-[#CFA65B] text-[#0A1629] text-xs font-bold shadow-sm hover:opacity-95 transition whitespace-nowrap"
+          >
+            Care Platform Studio &rarr;
+          </Link>
         </div>
 
         {/* --- MAIN OPERATIONAL CONSOLES --- */}
@@ -358,6 +393,39 @@ function AdminDashboardContent() {
               {portal.activeTab === "profile-updates" && (
                 <ProfileUpdateRequests />
               )}
+              
+              {/* PlacementsStudioTab */}
+              {portal.activeTab === "placements-dashboard" && (
+                <PlatformStoreProvider>
+                  <div className="rounded-2xl overflow-hidden bg-[#F8F5EE] text-[#1E293B]">
+                    <PlacementsStudioView initialMode="admin-list" />
+                  </div>
+                </PlatformStoreProvider>
+              )}
+
+              {portal.activeTab === "carer-accommodation" && (
+                <PlatformStoreProvider>
+                  <div className="rounded-2xl overflow-hidden bg-[#F8F5EE] text-[#1E293B] p-3 sm:p-5">
+                    <CarerAccommodationAdminView
+                      onBack={() => handleTabChange("overview")}
+                      onNavigateToPlacements={() =>
+                        handleTabChange("placements-dashboard")
+                      }
+                    />
+                  </div>
+                </PlatformStoreProvider>
+              )}
+
+              {portal.activeTab === "master-libraries" && (
+                <PlatformStoreProvider>
+                  <div className="rounded-2xl overflow-hidden bg-[#F8F5EE] text-[#1E293B] p-3 sm:p-5">
+                    <HealthConditionsMasterView
+                      onBack={() => handleTabChange("overview")}
+                    />
+                  </div>
+                </PlatformStoreProvider>
+              )}
+
               {SHOW_ADMIN_BLOG && portal.activeTab === "blog" && <BlogPostsTab />}
             </>
           )}

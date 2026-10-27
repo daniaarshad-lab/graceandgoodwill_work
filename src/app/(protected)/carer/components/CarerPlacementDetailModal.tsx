@@ -445,7 +445,7 @@ export default function CarerPlacementDetailModal({
               >
                 <Calendar className="w-3.5 h-3.5 text-gold-DEFAULT shrink-0" />
                 <span>Start: {formatDate(effectiveStartDate)}</span>
-                <span className="text-gold-300/40">•</span>
+                <span className="text-gold-300/40">-</span>
                 {effectiveEndDate ? (
                   <span>End: {formatDate(effectiveEndDate)}</span>
                 ) : (
@@ -1118,17 +1118,19 @@ export default function CarerPlacementDetailModal({
                       <span className="text-gold-100/50 font-bold uppercase tracking-wider block mb-1 text-[10px]">
                         Contact Information
                       </span>
-                      {placement.contactDetailsReleased && placement.clientProfile?.user?.email ? (
+                      {placement.contactDetailsReleased && (placement.clientProfile?.user?.phoneNumber || ((placement as any).emailExceptionAuthorised && placement.clientProfile?.user?.email)) ? (
                         <div className="space-y-2 text-gold-100">
-                          <div className="flex items-center gap-2">
-                            <Mail className="w-4 h-4 text-gold-DEFAULT" />
-                            <a
-                              href={`mailto:${placement.clientProfile.user.email}`}
-                              className="hover:underline text-gold-200 font-medium"
-                            >
-                              {placement.clientProfile.user.email}
-                            </a>
-                          </div>
+                          {(placement as any).emailExceptionAuthorised && placement.clientProfile?.user?.email && (
+                            <div className="flex items-center gap-2">
+                              <Mail className="w-4 h-4 text-gold-DEFAULT" />
+                              <a
+                                href={`mailto:${placement.clientProfile.user.email}`}
+                                className="hover:underline text-gold-200 font-medium"
+                              >
+                                {placement.clientProfile.user.email}
+                              </a>
+                            </div>
+                          )}
                           {placement.clientProfile.user.phoneNumber && (
                             <div className="flex items-center gap-2">
                               <Phone className="w-4 h-4 text-gold-DEFAULT" />
@@ -1155,10 +1157,10 @@ export default function CarerPlacementDetailModal({
                           </div>
                           <p className="text-gold-100/60 text-xs leading-relaxed">
                             {isRejected
-                              ? "Direct client phone and email are not disclosed for declined placements."
+                              ? "Direct client telephone and residential address are not disclosed for declined placements."
                               : isPendingOffer
-                              ? "Client direct phone and email will unlock 48 hours before placement commences once accepted."
-                              : "Direct phone number and email will be automatically released 48 hours before placement starts."}
+                              ? "Client direct telephone and residential address will unlock before placement commences once accepted."
+                              : "Direct telephone number and residential address will be automatically released before placement starts."}
                           </p>
                         </div>
                       )}

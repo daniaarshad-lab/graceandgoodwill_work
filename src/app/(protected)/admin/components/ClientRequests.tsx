@@ -405,8 +405,12 @@ export default function ClientRequests({
                               </span>
                               <span className="text-gold-200 font-medium font-mono text-[11px]">
                                 Start: <strong className="text-white">{req.startDate}</strong>
-                                {" — "}
-                                End: <strong className="text-white">{req.endDate && !req.isOngoing ? req.endDate : "Ongoing"}</strong>
+                                {" - "}
+                                {req.endDate && !req.isOngoing ? (
+                                  <>End: <strong className="text-white">{req.endDate}</strong></>
+                                ) : (
+                                  <strong className="text-white">Ongoing</strong>
+                                )}
                               </span>
                             </div>
                           </div>

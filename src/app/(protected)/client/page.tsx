@@ -185,8 +185,6 @@ export default function ClientDashboard() {
               setNotes={portal.setCareNotes}
               isOngoing={portal.isOngoing}
               setIsOngoing={portal.setIsOngoing}
-              weeklyPayRange={portal.weeklyPayRange}
-              setWeeklyPayRange={portal.setWeeklyPayRange}
               errors={portal.careErrors}
               isSubmitting={portal.isCareSubmitting}
               onSubmit={async (e) => {

@@ -1,4 +1,8 @@
+import { useState } from "react";
 import SectionCard from "./shared/SectionCard";
+import ClientCarerAccommodationSection, {
+  ClientAccommPhotoItem,
+} from "./ClientCarerAccommodationSection";
 import Input from "@/components/Input";
 import GoogleAddressAutocomplete from "@/components/GoogleAddressAutocomplete";
 import MultiSelect from "@/components/MultiSelect";
@@ -32,8 +36,6 @@ interface CareRequestFormProps {
   setNotes: (val: string) => void;
   isOngoing: boolean;
   setIsOngoing: (val: boolean) => void;
-  weeklyPayRange: { min: number; max: number } | null;
-  setWeeklyPayRange: (val: { min: number; max: number } | null) => void;
   errors: Record<string, string>;
   isSubmitting: boolean;
   onSubmit: (e: React.FormEvent) => void;
@@ -75,13 +77,40 @@ export default function CareRequestForm({
   setNotes,
   isOngoing,
   setIsOngoing,
-  weeklyPayRange,
-  setWeeklyPayRange,
   errors,
   isSubmitting,
   onSubmit,
   setActiveTab,
 }: CareRequestFormProps) {
+  const [hasPrivateBedroom, setHasPrivateBedroom] = useState<boolean>(true);
+  const [bathroomType, setBathroomType] = useState<string>("Private bathroom");
+  const [bathroomOther, setBathroomOther] = useState<string>("");
+  const [showerType, setShowerType] = useState<string>("Private");
+  const [showerOther, setShowerOther] = useState<string>("");
+  const [accommPhotos, setAccommPhotos] = useState<ClientAccommPhotoItem[]>([]);
+  // Never preselected: false by default
+  const [photoConsentConfirmed, setPhotoConsentConfirmed] = useState<boolean>(false);
+  const [accommError, setAccommError] = useState<string | null>(null);
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    setAccommError(null);
+    if (!hasPrivateBedroom) {
+      e.preventDefault();
+      setAccommError(
+        "Please confirm that the live-in carer will have their own private bedroom.",
+      );
+      return;
+    }
+    if (accommPhotos.length > 0 && !photoConsentConfirmed) {
+      e.preventDefault();
+      setAccommError(
+        "Please tick the confirmation checkbox beneath the accommodation photographs before submitting, or remove the photographs if you prefer not to upload any.",
+      );
+      return;
+    }
+    onSubmit(e);
+  };
+
   return (
     <SectionCard className="space-y-6">
       <div className="border-b border-gold-300/10 pb-4">
@@ -97,7 +126,7 @@ export default function CareRequestForm({
         </p>
       </div>
 
-      <form onSubmit={onSubmit} className="space-y-6">
+      <form onSubmit={handleFormSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Input
             label="Full Name of Requestor"
@@ -205,29 +234,7 @@ export default function CareRequestForm({
             </label>
           </div>
         </div>
-        {/* 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Input
-            label="Weekly Pay Range - Minimum (£)"
-            value={weeklyPayRange?.min?.toString() || ""}
-            onChange={(e) => {
-              const val = parseInt(e.target.value) || 0;
-              setWeeklyPayRange({ min: val, max: weeklyPayRange?.max || val });
-            }}
-            placeholder="e.g. 800"
-            type="number"
-          />
-          <Input
-            label="Weekly Pay Range - Maximum (£)"
-            value={weeklyPayRange?.max?.toString() || ""}
-            onChange={(e) => {
-              const val = parseInt(e.target.value) || 0;
-              setWeeklyPayRange({ min: weeklyPayRange?.min || 0, max: val });
-            }}
-            placeholder="e.g. 1200"
-            type="number"
-          />
-        </div> */}
+        
 
         <div className="space-y-2">
           <label className="text-sm font-medium text-gold-200">
@@ -301,6 +308,24 @@ export default function CareRequestForm({
             className="w-full rounded-xl border border-gray-300/20 bg-navy-950 px-4 py-3 text-gold-100 outline-none focus:ring-2 focus:ring-gold-DEFAULT transition duration-300 text-sm"
           ></textarea>
         </div>
+
+        <ClientCarerAccommodationSection
+          hasPrivateBedroom={hasPrivateBedroom}
+          setHasPrivateBedroom={setHasPrivateBedroom}
+          bathroomType={bathroomType}
+          setBathroomType={setBathroomType}
+          bathroomOther={bathroomOther}
+          setBathroomOther={setBathroomOther}
+          showerType={showerType}
+          setShowerType={setShowerType}
+          showerOther={showerOther}
+          setShowerOther={setShowerOther}
+          photos={accommPhotos}
+          setPhotos={setAccommPhotos}
+          photoConsentConfirmed={photoConsentConfirmed}
+          setPhotoConsentConfirmed={setPhotoConsentConfirmed}
+          validationError={accommError}
+        />
 
         <div className="flex justify-end gap-3 pt-2">
           <Button

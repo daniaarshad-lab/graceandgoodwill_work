@@ -139,9 +139,7 @@ export function useClientPortal({ user }: UseClientPortalProps) {
       additionalNotes: careNotes,
 
       shiftType: "MORNING",
-      weeklyPayRange: weeklyPayRange
-        ? `£${weeklyPayRange.min} - £${weeklyPayRange.max} per week`
-        : undefined,
+      
     };
 
     console.log("Submitting Care Request Payload:", payload);

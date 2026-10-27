@@ -223,10 +223,10 @@ export default function PlacementOpportunities() {
                     <Banknote className="w-3.5 h-3.5 text-gold-200/40" />
                     <div>
                       <span className="block text-[10px] uppercase tracking-wider text-gold-100/40">
-                        Weekly Pay
+                        Weekly Carer Fee &amp; Food Allowance
                       </span>
                       <span className="text-emerald-400 font-semibold">
-                        {formatPayRange(req.weeklyPayRange)}
+                        {formatPayRange(req.weeklyPayRange)} + £{(req as any).foodAllowance ?? 40}/wk food allowance
                       </span>
                     </div>
                   </div>

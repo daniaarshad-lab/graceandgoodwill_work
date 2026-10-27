@@ -1,0 +1,983 @@
+"use client";
+
+import React, { useState } from 'react';
+import {
+  Home,
+  User,
+  FileText,
+  Plus,
+  Pill,
+  Heart,
+  Shield,
+  ShieldCheck,
+  Clock,
+  CheckCircle2,
+  Phone,
+  Mail,
+  Check,
+  Coins,
+  Eye,
+  X,
+  AlertTriangle,
+  Calendar,
+} from 'lucide-react';
+import {
+  deriveMainCareNeeds,
+  getFinancialVisibility,
+  usePlatformStore,
+} from '@/data/care-platform/platformStore';
+
+interface ActivePlacementViewProps {
+  onBack: () => void;
+}
+
+export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack }) => {
+  const { placements, careRequests, updatePlacement } = usePlatformStore();
+
+  // Default to Eleanor Briggs so the original Client Profile view loads seamlessly, with ability to switch clients
+  const defaultEleanor = placements.find((p) => p.id === 'pl-eleanor') || placements[0];
+  const [selectedPlacementId, setSelectedPlacementId] = useState<string>(
+    defaultEleanor?.id || 'pl-eleanor'
+  );
+  const [portalMode, setPortalMode] = useState<'admin-profile' | 'client-portal'>('admin-profile');
+  const [activeTab, setActiveTab] = useState<
+    'overview' | 'careplan' | 'medication' | 'carers' | 'documents' | 'notes' | 'safety'
+  >('medication');
+  const [showNotificationToast, setShowNotificationToast] = useState(false);
+  const [previewDocType, setPreviewDocType] = useState<'agreement' | 'statement' | null>(null);
+  const [editingClientFee, setEditingClientFee] = useState(false);
+
+  const selectedPlacement =
+    placements.find((p) => p.id === selectedPlacementId) || defaultEleanor || placements[0];
+
+  // Client Profile & Client Portal strictly follow Client financial visibility:
+  // ONLY Agreed Grace & Goodwill Client Fee is ever shown here — carer fees NEVER appear on Client Profile, Client Portal, or Client Documents.
+  const clientFinancialPolicy = getFinancialVisibility('client');
+  const conciseCareNeeds = selectedPlacement
+    ? deriveMainCareNeeds(selectedPlacement, careRequests, 4)
+    : ['Live-in Companionship & Daily Support'];
+
+  const medications = [
+    {
+      name: 'Amlodipine',
+      dose: '5 mg',
+      frequency: 'Once daily',
+      time: '08:00',
+      support: 'Prompt only',
+      notes: 'For blood pressure',
+    },
+    {
+      name: 'Metformin',
+      dose: '500 mg',
+      frequency: 'Twice daily',
+      time: '08:00, 18:00',
+      support: 'Support to take',
+      notes: 'With food',
+    },
+    {
+      name: 'Paracetamol',
+      dose: '1 g',
+      frequency: 'Up to 4 times daily',
+      time: 'As required',
+      support: 'Support to take',
+      notes: 'For pain relief',
+    },
+    {
+      name: 'Furosemide',
+      dose: '40 mg',
+      frequency: 'Once daily',
+      time: '08:00',
+      support: 'Prompt only',
+      notes: 'Monitor for swelling',
+    },
+    {
+      name: 'Omeprazole',
+      dose: '20 mg',
+      frequency: 'Once daily',
+      time: '08:00',
+      support: 'Prompt only',
+      notes: 'Before food',
+    },
+    {
+      name: 'Vitamin D3',
+      dose: '800 IU',
+      frequency: 'Once daily',
+      time: '08:00',
+      support: 'Prompt only',
+      notes: 'Supplement',
+    },
+  ];
+
+  const handleConfirmSubmit = () => {
+    setShowNotificationToast(true);
+    setTimeout(() => setShowNotificationToast(false), 4000);
+  };
+
+  const clientDisplayName =
+    selectedPlacement.id === 'pl-eleanor'
+      ? 'Mrs Eleanor Briggs'
+      : `${selectedPlacement.clientFirstName} ${selectedPlacement.clientSurname}`;
+
+  return (
+    <div className="p-4 sm:p-6 lg:p-8 max-w-[1440px] mx-auto space-y-6 relative overflow-hidden">
+      {/* ── Background Grace & Goodwill Logo Watermark (3D Gold Ribbon Knot) ── */}
+      <div className="absolute top-0 right-0 w-[420px] sm:w-[540px] lg:w-[620px] h-48 sm:h-56 pointer-events-none select-none z-0 overflow-hidden opacity-[0.20]">
+        <img
+          src="/website_logo.png"
+          alt=""
+          className="w-full h-full object-contain object-right filter brightness-110 contrast-110"
+        />
+      </div>
+
+      {/* Top Breadcrumbs + Client Selector + Client Portal View Switcher */}
+      <div className="flex flex-wrap items-center justify-between gap-3 text-xs relative z-10">
+        <div className="flex items-center gap-2 text-[#7D7362]">
+          <button onClick={onBack} className="hover:text-[#0A1629] transition-colors cursor-pointer">
+            Clients
+          </button>
+          <span>&gt;</span>
+          <span>{clientDisplayName}</span>
+          <span>&gt;</span>
+          <span className="font-semibold text-[#0A1629]">
+            {portalMode === 'client-portal' ? 'Client Portal' : 'Client Profile'}
+          </span>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2.5">
+          {portalMode === 'admin-profile' && (
+            <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-[#EAE3D4] text-xs">
+              <span className="text-[#7D7362]">Client Profile:</span>
+              <select
+                value={selectedPlacement.id}
+                onChange={(e) => setSelectedPlacementId(e.target.value)}
+                className="font-semibold text-[#0A1629] bg-transparent focus:outline-none cursor-pointer"
+              >
+                {placements.map((pl) => (
+                  <option key={pl.id} value={pl.id}>
+                    {pl.clientFirstName} {pl.clientSurname} ({pl.location})
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          <div className="flex items-center bg-white rounded-xl border border-[#EAE3D4] p-0.5">
+            <button
+              onClick={() => setPortalMode('admin-profile')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
+                portalMode === 'admin-profile'
+                  ? 'bg-[#0A1629] text-white'
+                  : 'text-[#5C5549] hover:text-[#0A1629]'
+              }`}
+            >
+              Client Profile
+            </button>
+            <button
+              onClick={() => {
+                setPortalMode('client-portal');
+                setEditingClientFee(false);
+              }}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold inline-flex items-center gap-1.5 transition-colors cursor-pointer ${
+                portalMode === 'client-portal'
+                  ? 'bg-[#B88E3E] text-white'
+                  : 'text-[#5C5549] hover:text-[#0A1629]'
+              }`}
+            >
+              <Eye className="w-3.5 h-3.5" />
+              <span>Client Portal View</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {portalMode === 'client-portal' && (
+        <div className="rounded-xl bg-[#FAF6EE] border border-[#DFD0B4] px-4 py-3 flex flex-wrap items-center justify-between gap-2 text-xs text-[#0A1629] relative z-10">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="w-4 h-4 text-[#B88E3E] shrink-0" />
+            <span>
+              <strong>Grace &amp; Goodwill Client Portal ({clientDisplayName}):</strong> Displays
+              your care plan, clinical updates, assigned carer introduction, and your agreed Grace
+              &amp; Goodwill weekly care fee (&pound;
+              {selectedPlacement.agreedClientWeeklyFee.toLocaleString()}/wk).
+            </span>
+          </div>
+          <button
+            onClick={() => setActiveTab('documents')}
+            className="text-xs font-semibold text-[#8C6D2B] hover:text-[#0A1629] underline cursor-pointer"
+          >
+            View Client Agreements &amp; Fee Statements &rarr;
+          </button>
+        </div>
+      )}
+
+      {/* Header Banner Card */}
+      <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
+        <div className="flex items-center gap-4">
+          <img
+            src={selectedPlacement.avatar}
+            alt={clientDisplayName}
+            className="w-16 h-16 rounded-full object-cover ring-2 ring-[#B88E3E]/40 shrink-0"
+          />
+          <div>
+            <div className="flex flex-wrap items-center gap-3">
+              <h1 className="text-xl sm:text-2xl font-bold text-[#0A1629] tracking-tight">
+                {clientDisplayName}
+              </h1>
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-800">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
+                {selectedPlacement.status === 'Active' ? 'Active Placement' : selectedPlacement.status}
+              </span>
+            </div>
+            <div className="text-xs text-[#7D7362] mt-0.5">
+              {selectedPlacement.id === 'pl-eleanor'
+                ? '84, Manchester'
+                : `${selectedPlacement.age}, ${selectedPlacement.location}`}
+            </div>
+            <div className="text-xs text-[#5C5549] mt-1">
+              <span className="font-semibold text-[#0A1629]">Main Care Needs:</span>{' '}
+              {conciseCareNeeds.join(', ')}
+            </div>
+          </div>
+        </div>
+
+        {/* Placement & Client Agreed Fee Summary (Zero Carer Remuneration Shown) */}
+        <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-xs">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-[#FAF7F2] border border-[#E0D5C1] flex items-center justify-center text-[#B88E3E]">
+              <Home className="w-4 h-4" />
+            </div>
+            <div>
+              <div className="text-[10px] text-[#A39886]">{selectedPlacement.placementType}</div>
+              <div className="font-semibold text-[#0A1629]">
+                Start: {selectedPlacement.startDate}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-[#FAF7F2] border border-[#E0D5C1] flex items-center justify-center text-[#B88E3E]">
+              <User className="w-4 h-4" />
+            </div>
+            <div>
+              <div className="text-[10px] text-[#A39886]">Primary Carer</div>
+              <div className="font-semibold text-[#0A1629]">
+                {selectedPlacement.id === 'pl-eleanor'
+                  ? 'Sophie Williams'
+                  : selectedPlacement.primaryCarer.fullName}
+              </div>
+            </div>
+          </div>
+
+          {clientFinancialPolicy.canViewAgreedClientFee && (
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-[#FAF7F2] border border-[#E0D5C1] flex items-center justify-center text-[#B88E3E]">
+                <Coins className="w-4 h-4" />
+              </div>
+              <div>
+                <div className="text-[10px] text-[#A39886]">Agreed G&amp;G Care Fee</div>
+                <div className="font-semibold text-[#0A1629] tabular-nums">
+                  &pound;{selectedPlacement.agreedClientWeeklyFee.toLocaleString()} / week
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-[#FAF7F2] border border-[#E0D5C1] flex items-center justify-center text-[#B88E3E]">
+              <FileText className="w-4 h-4" />
+            </div>
+            <div>
+              <div className="text-[10px] text-[#A39886]">Care Plan</div>
+              <div className="font-semibold text-[#0A1629]">Version 3.2</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Tabs Row */}
+      <div className="flex items-center gap-1 border-b border-[#EAE3D4] pb-1 overflow-x-auto text-xs relative z-10">
+        {[
+          { id: 'overview', label: 'Overview & Agreed Fees' },
+          { id: 'careplan', label: 'Care Plan' },
+          { id: 'medication', label: 'Medication & Clinical', icon: Pill },
+          { id: 'carers', label: 'Carers' },
+          { id: 'documents', label: 'Client Documents & Statements' },
+          { id: 'notes', label: 'Notes' },
+          { id: 'safety', label: 'Safety & Alerts' },
+        ].map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as typeof activeTab)}
+              className={`flex items-center gap-2 px-4 py-2.5 font-semibold rounded-t-xl transition-all whitespace-nowrap cursor-pointer ${
+                isActive
+                  ? 'border-b-2 border-[#B88E3E] text-[#0A1629] bg-white shadow-sm'
+                  : 'text-[#7D7362] hover:text-[#0A1629] hover:bg-white/50'
+              }`}
+            >
+              {tab.icon && <Pill className="w-3.5 h-3.5 text-[#B88E3E]" />}
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* ── TAB 1: OVERVIEW & AGREED GRACE & GOODWILL FEES ── */}
+      {activeTab === 'overview' && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10 text-xs">
+          <div className="lg:col-span-2 space-y-6">
+            <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-sm space-y-4">
+              <h2 className="text-sm font-bold text-[#0A1629]">
+                Client Profile &amp; Live-in Care Arrangement
+              </h2>
+              <p className="text-[#5C5549] leading-relaxed">{selectedPlacement.aboutClient}</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                <div className="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#E0D5C1]">
+                  <span className="text-[11px] text-[#7D7362] block">Care Arrangement</span>
+                  <strong className="text-[#0A1629]">
+                    {selectedPlacement.placementType} ({selectedPlacement.duration})
+                  </strong>
+                </div>
+                <div className="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#E0D5C1]">
+                  <span className="text-[11px] text-[#7D7362] block">Placement Dates</span>
+                  <strong className="text-[#0A1629]">
+                    Start: {selectedPlacement.startDate} -{' '}
+                    {selectedPlacement.endDate === 'Ongoing'
+                      ? 'Ongoing'
+                      : `End: ${selectedPlacement.endDate}`}
+                  </strong>
+                </div>
+                <div className="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#E0D5C1]">
+                  <span className="text-[11px] text-[#7D7362] block">Main Care Needs</span>
+                  <strong className="text-[#0A1629]">{conciseCareNeeds.join(', ')}</strong>
+                </div>
+                <div className="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#E0D5C1]">
+                  <span className="text-[11px] text-[#7D7362] block">Carer Accommodation</span>
+                  <strong className="text-[#0A1629]">
+                    {selectedPlacement.accommodation.bedroomType} &bull;{' '}
+                    {selectedPlacement.accommodation.bathroomType}
+                  </strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Client Payment & Agreed Fee Card — Strictly Agreed Grace & Goodwill Fee Only */}
+          <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-sm space-y-4">
+            <div className="flex items-center justify-between pb-2.5 border-b border-[#F2ECE0]">
+              <div className="flex items-center gap-2">
+                <Coins className="w-4 h-4 text-[#B88E3E]" />
+                <h3 className="text-sm font-bold text-[#0A1629]">
+                  Agreed Grace &amp; Goodwill Fees
+                </h3>
+              </div>
+              {portalMode === 'admin-profile' && (
+                <button
+                  onClick={() => setEditingClientFee(!editingClientFee)}
+                  className="text-xs font-semibold text-[#B88E3E] hover:underline cursor-pointer"
+                >
+                  {editingClientFee ? 'Done' : 'Edit'}
+                </button>
+              )}
+            </div>
+
+            <p className="text-[11.5px] text-[#7D7362] leading-relaxed">
+              Fees agreed between {clientDisplayName} and Grace &amp; Goodwill for live-in care
+              provision.
+            </p>
+
+            {editingClientFee && portalMode === 'admin-profile' ? (
+              <div className="space-y-1.5">
+                <label className="font-semibold text-[#0A1629] block">
+                  Agreed Client Weekly Fee (&pound;/wk)
+                </label>
+                <input
+                  type="number"
+                  min={0}
+                  value={selectedPlacement.agreedClientWeeklyFee}
+                  onChange={(e) =>
+                    updatePlacement(selectedPlacement.id, (prev) => ({
+                      ...prev,
+                      agreedClientWeeklyFee: Number(e.target.value) || 0,
+                    }))
+                  }
+                  className="w-full px-3 py-2 rounded-xl border border-[#E0D5C1] bg-[#FAF7F2] font-bold text-[#0A1629] tabular-nums"
+                />
+              </div>
+            ) : (
+              <div className="p-4 rounded-xl bg-[#FAF7F2] border border-[#E0D5C1] space-y-1">
+                <span className="text-[11px] text-[#7D7362] block">
+                  Weekly Live-in Care Service Fee
+                </span>
+                <div className="text-xl font-bold text-[#0A1629] tabular-nums">
+                  &pound;{selectedPlacement.agreedClientWeeklyFee.toLocaleString()}.00
+                  <span className="text-xs font-normal text-[#7D7362]"> / week</span>
+                </div>
+                <span className="text-[11px] text-[#8C6D2B] font-medium block pt-0.5">
+                  Payable directly to Grace &amp; Goodwill
+                </span>
+              </div>
+            )}
+
+            <div className="space-y-2 pt-1">
+              <button
+                onClick={() => setPreviewDocType('agreement')}
+                className="w-full py-2 px-3.5 rounded-xl border border-[#DFD0B4] bg-[#FAF6EE] hover:bg-white text-xs font-semibold text-[#0A1629] flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <FileText className="w-3.5 h-3.5 text-[#B88E3E]" />
+                <span>View Client Service Agreement</span>
+              </button>
+              <button
+                onClick={() => setPreviewDocType('statement')}
+                className="w-full py-2 px-3.5 rounded-xl border border-[#EAE3D4] bg-white hover:bg-[#FAF7F2] text-xs font-semibold text-[#0A1629] flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <Calendar className="w-3.5 h-3.5 text-[#B88E3E]" />
+                <span>View Weekly Fee Statement</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── TAB 2: CARE PLAN ── */}
+      {activeTab === 'careplan' && (
+        <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-sm space-y-4 relative z-10 text-xs">
+          <h2 className="text-sm font-bold text-[#0A1629]">Approved Live-in Care Plan (v3.2)</h2>
+          <p className="text-[#5C5549] leading-relaxed">{selectedPlacement.careGoals}</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
+            <div className="p-4 rounded-xl bg-[#FAF7F2] border border-[#E0D5C1] space-y-1">
+              <div className="font-bold text-[#0A1629]">Mobility Support</div>
+              <div className="text-[#5C5549]">{selectedPlacement.mobilityLevel}</div>
+              <p className="text-[11px] text-[#7D7362]">{selectedPlacement.mobilityDetails}</p>
+            </div>
+            <div className="p-4 rounded-xl bg-[#FAF7F2] border border-[#E0D5C1] space-y-1">
+              <div className="font-bold text-[#0A1629]">Personal Care Routines</div>
+              <div className="text-[#5C5549]">{selectedPlacement.personalCareNeeds.join(', ')}</div>
+              <p className="text-[11px] text-[#7D7362]">{selectedPlacement.personalCareNotes}</p>
+            </div>
+            <div className="p-4 rounded-xl bg-[#FAF7F2] border border-[#E0D5C1] space-y-1">
+              <div className="font-bold text-[#0A1629]">Medication Routine</div>
+              <p className="text-[#5C5549]">{selectedPlacement.medicationSupport}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── TAB 3: MEDICATION & CLINICAL (Original Layout Preserved) ── */}
+      {activeTab === 'medication' && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
+          {/* Left 2 Cols: Medication Table & Clinical Information */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Section: Medication Management */}
+            <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-sm space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#F2ECE0]">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-[#FAF7F2] flex items-center justify-center text-[#B88E3E]">
+                    <Pill className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h2 className="text-sm font-bold text-[#0A1629]">Medication Management</h2>
+                    <p className="text-[11px] text-[#7D7362]">
+                      Keep medication information up to date to ensure safe, consistent care.
+                    </p>
+                  </div>
+                </div>
+
+                <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#E0D5C1] bg-[#FAF7F2] hover:bg-white text-xs font-semibold text-[#0A1629] transition-colors shadow-sm self-start sm:self-auto cursor-pointer">
+                  <Plus className="w-3.5 h-3.5 text-[#B88E3E]" />
+                  <span>Add Medication</span>
+                </button>
+              </div>
+
+              {/* Table */}
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs min-w-[620px]">
+                  <thead>
+                    <tr className="border-b border-[#F2ECE0] text-[#7D7362] text-[10.5px] uppercase font-semibold">
+                      <th className="pb-3">Medication Name</th>
+                      <th className="pb-3">Dose</th>
+                      <th className="pb-3">Frequency</th>
+                      <th className="pb-3">Time(s)</th>
+                      <th className="pb-3">Support Required</th>
+                      <th className="pb-3">Notes</th>
+                      <th className="pb-3 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#F5EFE4]">
+                    {medications.map((m, idx) => (
+                      <tr key={idx} className="hover:bg-[#FBF9F5] transition-colors">
+                        <td className="py-3 font-semibold text-[#0A1629]">{m.name}</td>
+                        <td className="py-3 text-[#7D7362]">{m.dose}</td>
+                        <td className="py-3 text-[#7D7362]">{m.frequency}</td>
+                        <td className="py-3 text-[#7D7362] font-mono">{m.time}</td>
+                        <td className="py-3">
+                          <span
+                            className={`text-[10.5px] font-semibold ${
+                              m.support === 'Prompt only' ? 'text-amber-800' : 'text-blue-800'
+                            }`}
+                          >
+                            {m.support}
+                          </span>
+                        </td>
+                        <td className="py-3 text-[#7D7362]">{m.notes}</td>
+                        <td className="py-3 text-right">
+                          <button className="text-[#A39886] hover:text-[#0A1629] p-1 cursor-pointer">
+                            •••
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Section: Clinical Information */}
+            <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-sm space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-[#F2ECE0]">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-[#FAF7F2] flex items-center justify-center text-[#B88E3E]">
+                    <Heart className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h2 className="text-sm font-bold text-[#0A1629]">Clinical Information</h2>
+                    <p className="text-[11px] text-[#7D7362]">
+                      Key clinical information to support safe and informed care.
+                    </p>
+                  </div>
+                </div>
+
+                <button className="text-xs text-[#B88E3E] hover:underline font-semibold cursor-pointer">
+                  Edit Clinical Information
+                </button>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-1 text-xs text-[#0A1629]">
+                <span className="inline-flex items-center gap-1.5 font-medium">
+                  <span className="w-2 h-2 rounded-full bg-sky-500" /> Catheter: Yes
+                </span>
+                <span className="text-[#D5CBB8]">&bull;</span>
+                <span className="inline-flex items-center gap-1.5 font-medium">
+                  <span className="w-2 h-2 rounded-full bg-rose-500" /> Diabetes: Type 2
+                </span>
+                <span className="text-[#D5CBB8]">&bull;</span>
+                <span className="inline-flex items-center gap-1.5 font-medium">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500" /> Physiotherapy: Weekly
+                </span>
+                <span className="text-[#D5CBB8]">&bull;</span>
+                <span className="inline-flex items-center gap-1.5 font-medium">
+                  <span className="w-2 h-2 rounded-full bg-purple-500" /> District Nurse: Monthly
+                </span>
+                <span className="text-[#D5CBB8]">&bull;</span>
+                <span className="inline-flex items-center gap-1.5 font-medium">
+                  <span className="w-2 h-2 rounded-full bg-amber-500" /> Allergies: Penicillin
+                </span>
+              </div>
+
+              {/* Clinical Notes & Key Contacts */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                <div className="bg-[#FAF7F2] p-4 rounded-xl border border-[#E0D5C1] space-y-1.5">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-[#0A1629]">
+                    <FileText className="w-3.5 h-3.5 text-[#B88E3E]" />
+                    <span>Clinical Notes</span>
+                  </div>
+                  <p className="text-[11.5px] text-[#7D7362] leading-relaxed">
+                    Mrs Briggs has a urinary catheter which is changed every 4 weeks by the district
+                    nurse. Monitor for signs of infection. Mobility support required. Attends weekly
+                    physiotherapy for strength and balance.
+                  </p>
+                </div>
+
+                <div className="bg-[#FAF7F2] p-4 rounded-xl border border-[#E0D5C1] space-y-2">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-[#0A1629]">
+                    <Phone className="w-3.5 h-3.5 text-[#B88E3E]" />
+                    <span>Key Contacts</span>
+                  </div>
+                  <div className="space-y-1.5 text-xs">
+                    <div>
+                      <span className="font-semibold text-[#0A1629] block text-[11px]">
+                        District Nurse Team – Central Manchester
+                      </span>
+                      <span className="text-[#7D7362] text-[11px]">Tel: 0161 123 4567</span>
+                    </div>
+                    <div>
+                      <span className="font-semibold text-[#0A1629] block text-[11px]">
+                        GP – Dr James Carter (Riverside Medical Centre)
+                      </span>
+                      <span className="text-[#7D7362] text-[11px]">Tel: 0161 987 6543</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Notifications & Safety Updates + Recent Activity */}
+          <div className="space-y-6">
+            {/* Notifications & Safety Updates Card */}
+            <div className="bg-white rounded-2xl p-5 border border-[#EAE3D4] shadow-sm space-y-4">
+              <div className="flex items-center gap-2 pb-2 border-b border-[#F2ECE0]">
+                <Shield className="w-4 h-4 text-[#B88E3E]" />
+                <h3 className="text-xs font-bold text-[#0A1629]">
+                  Notifications &amp; Safety Updates
+                </h3>
+              </div>
+              <p className="text-[11px] text-[#7D7362] leading-relaxed">
+                Clients and carers are automatically notified when medication or clinical
+                information is updated.
+              </p>
+
+              {/* Client Notification */}
+              <div className="bg-[#FAF7F2] p-3.5 rounded-xl border border-[#E0D5C1] space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-semibold text-[#0A1629] flex items-center gap-1.5">
+                    <Mail className="w-3.5 h-3.5 text-[#B88E3E]" /> Client Notification
+                  </span>
+                  <span className="text-[10px] font-semibold text-emerald-700 flex items-center gap-1">
+                    ● Email Sent
+                  </span>
+                </div>
+                <p className="text-[10.5px] text-[#7D7362]">
+                  A confirmation email is sent to {clientDisplayName} when changes are confirmed.
+                </p>
+                <div className="bg-white p-2.5 rounded-lg border border-[#E8DEC9] text-[10.5px] text-slate-700 italic">
+                  &ldquo;Your medication information has been updated. Please log in to your Grace
+                  &amp; Goodwill client portal to view the changes.&rdquo;
+                </div>
+                <div className="text-[10px] text-[#A39886] flex items-center gap-1">
+                  <Check className="w-3 h-3 text-emerald-600" /> Sent: 15 Jan 2024, 14:32
+                </div>
+              </div>
+
+              {/* Carer Alert */}
+              <div className="bg-[#FAF7F2] p-3.5 rounded-xl border border-[#E0D5C1] space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-semibold text-[#0A1629] flex items-center gap-1.5">
+                    <User className="w-3.5 h-3.5 text-[#B88E3E]" /> Carer Alert
+                  </span>
+                  <span className="text-[10px] font-semibold text-amber-700 flex items-center gap-1">
+                    ● Alert Sent
+                  </span>
+                </div>
+                <p className="text-[10.5px] text-[#7D7362]">
+                  The allocated carer receives an instant notification when medication or clinical
+                  information is updated.
+                </p>
+                <div className="bg-white p-2.5 rounded-lg border border-[#E8DEC9] text-[10.5px] text-slate-700 italic">
+                  &ldquo;Important medication information has been updated. Please log in to review
+                  the changes.&rdquo;
+                </div>
+                <div className="text-[10px] text-[#A39886] flex items-center gap-1">
+                  <Check className="w-3 h-3 text-emerald-600" /> Sent: 15 Jan 2024, 14:32
+                </div>
+              </div>
+            </div>
+
+            {/* Recent Activity Card */}
+            <div className="bg-white rounded-2xl p-5 border border-[#EAE3D4] shadow-sm space-y-3">
+              <div className="flex items-center justify-between pb-2 border-b border-[#F2ECE0]">
+                <div className="flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-[#B88E3E]" />
+                  <h3 className="text-xs font-bold text-[#0A1629]">Recent Activity</h3>
+                </div>
+                <button
+                  onClick={() => setActiveTab('notes')}
+                  className="text-[11px] text-[#B88E3E] font-medium hover:underline cursor-pointer"
+                >
+                  View all &rarr;
+                </button>
+              </div>
+
+              <div className="space-y-3 text-xs">
+                <div className="border-l-2 border-emerald-500 pl-3 py-0.5 space-y-0.5">
+                  <div className="text-[10px] text-[#A39886]">15 Jan 2024, 14:32</div>
+                  <div className="font-semibold text-[#0A1629]">Jessica Smith (Admin)</div>
+                  <div className="text-[11px] text-[#7D7362]">
+                    Medication updated: Metformin dose changed to 500mg twice daily
+                  </div>
+                </div>
+
+                <div className="border-l-2 border-[#B88E3E] pl-3 py-0.5 space-y-0.5">
+                  <div className="text-[10px] text-[#A39886]">12 Jan 2024, 10:15</div>
+                  <div className="font-semibold text-[#0A1629]">Sophie Williams (Carer)</div>
+                  <div className="text-[11px] text-[#7D7362]">
+                    Clinical information updated: Physiotherapy frequency updated to weekly
+                  </div>
+                </div>
+
+                <div className="border-l-2 border-sky-500 pl-3 py-0.5 space-y-0.5">
+                  <div className="text-[10px] text-[#A39886]">10 Jan 2024, 16:20</div>
+                  <div className="font-semibold text-[#0A1629]">Dr James Carter (GP)</div>
+                  <div className="text-[11px] text-[#7D7362]">
+                    Allergies updated: Penicillin added as allergy
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── TAB 4: CARERS (Client-Safe Carer Introduction — Zero Carer Pay Shown) ── */}
+      {activeTab === 'carers' && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 relative z-10 text-xs">
+          <div className="bg-white rounded-2xl p-5 border border-[#EAE3D4] shadow-sm flex items-center gap-4">
+            <img
+              src={selectedPlacement.primaryCarer.avatar}
+              alt={selectedPlacement.primaryCarer.name}
+              className="w-14 h-14 rounded-full object-cover border border-[#E0D5C1]"
+            />
+            <div>
+              <div className="text-[11px] text-[#7D7362]">Assigned Primary Live-in Carer</div>
+              <div className="text-base font-bold text-[#0A1629]">
+                {selectedPlacement.id === 'pl-eleanor'
+                  ? 'Sophie Williams'
+                  : selectedPlacement.primaryCarer.fullName}
+              </div>
+              <div className="text-[#8C6D2B] font-medium mt-0.5">
+                {selectedPlacement.placementType} &bull; DBS &amp; Reference Verified
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl p-5 border border-[#EAE3D4] shadow-sm flex items-center gap-4">
+            {selectedPlacement.reliefCarer ? (
+              <>
+                <img
+                  src={selectedPlacement.reliefCarer.avatar}
+                  alt={selectedPlacement.reliefCarer.name}
+                  className="w-14 h-14 rounded-full object-cover border border-[#E0D5C1]"
+                />
+                <div>
+                  <div className="text-[11px] text-[#7D7362]">Assigned Relief Carer</div>
+                  <div className="text-base font-bold text-[#0A1629]">
+                    {selectedPlacement.reliefCarer.name}
+                  </div>
+                  <div className="text-[#7D7362] mt-0.5">
+                    Confirmed respite cover:{' '}
+                    {selectedPlacement.reliefCarer.confirmedDates || 'As scheduled'}
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="text-[#7D7362]">
+                Single respite block — no relief carer changeover required.
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ── TAB 5: CLIENT DOCUMENTS & AUTO-GENERATED FEE STATEMENTS (Zero Carer Pay Shown) ── */}
+      {activeTab === 'documents' && (
+        <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-sm space-y-4 relative z-10 text-xs">
+          <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-[#F2ECE0]">
+            <div>
+              <h2 className="text-sm font-bold text-[#0A1629]">
+                Client Agreements &amp; Automatically Generated Fee Documents
+              </h2>
+              <p className="text-[11.5px] text-[#7D7362] mt-0.5">
+                All client-facing documents display only the fees agreed between the Client and
+                Grace &amp; Goodwill.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="p-4 rounded-xl bg-[#FAF7F2] border border-[#E0D5C1] flex flex-col justify-between gap-3">
+              <div>
+                <div className="text-[10.5px] uppercase tracking-wider font-semibold text-[#8C6D2B]">
+                  Auto-Generated Client Agreement
+                </div>
+                <h3 className="text-sm font-bold text-[#0A1629] mt-1">
+                  Grace &amp; Goodwill Client Care Service Agreement &amp; Schedule of Fees
+                </h3>
+                <p className="text-[11.5px] text-[#5C5549] mt-1 leading-relaxed">
+                  Agreed Weekly Care Fee:{' '}
+                  <strong className="text-[#0A1629] tabular-nums">
+                    &pound;{selectedPlacement.agreedClientWeeklyFee.toLocaleString()}.00 / week
+                  </strong>{' '}
+                  payable to Grace &amp; Goodwill.
+                </p>
+              </div>
+              <button
+                onClick={() => setPreviewDocType('agreement')}
+                className="self-start px-3.5 py-2 rounded-xl bg-[#0A1629] text-white font-semibold hover:bg-[#152542] transition-colors cursor-pointer"
+              >
+                Open Client Service Agreement
+              </button>
+            </div>
+
+            <div className="p-4 rounded-xl bg-[#FAF7F2] border border-[#E0D5C1] flex flex-col justify-between gap-3">
+              <div>
+                <div className="text-[10.5px] uppercase tracking-wider font-semibold text-[#8C6D2B]">
+                  Auto-Generated Client Statement
+                </div>
+                <h3 className="text-sm font-bold text-[#0A1629] mt-1">
+                  Grace &amp; Goodwill Weekly Care Fee Statement
+                </h3>
+                <p className="text-[11.5px] text-[#5C5549] mt-1 leading-relaxed">
+                  Statement of agreed weekly live-in care service charges (&pound;
+                  {selectedPlacement.agreedClientWeeklyFee.toLocaleString()}.00/wk) for{' '}
+                  {clientDisplayName}.
+                </p>
+              </div>
+              <button
+                onClick={() => setPreviewDocType('statement')}
+                className="self-start px-3.5 py-2 rounded-xl border border-[#D4AF7A] bg-white hover:bg-[#FAF6EE] text-[#0A1629] font-semibold transition-colors cursor-pointer"
+              >
+                Open Weekly Fee Statement
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── TAB 6 & 7: NOTES / SAFETY & ALERTS ── */}
+      {(activeTab === 'notes' || activeTab === 'safety') && (
+        <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-sm space-y-3 relative z-10 text-xs">
+          <div className="flex items-center gap-2 font-bold text-sm text-[#0A1629]">
+            {activeTab === 'safety' ? (
+              <AlertTriangle className="w-4 h-4 text-[#B88E3E]" />
+            ) : (
+              <Clock className="w-4 h-4 text-[#B88E3E]" />
+            )}
+            <span>
+              {activeTab === 'safety'
+                ? 'Safeguarding, Allergy & Clinical Alerts'
+                : 'Care & Clinical Activity Notes'}
+            </span>
+          </div>
+          <p className="text-[#5C5549] leading-relaxed">
+            {activeTab === 'safety'
+              ? 'Recorded allergy: Penicillin. District Nurse reviews catheter care every 4 weeks; weekly physiotherapy in place.'
+              : 'All medication prompts and daily wellbeing updates are logged and synchronised across authorised care team views.'}
+          </p>
+        </div>
+      )}
+
+      {/* Bottom Action Footer Bar */}
+      <div className="sticky bottom-4 z-30 bg-white/95 backdrop-blur-md rounded-2xl p-4 border border-[#EAE3D4] shadow-lg flex flex-wrap items-center justify-between gap-4">
+        <div className="text-xs text-[#7D7362]">
+          Last updated: 15 Jan 2024, 14:32 by Jessica Smith
+        </div>
+
+        <div className="flex items-center gap-3">
+          <button className="px-4 py-2 rounded-xl border border-[#E0D5C1] bg-[#FAF7F2] text-xs font-semibold text-[#0A1629] hover:bg-white transition-colors cursor-pointer">
+            Save Draft
+          </button>
+          {portalMode === 'admin-profile' && (
+            <button className="px-4 py-2 rounded-xl border border-[#D4AF7A] bg-[#FAF7F2] text-xs font-semibold text-[#8C6D2B] hover:bg-white transition-colors cursor-pointer">
+              Send for Client Review
+            </button>
+          )}
+          <button
+            onClick={handleConfirmSubmit}
+            className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#060D1E] to-[#12244C] text-[#EBD8B2] border border-[#D4AF7A]/50 text-xs font-bold hover:brightness-110 transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
+          >
+            <CheckCircle2 className="w-4 h-4 text-[#D4AF7A]" />
+            <span>Confirm &amp; Submit</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Auto-Generated Client Document Preview Modal (Zero Carer Remuneration Included) */}
+      {previewDocType && (
+        <div className="fixed inset-0 z-50 bg-[#0A1629]/70 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl border border-[#EAE3D4] max-w-xl w-full overflow-hidden shadow-2xl">
+            <div className="px-6 py-4 bg-[#0A1629] text-white flex items-center justify-between gap-3">
+              <div>
+                <div className="text-[10.5px] uppercase tracking-[0.18em] text-[#D4AF7A] font-semibold">
+                  Grace &amp; Goodwill &bull; Client-Facing Document
+                </div>
+                <h3 className="font-serif text-lg font-bold text-white mt-0.5">
+                  {previewDocType === 'agreement'
+                    ? 'Client Care Service Agreement & Schedule of Fees'
+                    : 'Weekly Live-in Care Service Fee Statement'}
+                </h3>
+              </div>
+              <button
+                onClick={() => setPreviewDocType(null)}
+                className="p-1.5 text-slate-300 hover:text-white cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4 text-xs text-[#334155]">
+              <div className="grid grid-cols-2 gap-3 p-3.5 rounded-xl bg-[#FAF7F2] border border-[#EAE3D4]">
+                <div>
+                  <span className="text-[10.5px] text-[#7D7362] block">Client</span>
+                  <strong className="text-[#0A1629]">{clientDisplayName}</strong>
+                </div>
+                <div>
+                  <span className="text-[10.5px] text-[#7D7362] block">Care Arrangement</span>
+                  <strong className="text-[#0A1629]">{selectedPlacement.placementType}</strong>
+                </div>
+                <div>
+                  <span className="text-[10.5px] text-[#7D7362] block">Dates</span>
+                  <strong className="text-[#0A1629]">
+                    Start: {selectedPlacement.startDate} -{' '}
+                    {selectedPlacement.endDate === 'Ongoing'
+                      ? 'Ongoing'
+                      : `End: ${selectedPlacement.endDate}`}
+                  </strong>
+                </div>
+                <div>
+                  <span className="text-[10.5px] text-[#7D7362] block">Billing Entity</span>
+                  <strong className="text-[#0A1629]">Grace &amp; Goodwill Ltd</strong>
+                </div>
+              </div>
+
+              <div className="rounded-xl border border-[#DFD0B4] bg-[#FDF9F1] p-4 space-y-2">
+                <div className="text-[11px] font-bold uppercase tracking-wider text-[#8C6D2B]">
+                  Agreed Client Fee (Payable to Grace &amp; Goodwill)
+                </div>
+                <div className="flex items-baseline justify-between pt-1.5 border-t border-[#EDE3CE]">
+                  <span className="font-semibold text-[#0A1629]">
+                    {selectedPlacement.placementType} — Weekly Service Fee
+                  </span>
+                  <span className="text-base font-bold text-[#0A1629] tabular-nums">
+                    &pound;{selectedPlacement.agreedClientWeeklyFee.toLocaleString()}.00 / week
+                  </span>
+                </div>
+                <p className="text-[11px] text-[#5C5549] leading-relaxed pt-1">
+                  This client document reflects solely the weekly care service fee agreed between
+                  the Client and Grace &amp; Goodwill.
+                </p>
+              </div>
+
+              <div className="flex justify-end pt-1">
+                <button
+                  onClick={() => setPreviewDocType(null)}
+                  className="px-4 py-2 rounded-xl border border-[#E0D5C1] font-semibold text-[#0A1629] hover:bg-[#FAF7F2] cursor-pointer"
+                >
+                  Close Document
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showNotificationToast && (
+        <div className="fixed top-6 right-6 z-50 bg-[#060D1E] text-white p-4 rounded-2xl border border-[#D4AF7A] shadow-2xl flex items-center gap-3 animate-in slide-in-from-top-4 duration-200">
+          <CheckCircle2 className="w-5 h-5 text-[#D4AF7A]" />
+          <div>
+            <p className="font-semibold text-xs text-[#EBD8B2]">
+              Changes Live &amp; Notifications Dispatched
+            </p>
+            <p className="text-[11px] text-slate-300">
+              Confirmation sent to {clientDisplayName} and{' '}
+              {selectedPlacement.id === 'pl-eleanor'
+                ? 'Sophie Williams'
+                : selectedPlacement.primaryCarer.fullName}
+              .
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};

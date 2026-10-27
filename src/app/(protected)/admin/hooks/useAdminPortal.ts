@@ -413,6 +413,9 @@ export type AdminTabType =
   | "emergency-requests"
   | "billing"
   | "enquiries"
+  | "placements-dashboard"
+  | "carer-accommodation"
+  | "master-libraries"
   | "profile-updates"
   | "blog";
 
@@ -431,6 +434,9 @@ export function useAdminPortal() {
         "emergency-requests",
         "billing",
         "enquiries",
+        "placements-dashboard",
+        "carer-accommodation",
+        "master-libraries",
         "profile-updates",
         "blog",
       ].includes(tabParam)

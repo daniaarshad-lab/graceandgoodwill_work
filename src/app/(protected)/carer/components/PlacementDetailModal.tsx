@@ -108,8 +108,14 @@ export default function PlacementDetailModal({
               />
               <DetailItem
                 icon={<Banknote className="w-4 h-4" />}
-                label="Weekly Pay Range"
+                label="Weekly Carer Fee"
                 value={formatPayRange(careRequest.weeklyPayRange)}
+                valueClassName="text-emerald-400 font-semibold"
+              />
+              <DetailItem
+                icon={<Banknote className="w-4 h-4" />}
+                label="Weekly Food Allowance"
+                value={`£${(careRequest as any).foodAllowance ?? 40} / week`}
                 valueClassName="text-emerald-400 font-semibold"
               />
               <DetailItem

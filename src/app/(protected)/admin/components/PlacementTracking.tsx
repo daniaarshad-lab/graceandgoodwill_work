@@ -209,7 +209,10 @@ export default function PlacementTracking({
                         (Array.isArray(place.careType)
                           ? place.careType.join(", ")
                           : place.careType) + " • "}
-                      {place.location} • Commenced: {place.startDate}
+                      {place.location} • Start: {place.startDate} -{" "}
+                      {(place as any).endDate && (place as any).endDate !== "Ongoing"
+                        ? `End: ${(place as any).endDate}`
+                        : "Ongoing"}
                     </p>
                     {place.contactDetailsReleased ? (
                       <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
@@ -222,6 +225,18 @@ export default function PlacementTracking({
                     )}
                   </div>
 
+                  <p className="text-xs text-gold-200/80 mt-1 truncate">
+                    <span className="font-semibold text-gold-100/60">Main Care Needs:</span>{" "}
+                    {(place as any).mainCareNeeds
+                      ? (Array.isArray((place as any).mainCareNeeds)
+                          ? (place as any).mainCareNeeds.slice(0, 4).join(", ")
+                          : (place as any).mainCareNeeds)
+                      : place.careType
+                        ? (Array.isArray(place.careType)
+                            ? (place.careType as unknown as string[]).slice(0, 4).join(", ")
+                            : place.careType)
+                        : "Live-in Companionship & Daily Support"}
+                  </p>
                   {place.status === "REJECTED_BY_CARER" && (
                     <div className="mt-2.5 flex items-center gap-2.5 p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-xs text-rose-200">
                       <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />

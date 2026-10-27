@@ -24,6 +24,8 @@ import {
   AccommodationPhotoItem,
   getAccommodationApprovalStatus,
   getAccommodationPhotoItems,
+  SHARED_CARER_BEDROOM,
+  SOLE_OCCUPANCY_BEDROOM,
   usePlatformStore,
 } from '@/data/care-platform/platformStore';
 
@@ -47,14 +49,15 @@ const BATHROOM_OPTIONS = [
   'Ensuite bathroom',
   'Shared bathroom with client',
   'Shared bathroom with household',
-  'Other – please specify',
+  'Other, please specify',
 ];
 
 const SHOWER_OPTIONS = [
   'Private',
+  'En-suite',
   'Shared with client',
   'Shared with household',
-  'Other – please specify',
+  'Other, please specify',
 ];
 
 export const CarerAccommodationView: React.FC<CarerAccommodationViewProps> = ({
@@ -74,14 +77,26 @@ export const CarerAccommodationView: React.FC<CarerAccommodationViewProps> = ({
   const [hasPrivateBedroom, setHasPrivateBedroom] = useState<boolean>(
     currentReq?.accommodation.privateBedroomConfirmed ?? true
   );
+  const [multipleCarersInHousehold, setMultipleCarersInHousehold] = useState<boolean>(
+    Boolean(currentReq?.accommodation.multipleCarersInHousehold)
+  );
+  const [bedroomType, setBedroomType] = useState<string>(
+    currentReq?.accommodation.bedroomType === SHARED_CARER_BEDROOM
+      ? SHARED_CARER_BEDROOM
+      : SOLE_OCCUPANCY_BEDROOM
+  );
   const [bathroomType, setBathroomType] = useState<string>(
-    currentReq?.accommodation.bathroomType || 'Private bathroom'
+    currentReq?.accommodation.bathroomType === 'Other – please specify'
+      ? 'Other, please specify'
+      : currentReq?.accommodation.bathroomType || 'Private bathroom'
   );
   const [bathroomOther, setBathroomOther] = useState<string>(
     currentReq?.accommodation.bathroomOtherDetails || ''
   );
   const [showerType, setShowerType] = useState<string>(
-    currentReq?.accommodation.showerType || 'Private'
+    currentReq?.accommodation.showerType === 'Other – please specify'
+      ? 'Other, please specify'
+      : currentReq?.accommodation.showerType || 'Private'
   );
   const [showerOther, setShowerOther] = useState<string>(
     currentReq?.accommodation.showerOtherDetails || ''
@@ -113,9 +128,23 @@ export const CarerAccommodationView: React.FC<CarerAccommodationViewProps> = ({
     const nextReq = careRequests.find((r) => r.id === nextId);
     if (!nextReq) return;
     setHasPrivateBedroom(nextReq.accommodation.privateBedroomConfirmed);
-    setBathroomType(nextReq.accommodation.bathroomType);
+    setMultipleCarersInHousehold(Boolean(nextReq.accommodation.multipleCarersInHousehold));
+    setBedroomType(
+      nextReq.accommodation.bedroomType === SHARED_CARER_BEDROOM
+        ? SHARED_CARER_BEDROOM
+        : SOLE_OCCUPANCY_BEDROOM
+    );
+    setBathroomType(
+      nextReq.accommodation.bathroomType === 'Other – please specify'
+        ? 'Other, please specify'
+        : nextReq.accommodation.bathroomType
+    );
     setBathroomOther(nextReq.accommodation.bathroomOtherDetails || '');
-    setShowerType(nextReq.accommodation.showerType);
+    setShowerType(
+      nextReq.accommodation.showerType === 'Other – please specify'
+        ? 'Other, please specify'
+        : nextReq.accommodation.showerType
+    );
     setShowerOther(nextReq.accommodation.showerOtherDetails || '');
     setWorkingPhotos(getAccommodationPhotoItems(nextReq.accommodation));
     setHasNewClientUploads(false);
@@ -239,7 +268,7 @@ export const CarerAccommodationView: React.FC<CarerAccommodationViewProps> = ({
 
     if (!hasPrivateBedroom) {
       setValidationError(
-        'Compulsory requirement: Please confirm that the live-in carer will have their own private bedroom.'
+        'Compulsory requirement: Please confirm that the live-in carer will have their own private bedroom for the duration of the placement.'
       );
       return;
     }
@@ -266,6 +295,10 @@ export const CarerAccommodationView: React.FC<CarerAccommodationViewProps> = ({
     );
 
     const hasPendingForAdmin = finalizedItems.some((item) => item.status === 'pending_approval');
+    const resolvedBedroomType =
+      multipleCarersInHousehold && bedroomType === SHARED_CARER_BEDROOM
+        ? SHARED_CARER_BEDROOM
+        : SOLE_OCCUPANCY_BEDROOM;
 
     updateCareRequest(currentReq.id, (prev) => ({
       ...prev,
@@ -273,11 +306,16 @@ export const CarerAccommodationView: React.FC<CarerAccommodationViewProps> = ({
       accommodation: {
         ...prev.accommodation,
         privateBedroomConfirmed: hasPrivateBedroom,
-        bedroomType: hasPrivateBedroom ? 'Private bedroom' : prev.accommodation.bedroomType,
+        multipleCarersInHousehold,
+        bedroomType: resolvedBedroomType,
+        bothCarersAgreedSharedBedroom:
+          resolvedBedroomType === SHARED_CARER_BEDROOM
+            ? prev.accommodation.bothCarersAgreedSharedBedroom
+            : false,
         bathroomType,
-        bathroomOtherDetails: bathroomType === 'Other – please specify' ? bathroomOther : '',
+        bathroomOtherDetails: bathroomType === 'Other, please specify' ? bathroomOther : '',
         showerType,
-        showerOtherDetails: showerType === 'Other – please specify' ? showerOther : '',
+        showerOtherDetails: showerType === 'Other, please specify' ? showerOther : '',
         photoItems: finalizedItems,
         clientPhotoConsentConfirmed:
           finalizedItems.length > 0 ? consentChecked || prev.accommodation.clientPhotoConsentConfirmed : false,
@@ -380,7 +418,7 @@ export const CarerAccommodationView: React.FC<CarerAccommodationViewProps> = ({
 
           <button
             onClick={onOpenAdminReview || onBack}
-            className="px-3.5 py-2 rounded-xl bg-[#0A1629] hover:bg-[#152542] text-[#EBD8B2] border border-[#D4AF7A]/40 text-xs font-semibold inline-flex items-center gap-1.5 transition-colors cursor-pointer shadow-sm"
+            className="px-3.5 py-2 rounded-xl bg-[#0A1629] hover:bg-[#152542] text-[#EBD8B2] border border-[#D4AF7A]/40 text-xs font-semibold inline-flex items-center gap-1.5 transition-colors cursor-pointer shadow-xs"
           >
             <ShieldCheck className="w-3.5 h-3.5 text-[#D4AF7A]" />
             <span>
@@ -440,8 +478,8 @@ export const CarerAccommodationView: React.FC<CarerAccommodationViewProps> = ({
       {/* Main Two-Column Layout matching WhatsApp_Image_2026-10-19_at_11.32.14_PM_befbf1cb.jpeg */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* LEFT 8 COLS: Soft Cream Outer Container holding Private Bedroom, Bathroom Arrangements & Accommodation Photos */}
-        <div className="lg:col-span-8 bg-[#FDFBF7] rounded-2xl border border-[#E6DFD0] p-4 sm:p-5 space-y-5 shadow-sm">
-          {/* 1. Private Bedroom Card */}
+        <div className="lg:col-span-8 bg-[#FDFBF7] rounded-2xl border border-[#E6DFD0] p-4 sm:p-5 space-y-5 shadow-2xs">
+          {/* 1. Bedroom Arrangements & Mandatory Private Bedroom Requirement Card */}
           <div className="bg-white rounded-xl p-5 sm:p-6 border border-[#EAE2D2] space-y-4">
             <div className="flex items-start gap-3.5">
               <div className="w-10 h-10 rounded-xl bg-[#FAF6EE] border border-[#EDE3CE] flex items-center justify-center text-[#B88E3E] shrink-0 mt-0.5">
@@ -449,11 +487,11 @@ export const CarerAccommodationView: React.FC<CarerAccommodationViewProps> = ({
               </div>
               <div>
                 <h2 className="font-serif text-xl font-semibold text-[#0A1629]">
-                  Private Bedroom
+                  Bedroom Arrangements
                 </h2>
                 <p className="text-xs sm:text-[13px] text-[#5C5549] mt-1 leading-relaxed">
-                  A live-in carer must be provided with their own private bedroom and suitable
-                  personal space for the duration of the placement.
+                  The live-in carer must have their own private bedroom. Sharing a bedroom with the
+                  client or other household members is not permitted.
                 </p>
               </div>
             </div>
@@ -473,10 +511,67 @@ export const CarerAccommodationView: React.FC<CarerAccommodationViewProps> = ({
                 {hasPrivateBedroom && <Check className="w-3.5 h-3.5 stroke-[2.6]" />}
               </button>
               <span className="text-xs sm:text-[13px] font-semibold text-[#0A1629]">
-                I confirm that the live-in carer will have their own private bedroom.{' '}
-                <span className="text-rose-600">*</span>
+                I confirm that the live-in carer will have their own private bedroom for the
+                duration of the placement. <span className="text-rose-600">*</span>
               </span>
             </label>
+
+            <div className="rounded-xl border border-[#EAE2D2] bg-[#FDFBF7] p-4 space-y-3">
+              <div className="text-xs sm:text-[13px] font-bold text-[#0A1629]">
+                Bedroom arrangements
+              </div>
+
+              <label className="flex items-center gap-2.5 text-xs text-[#334155] cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={multipleCarersInHousehold}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    setMultipleCarersInHousehold(checked);
+                    if (!checked) {
+                      setBedroomType(SOLE_OCCUPANCY_BEDROOM);
+                    }
+                  }}
+                  className="w-4 h-4 accent-[#0A1629] rounded cursor-pointer"
+                />
+                <span>Multiple carers are accommodated within the same household</span>
+              </label>
+
+              <div className="space-y-2 pt-0.5">
+                {(multipleCarersInHousehold
+                  ? [SOLE_OCCUPANCY_BEDROOM, SHARED_CARER_BEDROOM]
+                  : [SOLE_OCCUPANCY_BEDROOM]
+                ).map((opt) => {
+                  const selected = bedroomType === opt;
+                  return (
+                    <label
+                      key={opt}
+                      onClick={() => setBedroomType(opt)}
+                      className="flex items-center gap-2.5 text-xs sm:text-[13px] text-[#1E293B] cursor-pointer py-0.5"
+                    >
+                      <span
+                        className={`w-4 h-4 rounded-full flex items-center justify-center border transition-colors shrink-0 ${
+                          selected
+                            ? 'bg-[#0A1629] border-[#0A1629]'
+                            : 'bg-white border-[#CBD5E1]'
+                        }`}
+                      >
+                        {selected && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
+                      </span>
+                      <span className={selected ? 'font-medium text-[#0A1629]' : ''}>{opt}</span>
+                    </label>
+                  );
+                })}
+              </div>
+
+              {multipleCarersInHousehold && bedroomType === SHARED_CARER_BEDROOM && (
+                <p className="text-xs text-[#5C5549] bg-[#FAF6EE] border border-[#E6D7B9] rounded-lg p-3 leading-relaxed">
+                  Both carers must explicitly agree to this arrangement before the placement is
+                  confirmed. Neither carer will be expected or required to share accommodation
+                  without their consent.
+                </p>
+              )}
+            </div>
           </div>
 
           {/* 2. Bathroom Arrangements Card */}
@@ -490,17 +585,17 @@ export const CarerAccommodationView: React.FC<CarerAccommodationViewProps> = ({
                   Bathroom Arrangements
                 </h2>
                 <p className="text-xs sm:text-[13px] text-[#5C5549] mt-1 leading-relaxed">
-                  Please confirm the bathroom and shower/bathing arrangements for the live-in carer.
+                  Please confirm the bathroom and shower arrangements for the live-in carer.
                 </p>
               </div>
             </div>
 
-            {/* Two Side-by-Side Sub-Boxes matching illustration */}
+            {/* Two Side-by-Side Sub-Boxes: Left = Bathroom Arrangements, Right = Shower Arrangements */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
-              {/* Sub-box A: Bathroom arrangements */}
+              {/* Sub-box A: Bathroom Arrangements */}
               <div className="rounded-xl border border-[#EAE2D2] bg-[#FDFBF7] p-4 space-y-2.5">
                 <div className="text-xs sm:text-[13px] font-bold text-[#0A1629] mb-1">
-                  Bathroom arrangements
+                  Bathroom Arrangements
                 </div>
                 {BATHROOM_OPTIONS.map((opt) => {
                   const selected = bathroomType === opt;
@@ -523,7 +618,7 @@ export const CarerAccommodationView: React.FC<CarerAccommodationViewProps> = ({
                     </label>
                   );
                 })}
-                {bathroomType === 'Other – please specify' && (
+                {bathroomType === 'Other, please specify' && (
                   <input
                     type="text"
                     value={bathroomOther}
@@ -534,10 +629,10 @@ export const CarerAccommodationView: React.FC<CarerAccommodationViewProps> = ({
                 )}
               </div>
 
-              {/* Sub-box B: Shower/bathing arrangements */}
+              {/* Sub-box B: Shower Arrangements */}
               <div className="rounded-xl border border-[#EAE2D2] bg-[#FDFBF7] p-4 space-y-2.5">
                 <div className="text-xs sm:text-[13px] font-bold text-[#0A1629] mb-1">
-                  Shower/bathing arrangements
+                  Shower Arrangements
                 </div>
                 {SHOWER_OPTIONS.map((opt) => {
                   const selected = showerType === opt;
@@ -560,12 +655,12 @@ export const CarerAccommodationView: React.FC<CarerAccommodationViewProps> = ({
                     </label>
                   );
                 })}
-                {showerType === 'Other – please specify' && (
+                {showerType === 'Other, please specify' && (
                   <input
                     type="text"
                     value={showerOther}
                     onChange={(e) => setShowerOther(e.target.value)}
-                    placeholder="Please specify shower/bathing arrangement..."
+                    placeholder="Please specify shower arrangement..."
                     className="w-full mt-2 px-3 py-2 rounded-lg border border-[#DFD5C2] bg-white text-xs text-[#0A1629] focus:outline-none focus:border-[#C5A059]"
                   />
                 )}
@@ -600,7 +695,7 @@ export const CarerAccommodationView: React.FC<CarerAccommodationViewProps> = ({
                 return (
                   <div
                     key={slot.slotKey}
-                    className="rounded-xl border border-[#DFD5C2] bg-[#FAF7F2] overflow-hidden flex flex-col justify-between shadow-sm"
+                    className="rounded-xl border border-[#DFD5C2] bg-[#FAF7F2] overflow-hidden flex flex-col justify-between shadow-2xs"
                   >
                     {/* Hidden real file input */}
                     <input
@@ -627,19 +722,19 @@ export const CarerAccommodationView: React.FC<CarerAccommodationViewProps> = ({
                         {/* Approval Status Badge on Photo */}
                         <div className="absolute top-2 left-2">
                           {existingPhoto.status === 'approved' && (
-                            <span className="px-2 py-0.5 rounded-md bg-emerald-900/85 text-white text-[10px] font-semibold inline-flex items-center gap-1 backdrop-blur-sm">
+                            <span className="px-2 py-0.5 rounded-md bg-emerald-900/85 text-white text-[10px] font-semibold inline-flex items-center gap-1 backdrop-blur-xs">
                               <CheckCircle2 className="w-3 h-3 text-emerald-300" />
                               Approved
                             </span>
                           )}
                           {existingPhoto.status === 'pending_approval' && (
-                            <span className="px-2 py-0.5 rounded-md bg-amber-900/90 text-amber-50 text-[10px] font-semibold inline-flex items-center gap-1 backdrop-blur-sm">
+                            <span className="px-2 py-0.5 rounded-md bg-amber-900/90 text-amber-50 text-[10px] font-semibold inline-flex items-center gap-1 backdrop-blur-xs">
                               <Clock className="w-3 h-3 text-amber-300" />
                               Pending Approval
                             </span>
                           )}
                           {existingPhoto.status === 'rejected' && (
-                            <span className="px-2 py-0.5 rounded-md bg-rose-900/90 text-white text-[10px] font-semibold inline-flex items-center gap-1 backdrop-blur-sm">
+                            <span className="px-2 py-0.5 rounded-md bg-rose-900/90 text-white text-[10px] font-semibold inline-flex items-center gap-1 backdrop-blur-xs">
                               <XCircle className="w-3 h-3 text-rose-300" />
                               Not Approved
                             </span>
@@ -651,7 +746,7 @@ export const CarerAccommodationView: React.FC<CarerAccommodationViewProps> = ({
                           type="button"
                           onClick={() => handleRemovePhoto(existingPhoto.id)}
                           title="Remove photograph"
-                          className="absolute top-2 right-2 w-7 h-7 rounded-full bg-[#0A1629]/80 hover:bg-rose-600 text-white flex items-center justify-center transition-colors cursor-pointer shadow-sm"
+                          className="absolute top-2 right-2 w-7 h-7 rounded-full bg-[#0A1629]/80 hover:bg-rose-600 text-white flex items-center justify-center transition-colors cursor-pointer shadow-xs"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -836,7 +931,7 @@ export const CarerAccommodationView: React.FC<CarerAccommodationViewProps> = ({
         </div>
 
         {/* RIGHT 4 COLS: Bedroom Illustration Image + Why This Information Is Important + Helpful Tips */}
-        <div className="lg:col-span-4 bg-white rounded-2xl border border-[#EAE2D2] p-5 space-y-5 shadow-sm">
+        <div className="lg:col-span-4 bg-white rounded-2xl border border-[#EAE2D2] p-5 space-y-5 shadow-2xs">
           <img
             src="https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=800&auto=format&fit=crop&q=80"
             alt="Comfortable private carer bedroom"

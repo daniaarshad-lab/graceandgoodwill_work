@@ -26,9 +26,17 @@ export interface ClientAccommPhotoItem {
   status: "pending_approval" | "approved" | "rejected";
 }
 
+export const CLIENT_SOLE_OCCUPANCY_BEDROOM = "Private bedroom (sole occupancy)";
+export const CLIENT_SHARED_CARER_BEDROOM =
+  "Shared bedroom with another live-in carer, subject to both carers’ agreement";
+
 interface ClientCarerAccommodationSectionProps {
   hasPrivateBedroom: boolean;
   setHasPrivateBedroom: (v: boolean) => void;
+  multipleCarersInHousehold: boolean;
+  setMultipleCarersInHousehold: (v: boolean) => void;
+  bedroomType: string;
+  setBedroomType: (v: string) => void;
   bathroomType: string;
   setBathroomType: (v: string) => void;
   bathroomOther: string;
@@ -49,14 +57,15 @@ const BATHROOM_OPTIONS = [
   "Ensuite bathroom",
   "Shared bathroom with client",
   "Shared bathroom with household",
-  "Other – please specify",
+  "Other, please specify",
 ];
 
 const SHOWER_OPTIONS = [
   "Private",
+  "En-suite",
   "Shared with client",
   "Shared with household",
-  "Other – please specify",
+  "Other, please specify",
 ];
 
 const PRIMARY_SLOTS: {
@@ -88,6 +97,10 @@ const PRIMARY_SLOTS: {
 export default function ClientCarerAccommodationSection({
   hasPrivateBedroom,
   setHasPrivateBedroom,
+  multipleCarersInHousehold,
+  setMultipleCarersInHousehold,
+  bedroomType,
+  setBedroomType,
   bathroomType,
   setBathroomType,
   bathroomOther,
@@ -146,6 +159,10 @@ export default function ClientCarerAccommodationSection({
     });
   };
 
+  const bedroomOptions = multipleCarersInHousehold
+    ? [CLIENT_SOLE_OCCUPANCY_BEDROOM, CLIENT_SHARED_CARER_BEDROOM]
+    : [CLIENT_SOLE_OCCUPANCY_BEDROOM];
+
   return (
     <div className="rounded-2xl border border-[#E6DFD0] bg-[#FDFBF7] p-4 sm:p-6 space-y-5 text-[#1E293B]">
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -173,19 +190,20 @@ export default function ClientCarerAccommodationSection({
         </div>
       )}
 
-      {/* 1. Private Bedroom */}
-      <div className="bg-white rounded-xl p-5 border border-[#EAE2D2] space-y-3.5">
+      {/* 1. Bedroom Arrangements & Mandatory Private Bedroom Requirement */}
+      <div className="bg-white rounded-xl p-5 border border-[#EAE2D2] space-y-4">
         <div className="flex items-start gap-3">
           <div className="w-9 h-9 rounded-xl bg-[#FAF6EE] border border-[#EDE3CE] flex items-center justify-center text-[#B88E3E] shrink-0">
             <BedDouble className="w-5 h-5" />
           </div>
           <div>
             <h5 className="font-serif text-lg font-semibold text-[#0A1629]">
-              Private Bedroom
+              Bedroom Arrangements
             </h5>
             <p className="text-xs text-[#5C5549] mt-0.5 leading-relaxed">
-              A live-in carer must be provided with their own private bedroom
-              and suitable personal space for the duration of the placement.
+              The live-in carer must have their own private bedroom. Sharing a
+              bedroom with the client or other household members is not
+              permitted.
             </p>
           </div>
         </div>
@@ -205,13 +223,77 @@ export default function ClientCarerAccommodationSection({
             {hasPrivateBedroom && <Check className="w-3.5 h-3.5" />}
           </button>
           <span className="text-xs sm:text-[13px] font-semibold text-[#0A1629]">
-            I confirm that the live-in carer will have their own private
-            bedroom. <span className="text-rose-600">*</span>
+            I confirm that the live-in carer will have their own private bedroom
+            for the duration of the placement.{" "}
+            <span className="text-rose-600">*</span>
           </span>
         </label>
+
+        <div className="rounded-xl border border-[#EAE2D2] bg-[#FDFBF7] p-4 space-y-3">
+          <div className="text-xs font-bold text-[#0A1629]">
+            Bedroom arrangements
+          </div>
+
+          <label className="flex items-center gap-2.5 text-xs text-[#334155] cursor-pointer">
+            <input
+              type="checkbox"
+              checked={multipleCarersInHousehold}
+              onChange={(e) => {
+                const checked = e.target.checked;
+                setMultipleCarersInHousehold(checked);
+                if (!checked) {
+                  setBedroomType(CLIENT_SOLE_OCCUPANCY_BEDROOM);
+                }
+              }}
+              className="w-4 h-4 accent-[#0A1629] rounded cursor-pointer"
+            />
+            <span>
+              Multiple carers are accommodated within the same household
+            </span>
+          </label>
+
+          <div className="space-y-2">
+            {bedroomOptions.map((opt) => {
+              const selected = bedroomType === opt;
+              return (
+                <label
+                  key={opt}
+                  onClick={() => setBedroomType(opt)}
+                  className="flex items-center gap-2.5 text-xs text-[#1E293B] cursor-pointer py-0.5"
+                >
+                  <span
+                    className={`w-4 h-4 rounded-full flex items-center justify-center border shrink-0 ${
+                      selected
+                        ? "bg-[#0A1629] border-[#0A1629]"
+                        : "bg-white border-[#CBD5E1]"
+                    }`}
+                  >
+                    {selected && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-white" />
+                    )}
+                  </span>
+                  <span
+                    className={selected ? "font-medium text-[#0A1629]" : ""}
+                  >
+                    {opt}
+                  </span>
+                </label>
+              );
+            })}
+          </div>
+
+          {multipleCarersInHousehold &&
+            bedroomType === CLIENT_SHARED_CARER_BEDROOM && (
+              <p className="text-xs text-[#5C5549] bg-[#FAF6EE] border border-[#E6D7B9] rounded-lg p-3 leading-relaxed">
+                Both carers must explicitly agree to this arrangement before the
+                placement is confirmed. Neither carer will be expected or
+                required to share accommodation without their consent.
+              </p>
+            )}
+        </div>
       </div>
 
-      {/* 2. Bathroom Arrangements */}
+      {/* 2. Bathroom Arrangements (Left: Bathroom Arrangements | Right: Shower Arrangements) */}
       <div className="bg-white rounded-xl p-5 border border-[#EAE2D2] space-y-4">
         <div className="flex items-start gap-3">
           <div className="w-9 h-9 rounded-xl bg-[#FAF6EE] border border-[#EDE3CE] flex items-center justify-center text-[#B88E3E] shrink-0">
@@ -222,16 +304,17 @@ export default function ClientCarerAccommodationSection({
               Bathroom Arrangements
             </h5>
             <p className="text-xs text-[#5C5549] mt-0.5 leading-relaxed">
-              Please confirm the bathroom and shower/bathing arrangements for
-              the live-in carer.
+              Please confirm the bathroom and shower arrangements for the
+              live-in carer.
             </p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Left side: Bathroom Arrangements */}
           <div className="rounded-xl border border-[#EAE2D2] bg-[#FDFBF7] p-4 space-y-2">
             <div className="text-xs font-bold text-[#0A1629] mb-1">
-              Bathroom arrangements
+              Bathroom Arrangements
             </div>
             {BATHROOM_OPTIONS.map((opt) => {
               const selected = bathroomType === opt;
@@ -252,13 +335,15 @@ export default function ClientCarerAccommodationSection({
                       <span className="w-1.5 h-1.5 rounded-full bg-white" />
                     )}
                   </span>
-                  <span className={selected ? "font-medium text-[#0A1629]" : ""}>
+                  <span
+                    className={selected ? "font-medium text-[#0A1629]" : ""}
+                  >
                     {opt}
                   </span>
                 </label>
               );
             })}
-            {bathroomType === "Other – please specify" && (
+            {bathroomType === "Other, please specify" && (
               <input
                 type="text"
                 value={bathroomOther}
@@ -269,9 +354,10 @@ export default function ClientCarerAccommodationSection({
             )}
           </div>
 
+          {/* Right side: Shower Arrangements */}
           <div className="rounded-xl border border-[#EAE2D2] bg-[#FDFBF7] p-4 space-y-2">
             <div className="text-xs font-bold text-[#0A1629] mb-1">
-              Shower/bathing arrangements
+              Shower Arrangements
             </div>
             {SHOWER_OPTIONS.map((opt) => {
               const selected = showerType === opt;
@@ -292,18 +378,20 @@ export default function ClientCarerAccommodationSection({
                       <span className="w-1.5 h-1.5 rounded-full bg-white" />
                     )}
                   </span>
-                  <span className={selected ? "font-medium text-[#0A1629]" : ""}>
+                  <span
+                    className={selected ? "font-medium text-[#0A1629]" : ""}
+                  >
                     {opt}
                   </span>
                 </label>
               );
             })}
-            {showerType === "Other – please specify" && (
+            {showerType === "Other, please specify" && (
               <input
                 type="text"
                 value={showerOther}
                 onChange={(e) => setShowerOther(e.target.value)}
-                placeholder="Please specify shower/bathing arrangement..."
+                placeholder="Please specify shower arrangement..."
                 className="w-full mt-2 px-3 py-2 rounded-lg border border-[#DFD5C2] bg-white text-xs text-[#0A1629] focus:outline-none focus:border-[#C5A059]"
               />
             )}

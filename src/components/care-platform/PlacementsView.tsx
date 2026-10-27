@@ -441,7 +441,7 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
         ? { ...linkedAccount.accommodation, adminVerified: true }
         : {
             privateBedroomConfirmed: true,
-            bedroomType: 'Private bedroom',
+            bedroomType: 'Private bedroom (sole occupancy)',
             bathroomType: 'Private bathroom',
             showerType: 'Private',
             householdNotes:
@@ -543,7 +543,7 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
             {/* Left 7 Cols: Placement Overview + Assigned Carers (No carer pay shown) */}
             <div className="lg:col-span-7 space-y-5">
-              <div className="bg-white rounded-2xl border border-[#EAE3D4] p-5 sm:p-6 shadow-sm space-y-4">
+              <div className="bg-white rounded-2xl border border-[#EAE3D4] p-5 sm:p-6 shadow-2xs space-y-4">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-center gap-4">
                     <img
@@ -639,7 +639,7 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
 
               {/* Client-Facing Automatically Generated Service Agreement */}
               {clientFinancePolicy.canViewAgreedClientFee && (
-                <div className="bg-white rounded-2xl border border-[#EAE3D4] p-5 sm:p-6 shadow-sm space-y-3 text-xs">
+                <div className="bg-white rounded-2xl border border-[#EAE3D4] p-5 sm:p-6 shadow-2xs space-y-3 text-xs">
                   <div className="flex items-center justify-between border-b border-[#F2ECE0] pb-3">
                     <div>
                       <div className="text-[10.5px] font-semibold uppercase tracking-wider text-[#8C6D2B]">
@@ -688,7 +688,7 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
             </div>
 
             {/* Right 5 Cols: Client Payment Summary */}
-            <div className="lg:col-span-5 bg-white rounded-2xl border border-[#EAE3D4] p-5 sm:p-6 shadow-sm space-y-4 text-xs">
+            <div className="lg:col-span-5 bg-white rounded-2xl border border-[#EAE3D4] p-5 sm:p-6 shadow-2xs space-y-4 text-xs">
               <div className="flex items-center gap-2">
                 <Coins className="w-4 h-4 text-[#C5A059]" />
                 <h3 className="font-bold text-sm sm:text-base text-[#0A1629]">
@@ -824,7 +824,7 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
         {/* Split Layout matching image_3c5ca530.png */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
           {/* Left Column: Circulated Opportunities List */}
-          <div className="lg:col-span-4 bg-white rounded-2xl border border-[#EAE3D4] p-4 shadow-sm space-y-3">
+          <div className="lg:col-span-4 bg-white rounded-2xl border border-[#EAE3D4] p-4 shadow-2xs space-y-3">
             <div className="flex items-center gap-2">
               <div className="relative flex-1">
                 <Search className="w-3.5 h-3.5 text-[#94A3B8] absolute left-3 top-2.5" />
@@ -859,7 +859,7 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
                     }}
                     className={`p-3.5 rounded-xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
                       isSelected
-                        ? 'bg-[#FDFBF7] border-[#C5A059] ring-1 ring-[#C5A059]/30 shadow-sm'
+                        ? 'bg-[#FDFBF7] border-[#C5A059] ring-1 ring-[#C5A059]/30 shadow-xs'
                         : 'bg-white border-[#EFE8DC] hover:border-[#D4AF7A]/60'
                     }`}
                   >
@@ -917,7 +917,7 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
 
           {/* Right Column: Prominent Available Live-in Placement Summary + Comprehensive Details */}
           {activeOpportunity && (
-            <div className="lg:col-span-8 bg-white rounded-2xl border border-[#EAE3D4] p-5 sm:p-6 shadow-sm space-y-5">
+            <div className="lg:col-span-8 bg-white rounded-2xl border border-[#EAE3D4] p-5 sm:p-6 shadow-2xs space-y-5">
               {/* Top Nav Row */}
               <div className="flex items-center justify-between text-xs pb-2 border-b border-[#F3EDE2]">
                 <span className="font-semibold tracking-wider text-[#8C6D2B] uppercase text-[11px]">
@@ -992,7 +992,7 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
                         `Placement offer accepted / application submitted for ${activeOpportunity.clientFirstName} (£${activeOpportunity.weeklyPayment}/wk + £${activeOpportunity.foodAllowance} food allowance)`
                       );
                     }}
-                    className="w-full py-2.5 px-4 rounded-xl bg-[#C59B47] hover:bg-[#B38936] text-white text-xs font-semibold flex items-center justify-center gap-2 transition-colors shadow-sm cursor-pointer"
+                    className="w-full py-2.5 px-4 rounded-xl bg-[#C59B47] hover:bg-[#B38936] text-white text-xs font-semibold flex items-center justify-center gap-2 transition-colors shadow-xs cursor-pointer"
                   >
                     <span>
                       {appliedIds.includes(activeOpportunity.id)
@@ -1358,13 +1358,13 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
                       </div>
                     </div>
                     <div className="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#EFE8DC]">
-                      <div className="text-[11px] text-[#64748B]">Bathroom Facility</div>
+                      <div className="text-[11px] text-[#64748B]">Bathroom Arrangements</div>
                       <div className="font-bold text-[#0A1629] mt-0.5">
                         {activeOpportunity.accommodation.bathroomType}
                       </div>
                     </div>
                     <div className="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#EFE8DC]">
-                      <div className="text-[11px] text-[#64748B]">Bathing / Shower</div>
+                      <div className="text-[11px] text-[#64748B]">Shower Arrangements</div>
                       <div className="font-bold text-[#0A1629] mt-0.5">
                         {activeOpportunity.accommodation.showerType}
                       </div>
@@ -1580,7 +1580,7 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
         </div>
 
         {/* Client Hero Banner matching image_4c6b32ab.png & image_1ccc5538.png */}
-        <div className="bg-white rounded-2xl border border-[#EAE3D4] p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="bg-white rounded-2xl border border-[#EAE3D4] p-5 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <img
               src={currentPlacement.avatar}
@@ -1634,7 +1634,7 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
         </div>
 
         {/* Sub-tabs Bar */}
-        <div className="bg-white rounded-xl border border-[#EAE3D4] px-4 pt-1 flex items-center gap-2 sm:gap-5 overflow-x-auto text-xs shadow-sm">
+        <div className="bg-white rounded-xl border border-[#EAE3D4] px-4 pt-1 flex items-center gap-2 sm:gap-5 overflow-x-auto text-xs shadow-2xs">
           {[
             { id: 'overview', label: 'Overview', icon: FileText },
             { id: 'client-info', label: 'Client Information', icon: Home },
@@ -1669,7 +1669,7 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
             {/* Left 7 Cols: Client Contact Information + Client Summary */}
             <div className="lg:col-span-7 space-y-5">
-              <div className="bg-white rounded-2xl border border-[#EAE3D4] p-5 sm:p-6 shadow-sm space-y-4">
+              <div className="bg-white rounded-2xl border border-[#EAE3D4] p-5 sm:p-6 shadow-2xs space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     {accessEval.canCarerViewIdentityAndContact ? (
@@ -1797,7 +1797,7 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
               </div>
 
               {/* Client Summary 8-Box Grid matching image_4c6b32ab.png */}
-              <div className="bg-white rounded-2xl border border-[#EAE3D4] p-5 sm:p-6 shadow-sm space-y-3">
+              <div className="bg-white rounded-2xl border border-[#EAE3D4] p-5 sm:p-6 shadow-2xs space-y-3">
                 <div className="flex items-center gap-2">
                   <User className="w-4 h-4 text-[#C5A059]" />
                   <h3 className="font-bold text-sm text-[#0A1629]">Client Summary</h3>
@@ -1869,7 +1869,7 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
             </div>
 
             {/* Right 5 Cols: Information Access Timeline + Important Information */}
-            <div className="lg:col-span-5 bg-white rounded-2xl border border-[#EAE3D4] p-5 sm:p-6 shadow-sm space-y-6">
+            <div className="lg:col-span-5 bg-white rounded-2xl border border-[#EAE3D4] p-5 sm:p-6 shadow-2xs space-y-6">
               <div>
                 <div className="flex items-center gap-2 mb-4">
                   <Clock className="w-4 h-4 text-[#C5A059]" />
@@ -1971,7 +1971,7 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
             {/* Row 1: Access Status Horizontal Stepper + Information Visible to Carer */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
               {/* Access Status Card */}
-              <div className="lg:col-span-7 bg-white rounded-2xl border border-[#EAE3D4] p-5 sm:p-6 shadow-sm space-y-5">
+              <div className="lg:col-span-7 bg-white rounded-2xl border border-[#EAE3D4] p-5 sm:p-6 shadow-2xs space-y-5">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <Lock className="w-4 h-4 text-[#C5A059]" />
@@ -2062,7 +2062,7 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
               </div>
 
               {/* Information Visible to Carer Card */}
-              <div className="lg:col-span-5 bg-white rounded-2xl border border-[#EAE3D4] p-5 sm:p-6 shadow-sm space-y-3">
+              <div className="lg:col-span-5 bg-white rounded-2xl border border-[#EAE3D4] p-5 sm:p-6 shadow-2xs space-y-3">
                 <div className="flex items-center gap-2">
                   <User className="w-4 h-4 text-[#C5A059]" />
                   <h3 className="font-bold text-sm sm:text-base text-[#0A1629]">
@@ -2149,7 +2149,7 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
             {/* Row 2: 3 Administrator Manual Intervention Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
               {/* 1. Manual Override */}
-              <div className="bg-white rounded-2xl border border-[#EAE3D4] p-5 shadow-sm flex flex-col justify-between space-y-4">
+              <div className="bg-white rounded-2xl border border-[#EAE3D4] p-5 shadow-2xs flex flex-col justify-between space-y-4">
                 <div>
                   <div className="flex items-center gap-2 font-bold text-sm text-[#0A1629]">
                     <Key className="w-4 h-4 text-[#C5A059]" />
@@ -2179,7 +2179,7 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
               </div>
 
               {/* 2. Email Access (Exceptional) */}
-              <div className="bg-white rounded-2xl border border-[#EAE3D4] p-5 shadow-sm flex flex-col justify-between space-y-4">
+              <div className="bg-white rounded-2xl border border-[#EAE3D4] p-5 shadow-2xs flex flex-col justify-between space-y-4">
                 <div>
                   <div className="flex items-center gap-2 font-bold text-sm text-[#0A1629]">
                     <Mail className="w-4 h-4 text-[#C5A059]" />
@@ -2202,7 +2202,7 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
                         : 'bg-slate-200 justify-start'
                     }`}
                   >
-                    <span className="w-5 h-5 rounded-full bg-white shadow-sm block" />
+                    <span className="w-5 h-5 rounded-full bg-white shadow-xs block" />
                   </button>
                   <span className="text-xs font-medium text-[#0A1629]">
                     Make client email visible to this carer
@@ -2211,7 +2211,7 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
               </div>
 
               {/* 3. Return to Placement */}
-              <div className="bg-white rounded-2xl border border-[#EAE3D4] p-5 shadow-sm flex flex-col justify-between space-y-4">
+              <div className="bg-white rounded-2xl border border-[#EAE3D4] p-5 shadow-2xs flex flex-col justify-between space-y-4">
                 <div>
                   <div className="flex items-center gap-2 font-bold text-sm text-[#0A1629]">
                     <RotateCcw className="w-4 h-4 text-[#C5A059]" />
@@ -2242,7 +2242,7 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
             {/* Row 3: Access Rules + Returning Carers + Access History */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
               {/* Access Rules */}
-              <div className="lg:col-span-5 bg-white rounded-2xl border border-[#EAE3D4] p-5 shadow-sm space-y-3">
+              <div className="lg:col-span-5 bg-white rounded-2xl border border-[#EAE3D4] p-5 shadow-2xs space-y-3">
                 <div className="flex items-center gap-2 font-bold text-sm text-[#0A1629]">
                   <FileText className="w-4 h-4 text-[#C5A059]" />
                   <span>Access Rules</span>
@@ -2264,7 +2264,7 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
               </div>
 
               {/* Returning Carers */}
-              <div className="lg:col-span-3 bg-white rounded-2xl border border-[#EAE3D4] p-5 shadow-sm flex flex-col justify-between space-y-3">
+              <div className="lg:col-span-3 bg-white rounded-2xl border border-[#EAE3D4] p-5 shadow-2xs flex flex-col justify-between space-y-3">
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 font-bold text-sm text-[#0A1629]">
                     <User className="w-4 h-4 text-[#C5A059]" />
@@ -2305,7 +2305,7 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
               </div>
 
               {/* Access History Audit Log */}
-              <div className="lg:col-span-4 bg-white rounded-2xl border border-[#EAE3D4] p-5 shadow-sm space-y-3">
+              <div className="lg:col-span-4 bg-white rounded-2xl border border-[#EAE3D4] p-5 shadow-2xs space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 font-bold text-sm text-[#0A1629]">
                     <Clock className="w-4 h-4 text-[#C5A059]" />
@@ -2473,7 +2473,7 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
         {detailTab === 'payments' && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 text-xs">
             {/* 1. Carer Remuneration — Visible to Admin & Carers; Strictly Hidden from Clients */}
-            <div className="bg-white rounded-2xl border border-[#EAE3D4] p-5 sm:p-6 shadow-sm space-y-4">
+            <div className="bg-white rounded-2xl border border-[#EAE3D4] p-5 sm:p-6 shadow-2xs space-y-4">
               <div className="flex items-start justify-between gap-2 border-b border-[#F2ECE0] pb-3">
                 <div>
                   <div className="text-[10.5px] font-semibold uppercase tracking-wider text-emerald-800">
@@ -2538,7 +2538,7 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
             </div>
 
             {/* 2. Agreed Client Fee — Visible to Client & Admin; Hidden from Carers */}
-            <div className="bg-white rounded-2xl border border-[#EAE3D4] p-5 sm:p-6 shadow-sm space-y-4">
+            <div className="bg-white rounded-2xl border border-[#EAE3D4] p-5 sm:p-6 shadow-2xs space-y-4">
               <div className="flex items-start justify-between gap-2 border-b border-[#F2ECE0] pb-3">
                 <div>
                   <div className="text-[10.5px] font-semibold uppercase tracking-wider text-[#8C6D2B]">
@@ -2814,7 +2814,7 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
         <div className="flex flex-wrap items-center gap-2.5 self-start sm:self-auto">
           <button
             onClick={() => setViewMode('carer-available')}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-[#D4AF7A] bg-white hover:bg-[#FAF5EE] text-xs font-semibold text-[#0A1629] transition-colors shadow-sm cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-[#D4AF7A] bg-white hover:bg-[#FAF5EE] text-xs font-semibold text-[#0A1629] transition-colors shadow-2xs cursor-pointer"
           >
             <Eye className="w-4 h-4 text-[#C59B47]" />
             <span>Carer View: Available Placements</span>
@@ -2822,7 +2822,7 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
 
           <button
             onClick={() => setViewMode('client-portal')}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-[#E0D5C1] bg-white hover:bg-[#FAF5EE] text-xs font-semibold text-[#0A1629] transition-colors shadow-sm cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-[#E0D5C1] bg-white hover:bg-[#FAF5EE] text-xs font-semibold text-[#0A1629] transition-colors shadow-2xs cursor-pointer"
           >
             <Shield className="w-4 h-4 text-[#8C6D2B]" />
             <span>Client Portal View</span>
@@ -2830,7 +2830,7 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
 
           <button
             onClick={() => setShowNewModal(true)}
-            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#C59B47] hover:bg-[#B38936] text-white text-xs font-semibold transition-colors shadow-sm cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#C59B47] hover:bg-[#B38936] text-white text-xs font-semibold transition-colors shadow-xs cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>New Placement</span>
@@ -2840,7 +2840,7 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
 
       {/* 4 KPI Stat Cards Row matching image_5540fc35.png */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-2xl border border-[#EAE3D4] p-4 sm:p-5 shadow-sm flex items-center justify-between">
+        <div className="bg-white rounded-2xl border border-[#EAE3D4] p-4 sm:p-5 shadow-2xs flex items-center justify-between">
           <div className="flex items-start gap-3.5">
             <div className="w-10 h-10 rounded-xl bg-[#FAF5EE] flex items-center justify-center text-[#C5A059] shrink-0">
               <Home className="w-5 h-5" />
@@ -2856,7 +2856,7 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
           {renderSparkline()}
         </div>
 
-        <div className="bg-white rounded-2xl border border-[#EAE3D4] p-4 sm:p-5 shadow-sm flex items-center justify-between">
+        <div className="bg-white rounded-2xl border border-[#EAE3D4] p-4 sm:p-5 shadow-2xs flex items-center justify-between">
           <div className="flex items-start gap-3.5">
             <div className="w-10 h-10 rounded-xl bg-[#FAF5EE] flex items-center justify-center text-[#C5A059] shrink-0">
               <Calendar className="w-5 h-5" />
@@ -2872,7 +2872,7 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
           {renderSparkline()}
         </div>
 
-        <div className="bg-white rounded-2xl border border-[#EAE3D4] p-4 sm:p-5 shadow-sm flex items-center justify-between">
+        <div className="bg-white rounded-2xl border border-[#EAE3D4] p-4 sm:p-5 shadow-2xs flex items-center justify-between">
           <div className="flex items-start gap-3.5">
             <div className="w-10 h-10 rounded-xl bg-[#FAF5EE] flex items-center justify-center text-[#C5A059] shrink-0">
               <Clock className="w-5 h-5" />
@@ -2888,7 +2888,7 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
           {renderSparkline()}
         </div>
 
-        <div className="bg-white rounded-2xl border border-[#EAE3D4] p-4 sm:p-5 shadow-sm flex items-center justify-between">
+        <div className="bg-white rounded-2xl border border-[#EAE3D4] p-4 sm:p-5 shadow-2xs flex items-center justify-between">
           <div className="flex items-start gap-3.5">
             <div className="w-10 h-10 rounded-xl bg-[#FAF5EE] flex items-center justify-center text-[#C5A059] shrink-0">
               <CheckCircle2 className="w-5 h-5" />
@@ -2929,8 +2929,8 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
                 className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer border ${
                   isActive
                     ? tab.isEmergencyTab
-                      ? 'bg-rose-600 text-white border-rose-600 shadow-sm'
-                      : 'bg-white text-[#0A1629] border-b-2 border-b-[#C59B47] border-[#EAE3D4] shadow-sm'
+                      ? 'bg-rose-600 text-white border-rose-600 shadow-xs'
+                      : 'bg-white text-[#0A1629] border-b-2 border-b-[#C59B47] border-[#EAE3D4] shadow-2xs'
                     : tab.isEmergencyTab
                     ? 'bg-rose-50/80 text-rose-700 border-rose-200 hover:bg-rose-100'
                     : 'bg-white/60 text-[#64748B] border-transparent hover:bg-white hover:text-[#0A1629]'
@@ -3018,7 +3018,7 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
           {filteredPlacements.map((pl) => (
             <div
               key={pl.id}
-              className="bg-white rounded-2xl border border-[#EAE3D4] p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-4"
+              className="bg-white rounded-2xl border border-[#EAE3D4] p-5 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between space-y-4"
             >
               <div className="space-y-3">
                 {/* Card Top: Photo + Name + Status + Menu */}
@@ -3150,7 +3150,7 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
         </div>
       ) : (
         /* LAYOUT B: Option A Comprehensive Placements Roster Table */
-        <div className="bg-white rounded-2xl border border-[#EAE3D4] shadow-sm overflow-x-auto">
+        <div className="bg-white rounded-2xl border border-[#EAE3D4] shadow-2xs overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
               <tr className="border-b border-[#EAE3D4] bg-[#FAF7F2] text-[#64748B] font-semibold">
@@ -3248,7 +3248,7 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
 
       {/* Modal: + New Placement */}
       {showNewModal && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-2xl max-w-md w-full p-6 border border-[#EAE3D4] shadow-2xl space-y-4">
             <div className="flex items-center justify-between border-b border-[#F2ECE0] pb-3">
               <h3 className="font-bold text-base text-[#0A1629]">Create Confirmed Placement</h3>

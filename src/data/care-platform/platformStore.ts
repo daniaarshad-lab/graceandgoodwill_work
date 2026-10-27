@@ -18,8 +18,11 @@ export type CareRequestStage =
   | 'New Enquiry'
   | 'Reviewing Requirements'
   | 'Matching Carers'
+  | 'Confirming Payment'
   | 'Confirming Accommodation'
   | 'Finalised';
+
+export type CareRequestPaymentStatus = 'Pending' | 'Confirmed' | 'Paid';
 
 export type AccommodationPhotoCategory = 'Carer Bedroom' | 'Bathroom' | 'Additional Space';
 export type AccommodationPhotoStatus = 'pending_approval' | 'approved' | 'rejected';
@@ -105,6 +108,8 @@ export interface PlacementRecord {
   hasFoodAllowance: boolean;
   /** Weekly fee agreed by the client to pay Grace & Goodwill — visible to Client & Admin only */
   agreedClientWeeklyFee: number;
+  paymentStatus?: CareRequestPaymentStatus;
+  paymentArrangement?: string;
   startDate: string; // ISO or readable
   startDateISO: string; // YYYY-MM-DD for 7-day calculation
   endDate: string;
@@ -172,6 +177,8 @@ export interface CareRequestRecord {
   foodAllowance: number;
   /** Weekly fee agreed by the client to pay Grace & Goodwill */
   agreedClientWeeklyFee: number;
+  paymentStatus: CareRequestPaymentStatus;
+  paymentArrangement: string;
   requestDate: string;
   preferredStart: string;
   preferredStartISO: string;
@@ -1117,6 +1124,8 @@ const INITIAL_CARE_REQUESTS: CareRequestRecord[] = [
     weeklyPayment: 900,
     foodAllowance: 40,
     agreedClientWeeklyFee: 1350,
+    paymentStatus: 'Confirmed',
+    paymentArrangement: 'Weekly Direct Debit',
     requestDate: '16 Oct 2026',
     preferredStart: '01 Nov 2026',
     preferredStartISO: '2026-11-01',
@@ -1227,10 +1236,12 @@ const INITIAL_CARE_REQUESTS: CareRequestRecord[] = [
     weeklyPayment: 920,
     foodAllowance: 40,
     agreedClientWeeklyFee: 1380,
+    paymentStatus: 'Pending',
+    paymentArrangement: 'Monthly Standing Order',
     requestDate: '10 Oct 2026',
     preferredStart: 'As soon as possible',
     preferredStartISO: '2026-10-30',
-    stage: 'Matching Carers',
+    stage: 'Confirming Payment',
     priority: 'Standard',
     assignedCarerName: 'Unassigned',
     source: 'Family enquiry',
@@ -1294,6 +1305,8 @@ const INITIAL_CARE_REQUESTS: CareRequestRecord[] = [
     weeklyPayment: 960,
     foodAllowance: 45,
     agreedClientWeeklyFee: 1450,
+    paymentStatus: 'Pending',
+    paymentArrangement: 'Upfront Respite Invoice',
     requestDate: '25 Oct 2026',
     preferredStart: '28 Oct 2026 (Urgent)',
     preferredStartISO: '2026-10-28',
@@ -1355,6 +1368,8 @@ const INITIAL_CARE_REQUESTS: CareRequestRecord[] = [
     weeklyPayment: 910,
     foodAllowance: 40,
     agreedClientWeeklyFee: 1365,
+    paymentStatus: 'Pending',
+    paymentArrangement: 'Weekly Direct Debit',
     requestDate: '24 Oct 2026',
     preferredStart: '12 Nov 2026',
     preferredStartISO: '2026-11-12',
@@ -1455,6 +1470,8 @@ export const PlatformStoreProvider: React.FC<{ children: React.ReactNode }> = ({
               return {
                 ...cr,
                 agreedClientWeeklyFee: finalPl.agreedClientWeeklyFee,
+                paymentStatus: finalPl.paymentStatus || cr.paymentStatus,
+                paymentArrangement: finalPl.paymentArrangement || cr.paymentArrangement,
                 pets: finalPl.pets,
                 smoking: finalPl.smoking,
                 verbalAbuseHistory: finalPl.verbalAbuseHistory,
@@ -1517,6 +1534,8 @@ export const PlatformStoreProvider: React.FC<{ children: React.ReactNode }> = ({
                 placementType: finalReq.placementType,
                 duration: finalReq.duration,
                 agreedClientWeeklyFee: finalReq.agreedClientWeeklyFee,
+                paymentStatus: finalReq.paymentStatus,
+                paymentArrangement: finalReq.paymentArrangement,
                 weeklyPayment: finalReq.weeklyPayment,
                 foodAllowance: finalReq.foodAllowance,
                 mainMedicalConcerns: finalReq.conditions,
@@ -1583,6 +1602,8 @@ export const PlatformStoreProvider: React.FC<{ children: React.ReactNode }> = ({
         placementType: req.placementType,
         duration: req.duration,
         agreedClientWeeklyFee: req.agreedClientWeeklyFee,
+        paymentStatus: req.paymentStatus,
+        paymentArrangement: req.paymentArrangement,
         weeklyPayment: req.weeklyPayment,
         foodAllowance: req.foodAllowance,
         isEmergency: isEmergencyPlacement,
@@ -1626,6 +1647,8 @@ export const PlatformStoreProvider: React.FC<{ children: React.ReactNode }> = ({
       foodAllowance: req.foodAllowance,
       hasFoodAllowance: req.foodAllowance > 0,
       agreedClientWeeklyFee: req.agreedClientWeeklyFee,
+      paymentStatus: req.paymentStatus,
+      paymentArrangement: req.paymentArrangement,
       startDate: req.preferredStart,
       startDateISO: req.preferredStartISO,
       endDate: req.placementType === 'Live-in Ongoing Care' ? 'Ongoing' : '18 Nov 2026',

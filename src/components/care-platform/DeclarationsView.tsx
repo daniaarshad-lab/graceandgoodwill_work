@@ -42,6 +42,7 @@ import {
   AccommodationPhotoCategory,
   AccommodationPhotoItem,
   AvailabilityCategory,
+  CareRequestPaymentStatus,
   CareRequestRecord,
   CareRequestStage,
   getAccommodationApprovalStatus,
@@ -66,28 +67,41 @@ const PIPELINE_STAGES: {
   {
     stage: 'New Enquiry',
     shortLabel: '1. New Enquiries',
-    description: 'Initial family or hospital enquiries received',
+    description: 'Initial family or hospital enquiries received.',
   },
   {
     stage: 'Reviewing Requirements',
     shortLabel: '2. Reviewing Requirements',
-    description: 'Assessing medical, mobility & personal care needs',
+    description: 'Assessing medical, mobility and personal care needs.',
   },
   {
     stage: 'Matching Carers',
     shortLabel: '3. Matching Carers',
-    description: 'Shortlisting vetted live-in carers',
+    description: 'Shortlisting suitable vetted live-in carers.',
+  },
+  {
+    stage: 'Confirming Payment',
+    shortLabel: '4. Confirming Payment',
+    description: 'Confirming the client’s agreed fees, payment arrangements and payment status.',
   },
   {
     stage: 'Confirming Accommodation',
-    shortLabel: '4. Confirming Accommodation',
-    description: 'Verifying private bedroom & equipped bathroom',
+    shortLabel: '5. Confirming Accommodation',
+    description: 'Verifying the carer’s private bedroom and bathroom arrangements.',
   },
   {
     stage: 'Finalised',
-    shortLabel: '5. Finalised Placements',
-    description: 'Confirmed & published to Placements roster',
+    shortLabel: '6. Finalised Placements',
+    description: 'Confirmed and published to the Placements dashboard.',
   },
+];
+
+const PAYMENT_ARRANGEMENT_OPTIONS = [
+  'Weekly Direct Debit',
+  'Monthly Standing Order',
+  'Upfront Respite Invoice',
+  'Self-Funded Bank Transfer',
+  'Local Authority / CHC Direct Payment',
 ];
 
 const VETTED_CARERS = [
@@ -316,7 +330,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
 
   const handleAdvanceStage = (req: CareRequestRecord) => {
     const idx = PIPELINE_STAGES.findIndex((s) => s.stage === req.stage);
-    if (idx < 3) {
+    if (idx >= 0 && idx < PIPELINE_STAGES.length - 2) {
       const nextStage = PIPELINE_STAGES[idx + 1].stage;
       updateCareRequest(req.id, (prev) => ({
         ...prev,
@@ -324,9 +338,25 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
         lastUpdated: 'Just now',
       }));
       triggerToast(`Moved ${req.displayTitle} to "${nextStage}"`);
-    } else if (idx === 3) {
+    } else if (idx === PIPELINE_STAGES.length - 2) {
       openConfirmModal(req);
     }
+  };
+
+  const getPaymentStatusStyles = (status: CareRequestPaymentStatus, onDark = false) => {
+    if (status === 'Paid') {
+      return onDark
+        ? 'bg-emerald-500/20 text-emerald-200 border-emerald-400/40'
+        : 'bg-emerald-50 text-emerald-800 border-emerald-200';
+    }
+    if (status === 'Confirmed') {
+      return onDark
+        ? 'bg-[#D4AF7A]/25 text-[#F6E3BA] border-[#D4AF7A]/50'
+        : 'bg-[#FDF4E3] text-[#8B6623] border-[#E4C994]';
+    }
+    return onDark
+      ? 'bg-amber-500/20 text-amber-200 border-amber-400/40'
+      : 'bg-amber-50 text-amber-800 border-amber-200';
   };
 
   // Admin approves an individual client-uploaded photograph
@@ -587,8 +617,8 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
             </div>
           </div>
 
-          {/* 5-Column Matching Pipeline (New Enquiries -> Reviewing -> Matching -> Accommodation -> Finalised) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 items-start">
+          {/* 6-Column Matching Pipeline (New Enquiries -> Reviewing -> Matching -> Confirming Payment -> Confirming Accommodation -> Finalised) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3.5 items-start">
             {PIPELINE_STAGES.map((col) => {
               const items = careRequests.filter((r) => r.stage === col.stage);
               return (
@@ -665,13 +695,56 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                               <Coins className="w-3 h-3 text-[#B88E3E] shrink-0" />
                               <span>Agreed G&amp;G Client Fee: &pound;{req.agreedClientWeeklyFee}/wk</span>
                             </div>
+                            <div className="flex flex-wrap items-center justify-between gap-1.5 pt-1">
+                              <span
+                                className={`px-2 py-0.5 rounded-md border text-[10px] font-semibold ${getPaymentStatusStyles(
+                                  req.paymentStatus
+                                )}`}
+                              >
+                                Payment: {req.paymentStatus}
+                              </span>
+                              <span className="text-[10px] text-[#64748B] truncate">
+                                {req.paymentArrangement}
+                              </span>
+                            </div>
+                            {col.stage === 'Confirming Payment' && (
+                              <div className="flex items-center gap-1 pt-1">
+                                {(['Pending', 'Confirmed', 'Paid'] as CareRequestPaymentStatus[]).map(
+                                  (st) => (
+                                    <button
+                                      key={st}
+                                      type="button"
+                                      onClick={() => {
+                                        updateCareRequest(req.id, (prev) => ({
+                                          ...prev,
+                                          paymentStatus: st,
+                                          lastUpdated: 'Just now',
+                                        }));
+                                        triggerToast(
+                                          `Payment status for ${req.displayTitle} set to ${st}.`
+                                        );
+                                      }}
+                                      className={`flex-1 py-1 rounded-md border text-[10px] font-semibold transition-colors cursor-pointer ${
+                                        req.paymentStatus === st
+                                          ? 'bg-[#0A1629] text-white border-[#0A1629]'
+                                          : 'bg-[#FAF7F2] text-[#475569] border-[#E2D9C8] hover:border-[#C8A464]'
+                                      }`}
+                                    >
+                                      {st}
+                                    </button>
+                                  )
+                                )}
+                              </div>
+                            )}
                           </div>
 
                           <div className="pt-2 border-t border-[#F5F1E9] flex items-center justify-between gap-1.5">
                             <button
                               onClick={() => {
                                 setSelectedRequestId(req.id);
-                                setActiveTab('accommodation');
+                                setActiveTab(
+                                  col.stage === 'Confirming Payment' ? 'activity' : 'accommodation'
+                                );
                                 setViewMode('detail');
                               }}
                               className="px-2.5 py-1.5 rounded-lg border border-[#E2D9C8] text-[11px] font-medium text-[#0A1629] hover:bg-[#FAF6EE] transition-colors cursor-pointer"
@@ -2575,15 +2648,15 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
 
           {/* ── TAB 5: NOTES & ACTIVITY (Workflow Stage Control) ── */}
           {activeTab === 'activity' && (
-            <div className="bg-white rounded-2xl border border-[#EAE2D2] p-5 shadow-2xs space-y-4">
+            <div className="bg-white rounded-2xl border border-[#EAE2D2] p-5 shadow-2xs space-y-5">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <h3 className="font-serif text-lg font-bold text-[#0A1629]">
                     Care Request Workflow Stage
                   </h3>
                   <p className="text-xs text-[#64748B]">
-                    Progress this enquiry through matching and accommodation verification to publish
-                    to Placements.
+                    Progress this enquiry through matching, payment confirmation and accommodation
+                    verification to publish to Placements.
                   </p>
                 </div>
                 <button
@@ -2594,36 +2667,201 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-5 gap-2.5 pt-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-2.5 pt-2">
                 {PIPELINE_STAGES.map((st) => {
                   const isCurrent = currentReq.stage === st.stage;
+                  const isPaymentStage = st.stage === 'Confirming Payment';
                   return (
                     <button
                       key={st.stage}
+                      type="button"
                       onClick={() =>
                         updateCareRequest(currentReq.id, (prev) => ({
                           ...prev,
                           stage: st.stage,
+                          lastUpdated: 'Just now',
                         }))
                       }
-                      className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                      className={`p-3 rounded-xl border text-left transition-all flex flex-col justify-between gap-2 cursor-pointer ${
                         isCurrent
                           ? 'bg-[#0A1629] text-white border-[#0A1629]'
                           : 'bg-[#FAF7F2] text-[#475569] border-[#EAE2D2] hover:border-[#C8A464]'
                       }`}
                     >
-                      <div className="text-xs font-bold">{st.shortLabel}</div>
-                      <div
-                        className={`text-[10.5px] mt-1 ${
-                          isCurrent ? 'text-[#D4AF7A]' : 'text-[#71685A]'
-                        }`}
-                      >
-                        {st.description}
+                      <div>
+                        <div className="text-xs font-bold leading-snug">{st.shortLabel}</div>
+                        <div
+                          className={`text-[10.5px] mt-1 leading-relaxed ${
+                            isCurrent ? 'text-[#D4AF7A]' : 'text-[#71685A]'
+                          }`}
+                        >
+                          {st.description}
+                        </div>
                       </div>
+
+                      {isPaymentStage && portalRoleView === 'admin' && (
+                        <div
+                          className={`pt-2 border-t flex flex-col gap-1 ${
+                            isCurrent ? 'border-white/15' : 'border-[#E6DEC8]'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between gap-1">
+                            <span
+                              className={`text-[10px] font-medium ${
+                                isCurrent ? 'text-slate-300' : 'text-[#64748B]'
+                              }`}
+                            >
+                              Status:
+                            </span>
+                            <span
+                              className={`px-1.5 py-0.5 rounded-md border text-[10px] font-bold ${getPaymentStatusStyles(
+                                currentReq.paymentStatus,
+                                isCurrent
+                              )}`}
+                            >
+                              {currentReq.paymentStatus}
+                            </span>
+                          </div>
+                          <div
+                            className={`text-[10px] truncate ${
+                              isCurrent ? 'text-slate-300' : 'text-[#64748B]'
+                            }`}
+                          >
+                            {currentReq.paymentArrangement}
+                          </div>
+                        </div>
+                      )}
                     </button>
                   );
                 })}
               </div>
+
+              {/* Admin Stage 4 Payment Confirmation & Arrangements Panel */}
+              {portalRoleView === 'admin' && (
+                <div
+                  className={`rounded-2xl border p-4 space-y-3.5 text-xs transition-colors ${
+                    currentReq.stage === 'Confirming Payment'
+                      ? 'bg-[#FDF9F1] border-[#D4AF7A]'
+                      : 'bg-[#FAF7F2] border-[#EAE2D2]'
+                  }`}
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <Coins className="w-4 h-4 text-[#B88E3E]" />
+                      <h4 className="font-bold text-sm text-[#0A1629]">
+                        Stage 4 &mdash; Confirming Payment &amp; Payment Status
+                      </h4>
+                    </div>
+                    <span
+                      className={`px-2.5 py-1 rounded-lg border text-xs font-bold ${getPaymentStatusStyles(
+                        currentReq.paymentStatus
+                      )}`}
+                    >
+                      Payment Status: {currentReq.paymentStatus}
+                    </span>
+                  </div>
+
+                  <p className="text-[11.5px] text-[#64748B]">
+                    Confirm the client&apos;s agreed Grace &amp; Goodwill weekly care fee, payment
+                    arrangements, and current payment status before finalising placement.
+                  </p>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
+                    {/* 1. Payment Status Selector */}
+                    <div className="space-y-1.5">
+                      <label className="block text-[11px] font-semibold text-[#0A1629]">
+                        Payment Status
+                      </label>
+                      <div className="grid grid-cols-3 gap-1.5">
+                        {(['Pending', 'Confirmed', 'Paid'] as CareRequestPaymentStatus[]).map(
+                          (statusOpt) => {
+                            const selected = currentReq.paymentStatus === statusOpt;
+                            return (
+                              <button
+                                key={statusOpt}
+                                type="button"
+                                onClick={() => {
+                                  updateCareRequest(currentReq.id, (prev) => ({
+                                    ...prev,
+                                    paymentStatus: statusOpt,
+                                    lastUpdated: 'Just now',
+                                  }));
+                                  triggerToast(
+                                    `Payment status updated to "${statusOpt}" for ${currentReq.displayTitle}.`
+                                  );
+                                }}
+                                className={`py-2 px-2.5 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
+                                  selected
+                                    ? 'bg-[#0A1629] text-white border-[#0A1629] shadow-2xs'
+                                    : 'bg-white text-[#475569] border-[#DFD5C2] hover:border-[#C8A464]'
+                                }`}
+                              >
+                                {statusOpt}
+                              </button>
+                            );
+                          }
+                        )}
+                      </div>
+                    </div>
+
+                    {/* 2. Payment Arrangements */}
+                    <div className="space-y-1.5">
+                      <label className="block text-[11px] font-semibold text-[#0A1629]">
+                        Payment Arrangements
+                      </label>
+                      <select
+                        value={
+                          PAYMENT_ARRANGEMENT_OPTIONS.includes(currentReq.paymentArrangement)
+                            ? currentReq.paymentArrangement
+                            : 'Custom'
+                        }
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          if (val !== 'Custom') {
+                            updateCareRequest(currentReq.id, (prev) => ({
+                              ...prev,
+                              paymentArrangement: val,
+                              lastUpdated: 'Just now',
+                            }));
+                          }
+                        }}
+                        className="w-full px-3 py-2 rounded-xl border border-[#DFD5C2] bg-white text-xs font-medium text-[#0A1629] focus:outline-none focus:border-[#C8A464]"
+                      >
+                        {PAYMENT_ARRANGEMENT_OPTIONS.map((arr) => (
+                          <option key={arr} value={arr}>
+                            {arr}
+                          </option>
+                        ))}
+                        {!PAYMENT_ARRANGEMENT_OPTIONS.includes(currentReq.paymentArrangement) && (
+                          <option value="Custom">{currentReq.paymentArrangement}</option>
+                        )}
+                      </select>
+                    </div>
+
+                    {/* 3. Agreed Client Fee */}
+                    <div className="space-y-1.5">
+                      <label className="block text-[11px] font-semibold text-[#0A1629]">
+                        Agreed Client Weekly Fee (&pound;/wk)
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="number"
+                          min={0}
+                          value={currentReq.agreedClientWeeklyFee}
+                          onChange={(e) =>
+                            updateCareRequest(currentReq.id, (prev) => ({
+                              ...prev,
+                              agreedClientWeeklyFee: Number(e.target.value) || 0,
+                              lastUpdated: 'Just now',
+                            }))
+                          }
+                          className="w-full px-3 py-2 rounded-xl border border-[#DFD5C2] bg-white text-xs font-bold text-[#0A1629] tabular-nums focus:outline-none focus:border-[#C8A464]"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

@@ -94,6 +94,7 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
 
   // Return date input for Admin Access Controls
   const [returnDateInput, setReturnDateInput] = useState('2026-11-08');
+  const [editingPlacementLifestyle, setEditingPlacementLifestyle] = useState(false);
 
   // Carer Available Placements Portal Preview State
   const circulatedPlacements = placements.filter((p) => p.circulatedToCarers);
@@ -2352,9 +2353,37 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
         {detailTab === 'overview' && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 text-xs">
             <div className="bg-white rounded-2xl border border-[#EAE3D4] p-5 space-y-3">
-              <h3 className="font-bold text-sm text-[#0A1629]">
-                Medical, Care &amp; Behavioural Summary
-              </h3>
+              <div className="flex items-center justify-between gap-2">
+                <h3 className="font-bold text-sm text-[#0A1629]">
+                  Medical, Care &amp; Behavioural Summary
+                </h3>
+                {viewMode === 'admin-detail' && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (editingPlacementLifestyle) {
+                        setEditingPlacementLifestyle(false);
+                        showToast('Client lifestyle & safety disclosures updated.');
+                      } else {
+                        setEditingPlacementLifestyle(true);
+                      }
+                    }}
+                    className="inline-flex items-center gap-1 text-xs font-semibold text-[#B88E3E] hover:underline cursor-pointer"
+                  >
+                    {editingPlacementLifestyle ? (
+                      <>
+                        <Check className="w-3.5 h-3.5" />
+                        <span>Done</span>
+                      </>
+                    ) : (
+                      <>
+                        <Edit2 className="w-3.5 h-3.5" />
+                        <span>Edit Disclosures</span>
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
               <p className="text-[#5C5549] leading-relaxed">{currentPlacement.aboutClient}</p>
               <div className="grid grid-cols-2 gap-3 pt-2">
                 <div className="col-span-2 p-3 rounded-xl bg-[#FAF7F2] border border-[#EFE8DC]">
@@ -2373,13 +2402,81 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
                   <span className="text-[#64748B] block">Mobility</span>
                   <strong className="text-[#0A1629]">{currentPlacement.mobilityLevel}</strong>
                 </div>
-                <div className="p-3 rounded-xl bg-[#FAF7F2] border border-[#EFE8DC]">
-                  <span className="text-[#64748B] block">Verbal Abuse History</span>
-                  <strong className="text-[#0A1629]">{currentPlacement.verbalAbuseHistory}</strong>
+                <div className="p-3 rounded-xl bg-[#FAF7F2] border border-[#EFE8DC] space-y-1">
+                  <span className="text-[#64748B] block">Pets in Home</span>
+                  {editingPlacementLifestyle && viewMode === 'admin-detail' ? (
+                    <input
+                      type="text"
+                      value={currentPlacement.pets}
+                      onChange={(e) =>
+                        updatePlacement(currentPlacement.id, (prev) => ({
+                          ...prev,
+                          pets: e.target.value,
+                        }))
+                      }
+                      className="w-full px-2.5 py-1.5 rounded-lg bg-white border border-[#DCD2C0] text-[#0A1629] text-xs"
+                    />
+                  ) : (
+                    <strong className="text-[#0A1629]">{currentPlacement.pets || 'No'}</strong>
+                  )}
                 </div>
-                <div className="p-3 rounded-xl bg-[#FAF7F2] border border-[#EFE8DC]">
+                <div className="p-3 rounded-xl bg-[#FAF7F2] border border-[#EFE8DC] space-y-1">
+                  <span className="text-[#64748B] block">Smoking</span>
+                  {editingPlacementLifestyle && viewMode === 'admin-detail' ? (
+                    <input
+                      type="text"
+                      value={currentPlacement.smoking}
+                      onChange={(e) =>
+                        updatePlacement(currentPlacement.id, (prev) => ({
+                          ...prev,
+                          smoking: e.target.value,
+                        }))
+                      }
+                      className="w-full px-2.5 py-1.5 rounded-lg bg-white border border-[#DCD2C0] text-[#0A1629] text-xs"
+                    />
+                  ) : (
+                    <strong className="text-[#0A1629]">{currentPlacement.smoking || 'No'}</strong>
+                  )}
+                </div>
+                <div className="p-3 rounded-xl bg-[#FAF7F2] border border-[#EFE8DC] space-y-1">
+                  <span className="text-[#64748B] block">Verbal Abuse History</span>
+                  {editingPlacementLifestyle && viewMode === 'admin-detail' ? (
+                    <input
+                      type="text"
+                      value={currentPlacement.verbalAbuseHistory}
+                      onChange={(e) =>
+                        updatePlacement(currentPlacement.id, (prev) => ({
+                          ...prev,
+                          verbalAbuseHistory: e.target.value,
+                        }))
+                      }
+                      className="w-full px-2.5 py-1.5 rounded-lg bg-white border border-[#DCD2C0] text-[#0A1629] text-xs"
+                    />
+                  ) : (
+                    <strong className="text-[#0A1629]">
+                      {currentPlacement.verbalAbuseHistory}
+                    </strong>
+                  )}
+                </div>
+                <div className="p-3 rounded-xl bg-[#FAF7F2] border border-[#EFE8DC] space-y-1">
                   <span className="text-[#64748B] block">Racially Abusive Behaviour</span>
-                  <strong className="text-[#0A1629]">{currentPlacement.racialAbuseHistory}</strong>
+                  {editingPlacementLifestyle && viewMode === 'admin-detail' ? (
+                    <input
+                      type="text"
+                      value={currentPlacement.racialAbuseHistory}
+                      onChange={(e) =>
+                        updatePlacement(currentPlacement.id, (prev) => ({
+                          ...prev,
+                          racialAbuseHistory: e.target.value,
+                        }))
+                      }
+                      className="w-full px-2.5 py-1.5 rounded-lg bg-white border border-[#DCD2C0] text-[#0A1629] text-xs"
+                    />
+                  ) : (
+                    <strong className="text-[#0A1629]">
+                      {currentPlacement.racialAbuseHistory}
+                    </strong>
+                  )}
                 </div>
               </div>
             </div>

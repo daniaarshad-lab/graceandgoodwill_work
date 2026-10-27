@@ -20,6 +20,9 @@ import {
   X,
   AlertTriangle,
   Calendar,
+  PawPrint,
+  Cigarette,
+  Edit2,
 } from 'lucide-react';
 import {
   deriveMainCareNeeds,
@@ -46,6 +49,8 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
   const [showNotificationToast, setShowNotificationToast] = useState(false);
   const [previewDocType, setPreviewDocType] = useState<'agreement' | 'statement' | null>(null);
   const [editingClientFee, setEditingClientFee] = useState(false);
+  const [editingLifestyle, setEditingLifestyle] = useState(false);
+  const [newProfileNote, setNewProfileNote] = useState('');
 
   const selectedPlacement =
     placements.find((p) => p.id === selectedPlacementId) || defaultEleanor || placements[0];
@@ -211,7 +216,7 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
       )}
 
       {/* Header Banner Card */}
-      <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
+      <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
         <div className="flex items-center gap-4">
           <img
             src={selectedPlacement.avatar}
@@ -312,7 +317,7 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
               onClick={() => setActiveTab(tab.id as typeof activeTab)}
               className={`flex items-center gap-2 px-4 py-2.5 font-semibold rounded-t-xl transition-all whitespace-nowrap cursor-pointer ${
                 isActive
-                  ? 'border-b-2 border-[#B88E3E] text-[#0A1629] bg-white shadow-sm'
+                  ? 'border-b-2 border-[#B88E3E] text-[#0A1629] bg-white shadow-2xs'
                   : 'text-[#7D7362] hover:text-[#0A1629] hover:bg-white/50'
               }`}
             >
@@ -327,7 +332,7 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
       {activeTab === 'overview' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10 text-xs">
           <div className="lg:col-span-2 space-y-6">
-            <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-sm space-y-4">
+            <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-xs space-y-4">
               <h2 className="text-sm font-bold text-[#0A1629]">
                 Client Profile &amp; Live-in Care Arrangement
               </h2>
@@ -361,10 +366,197 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
                 </div>
               </div>
             </div>
+
+            {/* Household, Lifestyle & Carer Safety Disclosures on Client Profile */}
+            <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-xs space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-[#F2ECE0]">
+                <div className="flex items-center gap-2">
+                  <Heart className="w-4 h-4 text-[#B88E3E]" />
+                  <h3 className="text-sm font-bold text-[#0A1629]">
+                    Household, Lifestyle &amp; Carer Safety Disclosures
+                  </h3>
+                </div>
+                {portalMode === 'admin-profile' && (
+                  <button
+                    type="button"
+                    onClick={() => setEditingLifestyle(!editingLifestyle)}
+                    className="inline-flex items-center gap-1 text-xs font-semibold text-[#B88E3E] hover:underline cursor-pointer"
+                  >
+                    {editingLifestyle ? (
+                      <>
+                        <Check className="w-3.5 h-3.5" />
+                        <span>Done</span>
+                      </>
+                    ) : (
+                      <>
+                        <Edit2 className="w-3.5 h-3.5" />
+                        <span>Edit</span>
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+                <div className="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#E0D5C1] space-y-1.5">
+                  <div className="flex items-center gap-1.5 font-bold text-[#0A1629]">
+                    <PawPrint className="w-3.5 h-3.5 text-[#B88E3E]" />
+                    <span>Pets in Home</span>
+                  </div>
+                  {editingLifestyle && portalMode === 'admin-profile' ? (
+                    <textarea
+                      rows={2}
+                      value={selectedPlacement.pets}
+                      onChange={(e) =>
+                        updatePlacement(selectedPlacement.id, (prev) => ({
+                          ...prev,
+                          pets: e.target.value,
+                        }))
+                      }
+                      placeholder="e.g. Yes, 2 dogs and 1 cat"
+                      className="w-full px-2.5 py-1.5 rounded-lg bg-white border border-[#DCD2C0] text-[#0A1629] text-xs focus:outline-none focus:border-[#B88E3E]"
+                    />
+                  ) : (
+                    <p className="text-[#475569]">{selectedPlacement.pets || 'No'}</p>
+                  )}
+                </div>
+
+                <div className="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#E0D5C1] space-y-1.5">
+                  <div className="flex items-center gap-1.5 font-bold text-[#0A1629]">
+                    <Cigarette className="w-3.5 h-3.5 text-[#B88E3E]" />
+                    <span>Smoking</span>
+                  </div>
+                  {editingLifestyle && portalMode === 'admin-profile' ? (
+                    <textarea
+                      rows={2}
+                      value={selectedPlacement.smoking}
+                      onChange={(e) =>
+                        updatePlacement(selectedPlacement.id, (prev) => ({
+                          ...prev,
+                          smoking: e.target.value,
+                        }))
+                      }
+                      placeholder="e.g. Yes – smokes outdoors"
+                      className="w-full px-2.5 py-1.5 rounded-lg bg-white border border-[#DCD2C0] text-[#0A1629] text-xs focus:outline-none focus:border-[#B88E3E]"
+                    />
+                  ) : (
+                    <p className="text-[#475569]">{selectedPlacement.smoking || 'No'}</p>
+                  )}
+                </div>
+
+                <div className="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#E0D5C1] space-y-1.5">
+                  <div className="flex items-center gap-1.5 font-bold text-[#0A1629]">
+                    <AlertTriangle className="w-3.5 h-3.5 text-[#B88E3E]" />
+                    <span>History of Verbal Abuse</span>
+                  </div>
+                  {editingLifestyle && portalMode === 'admin-profile' ? (
+                    <textarea
+                      rows={2}
+                      value={selectedPlacement.verbalAbuseHistory}
+                      onChange={(e) =>
+                        updatePlacement(selectedPlacement.id, (prev) => ({
+                          ...prev,
+                          verbalAbuseHistory: e.target.value,
+                        }))
+                      }
+                      placeholder="Specify verbal abuse history..."
+                      className="w-full px-2.5 py-1.5 rounded-lg bg-white border border-[#DCD2C0] text-[#0A1629] text-xs focus:outline-none focus:border-[#B88E3E]"
+                    />
+                  ) : (
+                    <p className="text-[#475569]">
+                      {selectedPlacement.verbalAbuseHistory || 'No'}
+                    </p>
+                  )}
+                </div>
+
+                <div className="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#E0D5C1] space-y-1.5">
+                  <div className="flex items-center gap-1.5 font-bold text-[#0A1629]">
+                    <Shield className="w-3.5 h-3.5 text-[#B88E3E]" />
+                    <span>History of Racial Abuse</span>
+                  </div>
+                  {editingLifestyle && portalMode === 'admin-profile' ? (
+                    <textarea
+                      rows={2}
+                      value={selectedPlacement.racialAbuseHistory}
+                      onChange={(e) =>
+                        updatePlacement(selectedPlacement.id, (prev) => ({
+                          ...prev,
+                          racialAbuseHistory: e.target.value,
+                        }))
+                      }
+                      placeholder="Specify racial abuse history..."
+                      className="w-full px-2.5 py-1.5 rounded-lg bg-white border border-[#DCD2C0] text-[#0A1629] text-xs focus:outline-none focus:border-[#B88E3E]"
+                    />
+                  ) : (
+                    <p className="text-[#475569]">
+                      {selectedPlacement.racialAbuseHistory || 'No'}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {portalMode === 'admin-profile' && (
+                <div className="pt-2 flex flex-col sm:flex-row gap-2">
+                  <input
+                    type="text"
+                    value={newProfileNote}
+                    onChange={(e) => setNewProfileNote(e.target.value)}
+                    placeholder="Document profile change (e.g. Client got an extra pet / started smoking)..."
+                    className="flex-1 px-3 py-2 rounded-xl bg-[#FAF7F2] border border-[#E0D5C1] text-[#0A1629] text-xs focus:outline-none focus:border-[#B88E3E]"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const summary = newProfileNote.trim();
+                      if (!summary) return;
+                      const entryDate = new Date().toLocaleDateString('en-GB', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric',
+                      });
+                      updatePlacement(selectedPlacement.id, (prev) => ({
+                        ...prev,
+                        lifestyleChangeLog: [
+                          {
+                            id: `lc-${Date.now()}`,
+                            date: entryDate,
+                            updatedBy: 'Admin',
+                            summary,
+                          },
+                          ...(prev.lifestyleChangeLog || []),
+                        ],
+                      }));
+                      setNewProfileNote('');
+                    }}
+                    className="px-3.5 py-2 rounded-xl bg-[#0A1629] text-white text-xs font-semibold inline-flex items-center justify-center gap-1.5 cursor-pointer"
+                  >
+                    <Plus className="w-3.5 h-3.5 text-[#D4AF7A]" />
+                    <span>Add to Profile</span>
+                  </button>
+                </div>
+              )}
+
+              {selectedPlacement.lifestyleChangeLog &&
+                selectedPlacement.lifestyleChangeLog.length > 0 && (
+                  <div className="space-y-1.5 pt-1">
+                    {selectedPlacement.lifestyleChangeLog.map((entry) => (
+                      <div
+                        key={entry.id}
+                        className="p-2.5 rounded-xl bg-[#FAF7F2] border border-[#EAE3D4] flex flex-wrap items-center justify-between gap-2 text-xs"
+                      >
+                        <span className="font-medium text-[#0A1629]">{entry.summary}</span>
+                        <span className="text-[11px] text-[#7D7362]">
+                          {entry.date} &bull; {entry.updatedBy}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+            </div>
           </div>
 
           {/* Client Payment & Agreed Fee Card — Strictly Agreed Grace & Goodwill Fee Only */}
-          <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-sm space-y-4">
+          <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-xs space-y-4">
             <div className="flex items-center justify-between pb-2.5 border-b border-[#F2ECE0]">
               <div className="flex items-center gap-2">
                 <Coins className="w-4 h-4 text-[#B88E3E]" />
@@ -442,7 +634,7 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
 
       {/* ── TAB 2: CARE PLAN ── */}
       {activeTab === 'careplan' && (
-        <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-sm space-y-4 relative z-10 text-xs">
+        <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-xs space-y-4 relative z-10 text-xs">
           <h2 className="text-sm font-bold text-[#0A1629]">Approved Live-in Care Plan (v3.2)</h2>
           <p className="text-[#5C5549] leading-relaxed">{selectedPlacement.careGoals}</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
@@ -470,7 +662,7 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
           {/* Left 2 Cols: Medication Table & Clinical Information */}
           <div className="lg:col-span-2 space-y-6">
             {/* Section: Medication Management */}
-            <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-sm space-y-4">
+            <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-xs space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#F2ECE0]">
                 <div className="flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-lg bg-[#FAF7F2] flex items-center justify-center text-[#B88E3E]">
@@ -484,7 +676,7 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
                   </div>
                 </div>
 
-                <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#E0D5C1] bg-[#FAF7F2] hover:bg-white text-xs font-semibold text-[#0A1629] transition-colors shadow-sm self-start sm:self-auto cursor-pointer">
+                <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#E0D5C1] bg-[#FAF7F2] hover:bg-white text-xs font-semibold text-[#0A1629] transition-colors shadow-2xs self-start sm:self-auto cursor-pointer">
                   <Plus className="w-3.5 h-3.5 text-[#B88E3E]" />
                   <span>Add Medication</span>
                 </button>
@@ -534,7 +726,7 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
             </div>
 
             {/* Section: Clinical Information */}
-            <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-sm space-y-4">
+            <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-xs space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-[#F2ECE0]">
                 <div className="flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-lg bg-[#FAF7F2] flex items-center justify-center text-[#B88E3E]">
@@ -616,7 +808,7 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
           {/* Right Column: Notifications & Safety Updates + Recent Activity */}
           <div className="space-y-6">
             {/* Notifications & Safety Updates Card */}
-            <div className="bg-white rounded-2xl p-5 border border-[#EAE3D4] shadow-sm space-y-4">
+            <div className="bg-white rounded-2xl p-5 border border-[#EAE3D4] shadow-xs space-y-4">
               <div className="flex items-center gap-2 pb-2 border-b border-[#F2ECE0]">
                 <Shield className="w-4 h-4 text-[#B88E3E]" />
                 <h3 className="text-xs font-bold text-[#0A1629]">
@@ -675,7 +867,7 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
             </div>
 
             {/* Recent Activity Card */}
-            <div className="bg-white rounded-2xl p-5 border border-[#EAE3D4] shadow-sm space-y-3">
+            <div className="bg-white rounded-2xl p-5 border border-[#EAE3D4] shadow-xs space-y-3">
               <div className="flex items-center justify-between pb-2 border-b border-[#F2ECE0]">
                 <div className="flex items-center gap-2">
                   <Clock className="w-4 h-4 text-[#B88E3E]" />
@@ -722,7 +914,7 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
       {/* ── TAB 4: CARERS (Client-Safe Carer Introduction — Zero Carer Pay Shown) ── */}
       {activeTab === 'carers' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 relative z-10 text-xs">
-          <div className="bg-white rounded-2xl p-5 border border-[#EAE3D4] shadow-sm flex items-center gap-4">
+          <div className="bg-white rounded-2xl p-5 border border-[#EAE3D4] shadow-xs flex items-center gap-4">
             <img
               src={selectedPlacement.primaryCarer.avatar}
               alt={selectedPlacement.primaryCarer.name}
@@ -741,7 +933,7 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl p-5 border border-[#EAE3D4] shadow-sm flex items-center gap-4">
+          <div className="bg-white rounded-2xl p-5 border border-[#EAE3D4] shadow-xs flex items-center gap-4">
             {selectedPlacement.reliefCarer ? (
               <>
                 <img
@@ -771,7 +963,7 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
 
       {/* ── TAB 5: CLIENT DOCUMENTS & AUTO-GENERATED FEE STATEMENTS (Zero Carer Pay Shown) ── */}
       {activeTab === 'documents' && (
-        <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-sm space-y-4 relative z-10 text-xs">
+        <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-xs space-y-4 relative z-10 text-xs">
           <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-[#F2ECE0]">
             <div>
               <h2 className="text-sm font-bold text-[#0A1629]">
@@ -836,7 +1028,7 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
 
       {/* ── TAB 6 & 7: NOTES / SAFETY & ALERTS ── */}
       {(activeTab === 'notes' || activeTab === 'safety') && (
-        <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-sm space-y-3 relative z-10 text-xs">
+        <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-xs space-y-3 relative z-10 text-xs">
           <div className="flex items-center gap-2 font-bold text-sm text-[#0A1629]">
             {activeTab === 'safety' ? (
               <AlertTriangle className="w-4 h-4 text-[#B88E3E]" />
@@ -884,7 +1076,7 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
 
       {/* Auto-Generated Client Document Preview Modal (Zero Carer Remuneration Included) */}
       {previewDocType && (
-        <div className="fixed inset-0 z-50 bg-[#0A1629]/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-[#0A1629]/70 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl border border-[#EAE3D4] max-w-xl w-full overflow-hidden shadow-2xl">
             <div className="px-6 py-4 bg-[#0A1629] text-white flex items-center justify-between gap-3">
               <div>

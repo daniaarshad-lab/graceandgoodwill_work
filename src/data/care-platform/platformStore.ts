@@ -69,6 +69,13 @@ export interface AccessLogEntry {
   status: 'completed' | 'active' | 'scheduled' | 'restricted';
 }
 
+export interface LifestyleProfileLogEntry {
+  id: string;
+  date: string;
+  updatedBy: string;
+  summary: string;
+}
+
 export interface ReturningCarerRecord {
   carerName: string;
   avatar: string;
@@ -124,6 +131,8 @@ export interface PlacementRecord {
   smoking: string;
   verbalAbuseHistory: string;
   racialAbuseHistory: string;
+  lifestyleNotes?: string;
+  lifestyleChangeLog?: LifestyleProfileLogEntry[];
   interests: string[];
   aboutClient: string;
   careGoals: string;
@@ -194,6 +203,8 @@ export interface CareRequestRecord {
   smoking: string;
   verbalAbuseHistory: string;
   racialAbuseHistory: string;
+  lifestyleNotes?: string;
+  lifestyleChangeLog?: LifestyleProfileLogEntry[];
   interests: string[];
   accommodation: AccommodationDetails;
 }
@@ -1423,7 +1434,43 @@ export const PlatformStoreProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const updatePlacement = (id: string, updater: (prev: PlacementRecord) => PlacementRecord) => {
-    setPlacements((prev) => prev.map((p) => (p.id === id ? updater(p) : p)));
+    setPlacements((prev) => {
+      let syncedPlacement: PlacementRecord | null = null;
+      const nextPlacements = prev.map((p) => {
+        if (p.id !== id) return p;
+        const updated = updater(p);
+        syncedPlacement = updated;
+        return updated;
+      });
+
+      if (syncedPlacement) {
+        const finalPl: PlacementRecord = syncedPlacement;
+        setCareRequests((prevReqs) =>
+          prevReqs.map((cr) => {
+            if (
+              cr.clientFirstName.trim().toLowerCase() === finalPl.clientFirstName.trim().toLowerCase() &&
+              cr.clientSurname.trim().toLowerCase() === finalPl.clientSurname.trim().toLowerCase() &&
+              cr.location.trim().toLowerCase() === finalPl.location.trim().toLowerCase()
+            ) {
+              return {
+                ...cr,
+                agreedClientWeeklyFee: finalPl.agreedClientWeeklyFee,
+                pets: finalPl.pets,
+                smoking: finalPl.smoking,
+                verbalAbuseHistory: finalPl.verbalAbuseHistory,
+                racialAbuseHistory: finalPl.racialAbuseHistory,
+                lifestyleNotes: finalPl.lifestyleNotes,
+                lifestyleChangeLog: finalPl.lifestyleChangeLog,
+                lastUpdated: 'Just now',
+              };
+            }
+            return cr;
+          })
+        );
+      }
+
+      return nextPlacements;
+    });
   };
 
   const addPlacement = (placement: PlacementRecord) => {
@@ -1479,6 +1526,10 @@ export const PlatformStoreProvider: React.FC<{ children: React.ReactNode }> = ({
                 personalCareNotes: finalReq.personalCareNotes,
                 pets: finalReq.pets,
                 smoking: finalReq.smoking,
+                verbalAbuseHistory: finalReq.verbalAbuseHistory,
+                racialAbuseHistory: finalReq.racialAbuseHistory,
+                lifestyleNotes: finalReq.lifestyleNotes,
+                lifestyleChangeLog: finalReq.lifestyleChangeLog,
                 accommodation: { ...finalReq.accommodation },
               };
             }
@@ -1598,6 +1649,8 @@ export const PlatformStoreProvider: React.FC<{ children: React.ReactNode }> = ({
       smoking: req.smoking,
       verbalAbuseHistory: req.verbalAbuseHistory,
       racialAbuseHistory: req.racialAbuseHistory,
+      lifestyleNotes: req.lifestyleNotes,
+      lifestyleChangeLog: req.lifestyleChangeLog,
       interests: req.interests,
       aboutClient: req.aboutClient,
       careGoals: req.careGoals,

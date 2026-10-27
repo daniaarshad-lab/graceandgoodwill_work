@@ -141,6 +141,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
 
   // Inline edit toggles for cards
   const [editingCard, setEditingCard] = useState<string | null>(null);
+  const [newLifestyleNote, setNewLifestyleNote] = useState<string>('');
 
   // Confirm & Finalise Placement modal state
   const [confirmModalRequest, setConfirmModalRequest] = useState<CareRequestRecord | null>(null);
@@ -2070,40 +2071,505 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
 
           {/* ── TAB 4: LIFESTYLE & PREFERENCES ── */}
           {activeTab === 'lifestyle' && (
-            <div className="bg-white rounded-2xl border border-[#EAE2D2] p-5 shadow-2xs space-y-4">
-              <h3 className="font-serif text-lg font-bold text-[#0A1629]">
-                Household, Lifestyle &amp; Carer Safety Disclosures
-              </h3>
+            <div className="bg-white rounded-2xl border border-[#EAE2D2] p-5 shadow-2xs space-y-5">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h3 className="font-serif text-lg font-bold text-[#0A1629]">
+                    Household, Lifestyle &amp; Carer Safety Disclosures
+                  </h3>
+                  {portalRoleView === 'admin' && (
+                    <p className="text-xs text-[#64748B] mt-0.5">
+                      Update disclosures at any time if client circumstances change (e.g. new pet or
+                      smoking status) to keep their profile accurate.
+                    </p>
+                  )}
+                </div>
+                {portalRoleView === 'admin' && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (editingCard === 'lifestyle-all') {
+                        setEditingCard(null);
+                        triggerToast('Lifestyle & safety disclosures saved to client profile.');
+                      } else {
+                        setEditingCard('lifestyle-all');
+                      }
+                    }}
+                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
+                      editingCard === 'lifestyle-all'
+                        ? 'bg-[#0A1629] text-white'
+                        : 'border border-[#EAE2D2] bg-[#FAF7F2] text-[#0A1629] hover:bg-[#F3EDE2]'
+                    }`}
+                  >
+                    {editingCard === 'lifestyle-all' ? (
+                      <>
+                        <Check className="w-3.5 h-3.5 text-[#D4AF7A]" />
+                        <span>Done Editing</span>
+                      </>
+                    ) : (
+                      <>
+                        <Edit2 className="w-3.5 h-3.5 text-[#C8A464]" />
+                        <span>Edit Disclosures</span>
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
-                <div className="p-4 rounded-xl bg-[#FAF7F2] border border-[#EAE2D2]">
-                  <div className="flex items-center gap-2 font-bold text-[#0A1629] mb-1">
-                    <PawPrint className="w-4 h-4 text-[#C8A464]" />
-                    <span>Pets in Home</span>
+                {/* 1. Pets in Home */}
+                <div className="p-4 rounded-xl bg-[#FAF7F2] border border-[#EAE2D2] flex flex-col justify-between gap-2">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 font-bold text-[#0A1629]">
+                        <PawPrint className="w-4 h-4 text-[#C8A464]" />
+                        <span>Pets in Home</span>
+                      </div>
+                      {portalRoleView === 'admin' && editingCard !== 'lifestyle-all' && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (editingCard === 'lifestyle-pets') {
+                              setEditingCard(null);
+                              triggerToast('Pets in Home updated on client profile.');
+                            } else {
+                              setEditingCard('lifestyle-pets');
+                            }
+                          }}
+                          className="inline-flex items-center gap-1 text-[11px] font-medium text-[#64748B] hover:text-[#0A1629] cursor-pointer"
+                        >
+                          {editingCard === 'lifestyle-pets' ? (
+                            <>
+                              <Check className="w-3.5 h-3.5 text-emerald-700" />
+                              <span className="text-emerald-700 font-semibold">Save</span>
+                            </>
+                          ) : (
+                            <>
+                              <Edit2 className="w-3 h-3" />
+                              <span>Edit</span>
+                            </>
+                          )}
+                        </button>
+                      )}
+                    </div>
+
+                    {portalRoleView === 'admin' &&
+                    (editingCard === 'lifestyle-all' || editingCard === 'lifestyle-pets') ? (
+                      <div className="space-y-2 pt-1">
+                        <div className="flex flex-wrap gap-1.5">
+                          {[
+                            'No',
+                            'Yes, 1 dog',
+                            'Yes, 1 cat',
+                            'Yes, 1 dog and 1 cat',
+                            'Yes, multiple pets',
+                          ].map((preset) => (
+                            <button
+                              key={preset}
+                              type="button"
+                              onClick={() =>
+                                updateCareRequest(currentReq.id, (prev) => ({
+                                  ...prev,
+                                  pets: preset,
+                                  lastUpdated: 'Just now',
+                                }))
+                              }
+                              className={`px-2 py-1 rounded-lg border text-[11px] transition-colors cursor-pointer ${
+                                currentReq.pets === preset
+                                  ? 'bg-[#F5EBD6] border-[#C8A464] text-[#0A1629] font-semibold'
+                                  : 'bg-white border-[#E2D9C8] text-[#475569] hover:border-[#C8A464]'
+                              }`}
+                            >
+                              {preset}
+                            </button>
+                          ))}
+                        </div>
+                        <textarea
+                          rows={2}
+                          value={currentReq.pets}
+                          onChange={(e) =>
+                            updateCareRequest(currentReq.id, (prev) => ({
+                              ...prev,
+                              pets: e.target.value,
+                              lastUpdated: 'Just now',
+                            }))
+                          }
+                          placeholder="Document pet details (e.g. Yes, 2 dogs and 1 cat)..."
+                          className="w-full px-2.5 py-1.5 rounded-lg bg-white border border-[#DCD2C0] text-[#0A1629] text-xs focus:outline-none focus:border-[#C8A464]"
+                        />
+                      </div>
+                    ) : (
+                      <p className="text-[#475569] whitespace-pre-line">
+                        {currentReq.pets || 'None recorded'}
+                      </p>
+                    )}
                   </div>
-                  <p className="text-[#475569]">{currentReq.pets}</p>
                 </div>
-                <div className="p-4 rounded-xl bg-[#FAF7F2] border border-[#EAE2D2]">
-                  <div className="flex items-center gap-2 font-bold text-[#0A1629] mb-1">
-                    <Cigarette className="w-4 h-4 text-[#C8A464]" />
-                    <span>Smoking</span>
+
+                {/* 2. Smoking */}
+                <div className="p-4 rounded-xl bg-[#FAF7F2] border border-[#EAE2D2] flex flex-col justify-between gap-2">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 font-bold text-[#0A1629]">
+                        <Cigarette className="w-4 h-4 text-[#C8A464]" />
+                        <span>Smoking</span>
+                      </div>
+                      {portalRoleView === 'admin' && editingCard !== 'lifestyle-all' && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (editingCard === 'lifestyle-smoking') {
+                              setEditingCard(null);
+                              triggerToast('Smoking disclosure updated on client profile.');
+                            } else {
+                              setEditingCard('lifestyle-smoking');
+                            }
+                          }}
+                          className="inline-flex items-center gap-1 text-[11px] font-medium text-[#64748B] hover:text-[#0A1629] cursor-pointer"
+                        >
+                          {editingCard === 'lifestyle-smoking' ? (
+                            <>
+                              <Check className="w-3.5 h-3.5 text-emerald-700" />
+                              <span className="text-emerald-700 font-semibold">Save</span>
+                            </>
+                          ) : (
+                            <>
+                              <Edit2 className="w-3 h-3" />
+                              <span>Edit</span>
+                            </>
+                          )}
+                        </button>
+                      )}
+                    </div>
+
+                    {portalRoleView === 'admin' &&
+                    (editingCard === 'lifestyle-all' || editingCard === 'lifestyle-smoking') ? (
+                      <div className="space-y-2 pt-1">
+                        <div className="flex flex-wrap gap-1.5">
+                          {[
+                            'No',
+                            'Yes (Smoker)',
+                            'Yes – outdoors only',
+                            'Vapes / E-cigarettes',
+                            'Household member smokes',
+                          ].map((preset) => (
+                            <button
+                              key={preset}
+                              type="button"
+                              onClick={() =>
+                                updateCareRequest(currentReq.id, (prev) => ({
+                                  ...prev,
+                                  smoking: preset,
+                                  lastUpdated: 'Just now',
+                                }))
+                              }
+                              className={`px-2 py-1 rounded-lg border text-[11px] transition-colors cursor-pointer ${
+                                currentReq.smoking === preset
+                                  ? 'bg-[#F5EBD6] border-[#C8A464] text-[#0A1629] font-semibold'
+                                  : 'bg-white border-[#E2D9C8] text-[#475569] hover:border-[#C8A464]'
+                              }`}
+                            >
+                              {preset}
+                            </button>
+                          ))}
+                        </div>
+                        <textarea
+                          rows={2}
+                          value={currentReq.smoking}
+                          onChange={(e) =>
+                            updateCareRequest(currentReq.id, (prev) => ({
+                              ...prev,
+                              smoking: e.target.value,
+                              lastUpdated: 'Just now',
+                            }))
+                          }
+                          placeholder="Specify smoking status or changes..."
+                          className="w-full px-2.5 py-1.5 rounded-lg bg-white border border-[#DCD2C0] text-[#0A1629] text-xs focus:outline-none focus:border-[#C8A464]"
+                        />
+                      </div>
+                    ) : (
+                      <p className="text-[#475569] whitespace-pre-line">
+                        {currentReq.smoking || 'No'}
+                      </p>
+                    )}
                   </div>
-                  <p className="text-[#475569]">{currentReq.smoking}</p>
                 </div>
-                <div className="p-4 rounded-xl bg-[#FAF7F2] border border-[#EAE2D2]">
-                  <div className="flex items-center gap-2 font-bold text-[#0A1629] mb-1">
-                    <AlertTriangle className="w-4 h-4 text-[#C8A464]" />
-                    <span>History of Verbal Abuse</span>
+
+                {/* 3. History of Verbal Abuse */}
+                <div className="p-4 rounded-xl bg-[#FAF7F2] border border-[#EAE2D2] flex flex-col justify-between gap-2">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 font-bold text-[#0A1629]">
+                        <AlertTriangle className="w-4 h-4 text-[#C8A464]" />
+                        <span>History of Verbal Abuse</span>
+                      </div>
+                      {portalRoleView === 'admin' && editingCard !== 'lifestyle-all' && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (editingCard === 'lifestyle-verbal') {
+                              setEditingCard(null);
+                              triggerToast('Verbal abuse disclosure updated on client profile.');
+                            } else {
+                              setEditingCard('lifestyle-verbal');
+                            }
+                          }}
+                          className="inline-flex items-center gap-1 text-[11px] font-medium text-[#64748B] hover:text-[#0A1629] cursor-pointer"
+                        >
+                          {editingCard === 'lifestyle-verbal' ? (
+                            <>
+                              <Check className="w-3.5 h-3.5 text-emerald-700" />
+                              <span className="text-emerald-700 font-semibold">Save</span>
+                            </>
+                          ) : (
+                            <>
+                              <Edit2 className="w-3 h-3" />
+                              <span>Edit</span>
+                            </>
+                          )}
+                        </button>
+                      )}
+                    </div>
+
+                    {portalRoleView === 'admin' &&
+                    (editingCard === 'lifestyle-all' || editingCard === 'lifestyle-verbal') ? (
+                      <div className="space-y-2 pt-1">
+                        <div className="flex flex-wrap gap-1.5">
+                          {[
+                            'No',
+                            'Previously reported, not currently occurring',
+                            'Yes – documented in care plan',
+                          ].map((preset) => (
+                            <button
+                              key={preset}
+                              type="button"
+                              onClick={() =>
+                                updateCareRequest(currentReq.id, (prev) => ({
+                                  ...prev,
+                                  verbalAbuseHistory: preset,
+                                  lastUpdated: 'Just now',
+                                }))
+                              }
+                              className={`px-2 py-1 rounded-lg border text-[11px] transition-colors cursor-pointer text-left ${
+                                currentReq.verbalAbuseHistory === preset
+                                  ? 'bg-[#F5EBD6] border-[#C8A464] text-[#0A1629] font-semibold'
+                                  : 'bg-white border-[#E2D9C8] text-[#475569] hover:border-[#C8A464]'
+                              }`}
+                            >
+                              {preset}
+                            </button>
+                          ))}
+                        </div>
+                        <textarea
+                          rows={2}
+                          value={currentReq.verbalAbuseHistory}
+                          onChange={(e) =>
+                            updateCareRequest(currentReq.id, (prev) => ({
+                              ...prev,
+                              verbalAbuseHistory: e.target.value,
+                              lastUpdated: 'Just now',
+                            }))
+                          }
+                          placeholder="Document context, triggers, or care plan guidance..."
+                          className="w-full px-2.5 py-1.5 rounded-lg bg-white border border-[#DCD2C0] text-[#0A1629] text-xs focus:outline-none focus:border-[#C8A464]"
+                        />
+                      </div>
+                    ) : (
+                      <p className="text-[#475569] whitespace-pre-line">
+                        {currentReq.verbalAbuseHistory || 'No'}
+                      </p>
+                    )}
                   </div>
-                  <p className="text-[#475569]">{currentReq.verbalAbuseHistory}</p>
                 </div>
-                <div className="p-4 rounded-xl bg-[#FAF7F2] border border-[#EAE2D2]">
-                  <div className="flex items-center gap-2 font-bold text-[#0A1629] mb-1">
-                    <Shield className="w-4 h-4 text-[#C8A464]" />
-                    <span>History of Racial Abuse</span>
+
+                {/* 4. History of Racial Abuse */}
+                <div className="p-4 rounded-xl bg-[#FAF7F2] border border-[#EAE2D2] flex flex-col justify-between gap-2">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 font-bold text-[#0A1629]">
+                        <Shield className="w-4 h-4 text-[#C8A464]" />
+                        <span>History of Racial Abuse</span>
+                      </div>
+                      {portalRoleView === 'admin' && editingCard !== 'lifestyle-all' && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (editingCard === 'lifestyle-racial') {
+                              setEditingCard(null);
+                              triggerToast('Racial abuse disclosure updated on client profile.');
+                            } else {
+                              setEditingCard('lifestyle-racial');
+                            }
+                          }}
+                          className="inline-flex items-center gap-1 text-[11px] font-medium text-[#64748B] hover:text-[#0A1629] cursor-pointer"
+                        >
+                          {editingCard === 'lifestyle-racial' ? (
+                            <>
+                              <Check className="w-3.5 h-3.5 text-emerald-700" />
+                              <span className="text-emerald-700 font-semibold">Save</span>
+                            </>
+                          ) : (
+                            <>
+                              <Edit2 className="w-3 h-3" />
+                              <span>Edit</span>
+                            </>
+                          )}
+                        </button>
+                      )}
+                    </div>
+
+                    {portalRoleView === 'admin' &&
+                    (editingCard === 'lifestyle-all' || editingCard === 'lifestyle-racial') ? (
+                      <div className="space-y-2 pt-1">
+                        <div className="flex flex-wrap gap-1.5">
+                          {[
+                            'No',
+                            'Previously reported, not currently occurring',
+                            'Yes – documented in care plan',
+                          ].map((preset) => (
+                            <button
+                              key={preset}
+                              type="button"
+                              onClick={() =>
+                                updateCareRequest(currentReq.id, (prev) => ({
+                                  ...prev,
+                                  racialAbuseHistory: preset,
+                                  lastUpdated: 'Just now',
+                                }))
+                              }
+                              className={`px-2 py-1 rounded-lg border text-[11px] transition-colors cursor-pointer text-left ${
+                                currentReq.racialAbuseHistory === preset
+                                  ? 'bg-[#F5EBD6] border-[#C8A464] text-[#0A1629] font-semibold'
+                                  : 'bg-white border-[#E2D9C8] text-[#475569] hover:border-[#C8A464]'
+                              }`}
+                            >
+                              {preset}
+                            </button>
+                          ))}
+                        </div>
+                        <textarea
+                          rows={2}
+                          value={currentReq.racialAbuseHistory}
+                          onChange={(e) =>
+                            updateCareRequest(currentReq.id, (prev) => ({
+                              ...prev,
+                              racialAbuseHistory: e.target.value,
+                              lastUpdated: 'Just now',
+                            }))
+                          }
+                          placeholder="Document safeguarding details or status..."
+                          className="w-full px-2.5 py-1.5 rounded-lg bg-white border border-[#DCD2C0] text-[#0A1629] text-xs focus:outline-none focus:border-[#C8A464]"
+                        />
+                      </div>
+                    ) : (
+                      <p className="text-[#475569] whitespace-pre-line">
+                        {currentReq.racialAbuseHistory || 'No'}
+                      </p>
+                    )}
                   </div>
-                  <p className="text-[#475569]">{currentReq.racialAbuseHistory}</p>
                 </div>
               </div>
+
+              {/* Admin Profile Documentation & Change Log */}
+              {(portalRoleView === 'admin' ||
+                (currentReq.lifestyleChangeLog && currentReq.lifestyleChangeLog.length > 0)) && (
+                <div className="pt-4 border-t border-[#EFE8DC] space-y-3 text-xs">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2 font-bold text-[#0A1629]">
+                      <ClipboardList className="w-4 h-4 text-[#C8A464]" />
+                      <span>Documented Profile Updates &amp; Household Notes</span>
+                    </div>
+                    <span className="text-[11px] text-[#64748B]">
+                      Synced to Client Profile &amp; Placement Record
+                    </span>
+                  </div>
+
+                  {portalRoleView === 'admin' && (
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <input
+                        type="text"
+                        value={newLifestyleNote}
+                        onChange={(e) => setNewLifestyleNote(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && newLifestyleNote.trim()) {
+                            e.preventDefault();
+                            const summary = newLifestyleNote.trim();
+                            const entryDate = new Date().toLocaleDateString('en-GB', {
+                              day: '2-digit',
+                              month: 'short',
+                              year: 'numeric',
+                            });
+                            updateCareRequest(currentReq.id, (prev) => ({
+                              ...prev,
+                              lastUpdated: 'Just now',
+                              lifestyleChangeLog: [
+                                {
+                                  id: `lc-${Date.now()}`,
+                                  date: entryDate,
+                                  updatedBy: 'Admin',
+                                  summary,
+                                },
+                                ...(prev.lifestyleChangeLog || []),
+                              ],
+                            }));
+                            setNewLifestyleNote('');
+                            triggerToast('Update documented on client profile.');
+                          }
+                        }}
+                        placeholder="Document a change to add to profile (e.g. Client got an extra dog, started smoking outdoors)..."
+                        className="flex-1 px-3 py-2 rounded-xl bg-[#FAF7F2] border border-[#E2D9C8] text-[#0A1629] text-xs focus:outline-none focus:border-[#C8A464]"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const summary = newLifestyleNote.trim();
+                          if (!summary) return;
+                          const entryDate = new Date().toLocaleDateString('en-GB', {
+                            day: '2-digit',
+                            month: 'short',
+                            year: 'numeric',
+                          });
+                          updateCareRequest(currentReq.id, (prev) => ({
+                            ...prev,
+                            lastUpdated: 'Just now',
+                            lifestyleChangeLog: [
+                              {
+                                id: `lc-${Date.now()}`,
+                                date: entryDate,
+                                updatedBy: 'Admin',
+                                summary,
+                              },
+                              ...(prev.lifestyleChangeLog || []),
+                            ],
+                          }));
+                          setNewLifestyleNote('');
+                          triggerToast('Update documented on client profile.');
+                        }}
+                        className="px-4 py-2 rounded-xl bg-[#0A1629] hover:bg-[#152542] text-white font-semibold inline-flex items-center justify-center gap-1.5 shrink-0 cursor-pointer"
+                      >
+                        <Plus className="w-3.5 h-3.5 text-[#D4AF7A]" />
+                        <span>Add to Profile</span>
+                      </button>
+                    </div>
+                  )}
+
+                  {currentReq.lifestyleChangeLog && currentReq.lifestyleChangeLog.length > 0 && (
+                    <div className="space-y-2 pt-1">
+                      {currentReq.lifestyleChangeLog.map((entry) => (
+                        <div
+                          key={entry.id}
+                          className="p-3 rounded-xl bg-[#FAF7F2] border border-[#EAE2D2] flex flex-wrap items-start justify-between gap-2"
+                        >
+                          <p className="text-[#0A1629] font-medium">{entry.summary}</p>
+                          <span className="text-[11px] text-[#64748B] shrink-0">
+                            {entry.date} &bull; {entry.updatedBy}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )}
 

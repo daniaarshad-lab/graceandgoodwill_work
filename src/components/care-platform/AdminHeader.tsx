@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Search, Bell, ChevronDown, Shield, Menu } from 'lucide-react';
+import { Search, Bell, ChevronDown, Shield, ShieldCheck, Check, Menu } from 'lucide-react';
+import { useOptionalPlatformStore } from '@/data/care-platform/platformStore';
 
 interface AdminHeaderProps {
   onSearch?: (query: string) => void;
@@ -14,9 +15,13 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
   onOpenMobileMenu,
   searchPlaceholder = 'Search carers, clients, placements...',
 }) => {
+  const store = useOptionalPlatformStore();
+  const adminRole = store?.adminRole ?? 'admin';
   const [searchVal, setSearchVal] = useState('');
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+
+  const isSuperAdmin = adminRole === 'super_admin';
 
   return (
     <header className="h-16 px-4 sm:px-6 lg:px-8 bg-transparent flex items-center justify-between sticky top-0 z-30 select-none">
@@ -91,6 +96,12 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
                     <p className="text-slate-500 text-[11px]">David Thompson</p>
                   </div>
                 </div>
+                <a
+                  href="/admin"
+                  className="w-full text-left px-3.5 py-1.5 text-slate-700 hover:bg-[#F6F1E7] flex items-center gap-2 border-t border-slate-100 mt-1 pt-2"
+                >
+                  <span>&larr; Classic Admin Console</span>
+                </a>
               </div>
             </div>
           )}
@@ -115,7 +126,7 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
                 Jessica Smith
               </div>
               <div className="text-[11px] text-[#786F62] font-normal leading-tight">
-                Admin
+                {isSuperAdmin ? 'Super Admin' : 'Admin'}
               </div>
             </div>
 
@@ -123,25 +134,41 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
           </button>
 
           {showProfileMenu && (
-            <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-[#EAE2D2] py-1.5 text-xs z-50">
+            <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-[#EAE2D2] py-1.5 text-xs z-50">
               <div className="px-3.5 py-2 border-b border-slate-100">
                 <p className="font-semibold text-slate-800">Jessica Smith</p>
                 <p className="text-slate-500 text-[10px]">admin@graceandgoodwill.co.uk</p>
               </div>
               <div className="py-1">
+                <div className="px-3.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                  Access Level
+                </div>
                 <button
-                  onClick={() => setShowProfileMenu(false)}
-                  className="w-full text-left px-3.5 py-1.5 text-slate-700 hover:bg-[#F6F1E7] flex items-center gap-2"
+                  onClick={() => {
+                    store?.setAdminRole('admin');
+                    setShowProfileMenu(false);
+                  }}
+                  className="w-full text-left px-3.5 py-1.5 text-slate-700 hover:bg-[#F6F1E7] flex items-center justify-between gap-2 cursor-pointer"
                 >
-                  <Shield className="w-3.5 h-3.5 text-[#C5A059]" />
-                  Administrator Role
+                  <span className="flex items-center gap-2">
+                    <Shield className="w-3.5 h-3.5 text-[#C5A059]" />
+                    <span>Regular Admin</span>
+                  </span>
+                  {!isSuperAdmin && <Check className="w-3.5 h-3.5 text-[#0A1629]" />}
                 </button>
-                <a
-                  href="/admin"
-                  className="w-full text-left px-3.5 py-1.5 text-slate-700 hover:bg-[#F6F1E7] flex items-center gap-2 border-t border-slate-100 mt-1 pt-2"
+                <button
+                  onClick={() => {
+                    store?.setAdminRole('super_admin');
+                    setShowProfileMenu(false);
+                  }}
+                  className="w-full text-left px-3.5 py-1.5 text-slate-700 hover:bg-[#F6F1E7] flex items-center justify-between gap-2 cursor-pointer"
                 >
-                  <span>&larr; Classic Admin Console</span>
-                </a>
+                  <span className="flex items-center gap-2">
+                    <ShieldCheck className="w-3.5 h-3.5 text-[#0A1629]" />
+                    <span>Super Admin</span>
+                  </span>
+                  {isSuperAdmin && <Check className="w-3.5 h-3.5 text-[#0A1629]" />}
+                </button>
               </div>
             </div>
           )}

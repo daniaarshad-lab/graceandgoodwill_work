@@ -301,7 +301,7 @@ export function evaluateClientInfoAccess(
     };
   }
 
-  // Rule 6C: Agreements must be signed
+  // Rule 6C: Agreements must be signed before any client contact details are released
   if (!placement.agreementsSigned) {
     return {
       canCarerViewIdentityAndContact: false,
@@ -309,7 +309,7 @@ export function evaluateClientInfoAccess(
       accessStateLabel: 'Restricted (Agreements Pending)',
       releaseDateDisplay: 'Locked until agreements signed',
       reasonSummary:
-        'Client identifying and contact details remain hidden until placement confirmation and required agreements are completed.',
+        'Client identifying and contact details remain hidden until the required agreements have been signed.',
     };
   }
 
@@ -326,8 +326,8 @@ export function evaluateClientInfoAccess(
     year: 'numeric',
   });
 
-  // Rule 6B: Urgent / Emergency placements or starting within <= 7 days
-  if (placement.isEmergency || diffDays <= 7) {
+  // Rule 6B: Starting within <= 7 days (with signed agreements — handled separately from Emergency Placement flag)
+  if (diffDays <= 7) {
     return {
       canCarerViewIdentityAndContact: true,
       canCarerViewEmail: placement.emailExceptionAuthorised,
@@ -335,11 +335,11 @@ export function evaluateClientInfoAccess(
       releaseDateDisplay:
         diffDays <= 7 && diffDays >= 0
           ? `${releaseDateFormatted} (7-day window active)`
-          : 'Released immediately (Urgent / Active)',
+          : 'Released (Signed Agreements & Active Window)',
       reasonSummary:
-        placement.isEmergency || (diffDays < 7 && diffDays >= 0)
-          ? 'Placement starts within 7 days with signed agreements — full name, residential address and telephone released immediately.'
-          : 'Contact information is available to the assigned carer during the confirmed placement.',
+        diffDays < 7 && diffDays >= 0
+          ? 'Placement starts within 7 days with signed agreements — full name, residential address and telephone released.'
+          : 'Contact information is available to the assigned carer following signed agreements.',
     };
   }
 
@@ -614,8 +614,7 @@ const INITIAL_PLACEMENTS: PlacementRecord[] = [
       adminVerified: false,
     },
     confirmedDate: '18 Oct 2026',
-    agreementsSigned: true,
-    agreementsSignedDate: '18 Oct 2026',
+    agreementsSigned: false,
     manualOverride: 'none',
     emailExceptionAuthorised: false,
     returningCarers: [
@@ -1597,6 +1596,9 @@ export const PlatformStoreProvider: React.FC<{ children: React.ReactNode }> = ({
     );
 
     if (existingPlacement) {
+      const sameCarer = existingPlacement.primaryCarer.name === carerName;
+      const keepSigned = sameCarer ? existingPlacement.agreementsSigned : false;
+      const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       const updatedExisting: PlacementRecord = {
         ...existingPlacement,
         placementType: req.placementType,
@@ -1608,6 +1610,8 @@ export const PlatformStoreProvider: React.FC<{ children: React.ReactNode }> = ({
         foodAllowance: req.foodAllowance,
         isEmergency: isEmergencyPlacement,
         status: isEmergencyPlacement ? 'Emergency' : existingPlacement.status,
+        agreementsSigned: keepSigned,
+        agreementsSignedDate: keepSigned ? existingPlacement.agreementsSignedDate : undefined,
         primaryCarer: {
           name: carerName,
           fullName: carerName,
@@ -1622,6 +1626,19 @@ export const PlatformStoreProvider: React.FC<{ children: React.ReactNode }> = ({
           ...req.accommodation,
           adminVerified: true,
         },
+        accessHistory: [
+          {
+            id: `log-${Date.now()}-carer`,
+            date: '25 Oct 2026',
+            time: nowTime,
+            title: 'Carer selection confirmed',
+            subtitle: keepSigned
+              ? `Selected carer: ${carerName} • Accommodation verified`
+              : `Selected carer: ${carerName} • Client contact details locked until required agreements are signed`,
+            status: keepSigned ? 'completed' : 'restricted',
+          },
+          ...existingPlacement.accessHistory,
+        ],
       };
       setPlacements((prev) =>
         prev.map((p) => (p.id === existingPlacement.id ? updatedExisting : p))
@@ -1642,7 +1659,7 @@ export const PlatformStoreProvider: React.FC<{ children: React.ReactNode }> = ({
       placementType: req.placementType,
       duration: req.duration,
       isEmergency: isEmergencyPlacement,
-      status: isEmergencyPlacement ? 'Emergency' : 'Confirmed',
+      status: isEmergencyPlacement ? 'Emergency' : 'Upcoming',
       weeklyPayment: req.weeklyPayment,
       foodAllowance: req.foodAllowance,
       hasFoodAllowance: req.foodAllowance > 0,
@@ -1683,8 +1700,7 @@ export const PlatformStoreProvider: React.FC<{ children: React.ReactNode }> = ({
         adminVerified: true,
       },
       confirmedDate: '25 Oct 2026',
-      agreementsSigned: true,
-      agreementsSignedDate: '25 Oct 2026',
+      agreementsSigned: false,
       manualOverride: 'none',
       emailExceptionAuthorised: false,
       returningCarers: [],
@@ -1693,19 +1709,17 @@ export const PlatformStoreProvider: React.FC<{ children: React.ReactNode }> = ({
           id: `log-${Date.now()}-1`,
           date: '25 Oct 2026',
           time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          title: 'Placement confirmed from Care Request',
-          subtitle: `Assigned to ${carerName} • Accommodation verified`,
+          title: 'Carer selection confirmed',
+          subtitle: `Selected carer: ${carerName} • Accommodation verified`,
           status: 'completed',
         },
         {
           id: `log-${Date.now()}-2`,
           date: '25 Oct 2026',
           time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          title: isEmergencyPlacement
-            ? 'Emergency <7d rule: Client full name, address & phone released'
-            : 'Automatic 7-day release rule active',
-          subtitle: 'Client email remains hidden by default',
-          status: 'active',
+          title: 'Client contact details restricted (Agreements pending)',
+          subtitle: 'Client contact details are only released once required agreements have been signed',
+          status: 'restricted',
         },
       ],
       circulatedToCarers: true,

@@ -451,8 +451,7 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
             adminVerified: true,
           },
       confirmedDate: '25 Oct 2026',
-      agreementsSigned: true,
-      agreementsSignedDate: '25 Oct 2026',
+      agreementsSigned: false,
       manualOverride: 'none',
       emailExceptionAuthorised: false,
       returningCarers: [],
@@ -3503,16 +3502,19 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
                 </select>
               </div>
 
-              <label className="flex items-center gap-2 p-2.5 rounded-xl bg-rose-50/70 border border-rose-200 cursor-pointer">
+              <label className="flex items-start gap-2.5 p-2.5 rounded-xl bg-rose-50/70 border border-rose-200 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={newIsEmergency}
                   onChange={(e) => setNewIsEmergency(e.target.checked)}
-                  className="w-4 h-4 accent-rose-600"
+                  className="mt-0.5 w-4 h-4 accent-rose-600 shrink-0"
                 />
-                <span className="font-semibold text-rose-900">
-                  Mark as Emergency Placement (resides in Emergency Placements tab)
-                </span>
+                <div>
+                  <div className="font-semibold text-rose-900">Mark as Emergency Placement</div>
+                  <p className="text-[11px] text-rose-800/80 mt-0.5">
+                    Prioritise this placement and display it in the Emergency Placements section.
+                  </p>
+                </div>
               </label>
 
               <div className="flex justify-end gap-2 pt-3 border-t border-[#F2ECE0]">

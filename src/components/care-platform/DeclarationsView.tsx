@@ -307,7 +307,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
       return;
     }
     if (!adminConfirmedAccommodation) {
-      triggerToast('Please tick administrator accommodation verification to finalise.');
+      triggerToast('Please tick administrator accommodation verification to confirm carer selection.');
       return;
     }
 
@@ -323,7 +323,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
     if (createdOrUpdated) {
       setRecentlyConfirmedPlacementId(createdOrUpdated.id);
       triggerToast(
-        `Placement confirmed for ${confirmModalRequest.displayTitle} and automatically added to Placements!`
+        `Carer selection confirmed (${chosenCarer.name}) for ${confirmModalRequest.displayTitle}. Client contact details remain restricted until required agreements are signed.`
       );
     }
   };
@@ -530,14 +530,15 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
         </div>
       )}
 
-      {/* Confirmation Banner when a Care Request has just been finalised into Placements */}
+      {/* Confirmation Banner when Carer Selection has been confirmed */}
       {recentlyConfirmedPlacementId && (
         <div className="relative z-20 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 flex flex-wrap items-center justify-between gap-3 shadow-2xs">
           <div className="flex items-center gap-2.5 text-xs sm:text-sm text-emerald-900 font-medium">
             <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
             <span>
-              Placement confirmed and automatically added to the <strong>Placements</strong> roster
-              with inherited Carer Accommodation details.
+              Carer selection confirmed and added to <strong>Placements</strong> with verified Carer
+              Accommodation details. Client contact details remain restricted until required
+              agreements have been signed.
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -2663,7 +2664,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                   onClick={() => openConfirmModal(currentReq)}
                   className="px-4 py-2 rounded-xl bg-[#C8A464] hover:bg-[#B89352] text-white text-xs font-semibold cursor-pointer"
                 >
-                  Confirm &amp; Finalise Placement
+                  Confirm Carer Selection
                 </button>
               </div>
 
@@ -2868,7 +2869,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
       )}
 
       {/* ═══════════════════════════════════════════════════════════════════════════
-          MODAL: CONFIRM ACCOMMODATION & FINALISE PLACEMENT -> PLACEMENTS ROSTER
+          MODAL: CONFIRM CARER SELECTION
       ═══════════════════════════════════════════════════════════════════════════ */}
       {confirmModalRequest && (
         <div className="fixed inset-0 z-50 bg-[#0A1629]/60 backdrop-blur-xs flex items-center justify-center p-4">
@@ -2876,7 +2877,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
             <div className="flex items-start justify-between gap-3">
               <div>
                 <h3 className="font-serif text-xl font-bold text-[#0A1629]">
-                  Confirm Accommodation &amp; Finalise Placement
+                  Confirm Carer Selection
                 </h3>
                 <p className="text-xs text-[#64748B] mt-0.5">
                   Client: <strong>{confirmModalRequest.displayTitle}</strong> ({confirmModalRequest.location}) &bull;{' '}
@@ -2891,10 +2892,10 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
               </button>
             </div>
 
-            {/* Select Matched Vetted Live-in Carer */}
+            {/* Select Live-in Carer */}
             <div>
               <label className="block text-xs font-semibold text-[#0A1629] mb-2">
-                Assign Matched Approved Live-in Carer
+                Select Live-in Carer
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {VETTED_CARERS.map((c, idx) => (
@@ -3044,18 +3045,20 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
               </label>
             </div>
 
-            {/* Emergency Placement Flag */}
-            <label className="flex items-center gap-2.5 text-xs text-[#334155] cursor-pointer">
+            {/* Emergency Placement Flag (Handled separately from client contact detail release) */}
+            <label className="flex items-start gap-2.5 text-xs text-[#334155] cursor-pointer">
               <input
                 type="checkbox"
                 checked={markAsEmergency}
                 onChange={(e) => setMarkAsEmergency(e.target.checked)}
-                className="w-4 h-4 accent-rose-600 cursor-pointer"
+                className="mt-0.5 w-4 h-4 accent-rose-600 cursor-pointer shrink-0"
               />
-              <span>
-                Classify as <strong>Emergency Placement</strong> (places in Emergency Placements tab
-                &amp; releases client contact details immediately upon signed agreements)
-              </span>
+              <div>
+                <div className="font-semibold text-[#0A1629]">Mark as Emergency Placement</div>
+                <p className="text-[11.5px] text-[#64748B] mt-0.5">
+                  Prioritise this placement and display it in the Emergency Placements section.
+                </p>
+              </div>
             </label>
 
             <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-[#F1ECE2]">
@@ -3070,7 +3073,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                 className="px-4 py-2 rounded-xl bg-[#0A1629] hover:bg-[#152542] text-white text-xs font-semibold inline-flex items-center gap-1.5 cursor-pointer"
               >
                 <CheckCircle2 className="w-4 h-4 text-[#D4AF7A]" />
-                <span>Confirm &amp; Publish to Placements</span>
+                <span>Confirm Carer Selection</span>
               </button>
             </div>
           </div>

@@ -225,6 +225,7 @@ export interface EvaluatedAccessState {
 }
 
 export type PlatformViewerRole = 'admin' | 'carer' | 'client';
+export type AdminUserRole = 'admin' | 'super_admin';
 
 export interface FinancialVisibilityPolicy {
   canViewCarerFeeAndAllowance: boolean;
@@ -1418,6 +1419,8 @@ interface PlatformStoreContextType {
   placements: PlacementRecord[];
   careRequests: CareRequestRecord[];
   totalCarersCount: number;
+  adminRole: AdminUserRole;
+  setAdminRole: React.Dispatch<React.SetStateAction<AdminUserRole>>;
   carerAvailabilityPrefs: AvailabilityCategory[];
   setCarerAvailabilityPrefs: React.Dispatch<React.SetStateAction<AvailabilityCategory[]>>;
   incrementApprovedCarers: () => void;
@@ -1438,6 +1441,7 @@ export const PlatformStoreProvider: React.FC<{ children: React.ReactNode }> = ({
   const [placements, setPlacements] = useState<PlacementRecord[]>(INITIAL_PLACEMENTS);
   const [careRequests, setCareRequests] = useState<CareRequestRecord[]>(INITIAL_CARE_REQUESTS);
   const [totalCarersCount, setTotalCarersCount] = useState<number>(248);
+  const [adminRole, setAdminRole] = useState<AdminUserRole>('admin');
   const [carerAvailabilityPrefs, setCarerAvailabilityPrefs] = useState<AvailabilityCategory[]>([
     'Live-in Ongoing Care',
     'Live-in Respite Care',
@@ -1737,6 +1741,8 @@ export const PlatformStoreProvider: React.FC<{ children: React.ReactNode }> = ({
         placements,
         careRequests,
         totalCarersCount,
+        adminRole,
+        setAdminRole,
         carerAvailabilityPrefs,
         setCarerAvailabilityPrefs,
         incrementApprovedCarers,
@@ -1756,4 +1762,8 @@ export function usePlatformStore() {
     throw new Error('usePlatformStore must be used inside PlatformStoreProvider');
   }
   return ctx;
+}
+
+export function useOptionalPlatformStore() {
+  return useContext(PlatformStoreContext);
 }

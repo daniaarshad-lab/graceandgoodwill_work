@@ -420,6 +420,7 @@ function AdminDashboardContent() {
                 <PlatformStoreProvider>
                   <div className="rounded-2xl overflow-hidden bg-[#F8F5EE] text-[#1E293B] p-3 sm:p-5">
                     <HealthConditionsMasterView
+                      userRole={user?.role}
                       onBack={() => handleTabChange("overview")}
                     />
                   </div>

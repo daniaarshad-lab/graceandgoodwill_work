@@ -24,7 +24,7 @@ export default function AgreementsGuard({ children }: AgreementsGuardProps) {
     }
 
     // Skip check for admins
-    if (user.role?.toUpperCase() === "ADMIN") {
+    if (user.role?.toUpperCase() === "ADMIN" || user.role?.toUpperCase() === "SUPER_ADMIN") {
       setHasPending(false);
       return;
     }

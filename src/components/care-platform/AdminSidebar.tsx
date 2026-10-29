@@ -12,6 +12,7 @@ import {
   BarChart3,
   Calendar,
   Settings,
+  Globe,
   X,
 } from 'lucide-react';
 
@@ -31,6 +32,7 @@ interface AdminSidebarProps {
   onViewChange: (view: AdminView) => void;
   isOpenOnMobile?: boolean;
   onCloseMobile?: () => void;
+  websiteHref?: string;
 }
 
 export const AdminSidebar: React.FC<AdminSidebarProps> = ({
@@ -38,6 +40,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
   onViewChange,
   isOpenOnMobile = false,
   onCloseMobile,
+  websiteHref,
 }) => {
   // Navigation strictly matching client mockup:
   // Icons: Home, Users, User, FileText, CreditCard (Placements), MessageSquare, BookOpen, BarChart3, Calendar, Settings
@@ -105,7 +108,6 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
             <span className="font-cinzel tracking-[0.22em] text-[#D4AF7A] text-[13px] font-semibold uppercase leading-tight">
               GRACE &amp; GOODWILL
             </span>
-
             <span className="text-[7.5px] tracking-[0.22em] uppercase text-[#D4AF7A]/80 font-medium mt-1">
               — CARE DEFINED BY INTEGRITY —
             </span>
@@ -117,7 +119,6 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
           {navItems.map((item) => {
             const active = isItemActive(item.label);
             const Icon = item.icon;
-
             return (
               <button
                 key={item.label}
@@ -141,6 +142,18 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
               </button>
             );
           })}
+
+          {websiteHref && (
+            <div className="pt-2 mt-2 border-t border-[#D4AF7A]/15">
+              <a
+                href={websiteHref}
+                className="w-full flex items-center gap-3.5 px-3.5 py-2 rounded-xl text-[12.5px] text-[#D4AF7A] hover:text-white hover:bg-white/[0.05] transition-all"
+              >
+                <Globe className="w-4 h-4 shrink-0 text-[#D4AF7A]" strokeWidth={1.8} />
+                <span className="truncate">Main Website</span>
+              </a>
+            </div>
+          )}
         </div>
       </div>
 

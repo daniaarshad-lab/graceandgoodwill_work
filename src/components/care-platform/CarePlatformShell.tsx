@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { AdminSidebar, AdminView } from "./AdminSidebar";
 import { AdminHeader } from "./AdminHeader";
 import { AdminDashboard } from "./AdminDashboard";
@@ -13,24 +14,36 @@ import { DeclarationsView } from "./DeclarationsView";
 import { PlacementsView } from "./PlacementsView";
 import { ExpiredProfileView } from "./ExpiredProfileView";
 import { PlatformStoreProvider } from "@/data/care-platform/platformStore";
+import { useAuth } from "@/contexts/AuthContext";
+import { useAppDispatch } from "@/store/hooks";
+import { logout as logoutThunk } from "@/store/slices/authSlice";
+import { AUTH_ROUTES } from "@/lib/auth-routes";
 
 interface CarePlatformShellProps {
   initialView?: AdminView;
-  initialPlacementsMode?: "admin-list" | "carer-available" | "client-portal";
+  initialPlacementsMode?: "admin-list" | "carer-available";
 }
 
 export default function CarePlatformShell({
   initialView = "dashboard",
   initialPlacementsMode = "admin-list",
 }: CarePlatformShellProps) {
+  const { user } = useAuth();
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+
   const [currentView, setCurrentView] = useState<AdminView>(initialView);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [placementsInitialMode, setPlacementsInitialMode] = useState<
-    "admin-list" | "carer-available" | "client-portal"
+    "admin-list" | "carer-available"
   >(initialPlacementsMode);
   const [focusedPlacementId, setFocusedPlacementId] = useState<string | null>(
-    null,
+    null
   );
+
+  useEffect(() => {
+    setCurrentView(initialView);
+  }, [initialView]);
 
   const handleNavigate = (view: AdminView) => {
     if (view === "carer-accommodation") {
@@ -42,10 +55,23 @@ export default function CarePlatformShell({
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const handleLogout = async () => {
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("auth_logging_out", String(Date.now()));
+    }
+    await dispatch(logoutThunk());
+    router.replace(AUTH_ROUTES.login.admin);
+  };
+
+  const fullName =
+    user?.firstName || user?.lastName
+      ? `${user?.firstName || ""} ${user?.lastName || ""}`.trim()
+      : undefined;
+
   if (currentView === "expired-link") {
     return (
       <PlatformStoreProvider>
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-[#F8F5EE]">
+        <div className="fixed inset-0 z-40 overflow-y-auto bg-[#F8F5EE]">
           <ExpiredProfileView onBack={() => setCurrentView("dashboard")} />
         </div>
       </PlatformStoreProvider>
@@ -54,18 +80,25 @@ export default function CarePlatformShell({
 
   return (
     <PlatformStoreProvider>
-      <div className="fixed inset-0 z-50 overflow-y-auto bg-[#F8F5EE] flex text-[#1E293B] antialiased">
+      <div className="fixed inset-0 z-40 overflow-y-auto bg-[#F8F5EE] flex text-[#1E293B] antialiased">
         <AdminSidebar
           currentView={currentView}
           onViewChange={handleNavigate}
           isOpenOnMobile={mobileMenuOpen}
           onCloseMobile={() => setMobileMenuOpen(false)}
+          websiteHref="/"
         />
 
         <div className="flex-1 flex flex-col min-w-0 min-h-screen">
           <AdminHeader
             onOpenMobileMenu={() => setMobileMenuOpen(true)}
             onSearch={(q) => console.log("Search:", q)}
+            userName={fullName}
+            userEmail={user?.email}
+            userRole={user?.role}
+            websiteHref="/"
+            classicAdminHref="/admin/classic"
+            onLogout={handleLogout}
           />
 
           <main className="flex-1 pb-16">
@@ -91,6 +124,7 @@ export default function CarePlatformShell({
 
             {currentView === "health-conditions" && (
               <HealthConditionsView
+                userRole={user?.role}
                 onBack={() => handleNavigate("dashboard")}
               />
             )}

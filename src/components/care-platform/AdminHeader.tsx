@@ -1,27 +1,73 @@
 "use client";
 
-import React, { useState } from 'react';
-import { Search, Bell, ChevronDown, Shield, ShieldCheck, Check, Menu } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import {
+  Search,
+  Bell,
+  ChevronDown,
+  Shield,
+  ShieldCheck,
+  Check,
+  Menu,
+  Globe,
+  LogOut,
+  LayoutGrid,
+} from 'lucide-react';
 import { useOptionalPlatformStore } from '@/data/care-platform/platformStore';
 
 interface AdminHeaderProps {
   onSearch?: (query: string) => void;
   onOpenMobileMenu?: () => void;
   searchPlaceholder?: string;
+  userName?: string;
+  userEmail?: string;
+  userRole?: string | null;
+  websiteHref?: string;
+  classicAdminHref?: string;
+  onLogout?: () => void;
 }
 
 export const AdminHeader: React.FC<AdminHeaderProps> = ({
   onSearch,
   onOpenMobileMenu,
   searchPlaceholder = 'Search carers, clients, placements...',
+  userName,
+  userEmail,
+  userRole,
+  websiteHref,
+  classicAdminHref,
+  onLogout,
 }) => {
   const store = useOptionalPlatformStore();
-  const adminRole = store?.adminRole ?? 'admin';
   const [searchVal, setSearchVal] = useState('');
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
+  // Sync authenticated role from main website session when present
+  useEffect(() => {
+    if (!userRole) return;
+    const normalized = userRole.trim().toLowerCase();
+    if (normalized === 'super_admin' || normalized === 'superadmin') {
+      store?.setAdminRole('super_admin');
+    } else if (normalized === 'admin') {
+      store?.setAdminRole('admin');
+    }
+  }, [userRole]);
+
+  const adminRole = store?.adminRole ?? 'admin';
   const isSuperAdmin = adminRole === 'super_admin';
+  const lockedByAuthRole = Boolean(
+    userRole && ['admin', 'super_admin', 'superadmin'].includes(userRole.trim().toLowerCase())
+  );
+
+  const displayName = userName?.trim() || 'Jessica Smith';
+  const displayEmail = userEmail?.trim() || 'admin@graceandgoodwill.co.uk';
+  const initials = displayName
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() || '')
+    .join('') || 'JS';
 
   return (
     <header className="h-16 px-4 sm:px-6 lg:px-8 bg-transparent flex items-center justify-between sticky top-0 z-30 select-none">
@@ -96,12 +142,6 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
                     <p className="text-slate-500 text-[11px]">David Thompson</p>
                   </div>
                 </div>
-                <a
-                  href="/admin"
-                  className="w-full text-left px-3.5 py-1.5 text-slate-700 hover:bg-[#F6F1E7] flex items-center gap-2 border-t border-slate-100 mt-1 pt-2"
-                >
-                  <span>&larr; Classic Admin Console</span>
-                </a>
               </div>
             </div>
           )}
@@ -118,12 +158,12 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
           >
             {/* Camel/Gold Initials Circle */}
             <div className="w-8 h-8 rounded-full bg-[#C8A86B] text-[#0A1629] font-semibold text-xs flex items-center justify-center shadow-sm shrink-0">
-              JS
+              {initials}
             </div>
 
             <div className="text-left hidden sm:block">
               <div className="text-xs font-semibold text-[#0A1629] leading-tight">
-                Jessica Smith
+                {displayName}
               </div>
               <div className="text-[11px] text-[#786F62] font-normal leading-tight">
                 {isSuperAdmin ? 'Super Admin' : 'Admin'}
@@ -134,42 +174,80 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
           </button>
 
           {showProfileMenu && (
-            <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-[#EAE2D2] py-1.5 text-xs z-50">
+            <div className="absolute right-0 mt-2 w-60 bg-white rounded-xl shadow-xl border border-[#EAE2D2] py-1.5 text-xs z-50">
               <div className="px-3.5 py-2 border-b border-slate-100">
-                <p className="font-semibold text-slate-800">Jessica Smith</p>
-                <p className="text-slate-500 text-[10px]">admin@graceandgoodwill.co.uk</p>
+                <p className="font-semibold text-slate-800">{displayName}</p>
+                <p className="text-slate-500 text-[10px] truncate">{displayEmail}</p>
               </div>
-              <div className="py-1">
-                <div className="px-3.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
-                  Access Level
+
+              {!lockedByAuthRole && (
+                <div className="py-1 border-b border-slate-100">
+                  <div className="px-3.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                    Access Level
+                  </div>
+                  <button
+                    onClick={() => {
+                      store?.setAdminRole('admin');
+                      setShowProfileMenu(false);
+                    }}
+                    className="w-full text-left px-3.5 py-1.5 text-slate-700 hover:bg-[#F6F1E7] flex items-center justify-between gap-2 cursor-pointer"
+                  >
+                    <span className="flex items-center gap-2">
+                      <Shield className="w-3.5 h-3.5 text-[#C5A059]" />
+                      <span>Regular Admin</span>
+                    </span>
+                    {!isSuperAdmin && <Check className="w-3.5 h-3.5 text-[#0A1629]" />}
+                  </button>
+                  <button
+                    onClick={() => {
+                      store?.setAdminRole('super_admin');
+                      setShowProfileMenu(false);
+                    }}
+                    className="w-full text-left px-3.5 py-1.5 text-slate-700 hover:bg-[#F6F1E7] flex items-center justify-between gap-2 cursor-pointer"
+                  >
+                    <span className="flex items-center gap-2">
+                      <ShieldCheck className="w-3.5 h-3.5 text-[#0A1629]" />
+                      <span>Super Admin</span>
+                    </span>
+                    {isSuperAdmin && <Check className="w-3.5 h-3.5 text-[#0A1629]" />}
+                  </button>
                 </div>
-                <button
-                  onClick={() => {
-                    store?.setAdminRole('admin');
-                    setShowProfileMenu(false);
-                  }}
-                  className="w-full text-left px-3.5 py-1.5 text-slate-700 hover:bg-[#F6F1E7] flex items-center justify-between gap-2 cursor-pointer"
-                >
-                  <span className="flex items-center gap-2">
-                    <Shield className="w-3.5 h-3.5 text-[#C5A059]" />
-                    <span>Regular Admin</span>
-                  </span>
-                  {!isSuperAdmin && <Check className="w-3.5 h-3.5 text-[#0A1629]" />}
-                </button>
-                <button
-                  onClick={() => {
-                    store?.setAdminRole('super_admin');
-                    setShowProfileMenu(false);
-                  }}
-                  className="w-full text-left px-3.5 py-1.5 text-slate-700 hover:bg-[#F6F1E7] flex items-center justify-between gap-2 cursor-pointer"
-                >
-                  <span className="flex items-center gap-2">
-                    <ShieldCheck className="w-3.5 h-3.5 text-[#0A1629]" />
-                    <span>Super Admin</span>
-                  </span>
-                  {isSuperAdmin && <Check className="w-3.5 h-3.5 text-[#0A1629]" />}
-                </button>
-              </div>
+              )}
+
+              {(websiteHref || classicAdminHref || onLogout) && (
+                <div className="py-1">
+                  {websiteHref && (
+                    <a
+                      href={websiteHref}
+                      className="w-full text-left px-3.5 py-1.5 text-slate-700 hover:bg-[#F6F1E7] flex items-center gap-2"
+                    >
+                      <Globe className="w-3.5 h-3.5 text-[#C5A059]" />
+                      <span>Main Website</span>
+                    </a>
+                  )}
+                  {classicAdminHref && (
+                    <a
+                      href={classicAdminHref}
+                      className="w-full text-left px-3.5 py-1.5 text-slate-700 hover:bg-[#F6F1E7] flex items-center gap-2"
+                    >
+                      <LayoutGrid className="w-3.5 h-3.5 text-slate-500" />
+                      <span>Classic Admin Console</span>
+                    </a>
+                  )}
+                  {onLogout && (
+                    <button
+                      onClick={() => {
+                        setShowProfileMenu(false);
+                        onLogout();
+                      }}
+                      className="w-full text-left px-3.5 py-1.5 text-rose-700 hover:bg-rose-50 flex items-center gap-2 border-t border-slate-100 mt-1 pt-2 cursor-pointer"
+                    >
+                      <LogOut className="w-3.5 h-3.5 text-rose-600" />
+                      <span>Sign Out</span>
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           )}
         </div>

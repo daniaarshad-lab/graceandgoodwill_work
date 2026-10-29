@@ -89,6 +89,19 @@ export default function AuthenticatedHeader() {
     }
   };
 
+  const normalizedPathname =
+    pathname.endsWith("/") && pathname.length > 1 ? pathname.slice(0, -1) : pathname;
+  const isCarePlatformFullScreenRoute =
+    normalizedPathname === "/admin" ||
+    normalizedPathname === "/admin/care-platform" ||
+    normalizedPathname === "/admin/master-libraries" ||
+    normalizedPathname === "/admin/placements-dashboard" ||
+    normalizedPathname === "/admin/carer-accommodation";
+
+  if (isCarePlatformFullScreenRoute) {
+    return null;
+  }
+
   return (
     <header className="fixed top-0 left-0 right-0 z-[100] w-full shrink-0 min-h-[72px] bg-navy-950/95 backdrop-blur shadow-soft" style={{ top: 0, marginTop: 0 }}>
       <div className="container-wrapper py-4 flex items-center justify-between h-[72px] min-h-[72px] shrink-0">

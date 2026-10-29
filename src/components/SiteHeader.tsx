@@ -89,7 +89,7 @@ function SiteHeader() {
     if (!user || !user.role) return null;
     const role = user.role.toLowerCase();
     if (role === "carer") return { href: "/carer", label: "Carer Portal" };
-    if (role === "admin") return { href: "/admin", label: "Admin Portal" };
+    if (role === "admin" || role === "super_admin") return { href: "/admin", label: "Admin Portal" };
     if (role === "client") return { href: "/client", label: "Client Portal" };
     return null;
   };

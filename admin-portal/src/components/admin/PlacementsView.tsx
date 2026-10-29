@@ -37,6 +37,7 @@ import {
   List,
   Eye,
   BookOpen,
+  Cake,
 } from 'lucide-react';
 import {
   AvailabilityCategory,
@@ -1762,64 +1763,68 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
                   <h3 className="font-bold text-sm text-[#0A1629]">Client Summary</h3>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-                  <div className="p-3 rounded-xl bg-[#FAF7F2] border border-[#EFE8DC]">
+                  <div className="p-3 rounded-xl bg-[#FAF7F2] border border-[#EFE8DC] space-y-1">
+                    <Cake className="w-4 h-4 text-[#C5A059]" />
                     <div className="text-[10.5px] text-[#64748B]">Age</div>
-                    <div className="font-bold text-[#0A1629] mt-0.5">
+                    <div className="font-bold text-[#0A1629]">
                       {currentPlacement.age} years old
                     </div>
                   </div>
-                  <div className="p-3 rounded-xl bg-[#FAF7F2] border border-[#EFE8DC]">
+                  <div className="p-3 rounded-xl bg-[#FAF7F2] border border-[#EFE8DC] space-y-1">
+                    <MapPin className="w-4 h-4 text-[#C5A059]" />
                     <div className="text-[10.5px] text-[#64748B]">Location</div>
-                    <div className="font-bold text-[#0A1629] mt-0.5">
+                    <div className="font-bold text-[#0A1629]">
                       {currentPlacement.location}
                     </div>
                   </div>
-                  <div className="p-3 rounded-xl bg-[#FAF7F2] border border-[#EFE8DC]">
+                  <div className="p-3 rounded-xl bg-[#FAF7F2] border border-[#EFE8DC] space-y-1">
+                    <Home className="w-4 h-4 text-[#C5A059]" />
                     <div className="text-[10.5px] text-[#64748B]">Placement Type</div>
-                    <div className="font-bold text-[#0A1629] mt-0.5">
+                    <div className="font-bold text-[#0A1629]">
                       {currentPlacement.placementType}
                     </div>
                   </div>
-                  <div className="p-3 rounded-xl bg-[#FAF7F2] border border-[#EFE8DC]">
-                    <div className="text-[10.5px] text-[#64748B]">
-                      Weekly Carer Fee (Admin &amp; Carer)
-                    </div>
-                    <div className="font-bold text-[#0A1629] mt-0.5 tabular-nums">
+                  <div className="p-3 rounded-xl bg-[#FAF7F2] border border-[#EFE8DC] space-y-1">
+                    <Coins className="w-4 h-4 text-[#C5A059]" />
+                    <div className="text-[10.5px] text-[#64748B]">Weekly Payment</div>
+                    <div className="font-bold text-[#0A1629] tabular-nums">
                       &pound;{currentPlacement.weeklyPayment} per week
                     </div>
                   </div>
-                  <div className="p-3 rounded-xl bg-[#FAF7F2] border border-[#EFE8DC]">
-                    <div className="text-[10.5px] text-[#64748B]">
-                      Food Allowance (Admin &amp; Carer)
-                    </div>
-                    <div className="font-bold text-[#0A1629] mt-0.5 tabular-nums">
-                      &pound;{currentPlacement.foodAllowance} per week
-                    </div>
-                  </div>
-                  <div className="p-3 rounded-xl bg-[#FAF7F2] border border-[#EFE8DC]">
-                    <div className="text-[10.5px] text-[#64748B]">
-                      Agreed Client Fee (G&amp;G)
-                    </div>
-                    <div className="font-bold text-[#8C6D2B] mt-0.5 tabular-nums">
-                      &pound;{currentPlacement.agreedClientWeeklyFee.toLocaleString()} per week
+                  <div className="p-3 rounded-xl bg-[#FAF7F2] border border-[#EFE8DC] space-y-1">
+                    <Utensils className="w-4 h-4 text-[#C5A059]" />
+                    <div className="text-[10.5px] text-[#64748B]">Food Allowance</div>
+                    <div className="font-bold text-[#0A1629] tabular-nums">
+                      {currentPlacement.hasFoodAllowance
+                        ? `Yes (\u00a3${currentPlacement.foodAllowance} per week)`
+                        : 'Included in household meals'}
                     </div>
                   </div>
-                  <div className="p-3 rounded-xl bg-[#FAF7F2] border border-[#EFE8DC]">
-                    <div className="text-[10.5px] text-[#64748B]">Start &amp; End Dates</div>
-                    <div className="font-bold text-[#0A1629] mt-0.5 tabular-nums">
-                      Start: {currentPlacement.startDate} -{' '}
-                      {currentPlacement.endDate === 'Ongoing'
-                        ? 'Ongoing'
-                        : `End: ${currentPlacement.endDate}`}
+                  <div className="p-3 rounded-xl bg-[#FAF7F2] border border-[#EFE8DC] space-y-1">
+                    <Calendar className="w-4 h-4 text-[#C5A059]" />
+                    <div className="text-[10.5px] text-[#64748B]">Start Date</div>
+                    <div className="font-bold text-[#0A1629] tabular-nums">
+                      {currentPlacement.startDate}
                     </div>
                   </div>
-                  <div className="p-3 rounded-xl bg-[#FAF7F2] border border-[#EFE8DC]">
+                  <div className="p-3 rounded-xl bg-[#FAF7F2] border border-[#EFE8DC] space-y-1">
+                    <Clock className="w-4 h-4 text-[#C5A059]" />
+                    <div className="text-[10.5px] text-[#64748B]">Duration</div>
+                    <div className="font-bold text-[#0A1629]">
+                      {currentPlacement.duration}
+                    </div>
+                  </div>
+                  <div className="p-3 rounded-xl bg-[#FAF7F2] border border-[#EFE8DC] space-y-1">
+                    <PawPrint className="w-4 h-4 text-[#C5A059]" />
                     <div className="text-[10.5px] text-[#64748B]">Pets</div>
-                    <div className="font-bold text-[#0A1629] mt-0.5">{currentPlacement.pets}</div>
+                    <div className="font-bold text-[#0A1629]">
+                      {currentPlacement.pets}
+                    </div>
                   </div>
-                  <div className="col-span-2 sm:col-span-4 p-3 rounded-xl bg-[#FAF7F2] border border-[#EFE8DC]">
+                  <div className="col-span-2 sm:col-span-4 p-3 rounded-xl bg-[#FAF7F2] border border-[#EFE8DC] space-y-1">
+                    <Heart className="w-4 h-4 text-[#C5A059]" />
                     <div className="text-[10.5px] text-[#64748B]">Main Care Needs</div>
-                    <div className="font-bold text-[#0A1629] mt-0.5 leading-relaxed">
+                    <div className="font-bold text-[#0A1629] leading-relaxed">
                       {deriveMainCareNeeds(currentPlacement, careRequests).join(', ')}
                     </div>
                   </div>

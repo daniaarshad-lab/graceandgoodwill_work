@@ -83,15 +83,15 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
   };
 
   const sidebarContent = (
-    <aside className="w-56 lg:w-[228px] xl:w-60 bg-[#060D1E] text-slate-200 flex flex-col justify-between shrink-0 min-h-[960px] h-full overflow-x-hidden select-none z-40 border-r border-[#D4AF7A]/15">
+    <aside className="w-56 lg:w-[224px] xl:w-[232px] bg-[#060D1E] text-slate-200 flex flex-col justify-between shrink-0 h-screen sticky top-0 overflow-y-auto overflow-x-hidden select-none z-40 border-r border-[#D4AF7A]/15">
       {/* Top Section: Brand + Main Navigation */}
       <div className="shrink-0">
-        {/* Top Brand Block (Bigger logo, NO line underneath) */}
-        <div className="pt-5 pb-3 px-5 flex flex-col items-center text-center relative">
+        {/* Top Brand Block */}
+        <div className="pt-3.5 pb-2 px-4 flex flex-col items-center text-center relative">
           {onCloseMobile && (
             <button
               onClick={onCloseMobile}
-              className="lg:hidden absolute top-4 right-4 p-1 rounded-lg text-slate-400 hover:text-white"
+              className="lg:hidden absolute top-3.5 right-3.5 p-1 rounded-lg text-slate-400 hover:text-white"
               aria-label="Close navigation"
             >
               <X className="w-5 h-5" />
@@ -106,7 +106,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
             className="flex flex-col items-center group focus:outline-none cursor-pointer"
           >
             {/* Official Grace & Goodwill 3D Gold Knot Logo */}
-            <div className="w-16 h-16 mb-2 transition-transform group-hover:scale-105">
+            <div className="w-14 h-14 mb-1.5 transition-transform group-hover:scale-105">
               <img
                 src="/assets/website_logo_dark_clean.png"
                 alt="Grace & Goodwill Logo"
@@ -114,17 +114,17 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
               />
             </div>
 
-            <span className="font-cinzel tracking-[0.22em] text-[#D4AF7A] text-[13px] font-semibold uppercase leading-tight">
+            <span className="font-cinzel tracking-[0.22em] text-[#D4AF7A] text-[12.5px] font-semibold uppercase leading-tight">
               GRACE &amp; GOODWILL
             </span>
-            <span className="text-[7.5px] tracking-[0.22em] uppercase text-[#D4AF7A]/80 font-medium mt-1">
+            <span className="text-[7.5px] tracking-[0.22em] uppercase text-[#D4AF7A]/80 font-medium mt-0.5">
               — CARE DEFINED BY INTEGRITY —
             </span>
           </button>
         </div>
 
         {/* Main Navigation List */}
-        <div className="px-3 space-y-0.5 mt-0.5">
+        <div className="px-3 space-y-0.5">
           {navItems.map((item) => {
             const active = isItemActive(item.label);
             const Icon = item.icon;
@@ -135,7 +135,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
                   onViewChange(item.id);
                   onCloseMobile?.();
                 }}
-                className={`w-full flex items-center gap-3.5 px-3.5 py-2 rounded-xl text-[13px] transition-all text-left cursor-pointer ${
+                className={`w-full flex items-center gap-3 px-3.5 py-1.5 rounded-xl text-[12.5px] transition-all text-left cursor-pointer ${
                   active
                     ? 'bg-gradient-to-r from-[#DFC289] to-[#CFA65B] text-[#0A1629] font-semibold shadow-sm'
                     : 'text-slate-300/80 hover:text-white hover:bg-white/[0.05] font-normal'
@@ -153,10 +153,10 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
           })}
 
           {websiteHref && (
-            <div className="pt-2 mt-2 border-t border-[#D4AF7A]/15">
+            <div className="pt-1.5 mt-1.5 border-t border-[#D4AF7A]/15">
               <a
                 href={websiteHref}
-                className="w-full flex items-center gap-3.5 px-3.5 py-2 rounded-xl text-[12.5px] text-[#D4AF7A] hover:text-white hover:bg-white/[0.05] transition-all"
+                className="w-full flex items-center gap-3 px-3.5 py-1.5 rounded-xl text-[12px] text-[#D4AF7A] hover:text-white hover:bg-white/[0.05] transition-all"
               >
                 <Globe className="w-4 h-4 shrink-0 text-[#D4AF7A]" strokeWidth={1.8} />
                 <span className="truncate">Main Website</span>
@@ -166,8 +166,8 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
         </div>
       </div>
 
-      {/* Sidebar Footer: Large Grace & Goodwill 3D Gold Knot Logo zoomed to touch both sidebar edges and anchored at the bottom */}
-      <div className="shrink-0 w-full mt-auto pt-16 pb-0 px-0 flex items-end justify-center overflow-hidden select-none pointer-events-none bg-[#060D1E]">
+      {/* Sidebar Footer: Large Grace & Goodwill 3D Gold Knot Logo zoomed edge-to-edge and anchored at viewport bottom */}
+      <div className="shrink-0 w-full mt-auto pt-4 pb-0 px-0 flex items-end justify-center overflow-hidden select-none pointer-events-none bg-[#060D1E]">
         <img
           src="/assets/website_logo_dark_clean.png"
           alt="Grace & Goodwill Emblem"
@@ -179,8 +179,8 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
 
   return (
     <>
-      {/* Desktop Persistent Full-Height Sidebar */}
-      <div className="hidden lg:flex shrink-0 bg-[#060D1E] self-stretch">
+      {/* Desktop Sticky Viewport Sidebar */}
+      <div className="hidden lg:block shrink-0 bg-[#060D1E]">
         {sidebarContent}
       </div>
 
@@ -191,7 +191,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
             onClick={onCloseMobile}
             className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
           />
-          <div className="fixed inset-y-0 left-0 max-w-full flex z-50 bg-[#060D1E] overflow-y-auto">
+          <div className="fixed inset-y-0 left-0 max-w-full flex z-50 bg-[#060D1E]">
             {sidebarContent}
           </div>
         </div>

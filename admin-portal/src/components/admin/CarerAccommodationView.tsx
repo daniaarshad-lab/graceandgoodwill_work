@@ -54,20 +54,21 @@ const BATHROOM_OPTIONS = [
   'Ensuite bathroom',
   'Shared bathroom with client',
   'Shared bathroom with household',
-  'Other – please specify',
+  'Other, please specify',
 ];
 
 const SHOWER_OPTIONS = [
   'Private',
+  'En-suite',
   'Shared with client',
   'Shared with household',
-  'Other – please specify',
+  'Other, please specify',
 ];
 
 const normalizeBathroomOption = (val?: string): string => {
   if (!val) return 'Private bathroom';
   if (val === 'Other, please specify' || val === 'Other – please specify') {
-    return 'Other – please specify';
+    return 'Other, please specify';
   }
   return BATHROOM_OPTIONS.includes(val) ? val : 'Private bathroom';
 };
@@ -75,9 +76,8 @@ const normalizeBathroomOption = (val?: string): string => {
 const normalizeShowerOption = (val?: string): string => {
   if (!val) return 'Private';
   if (val === 'Other, please specify' || val === 'Other – please specify') {
-    return 'Other – please specify';
+    return 'Other, please specify';
   }
-  if (val === 'En-suite') return 'Private';
   return SHOWER_OPTIONS.includes(val) ? val : 'Private';
 };
 
@@ -974,13 +974,18 @@ export const CarerAccommodationView: React.FC<CarerAccommodationViewProps> = ({
 
                       {/* Two Side-by-Side Sub-Boxes matching image_d502c541.png */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {/* Left Sub-Box: Bathroom arrangements */}
+                        {/* Left Sub-Box: Bathroom Arrangements */}
                         <div className="rounded-xl border border-[#EAE2D2] bg-white/85 p-4 space-y-2.5">
                           <div className="text-xs sm:text-[13.5px] font-bold text-[#0A1629] mb-1">
-                            Bathroom arrangements
+                            Bathroom Arrangements
                           </div>
                           {BATHROOM_OPTIONS.map((opt) => {
-                            const selected = bathroomType === opt;
+                            const isOther = opt.startsWith('Other');
+                            const selected =
+                              bathroomType === opt ||
+                              (isOther &&
+                                (bathroomType === 'Other, please specify' ||
+                                  bathroomType === 'Other – please specify'));
                             return (
                               <label
                                 key={opt}
@@ -1004,7 +1009,8 @@ export const CarerAccommodationView: React.FC<CarerAccommodationViewProps> = ({
                               </label>
                             );
                           })}
-                          {bathroomType === 'Other – please specify' && (
+                          {(bathroomType === 'Other, please specify' ||
+                            bathroomType === 'Other – please specify') && (
                             <input
                               type="text"
                               value={bathroomOther}
@@ -1015,13 +1021,18 @@ export const CarerAccommodationView: React.FC<CarerAccommodationViewProps> = ({
                           )}
                         </div>
 
-                        {/* Right Sub-Box: Shower/bathing arrangements */}
+                        {/* Right Sub-Box: Shower Arrangements */}
                         <div className="rounded-xl border border-[#EAE2D2] bg-white/85 p-4 space-y-2.5">
                           <div className="text-xs sm:text-[13.5px] font-bold text-[#0A1629] mb-1">
-                            Shower/bathing arrangements
+                            Shower Arrangements
                           </div>
                           {SHOWER_OPTIONS.map((opt) => {
-                            const selected = showerType === opt;
+                            const isOther = opt.startsWith('Other');
+                            const selected =
+                              showerType === opt ||
+                              (isOther &&
+                                (showerType === 'Other, please specify' ||
+                                  showerType === 'Other – please specify'));
                             return (
                               <label
                                 key={opt}
@@ -1045,12 +1056,13 @@ export const CarerAccommodationView: React.FC<CarerAccommodationViewProps> = ({
                               </label>
                             );
                           })}
-                          {showerType === 'Other – please specify' && (
+                          {(showerType === 'Other, please specify' ||
+                            showerType === 'Other – please specify') && (
                             <input
                               type="text"
                               value={showerOther}
                               onChange={(e) => setShowerOther(e.target.value)}
-                              placeholder="Please specify shower/bathing arrangement..."
+                              placeholder="Please specify shower arrangement..."
                               className="w-full mt-2 px-3 py-2 rounded-lg border border-[#DFD5C2] bg-white text-xs text-[#0A1629] focus:outline-none focus:border-[#C5A059]"
                             />
                           )}
@@ -1769,9 +1781,9 @@ export const CarerAccommodationView: React.FC<CarerAccommodationViewProps> = ({
               </div>
             </div>
             <div className="rounded-xl bg-[#FDFBF7] border border-[#EAE2D2] p-4">
-              <div className="text-[#64748B] font-medium">Shower / Bathing Arrangements</div>
+              <div className="text-[#64748B] font-medium">Shower Arrangements</div>
               <div className="text-sm font-semibold text-[#0A1629] mt-1">
-                {showerType === 'Other – please specify' && showerOther
+                {(showerType.startsWith('Other') && showerOther)
                   ? showerOther
                   : showerType}
               </div>

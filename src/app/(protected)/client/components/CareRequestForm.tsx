@@ -20,12 +20,12 @@ const MOBILITY_OPTIONS = [
 ];
 
 const PERSONAL_CARE_OPTIONS = [
-  "Washing / bathing",
+  "Washing/Bathing",
   "Dressing",
   "Toileting",
-  "Continence care",
-  "Oral care",
-  "Hair care",
+  "Continence Care",
+  "Oral Care",
+  "Hair Care",
   "Shaving",
   "Hearing aid assistance",
   "Nail care",
@@ -126,12 +126,19 @@ export default function CareRequestForm({
     useState<boolean>(false);
   const [accommError, setAccommError] = useState<string | null>(null);
 
+  const isPersonalCareSelected = (option: string) => {
+    const norm = (s: string) => s.toLowerCase().replace(/[\s/–-]+/g, "");
+    return personalCare.some((item) => norm(item) === norm(option));
+  };
+
   const togglePersonalCareOption = (option: string) => {
-    setPersonalCare((prev) =>
-      prev.includes(option)
-        ? prev.filter((item) => item !== option)
-        : [...prev, option],
-    );
+    const norm = (s: string) => s.toLowerCase().replace(/[\s/–-]+/g, "");
+    setPersonalCare((prev) => {
+      const exists = prev.some((item) => norm(item) === norm(option));
+      return exists
+        ? prev.filter((item) => norm(item) !== norm(option))
+        : [...prev, option];
+    });
   };
 
   const handleFormSubmit = (e: React.FormEvent) => {
@@ -329,7 +336,7 @@ export default function CareRequestForm({
             </div>
             <div className="flex flex-wrap gap-2">
               {PERSONAL_CARE_OPTIONS.map((option) => {
-                const selected = personalCare.includes(option);
+                const selected = isPersonalCareSelected(option);
                 return (
                   <button
                     key={option}

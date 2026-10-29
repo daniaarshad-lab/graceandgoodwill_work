@@ -253,13 +253,22 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
     }));
   };
 
+  const isPersonalCareSelected = (list: string[], item: string) => {
+    const norm = (s: string) => s.toLowerCase().replace(/[\s/–-]+/g, '');
+    return list.some((c) => norm(c) === norm(item));
+  };
+
   const togglePersonalCare = (item: string) => {
-    updateCareRequest(currentReq.id, (prev) => ({
-      ...prev,
-      personalCare: prev.personalCare.includes(item)
-        ? prev.personalCare.filter((c) => c !== item)
-        : [...prev.personalCare, item],
-    }));
+    const norm = (s: string) => s.toLowerCase().replace(/[\s/–-]+/g, '');
+    updateCareRequest(currentReq.id, (prev) => {
+      const exists = prev.personalCare.some((c) => norm(c) === norm(item));
+      return {
+        ...prev,
+        personalCare: exists
+          ? prev.personalCare.filter((c) => norm(c) !== norm(item))
+          : [...prev.personalCare, item],
+      };
+    });
   };
 
   const openConfirmModal = (req: CareRequestRecord) => {
@@ -1109,7 +1118,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                       </p>
                       <div className="flex flex-wrap gap-2">
                         {allPersonalCareOptions.map((item) => {
-                          const isSelected = currentReq.personalCare.includes(item);
+                          const isSelected = isPersonalCareSelected(currentReq.personalCare, item);
                           return (
                             <button
                               key={item}
@@ -2156,7 +2165,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                   <div className="font-bold text-[#0A1629]">Personal Care Requirements</div>
                   <div className="flex flex-wrap gap-1.5">
                     {allPersonalCareOptions.map((item) => {
-                      const isSelected = currentReq.personalCare.includes(item);
+                      const isSelected = isPersonalCareSelected(currentReq.personalCare, item);
                       return (
                         <button
                           key={item}

@@ -248,6 +248,8 @@ export const INITIAL_MASTER_LIBRARIES: MasterLibraryRecord[] = [
       { text: 'Toileting' },
       { text: 'Showering' },
       { text: 'Continence care' },
+      { text: 'Hearing aid assistance' },
+      { text: 'Nail care' },
     ],
     archivedTags: [],
     moreCountText: '+69 more',

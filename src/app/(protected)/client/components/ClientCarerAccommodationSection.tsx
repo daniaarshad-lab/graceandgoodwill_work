@@ -57,14 +57,15 @@ const BATHROOM_OPTIONS = [
   "Ensuite bathroom",
   "Shared bathroom with client",
   "Shared bathroom with household",
-  "Other – please specify",
+  "Other, please specify",
 ];
 
 const SHOWER_OPTIONS = [
   "Private",
+  "En-suite",
   "Shared with client",
   "Shared with household",
-  "Other – please specify",
+  "Other, please specify",
 ];
 
 const PRIMARY_SLOTS: {
@@ -300,7 +301,7 @@ export default function ClientCarerAccommodationSection({
                     Bathroom Arrangements
                   </h5>
                   <p className="text-xs text-[#5C5549] mt-0.5 leading-relaxed">
-                    Please confirm the bathroom and shower/bathing arrangements
+                    Please confirm the bathroom and shower arrangements
                     for the live-in carer.
                   </p>
                 </div>
@@ -309,7 +310,7 @@ export default function ClientCarerAccommodationSection({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                 <div className="rounded-xl border border-[#EAE2D2] bg-white p-3.5 space-y-2">
                   <div className="text-xs font-bold text-[#0A1629]">
-                    Bathroom arrangements
+                    Bathroom Arrangements
                   </div>
                   {BATHROOM_OPTIONS.map((opt) => {
                     const selected =
@@ -355,7 +356,7 @@ export default function ClientCarerAccommodationSection({
 
                 <div className="rounded-xl border border-[#EAE2D2] bg-white p-3.5 space-y-2">
                   <div className="text-xs font-bold text-[#0A1629]">
-                    Shower/bathing arrangements
+                    Shower Arrangements
                   </div>
                   {SHOWER_OPTIONS.map((opt) => {
                     const selected =
@@ -393,7 +394,7 @@ export default function ClientCarerAccommodationSection({
                       type="text"
                       value={showerOther}
                       onChange={(e) => setShowerOther(e.target.value)}
-                      placeholder="Please specify shower/bathing arrangement..."
+                      placeholder="Please specify shower arrangement..."
                       className="w-full mt-2 px-3 py-2 rounded-lg border border-[#DFD5C2] bg-white text-xs text-[#0A1629] focus:outline-none focus:border-[#C5A059]"
                     />
                   )}

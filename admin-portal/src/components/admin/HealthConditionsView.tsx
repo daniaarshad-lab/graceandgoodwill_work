@@ -235,6 +235,8 @@ const DEFAULT_LIBRARIES: LibraryItem[] = [
       { text: 'Toileting' },
       { text: 'Showering' },
       { text: 'Continence care' },
+      { text: 'Hearing aid assistance' },
+      { text: 'Nail care' },
     ],
     archivedTags: [],
     moreCountText: '+69 more',

@@ -120,11 +120,7 @@ export default function ClientProfileManagement() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#EAE3D4]">
           <div className="flex items-center gap-4">
             <div className="relative">
-              <img
-                src={activePhoto}
-                alt="Client profile"
-                className="w-20 h-20 rounded-full object-cover ring-4 ring-[#F6EFE2] border-2 border-[#D4AF7A]/70 shadow-sm"
-              />
+              <div className="w-20 h-20 rounded-full overflow-hidden ring-4 ring-[#F6EFE2] border-2 border-[#D4AF7A]/70 shadow-sm bg-[#FAF7F2]"><img src={activePhoto} alt="Client profile" className="w-full h-full object-cover scale-[1.06]" /></div>
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
@@ -174,11 +170,7 @@ export default function ClientProfileManagement() {
                       : "ring-1 ring-[#E2D9C6] hover:ring-[#C59B38]/60 hover:scale-105"
                   }`}
                 >
-                  <img
-                    src={preset.url}
-                    alt={preset.label}
-                    className="w-full h-full rounded-full object-cover"
-                  />
+                  <div className="w-full h-full rounded-full overflow-hidden bg-[#FAF7F2]"><img src={preset.url} alt={preset.label} className="w-full h-full object-cover scale-[1.06]" /></div>
                   {isSelected && (
                     <span className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#C59B38] text-white flex items-center justify-center shadow-sm">
                       <Check className="w-2.5 h-2.5" strokeWidth={3} />

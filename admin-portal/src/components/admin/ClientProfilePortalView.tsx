@@ -302,11 +302,13 @@ export const ClientProfilePortalView: React.FC<ClientProfilePortalViewProps> = (
         <div className="lg:col-span-4 bg-white rounded-2xl p-6 border border-[#EAE3D4] shadow-sm flex flex-col items-center justify-center text-center">
           <div className="relative mb-4">
             <div className="w-44 h-44 sm:w-48 sm:h-48 rounded-full p-1.5 bg-gradient-to-tr from-[#C5A059] via-[#EBD8B2] to-[#B88E3E] shadow-sm">
-              <img
-                src={currentAvatar}
-                alt={activeClient.name}
-                className="w-full h-full rounded-full object-cover bg-[#FAF7F2]"
-              />
+              <div className="w-full h-full rounded-full overflow-hidden bg-[#FAF7F2]">
+                <img
+                  src={currentAvatar}
+                  alt={activeClient.name}
+                  className="w-full h-full object-cover scale-[1.06]"
+                />
+              </div>
             </div>
             <button
               type="button"
@@ -425,11 +427,13 @@ export const ClientProfilePortalView: React.FC<ClientProfilePortalViewProps> = (
                         : 'hover:ring-2 hover:ring-[#D4AF7A]/60 bg-transparent'
                     }`}
                   >
-                    <img
-                      src={preset.url}
-                      alt={preset.label}
-                      className="w-full h-full rounded-full object-cover"
-                    />
+                    <div className="w-full h-full rounded-full overflow-hidden bg-[#FAF7F2]">
+                      <img
+                        src={preset.url}
+                        alt={preset.label}
+                        className="w-full h-full object-cover scale-[1.06]"
+                      />
+                    </div>
                     {isSelected && (
                       <span className="absolute top-0 right-0 w-6 h-6 rounded-full bg-[#C5A059] text-white border-2 border-white flex items-center justify-center shadow-sm">
                         <Check className="w-3.5 h-3.5" strokeWidth={2.8} />

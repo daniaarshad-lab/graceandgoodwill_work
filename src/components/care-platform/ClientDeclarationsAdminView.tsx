@@ -139,11 +139,13 @@ export const ClientDeclarationsAdminView: React.FC<ClientDeclarationsAdminViewPr
       {/* Client Summary Header Strip */}
       <div className="relative z-10 bg-white rounded-2xl p-5 border border-[#EAE3D4] shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-5">
         <div className="flex items-center gap-4">
-          <img
-            src={margaretAvatar}
-            alt="Margaret Lewis"
-            className="w-14 h-14 rounded-full object-cover ring-2 ring-[#C5A059]/40 shrink-0"
-          />
+          <div className="w-14 h-14 rounded-full overflow-hidden ring-2 ring-[#C5A059]/40 shrink-0 bg-[#FAF7F2]">
+            <img
+              src={margaretAvatar}
+              alt="Margaret Lewis"
+              className="w-full h-full object-cover scale-[1.06]"
+            />
+          </div>
           <div>
             <h2 className="font-serif text-xl sm:text-2xl font-semibold text-[#0A1629]">
               Margaret Lewis

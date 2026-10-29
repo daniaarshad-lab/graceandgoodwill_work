@@ -5,59 +5,59 @@ export interface ClientProfileAvatarPreset {
 }
 
 /**
- * Curated profile image options for the Grace & Goodwill Client Portal ("Choose a profile image").
- * Structured in a single list so client-supplied artwork can replace or extend these presets cleanly.
+ * Official client-supplied profile image options for the Grace & Goodwill Client Portal
+ * ("Choose a profile image").
  */
 export const CLIENT_PROFILE_AVATAR_PRESETS: ClientProfileAvatarPreset[] = [
   {
     id: 'dog',
     label: 'Dog',
-    url: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=320&auto=format&fit=crop&q=80',
+    url: '/assets/aistudio/WhatsApp_Image_2026-10-19_at_11.30.31_PM_e4a4c977.jpeg',
   },
   {
     id: 'flowers',
     label: 'Flowers',
-    url: 'https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=320&auto=format&fit=crop&q=80',
+    url: '/assets/aistudio/WhatsApp_Image_2026-10-19_at_11.30.23_PM_e8273dc1.jpeg',
   },
   {
-    id: 'mountains',
-    label: 'Mountains',
-    url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=320&auto=format&fit=crop&q=80',
+    id: 'afternoon-tea',
+    label: 'Afternoon tea',
+    url: '/assets/aistudio/WhatsApp_Image_2026-10-19_at_11.30.43_PM_64d96456.jpeg',
   },
   {
     id: 'full-moon',
     label: 'Full moon',
-    url: 'https://images.unsplash.com/photo-1532693322450-2cb5c511067d?w=320&auto=format&fit=crop&q=80',
-  },
-  {
-    id: 'sea',
-    label: 'Sea',
-    url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=320&auto=format&fit=crop&q=80',
+    url: '/assets/aistudio/WhatsApp_Image_2026-10-19_at_11.30.31_PM__1__1dcef06d.jpeg',
   },
   {
     id: 'starry-sky',
     label: 'Starry sky',
-    url: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=320&auto=format&fit=crop&q=80',
+    url: '/assets/aistudio/WhatsApp_Image_2026-10-19_at_11.30.36_PM_5fe7450d.jpeg',
   },
   {
     id: 'forest',
     label: 'Forest',
-    url: 'https://images.unsplash.com/photo-1448375240586-882707db888b?w=320&auto=format&fit=crop&q=80',
+    url: '/assets/aistudio/WhatsApp_Image_2026-10-19_at_11.30.36_PM__1__2184c878.jpeg',
   },
   {
     id: 'bird',
     label: 'Bird',
-    url: 'https://images.unsplash.com/photo-1444464666168-49d633b86797?w=320&auto=format&fit=crop&q=80',
+    url: '/assets/aistudio/WhatsApp_Image_2026-10-19_at_11.30.37_PM__1__9ebc2891.jpeg',
   },
   {
     id: 'giraffe',
     label: 'Giraffe',
-    url: 'https://images.unsplash.com/photo-1547721064-da6cfb341d50?w=320&auto=format&fit=crop&q=80',
+    url: '/assets/aistudio/WhatsApp_Image_2026-10-19_at_11.30.37_PM_68812844.jpeg',
   },
   {
-    id: 'abstract-art',
-    label: 'Abstract art',
-    url: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=320&auto=format&fit=crop&q=80',
+    id: 'the-queen',
+    label: 'The Queen',
+    url: '/assets/aistudio/WhatsApp_Image_2026-10-19_at_11.30.37_PM__3__fc9a18e3.jpeg',
+  },
+  {
+    id: 'elvis',
+    label: 'Elvis',
+    url: '/assets/aistudio/WhatsApp_Image_2026-10-19_at_11.30.37_PM__2__f3921809.jpeg',
   },
 ];
 

@@ -21,19 +21,27 @@ import {
   PawPrint,
   Cigarette,
   Edit2,
+  Camera,
+  Trash2,
 } from 'lucide-react';
 import {
   deriveMainCareNeeds,
   getFinancialVisibility,
   usePlatformStore,
 } from '../../data/platformStore';
+import { AdminView } from './AdminSidebar';
+import { ClientSectionNav } from './ClientSectionNav';
 
 interface ActivePlacementViewProps {
   onBack: () => void;
+  onNavigate?: (view: AdminView) => void;
 }
 
-export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack }) => {
-  const { placements, careRequests, updatePlacement } = usePlatformStore();
+export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({
+  onBack,
+  onNavigate,
+}) => {
+  const { placements, careRequests, updatePlacement, setDeclarationStatus } = usePlatformStore();
 
   // Default to Eleanor Briggs so the original Client Profile view loads seamlessly, with ability to switch clients
   const defaultEleanor = placements.find((p) => p.id === 'pl-eleanor') || placements[0];
@@ -45,10 +53,91 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
     'overview' | 'careplan' | 'medication' | 'carers' | 'documents' | 'notes' | 'safety'
   >('medication');
   const [showNotificationToast, setShowNotificationToast] = useState(false);
+  const [toastSubtitle, setToastSubtitle] = useState('');
   const [previewDocType, setPreviewDocType] = useState<'agreement' | 'statement' | null>(null);
   const [editingClientFee, setEditingClientFee] = useState(false);
   const [editingLifestyle, setEditingLifestyle] = useState(false);
   const [newProfileNote, setNewProfileNote] = useState('');
+
+  const [medications, setMedications] = useState([
+    {
+      id: 'ap-m1',
+      name: 'Amlodipine',
+      dose: '5 mg',
+      frequency: 'Once daily',
+      time: '08:00',
+      support: 'Prompt only',
+      notes: 'For blood pressure',
+    },
+    {
+      id: 'ap-m2',
+      name: 'Metformin',
+      dose: '500 mg',
+      frequency: 'Twice daily',
+      time: '08:00, 18:00',
+      support: 'Support to take',
+      notes: 'With food',
+    },
+    {
+      id: 'ap-m3',
+      name: 'Paracetamol',
+      dose: '1 g',
+      frequency: 'Up to 4 times daily',
+      time: 'As required',
+      support: 'Support to take',
+      notes: 'For pain relief',
+    },
+    {
+      id: 'ap-m4',
+      name: 'Furosemide',
+      dose: '40 mg',
+      frequency: 'Once daily',
+      time: '08:00',
+      support: 'Prompt only',
+      notes: 'Monitor for swelling',
+    },
+    {
+      id: 'ap-m5',
+      name: 'Omeprazole',
+      dose: '20 mg',
+      frequency: 'Once daily',
+      time: '08:00',
+      support: 'Prompt only',
+      notes: 'Before food',
+    },
+    {
+      id: 'ap-m6',
+      name: 'Vitamin D3',
+      dose: '800 IU',
+      frequency: 'Once daily',
+      time: '08:00',
+      support: 'Prompt only',
+      notes: 'Supplement',
+    },
+  ]);
+
+  const [medModalOpen, setMedModalOpen] = useState(false);
+  const [editingMedId, setEditingMedId] = useState<string | null>(null);
+  const [openMedMenuId, setOpenMedMenuId] = useState<string | null>(null);
+  const [medForm, setMedForm] = useState({
+    name: '',
+    dose: '',
+    frequency: 'Once daily',
+    time: '08:00',
+    support: 'Prompt only',
+    notes: '',
+  });
+
+  const [editingClinical, setEditingClinical] = useState(false);
+  const [clinicalSummary, setClinicalSummary] = useState({
+    catheter: 'Yes',
+    diabetes: 'Type 2',
+    physiotherapy: 'Weekly',
+    districtNurse: 'Monthly',
+    allergies: 'Penicillin',
+    notes:
+      'Mrs Briggs has a urinary catheter which is changed every 4 weeks by the district nurse. Monitor for signs of infection. Mobility support required. Attends weekly physiotherapy for strength and balance.',
+  });
 
   const selectedPlacement =
     placements.find((p) => p.id === selectedPlacementId) || defaultEleanor || placements[0];
@@ -60,58 +149,8 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
     ? deriveMainCareNeeds(selectedPlacement, careRequests, 4)
     : ['Live-in Companionship & Daily Support'];
 
-  const medications = [
-    {
-      name: 'Amlodipine',
-      dose: '5 mg',
-      frequency: 'Once daily',
-      time: '08:00',
-      support: 'Prompt only',
-      notes: 'For blood pressure',
-    },
-    {
-      name: 'Metformin',
-      dose: '500 mg',
-      frequency: 'Twice daily',
-      time: '08:00, 18:00',
-      support: 'Support to take',
-      notes: 'With food',
-    },
-    {
-      name: 'Paracetamol',
-      dose: '1 g',
-      frequency: 'Up to 4 times daily',
-      time: 'As required',
-      support: 'Support to take',
-      notes: 'For pain relief',
-    },
-    {
-      name: 'Furosemide',
-      dose: '40 mg',
-      frequency: 'Once daily',
-      time: '08:00',
-      support: 'Prompt only',
-      notes: 'Monitor for swelling',
-    },
-    {
-      name: 'Omeprazole',
-      dose: '20 mg',
-      frequency: 'Once daily',
-      time: '08:00',
-      support: 'Prompt only',
-      notes: 'Before food',
-    },
-    {
-      name: 'Vitamin D3',
-      dose: '800 IU',
-      frequency: 'Once daily',
-      time: '08:00',
-      support: 'Prompt only',
-      notes: 'Supplement',
-    },
-  ];
-
-  const handleConfirmSubmit = () => {
+  const handleConfirmSubmit = (customMsg?: string) => {
+    setToastSubtitle(customMsg || '');
     setShowNotificationToast(true);
     setTimeout(() => setShowNotificationToast(false), 4000);
   };
@@ -131,6 +170,11 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
           className="w-full h-full object-contain object-right filter brightness-110 contrast-110"
         />
       </div>
+
+      {/* Unified Client Section Navigation */}
+      {onNavigate && (
+        <ClientSectionNav currentView="active-placement" onNavigate={onNavigate} />
+      )}
 
       {/* Top Breadcrumbs + Client Selector + Client Portal View Switcher */}
       <div className="flex flex-wrap items-center justify-between gap-3 text-xs relative z-10">
@@ -194,7 +238,7 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
       </div>
 
       {portalMode === 'client-portal' && (
-        <div className="rounded-xl bg-[#FAF6EE] border border-[#DFD0B4] px-4 py-3 flex flex-wrap items-center justify-between gap-2 text-xs text-[#0A1629] relative z-10">
+        <div className="rounded-xl bg-[#FAF6EE] border border-[#DFD0B4] px-4 py-3 flex flex-wrap items-center justify-between gap-3 text-xs text-[#0A1629] relative z-10">
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-[#B88E3E] shrink-0" />
             <span>
@@ -204,17 +248,29 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
               {selectedPlacement.agreedClientWeeklyFee.toLocaleString()}/wk).
             </span>
           </div>
-          <button
-            onClick={() => setActiveTab('documents')}
-            className="text-xs font-semibold text-[#8C6D2B] hover:text-[#0A1629] underline cursor-pointer"
-          >
-            View Client Agreements &amp; Fee Statements &rarr;
-          </button>
+          <div className="flex flex-wrap items-center gap-3">
+            {onNavigate && (
+              <button
+                type="button"
+                onClick={() => onNavigate('client-portal-profile')}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0A1629] text-[#EBD8B2] text-xs font-semibold hover:bg-[#132544] transition-colors cursor-pointer"
+              >
+                <Camera className="w-3.5 h-3.5 text-[#D4AF7A]" />
+                <span>Choose Profile Image &amp; My Profile</span>
+              </button>
+            )}
+            <button
+              onClick={() => setActiveTab('documents')}
+              className="text-xs font-semibold text-[#8C6D2B] hover:text-[#0A1629] underline cursor-pointer"
+            >
+              View Client Agreements &amp; Fee Statements &rarr;
+            </button>
+          </div>
         </div>
       )}
 
       {/* Header Banner Card */}
-      <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
+      <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
         <div className="flex items-center gap-4">
           <img
             src={selectedPlacement.avatar}
@@ -315,7 +371,7 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
               onClick={() => setActiveTab(tab.id as typeof activeTab)}
               className={`flex items-center gap-2 px-4 py-2.5 font-semibold rounded-t-xl transition-all whitespace-nowrap cursor-pointer ${
                 isActive
-                  ? 'border-b-2 border-[#B88E3E] text-[#0A1629] bg-white shadow-2xs'
+                  ? 'border-b-2 border-[#B88E3E] text-[#0A1629] bg-white shadow-sm'
                   : 'text-[#7D7362] hover:text-[#0A1629] hover:bg-white/50'
               }`}
             >
@@ -330,7 +386,7 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
       {activeTab === 'overview' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10 text-xs">
           <div className="lg:col-span-2 space-y-6">
-            <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-xs space-y-4">
+            <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-sm space-y-4">
               <h2 className="text-sm font-bold text-[#0A1629]">
                 Client Profile &amp; Live-in Care Arrangement
               </h2>
@@ -366,7 +422,7 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
             </div>
 
             {/* Household, Lifestyle & Carer Safety Disclosures on Client Profile */}
-            <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-xs space-y-4">
+            <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-sm space-y-4">
               <div className="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-[#F2ECE0]">
                 <div className="flex items-center gap-2">
                   <Heart className="w-4 h-4 text-[#B88E3E]" />
@@ -554,7 +610,7 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
           </div>
 
           {/* Client Payment & Agreed Fee Card — Strictly Agreed Grace & Goodwill Fee Only */}
-          <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-xs space-y-4">
+          <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-sm space-y-4">
             <div className="flex items-center justify-between pb-2.5 border-b border-[#F2ECE0]">
               <div className="flex items-center gap-2">
                 <Coins className="w-4 h-4 text-[#B88E3E]" />
@@ -632,7 +688,7 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
 
       {/* ── TAB 2: CARE PLAN ── */}
       {activeTab === 'careplan' && (
-        <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-xs space-y-4 relative z-10 text-xs">
+        <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-sm space-y-4 relative z-10 text-xs">
           <h2 className="text-sm font-bold text-[#0A1629]">Approved Live-in Care Plan (v3.2)</h2>
           <p className="text-[#5C5549] leading-relaxed">{selectedPlacement.careGoals}</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
@@ -654,13 +710,13 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
         </div>
       )}
 
-      {/* ── TAB 3: MEDICATION & CLINICAL (Original Layout Preserved) ── */}
+      {/* ── TAB 3: MEDICATION & CLINICAL ── */}
       {activeTab === 'medication' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
           {/* Left 2 Cols: Medication Table & Clinical Information */}
           <div className="lg:col-span-2 space-y-6">
             {/* Section: Medication Management */}
-            <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-xs space-y-4">
+            <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-sm space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#F2ECE0]">
                 <div className="flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-lg bg-[#FAF7F2] flex items-center justify-center text-[#B88E3E]">
@@ -674,8 +730,23 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
                   </div>
                 </div>
 
-                <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#E0D5C1] bg-[#FAF7F2] hover:bg-white text-xs font-semibold text-[#0A1629] transition-colors shadow-2xs self-start sm:self-auto cursor-pointer">
-                  <Plus className="w-3.5 h-3.5 text-[#B88E3E]" />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditingMedId(null);
+                    setMedForm({
+                      name: '',
+                      dose: '',
+                      frequency: 'Once daily',
+                      time: '08:00',
+                      support: 'Prompt only',
+                      notes: '',
+                    });
+                    setMedModalOpen(true);
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#EFE4CC] hover:bg-[#E7D8B6] border border-[#DFCEA8] text-xs font-semibold text-[#0A1629] transition-colors shadow-sm self-start sm:self-auto cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5 text-[#8C6D2B]" />
                   <span>Add Medication</span>
                 </button>
               </div>
@@ -695,8 +766,8 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#F5EFE4]">
-                    {medications.map((m, idx) => (
-                      <tr key={idx} className="hover:bg-[#FBF9F5] transition-colors">
+                    {medications.map((m) => (
+                      <tr key={m.id} className="hover:bg-[#FBF9F5] transition-colors">
                         <td className="py-3 font-semibold text-[#0A1629]">{m.name}</td>
                         <td className="py-3 text-[#7D7362]">{m.dose}</td>
                         <td className="py-3 text-[#7D7362]">{m.frequency}</td>
@@ -711,10 +782,51 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
                           </span>
                         </td>
                         <td className="py-3 text-[#7D7362]">{m.notes}</td>
-                        <td className="py-3 text-right">
-                          <button className="text-[#A39886] hover:text-[#0A1629] p-1 cursor-pointer">
+                        <td className="py-3 text-right relative">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setOpenMedMenuId(openMedMenuId === m.id ? null : m.id)
+                            }
+                            className="text-[#A39886] hover:text-[#0A1629] p-1 cursor-pointer"
+                          >
                             •••
                           </button>
+                          {openMedMenuId === m.id && (
+                            <div className="absolute right-0 mt-1 w-32 bg-white rounded-xl border border-[#EAE3D4] shadow-lg py-1 z-20 text-left">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setEditingMedId(m.id);
+                                  setMedForm({
+                                    name: m.name,
+                                    dose: m.dose,
+                                    frequency: m.frequency,
+                                    time: m.time,
+                                    support: m.support,
+                                    notes: m.notes,
+                                  });
+                                  setOpenMedMenuId(null);
+                                  setMedModalOpen(true);
+                                }}
+                                className="w-full px-3 py-1.5 text-xs text-[#0A1629] hover:bg-[#FAF7F2] flex items-center gap-2 cursor-pointer"
+                              >
+                                <Edit2 className="w-3 h-3 text-[#B88E3E]" />
+                                <span>Edit</span>
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setMedications((prev) => prev.filter((item) => item.id !== m.id));
+                                  setOpenMedMenuId(null);
+                                }}
+                                className="w-full px-3 py-1.5 text-xs text-rose-700 hover:bg-rose-50 flex items-center gap-2 cursor-pointer"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                                <span>Remove</span>
+                              </button>
+                            </div>
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -724,8 +836,8 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
             </div>
 
             {/* Section: Clinical Information */}
-            <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-xs space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-[#F2ECE0]">
+            <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-sm space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-[#F2ECE0]">
                 <div className="flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-lg bg-[#FAF7F2] flex items-center justify-center text-[#B88E3E]">
                     <Heart className="w-4 h-4" />
@@ -738,31 +850,74 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
                   </div>
                 </div>
 
-                <button className="text-xs text-[#B88E3E] hover:underline font-semibold cursor-pointer">
-                  Edit Clinical Information
+                <button
+                  type="button"
+                  onClick={() => setEditingClinical(!editingClinical)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#EAE3D4] bg-[#FAF7F2] hover:bg-white text-xs font-semibold text-[#0A1629] transition-colors cursor-pointer"
+                >
+                  <Edit2 className="w-3 h-3 text-[#B88E3E]" />
+                  <span>{editingClinical ? 'Done Editing' : 'Edit Clinical Information'}</span>
                 </button>
               </div>
 
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-1 text-xs text-[#0A1629]">
-                <span className="inline-flex items-center gap-1.5 font-medium">
-                  <span className="w-2 h-2 rounded-full bg-sky-500" /> Catheter: Yes
-                </span>
-                <span className="text-[#D5CBB8]">&bull;</span>
-                <span className="inline-flex items-center gap-1.5 font-medium">
-                  <span className="w-2 h-2 rounded-full bg-rose-500" /> Diabetes: Type 2
-                </span>
-                <span className="text-[#D5CBB8]">&bull;</span>
-                <span className="inline-flex items-center gap-1.5 font-medium">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500" /> Physiotherapy: Weekly
-                </span>
-                <span className="text-[#D5CBB8]">&bull;</span>
-                <span className="inline-flex items-center gap-1.5 font-medium">
-                  <span className="w-2 h-2 rounded-full bg-purple-500" /> District Nurse: Monthly
-                </span>
-                <span className="text-[#D5CBB8]">&bull;</span>
-                <span className="inline-flex items-center gap-1.5 font-medium">
-                  <span className="w-2 h-2 rounded-full bg-amber-500" /> Allergies: Penicillin
-                </span>
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 pt-1 text-xs">
+                {[
+                  {
+                    key: 'catheter' as const,
+                    label: 'Catheter',
+                    value: clinicalSummary.catheter,
+                    dot: 'bg-sky-500',
+                  },
+                  {
+                    key: 'diabetes' as const,
+                    label: 'Diabetes',
+                    value: clinicalSummary.diabetes,
+                    dot: 'bg-rose-500',
+                  },
+                  {
+                    key: 'physiotherapy' as const,
+                    label: 'Physiotherapy',
+                    value: clinicalSummary.physiotherapy,
+                    dot: 'bg-emerald-500',
+                  },
+                  {
+                    key: 'districtNurse' as const,
+                    label: 'District Nurse',
+                    value: clinicalSummary.districtNurse,
+                    dot: 'bg-purple-500',
+                  },
+                  {
+                    key: 'allergies' as const,
+                    label: 'Allergies',
+                    value: clinicalSummary.allergies,
+                    dot: 'bg-amber-500',
+                  },
+                ].map((tile) => (
+                  <div
+                    key={tile.label}
+                    className="p-3 rounded-xl bg-[#FAF7F2] border border-[#EAE3D4] space-y-1"
+                  >
+                    <div className="flex items-center gap-1.5 font-semibold text-[#0A1629]">
+                      <span className={`w-2 h-2 rounded-full shrink-0 ${tile.dot}`} />
+                      <span>{tile.label}</span>
+                    </div>
+                    {editingClinical ? (
+                      <input
+                        type="text"
+                        value={tile.value}
+                        onChange={(e) =>
+                          setClinicalSummary((prev) => ({
+                            ...prev,
+                            [tile.key]: e.target.value,
+                          }))
+                        }
+                        className="w-full px-2 py-1 rounded-lg border border-[#DFD5C2] bg-white text-xs text-[#0A1629]"
+                      />
+                    ) : (
+                      <div className="text-[#5C5549] pl-3.5">{tile.value}</div>
+                    )}
+                  </div>
+                ))}
               </div>
 
               {/* Clinical Notes & Key Contacts */}
@@ -772,11 +927,20 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
                     <FileText className="w-3.5 h-3.5 text-[#B88E3E]" />
                     <span>Clinical Notes</span>
                   </div>
-                  <p className="text-[11.5px] text-[#7D7362] leading-relaxed">
-                    Mrs Briggs has a urinary catheter which is changed every 4 weeks by the district
-                    nurse. Monitor for signs of infection. Mobility support required. Attends weekly
-                    physiotherapy for strength and balance.
-                  </p>
+                  {editingClinical ? (
+                    <textarea
+                      rows={3}
+                      value={clinicalSummary.notes}
+                      onChange={(e) =>
+                        setClinicalSummary((prev) => ({ ...prev, notes: e.target.value }))
+                      }
+                      className="w-full p-2 rounded-lg border border-[#DFD5C2] bg-white text-xs text-[#0A1629]"
+                    />
+                  ) : (
+                    <p className="text-[11.5px] text-[#7D7362] leading-relaxed">
+                      {clinicalSummary.notes}
+                    </p>
+                  )}
                 </div>
 
                 <div className="bg-[#FAF7F2] p-4 rounded-xl border border-[#E0D5C1] space-y-2">
@@ -806,7 +970,7 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
           {/* Right Column: Notifications & Safety Updates + Recent Activity */}
           <div className="space-y-6">
             {/* Notifications & Safety Updates Card */}
-            <div className="bg-white rounded-2xl p-5 border border-[#EAE3D4] shadow-xs space-y-4">
+            <div className="bg-white rounded-2xl p-5 border border-[#EAE3D4] shadow-sm space-y-4">
               <div className="flex items-center gap-2 pb-2 border-b border-[#F2ECE0]">
                 <Shield className="w-4 h-4 text-[#B88E3E]" />
                 <h3 className="text-xs font-bold text-[#0A1629]">
@@ -865,7 +1029,7 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
             </div>
 
             {/* Recent Activity Card */}
-            <div className="bg-white rounded-2xl p-5 border border-[#EAE3D4] shadow-xs space-y-3">
+            <div className="bg-white rounded-2xl p-5 border border-[#EAE3D4] shadow-sm space-y-3">
               <div className="flex items-center justify-between pb-2 border-b border-[#F2ECE0]">
                 <div className="flex items-center gap-2">
                   <Clock className="w-4 h-4 text-[#B88E3E]" />
@@ -879,30 +1043,49 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
                 </button>
               </div>
 
-              <div className="space-y-3 text-xs">
-                <div className="border-l-2 border-emerald-500 pl-3 py-0.5 space-y-0.5">
-                  <div className="text-[10px] text-[#A39886]">15 Jan 2024, 14:32</div>
-                  <div className="font-semibold text-[#0A1629]">Jessica Smith (Admin)</div>
-                  <div className="text-[11px] text-[#7D7362]">
-                    Medication updated: Metformin dose changed to 500mg twice daily
+              <div className="space-y-3.5 text-xs">
+                {[
+                  {
+                    dot: 'bg-sky-500',
+                    date: '15 Jan 2024, 14:32',
+                    actor: 'Jessica Smith (Admin)',
+                    title: 'Medication updated',
+                    detail: 'Metformin dose changed to 500mg twice daily',
+                  },
+                  {
+                    dot: 'bg-[#B88E3E]',
+                    date: '12 Jan 2024, 10:15',
+                    actor: 'Sophie Williams (Carer)',
+                    title: 'Clinical information updated',
+                    detail: 'Physiotherapy frequency updated to weekly',
+                  },
+                  {
+                    dot: 'bg-amber-500',
+                    date: '10 Jan 2024, 16:20',
+                    actor: 'Dr James Carter (GP)',
+                    title: 'Allergies updated',
+                    detail: 'Penicillin added as allergy',
+                  },
+                  {
+                    dot: 'bg-emerald-600',
+                    date: '08 Jan 2024, 09:14',
+                    actor: 'Sophie Williams (Carer)',
+                    title: 'Medication confirmed',
+                    detail: 'All medications reviewed and confirmed',
+                  },
+                ].map((item, idx) => (
+                  <div key={idx} className="flex items-start gap-2.5">
+                    <span className={`w-2.5 h-2.5 rounded-full mt-1 shrink-0 ${item.dot}`} />
+                    <div className="space-y-0.5 flex-1">
+                      <div className="flex flex-wrap items-center justify-between gap-1 text-[10.5px] text-[#7D7362]">
+                        <span>{item.date}</span>
+                        <span className="font-medium text-[#0A1629]">{item.actor}</span>
+                      </div>
+                      <div className="font-semibold text-[#0A1629]">{item.title}</div>
+                      <div className="text-[11px] text-[#7D7362]">{item.detail}</div>
+                    </div>
                   </div>
-                </div>
-
-                <div className="border-l-2 border-[#B88E3E] pl-3 py-0.5 space-y-0.5">
-                  <div className="text-[10px] text-[#A39886]">12 Jan 2024, 10:15</div>
-                  <div className="font-semibold text-[#0A1629]">Sophie Williams (Carer)</div>
-                  <div className="text-[11px] text-[#7D7362]">
-                    Clinical information updated: Physiotherapy frequency updated to weekly
-                  </div>
-                </div>
-
-                <div className="border-l-2 border-sky-500 pl-3 py-0.5 space-y-0.5">
-                  <div className="text-[10px] text-[#A39886]">10 Jan 2024, 16:20</div>
-                  <div className="font-semibold text-[#0A1629]">Dr James Carter (GP)</div>
-                  <div className="text-[11px] text-[#7D7362]">
-                    Allergies updated: Penicillin added as allergy
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>
@@ -912,7 +1095,7 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
       {/* ── TAB 4: CARERS (Client-Safe Carer Introduction — Zero Carer Pay Shown) ── */}
       {activeTab === 'carers' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 relative z-10 text-xs">
-          <div className="bg-white rounded-2xl p-5 border border-[#EAE3D4] shadow-xs flex items-center gap-4">
+          <div className="bg-white rounded-2xl p-5 border border-[#EAE3D4] shadow-sm flex items-center gap-4">
             <img
               src={selectedPlacement.primaryCarer.avatar}
               alt={selectedPlacement.primaryCarer.name}
@@ -931,7 +1114,7 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl p-5 border border-[#EAE3D4] shadow-xs flex items-center gap-4">
+          <div className="bg-white rounded-2xl p-5 border border-[#EAE3D4] shadow-sm flex items-center gap-4">
             {selectedPlacement.reliefCarer ? (
               <>
                 <img
@@ -961,7 +1144,7 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
 
       {/* ── TAB 5: CLIENT DOCUMENTS & AUTO-GENERATED FEE STATEMENTS (Zero Carer Pay Shown) ── */}
       {activeTab === 'documents' && (
-        <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-xs space-y-4 relative z-10 text-xs">
+        <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-sm space-y-4 relative z-10 text-xs">
           <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-[#F2ECE0]">
             <div>
               <h2 className="text-sm font-bold text-[#0A1629]">
@@ -1026,7 +1209,7 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
 
       {/* ── TAB 6 & 7: NOTES / SAFETY & ALERTS ── */}
       {(activeTab === 'notes' || activeTab === 'safety') && (
-        <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-xs space-y-3 relative z-10 text-xs">
+        <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#EAE3D4] shadow-sm space-y-3 relative z-10 text-xs">
           <div className="flex items-center gap-2 font-bold text-sm text-[#0A1629]">
             {activeTab === 'safety' ? (
               <AlertTriangle className="w-4 h-4 text-[#B88E3E]" />
@@ -1053,17 +1236,31 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
           Last updated: 15 Jan 2024, 14:32 by Jessica Smith
         </div>
 
-        <div className="flex items-center gap-3">
-          <button className="px-4 py-2 rounded-xl border border-[#E0D5C1] bg-[#FAF7F2] text-xs font-semibold text-[#0A1629] hover:bg-white transition-colors cursor-pointer">
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            onClick={() => handleConfirmSubmit('Changes saved as Draft.')}
+            className="px-4 py-2 rounded-xl border border-[#E0D5C1] bg-[#FAF7F2] text-xs font-semibold text-[#0A1629] hover:bg-white transition-colors cursor-pointer"
+          >
             Save Draft
           </button>
           {portalMode === 'admin-profile' && (
-            <button className="px-4 py-2 rounded-xl border border-[#D4AF7A] bg-[#FAF7F2] text-xs font-semibold text-[#8C6D2B] hover:bg-white transition-colors cursor-pointer">
+            <button
+              type="button"
+              onClick={() => {
+                setDeclarationStatus('awaiting_client');
+                handleConfirmSubmit(
+                  `Sent to ${clientDisplayName} for Client Declaration review & authorisation.`
+                );
+              }}
+              className="px-4 py-2 rounded-xl bg-[#EFE2C6] hover:bg-[#E7D5AE] border border-[#D4AF7A] text-xs font-semibold text-[#0A1629] transition-colors cursor-pointer"
+            >
               Send for Client Review
             </button>
           )}
           <button
-            onClick={handleConfirmSubmit}
+            type="button"
+            onClick={() => handleConfirmSubmit()}
             className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#060D1E] to-[#12244C] text-[#EBD8B2] border border-[#D4AF7A]/50 text-xs font-bold hover:brightness-110 transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
           >
             <CheckCircle2 className="w-4 h-4 text-[#D4AF7A]" />
@@ -1072,9 +1269,135 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
         </div>
       </div>
 
+      {/* Add / Edit Medication Modal */}
+      {medModalOpen && (
+        <div className="fixed inset-0 z-50 bg-[#0A1629]/70 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl border border-[#EAE3D4] max-w-md w-full overflow-hidden shadow-2xl">
+            <div className="px-6 py-4 bg-[#0A1629] text-white flex items-center justify-between">
+              <h3 className="font-serif text-lg font-semibold">
+                {editingMedId ? 'Edit Medication' : 'Add Medication'}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setMedModalOpen(false)}
+                className="text-slate-300 hover:text-white cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (!medForm.name.trim()) return;
+                if (editingMedId) {
+                  setMedications((prev) =>
+                    prev.map((m) => (m.id === editingMedId ? { ...medForm, id: editingMedId } : m))
+                  );
+                } else {
+                  setMedications((prev) => [...prev, { ...medForm, id: `ap-m-${Date.now()}` }]);
+                }
+                setMedModalOpen(false);
+                handleConfirmSubmit(`Medication schedule updated for ${clientDisplayName}.`);
+              }}
+              className="p-6 space-y-3.5 text-xs"
+            >
+              <div>
+                <label className="block font-semibold text-[#0A1629] mb-1">Medication Name</label>
+                <input
+                  type="text"
+                  required
+                  value={medForm.name}
+                  onChange={(e) => setMedForm((prev) => ({ ...prev, name: e.target.value }))}
+                  placeholder="e.g. Amlodipine"
+                  className="w-full px-3 py-2 rounded-xl border border-[#EAE3D4] bg-[#FAF7F2] text-[#0A1629]"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-[#0A1629] mb-1">Dose</label>
+                  <input
+                    type="text"
+                    required
+                    value={medForm.dose}
+                    onChange={(e) => setMedForm((prev) => ({ ...prev, dose: e.target.value }))}
+                    placeholder="e.g. 5 mg"
+                    className="w-full px-3 py-2 rounded-xl border border-[#EAE3D4] bg-[#FAF7F2] text-[#0A1629]"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-[#0A1629] mb-1">Frequency</label>
+                  <input
+                    type="text"
+                    required
+                    value={medForm.frequency}
+                    onChange={(e) =>
+                      setMedForm((prev) => ({ ...prev, frequency: e.target.value }))
+                    }
+                    placeholder="e.g. Once daily"
+                    className="w-full px-3 py-2 rounded-xl border border-[#EAE3D4] bg-[#FAF7F2] text-[#0A1629]"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-[#0A1629] mb-1">Time(s)</label>
+                  <input
+                    type="text"
+                    required
+                    value={medForm.time}
+                    onChange={(e) => setMedForm((prev) => ({ ...prev, time: e.target.value }))}
+                    placeholder="e.g. 08:00"
+                    className="w-full px-3 py-2 rounded-xl border border-[#EAE3D4] bg-[#FAF7F2] text-[#0A1629]"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-[#0A1629] mb-1">
+                    Support Required
+                  </label>
+                  <select
+                    value={medForm.support}
+                    onChange={(e) => setMedForm((prev) => ({ ...prev, support: e.target.value }))}
+                    className="w-full px-3 py-2 rounded-xl border border-[#EAE3D4] bg-[#FAF7F2] text-[#0A1629]"
+                  >
+                    <option value="Prompt only">Prompt only</option>
+                    <option value="Support to take">Support to take</option>
+                    <option value="Independent">Independent</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="block font-semibold text-[#0A1629] mb-1">Notes</label>
+                <input
+                  type="text"
+                  value={medForm.notes}
+                  onChange={(e) => setMedForm((prev) => ({ ...prev, notes: e.target.value }))}
+                  placeholder="e.g. With food"
+                  className="w-full px-3 py-2 rounded-xl border border-[#EAE3D4] bg-[#FAF7F2] text-[#0A1629]"
+                />
+              </div>
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setMedModalOpen(false)}
+                  className="px-4 py-2 rounded-xl border border-[#EAE3D4] font-semibold text-[#5C5549] hover:bg-[#FAF7F2] cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-xl bg-[#0A1629] text-[#EBD8B2] font-semibold cursor-pointer"
+                >
+                  {editingMedId ? 'Save Changes' : 'Add Medication'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* Auto-Generated Client Document Preview Modal (Zero Carer Remuneration Included) */}
       {previewDocType && (
-        <div className="fixed inset-0 z-50 bg-[#0A1629]/70 backdrop-blur-xs flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-[#0A1629]/70 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl border border-[#EAE3D4] max-w-xl w-full overflow-hidden shadow-2xl">
             <div className="px-6 py-4 bg-[#0A1629] text-white flex items-center justify-between gap-3">
               <div>
@@ -1152,18 +1475,19 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({ onBack
       )}
 
       {showNotificationToast && (
-        <div className="fixed top-6 right-6 z-50 bg-[#060D1E] text-white p-4 rounded-2xl border border-[#D4AF7A] shadow-2xl flex items-center gap-3 animate-in slide-in-from-top-4 duration-200">
+        <div className="fixed top-6 right-6 z-50 bg-[#060D1E] text-white p-4 rounded-2xl border border-[#D4AF7A] shadow-2xl flex items-center gap-3">
           <CheckCircle2 className="w-5 h-5 text-[#D4AF7A]" />
           <div>
             <p className="font-semibold text-xs text-[#EBD8B2]">
-              Changes Live &amp; Notifications Dispatched
+              {toastSubtitle ? 'Profile Update Recorded' : 'Changes Live & Notifications Dispatched'}
             </p>
             <p className="text-[11px] text-slate-300">
-              Confirmation sent to {clientDisplayName} and{' '}
-              {selectedPlacement.id === 'pl-eleanor'
-                ? 'Sophie Williams'
-                : selectedPlacement.primaryCarer.fullName}
-              .
+              {toastSubtitle ||
+                `Confirmation sent to ${clientDisplayName} and ${
+                  selectedPlacement.id === 'pl-eleanor'
+                    ? 'Sophie Williams'
+                    : selectedPlacement.primaryCarer.fullName
+                }.`}
             </p>
           </div>
         </div>

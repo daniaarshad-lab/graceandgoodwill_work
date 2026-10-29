@@ -4,10 +4,15 @@ import { AdminHeader } from './components/admin/AdminHeader';
 import { AdminDashboard } from './components/admin/AdminDashboard';
 import { CarerProfileReview } from './components/admin/CarerProfileReview';
 import { ActivePlacementView } from './components/admin/ActivePlacementView';
+import { ClientProfilePortalView } from './components/admin/ClientProfilePortalView';
+import { ClientBiographyView } from './components/admin/ClientBiographyView';
+import { ClientHealthConditionsView } from './components/admin/ClientHealthConditionsView';
 import { HealthConditionsView } from './components/admin/HealthConditionsView';
 import { MedicationView } from './components/admin/MedicationView';
 import { AllergiesView } from './components/admin/AllergiesView';
 import { DeclarationsView } from './components/admin/DeclarationsView';
+import { ClientDeclarationsAdminView } from './components/admin/ClientDeclarationsAdminView';
+import { ClientDeclarationPortalView } from './components/admin/ClientDeclarationPortalView';
 import { PlacementsView } from './components/admin/PlacementsView';
 import { ExpiredProfileView } from './components/admin/ExpiredProfileView';
 import { PlatformStoreProvider } from './data/platformStore';
@@ -77,7 +82,31 @@ export default function App() {
             )}
 
             {currentView === 'active-placement' && (
-              <ActivePlacementView onBack={() => handleNavigate('dashboard')} />
+              <ActivePlacementView
+                onBack={() => handleNavigate('dashboard')}
+                onNavigate={handleNavigate}
+              />
+            )}
+
+            {currentView === 'client-portal-profile' && (
+              <ClientProfilePortalView
+                onBack={() => handleNavigate('active-placement')}
+                onNavigate={handleNavigate}
+              />
+            )}
+
+            {currentView === 'client-biography' && (
+              <ClientBiographyView
+                onBack={() => handleNavigate('active-placement')}
+                onNavigate={handleNavigate}
+              />
+            )}
+
+            {currentView === 'client-health-conditions' && (
+              <ClientHealthConditionsView
+                onBack={() => handleNavigate('active-placement')}
+                onNavigate={handleNavigate}
+              />
             )}
 
             {currentView === 'health-conditions' && (
@@ -85,11 +114,31 @@ export default function App() {
             )}
 
             {currentView === 'medication' && (
-              <MedicationView onBack={() => handleNavigate('dashboard')} />
+              <MedicationView
+                onBack={() => handleNavigate('active-placement')}
+                onNavigate={handleNavigate}
+              />
             )}
 
             {currentView === 'allergies' && (
-              <AllergiesView onBack={() => handleNavigate('dashboard')} />
+              <AllergiesView
+                onBack={() => handleNavigate('active-placement')}
+                onNavigate={handleNavigate}
+              />
+            )}
+
+            {currentView === 'client-declarations' && (
+              <ClientDeclarationsAdminView
+                onBack={() => handleNavigate('active-placement')}
+                onNavigate={handleNavigate}
+              />
+            )}
+
+            {currentView === 'client-declaration-portal' && (
+              <ClientDeclarationPortalView
+                onBack={() => handleNavigate('active-placement')}
+                onNavigate={handleNavigate}
+              />
             )}
 
             {currentView === 'declarations' && (

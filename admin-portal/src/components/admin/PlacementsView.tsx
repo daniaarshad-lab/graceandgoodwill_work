@@ -74,7 +74,7 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
   const [activeFilterTab, setActiveFilterTab] = useState<
     'all' | 'emergency' | 'active' | 'upcoming' | 'on-hold' | 'completed' | 'cancelled'
   >('all');
-  const [displayLayout, setDisplayLayout] = useState<'cards' | 'roster'>('cards');
+  const [displayLayout, setDisplayLayout] = useState<'cards' | 'roster'>('roster');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'start' | 'rate' | 'name'>('start');
 
@@ -982,66 +982,45 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
                 <div className="flex flex-col gap-2 sm:w-60 shrink-0">
                   <button
                     onClick={() => {
-                      setDeclinedIds((prev) => prev.filter((i) => i !== activeOpportunity.id));
                       if (!appliedIds.includes(activeOpportunity.id)) {
                         setAppliedIds([...appliedIds, activeOpportunity.id]);
                       }
                       showToast(
-                        `Placement offer accepted / application submitted for ${activeOpportunity.clientFirstName} (£${activeOpportunity.weeklyPayment}/wk + £${activeOpportunity.foodAllowance} food allowance)`
+                        `Placement application submitted for ${activeOpportunity.clientFirstName}`
                       );
                     }}
-                    className="w-full py-2.5 px-4 rounded-xl bg-[#C59B47] hover:bg-[#B38936] text-white text-xs font-semibold flex items-center justify-center gap-2 transition-colors shadow-xs cursor-pointer"
+                    className="w-full py-2.5 px-4 rounded-xl bg-[#C59B47] hover:bg-[#B38936] text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-xs cursor-pointer"
                   >
                     <span>
                       {appliedIds.includes(activeOpportunity.id)
-                        ? 'Offer Accepted / Applied ✓'
-                        : 'Accept / Apply for Placement →'}
+                        ? 'Application Submitted ✓'
+                        : 'Apply for this placement →'}
                     </span>
                   </button>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      onClick={() => {
-                        setShortlistedIds((prev) =>
-                          prev.includes(activeOpportunity.id)
-                            ? prev.filter((i) => i !== activeOpportunity.id)
-                            : [...prev, activeOpportunity.id]
-                        );
-                        showToast('Updated placement shortlist');
-                      }}
-                      className="py-2 px-3 rounded-xl border border-[#D4AF7A] bg-white hover:bg-[#FAF5EE] text-[#0A1629] text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                    >
-                      <Heart
-                        className={`w-3.5 h-3.5 ${
-                          shortlistedIds.includes(activeOpportunity.id)
-                            ? 'fill-[#C59B47] text-[#C59B47]'
-                            : 'text-[#C59B47]'
-                        }`}
-                      />
-                      <span>
-                        {shortlistedIds.includes(activeOpportunity.id) ? 'Saved' : 'Shortlist'}
-                      </span>
-                    </button>
-                    <button
-                      onClick={() => {
-                        setAppliedIds((prev) => prev.filter((i) => i !== activeOpportunity.id));
-                        if (!declinedIds.includes(activeOpportunity.id)) {
-                          setDeclinedIds([...declinedIds, activeOpportunity.id]);
-                        }
-                        showToast(
-                          `Declined placement offer for ${activeOpportunity.clientFirstName}`
-                        );
-                      }}
-                      className={`py-2 px-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1 transition-colors cursor-pointer ${
-                        declinedIds.includes(activeOpportunity.id)
-                          ? 'border-rose-300 bg-rose-50 text-rose-800'
-                          : 'border-[#E2DACB] bg-white hover:bg-rose-50 hover:text-rose-700 text-[#475569]'
+                  <button
+                    onClick={() => {
+                      setShortlistedIds((prev) =>
+                        prev.includes(activeOpportunity.id)
+                          ? prev.filter((i) => i !== activeOpportunity.id)
+                          : [...prev, activeOpportunity.id]
+                      );
+                      showToast('Updated placement shortlist');
+                    }}
+                    className="w-full py-2.5 px-4 rounded-xl border border-[#D4AF7A] bg-white hover:bg-[#FAF5EE] text-[#0A1629] text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+                  >
+                    <Heart
+                      className={`w-3.5 h-3.5 ${
+                        shortlistedIds.includes(activeOpportunity.id)
+                          ? 'fill-[#C59B47] text-[#C59B47]'
+                          : 'text-[#C5A059]'
                       }`}
-                    >
-                      <span>
-                        {declinedIds.includes(activeOpportunity.id) ? 'Declined' : 'Decline Offer'}
-                      </span>
-                    </button>
-                  </div>
+                    />
+                    <span>
+                      {shortlistedIds.includes(activeOpportunity.id)
+                        ? 'Saved to shortlist ✓'
+                        : 'Save to shortlist'}
+                    </span>
+                  </button>
                 </div>
               </div>
 
@@ -1524,60 +1503,48 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
             <p className="text-xs sm:text-sm text-[#64748B] mt-1">
               {detailTab === 'access-controls'
                 ? 'Manage client information access, permissions and manual overrides for this placement.'
-                : `${currentPlacement.placementType}  •  Start: ${currentPlacement.startDate} - ${
-                    currentPlacement.endDate === 'Ongoing'
-                      ? 'Ongoing'
-                      : `End: ${currentPlacement.endDate}`
-                  }  •  ${currentPlacement.duration}`}
+                : `${currentPlacement.placementType}  |  Start: ${currentPlacement.startDate}  |  ${currentPlacement.duration}`}
             </p>
           </div>
 
-          {/* Admin Status Simulation & Quick Controls */}
+          {/* Action buttons matching image_c3de7f63.png and image_6c79f65d.png */}
           <div className="flex flex-wrap items-center gap-2.5">
-            <div className="flex items-center gap-1.5 text-xs bg-white px-3 py-1.5 rounded-xl border border-[#E0D5C1]">
-              <span className="text-[#64748B]">Status:</span>
-              <select
-                value={currentPlacement.status}
-                onChange={(e) =>
-                  handleStatusChange(currentPlacement.id, e.target.value as PlacementStatus)
-                }
-                className="font-semibold text-[#0A1629] bg-transparent focus:outline-none cursor-pointer"
+            {detailTab === 'access-controls' ? (
+              <button
+                onClick={() => setDetailTab('client-info')}
+                className="px-4 py-2 rounded-xl border border-[#D4AF7A] bg-white hover:bg-[#FAF5EE] text-xs font-semibold text-[#8C6D2B] flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
               >
-                <option value="Active">Active</option>
-                <option value="Emergency">Emergency</option>
-                <option value="Confirmed">Confirmed</option>
-                <option value="Upcoming">Upcoming</option>
-                <option value="On Hold">On Hold</option>
-                <option value="Completed">Completed (Test Auto-Revoke)</option>
-                <option value="Cancelled">Cancelled (Test Auto-Revoke)</option>
-              </select>
-            </div>
-
-            <button
-              onClick={() => setViewMode('client-portal')}
-              className="px-3.5 py-2 rounded-xl border border-[#E0D5C1] bg-white hover:bg-[#FAF5EE] text-xs font-semibold text-[#0A1629] flex items-center gap-1.5 transition-colors cursor-pointer"
-            >
-              <Eye className="w-3.5 h-3.5 text-[#C5A059]" />
-              <span>Client Portal View</span>
-            </button>
-
-            <button
-              onClick={() =>
-                setDetailTab(
-                  detailTab === 'access-controls' ? 'client-info' : 'access-controls'
-                )
-              }
-              className="px-3.5 py-2 rounded-xl border border-[#D4AF7A] bg-white hover:bg-[#FAF5EE] text-xs font-semibold text-[#0A1629] flex items-center gap-1.5 transition-colors cursor-pointer"
-            >
-              <Edit2 className="w-3.5 h-3.5 text-[#C5A059]" />
-              <span>
-                {detailTab === 'access-controls' ? 'View Full Placement' : 'Access Controls'}
-              </span>
-            </button>
+                <span>View Full Placement</span>
+                <span>&rarr;</span>
+              </button>
+            ) : (
+              <>
+                <button
+                  onClick={() => setDetailTab('access-controls')}
+                  className="px-3.5 py-2 rounded-xl border border-[#D4AF7A] bg-white hover:bg-[#FAF5EE] text-xs font-semibold text-[#8C6D2B] flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+                >
+                  <Lock className="w-3.5 h-3.5 text-[#C5A059]" />
+                  <span>Access Controls</span>
+                </button>
+                <button
+                  onClick={() => showToast(`Edit placement mode opened for ${currentPlacement.clientFirstName}`)}
+                  className="px-3.5 py-2 rounded-xl border border-[#D4AF7A] bg-white hover:bg-[#FAF5EE] text-xs font-semibold text-[#0A1629] flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+                >
+                  <Edit2 className="w-3.5 h-3.5 text-[#C5A059]" />
+                  <span>Edit Placement</span>
+                </button>
+                <button
+                  className="p-2 rounded-xl border border-[#E0D5C1] bg-white hover:bg-[#FAF5EE] text-[#64748B] hover:text-[#0A1629] transition-colors cursor-pointer shadow-2xs"
+                  title="More Options"
+                >
+                  <MoreVertical className="w-4 h-4" />
+                </button>
+              </>
+            )}
           </div>
         </div>
 
-        {/* Client Hero Banner matching image_4c6b32ab.png & image_1ccc5538.png */}
+        {/* Client Hero Banner matching image_c3de7f63.png & image_6c79f65d.png */}
         <div className="bg-white rounded-2xl border border-[#EAE3D4] p-5 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <img
@@ -1586,9 +1553,16 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
               className="w-20 h-20 rounded-2xl object-cover border border-[#E8DFD5] shrink-0"
             />
             <div>
-              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0A1629]">
-                {currentPlacement.clientFirstName}
-              </h2>
+              <div className="flex items-center gap-2.5">
+                <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0A1629]">
+                  {currentPlacement.clientFirstName}
+                </h2>
+                {detailTab === 'access-controls' && (
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    Active
+                  </span>
+                )}
+              </div>
               <div className="text-xs sm:text-sm text-[#64748B] mt-0.5">
                 Age {currentPlacement.age} &bull; {currentPlacement.location}
               </div>
@@ -1599,33 +1573,20 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
                 </span>
                 <span className="inline-flex items-center gap-1.5 font-medium tabular-nums">
                   <Calendar className="w-3.5 h-3.5 text-[#C5A059]" />
-                  Start: {currentPlacement.startDate} -{' '}
-                  {currentPlacement.endDate === 'Ongoing'
-                    ? 'Ongoing'
-                    : `End: ${currentPlacement.endDate}`}
+                  {currentPlacement.startDate}
                 </span>
                 <span className="inline-flex items-center gap-1.5 font-medium">
                   <Clock className="w-3.5 h-3.5 text-[#C5A059]" />
                   {currentPlacement.duration}
                 </span>
-                {adminFinancePolicy.canViewCarerFeeAndAllowance && (
-                  <>
-                    <span className="inline-flex items-center gap-1.5 font-semibold text-[#0A1629] tabular-nums">
-                      <Coins className="w-3.5 h-3.5 text-[#C5A059]" />
-                      Carer Fee: &pound;{currentPlacement.weeklyPayment}/wk
-                    </span>
-                    <span className="inline-flex items-center gap-1.5 font-medium tabular-nums">
-                      <Utensils className="w-3.5 h-3.5 text-[#C5A059]" />
-                      Food Allowance: &pound;{currentPlacement.foodAllowance}/wk
-                    </span>
-                  </>
-                )}
-                {adminFinancePolicy.canViewAgreedClientFee && (
-                  <span className="inline-flex items-center gap-1.5 font-semibold text-[#8C6D2B] tabular-nums">
-                    Agreed Client Fee (G&amp;G): &pound;
-                    {currentPlacement.agreedClientWeeklyFee.toLocaleString()}/wk
-                  </span>
-                )}
+                <span className="inline-flex items-center gap-1.5 font-medium tabular-nums">
+                  <Coins className="w-3.5 h-3.5 text-[#C5A059]" />
+                  &pound;{currentPlacement.weeklyPayment} per week
+                </span>
+                <span className="inline-flex items-center gap-1.5 font-medium tabular-nums">
+                  <Utensils className="w-3.5 h-3.5 text-[#C5A059]" />
+                  Food allowance: &pound;{currentPlacement.foodAllowance} per week
+                </span>
               </div>
             </div>
           </div>
@@ -2081,21 +2042,9 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
                           <Icon className="w-3.5 h-3.5 text-[#64748B]" />
                           {row.label}
                         </span>
-                        <span
-                          className={`font-semibold flex items-center gap-1.5 ${
-                            accessEval.canCarerViewIdentityAndContact
-                              ? 'text-emerald-700'
-                              : 'text-amber-800'
-                          }`}
-                        >
-                          {accessEval.canCarerViewIdentityAndContact ? (
-                            <>
-                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                              <span>Visible now</span>
-                            </>
-                          ) : (
-                            <span>{accessEval.releaseDateDisplay}</span>
-                          )}
+                        <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>Visible from {accessEval.releaseDateDisplay}</span>
                         </span>
                       </div>
                     );
@@ -2103,40 +2052,19 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
 
                   <div className="py-2.5 flex items-center justify-between gap-2">
                     <span className="flex items-center gap-2 text-[#475569]">
-                      <Coins className="w-3.5 h-3.5 text-[#64748B]" />
-                      Weekly carer fee &amp; food allowance
-                    </span>
-                    <span className="font-semibold text-emerald-700 flex items-center gap-1.5">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                      <span>Always visible to Carer &amp; Admin</span>
-                    </span>
-                  </div>
-
-                  <div className="py-2.5 flex items-center justify-between gap-2">
-                    <span className="flex items-center gap-2 text-[#475569]">
-                      <Shield className="w-3.5 h-3.5 text-[#64748B]" />
-                      Carer pay visibility to Client
-                    </span>
-                    <span className="font-semibold text-rose-700 flex items-center gap-1">
-                      <X className="w-3.5 h-3.5 text-rose-600" />
-                      <span>Never visible to Client</span>
-                    </span>
-                  </div>
-
-                  <div className="py-2.5 flex items-center justify-between gap-2">
-                    <span className="flex items-center gap-2 text-[#475569]">
                       <Mail className="w-3.5 h-3.5 text-[#64748B]" />
                       Email address
                     </span>
                     {accessEval.canCarerViewEmail ? (
-                      <span className="font-semibold text-amber-800 flex items-center gap-1">
+                      <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-800 border border-amber-200 flex items-center gap-1">
                         <CheckCircle2 className="w-3.5 h-3.5 text-amber-600" />
-                        Visible (Admin Exception)
+                        <span>Visible (Admin Exception)</span>
                       </span>
                     ) : (
-                      <span className="font-semibold text-rose-700 flex items-center gap-1">
+                      <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-rose-50 text-rose-700 border border-rose-200 flex items-center gap-1">
                         <X className="w-3.5 h-3.5 text-rose-600" />
-                        Always hidden
+                        <span>Always hidden</span>
+                        <Info className="w-3 h-3 text-rose-400 ml-0.5" />
                       </span>
                     )}
                   </div>

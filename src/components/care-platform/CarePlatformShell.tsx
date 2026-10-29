@@ -8,6 +8,7 @@ import { AdminDashboard } from "./AdminDashboard";
 import { CarerProfileReview } from "./CarerProfileReview";
 import { ActivePlacementView } from "./ActivePlacementView";
 import { ClientProfilePortalView } from "./ClientProfilePortalView";
+import { CarerAccommodationView } from "./CarerAccommodationView";
 import { ClientBiographyView } from "./ClientBiographyView";
 import { ClientHealthConditionsView } from "./ClientHealthConditionsView";
 import { ClientDeclarationsAdminView } from "./ClientDeclarationsAdminView";
@@ -125,6 +126,13 @@ export default function CarePlatformShell({
               <ActivePlacementView
                 onBack={() => handleNavigate("dashboard")}
                 onNavigate={handleNavigate}
+              />
+            )}
+            {currentView === "client-carer-accommodation" && (
+              <CarerAccommodationView
+                onBack={() => handleNavigate("active-placement")}
+                onNavigate={handleNavigate}
+                onOpenAdminReview={() => handleNavigate("declarations")}
               />
             )}
             {currentView === "client-portal-profile" && (

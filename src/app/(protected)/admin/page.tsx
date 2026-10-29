@@ -11,6 +11,7 @@ const VALID_VIEWS: AdminView[] = [
   "carer-review",
   "active-placement",
   "client-portal-profile",
+  "client-carer-accommodation",
   "client-biography",
   "client-health-conditions",
   "health-conditions",

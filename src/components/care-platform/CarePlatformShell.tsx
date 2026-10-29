@@ -7,6 +7,11 @@ import { AdminHeader } from "./AdminHeader";
 import { AdminDashboard } from "./AdminDashboard";
 import { CarerProfileReview } from "./CarerProfileReview";
 import { ActivePlacementView } from "./ActivePlacementView";
+import { ClientProfilePortalView } from "./ClientProfilePortalView";
+import { ClientBiographyView } from "./ClientBiographyView";
+import { ClientHealthConditionsView } from "./ClientHealthConditionsView";
+import { ClientDeclarationsAdminView } from "./ClientDeclarationsAdminView";
+import { ClientDeclarationPortalView } from "./ClientDeclarationPortalView";
 import { HealthConditionsView } from "./HealthConditionsView";
 import { MedicationView } from "./MedicationView";
 import { AllergiesView } from "./AllergiesView";
@@ -105,7 +110,6 @@ export default function CarePlatformShell({
             {currentView === "dashboard" && (
               <AdminDashboard onNavigate={handleNavigate} />
             )}
-
             {currentView === "carer-review" && (
               <CarerProfileReview
                 onBack={() => handleNavigate("dashboard")}
@@ -117,26 +121,45 @@ export default function CarePlatformShell({
                 }}
               />
             )}
-
             {currentView === "active-placement" && (
-              <ActivePlacementView onBack={() => handleNavigate("dashboard")} />
+              <ActivePlacementView
+                onBack={() => handleNavigate("dashboard")}
+                onNavigate={handleNavigate}
+              />
             )}
-
+            {currentView === "client-portal-profile" && (
+              <ClientProfilePortalView onBack={() => handleNavigate("dashboard")} onNavigate={handleNavigate} />
+            )}
+            {currentView === "client-biography" && (
+              <ClientBiographyView onBack={() => handleNavigate("dashboard")} onNavigate={handleNavigate} />
+            )}
+            {currentView === "client-health-conditions" && (
+              <ClientHealthConditionsView onBack={() => handleNavigate("dashboard")} onNavigate={handleNavigate} />
+            )}
+            {currentView === "client-declarations" && (
+              <ClientDeclarationsAdminView onBack={() => handleNavigate("dashboard")} onNavigate={handleNavigate} />
+            )}
+            {currentView === "client-declaration-portal" && (
+              <ClientDeclarationPortalView onBack={() => handleNavigate("dashboard")} onNavigate={handleNavigate} />
+            )}
             {currentView === "health-conditions" && (
               <HealthConditionsView
                 userRole={user?.role}
                 onBack={() => handleNavigate("dashboard")}
               />
             )}
-
             {currentView === "medication" && (
-              <MedicationView onBack={() => handleNavigate("dashboard")} />
+              <MedicationView
+                onBack={() => handleNavigate("dashboard")}
+                onNavigate={handleNavigate}
+              />
             )}
-
             {currentView === "allergies" && (
-              <AllergiesView onBack={() => handleNavigate("dashboard")} />
+              <AllergiesView
+                onBack={() => handleNavigate("dashboard")}
+                onNavigate={handleNavigate}
+              />
             )}
-
             {currentView === "declarations" && (
               <DeclarationsView
                 onBack={() => handleNavigate("dashboard")}
@@ -148,7 +171,6 @@ export default function CarePlatformShell({
                 }}
               />
             )}
-
             {currentView === "carer-accommodation" && (
               <PlacementsView
                 key={`${placementsInitialMode}-${focusedPlacementId || "list"}`}

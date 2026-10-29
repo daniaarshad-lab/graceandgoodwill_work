@@ -13,6 +13,7 @@ import {
   Calendar,
   Settings,
   Globe,
+  ClipboardCheck,
   X,
 } from 'lucide-react';
 
@@ -20,10 +21,15 @@ export type AdminView =
   | 'dashboard'
   | 'carer-review'
   | 'active-placement'
+  | 'client-portal-profile'
+  | 'client-biography'
+  | 'client-health-conditions'
   | 'health-conditions'
   | 'medication'
   | 'allergies'
   | 'declarations'
+  | 'client-declarations'
+  | 'client-declaration-portal'
   | 'carer-accommodation'
   | 'expired-link';
 
@@ -42,14 +48,14 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
   onCloseMobile,
   websiteHref,
 }) => {
-  // Navigation strictly matching client mockup:
-  // Icons: Home, Users, User, FileText, CreditCard (Placements), MessageSquare, BookOpen, BarChart3, Calendar, Settings
+  // Navigation matching Grace & Goodwill Admin Portal structure
   const navItems = [
     { id: 'dashboard' as AdminView, label: 'Dashboard', icon: Home },
     { id: 'carer-review' as AdminView, label: 'Carers', icon: Users },
     { id: 'active-placement' as AdminView, label: 'Clients', icon: User },
     { id: 'declarations' as AdminView, label: 'Care Requests', icon: FileText },
     { id: 'carer-accommodation' as AdminView, label: 'Placements', icon: CreditCard },
+    { id: 'client-declarations' as AdminView, label: 'Declarations', icon: ClipboardCheck },
     { id: 'dashboard' as AdminView, label: 'Messages', icon: MessageSquare },
     { id: 'health-conditions' as AdminView, label: 'Master Libraries', icon: BookOpen },
     { id: 'dashboard' as AdminView, label: 'Reports', icon: BarChart3 },
@@ -60,16 +66,21 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
   const isItemActive = (label: string) => {
     if (label === 'Dashboard') return currentView === 'dashboard';
     if (label === 'Carers') return currentView === 'carer-review';
-    if (label === 'Clients') return currentView === 'active-placement';
-    if (label === 'Care Requests') return currentView === 'declarations';
-    if (label === 'Placements') return currentView === 'carer-accommodation';
-    if (label === 'Master Libraries') {
+    if (label === 'Clients') {
       return (
-        currentView === 'health-conditions' ||
+        currentView === 'active-placement' ||
+        currentView === 'client-portal-profile' ||
+        currentView === 'client-biography' ||
+        currentView === 'client-health-conditions' ||
         currentView === 'medication' ||
-        currentView === 'allergies'
+        currentView === 'allergies' ||
+        currentView === 'client-declaration-portal'
       );
     }
+    if (label === 'Care Requests') return currentView === 'declarations';
+    if (label === 'Placements') return currentView === 'carer-accommodation';
+    if (label === 'Declarations') return currentView === 'client-declarations';
+    if (label === 'Master Libraries') return currentView === 'health-conditions';
     return false;
   };
 

@@ -1413,6 +1413,24 @@ const INITIAL_CARE_REQUESTS: CareRequestRecord[] = [
   },
 ];
 
+export interface DeclarationDiffItem {
+  id: string;
+  section: string;
+  currentLive: string;
+  newDraft: string;
+}
+
+export interface DeclarationAuditEntry {
+  id: string;
+  date: string;
+  time: string;
+  title: string;
+  actor: string;
+  version: string;
+  details: string;
+  isLatest?: boolean;
+}
+
 interface PlatformStoreContextType {
   placements: PlacementRecord[];
   careRequests: CareRequestRecord[];
@@ -1421,6 +1439,16 @@ interface PlatformStoreContextType {
   setAdminRole: React.Dispatch<React.SetStateAction<AdminUserRole>>;
   carerAvailabilityPrefs: AvailabilityCategory[];
   setCarerAvailabilityPrefs: React.Dispatch<React.SetStateAction<AvailabilityCategory[]>>;
+  clientAvatars: Record<string, string>;
+  setClientAvatar: (clientKey: string, url: string) => void;
+  clientUploadedPhotos: Record<string, { id: string; label: string; url: string }[]>;
+  addClientUploadedPhoto: (clientKey: string, photo: { id: string; label: string; url: string }) => void;
+  declarationStatus: 'draft' | 'awaiting_client' | 'live';
+  setDeclarationStatus: React.Dispatch<React.SetStateAction<'draft' | 'awaiting_client' | 'live'>>;
+  declarationDiffs: DeclarationDiffItem[];
+  setDeclarationDiffs: React.Dispatch<React.SetStateAction<DeclarationDiffItem[]>>;
+  declarationAuditTrail: DeclarationAuditEntry[];
+  addDeclarationAuditEntry: (entry: DeclarationAuditEntry) => void;
   incrementApprovedCarers: () => void;
   updatePlacement: (id: string, updater: (prev: PlacementRecord) => PlacementRecord) => void;
   addPlacement: (placement: PlacementRecord) => void;
@@ -1444,6 +1472,122 @@ export const PlatformStoreProvider: React.FC<{ children: React.ReactNode }> = ({
     'Live-in Ongoing Care',
     'Live-in Respite Care',
   ]);
+  const [clientAvatars, setClientAvatarsState] = useState<Record<string, string>>({
+    'margaret-lewis':
+      'https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?w=400&auto=format&fit=crop&q=80',
+    'eleanor-thomas':
+      'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=600&auto=format&fit=crop&q=80',
+  });
+  const [clientUploadedPhotos, setClientUploadedPhotos] = useState<
+    Record<string, { id: string; label: string; url: string }[]>
+  >({
+    'margaret-lewis': [
+      {
+        id: 'initial-portrait',
+        label: 'Current Portrait',
+        url: 'https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?w=400&auto=format&fit=crop&q=80',
+      },
+    ],
+    'eleanor-thomas': [
+      {
+        id: 'initial-eleanor',
+        label: 'Current Portrait',
+        url: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=600&auto=format&fit=crop&q=80',
+      },
+    ],
+  });
+
+  const setClientAvatar = (clientKey: string, url: string) => {
+    setClientAvatarsState((prev) => ({ ...prev, [clientKey]: url }));
+  };
+
+  const addClientUploadedPhoto = (
+    clientKey: string,
+    photo: { id: string; label: string; url: string }
+  ) => {
+    setClientUploadedPhotos((prev) => {
+      const existing = prev[clientKey] || [];
+      if (existing.length >= 10) return prev;
+      return { ...prev, [clientKey]: [...existing, photo] };
+    });
+  };
+
+  const [declarationStatus, setDeclarationStatus] = useState<'draft' | 'awaiting_client' | 'live'>(
+    'draft'
+  );
+  const [declarationDiffs, setDeclarationDiffs] = useState<DeclarationDiffItem[]>([
+    {
+      id: 'diff-1',
+      section: 'Care Needs',
+      currentLive: 'Assistance with mobility',
+      newDraft: 'Assistance with mobility and personal care',
+    },
+    {
+      id: 'diff-2',
+      section: 'Medical Information',
+      currentLive: 'None listed',
+      newDraft: 'Type 2 diabetes (medication managed)',
+    },
+    {
+      id: 'diff-3',
+      section: 'Interests & Hobbies',
+      currentLive: 'Gardening',
+      newDraft: 'Gardening, reading, classical music',
+    },
+    {
+      id: 'diff-4',
+      section: 'Spoken Languages',
+      currentLive: 'English',
+      newDraft: 'English, French',
+    },
+  ]);
+
+  const [declarationAuditTrail, setDeclarationAuditTrail] = useState<DeclarationAuditEntry[]>([
+    {
+      id: 'aud-1',
+      date: '14 Jan 2024',
+      time: '10:24',
+      title: 'Changes submitted for client confirmation',
+      actor: 'Entered by Jessica Smith (Admin)',
+      version: 'Declaration v3.3 (Draft)',
+      details: 'Categories: Care Needs, Medical Information, Interests & Hobbies, Spoken Languages',
+      isLatest: true,
+    },
+    {
+      id: 'aud-2',
+      date: '14 Jan 2024',
+      time: '10:18',
+      title: 'Admin updated client information',
+      actor: 'Entered by Jessica Smith (Admin)',
+      version: 'Declaration v3.3 (Draft)',
+      details: 'Previous values recorded (see details)',
+    },
+    {
+      id: 'aud-3',
+      date: '08 Nov 2023',
+      time: '14:32',
+      title: 'Client confirmed changes',
+      actor: 'Confirmed by Margaret Lewis (Client)',
+      version: 'Declaration v3.2 (Live)',
+      details: 'Categories: Home Environment, Interests & Hobbies',
+    },
+    {
+      id: 'aud-4',
+      date: '08 Nov 2023',
+      time: '10:15',
+      title: 'Changes submitted for client confirmation',
+      actor: 'Entered by Daniel Carter (Admin)',
+      version: 'Declaration v3.2 (Pending)',
+      details: '',
+    },
+  ]);
+
+  const addDeclarationAuditEntry = (entry: DeclarationAuditEntry) => {
+    setDeclarationAuditTrail((prev) => [
+      { ...entry, isLatest: true },
+      ...prev.map((item) => ({ ...item, isLatest: false })),
+    ]);
+  };
 
   const incrementApprovedCarers = () => {
     setTotalCarersCount((c) => c + 1);
@@ -1743,6 +1887,16 @@ export const PlatformStoreProvider: React.FC<{ children: React.ReactNode }> = ({
         setAdminRole,
         carerAvailabilityPrefs,
         setCarerAvailabilityPrefs,
+        clientAvatars,
+        setClientAvatar,
+        clientUploadedPhotos,
+        addClientUploadedPhoto,
+        declarationStatus,
+        setDeclarationStatus,
+        declarationDiffs,
+        setDeclarationDiffs,
+        declarationAuditTrail,
+        addDeclarationAuditEntry,
         incrementApprovedCarers,
         updatePlacement,
         addPlacement,

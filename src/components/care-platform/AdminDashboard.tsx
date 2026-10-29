@@ -23,7 +23,7 @@ import {
   Heart,
 } from 'lucide-react';
 import { AdminView } from './AdminSidebar';
-import { usePlatformStore } from '@/data/care-platform/platformStore';
+import { usePlatformStore } from "@/data/care-platform/platformStore";
 
 interface AdminDashboardProps {
   onNavigate: (view: AdminView) => void;
@@ -138,7 +138,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
 
         {/* Pending Confirmations */}
         <div
-          onClick={() => onNavigate('declarations')}
+          onClick={() => onNavigate('client-declarations')}
           className="bg-white rounded-2xl p-5 border border-[#EFE8DE] shadow-sm hover:shadow-md hover:border-[#D4AF7A]/60 transition-all cursor-pointer group flex flex-col justify-between"
         >
           <div className="flex items-start justify-between">

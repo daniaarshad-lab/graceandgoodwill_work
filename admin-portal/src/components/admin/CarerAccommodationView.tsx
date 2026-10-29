@@ -420,7 +420,7 @@ export const CarerAccommodationView: React.FC<CarerAccommodationViewProps> = ({
 
     if (!hasPrivateBedroom) {
       setValidationError(
-        'Compulsory requirement: Please confirm that the live-in carer will have their own private bedroom.'
+        'Compulsory requirement: Please confirm that the live-in carer will have their own private bedroom for the duration of the placement.'
       );
       return;
     }
@@ -869,12 +869,12 @@ export const CarerAccommodationView: React.FC<CarerAccommodationViewProps> = ({
                           Private Bedroom
                         </h2>
                         <p className="text-xs sm:text-[13px] text-[#5C5549] mt-1 leading-relaxed">
-                          A live-in carer must be provided with their own private bedroom and
-                          suitable personal space for the duration of the placement.
+                          The live-in carer must have their own private bedroom. Sharing a bedroom with the client or other household members is not permitted.
                         </p>
                       </div>
                     </div>
 
+                    {/* Mandatory Confirmation */}
                     <label className="flex items-center gap-3 pt-1 cursor-pointer group">
                       <button
                         type="button"
@@ -893,12 +893,12 @@ export const CarerAccommodationView: React.FC<CarerAccommodationViewProps> = ({
                         {hasPrivateBedroom && <Check className="w-3.5 h-3.5 stroke-[2.6]" />}
                       </button>
                       <span className="text-xs sm:text-[13.5px] font-semibold text-[#0A1629]">
-                        I confirm that the live-in carer will have their own private bedroom.{' '}
+                        I confirm that the live-in carer will have their own private bedroom for the duration of the placement.{' '}
                         <span className="text-rose-600">*</span>
                       </span>
                     </label>
 
-                    {/* Optional household multiple-carer occupancy selector */}
+                    {/* Household multiple-carer occupancy selector */}
                     <div className="pt-1 border-t border-[#EAE2D2]/80">
                       <label className="inline-flex items-center gap-2 text-xs text-[#5C5549] cursor-pointer mt-2">
                         <input
@@ -915,7 +915,10 @@ export const CarerAccommodationView: React.FC<CarerAccommodationViewProps> = ({
                       </label>
 
                       {multipleCarersInHousehold && (
-                        <div className="mt-2.5 rounded-xl bg-white border border-[#EAE2D2] p-3.5 space-y-2">
+                        <div className="mt-2.5 rounded-xl bg-white border border-[#EAE2D2] p-3.5 space-y-2.5">
+                          <div className="text-[11.5px] font-medium text-[#475569]">
+                            Bedroom arrangements:
+                          </div>
                           {[SOLE_OCCUPANCY_BEDROOM, SHARED_CARER_BEDROOM].map((opt) => {
                             const selected = bedroomType === opt;
                             return (
@@ -939,6 +942,12 @@ export const CarerAccommodationView: React.FC<CarerAccommodationViewProps> = ({
                               </label>
                             );
                           })}
+
+                          {bedroomType === SHARED_CARER_BEDROOM && (
+                            <div className="rounded-lg bg-[#FAF6EE] border border-[#E6D7B9] p-2.5 text-[11px] text-[#5C5549] leading-relaxed">
+                              <strong>Important:</strong> If a shared bedroom is proposed, both carers must explicitly agree to the arrangement before the placement is confirmed. Neither carer should be expected or required to share accommodation without their consent.
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>

@@ -285,6 +285,9 @@ export default function CareRequestForm({
                 Select the client&apos;s current mobility level and provide any
                 transfer, repositioning or specialist equipment details.
               </p>
+              <p className="text-[11px] text-gold-200/80 italic mt-1 leading-snug">
+                Distinguish between clients who cannot walk but can still be transferred into a wheelchair, and those who are completely bedbound.
+              </p>
             </div>
             <div className="flex flex-wrap gap-2">
               {MOBILITY_OPTIONS.map((option) => {

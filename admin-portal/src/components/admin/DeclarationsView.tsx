@@ -1287,10 +1287,32 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                     </button>
                   </div>
 
-                  <p className="text-xs text-[#64748B]">
-                    Bedroom provided for live-in carer (sharing a bedroom with the client or other
-                    household members is not permitted)
-                  </p>
+                  <div className="rounded-xl bg-[#FAF6EE] border border-[#E6D7B9] p-3 text-xs text-[#475569] leading-relaxed">
+                    <strong>Compulsory Requirement:</strong> The live-in carer must have their own private bedroom. Sharing a bedroom with the client or other household members is not permitted.
+                  </div>
+
+                  {/* Mandatory Confirmation */}
+                  <label className="flex items-center gap-2.5 p-3 rounded-xl bg-[#FAF7F2] border border-[#EAE2D2] cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={Boolean(currentReq.accommodation.privateBedroomConfirmed)}
+                      onChange={(e) => {
+                        const checked = e.target.checked;
+                        updateCareRequest(currentReq.id, (prev) => ({
+                          ...prev,
+                          accommodation: {
+                            ...prev.accommodation,
+                            privateBedroomConfirmed: checked,
+                          },
+                        }));
+                      }}
+                      className="w-4 h-4 accent-[#0A1629] rounded cursor-pointer shrink-0"
+                    />
+                    <span className="text-xs sm:text-[13px] font-semibold text-[#0A1629]">
+                      I confirm that the live-in carer will have their own private bedroom for the duration of the placement.{' '}
+                      <span className="text-rose-600">*</span>
+                    </span>
+                  </label>
 
                   {/* Household multiple-carers toggle governing second bedroom option */}
                   <label className="flex items-center gap-2.5 text-xs text-[#334155] cursor-pointer">
@@ -1318,7 +1340,11 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                     <span>Multiple carers are accommodated within the same household</span>
                   </label>
 
-                  <div className="flex flex-wrap gap-2">
+                  <div className="space-y-1.5">
+                    <div className="text-[11.5px] font-medium text-[#475569]">
+                      Bedroom arrangements:
+                    </div>
+                    <div className="flex flex-wrap gap-2">
                     {bedroomOptions.map((opt) => {
                       const isSelected =
                         currentReq.accommodation.bedroomType === opt ||
@@ -1353,6 +1379,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                         </button>
                       );
                     })}
+                    </div>
                   </div>
 
                   {currentReq.accommodation.bedroomType === SHARED_CARER_BEDROOM && (
@@ -2065,10 +2092,17 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                   <div className="text-[#64748B] pt-1">{currentReq.conditionsNotes}</div>
                 </div>
                 <div className="p-4 rounded-xl bg-[#FAF7F2] border border-[#EAE2D2] space-y-2">
-                  <div className="font-bold text-[#0A1629]">Mobility</div>
+                  <div className="flex items-center justify-between">
+                    <div className="font-bold text-[#0A1629]">Mobility</div>
+                    <span className="text-[11px] text-[#64748B]">Current level</span>
+                  </div>
+                  <p className="text-[11px] text-[#64748B] leading-snug">
+                    Distinguish between clients who cannot walk but can still be transferred into a wheelchair and those who are completely bedbound.
+                  </p>
                   <div className="flex flex-wrap gap-1.5">
                     {allMobilityLevels.map((lvl) => {
-                      const isSelected = currentReq.mobilityLevel === lvl;
+                      const isSelected =
+                        currentReq.mobilityLevel?.toLowerCase() === lvl.toLowerCase();
                       return (
                         <button
                           key={lvl}
@@ -2091,18 +2125,23 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                       );
                     })}
                   </div>
-                  <textarea
-                    rows={2}
-                    value={currentReq.mobilityDetails}
-                    placeholder="Explain mobility requirements, including transfers, repositioning, or specialist moving and handling equipment..."
-                    onChange={(e) =>
-                      updateCareRequest(currentReq.id, (prev) => ({
-                        ...prev,
-                        mobilityDetails: e.target.value,
-                      }))
-                    }
-                    className="w-full rounded-xl border border-[#DFD5C2] bg-white p-2.5 text-xs text-[#334155] focus:outline-none focus:border-[#C8A464]"
-                  />
+                  <div className="pt-0.5">
+                    <label className="text-[11px] font-medium text-[#475569] block mb-1">
+                      Additional Mobility, Handling &amp; Repositioning Details
+                    </label>
+                    <textarea
+                      rows={2}
+                      value={currentReq.mobilityDetails}
+                      placeholder="Explain mobility requirements, including transfers, repositioning, hoist or specialist moving and handling equipment..."
+                      onChange={(e) =>
+                        updateCareRequest(currentReq.id, (prev) => ({
+                          ...prev,
+                          mobilityDetails: e.target.value,
+                        }))
+                      }
+                      className="w-full rounded-xl border border-[#DFD5C2] bg-white p-2.5 text-xs text-[#334155] focus:outline-none focus:border-[#C8A464]"
+                    />
+                  </div>
                 </div>
                 <div className="p-4 rounded-xl bg-[#FAF7F2] border border-[#EAE2D2] space-y-1.5">
                   <div className="font-bold text-[#0A1629]">Medication Support</div>

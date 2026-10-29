@@ -210,9 +210,7 @@ export default function ClientCarerAccommodationSection({
                   Private Bedroom
                 </h5>
                 <p className="text-xs text-[#5C5549] mt-0.5 leading-relaxed">
-                  A live-in carer must be provided with their own private
-                  bedroom and suitable personal space for the duration of the
-                  placement.
+                  The live-in carer must have their own private bedroom. Sharing a bedroom with the client or other household members is not permitted.
                 </p>
               </div>
             </div>
@@ -232,8 +230,7 @@ export default function ClientCarerAccommodationSection({
                 {hasPrivateBedroom && <Check className="w-3.5 h-3.5" />}
               </button>
               <span className="text-xs sm:text-[13px] font-semibold text-[#0A1629]">
-                I confirm that the live-in carer will have their own private
-                bedroom. <span className="text-rose-600">*</span>
+                I confirm that the live-in carer will have their own private bedroom for the duration of the placement. <span className="text-rose-600">*</span>
               </span>
             </label>
 
@@ -600,7 +597,7 @@ export default function ClientCarerAccommodationSection({
               {[
                 "The live-in carer must have their own private bedroom.",
                 "A quiet and comfortable space helps the carer to rest.",
-                "Consider access to a bathroom and shower.",
+                "Compulsory: The live-in carer must have access to a fully equipped bathroom with a toilet, washbasin and either a shower or bathtub.",
                 "You can upload photographs to give carers a better understanding of the accommodation.",
                 "Photographs are optional.",
               ].map((tip, idx) => (

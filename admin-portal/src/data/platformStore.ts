@@ -385,9 +385,9 @@ export function buildConciseCareNeeds(params: {
       mobilityNeed = 'Bedbound Mobility & Repositioning';
     } else if (mobilityLevel === 'Unable to walk, requires full assistance') {
       mobilityNeed = 'Full Mobility Assistance';
-    } else if (mobilityLevel === 'Requires support') {
+    } else if (mobilityLevel === 'Requires support' || mobilityLevel === 'Requires Support') {
       mobilityNeed = 'Limited Mobility';
-    } else if (mobilityLevel === 'Wheelchair user') {
+    } else if (mobilityLevel === 'Wheelchair user' || mobilityLevel === 'Wheelchair User') {
       mobilityNeed = 'Wheelchair Mobility';
     } else if (mobilityLevel === 'Independent (with aid)') {
       mobilityNeed = 'Mobility Aid Support';

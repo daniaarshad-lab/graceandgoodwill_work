@@ -1366,7 +1366,7 @@ export const CarerAccommodationView: React.FC<CarerAccommodationViewProps> = ({
                       {[
                         'The live-in carer must have their own private bedroom.',
                         'A quiet and comfortable space helps the carer to rest.',
-                        'Consider access to a bathroom and shower.',
+                        'Compulsory: The live-in carer must have access to a fully equipped bathroom with a toilet, washbasin and either a shower or bathtub.',
                         'You can upload photographs to give carers a better understanding of the accommodation.',
                         'Photographs are optional.',
                       ].map((tip, idx) => (

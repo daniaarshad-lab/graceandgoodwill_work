@@ -85,7 +85,8 @@ export default function CarePlatformShell({
 
   return (
     <PlatformStoreProvider>
-      <div className="fixed inset-0 z-40 overflow-y-auto bg-[#F8F5EE] flex text-[#1E293B] antialiased">
+      <div className="fixed inset-0 z-40 overflow-y-auto bg-[#F8F5EE] text-[#1E293B] antialiased">
+        <div className="min-h-full w-full flex items-stretch">
         <AdminSidebar
           currentView={currentView}
           onViewChange={handleNavigate}
@@ -179,6 +180,7 @@ export default function CarePlatformShell({
               />
             )}
           </main>
+        </div>
         </div>
       </div>
     </PlatformStoreProvider>

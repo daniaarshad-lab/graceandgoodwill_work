@@ -85,7 +85,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
   };
 
   const sidebarContent = (
-    <aside className="w-56 lg:w-[228px] xl:w-60 bg-[#060D1E] text-slate-200 flex flex-col justify-between shrink-0 h-screen sticky top-0 overflow-y-auto overflow-x-hidden select-none z-40 border-r border-[#D4AF7A]/15">
+    <aside className="w-56 lg:w-[228px] xl:w-60 bg-[#060D1E] text-slate-200 flex flex-col justify-between shrink-0 min-h-[960px] h-full overflow-x-hidden select-none z-40 border-r border-[#D4AF7A]/15">
       {/* Top Section: Brand + Main Navigation */}
       <div className="shrink-0">
         {/* Top Brand Block (Bigger logo, NO line underneath) */}
@@ -168,12 +168,12 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
         </div>
       </div>
 
-      {/* Sidebar Footer: Large Grace & Goodwill 3D Gold Knot Logo anchored flush at the bottom end of the sidebar */}
-      <div className="shrink-0 w-full mt-auto pt-3 pb-0 px-0 flex items-end justify-center overflow-hidden select-none pointer-events-none bg-[#060D1E]">
+      {/* Sidebar Footer: Large Grace & Goodwill 3D Gold Knot Logo zoomed to touch both sidebar edges and anchored at the bottom */}
+      <div className="shrink-0 w-full mt-auto pt-16 pb-0 px-0 flex items-end justify-center overflow-hidden select-none pointer-events-none bg-[#060D1E]">
         <img
           src="/assets/website_logo_dark_clean.png"
           alt="Grace & Goodwill Emblem"
-          className="w-[104%] max-w-none aspect-square object-contain block -mb-2 filter drop-shadow-[0_10px_24px_rgba(0,0,0,0.65)]"
+          className="w-[112%] max-w-none aspect-square object-contain block -mb-3.5 filter drop-shadow-[0_10px_24px_rgba(0,0,0,0.65)]"
         />
       </div>
     </aside>
@@ -181,8 +181,8 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
 
   return (
     <>
-      {/* Desktop Persistent Sidebar */}
-      <div className="hidden lg:block shrink-0 bg-[#060D1E]">
+      {/* Desktop Persistent Full-Height Sidebar */}
+      <div className="hidden lg:flex shrink-0 bg-[#060D1E] self-stretch">
         {sidebarContent}
       </div>
 
@@ -193,7 +193,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
             onClick={onCloseMobile}
             className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
           />
-          <div className="fixed inset-y-0 left-0 max-w-full flex z-50 bg-[#060D1E]">
+          <div className="fixed inset-y-0 left-0 max-w-full flex z-50 bg-[#060D1E] overflow-y-auto">
             {sidebarContent}
           </div>
         </div>

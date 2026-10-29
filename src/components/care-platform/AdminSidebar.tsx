@@ -22,6 +22,7 @@ export type AdminView =
   | 'carer-review'
   | 'active-placement'
   | 'client-portal-profile'
+  | 'client-carer-accommodation'
   | 'client-biography'
   | 'client-health-conditions'
   | 'health-conditions'
@@ -70,6 +71,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
       return (
         currentView === 'active-placement' ||
         currentView === 'client-portal-profile' ||
+        currentView === 'client-carer-accommodation' ||
         currentView === 'client-biography' ||
         currentView === 'client-health-conditions' ||
         currentView === 'medication' ||

@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   User,
+  BedDouble,
   BookOpen,
   HeartPulse,
   Pill,
@@ -27,6 +28,7 @@ export const ClientSectionNav: React.FC<ClientSectionNavProps> = ({
   }[] = [
     { id: 'active-placement', label: 'Active Placement', icon: Home },
     { id: 'client-portal-profile', label: 'Client Profile & Photo', icon: User },
+    { id: 'client-carer-accommodation', label: 'Carer Accommodation', icon: BedDouble },
     { id: 'client-biography', label: 'Biography', icon: BookOpen },
     { id: 'client-health-conditions', label: 'Health Conditions', icon: HeartPulse },
     { id: 'medication', label: 'Medication', icon: Pill },

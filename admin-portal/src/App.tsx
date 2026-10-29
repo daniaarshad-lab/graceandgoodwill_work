@@ -5,6 +5,7 @@ import { AdminDashboard } from './components/admin/AdminDashboard';
 import { CarerProfileReview } from './components/admin/CarerProfileReview';
 import { ActivePlacementView } from './components/admin/ActivePlacementView';
 import { ClientProfilePortalView } from './components/admin/ClientProfilePortalView';
+import { CarerAccommodationView } from './components/admin/CarerAccommodationView';
 import { ClientBiographyView } from './components/admin/ClientBiographyView';
 import { ClientHealthConditionsView } from './components/admin/ClientHealthConditionsView';
 import { HealthConditionsView } from './components/admin/HealthConditionsView';
@@ -92,6 +93,14 @@ export default function App() {
               <ClientProfilePortalView
                 onBack={() => handleNavigate('active-placement')}
                 onNavigate={handleNavigate}
+              />
+            )}
+
+            {currentView === 'client-carer-accommodation' && (
+              <CarerAccommodationView
+                onBack={() => handleNavigate('active-placement')}
+                onNavigate={handleNavigate}
+                onOpenAdminReview={() => handleNavigate('declarations')}
               />
             )}
 

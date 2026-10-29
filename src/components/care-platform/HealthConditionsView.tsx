@@ -38,6 +38,10 @@ import {
   Trash2,
 } from 'lucide-react';
 import { useOptionalPlatformStore, AdminUserRole } from '@/data/care-platform/platformStore';
+import {
+  executeMasterLibraryMutation,
+  MasterLibraryMutationPayload,
+} from '@/lib/masterLibrariesService';
 
 export type LibraryScope = 'client_carer' | 'admin_portal';
 export type ApprovalActionType = 'edit' | 'archive' | 'remove';
@@ -601,15 +605,47 @@ export const HealthConditionsView: React.FC<HealthConditionsViewProps> = ({ user
     };
   }, [effectiveRole]);
 
-  // Execute server-validated mutation against /master-libraries-api
+  // Execute server-validated mutation against /master-libraries-api (with RBAC fallback on static CDN hosts)
   const dispatchServerMutation = async (payload: Record<string, unknown>): Promise<boolean> => {
+    const actorName =
+      effectiveRole === 'super_admin' ? 'Jessica Smith (Super Admin)' : 'Jessica Smith (Admin)';
+
+    const runLocalRbacFallback = () => {
+      const localResult = executeMasterLibraryMutation(
+        effectiveRole,
+        actorName,
+        payload as unknown as MasterLibraryMutationPayload
+      );
+      if (localResult.status >= 400) {
+        showToast(
+          localResult.error || 'Permission denied: This action requires Super Admin authorisation.',
+          true
+        );
+        return false;
+      }
+      setLibraries(localResult.libraries);
+      setApprovalRequests(localResult.approvalRequests);
+      if (localResult.message) {
+        showToast(localResult.message, false);
+      }
+      return true;
+    };
+
     try {
       const res = await fetch('/master-libraries-api', {
         method: 'POST',
         headers: getStoredAuthHeaders(effectiveRole),
         body: JSON.stringify(payload),
       });
-      const data = await res.json().catch(() => null);
+      const contentType = res.headers.get('content-type') || '';
+      const data = contentType.includes('application/json')
+        ? await res.json().catch(() => null)
+        : null;
+
+      // Static hosts (e.g. Netlify SPA) return 404/405 without JSON API handler
+      if ((res.status === 404 || res.status === 405) && !data?.error) {
+        return runLocalRbacFallback();
+      }
 
       if (!res.ok) {
         showToast(
@@ -630,8 +666,7 @@ export const HealthConditionsView: React.FC<HealthConditionsViewProps> = ({ user
       }
       return true;
     } catch {
-      showToast('Unable to reach server to verify Master Library permissions.', true);
-      return false;
+      return runLocalRbacFallback();
     }
   };
 

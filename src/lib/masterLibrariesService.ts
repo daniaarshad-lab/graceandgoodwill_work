@@ -415,9 +415,24 @@ export const INITIAL_APPROVAL_REQUESTS: LibraryApprovalRequest[] = [
   },
 ];
 
-// In-memory singleton state on server process
-let serverLibrariesState: MasterLibraryRecord[] = JSON.parse(JSON.stringify(INITIAL_MASTER_LIBRARIES));
-let serverApprovalRequestsState: LibraryApprovalRequest[] = JSON.parse(JSON.stringify(INITIAL_APPROVAL_REQUESTS));
+// In-memory singleton state
+let serverLibrariesState: MasterLibraryRecord[] = JSON.parse(
+  JSON.stringify(INITIAL_MASTER_LIBRARIES)
+);
+let serverApprovalRequestsState: LibraryApprovalRequest[] = JSON.parse(
+  JSON.stringify(INITIAL_APPROVAL_REQUESTS)
+);
+
+function decodeBase64Utf8(base64: string): string {
+  if (typeof Buffer !== 'undefined') {
+    return Buffer.from(base64, 'base64').toString('utf8');
+  }
+  return decodeURIComponent(
+    Array.prototype.map
+      .call(atob(base64), (c: string) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+      .join('')
+  );
+}
 
 function decodeJwtRole(authHeader?: string | null): string | null {
   if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
@@ -426,7 +441,7 @@ function decodeJwtRole(authHeader?: string | null): string | null {
   if (parts.length !== 3) return null;
   try {
     const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
-    const json = Buffer.from(base64, 'base64').toString('utf8');
+    const json = decodeBase64Utf8(base64);
     const payload = JSON.parse(json);
     if (typeof payload?.role === 'string') {
       return payload.role;

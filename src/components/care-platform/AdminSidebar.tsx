@@ -1,5 +1,4 @@
 "use client";
-
 import React from 'react';
 import {
   Home,
@@ -87,15 +86,15 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
   };
 
   const sidebarContent = (
-    <aside className="w-56 lg:w-[224px] xl:w-[232px] bg-[#060D1E] text-slate-200 flex flex-col justify-between shrink-0 h-screen sticky top-0 overflow-y-auto overflow-x-hidden select-none z-40 border-r border-[#D4AF7A]/15">
+    <aside className="w-64 lg:w-[256px] xl:w-[264px] bg-[#060D1E] text-slate-200 flex flex-col justify-between shrink-0 h-screen sticky top-0 overflow-y-auto overflow-x-hidden select-none z-40 border-r border-[#D4AF7A]/15">
       {/* Top Section: Brand + Main Navigation */}
       <div className="shrink-0">
         {/* Top Brand Block */}
-        <div className="pt-3.5 pb-2 px-4 flex flex-col items-center text-center relative">
+        <div className="pt-7 pb-5 px-4 flex flex-col items-center text-center relative">
           {onCloseMobile && (
             <button
               onClick={onCloseMobile}
-              className="lg:hidden absolute top-3.5 right-3.5 p-1 rounded-lg text-slate-400 hover:text-white"
+              className="lg:hidden absolute top-4 right-4 p-1 rounded-lg text-slate-400 hover:text-white"
               aria-label="Close navigation"
             >
               <X className="w-5 h-5" />
@@ -110,18 +109,18 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
             className="flex flex-col items-center group focus:outline-none cursor-pointer"
           >
             {/* Official Grace & Goodwill 3D Gold Knot Logo */}
-            <div className="w-14 h-14 mb-1.5 transition-transform group-hover:scale-105">
+            <div className="w-28 h-28 mb-3 transition-transform group-hover:scale-105">
               <img
                 src="/assets/website_logo_dark_clean.png"
                 alt="Grace & Goodwill Logo"
-                className="w-full h-full object-contain filter drop-shadow-[0_6px_14px_rgba(212,175,122,0.4)]"
+                className="w-full h-full object-contain filter drop-shadow-[0_10px_24px_rgba(212,175,122,0.5)]"
               />
             </div>
 
-            <span className="font-cinzel tracking-[0.22em] text-[#D4AF7A] text-[12.5px] font-semibold uppercase leading-tight">
+            <span className="font-cinzel tracking-[0.22em] text-[#D4AF7A] text-[15px] sm:text-[16px] font-bold uppercase leading-tight">
               GRACE &amp; GOODWILL
             </span>
-            <span className="text-[7.5px] tracking-[0.22em] uppercase text-[#D4AF7A]/80 font-medium mt-0.5">
+            <span className="text-[9.5px] tracking-[0.25em] uppercase text-[#D4AF7A]/90 font-medium mt-1.5">
               — CARE DEFINED BY INTEGRITY —
             </span>
           </button>

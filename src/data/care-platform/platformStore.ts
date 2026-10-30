@@ -1,3 +1,4 @@
+"use client";
 import React, { createContext, useContext, useState } from 'react';
 
 export type AvailabilityCategory = 'Live-in Ongoing Care' | 'Live-in Respite Care';
@@ -13,10 +14,15 @@ export type PlacementStatus =
   | 'Cancelled';
 
 export type CareRequestStage =
-  | 'New Enquiry'
+  | 'New Enquiries'
   | 'Reviewing Requirements'
-  | 'Matching Carers'
   | 'Confirming Payment'
+  | 'Publish Placement'
+  | 'Carer Selection'
+  | 'Placement Confirmed'
+  | 'Care Commenced'
+  | 'New Enquiry'
+  | 'Matching Carers'
   | 'Confirming Accommodation'
   | 'Finalised';
 
@@ -152,6 +158,10 @@ export interface PlacementRecord {
   accessHistory: AccessLogEntry[];
   circulatedToCarers: boolean;
   opportunityBadge?: 'New' | 'Urgent' | 'Emergency';
+  arrivalConfirmed?: boolean;
+  arrivalConfirmedAt?: string;
+  arrivalConfirmedBy?: string;
+  arrivalNotes?: string;
 }
 
 export interface CareRequestRecord {
@@ -212,6 +222,15 @@ export interface CareRequestRecord {
   lifestyleChangeLog?: LifestyleProfileLogEntry[];
   interests: string[];
   accommodation: AccommodationDetails;
+  isFulfilled?: boolean;
+  fulfilledAt?: string;
+  arrivalConfirmed?: boolean;
+  arrivalConfirmedAt?: string;
+  arrivalConfirmedBy?: 'Carer' | 'Admin';
+  arrivalNotes?: string;
+  shareableLinkToken?: string;
+  shareableLinkCreatedAt?: number;
+  shareableLinkExpiresAt?: number;
 }
 
 export interface EvaluatedAccessState {
@@ -228,6 +247,22 @@ export type AdminUserRole = 'admin' | 'super_admin';
 export interface FinancialVisibilityPolicy {
   canViewCarerFeeAndAllowance: boolean;
   canViewAgreedClientFee: boolean;
+}
+
+export function isShareableLinkActive(req?: CareRequestRecord | null): boolean {
+  if (!req) return false;
+  // Automatically expired immediately if fulfilled or care commenced
+  if (req.isFulfilled || req.stage === 'Care Commenced') return false;
+  if (!req.shareableLinkExpiresAt) return false;
+  return Date.now() < req.shareableLinkExpiresAt;
+}
+
+export function getShareableLinkRemainingHours(req?: CareRequestRecord | null): number {
+  if (!req || !req.shareableLinkExpiresAt) return 0;
+  if (req.isFulfilled || req.stage === 'Care Commenced') return 0;
+  const diffMs = req.shareableLinkExpiresAt - Date.now();
+  if (diffMs <= 0) return 0;
+  return Math.max(1, Math.ceil(diffMs / (3600 * 1000)));
 }
 
 /**
@@ -1127,11 +1162,15 @@ const INITIAL_CARE_REQUESTS: CareRequestRecord[] = [
     requestDate: '16 Oct 2026',
     preferredStart: '01 Nov 2026',
     preferredStartISO: '2026-11-01',
-    stage: 'Confirming Accommodation',
+    stage: 'Carer Selection',
     priority: 'Standard',
     assignedCarerName: 'Anita K.',
     source: 'Family enquiry',
     lastUpdated: '24 Oct 2026',
+    isFulfilled: false,
+    shareableLinkToken: 'gg-share-doris-88h',
+    shareableLinkCreatedAt: Date.now() - 3600 * 1000 * 4,
+    shareableLinkExpiresAt: Date.now() + 3600 * 1000 * 68,
     familyContact: {
       name: 'Claire Thompson',
       relation: 'Daughter',
@@ -1308,7 +1347,7 @@ const INITIAL_CARE_REQUESTS: CareRequestRecord[] = [
     requestDate: '25 Oct 2026',
     preferredStart: '28 Oct 2026 (Urgent)',
     preferredStartISO: '2026-10-28',
-    stage: 'New Enquiry',
+    stage: 'New Enquiries',
     priority: 'Urgent / Emergency',
     assignedCarerName: 'Unassigned',
     source: 'Hospital discharge team',
@@ -1459,6 +1498,11 @@ interface PlatformStoreContextType {
     carerAvatar: string,
     isEmergencyPlacement: boolean
   ) => PlacementRecord | null;
+  confirmCarerArrival: (
+    placementId: string,
+    confirmedBy: 'Carer' | 'Admin',
+    arrivalNotes?: string
+  ) => void;
 }
 
 const PlatformStoreContext = createContext<PlatformStoreContextType | null>(null);
@@ -1719,13 +1763,13 @@ export const PlatformStoreProvider: React.FC<{ children: React.ReactNode }> = ({
     const req = careRequests.find((r) => r.id === requestId);
     if (!req) return null;
 
-    // Mark Care Request as Finalised & Accommodation Verified
+    // Mark Care Request as Placement Confirmed & Accommodation Verified
     setCareRequests((prev) =>
       prev.map((r) =>
         r.id === requestId
           ? {
               ...r,
-              stage: 'Finalised',
+              stage: 'Placement Confirmed',
               assignedCarerName: carerName,
               isEmergency: isEmergencyPlacement,
               accommodation: { ...r.accommodation, adminVerified: true },
@@ -1876,6 +1920,84 @@ export const PlatformStoreProvider: React.FC<{ children: React.ReactNode }> = ({
     return newPlacement;
   };
 
+  const confirmCarerArrival = (
+    placementId: string,
+    confirmedBy: 'Carer' | 'Admin',
+    arrivalNotes?: string
+  ) => {
+    const nowReadable =
+      new Date().toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+      }) +
+      ' at ' +
+      new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    let updatedClientName = '';
+    let updatedLocation = '';
+
+    setPlacements((prev) =>
+      prev.map((p) => {
+        if (p.id === placementId) {
+          updatedClientName = p.clientFirstName;
+          updatedLocation = p.location;
+          return {
+            ...p,
+            status: 'Active',
+            arrivalConfirmed: true,
+            arrivalConfirmedAt: nowReadable,
+            arrivalConfirmedBy:
+              confirmedBy === 'Admin'
+                ? 'Administrator (on behalf)'
+                : `Assigned Carer (${p.primaryCarer.name})`,
+            arrivalNotes: arrivalNotes || p.arrivalNotes,
+            accessHistory: [
+              {
+                id: `log-${Date.now()}-arrival`,
+                date: 'Today',
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                title: 'Carer arrival confirmed & care commenced',
+                subtitle: `Arrival confirmed by ${confirmedBy}. Placement active on dashboard.`,
+                status: 'completed',
+              },
+              ...p.accessHistory,
+            ],
+          };
+        }
+        return p;
+      })
+    );
+
+    // Automatically mark matching care request as Fulfilled and advance stage to Care Commenced
+    // Expire any active shareable links immediately upon fulfilment!
+    setCareRequests((prev) =>
+      prev.map((r) => {
+        const isMatch =
+          r.id === placementId ||
+          (updatedClientName &&
+            r.clientFirstName.toLowerCase() === updatedClientName.toLowerCase() &&
+            r.location.toLowerCase() === updatedLocation.toLowerCase());
+
+        if (isMatch) {
+          return {
+            ...r,
+            stage: 'Care Commenced',
+            isFulfilled: true,
+            fulfilledAt: nowReadable,
+            arrivalConfirmed: true,
+            arrivalConfirmedAt: nowReadable,
+            arrivalConfirmedBy: confirmedBy,
+            arrivalNotes: arrivalNotes || r.arrivalNotes,
+            shareableLinkExpiresAt: Date.now() - 1000,
+            lastUpdated: 'Just now',
+          };
+        }
+        return r;
+      })
+    );
+  };
+
   return React.createElement(
     PlatformStoreContext.Provider,
     {
@@ -1902,6 +2024,7 @@ export const PlatformStoreProvider: React.FC<{ children: React.ReactNode }> = ({
         addPlacement,
         updateCareRequest,
         confirmCareRequestToPlacement,
+        confirmCarerArrival,
       },
     },
     children

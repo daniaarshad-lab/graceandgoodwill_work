@@ -36,6 +36,9 @@ import {
   ZoomIn,
   Coins,
   Eye,
+  Share2,
+  Send,
+  Radio,
 } from 'lucide-react';
 import {
   AccommodationPhotoCategory,
@@ -52,6 +55,8 @@ import {
   usePlatformStore,
 } from '@/data/care-platform/platformStore';
 import { CarerAccommodationView } from './CarerAccommodationView';
+import { SharedCareOpportunityModal } from './SharedCareOpportunityModal';
+import { SharedCareOpportunityView } from './SharedCareOpportunityView';
 
 interface DeclarationsViewProps {
   onBack: () => void;
@@ -64,34 +69,39 @@ const PIPELINE_STAGES: {
   description: string;
 }[] = [
   {
-    stage: 'New Enquiry',
+    stage: 'New Enquiries',
     shortLabel: '1. New Enquiries',
-    description: 'Initial family or hospital enquiries received.',
+    description: 'Initial care enquiries received from clients, families or hospitals.',
   },
   {
     stage: 'Reviewing Requirements',
     shortLabel: '2. Reviewing Requirements',
-    description: 'Assessing medical, mobility and personal care needs.',
-  },
-  {
-    stage: 'Matching Carers',
-    shortLabel: '3. Matching Carers',
-    description: 'Shortlisting suitable vetted live-in carers.',
+    description: 'Reviewing the client’s care needs, mobility, accommodation arrangements and other relevant requirements.',
   },
   {
     stage: 'Confirming Payment',
-    shortLabel: '4. Confirming Payment',
+    shortLabel: '3. Confirming Payment',
     description: 'Confirming the client’s agreed fees, payment arrangements and payment status.',
   },
   {
-    stage: 'Confirming Accommodation',
-    shortLabel: '5. Confirming Accommodation',
-    description: 'Verifying the carer’s private bedroom and bathroom arrangements.',
+    stage: 'Publish Placement',
+    shortLabel: '4. Publish Placement',
+    description: 'Publishing the available placement on the Carer Dashboard so approved carers can review the opportunity and express interest.',
   },
   {
-    stage: 'Finalised',
-    shortLabel: '6. Finalised Placements',
-    description: 'Confirmed and published to the Placements dashboard.',
+    stage: 'Carer Selection',
+    shortLabel: '5. Carer Selection',
+    description: 'Reviewing interested carers, shortlisting suitable candidates, sending offers to multiple carers where appropriate, and selecting the primary and any relief carers.',
+  },
+  {
+    stage: 'Placement Confirmed',
+    shortLabel: '6. Placement Confirmed',
+    description: 'The selected carer has accepted the placement, the start date has been agreed and all required agreements have been signed.',
+  },
+  {
+    stage: 'Care Commenced',
+    shortLabel: '7. Care Commenced',
+    description: 'The carer has arrived at the client’s home, confirmed their arrival and started providing care.',
   },
 ];
 
@@ -135,7 +145,13 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
   onBack,
   onNavigateToPlacements,
 }) => {
-  const { careRequests, updateCareRequest, confirmCareRequestToPlacement } = usePlatformStore();
+  const {
+    careRequests,
+    placements,
+    updateCareRequest,
+    confirmCareRequestToPlacement,
+    confirmCarerArrival,
+  } = usePlatformStore();
 
   // View mode: 'detail' (matches image_34c66094.png), 'pipeline' (Option B Matching Pipeline), or 'carer-form' (full Carer Accommodation form from image_4aae6312.png)
   const [viewMode, setViewMode] = useState<'detail' | 'pipeline' | 'carer-form'>('detail');
@@ -151,6 +167,11 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
   // Role preview toggle so Admin can verify Client Portal Care Request view (zero carer fee exposure)
   const [portalRoleView, setPortalRoleView] = useState<'admin' | 'client'>('admin');
   const [showClientAgreementPreview, setShowClientAgreementPreview] = useState<boolean>(false);
+
+  // Admin Shareable Care Request Link State
+  const [shareModalOpen, setShareModalOpen] = useState<boolean>(false);
+  const [previewShareMode, setPreviewShareMode] = useState<'active' | 'expired' | null>(null);
+  const [isPlacementPublished, setIsPlacementPublished] = useState<boolean>(true);
 
   // Inline edit toggles for cards
   const [editingCard, setEditingCard] = useState<string | null>(null);
@@ -308,12 +329,6 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
       );
       return;
     }
-    if (hasPendingAccommodationPhotos(confirmModalRequest.accommodation)) {
-      triggerToast(
-        'Pending Approval: Please review and approve or reject all client-submitted accommodation photographs first.'
-      );
-      return;
-    }
     if (!adminConfirmedAccommodation) {
       triggerToast('Please tick administrator accommodation verification to confirm carer selection.');
       return;
@@ -331,23 +346,42 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
     if (createdOrUpdated) {
       setRecentlyConfirmedPlacementId(createdOrUpdated.id);
       triggerToast(
-        `Carer selection confirmed (${chosenCarer.name}) for ${confirmModalRequest.displayTitle}. Client contact details remain restricted until required agreements are signed.`
+        `Carer selection confirmed (${chosenCarer.name}) for ${confirmModalRequest.displayTitle}. Placement confirmed and added to Placements dashboard.`
       );
     }
   };
 
   const handleAdvanceStage = (req: CareRequestRecord) => {
     const idx = PIPELINE_STAGES.findIndex((s) => s.stage === req.stage);
-    if (idx >= 0 && idx < PIPELINE_STAGES.length - 2) {
+    if (idx >= 0 && idx < PIPELINE_STAGES.length - 1) {
       const nextStage = PIPELINE_STAGES[idx + 1].stage;
+      if (nextStage === 'Carer Selection') {
+        openConfirmModal(req);
+        return;
+      }
+      if (nextStage === 'Care Commenced') {
+        const matchingPl = placements.find(
+          (p) =>
+            p.id === req.id ||
+            (p.clientFirstName.toLowerCase() === req.clientFirstName.toLowerCase() &&
+              p.location.toLowerCase() === req.location.toLowerCase())
+        );
+        if (matchingPl) {
+          confirmCarerArrival(matchingPl.id, 'Admin');
+          triggerToast(
+            `Arrival confirmed for ${req.displayTitle}. Placement is Active and Care Request is Fulfilled.`
+          );
+          return;
+        }
+      }
       updateCareRequest(req.id, (prev) => ({
         ...prev,
         stage: nextStage,
         lastUpdated: 'Just now',
       }));
       triggerToast(`Moved ${req.displayTitle} to "${nextStage}"`);
-    } else if (idx === PIPELINE_STAGES.length - 2) {
-      openConfirmModal(req);
+    } else if (idx === PIPELINE_STAGES.length - 1) {
+      triggerToast(`Care has already commenced for ${req.displayTitle}.`);
     }
   };
 
@@ -528,6 +562,16 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
     triggerToast('Accommodation photograph removed.');
   };
 
+  if (previewShareMode !== null) {
+    return (
+      <SharedCareOpportunityView
+        careRequest={currentReq}
+        forceExpiredPreview={previewShareMode === 'expired'}
+        onBack={() => setPreviewShareMode(null)}
+      />
+    );
+  }
+
   return (
     <div className="w-full px-4 sm:px-6 lg:px-8 py-5 space-y-5 relative select-none bg-[#FAF7F2] min-h-screen">
       {/* Toast Notification */}
@@ -626,8 +670,8 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
             </div>
           </div>
 
-          {/* 6-Column Matching Pipeline (New Enquiries -> Reviewing -> Matching -> Confirming Payment -> Confirming Accommodation -> Finalised) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3.5 items-start">
+          {/* 7-Stage Care Request Workflow (New Enquiries -> Reviewing Requirements -> Confirming Payment -> Publish Placement -> Carer Selection -> Placement Confirmed -> Care Commenced) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7 gap-3.5 items-start">
             {PIPELINE_STAGES.map((col) => {
               const items = careRequests.filter((r) => r.stage === col.stage);
               return (
@@ -761,18 +805,20 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                               Open Details
                             </button>
 
-                            {req.stage !== 'Finalised' ? (
+                            {req.stage !== 'Care Commenced' && !req.isFulfilled ? (
                               <button
                                 onClick={() =>
-                                  req.stage === 'Confirming Accommodation'
+                                  req.stage === 'Carer Selection'
                                     ? openConfirmModal(req)
                                     : handleAdvanceStage(req)
                                 }
                                 className="px-2.5 py-1.5 rounded-lg bg-[#C8A464] hover:bg-[#B89352] text-white text-[11px] font-semibold transition-colors inline-flex items-center gap-1 cursor-pointer"
                               >
                                 <span>
-                                  {req.stage === 'Confirming Accommodation'
-                                    ? 'Finalise'
+                                  {req.stage === 'Carer Selection'
+                                    ? 'Select Carer'
+                                    : req.stage === 'Placement Confirmed'
+                                    ? 'Confirm Arrival'
                                     : 'Next Stage'}
                                 </span>
                                 <ArrowRight className="w-3 h-3" />
@@ -780,7 +826,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                             ) : (
                               <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700">
                                 <CheckCircle2 className="w-3.5 h-3.5" />
-                                In Placements
+                                Care Commenced
                               </span>
                             )}
                           </div>
@@ -893,7 +939,9 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                     {currentReq.displayTitle}
                   </h1>
                   <span className="px-3 py-0.5 rounded-full bg-[#F5E8CE] text-[#8B6623] text-xs font-semibold">
-                    {currentReq.stage === 'Confirming Accommodation' ? 'New' : currentReq.stage}
+                    {currentReq.isFulfilled || currentReq.stage === 'Care Commenced'
+                      ? 'Care Commenced'
+                      : currentReq.stage}
                   </span>
                   {currentReq.isEmergency && (
                     <span className="px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200 text-xs font-semibold">
@@ -911,7 +959,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
               </div>
             </div>
 
-            {/* Top-Right Client Accommodation Form, Save Draft & Confirm Buttons */}
+            {/* Top-Right Client Accommodation Form, Save Draft, Share Opportunity & Confirm Buttons */}
             <div className="flex flex-wrap items-center gap-2.5 self-start md:self-center">
               <button
                 onClick={() => setViewMode('carer-form')}
@@ -928,15 +976,37 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                 <span>Save Draft</span>
               </button>
               {portalRoleView === 'admin' && (
-                <button
-                  onClick={() => openConfirmModal(currentReq)}
-                  className="px-5 py-2.5 rounded-xl bg-[#C8A464] hover:bg-[#B89352] text-white text-xs sm:text-sm font-semibold transition-colors inline-flex items-center gap-2 shadow-xs cursor-pointer"
-                >
-                  <span>
-                    {currentReq.stage === 'Finalised' ? 'Update Confirmed Placement' : 'Confirm & Proceed'}
-                  </span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
+                <>
+                  <button
+                    onClick={() => setShareModalOpen(true)}
+                    className="px-4 py-2.5 rounded-xl bg-[#0A1629] text-white hover:bg-[#1E293B] text-xs sm:text-sm font-semibold transition-colors inline-flex items-center gap-2 shadow-2xs cursor-pointer"
+                    title="Generate and copy Admin 72-hour anonymous shareable link"
+                  >
+                    <Share2 className="w-4 h-4 text-[#D4AF7A]" />
+                    <span>Share Opportunity (72h)</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (
+                        currentReq.stage === 'Placement Confirmed' ||
+                        currentReq.stage === 'Care Commenced'
+                      ) {
+                        onNavigateToPlacements?.(recentlyConfirmedPlacementId || undefined);
+                      } else {
+                        openConfirmModal(currentReq);
+                      }
+                    }}
+                    className="px-5 py-2.5 rounded-xl bg-[#C8A464] hover:bg-[#B89352] text-white text-xs sm:text-sm font-semibold transition-colors inline-flex items-center gap-2 shadow-xs cursor-pointer"
+                  >
+                    <span>
+                      {currentReq.stage === 'Placement Confirmed' ||
+                      currentReq.stage === 'Care Commenced'
+                        ? 'View Placement Details'
+                        : 'Confirm Carer Selection'}
+                    </span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </>
               )}
             </div>
           </div>
@@ -2715,7 +2785,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-2.5 pt-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-2.5 pt-2">
                 {PIPELINE_STAGES.map((st) => {
                   const isCurrent = currentReq.stage === st.stage;
                   const isPaymentStage = st.stage === 'Confirming Payment';
@@ -2732,7 +2802,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                       }
                       className={`p-3 rounded-xl border text-left transition-all flex flex-col justify-between gap-2 cursor-pointer ${
                         isCurrent
-                          ? 'bg-[#0A1629] text-white border-[#0A1629]'
+                          ? 'bg-[#0A1629] text-white border-[#0A1629] shadow-xs'
                           : 'bg-[#FAF7F2] text-[#475569] border-[#EAE2D2] hover:border-[#C8A464]'
                       }`}
                     >
@@ -2784,7 +2854,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                 })}
               </div>
 
-              {/* Admin Stage 4 Payment Confirmation & Arrangements Panel */}
+              {/* Admin Stage 3: Confirming Payment & Payment Status */}
               {portalRoleView === 'admin' && (
                 <div
                   className={`rounded-2xl border p-4 space-y-3.5 text-xs transition-colors ${
@@ -2797,7 +2867,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                     <div className="flex items-center gap-2">
                       <Coins className="w-4 h-4 text-[#B88E3E]" />
                       <h4 className="font-bold text-sm text-[#0A1629]">
-                        Stage 4 &mdash; Confirming Payment &amp; Payment Status
+                        Stage 3 &mdash; Confirming Payment &amp; Payment Status
                       </h4>
                     </div>
                     <span
@@ -2811,7 +2881,7 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
 
                   <p className="text-[11.5px] text-[#64748B]">
                     Confirm the client&apos;s agreed Grace &amp; Goodwill weekly care fee, payment
-                    arrangements, and current payment status before finalising placement.
+                    arrangements, and current payment status.
                   </p>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
@@ -2910,6 +2980,345 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                   </div>
                 </div>
               )}
+
+              {/* Admin Stage 4: Publish Placement on Carer Dashboard & Anonymous Sharing */}
+              {portalRoleView === 'admin' && (
+                <div
+                  className={`rounded-2xl border p-4 space-y-3.5 text-xs transition-colors ${
+                    currentReq.stage === 'Publish Placement'
+                      ? 'bg-[#FDF9F1] border-[#D4AF7A]'
+                      : 'bg-[#FAF7F2] border-[#EAE2D2]'
+                  }`}
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <Radio className="w-4 h-4 text-[#B88E3E]" />
+                      <h4 className="font-bold text-sm text-[#0A1629]">
+                        Stage 4 &mdash; Publish Placement &amp; Anonymous Sharing
+                      </h4>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold">
+                        Published to Carer Dashboard
+                      </span>
+                    </div>
+                  </div>
+
+                  <p className="text-[11.5px] text-[#64748B]">
+                    Publishing makes this opportunity available for vetted carers to review and express interest.
+                    Admin can also generate a secure 72-hour anonymous link to share via WhatsApp, Email, or Social Media.
+                  </p>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+                    {/* Shareable Link Box */}
+                    <div className="p-3.5 rounded-xl bg-white border border-[#EAE2D2] space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-[#0A1629] flex items-center gap-1.5">
+                          <Share2 className="w-3.5 h-3.5 text-[#B88E3E]" />
+                          <span>Admin Shareable Link (72h Expiry)</span>
+                        </span>
+                        <span className="text-[10px] font-semibold text-[#8C6D2B] bg-[#FDF6E8] px-2 py-0.5 rounded-full border border-[#E8D7B5]">
+                          Admin-Only Access
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-[#64748B]">
+                        Strictly anonymised: displays care needs, location (town/county), weekly carer fee (&pound;{currentReq.weeklyPayment}), food allowance (&pound;{currentReq.foodAllowance}), and private bedroom confirmation. Client email and contact details are permanently hidden.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => setShareModalOpen(true)}
+                        className="w-full py-2 px-3 rounded-lg bg-[#0A1629] hover:bg-[#1E293B] text-white text-xs font-semibold inline-flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                      >
+                        <Share2 className="w-3.5 h-3.5 text-[#D4AF7A]" />
+                        <span>Manage &amp; Share 72-Hour Link</span>
+                      </button>
+                    </div>
+
+                    {/* Direct Shortlist Bypass Notice */}
+                    <div className="p-3.5 rounded-xl bg-white border border-[#EAE2D2] space-y-2">
+                      <span className="font-bold text-[#0A1629] flex items-center gap-1.5">
+                        <Users className="w-3.5 h-3.5 text-[#B88E3E]" />
+                        <span>Direct Shortlist &amp; Direct Offers</span>
+                      </span>
+                      <p className="text-[11px] text-[#64748B] leading-relaxed">
+                        Admin retains full ability to shortlist carers and send placement offers directly without waiting for applications through the published opportunity.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          updateCareRequest(currentReq.id, (prev) => ({
+                            ...prev,
+                            stage: 'Carer Selection',
+                            lastUpdated: 'Just now',
+                          }));
+                          triggerToast('Advanced to Stage 5: Carer Selection');
+                        }}
+                        className="w-full py-2 px-3 rounded-lg bg-[#FAF5EE] border border-[#DFD0B4] hover:bg-[#F3E9D7] text-[#0A1629] text-xs font-semibold inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                      >
+                        <span>Advance Directly to Stage 5: Carer Selection</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Admin Stage 5: Carer Selection */}
+              {portalRoleView === 'admin' && (
+                <div
+                  className={`rounded-2xl border p-4 space-y-3.5 text-xs transition-colors ${
+                    currentReq.stage === 'Carer Selection'
+                      ? 'bg-[#FDF9F1] border-[#D4AF7A]'
+                      : 'bg-[#FAF7F2] border-[#EAE2D2]'
+                  }`}
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <Users className="w-4 h-4 text-[#B88E3E]" />
+                      <h4 className="font-bold text-sm text-[#0A1629]">
+                        Stage 5 &mdash; Carer Selection &amp; Placement Offers
+                      </h4>
+                    </div>
+                    <span className="text-xs font-semibold text-[#8C6D2B]">
+                      {VETTED_CARERS.length} Vetted Live-in Carers Available
+                    </span>
+                  </div>
+
+                  <p className="text-[11.5px] text-[#64748B]">
+                    Review interested carers, shortlist suitable candidates, send offers to multiple carers where appropriate, and confirm the primary and relief carers.
+                  </p>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+                    {VETTED_CARERS.map((carer, idx) => (
+                      <div
+                        key={carer.name}
+                        className="p-3 rounded-xl bg-white border border-[#EAE2D2] flex flex-col justify-between gap-2.5 shadow-2xs"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <img
+                            src={carer.avatar}
+                            alt={carer.name}
+                            className="w-9 h-9 rounded-full object-cover shrink-0"
+                          />
+                          <div className="min-w-0">
+                            <div className="text-xs font-bold text-[#0A1629] truncate">{carer.name}</div>
+                            <div className="text-[10.5px] text-[#64748B] truncate">{carer.role}</div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1.5 pt-1 border-t border-[#F1ECE2]">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedCarerIdx(idx);
+                              openConfirmModal(currentReq);
+                            }}
+                            className="flex-1 py-1.5 px-2 rounded-lg bg-[#C8A464] hover:bg-[#B89352] text-white text-[11px] font-semibold text-center cursor-pointer transition-colors"
+                          >
+                            Select Carer
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              triggerToast(`Placement offer sent to ${carer.name} via WhatsApp and Portal.`)
+                            }
+                            className="py-1.5 px-2 rounded-lg border border-[#DFD5C2] hover:bg-[#FAF7F2] text-[#0A1629] text-[11px] font-semibold cursor-pointer transition-colors"
+                            title="Send Placement Offer"
+                          >
+                            <Send className="w-3 h-3 text-[#B88E3E]" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Admin Stage 6: Placement Confirmed */}
+              {portalRoleView === 'admin' && (
+                <div
+                  className={`rounded-2xl border p-4 space-y-3.5 text-xs transition-colors ${
+                    currentReq.stage === 'Placement Confirmed'
+                      ? 'bg-[#FDF9F1] border-[#D4AF7A]'
+                      : 'bg-[#FAF7F2] border-[#EAE2D2]'
+                  }`}
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                      <h4 className="font-bold text-sm text-[#0A1629]">
+                        Stage 6 &mdash; Placement Confirmed
+                      </h4>
+                    </div>
+                    <span className="px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold">
+                      Agreements Signed &bull; Start Date Agreed
+                    </span>
+                  </div>
+
+                  <p className="text-[11.5px] text-[#64748B]">
+                    The selected carer has accepted the placement, the start date ({currentReq.preferredStart}) has been agreed, and required care agreements have been executed.
+                  </p>
+
+                  <div className="p-3.5 rounded-xl bg-white border border-[#EAE2D2] flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <div className="text-xs font-bold text-[#0A1629]">
+                        Primary Carer: {VETTED_CARERS[selectedCarerIdx]?.name || 'Anita K.'}
+                      </div>
+                      <div className="text-[11px] text-[#64748B] mt-0.5">
+                        Agreed Remuneration: &pound;{currentReq.weeklyPayment}/wk + &pound;{currentReq.foodAllowance}/wk food allowance
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          confirmCarerArrival(
+                            recentlyConfirmedPlacementId || 'plc-doris-thompson',
+                            'Admin'
+                          );
+                          triggerToast(
+                            `Carer arrival confirmed for ${currentReq.displayTitle}. Care commenced!`
+                          );
+                        }}
+                        className="py-2 px-3.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold inline-flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                      >
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        <span>Confirm Carer Arrival (Care Commenced)</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          onNavigateToPlacements?.(recentlyConfirmedPlacementId || undefined)
+                        }
+                        className="py-2 px-3.5 rounded-xl border border-[#DFD5C2] hover:bg-[#FAF7F2] text-[#0A1629] text-xs font-semibold inline-flex items-center gap-1.5 cursor-pointer"
+                      >
+                        <span>View Placements Dashboard</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Admin Stage 7: Care Commenced */}
+              {portalRoleView === 'admin' && (
+                <div
+                  className={`rounded-2xl border p-4 space-y-3.5 text-xs transition-colors ${
+                    currentReq.stage === 'Care Commenced'
+                      ? 'bg-[#F0FDF4] border-emerald-300'
+                      : 'bg-[#FAF7F2] border-[#EAE2D2]'
+                  }`}
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-emerald-600" />
+                      <h4 className="font-bold text-sm text-[#0A1629]">
+                        Stage 7 &mdash; Care Commenced &amp; Arrival Confirmation
+                      </h4>
+                    </div>
+                    <span
+                      className={`px-2.5 py-1 rounded-lg border text-xs font-bold ${
+                        currentReq.arrivalConfirmed || currentReq.isFulfilled
+                          ? 'bg-emerald-100 border-emerald-300 text-emerald-800'
+                          : 'bg-amber-50 border-amber-200 text-amber-800'
+                      }`}
+                    >
+                      {currentReq.arrivalConfirmed || currentReq.isFulfilled
+                        ? 'Care Commenced &bull; Fulfilled'
+                        : 'Awaiting Carer Arrival Confirmation'}
+                    </span>
+                  </div>
+
+                  {currentReq.arrivalConfirmed || currentReq.isFulfilled ? (
+                    <div className="space-y-3">
+                      <div className="p-3.5 rounded-xl bg-white border border-emerald-200 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-[#0A1629] flex items-center gap-1.5">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                            <span>Carer Arrival Confirmed at Client&apos;s Home</span>
+                          </span>
+                          <span className="text-[10.5px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                            Placement Status: Active
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1 text-[11px] text-[#475569]">
+                          <div>
+                            <span className="text-[#64748B] block">Arrival Time:</span>
+                            <strong className="text-[#0A1629]">
+                              {currentReq.arrivalConfirmedAt || 'Recorded upon arrival'}
+                            </strong>
+                          </div>
+                          <div>
+                            <span className="text-[#64748B] block">Confirmed By:</span>
+                            <strong className="text-[#0A1629]">
+                              {currentReq.arrivalConfirmedBy || 'Carer / Admin'}
+                            </strong>
+                          </div>
+                          <div>
+                            <span className="text-[#64748B] block">Care Request Status:</span>
+                            <strong className="text-emerald-700">Fulfilled</strong>
+                          </div>
+                        </div>
+                        <p className="text-[11px] text-[#64748B] pt-1">
+                          Shareable opportunities for this care request have been automatically expired. The placement remains fully active on the Placements Dashboard for ongoing rotation and management.
+                        </p>
+                      </div>
+
+                      <div className="flex items-center justify-end">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            onNavigateToPlacements?.(recentlyConfirmedPlacementId || undefined)
+                          }
+                          className="py-2 px-4 rounded-xl bg-[#0A1629] hover:bg-[#1E293B] text-white text-xs font-semibold inline-flex items-center gap-2 cursor-pointer shadow-xs"
+                        >
+                          <span>Manage on Placements Dashboard</span>
+                          <ArrowRight className="w-3.5 h-3.5 text-[#D4AF7A]" />
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="p-3.5 rounded-xl bg-white border border-amber-200 space-y-3">
+                      <p className="text-[11.5px] text-[#475569] leading-relaxed">
+                        The live-in carer can confirm their arrival directly through their Carer Portal upon reaching the client&apos;s residence. Alternatively, Administrator can confirm arrival below on their behalf.
+                      </p>
+                      <div className="flex flex-wrap items-center gap-2.5">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            confirmCarerArrival(
+                              recentlyConfirmedPlacementId || 'plc-doris-thompson',
+                              'Admin'
+                            );
+                            triggerToast(
+                              `Arrival confirmed for ${currentReq.displayTitle}. Care commenced, request fulfilled!`
+                            );
+                          }}
+                          className="py-2 px-4 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold inline-flex items-center gap-2 cursor-pointer shadow-2xs"
+                        >
+                          <CheckCircle2 className="w-4 h-4" />
+                          <span>Confirm Carer Arrival (Admin on Behalf)</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            confirmCarerArrival(
+                              recentlyConfirmedPlacementId || 'plc-doris-thompson',
+                              'Carer'
+                            );
+                            triggerToast(
+                              `Simulated Carer Portal arrival confirmation for ${currentReq.displayTitle}!`
+                            );
+                          }}
+                          className="py-2 px-4 rounded-xl bg-white border border-[#DFD5C2] hover:bg-[#FAF7F2] text-[#0A1629] text-xs font-semibold inline-flex items-center gap-2 cursor-pointer"
+                        >
+                          <UserCheck className="w-4 h-4 text-[#B88E3E]" />
+                          <span>Simulate Carer Self-Arrival Check-In</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -2969,15 +3378,12 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
               </div>
             </div>
 
-            {/* Admin-Only Carer Remuneration for Circulated Placement (Hidden from Client) */}
+            {/* Admin-Only Carer Remuneration for Circulated Placement */}
             <div className="rounded-xl bg-[#FAF7F2] border border-[#EAE2D2] p-3.5 space-y-2.5 text-xs">
               <div className="flex items-center justify-between gap-2">
                 <span className="font-bold text-[#0A1629] flex items-center gap-1.5">
                   <Coins className="w-4 h-4 text-[#B88E3E]" />
                   <span>Carer Remuneration (Visible to Admin &amp; Carers Only)</span>
-                </span>
-                <span className="text-[10.5px] font-semibold text-rose-700">
-                  Hidden from Client
                 </span>
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -3277,6 +3683,18 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
           </div>
         </div>
       )}
+
+      {/* Admin Shareable Care Opportunity Modal (72-hour Link) */}
+      <SharedCareOpportunityModal
+        careRequest={currentReq}
+        isOpen={shareModalOpen}
+        onClose={() => setShareModalOpen(false)}
+        onUpdateCareRequest={(updated) =>
+          updateCareRequest(currentReq.id, (prev) => ({ ...prev, ...updated }))
+        }
+        onOpenPreview={(mode) => setPreviewShareMode(mode)}
+        showToast={(msg) => triggerToast(msg)}
+      />
     </div>
   );
 };

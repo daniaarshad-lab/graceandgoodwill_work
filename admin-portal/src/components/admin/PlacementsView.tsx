@@ -62,7 +62,13 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
   initialMode = 'admin-list',
   initialSelectedPlacementId = null,
 }) => {
-  const { placements, careRequests, updatePlacement, addPlacement } = usePlatformStore();
+  const {
+    placements,
+    careRequests,
+    updatePlacement,
+    addPlacement,
+    confirmCarerArrival,
+  } = usePlatformStore();
 
   const [viewMode, setViewMode] = useState<
     'admin-list' | 'admin-detail' | 'carer-available' | 'client-portal'
@@ -1590,6 +1596,79 @@ export const PlacementsView: React.FC<PlacementsViewProps> = ({
                 </span>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Carer Arrival Confirmation Card (Requirement: Once carer arrives, arrival is confirmed, placement is Active, care request is Fulfilled) */}
+        <div
+          className={`rounded-2xl border p-4 sm:p-5 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4 ${
+            currentPlacement.arrivalConfirmed
+              ? 'bg-[#F0FDF4] border-emerald-200'
+              : 'bg-[#FFFBEB] border-amber-200'
+          }`}
+        >
+          <div className="flex items-start gap-3.5">
+            <div
+              className={`p-2.5 rounded-xl shrink-0 ${
+                currentPlacement.arrivalConfirmed
+                  ? 'bg-emerald-100 text-emerald-700'
+                  : 'bg-amber-100 text-amber-800'
+              }`}
+            >
+              {currentPlacement.arrivalConfirmed ? (
+                <CheckCircle2 className="w-5 h-5" />
+              ) : (
+                <Clock className="w-5 h-5" />
+              )}
+            </div>
+            <div>
+              <div className="flex flex-wrap items-center gap-2">
+                <h4 className="font-bold text-sm text-[#0A1629]">
+                  {currentPlacement.arrivalConfirmed
+                    ? 'Carer Arrival Confirmed · Care Commenced'
+                    : 'Awaiting Carer Arrival Confirmation'}
+                </h4>
+                <span
+                  className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${
+                    currentPlacement.arrivalConfirmed
+                      ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
+                      : 'bg-amber-50 text-amber-800 border-amber-300'
+                  }`}
+                >
+                  {currentPlacement.arrivalConfirmed ? 'Placement Active' : 'Arrival Pending'}
+                </span>
+              </div>
+              <p className="text-xs text-[#64748B] mt-1 max-w-2xl leading-relaxed">
+                {currentPlacement.arrivalConfirmed
+                  ? `Live-in carer arrived at client residence on ${currentPlacement.arrivalConfirmedAt}. Confirmed by ${currentPlacement.arrivalConfirmedBy}. Original care request marked as Fulfilled.`
+                  : `Primary carer (${currentPlacement.primaryCarer.name}) confirms arrival upon reaching the client's residence. Administrator can also confirm arrival on their behalf below.`}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2.5 self-end md:self-center shrink-0">
+            {!currentPlacement.arrivalConfirmed ? (
+              <button
+                type="button"
+                onClick={() => {
+                  confirmCarerArrival(currentPlacement.id, 'Admin');
+                  showToast(
+                    `Arrival confirmed for ${currentPlacement.clientFirstName}. Placement is now Active and Care Request is Fulfilled!`
+                  );
+                }}
+                className="px-4 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold inline-flex items-center gap-2 transition-colors cursor-pointer shadow-xs"
+              >
+                <CheckCircle2 className="w-4 h-4" />
+                <span>Confirm Carer Arrival (Admin on Behalf)</span>
+              </button>
+            ) : (
+              <div className="text-right text-xs">
+                <span className="text-[#64748B] block text-[11px]">Arrival Verified:</span>
+                <strong className="text-emerald-800 tabular-nums">
+                  {currentPlacement.arrivalConfirmedAt}
+                </strong>
+              </div>
+            )}
           </div>
         </div>
 

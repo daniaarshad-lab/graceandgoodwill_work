@@ -480,41 +480,8 @@ export const ClientProfilePortalView: React.FC<ClientProfilePortalViewProps> = (
             </div>
           </div>
 
-          {/* Stored Client Photos Strip (Allows Switching Back to Portrait or Custom Uploads) */}
-          {storedPhotos.length > 0 && (
-            <div className="pt-3 border-t border-[#F2ECE0] flex flex-wrap items-center gap-3">
-              <span className="text-[11px] font-semibold text-[#7D7362]">
-                Your stored photos ({storedPhotos.length}/10):
-              </span>
-              <div className="flex flex-wrap items-center gap-2">
-                {storedPhotos.map((photo) => {
-                  const isCurrent = currentAvatar === photo.url;
-                  return (
-                    <button
-                      key={photo.id}
-                      type="button"
-                      onClick={() => {
-                        setClientAvatar(selectedClientKey, photo.url);
-                        showToast(`Switched display image to "${photo.label}".`);
-                      }}
-                      className={`inline-flex items-center gap-2 pr-3 pl-1 py-1 rounded-full border text-xs transition-all cursor-pointer ${
-                        isCurrent
-                          ? 'border-[#B88E3E] bg-[#FAF6EE] font-semibold text-[#0A1629]'
-                          : 'border-[#EAE3D4] bg-white text-[#5C5549] hover:border-[#D4AF7A]'
-                      }`}
-                    >
-                      <img
-                        src={photo.url}
-                        alt={photo.label}
-                        className="w-6 h-6 rounded-full object-cover"
-                      />
-                      <span className="max-w-[120px] truncate">{photo.label}</span>
-                      {isCurrent && <Check className="w-3 h-3 text-[#B88E3E]" />}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+          </div>
+      </div>
           )}
         </div>
       </div>

@@ -16,6 +16,10 @@ import { ClientDeclarationsAdminView } from './components/admin/ClientDeclaratio
 import { ClientDeclarationPortalView } from './components/admin/ClientDeclarationPortalView';
 import { PlacementsView } from './components/admin/PlacementsView';
 import { ExpiredProfileView } from './components/admin/ExpiredProfileView';
+import { MessagesView } from './components/admin/MessagesView';
+import { ReportsView } from './components/admin/ReportsView';
+import { CalendarView } from './components/admin/CalendarView';
+import { SettingsView } from './components/admin/SettingsView';
 import { PlatformStoreProvider } from './data/platformStore';
 
 export default function App() {
@@ -169,6 +173,14 @@ export default function App() {
                 initialSelectedPlacementId={focusedPlacementId}
               />
             )}
+
+            {currentView === 'messages' && <MessagesView />}
+
+            {currentView === 'reports' && <ReportsView />}
+
+            {currentView === 'calendar' && <CalendarView />}
+
+            {currentView === 'settings' && <SettingsView />}
           </main>
         </div>
       </div>

@@ -31,6 +31,7 @@ import {
 } from '../../data/platformStore';
 import { AdminView } from './AdminSidebar';
 import { ClientSectionNav } from './ClientSectionNav';
+import { CreateCareRequestModal } from './CreateCareRequestModal';
 
 interface ActivePlacementViewProps {
   onBack: () => void;
@@ -58,6 +59,7 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({
   const [editingClientFee, setEditingClientFee] = useState(false);
   const [editingLifestyle, setEditingLifestyle] = useState(false);
   const [newProfileNote, setNewProfileNote] = useState('');
+  const [isCreateCareRequestOpen, setIsCreateCareRequestOpen] = useState(false);
 
   const [medications, setMedications] = useState([
     {
@@ -350,6 +352,15 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({
               <div className="font-semibold text-[#0A1629]">Version 3.2</div>
             </div>
           </div>
+
+          <button
+            type="button"
+            onClick={() => setIsCreateCareRequestOpen(true)}
+            className="px-3.5 py-2 rounded-xl bg-[#060D1E] hover:bg-[#1E293B] text-[#FAF7F2] text-xs font-semibold shadow-sm transition-colors inline-flex items-center gap-1.5 cursor-pointer border border-[#D4AF7A]/30 shrink-0"
+          >
+            <Plus className="w-3.5 h-3.5 text-[#D4AF7A]" />
+            <span>Create Care Request</span>
+          </button>
         </div>
       </div>
 
@@ -1492,6 +1503,19 @@ export const ActivePlacementView: React.FC<ActivePlacementViewProps> = ({
           </div>
         </div>
       )}
+
+      {/* Admin Create Care Request Modal */}
+      <CreateCareRequestModal
+        isOpen={isCreateCareRequestOpen}
+        onClose={() => setIsCreateCareRequestOpen(false)}
+        preselectedClientId={selectedPlacement.id}
+        onSuccess={(newId) => {
+          setToastSubtitle(`New Care Request created on behalf of ${clientDisplayName}`);
+          setShowNotificationToast(true);
+          setTimeout(() => setShowNotificationToast(false), 4000);
+          onNavigate?.('declarations');
+        }}
+      />
     </div>
   );
 };

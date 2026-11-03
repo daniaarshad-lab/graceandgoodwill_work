@@ -30,7 +30,11 @@ export type AdminView =
   | 'client-declarations'
   | 'client-declaration-portal'
   | 'carer-accommodation'
-  | 'expired-link';
+  | 'expired-link'
+  | 'messages'
+  | 'reports'
+  | 'calendar'
+  | 'settings';
 
 interface AdminSidebarProps {
   currentView: AdminView;
@@ -55,11 +59,11 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
     { id: 'declarations' as AdminView, label: 'Care Requests', icon: FileText },
     { id: 'carer-accommodation' as AdminView, label: 'Placements', icon: CreditCard },
     { id: 'client-declarations' as AdminView, label: 'Declarations', icon: ClipboardCheck },
-    { id: 'dashboard' as AdminView, label: 'Messages', icon: MessageSquare },
+    { id: 'messages' as AdminView, label: 'Messages', icon: MessageSquare },
     { id: 'health-conditions' as AdminView, label: 'Master Libraries', icon: BookOpen },
-    { id: 'dashboard' as AdminView, label: 'Reports', icon: BarChart3 },
-    { id: 'dashboard' as AdminView, label: 'Calendar', icon: Calendar },
-    { id: 'dashboard' as AdminView, label: 'Settings', icon: Settings },
+    { id: 'reports' as AdminView, label: 'Reports', icon: BarChart3 },
+    { id: 'calendar' as AdminView, label: 'Calendar', icon: Calendar },
+    { id: 'settings' as AdminView, label: 'Settings', icon: Settings },
   ];
 
   const isItemActive = (label: string) => {
@@ -80,7 +84,11 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
     if (label === 'Care Requests') return currentView === 'declarations';
     if (label === 'Placements') return currentView === 'carer-accommodation';
     if (label === 'Declarations') return currentView === 'client-declarations';
+    if (label === 'Messages') return currentView === 'messages';
     if (label === 'Master Libraries') return currentView === 'health-conditions';
+    if (label === 'Reports') return currentView === 'reports';
+    if (label === 'Calendar') return currentView === 'calendar';
+    if (label === 'Settings') return currentView === 'settings';
     return false;
   };
 

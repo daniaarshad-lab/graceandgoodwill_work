@@ -479,10 +479,6 @@ export const ClientProfilePortalView: React.FC<ClientProfilePortalViewProps> = (
               </button>
             </div>
           </div>
-
-          </div>
-      </div>
-          )}
         </div>
       </div>
 

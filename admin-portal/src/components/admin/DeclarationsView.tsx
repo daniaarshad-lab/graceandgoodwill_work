@@ -38,6 +38,8 @@ import {
   Share2,
   Send,
   Radio,
+  MessageSquare,
+  UserCheck,
 } from 'lucide-react';
 import {
   AccommodationPhotoCategory,
@@ -56,6 +58,11 @@ import {
 import { CarerAccommodationView } from './CarerAccommodationView';
 import { SharedCareOpportunityModal } from './SharedCareOpportunityModal';
 import { SharedCareOpportunityView } from './SharedCareOpportunityView';
+import { CreateCareRequestModal } from './CreateCareRequestModal';
+import { ClientReviewApprovalModal } from './ClientReviewApprovalModal';
+import { ApprovalEmailModal } from './ApprovalEmailModal';
+import { WhatsAppShareModal } from './WhatsAppShareModal';
+import { PricingNotesModal } from './PricingNotesModal';
 
 interface DeclarationsViewProps {
   onBack: () => void;
@@ -190,6 +197,13 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
   const [adminUploadCategory, setAdminUploadCategory] =
     useState<AccommodationPhotoCategory>('Additional Space');
   const [previewPhotoItem, setPreviewPhotoItem] = useState<AccommodationPhotoItem | null>(null);
+
+  // Care Request Modals State
+  const [createReqModalOpen, setCreateReqModalOpen] = useState(false);
+  const [clientApprovalModalOpen, setClientApprovalModalOpen] = useState(false);
+  const [approvalEmailModalOpen, setApprovalEmailModalOpen] = useState(false);
+  const [whatsappModalOpen, setWhatsappModalOpen] = useState(false);
+  const [pricingNotesModalOpen, setPricingNotesModalOpen] = useState(false);
 
   // Toast notification
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -646,6 +660,13 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
             </div>
 
             <div className="flex flex-wrap items-center gap-2.5">
+              <button
+                onClick={() => setCreateReqModalOpen(true)}
+                className="px-4 py-2 rounded-xl bg-[#060D1E] hover:bg-[#1E293B] text-[#FAF7F2] text-xs font-semibold shadow-sm transition-colors inline-flex items-center gap-2 cursor-pointer border border-[#D4AF7A]/30"
+              >
+                <Plus className="w-4 h-4 text-[#D4AF7A]" />
+                <span>Create Care Request</span>
+              </button>
               {onNavigateToPlacements && (
                 <button
                   onClick={() => onNavigateToPlacements()}
@@ -937,6 +958,24 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
                   <h1 className="font-serif text-2xl sm:text-[32px] font-bold text-[#0A1629] leading-tight">
                     {currentReq.displayTitle}
                   </h1>
+                  <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-xs font-mono font-semibold border border-slate-300">
+                    {currentReq.version || 'v1.0'}
+                  </span>
+                  <span
+                    className={`px-3 py-0.5 rounded-full text-xs font-semibold border ${
+                      currentReq.approvalStatus === 'Approved'
+                        ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                        : currentReq.approvalStatus === 'Awaiting client approval'
+                        ? 'bg-amber-50 text-amber-800 border-amber-300'
+                        : 'bg-slate-100 text-slate-700 border-slate-200'
+                    }`}
+                  >
+                    {currentReq.approvalStatus === 'Approved'
+                      ? 'Approved by Client'
+                      : currentReq.approvalStatus === 'Awaiting client approval'
+                      ? 'Awaiting Client Approval'
+                      : 'Draft'}
+                  </span>
                   <span className="px-3 py-0.5 rounded-full bg-[#F5E8CE] text-[#8B6623] text-xs font-semibold">
                     {currentReq.isFulfilled || currentReq.stage === 'Care Commenced'
                       ? 'Care Commenced'
@@ -958,20 +997,65 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
               </div>
             </div>
 
-            {/* Top-Right Client Accommodation Form, Save Draft, Share Opportunity & Confirm Buttons */}
-            <div className="flex flex-wrap items-center gap-2.5 self-start md:self-center">
+            {/* Top-Right Action Buttons: Approval, Messaging, Pricing, and Accommodation */}
+            <div className="flex flex-wrap items-center gap-2 self-start md:self-center">
+              <button
+                onClick={() => setCreateReqModalOpen(true)}
+                className="px-3 py-2 rounded-xl bg-[#060D1E] hover:bg-[#1E293B] text-[#FAF7F2] text-xs font-semibold shadow-sm transition-colors inline-flex items-center gap-1.5 cursor-pointer border border-[#D4AF7A]/30"
+              >
+                <Plus className="w-3.5 h-3.5 text-[#D4AF7A]" />
+                <span>Create Care Request</span>
+              </button>
+
+              <button
+                onClick={() => setClientApprovalModalOpen(true)}
+                className="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold shadow-xs transition-colors inline-flex items-center gap-1.5 cursor-pointer"
+                title="Review full dated version and record client checkbox approval"
+              >
+                <ShieldCheck className="w-3.5 h-3.5" />
+                <span>Client Review &amp; Approval</span>
+              </button>
+
+              <button
+                onClick={() => setApprovalEmailModalOpen(true)}
+                className="px-3 py-2 rounded-xl bg-white border border-[#DFD5C2] text-xs font-semibold text-[#0A1629] hover:bg-[#FAF7F2] transition-colors inline-flex items-center gap-1.5 cursor-pointer"
+                title="Preview and dispatch automatic approval email"
+              >
+                <Mail className="w-3.5 h-3.5 text-[#B88E3E]" />
+                <span>Approval Email</span>
+              </button>
+
+              <button
+                onClick={() => setWhatsappModalOpen(true)}
+                className="px-3 py-2 rounded-xl bg-emerald-50 border border-emerald-300 text-xs font-semibold text-emerald-800 hover:bg-emerald-100 transition-colors inline-flex items-center gap-1.5 cursor-pointer"
+                title="Share formatted review notice via WhatsApp"
+              >
+                <MessageSquare className="w-3.5 h-3.5 text-emerald-600" />
+                <span>WhatsApp Share</span>
+              </button>
+
+              <button
+                onClick={() => setPricingNotesModalOpen(true)}
+                className="px-3 py-2 rounded-xl bg-white border border-[#DFD5C2] text-xs font-semibold text-[#0A1629] hover:bg-[#FAF7F2] transition-colors inline-flex items-center gap-1.5 cursor-pointer"
+                title="Inspect agreed pricing, negotiator context, and internal notes"
+              >
+                <Coins className="w-3.5 h-3.5 text-[#B88E3E]" />
+                <span>Pricing &amp; Notes</span>
+              </button>
+
               <button
                 onClick={() => setViewMode('carer-form')}
-                className="px-4 py-2.5 rounded-xl bg-[#FAF5EE] border border-[#DFD0B4] text-xs sm:text-sm font-semibold text-[#0A1629] hover:border-[#C5A059] hover:bg-[#F3E9D7] transition-colors inline-flex items-center gap-2 shadow-2xs cursor-pointer"
+                className="px-3 py-2 rounded-xl bg-[#FAF5EE] border border-[#DFD0B4] text-xs font-semibold text-[#0A1629] hover:border-[#C5A059] hover:bg-[#F3E9D7] transition-colors inline-flex items-center gap-1.5 shadow-2xs cursor-pointer"
               >
-                <BedDouble className="w-4 h-4 text-[#B88E3E]" />
-                <span>Client Carer Accommodation Form</span>
+                <BedDouble className="w-3.5 h-3.5 text-[#B88E3E]" />
+                <span>Accommodation Form</span>
               </button>
+
               <button
                 onClick={() => triggerToast(`Draft saved for ${currentReq.displayTitle}`)}
-                className="px-4 py-2.5 rounded-xl bg-white border border-[#E2D9C8] text-xs sm:text-sm font-semibold text-[#1E293B] hover:bg-[#FAF6EE] transition-colors inline-flex items-center gap-2 shadow-2xs cursor-pointer"
+                className="px-3 py-2 rounded-xl bg-white border border-[#E2D9C8] text-xs font-semibold text-[#1E293B] hover:bg-[#FAF6EE] transition-colors inline-flex items-center gap-1.5 shadow-2xs cursor-pointer"
               >
-                <FileText className="w-4 h-4 text-[#8C6D2B]" />
+                <FileText className="w-3.5 h-3.5 text-[#8C6D2B]" />
                 <span>Save Draft</span>
               </button>
               {portalRoleView === 'admin' && (
@@ -3693,6 +3777,55 @@ export const DeclarationsView: React.FC<DeclarationsViewProps> = ({
         }
         onOpenPreview={(mode) => setPreviewShareMode(mode)}
         showToast={(msg) => triggerToast(msg)}
+      />
+
+      {/* Admin Create Care Request Modal */}
+      <CreateCareRequestModal
+        isOpen={createReqModalOpen}
+        onClose={() => setCreateReqModalOpen(false)}
+        onSuccess={(newId) => {
+          setSelectedRequestId(newId);
+          setViewMode('detail');
+          triggerToast('New Care Request created and saved as Version 1.0.');
+        }}
+      />
+
+      {/* Client Review & Checkbox Approval Modal */}
+      <ClientReviewApprovalModal
+        isOpen={clientApprovalModalOpen}
+        onClose={() => setClientApprovalModalOpen(false)}
+        careRequest={currentReq}
+        onApproved={() => {
+          triggerToast(`Care Request ${currentReq.id} approved by client and activated.`);
+        }}
+        onRequestCorrections={(notes) => {
+          triggerToast(`Corrections requested for ${currentReq.id}. Draft status maintained.`);
+        }}
+      />
+
+      {/* Automatic Approval Email Modal */}
+      <ApprovalEmailModal
+        isOpen={approvalEmailModalOpen}
+        onClose={() => setApprovalEmailModalOpen(false)}
+        careRequest={currentReq}
+        onOpenDirectReview={() => {
+          setApprovalEmailModalOpen(false);
+          setClientApprovalModalOpen(true);
+        }}
+      />
+
+      {/* WhatsApp Share Modal */}
+      <WhatsAppShareModal
+        isOpen={whatsappModalOpen}
+        onClose={() => setWhatsappModalOpen(false)}
+        careRequest={currentReq}
+      />
+
+      {/* Pricing & Internal Notes Modal */}
+      <PricingNotesModal
+        isOpen={pricingNotesModalOpen}
+        onClose={() => setPricingNotesModalOpen(false)}
+        careRequest={currentReq}
       />
     </div>
   );

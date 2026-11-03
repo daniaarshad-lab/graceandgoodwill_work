@@ -230,6 +230,212 @@ export interface CareRequestRecord {
   shareableLinkToken?: string;
   shareableLinkCreatedAt?: number;
   shareableLinkExpiresAt?: number;
+  // Versioning & Client Checkbox Approval
+  version: string;
+  approvalStatus: 'Draft' | 'Awaiting client approval' | 'Approved' | 'Published' | 'Privately Shared';
+  distributionOption?: 'broadcast' | 'private_selected' | 'direct_carer';
+  clientApprovedAt?: string;
+  clientApprovedBy?: {
+    name: string;
+    capacity: 'Client' | 'Authorised Representative';
+    relationBasis?: string;
+    email: string;
+  };
+  approvalHistory?: CareRequestApprovalVersion[];
+  pricingNotes?: CareRequestPricingNotes;
+  invitedCarers?: CarerInvitationRecord[];
+  creationSource?: 'Phone' | 'Email' | 'In-person' | 'Website';
+  responsibleStaff?: {
+    createdBy: { name: string; role: string; timestamp: string };
+    updatedBy?: { name: string; role: string; timestamp: string; changes: string };
+    sentForApprovalBy?: { name: string; role: string; timestamp: string };
+    publishedOrSharedBy?: { name: string; role: string; timestamp: string; isSystemAction?: boolean };
+  };
+}
+
+export interface CareRequestApprovalVersion {
+  versionNumber: string;
+  preparedBy: string;
+  preparedRole: string;
+  preparedAt: string;
+  status: 'draft' | 'awaiting_approval' | 'approved' | 'rejected_corrections';
+  approvedAt?: string;
+  approvedBy?: {
+    name: string;
+    capacity: 'Client' | 'Authorised Representative';
+    relationBasis?: string;
+    email: string;
+  };
+  declarationsAccepted?: { id: string; text: string; acceptedAt: string }[];
+  correctionsRequested?: {
+    date: string;
+    notes: string;
+    requestedBy: string;
+  };
+  distributionOption?: 'broadcast' | 'private_selected' | 'direct_carer';
+}
+
+export interface CareRequestPricingNotes {
+  agreedWeeklyCharge: number;
+  additionalCharges: { label: string; amount: number }[];
+  negotiatedBy: string;
+  enteredBy: string;
+  agreedOnClientBehalfBy: string;
+  agreementDate: string;
+  communicationChannel: 'Phone' | 'Email' | 'In-person' | 'Website' | 'WhatsApp';
+  belowStandardReason?: string;
+  supportingDocName?: string;
+  notes: {
+    id: string;
+    author: string;
+    authorRole: string;
+    timestamp: string;
+    text: string;
+    edited?: boolean;
+  }[];
+  priceChanges?: {
+    previous: number;
+    current: number;
+    reason: string;
+    admin: string;
+    date: string;
+    requiresClientApproval: boolean;
+  }[];
+}
+
+export interface CarerInvitationRecord {
+  id: string;
+  carerId: string;
+  carerName: string;
+  carerAvatar: string;
+  carerRole: string;
+  invitedAt: string;
+  invitedBy: string;
+  status: 'Invited' | 'Accepted' | 'Declined' | 'Confirmed Assignment';
+  responseAt?: string;
+  notes?: string;
+}
+
+export interface PlatformAuditEntry {
+  id: string;
+  timestamp: string;
+  date: string;
+  adminName: string;
+  adminRole: string;
+  actionType:
+    | 'create_request'
+    | 'update_request'
+    | 'pricing_agreement'
+    | 'approval_request_sent'
+    | 'declaration_accepted'
+    | 'request_shared'
+    | 'carer_invited'
+    | 'carer_accepted'
+    | 'carer_assigned'
+    | 'placement_created'
+    | 'placement_arrival_confirmed'
+    | 'permission_override'
+    | 'record_deletion'
+    | 'settings_updated'
+    | 'whatsapp_shared'
+    | 'substantive_edit'
+    | 'client_approval'
+    | 'care_request_created'
+    | 'published_to_all_carers'
+    | 'carer_invitation_accepted'
+    | 'placement_confirmed';
+  entityType: 'care_request' | 'placement' | 'client' | 'carer' | 'pricing' | 'settings';
+  entityId: string;
+  clientName: string;
+  carerName?: string;
+  location: string;
+  description: string;
+  previousValue?: string;
+  newValue?: string;
+}
+
+export interface ChatMessage {
+  id: string;
+  sender: 'admin' | 'participant';
+  senderName: string;
+  senderRole?: string;
+  senderAvatar: string;
+  timestamp: string;
+  text: string;
+  status: 'sent' | 'delivered' | 'read';
+  attachment?: { name: string; size: string; type: string };
+  carerCard?: { name: string; role: string; avatar: string; experience: string; rating: number };
+  careRequestSummary?: { title: string; location: string; start: string; rate: string };
+  adminFooterText?: string;
+}
+
+export interface InternalNote {
+  id: string;
+  author: string;
+  authorRole: string;
+  timestamp: string;
+  text: string;
+}
+
+export interface ConversationRecord {
+  id: string;
+  type: 'client' | 'carer';
+  participantName: string;
+  participantRole: string;
+  participantAvatar: string;
+  participantPhone: string;
+  participantEmail: string;
+  clientName: string;
+  clientCode: string;
+  linkedRequestId?: string;
+  linkedPlacementId?: string;
+  requestStatus: 'New' | 'In progress' | 'Awaiting client' | 'Completed' | 'Cancelled';
+  requestCompletionNotes?: {
+    completedBy: string;
+    completedAt: string;
+    summary: string;
+  };
+  assignedAdmin: string;
+  unreadCount: number;
+  lastMessageAt: string;
+  messages: ChatMessage[];
+  internalNotes: InternalNote[];
+}
+
+export interface CalendarPlacementEvent {
+  id: string;
+  title: string;
+  clientName: string;
+  carerName: string;
+  location: string;
+  type:
+    | 'confirmed_ongoing'
+    | 'confirmed_future'
+    | 'published_awaiting'
+    | 'urgent_unmatched'
+    | 'draft_awaiting_approval';
+  colorCategory: 'light-blue' | 'green' | 'yellow' | 'red' | 'grey';
+  startDateISO: string;
+  endDateISO?: string;
+  reliefDates?: string;
+  isEmergency: boolean;
+  statusLabel: string;
+  responsibleAdmin: string;
+  hasOverlappingCarer?: boolean;
+  overlapCarerName?: string;
+  hasUnscheduledStart?: boolean;
+  linkedPlacementId?: string;
+  linkedRequestId?: string;
+}
+
+export interface PlatformSettings {
+  currentLoggedInAdmin: { name: string; role: AdminUserRole; email: string };
+  standardWeeklyPriceFloor: number;
+  automaticCarerEmailBroadcastOnPublish: boolean;
+  whatsappNotificationTemplate: string;
+  approvalEmailTemplateSubject: string;
+  approvalEmailTemplateBody: string;
+  adminsList: { id: string; name: string; role: AdminUserRole; email: string; active: boolean }[];
 }
 
 export interface EvaluatedAccessState {
@@ -1167,6 +1373,65 @@ const INITIAL_CARE_REQUESTS: CareRequestRecord[] = [
     source: 'Family enquiry',
     lastUpdated: '24 Oct 2026',
     isFulfilled: false,
+    version: 'v1.0',
+    approvalStatus: 'Approved',
+    distributionOption: 'broadcast',
+    clientApprovedAt: '20 Oct 2026, 14:15',
+    clientApprovedBy: {
+      name: 'Claire Thompson',
+      capacity: 'Authorised Representative',
+      relationBasis: 'Daughter (Lasting Power of Attorney)',
+      email: 'claire.thompson@example.co.uk',
+    },
+    creationSource: 'Phone',
+    responsibleStaff: {
+      createdBy: { name: 'Jessica Smith', role: 'Admin', timestamp: '16 Oct 2026, 10:30' },
+      sentForApprovalBy: { name: 'Jessica Smith', role: 'Admin', timestamp: '17 Oct 2026, 11:00' },
+      publishedOrSharedBy: { name: 'System (Automated upon approval)', role: 'System', timestamp: '20 Oct 2026, 14:15', isSystemAction: true },
+    },
+    pricingNotes: {
+      agreedWeeklyCharge: 1350,
+      additionalCharges: [],
+      negotiatedBy: 'Aurea Neto',
+      enteredBy: 'Jessica Smith',
+      agreedOnClientBehalfBy: 'Claire Thompson (Daughter)',
+      agreementDate: '16 Oct 2026',
+      communicationChannel: 'Phone',
+      notes: [
+        {
+          id: 'pn-1',
+          author: 'Jessica Smith',
+          authorRole: 'Admin',
+          timestamp: '16 Oct 2026, 11:20',
+          text: 'Family confirmed weekly Direct Debit arrangement. Agreed client charge of £1,350/wk meets standard rate threshold (£1,200).',
+        },
+      ],
+      priceChanges: [],
+    },
+    invitedCarers: [
+      {
+        id: 'inv-doris-1',
+        carerId: 'carer-anita',
+        carerName: 'Anita K.',
+        carerAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160&auto=format&fit=crop&q=80',
+        carerRole: 'Live-in Ongoing & Respite Carer',
+        invitedAt: '21 Oct 2026, 09:30',
+        invitedBy: 'Jessica Smith',
+        status: 'Accepted',
+        responseAt: '22 Oct 2026, 11:45',
+        notes: 'Carer enthusiastic and experienced with dementia and pets.',
+      },
+      {
+        id: 'inv-doris-2',
+        carerId: 'carer-sophie',
+        carerName: 'Sophie Williams',
+        carerAvatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=160&auto=format&fit=crop&q=80',
+        carerRole: 'Live-in Ongoing Carer',
+        invitedAt: '21 Oct 2026, 09:30',
+        invitedBy: 'Jessica Smith',
+        status: 'Invited',
+      },
+    ],
     shareableLinkToken: 'gg-share-doris-88h',
     shareableLinkCreatedAt: Date.now() - 3600 * 1000 * 4,
     shareableLinkExpiresAt: Date.now() + 3600 * 1000 * 68,
@@ -1282,6 +1547,41 @@ const INITIAL_CARE_REQUESTS: CareRequestRecord[] = [
     assignedCarerName: 'Unassigned',
     source: 'Family enquiry',
     lastUpdated: '24 Oct 2026',
+    version: 'v1.0',
+    approvalStatus: 'Approved',
+    distributionOption: 'broadcast',
+    clientApprovedAt: '14 Oct 2026, 16:30',
+    clientApprovedBy: {
+      name: 'Sarah Richard',
+      capacity: 'Authorised Representative',
+      relationBasis: 'Daughter',
+      email: 'sarah.richard@email.com',
+    },
+    creationSource: 'Phone',
+    responsibleStaff: {
+      createdBy: { name: 'Daniel Carter', role: 'Admin', timestamp: '10 Oct 2026, 14:00' },
+      sentForApprovalBy: { name: 'Jessica Smith', role: 'Admin', timestamp: '12 Oct 2026, 09:30' },
+      publishedOrSharedBy: { name: 'System (Automated upon approval)', role: 'System', timestamp: '14 Oct 2026, 16:30', isSystemAction: true },
+    },
+    pricingNotes: {
+      agreedWeeklyCharge: 1380,
+      additionalCharges: [],
+      negotiatedBy: 'Aurea Neto',
+      enteredBy: 'Daniel Carter',
+      agreedOnClientBehalfBy: 'Sarah Richard (Daughter)',
+      agreementDate: '10 Oct 2026',
+      communicationChannel: 'Email',
+      notes: [
+        {
+          id: 'pn-rich-1',
+          author: 'Daniel Carter',
+          authorRole: 'Admin',
+          timestamp: '10 Oct 2026, 15:00',
+          text: 'Client requested monthly standing order. Charge agreed at £1,380/wk.',
+        },
+      ],
+      priceChanges: [],
+    },
     familyContact: {
       name: 'Sarah Richard',
       relation: 'Daughter',
@@ -1351,6 +1651,33 @@ const INITIAL_CARE_REQUESTS: CareRequestRecord[] = [
     assignedCarerName: 'Unassigned',
     source: 'Hospital discharge team',
     lastUpdated: 'Today',
+    version: 'v1.0',
+    approvalStatus: 'Awaiting client approval',
+    distributionOption: 'broadcast',
+    creationSource: 'In-person',
+    responsibleStaff: {
+      createdBy: { name: 'Jessica Smith', role: 'Admin', timestamp: '25 Oct 2026, 08:30' },
+      sentForApprovalBy: { name: 'Jessica Smith', role: 'Admin', timestamp: '25 Oct 2026, 09:00' },
+    },
+    pricingNotes: {
+      agreedWeeklyCharge: 1450,
+      additionalCharges: [],
+      negotiatedBy: 'Jessica Smith',
+      enteredBy: 'Jessica Smith',
+      agreedOnClientBehalfBy: 'Mark Langley (Son)',
+      agreementDate: '25 Oct 2026',
+      communicationChannel: 'Phone',
+      notes: [
+        {
+          id: 'pn-ed-1',
+          author: 'Jessica Smith',
+          authorRole: 'Admin',
+          timestamp: '25 Oct 2026, 08:45',
+          text: 'Urgent convalescence request. Respite invoice agreed with son Mark Langley.',
+        },
+      ],
+      priceChanges: [],
+    },
     familyContact: {
       name: 'Mark Langley',
       relation: 'Son',
@@ -1414,6 +1741,32 @@ const INITIAL_CARE_REQUESTS: CareRequestRecord[] = [
     assignedCarerName: 'Unassigned',
     source: 'Website enquiry',
     lastUpdated: '2h ago',
+    version: 'v1.0',
+    approvalStatus: 'Draft',
+    distributionOption: 'broadcast',
+    creationSource: 'Website',
+    responsibleStaff: {
+      createdBy: { name: 'Jessica Smith', role: 'Admin', timestamp: '24 Oct 2026, 15:45' },
+    },
+    pricingNotes: {
+      agreedWeeklyCharge: 1365,
+      additionalCharges: [],
+      negotiatedBy: 'Jessica Smith',
+      enteredBy: 'Jessica Smith',
+      agreedOnClientBehalfBy: 'Pending client review',
+      agreementDate: '24 Oct 2026',
+      communicationChannel: 'Website',
+      notes: [
+        {
+          id: 'pn-mar-1',
+          author: 'Jessica Smith',
+          authorRole: 'Admin',
+          timestamp: '24 Oct 2026, 16:00',
+          text: 'Web enquiry received from niece Helen Lewis. Initial assessment in progress.',
+        },
+      ],
+      priceChanges: [],
+    },
     familyContact: {
       name: 'helen Lewis',
       relation: 'Niece',
@@ -1450,6 +1803,434 @@ const INITIAL_CARE_REQUESTS: CareRequestRecord[] = [
     },
   },
 ];
+
+
+export const INITIAL_AUDIT_ENTRIES: PlatformAuditEntry[] = [
+  {
+    id: "aud-p-1",
+    timestamp: "25 Oct 2026, 14:30",
+    date: "25 Oct 2026",
+    adminName: "Jessica Smith",
+    adminRole: "Admin",
+    actionType: "create_request",
+    entityType: "care_request",
+    entityId: "cr-edward-new",
+    clientName: "Edward Langley",
+    location: "Cotswolds",
+    description: "Created urgent respite care request via Phone from Hospital discharge team",
+    newValue: "Status: Draft (v1.0) • £1,450/wk",
+  },
+  {
+    id: "aud-p-2",
+    timestamp: "25 Oct 2026, 14:45",
+    date: "25 Oct 2026",
+    adminName: "Jessica Smith",
+    adminRole: "Admin",
+    actionType: "approval_request_sent",
+    entityType: "care_request",
+    entityId: "cr-edward-new",
+    clientName: "Edward Langley",
+    location: "Cotswolds",
+    description: "Sent care request v1.0 to Mark Langley (Son) for checkbox review and approval",
+    newValue: "Awaiting client approval • Verified Email: mark.langley@example.co.uk",
+  },
+  {
+    id: "aud-p-3",
+    timestamp: "24 Oct 2026, 16:00",
+    date: "24 Oct 2026",
+    adminName: "Jessica Smith",
+    adminRole: "Admin",
+    actionType: "pricing_agreement",
+    entityType: "pricing",
+    entityId: "cr-doris",
+    clientName: "Doris Thompson",
+    location: "Hertfordshire",
+    description: "Agreed weekly client fee £1,350/wk via phone with daughter Claire Thompson. Negotiated by Aurea Neto.",
+    newValue: "Weekly Direct Debit • Standard threshold met",
+  },
+  {
+    id: "aud-p-4",
+    timestamp: "22 Oct 2026, 11:45",
+    date: "22 Oct 2026",
+    adminName: "Jessica Smith",
+    adminRole: "Admin",
+    actionType: "carer_accepted",
+    entityType: "carer",
+    entityId: "carer-anita",
+    clientName: "Doris Thompson",
+    location: "Hertfordshire",
+    description: "Anita K. accepted live-in care placement offer",
+    newValue: "Status: Accepted • Stage: Carer Selection",
+  },
+  {
+    id: "aud-p-5",
+    timestamp: "20 Oct 2026, 14:15",
+    date: "20 Oct 2026",
+    adminName: "System (Automated)",
+    adminRole: "System",
+    actionType: "declaration_accepted",
+    entityType: "care_request",
+    entityId: "cr-doris",
+    clientName: "Doris Thompson",
+    location: "Hertfordshire",
+    description: "Claire Thompson (Authorised Representative) approved version v1.0 and submitted statutory electronic declarations",
+    newValue: "Approved & Live for Carer Matching",
+  },
+  {
+    id: "aud-p-6",
+    timestamp: "20 Oct 2026, 14:16",
+    date: "20 Oct 2026",
+    adminName: "System (Automated)",
+    adminRole: "System",
+    actionType: "request_shared",
+    entityType: "care_request",
+    entityId: "cr-doris",
+    clientName: "Doris Thompson",
+    location: "Hertfordshire",
+    description: "Broadcast email sent to all eligible live-in carers following client authorization",
+    newValue: "Published on Carer Dashboard",
+  },
+  {
+    id: "aud-p-7",
+    timestamp: "18 Oct 2026, 09:20",
+    date: "18 Oct 2026",
+    adminName: "Aurea Neto",
+    adminRole: "Super Admin",
+    actionType: "settings_updated",
+    entityType: "settings",
+    entityId: "platform-settings",
+    clientName: "System Platform",
+    location: "National",
+    description: "Standard weekly price floor verified at £1,200/wk",
+    newValue: "Floor: £1,200/wk • Mandatory reason required if below",
+  },
+];
+
+export const INITIAL_CONVERSATIONS: ConversationRecord[] = [
+  {
+    id: "conv-cl-doris",
+    type: "client",
+    participantName: "Claire Thompson",
+    participantRole: "Daughter (Authorised Representative)",
+    participantAvatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    participantPhone: "+44 7712 345678",
+    participantEmail: "claire.thompson@example.co.uk",
+    clientName: "Doris Thompson",
+    clientCode: "CL-00489",
+    linkedRequestId: "cr-doris",
+    linkedPlacementId: "pl-doris",
+    requestStatus: "In progress",
+    assignedAdmin: "Jessica Smith",
+    unreadCount: 1,
+    lastMessageAt: "11:24 Today",
+    messages: [
+      {
+        id: "msg-d-1",
+        sender: "admin",
+        senderName: "Jessica Smith",
+        senderRole: "Admin",
+        senderAvatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=80",
+        timestamp: "20 Oct 2026, 14:20",
+        text: "Hello Claire, thank you for approving Doris's care request version v1.0. We have received your electronic declarations and published the opportunity to our vetted carers.",
+        status: "read",
+        adminFooterText: "Jessica Smith · Admin · Sent at 14:20 on 20/10/2026",
+      },
+      {
+        id: "msg-d-2",
+        sender: "participant",
+        senderName: "Claire Thompson",
+        senderAvatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+        timestamp: "21 Oct 2026, 09:15",
+        text: "Thank you Jessica! Mum is looking forward to meeting the carer. Could you let us know if any carers have experience with garden birds and cats?",
+        status: "read",
+      },
+      {
+        id: "msg-d-3",
+        sender: "admin",
+        senderName: "Jessica Smith",
+        senderRole: "Admin",
+        senderAvatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=80",
+        timestamp: "22 Oct 2026, 12:00",
+        text: "Great news Claire. Anita K. has accepted the placement offer! Here is her carer profile card for your family to review:",
+        status: "read",
+        carerCard: {
+          name: "Anita K.",
+          role: "Live-in Ongoing & Respite Carer",
+          avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160&auto=format&fit=crop&q=80",
+          experience: "8 years experience",
+          rating: 4.9,
+        },
+        adminFooterText: "Jessica Smith · Admin · Sent at 12:00 on 22/10/2026",
+      },
+      {
+        id: "msg-d-4",
+        sender: "participant",
+        senderName: "Claire Thompson",
+        senderAvatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+        timestamp: "11:24 Today",
+        text: "Anita looks wonderful! Mum had a quick question about her arrival time on the 1st of November.",
+        status: "delivered",
+      },
+    ],
+    internalNotes: [
+      {
+        id: "in-1",
+        author: "Aurea Neto",
+        authorRole: "Super Admin",
+        timestamp: "22 Oct 2026, 14:00",
+        text: "Handover check: Anita K. DBS and reference checks re-verified. Private bedroom sole-occupancy confirmed.",
+      },
+    ],
+  },
+  {
+    id: "conv-cl-edward",
+    type: "client",
+    participantName: "Mark Langley",
+    participantRole: "Son (Authorised Representative)",
+    participantAvatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80",
+    participantPhone: "+44 7799 118822",
+    participantEmail: "mark.langley@example.co.uk",
+    clientName: "Edward Langley",
+    clientCode: "CL-00502",
+    linkedRequestId: "cr-edward-new",
+    requestStatus: "Awaiting client",
+    assignedAdmin: "Jessica Smith",
+    unreadCount: 0,
+    lastMessageAt: "10:15 Today",
+    messages: [
+      {
+        id: "msg-e-1",
+        sender: "admin",
+        senderName: "Jessica Smith",
+        senderRole: "Admin",
+        senderAvatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=80",
+        timestamp: "10:15 Today",
+        text: "Hello Mark, we have prepared Edward's care request record version v1.0 based on your phone call with the hospital discharge team. An email with your secure approval link has been sent to mark.langley@example.co.uk.",
+        status: "read",
+        adminFooterText: "Jessica Smith · Admin · Sent at 10:15 on 25/10/2026",
+      },
+    ],
+    internalNotes: [
+      {
+        id: "in-e-1",
+        author: "Jessica Smith",
+        authorRole: "Admin",
+        timestamp: "10:20 Today",
+        text: "Urgent convalescence request starting in 3 days. Awaiting Mark's checkbox approval on v1.0.",
+      },
+    ],
+  },
+  {
+    id: "conv-carer-anita",
+    type: "carer",
+    participantName: "Anita K.",
+    participantRole: "Approved Live-in Carer",
+    participantAvatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160&auto=format&fit=crop&q=80",
+    participantPhone: "+44 7890 123456",
+    participantEmail: "anita.k@graceandgoodwill.co.uk",
+    clientName: "Doris Thompson",
+    clientCode: "CL-00489",
+    linkedRequestId: "cr-doris",
+    linkedPlacementId: "pl-doris",
+    requestStatus: "Completed",
+    requestCompletionNotes: {
+      completedBy: "Jessica Smith",
+      completedAt: "22 Oct 2026, 12:30",
+      summary: "Placement offer accepted and agreements signed.",
+    },
+    assignedAdmin: "Jessica Smith",
+    unreadCount: 0,
+    lastMessageAt: "Yesterday",
+    messages: [
+      {
+        id: "msg-ca-1",
+        sender: "admin",
+        senderName: "Jessica Smith",
+        senderRole: "Admin",
+        senderAvatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=80",
+        timestamp: "21 Oct 2026, 10:00",
+        text: "Hi Anita, we have an ongoing live-in care placement in Hertfordshire starting 01 Nov 2026. Weekly carer fee is £900/wk plus £40/wk food allowance with dedicated private bedroom.",
+        status: "read",
+        careRequestSummary: {
+          title: "Doris — Live-in Ongoing Care",
+          location: "Hertfordshire",
+          start: "01 Nov 2026",
+          rate: "£900/wk + £40 food allowance",
+        },
+        adminFooterText: "Jessica Smith · Admin · Sent at 10:00 on 21/10/2026",
+      },
+      {
+        id: "msg-ca-2",
+        sender: "participant",
+        senderName: "Anita K.",
+        senderAvatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160&auto=format&fit=crop&q=80",
+        timestamp: "22 Oct 2026, 11:45",
+        text: "Hello Jessica, I am delighted to accept this placement! I have great experience with dementia support and I love animals.",
+        status: "read",
+      },
+    ],
+    internalNotes: [],
+  },
+  {
+    id: "conv-carer-daniel",
+    type: "carer",
+    participantName: "Daniel Carter",
+    participantRole: "Approved Live-in Carer",
+    participantAvatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=160&auto=format&fit=crop&q=80",
+    participantPhone: "+44 7891 654321",
+    participantEmail: "daniel.c@graceandgoodwill.co.uk",
+    clientName: "Richard Hargrave",
+    clientCode: "CL-00427",
+    linkedRequestId: "cr-richard",
+    linkedPlacementId: "pl-richard",
+    requestStatus: "In progress",
+    assignedAdmin: "Jessica Smith",
+    unreadCount: 0,
+    lastMessageAt: "26 Oct 2026",
+    messages: [
+      {
+        id: "msg-cd-1",
+        sender: "admin",
+        senderName: "Jessica Smith",
+        senderRole: "Admin",
+        senderAvatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=80",
+        timestamp: "26 Oct 2026, 09:00",
+        text: "Hi Daniel, urgent respite placement in Cheshire. Client contact details released per 7-day rule.",
+        status: "read",
+        adminFooterText: "Jessica Smith · Admin · Sent at 09:00 on 26/10/2026",
+      },
+    ],
+    internalNotes: [],
+  },
+];
+
+export const INITIAL_CALENDAR_EVENTS: CalendarPlacementEvent[] = [
+  {
+    id: "cal-1",
+    title: "Eleanor Briggs — Ongoing Care",
+    clientName: "Eleanor Briggs",
+    carerName: "Komal Verma",
+    location: "Manchester",
+    type: "confirmed_ongoing",
+    colorCategory: "light-blue",
+    startDateISO: "2026-10-15",
+    endDateISO: "2026-11-30",
+    reliefDates: "15 Nov - 22 Nov (Thomas Green)",
+    isEmergency: false,
+    statusLabel: "Active Live-in Ongoing",
+    responsibleAdmin: "Jessica Smith",
+    linkedPlacementId: "pl-eleanor",
+  },
+  {
+    id: "cal-2",
+    title: "Richard Hargrave — Urgent Respite",
+    clientName: "Richard Hargrave",
+    carerName: "Daniel Carter",
+    location: "Cheshire",
+    type: "confirmed_ongoing",
+    colorCategory: "light-blue",
+    startDateISO: "2026-10-26",
+    endDateISO: "2026-11-09",
+    isEmergency: true,
+    statusLabel: "Active Emergency Respite",
+    responsibleAdmin: "Daniel Carter",
+    linkedPlacementId: "pl-richard",
+  },
+  {
+    id: "cal-3",
+    title: "Doris Thompson — Carer Matching",
+    clientName: "Doris Thompson",
+    carerName: "Anita K. (Accepted)",
+    location: "Hertfordshire",
+    type: "published_awaiting",
+    colorCategory: "yellow",
+    startDateISO: "2026-11-01",
+    isEmergency: false,
+    statusLabel: "Carer Selection in Progress",
+    responsibleAdmin: "Jessica Smith",
+    linkedRequestId: "cr-doris",
+  },
+  {
+    id: "cal-4",
+    title: "Edward Langley — Convalescent Respite",
+    clientName: "Edward Langley",
+    carerName: "Unassigned",
+    location: "Cotswolds",
+    type: "urgent_unmatched",
+    colorCategory: "red",
+    startDateISO: "2026-10-28",
+    endDateISO: "2026-11-18",
+    isEmergency: true,
+    statusLabel: "Urgent Unmatched",
+    responsibleAdmin: "Jessica Smith",
+    linkedRequestId: "cr-edward-new",
+  },
+  {
+    id: "cal-5",
+    title: "Margaret Lewis — Assessment Draft",
+    clientName: "Margaret Lewis",
+    carerName: "Unassigned",
+    location: "Chester",
+    type: "draft_awaiting_approval",
+    colorCategory: "grey",
+    startDateISO: "2026-11-12",
+    isEmergency: false,
+    statusLabel: "Draft v1.0 • Reviewing Requirements",
+    responsibleAdmin: "Jessica Smith",
+    linkedRequestId: "cr-margaret",
+  },
+  {
+    id: "cal-6",
+    title: "Arthur Pendleton — Emergency Ongoing",
+    clientName: "Arthur Pendleton",
+    carerName: "Komal Verma",
+    location: "Oxfordshire",
+    type: "confirmed_ongoing",
+    colorCategory: "light-blue",
+    startDateISO: "2026-10-26",
+    isEmergency: true,
+    statusLabel: "Emergency Ongoing Active",
+    responsibleAdmin: "Aurea Neto",
+    hasOverlappingCarer: true,
+    overlapCarerName: "Komal Verma (overallocated)",
+    linkedPlacementId: "pl-arthur-emergency",
+  },
+  {
+    id: "cal-7",
+    title: "Harold Finch — Unscheduled Enquiry",
+    clientName: "Harold Finch",
+    carerName: "Unassigned",
+    location: "Surrey",
+    type: "draft_awaiting_approval",
+    colorCategory: "grey",
+    startDateISO: "",
+    hasUnscheduledStart: true,
+    isEmergency: false,
+    statusLabel: "Unscheduled Enquiry • No Start Date",
+    responsibleAdmin: "Jessica Smith",
+  },
+];
+
+export const INITIAL_PLATFORM_SETTINGS: PlatformSettings = {
+  currentLoggedInAdmin: {
+    name: "Jessica Smith",
+    role: "admin",
+    email: "jessica.smith@graceandgoodwill.co.uk",
+  },
+  standardWeeklyPriceFloor: 1200,
+  automaticCarerEmailBroadcastOnPublish: true,
+  whatsappNotificationTemplate:
+    "Hello [First Name], we have prepared your Grace & Goodwill care-request information for you to review. We have sent a secure approval link to your registered email address, [Masked Email]. Please check all the details carefully, including the care requirements, medication information, dates and agreed weekly charge. If everything is correct, please tick the declarations and select ‘Agree and approve for publication’ through the link in your email. If anything needs correcting, please request changes before approving. A WhatsApp reply will not complete the approval process. Please let us know if you cannot find or access the email.",
+  approvalEmailTemplateSubject:
+    "Action required: review and approve your Grace & Goodwill profile and care request",
+  approvalEmailTemplateBody:
+    "Dear [Client / Representative First Name],\n\nWe have completed or updated the Grace & Goodwill client profile and care request for [Client Name], using information supplied by you or your representative.\n\nYour completed information is ready for review:\n\nReference: [Care Request Reference]\nVersion: [Version Number]\nPrepared by: [Admin Name]\nPrepared on: [Date and Time]\n\nPlease review the complete record carefully before approving. This includes the care requirements, health conditions, medication information, allergies, daily routines, accommodation, placement dates, agreed client charges and any other details recorded on your behalf.\n\n[Review information and approve securely]\n\nYou can view and download a complete copy through the secure link above. If anything is incorrect, incomplete, unclear or out of date, please select “Request corrections” before approving.\n\nThe information you approve will be used to identify suitable carers. Relevant information will be shared securely with carers considering or undertaking the placement, subject to our access controls and Privacy Policy. It may influence a carer’s decision to accept the placement and how they prepare for and provide day-to-day support. Incorrect or missing information may affect suitability and safety.\n\nYou are responsible for providing accurate and complete information to the best of your knowledge, checking that information entered on your behalf accurately reflects what you supplied, and promptly notifying us of changes.\n\nPlease pay particular attention to medication names, doses, timings, allergies and support requirements. Where you are uncertain, obtain confirmation from the appropriate healthcare professional before approving the relevant information.\n\nGrace & Goodwill records the information supplied for matching and administrative purposes. This record is not a clinical assessment, care plan, prescription or authority to change medication or treatment.\n\nTo approve, follow the secure link, review the information, tick the declarations and select “Agree and approve for publication”. Your checkbox submission will be recorded as your electronic acceptance; no separate signature is required.\n\nYour profile and care request will remain awaiting approval until you or an appropriately authorised representative completes this process. Approval authorises the approved version to become live for matching or be shared with selected carers; it does not itself confirm a placement.\n\nIf you need help accessing or reviewing the information, please contact our team.\n\nKind regards,\nGrace & Goodwill\nCare Defined by Integrity\ngraceandgoodwill.co.uk",
+  adminsList: [
+    { id: "adm-1", name: "Jessica Smith", role: "admin", email: "jessica.smith@graceandgoodwill.co.uk", active: true },
+    { id: "adm-2", name: "Aurea Neto", role: "super_admin", email: "aurea.neto@graceandgoodwill.co.uk", active: true },
+    { id: "adm-3", name: "Daniel Carter", role: "admin", email: "daniel.carter@graceandgoodwill.co.uk", active: true },
+  ],
+};
 
 export interface DeclarationDiffItem {
   id: string;
@@ -1502,6 +2283,61 @@ interface PlatformStoreContextType {
     confirmedBy: 'Carer' | 'Admin',
     arrivalNotes?: string
   ) => void;
+  auditEntries: PlatformAuditEntry[];
+  addAuditEntry: (entry: Omit<PlatformAuditEntry, "id" | "timestamp" | "date"> & { date?: string }) => void;
+  conversations: ConversationRecord[];
+  sendMessage: (
+    conversationId: string,
+    text: string,
+    senderRole?: string,
+    attachment?: { name: string; size: string; type: string },
+    carerCard?: any,
+    careSummary?: any
+  ) => void;
+  addInternalNote: (conversationId: string, text: string) => void;
+  updateConversationStatus: (
+    conversationId: string,
+    status: ConversationRecord["requestStatus"],
+    completionSummary?: string
+  ) => void;
+  calendarEvents: CalendarPlacementEvent[];
+  platformSettings: PlatformSettings;
+  updatePlatformSettings: (updater: (prev: PlatformSettings) => PlatformSettings) => void;
+  createCareRequest: (data: Partial<CareRequestRecord>) => CareRequestRecord;
+  sendCareRequestForApproval: (
+    requestId: string,
+    distributionOption: "broadcast" | "private_selected" | "direct_carer",
+    adminName?: string
+  ) => void;
+  approveCareRequestByClient: (
+    requestId: string,
+    approvalData: {
+      approverName: string;
+      capacity: "Client" | "Authorised Representative";
+      relationBasis?: string;
+      email: string;
+      declarations: string[];
+    }
+  ) => void;
+  requestCareRequestCorrections: (
+    requestId: string,
+    notes: string,
+    requestedBy: string
+  ) => void;
+  inviteCarerToCareRequest: (
+    requestId: string,
+    carer: { name: string; avatar: string; role: string }
+  ) => void;
+  updateCarerInvitationStatus: (
+    requestId: string,
+    invitationId: string,
+    status: "Invited" | "Accepted" | "Declined" | "Confirmed Assignment"
+  ) => void;
+  updateCareRequestPricing: (
+    requestId: string,
+    pricing: Partial<CareRequestPricingNotes>,
+    adminName: string
+  ) => void;
 }
 
 const PlatformStoreContext = createContext<PlatformStoreContextType | null>(null);
@@ -1511,6 +2347,10 @@ export const PlatformStoreProvider: React.FC<{ children: React.ReactNode }> = ({
   const [careRequests, setCareRequests] = useState<CareRequestRecord[]>(INITIAL_CARE_REQUESTS);
   const [totalCarersCount, setTotalCarersCount] = useState<number>(248);
   const [adminRole, setAdminRole] = useState<AdminUserRole>('admin');
+  const [auditEntries, setAuditEntries] = useState<PlatformAuditEntry[]>(INITIAL_AUDIT_ENTRIES);
+  const [conversations, setConversations] = useState<ConversationRecord[]>(INITIAL_CONVERSATIONS);
+  const [calendarEvents, setCalendarEvents] = useState<CalendarPlacementEvent[]>(INITIAL_CALENDAR_EVENTS);
+  const [platformSettings, setPlatformSettings] = useState<PlatformSettings>(INITIAL_PLATFORM_SETTINGS);
   const [carerAvailabilityPrefs, setCarerAvailabilityPrefs] = useState<AvailabilityCategory[]>([
     'Live-in Ongoing Care',
     'Live-in Respite Care',
@@ -1997,6 +2837,569 @@ export const PlatformStoreProvider: React.FC<{ children: React.ReactNode }> = ({
     );
   };
 
+
+  const addAuditEntry = (entry: Omit<PlatformAuditEntry, "id" | "timestamp" | "date"> & { date?: string }) => {
+    const now = new Date();
+    const dateStr = now.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+    const timeStr = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const newEntry: PlatformAuditEntry = {
+      id: "aud-" + Date.now(),
+      timestamp: dateStr + ", " + timeStr,
+      date: dateStr,
+      ...entry,
+    };
+    setAuditEntries((prev) => [newEntry, ...prev]);
+  };
+
+  const updatePlatformSettings = (updater: (prev: PlatformSettings) => PlatformSettings) => {
+    setPlatformSettings(updater);
+    addAuditEntry({
+      adminName: platformSettings.currentLoggedInAdmin.name,
+      adminRole: platformSettings.currentLoggedInAdmin.role === "super_admin" ? "Super Admin" : "Admin",
+      actionType: "settings_updated",
+      entityType: "settings",
+      entityId: "platform-settings",
+      clientName: "System Configuration",
+      location: "National",
+      description: "Updated platform settings, pricing thresholds, or email templates",
+    });
+  };
+
+  const sendMessage = (
+    conversationId: string,
+    text: string,
+    senderRole: string = "Admin",
+    attachment?: { name: string; size: string; type: string },
+    carerCard?: any,
+    careSummary?: any
+  ) => {
+    const adminUser = platformSettings.currentLoggedInAdmin;
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const dateStr = now.toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric" });
+    const footerText = adminUser.name + " · " + (adminUser.role === "super_admin" ? "Super Admin" : "Admin") + " · Replied at " + timeStr + " on " + dateStr;
+
+    const newMsg: ChatMessage = {
+      id: "msg-" + Date.now(),
+      sender: "admin",
+      senderName: adminUser.name,
+      senderRole: adminUser.role === "super_admin" ? "Super Admin" : "Admin",
+      senderAvatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=80",
+      timestamp: timeStr + " Today",
+      text,
+      status: "delivered",
+      attachment,
+      carerCard,
+      careRequestSummary: careSummary,
+      adminFooterText: footerText,
+    };
+
+    setConversations((prev) =>
+      prev.map((c) =>
+        c.id === conversationId
+          ? {
+              ...c,
+              lastMessageAt: timeStr + " Today",
+              messages: [...c.messages, newMsg],
+            }
+          : c
+      )
+    );
+  };
+
+  const addInternalNote = (conversationId: string, text: string) => {
+    const adminUser = platformSettings.currentLoggedInAdmin;
+    const now = new Date();
+    const dateStr = now.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+    const timeStr = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const newNote: InternalNote = {
+      id: "note-" + Date.now(),
+      author: adminUser.name,
+      authorRole: adminUser.role === "super_admin" ? "Super Admin" : "Admin",
+      timestamp: dateStr + ", " + timeStr,
+      text,
+    };
+
+    setConversations((prev) =>
+      prev.map((c) =>
+        c.id === conversationId
+          ? {
+              ...c,
+              internalNotes: [...c.internalNotes, newNote],
+            }
+          : c
+      )
+    );
+  };
+
+  const updateConversationStatus = (
+    conversationId: string,
+    status: ConversationRecord["requestStatus"],
+    completionSummary?: string
+  ) => {
+    const adminUser = platformSettings.currentLoggedInAdmin;
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const dateStr = now.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+
+    setConversations((prev) =>
+      prev.map((c) => {
+        if (c.id !== conversationId) return c;
+        return {
+          ...c,
+          requestStatus: status,
+          requestCompletionNotes:
+            status === "Completed"
+              ? {
+                  completedBy: adminUser.name,
+                  completedAt: dateStr + ", " + timeStr,
+                  summary: completionSummary || "Request processed and completed by admin.",
+                }
+              : c.requestCompletionNotes,
+        };
+      })
+    );
+  };
+
+  const createCareRequest = (data: Partial<CareRequestRecord>): CareRequestRecord => {
+    const adminUser = platformSettings.currentLoggedInAdmin;
+    const now = new Date();
+    const dateStr = now.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+    const timeStr = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const newId = "cr-" + Date.now();
+    const clientCode = "CL-" + Math.floor(10000 + Math.random() * 90000);
+
+    const newReq: CareRequestRecord = {
+      id: newId,
+      clientCode,
+      clientFirstName: data.clientFirstName || "New",
+      clientSurname: data.clientSurname || "Client",
+      displayTitle: data.displayTitle || (data.clientFirstName || "New Client"),
+      age: data.age || 75,
+      dob: data.dob || "01 Jan 1950 (76)",
+      location: data.location || "London",
+      residentialAddress: data.residentialAddress || "Private Address",
+      telephoneNumber: data.telephoneNumber || "07700 900000",
+      emailAddress: data.emailAddress || "client@example.co.uk",
+      avatar: data.avatar || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=240&auto=format&fit=crop&q=80",
+      placementType: data.placementType || "Live-in Ongoing Care",
+      duration: data.duration || "Ongoing",
+      isEmergency: Boolean(data.isEmergency),
+      weeklyPayment: data.weeklyPayment || 900,
+      foodAllowance: data.foodAllowance || 40,
+      agreedClientWeeklyFee: data.agreedClientWeeklyFee || 1350,
+      paymentStatus: data.paymentStatus || "Pending",
+      paymentArrangement: data.paymentArrangement || "Weekly Direct Debit",
+      requestDate: dateStr,
+      preferredStart: data.preferredStart || "As soon as possible",
+      preferredStartISO: data.preferredStartISO || new Date(Date.now() + 86400000 * 7).toISOString().slice(0, 10),
+      stage: "New Enquiries",
+      priority: data.isEmergency ? "Urgent / Emergency" : "Standard",
+      assignedCarerName: "Unassigned",
+      source: data.source || "Phone",
+      lastUpdated: "Just now",
+      familyContact: data.familyContact || {
+        name: "Primary Contact",
+        relation: "Family",
+        phone: "07700 900000",
+        email: "contact@example.co.uk",
+        avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+      },
+      aboutClient: data.aboutClient || "Care request created on behalf of client by Grace & Goodwill administration.",
+      careGoals: data.careGoals || "Promote independence, safety, and dignity at home.",
+      conditions: data.conditions || ["Mobility support"],
+      conditionsNotes: data.conditionsNotes || "Assistance with daily living.",
+      mobilityLevel: data.mobilityLevel || "Requires support",
+      mobilityDetails: data.mobilityDetails || "Walking aid used indoors.",
+      aids: data.aids || ["Walking frame"],
+      aidsNotes: data.aidsNotes || "Bathroom grab rails fitted.",
+      personalCare: data.personalCare || ["Washing / bathing", "Dressing"],
+      personalCareNotes: data.personalCareNotes || "Daily support routine.",
+      medicationSupport: data.medicationSupport || "Daily prompt required.",
+      pets: data.pets || "No pets",
+      smoking: data.smoking || "No",
+      verbalAbuseHistory: "No",
+      racialAbuseHistory: "No",
+      interests: data.interests || ["Music", "Reading"],
+      accommodation: data.accommodation || {
+        privateBedroomConfirmed: true,
+        bedroomType: SOLE_OCCUPANCY_BEDROOM,
+        bathroomType: "Private bathroom",
+        showerType: "Private",
+        householdNotes: "Private carer bedroom with natural light and dedicated bathroom access.",
+        photos: DEFAULT_ACCOMMODATION_PHOTOS.slice(0, 2),
+        adminVerified: false,
+      },
+      version: "v1.0",
+      approvalStatus: data.approvalStatus || "Draft",
+      distributionOption: data.distributionOption || "broadcast",
+      creationSource: (data.creationSource as any) || "Phone",
+      responsibleStaff: {
+        createdBy: {
+          name: adminUser.name,
+          role: adminUser.role === "super_admin" ? "Super Admin" : "Admin",
+          timestamp: dateStr + ", " + timeStr,
+        },
+      },
+      pricingNotes: {
+        agreedWeeklyCharge: data.agreedClientWeeklyFee || 1350,
+        additionalCharges: [],
+        negotiatedBy: adminUser.name,
+        enteredBy: adminUser.name,
+        agreedOnClientBehalfBy: data.familyContact?.name || "Client",
+        agreementDate: dateStr,
+        communicationChannel: (data.creationSource as any) || "Phone",
+        belowStandardReason: (data.agreedClientWeeklyFee || 1350) < 1200 ? "Custom family subsidy agreed" : undefined,
+        notes: [
+          {
+            id: "pn-" + Date.now(),
+            author: adminUser.name,
+            authorRole: adminUser.role === "super_admin" ? "Super Admin" : "Admin",
+            timestamp: dateStr + ", " + timeStr,
+            text: "Initial care request and pricing record entered on behalf of client.",
+          },
+        ],
+        priceChanges: [],
+      },
+      invitedCarers: [],
+    };
+
+    setCareRequests((prev) => [newReq, ...prev]);
+
+    addAuditEntry({
+      adminName: adminUser.name,
+      adminRole: adminUser.role === "super_admin" ? "Super Admin" : "Admin",
+      actionType: "create_request",
+      entityType: "care_request",
+      entityId: newId,
+      clientName: newReq.displayTitle,
+      location: newReq.location,
+      description: "Created care request via " + (newReq.creationSource || "Phone") + " on behalf of client",
+      newValue: "Version v1.0 • Status: " + newReq.approvalStatus,
+    });
+
+    return newReq;
+  };
+
+  const sendCareRequestForApproval = (
+    requestId: string,
+    distributionOption: "broadcast" | "private_selected" | "direct_carer",
+    adminName?: string
+  ) => {
+    const adminUser = platformSettings.currentLoggedInAdmin;
+    const actorName = adminName || adminUser.name;
+    const now = new Date();
+    const dateStr = now.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+    const timeStr = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+    setCareRequests((prev) =>
+      prev.map((r) => {
+        if (r.id !== requestId) return r;
+        const currentVer = r.version || "v1.0";
+        const newHistItem: CareRequestApprovalVersion = {
+          versionNumber: currentVer,
+          preparedBy: actorName,
+          preparedRole: adminUser.role === "super_admin" ? "Super Admin" : "Admin",
+          preparedAt: dateStr + ", " + timeStr,
+          status: "awaiting_approval",
+          distributionOption,
+        };
+
+        return {
+          ...r,
+          approvalStatus: "Awaiting client approval",
+          distributionOption,
+          approvalHistory: [...(r.approvalHistory || []), newHistItem],
+          responsibleStaff: {
+            ...r.responsibleStaff,
+            createdBy: r.responsibleStaff?.createdBy || { name: actorName, role: "Admin", timestamp: dateStr + ", " + timeStr },
+            sentForApprovalBy: { name: actorName, role: adminUser.role === "super_admin" ? "Super Admin" : "Admin", timestamp: dateStr + ", " + timeStr },
+          },
+          lastUpdated: "Just now",
+        };
+      })
+    );
+
+    const targetReq = careRequests.find((r) => r.id === requestId);
+    addAuditEntry({
+      adminName: actorName,
+      adminRole: adminUser.role === "super_admin" ? "Super Admin" : "Admin",
+      actionType: "approval_request_sent",
+      entityType: "care_request",
+      entityId: requestId,
+      clientName: targetReq?.displayTitle || "Client",
+      location: targetReq?.location || "National",
+      description: "Sent care request " + (targetReq?.version || "v1.0") + " to client for checkbox review and electronic authorization",
+      newValue: "Status: Awaiting client approval • Verified Email: " + (targetReq?.emailAddress || "client@example.co.uk"),
+    });
+  };
+
+  const approveCareRequestByClient = (
+    requestId: string,
+    approvalData: {
+      approverName: string;
+      capacity: "Client" | "Authorised Representative";
+      relationBasis?: string;
+      email: string;
+      declarations: string[];
+    }
+  ) => {
+    const now = new Date();
+    const dateStr = now.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+    const timeStr = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const fullTimestamp = dateStr + ", " + timeStr;
+
+    setCareRequests((prev) =>
+      prev.map((r) => {
+        if (r.id !== requestId) return r;
+        const distOption = r.distributionOption || "broadcast";
+        const willBroadcast = distOption === "broadcast";
+
+        return {
+          ...r,
+          approvalStatus: "Approved",
+          stage: "Reviewing Requirements",
+          clientApprovedAt: fullTimestamp,
+          clientApprovedBy: {
+            name: approvalData.approverName,
+            capacity: approvalData.capacity,
+            relationBasis: approvalData.relationBasis,
+            email: approvalData.email,
+          },
+          responsibleStaff: {
+            ...r.responsibleStaff,
+            createdBy: r.responsibleStaff?.createdBy || { name: "Admin", role: "Admin", timestamp: fullTimestamp },
+            publishedOrSharedBy: {
+              name: "System (Automated upon client approval)",
+              role: "System",
+              timestamp: fullTimestamp,
+              isSystemAction: true,
+            },
+          },
+          lastUpdated: "Just now",
+        };
+      })
+    );
+
+    const targetReq = careRequests.find((r) => r.id === requestId);
+    addAuditEntry({
+      adminName: "Client Portal Submission",
+      adminRole: "Client / Representative",
+      actionType: "declaration_accepted",
+      entityType: "care_request",
+      entityId: requestId,
+      clientName: targetReq?.displayTitle || "Client",
+      location: targetReq?.location || "National",
+      description: approvalData.approverName + " (" + approvalData.capacity + ") confirmed all 6 statutory declarations. Electronic signature recorded.",
+      newValue: "Approved version " + (targetReq?.version || "v1.0") + " • Published/Shared: " + (targetReq?.distributionOption || "broadcast"),
+    });
+  };
+
+  const requestCareRequestCorrections = (
+    requestId: string,
+    notes: string,
+    requestedBy: string
+  ) => {
+    const now = new Date();
+    const dateStr = now.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+    const timeStr = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+    setCareRequests((prev) =>
+      prev.map((r) => {
+        if (r.id !== requestId) return r;
+        return {
+          ...r,
+          approvalStatus: "Draft",
+          approvalHistory: [
+            ...(r.approvalHistory || []),
+            {
+              versionNumber: r.version,
+              preparedBy: r.responsibleStaff?.createdBy?.name || "Admin",
+              preparedRole: "Admin",
+              preparedAt: dateStr + ", " + timeStr,
+              status: "rejected_corrections",
+              correctionsRequested: {
+                date: dateStr + ", " + timeStr,
+                notes,
+                requestedBy,
+              },
+            },
+          ],
+          lastUpdated: "Corrections requested",
+        };
+      })
+    );
+  };
+
+  const inviteCarerToCareRequest = (
+    requestId: string,
+    carer: { name: string; avatar: string; role: string }
+  ) => {
+    const adminUser = platformSettings.currentLoggedInAdmin;
+    const now = new Date();
+    const dateStr = now.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+    const timeStr = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const newInvId = "inv-" + Date.now();
+
+    const newInv: CarerInvitationRecord = {
+      id: newInvId,
+      carerId: "carer-" + carer.name.toLowerCase().replace(/\s+/g, "-"),
+      carerName: carer.name,
+      carerAvatar: carer.avatar,
+      carerRole: carer.role,
+      invitedAt: dateStr + ", " + timeStr,
+      invitedBy: adminUser.name,
+      status: "Invited",
+    };
+
+    setCareRequests((prev) =>
+      prev.map((r) => {
+        if (r.id !== requestId) return r;
+        return {
+          ...r,
+          invitedCarers: [...(r.invitedCarers || []), newInv],
+          lastUpdated: "Just now",
+        };
+      })
+    );
+
+    const targetReq = careRequests.find((r) => r.id === requestId);
+    addAuditEntry({
+      adminName: adminUser.name,
+      adminRole: adminUser.role === "super_admin" ? "Super Admin" : "Admin",
+      actionType: "carer_invited",
+      entityType: "carer",
+      entityId: newInv.carerId,
+      clientName: targetReq?.displayTitle || "Client",
+      location: targetReq?.location || "National",
+      description: "Invited carer " + carer.name + " (" + carer.role + ") to placement opportunity",
+      newValue: "Status: Invited",
+    });
+  };
+
+  const updateCarerInvitationStatus = (
+    requestId: string,
+    invitationId: string,
+    status: "Invited" | "Accepted" | "Declined" | "Confirmed Assignment"
+  ) => {
+    const adminUser = platformSettings.currentLoggedInAdmin;
+    const now = new Date();
+    const dateStr = now.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+    const timeStr = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+    setCareRequests((prev) =>
+      prev.map((r) => {
+        if (r.id !== requestId) return r;
+        return {
+          ...r,
+          invitedCarers: (r.invitedCarers || []).map((inv) =>
+            inv.id === invitationId
+              ? {
+                  ...inv,
+                  status,
+                  responseAt: dateStr + ", " + timeStr,
+                }
+              : inv
+          ),
+          assignedCarerName: status === "Confirmed Assignment"
+            ? (r.invitedCarers?.find((i) => i.id === invitationId)?.carerName || r.assignedCarerName)
+            : r.assignedCarerName,
+          lastUpdated: "Just now",
+        };
+      })
+    );
+  };
+
+  const updateCareRequestPricing = (
+    requestId: string,
+    pricing: Partial<CareRequestPricingNotes>,
+    adminName: string
+  ) => {
+    const adminUser = platformSettings.currentLoggedInAdmin;
+    const actorName = adminName || adminUser.name;
+    const now = new Date();
+    const dateStr = now.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+    const timeStr = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+    setCareRequests((prev) =>
+      prev.map((r) => {
+        if (r.id !== requestId) return r;
+        const prevCharge = r.agreedClientWeeklyFee;
+        const newCharge = pricing.agreedWeeklyCharge ?? prevCharge;
+        const isChargeChanged = prevCharge !== newCharge;
+
+        // Substantive change creates a new version requiring fresh client approval
+        let newVersion = r.version || "v1.0";
+        let newApprovalStatus = r.approvalStatus;
+        if (isChargeChanged) {
+          const parts = newVersion.replace("v", "").split(".");
+          const major = parseInt(parts[0] || "1", 10);
+          const minor = parseInt(parts[1] || "0", 10) + 1;
+          newVersion = "v" + major + "." + minor;
+          newApprovalStatus = "Awaiting client approval";
+        }
+
+        const priceChanges = r.pricingNotes?.priceChanges || [];
+        if (isChargeChanged) {
+          priceChanges.push({
+            previous: prevCharge,
+            current: newCharge,
+            reason: pricing.belowStandardReason || "Agreed rate adjustment",
+            admin: actorName,
+            date: dateStr + ", " + timeStr,
+            requiresClientApproval: true,
+          });
+        }
+
+        return {
+          ...r,
+          agreedClientWeeklyFee: newCharge,
+          version: newVersion,
+          approvalStatus: newApprovalStatus,
+          pricingNotes: {
+            ...(r.pricingNotes || {
+              agreedWeeklyCharge: newCharge,
+              additionalCharges: [],
+              negotiatedBy: actorName,
+              enteredBy: actorName,
+              agreedOnClientBehalfBy: "Client",
+              agreementDate: dateStr,
+              communicationChannel: "Phone",
+              notes: [],
+            }),
+            ...pricing,
+            agreedWeeklyCharge: newCharge,
+            priceChanges,
+          },
+          responsibleStaff: {
+            ...r.responsibleStaff,
+            createdBy: r.responsibleStaff?.createdBy || { name: actorName, role: "Admin", timestamp: dateStr + ", " + timeStr },
+            updatedBy: {
+              name: actorName,
+              role: adminUser.role === "super_admin" ? "Super Admin" : "Admin",
+              timestamp: dateStr + ", " + timeStr,
+              changes: "Updated agreed weekly fee to £" + newCharge + " (Created version " + newVersion + ")",
+            },
+          },
+          lastUpdated: "Just now",
+        };
+      })
+    );
+
+    const targetReq = careRequests.find((r) => r.id === requestId);
+    addAuditEntry({
+      adminName: actorName,
+      adminRole: adminUser.role === "super_admin" ? "Super Admin" : "Admin",
+      actionType: "pricing_agreement",
+      entityType: "pricing",
+      entityId: requestId,
+      clientName: targetReq?.displayTitle || "Client",
+      location: targetReq?.location || "National",
+      description: "Updated pricing for " + (targetReq?.displayTitle || "client") + ". Created version requiring fresh approval.",
+      newValue: "Agreed fee: £" + (pricing.agreedWeeklyCharge || 1350) + "/wk",
+    });
+  };
+
   return React.createElement(
     PlatformStoreContext.Provider,
     {
@@ -2024,6 +3427,22 @@ export const PlatformStoreProvider: React.FC<{ children: React.ReactNode }> = ({
         updateCareRequest,
         confirmCareRequestToPlacement,
         confirmCarerArrival,
+        auditEntries,
+        addAuditEntry,
+        conversations,
+        sendMessage,
+        addInternalNote,
+        updateConversationStatus,
+        calendarEvents,
+        platformSettings,
+        updatePlatformSettings,
+        createCareRequest,
+        sendCareRequestForApproval,
+        approveCareRequestByClient,
+        requestCareRequestCorrections,
+        inviteCarerToCareRequest,
+        updateCarerInvitationStatus,
+        updateCareRequestPricing,
       },
     },
     children

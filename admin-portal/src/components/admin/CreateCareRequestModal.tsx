@@ -90,11 +90,13 @@ export const CreateCareRequestModal: React.FC<CreateCareRequestModalProps> = ({
   >('broadcast_all');
 
   const [initialAction, setInitialAction] = useState<'draft' | 'send_approval'>('send_approval');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage(null);
 
     let targetTitle = `${clientFirstName} ${clientSurname}`.trim();
     let targetLoc = location;
@@ -114,12 +116,12 @@ export const CreateCareRequestModal: React.FC<CreateCareRequestModalProps> = ({
     }
 
     if (!targetTitle) {
-      alert('Please specify the client name.');
+      setErrorMessage('Please specify the client name.');
       return;
     }
 
     if (agreedWeeklyFee < standardFloor && !pricingFloorReason.trim()) {
-      alert(`The agreed weekly charge (£${agreedWeeklyFee}) is below the standard floor (£${standardFloor}/wk). A documented justification is required.`);
+      setErrorMessage(`The agreed weekly charge (£${agreedWeeklyFee}) is below the standard floor (£${standardFloor}/wk). A documented justification is required.`);
       return;
     }
 
@@ -219,6 +221,12 @@ export const CreateCareRequestModal: React.FC<CreateCareRequestModalProps> = ({
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6 mt-5 text-xs">
+          {errorMessage && (
+            <div className="bg-rose-50 border border-rose-200 text-rose-800 p-3 rounded-xl flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
+              <span>{errorMessage}</span>
+            </div>
+          )}
           {/* Section 1: Client Selection & Source */}
           <div className="bg-[#FAF7F2] p-4 rounded-2xl border border-[#E2D8C3] space-y-3">
             <h3 className="font-semibold text-xs text-[#060D1E] flex items-center gap-2">

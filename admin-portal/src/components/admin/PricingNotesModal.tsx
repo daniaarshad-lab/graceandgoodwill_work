@@ -49,6 +49,8 @@ export const PricingNotesModal: React.FC<PricingNotesModalProps> = ({
     agreedWeeklyCharge !== (careRequest.agreedClientWeeklyFee || 1450)
   );
 
+  const [priceError, setPriceError] = useState<string | null>(null);
+
   if (!isOpen) return null;
 
   const handlePriceChange = (val: number) => {
@@ -59,8 +61,9 @@ export const PricingNotesModal: React.FC<PricingNotesModalProps> = ({
   };
 
   const handleSave = () => {
+    setPriceError(null);
     if (agreedWeeklyCharge < standardFloor && !belowStandardReason.trim()) {
-      alert(
+      setPriceError(
         `The agreed charge (£${agreedWeeklyCharge}/wk) is below the £${standardFloor}/wk standard floor. You must provide a documented reason.`
       );
       return;
@@ -116,6 +119,13 @@ export const PricingNotesModal: React.FC<PricingNotesModalProps> = ({
             <X className="w-5 h-5" />
           </button>
         </div>
+
+        {priceError && (
+          <div className="mt-4 bg-rose-50 border border-rose-200 text-rose-800 p-3 rounded-xl flex items-center gap-2 text-xs">
+            <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
+            <span>{priceError}</span>
+          </div>
+        )}
 
         {/* Substantive change notice */}
         {isSubstantiveChange && (

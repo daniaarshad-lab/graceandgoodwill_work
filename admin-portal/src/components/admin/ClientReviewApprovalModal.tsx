@@ -53,18 +53,20 @@ export const ClientReviewApprovalModal: React.FC<ClientReviewApprovalModalProps>
   // Corrections state
   const [isRequestingCorrections, setIsRequestingCorrections] = useState(false);
   const [correctionNotes, setCorrectionNotes] = useState('');
+  const [clientModalError, setClientModalError] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
   const allDeclarationsChecked = dec1 && dec2 && dec3 && dec4 && dec5 && dec6;
 
   const handleApprove = () => {
+    setClientModalError(null);
     if (!allDeclarationsChecked) {
-      alert('All 6 statutory declarations must be reviewed and ticked to submit approval.');
+      setClientModalError('All 6 statutory declarations must be reviewed and ticked to submit approval.');
       return;
     }
     if (!approverName.trim()) {
-      alert('Please enter the approver’s full name.');
+      setClientModalError('Please enter the approver’s full name.');
       return;
     }
 
@@ -89,8 +91,9 @@ export const ClientReviewApprovalModal: React.FC<ClientReviewApprovalModalProps>
   };
 
   const handleSendCorrections = () => {
+    setClientModalError(null);
     if (!correctionNotes.trim()) {
-      alert('Please explain what needs correcting or updating.');
+      setClientModalError('Please explain what needs correcting or updating.');
       return;
     }
     requestCareRequestCorrections(careRequest.id, correctionNotes, approverName);
@@ -127,6 +130,13 @@ export const ClientReviewApprovalModal: React.FC<ClientReviewApprovalModalProps>
             <X className="w-5 h-5" />
           </button>
         </div>
+
+        {clientModalError && (
+          <div className="mt-4 bg-rose-50 border border-rose-200 text-rose-800 p-3 rounded-xl flex items-center gap-2 text-xs">
+            <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
+            <span>{clientModalError}</span>
+          </div>
+        )}
 
         {/* Audit Metadata Banner */}
         <div className="mt-4 p-3 bg-[#FAF7F2] rounded-xl border border-[#E2D8C3] text-xs grid grid-cols-2 sm:grid-cols-4 gap-2 text-slate-600">

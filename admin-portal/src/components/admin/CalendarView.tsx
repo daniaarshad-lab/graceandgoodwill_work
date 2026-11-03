@@ -426,7 +426,23 @@ export const CalendarView: React.FC = () => {
                       Agreed: £{req.agreedClientWeeklyFee || 1400}/wk
                     </span>
                     <button
-                      onClick={() => alert(`Open scheduler for ${req.displayTitle}`)}
+                      onClick={() =>
+                        setSelectedEvent({
+                          id: `temp-${req.id}`,
+                          title: req.displayTitle,
+                          clientName: req.displayTitle,
+                          carerName: 'Carer Matching in Progress',
+                          location: req.location || 'London',
+                          startDateISO: '2024-10-20',
+                          endDateISO: '2024-11-03',
+                          type: 'published_awaiting',
+                          colorCategory: 'yellow',
+                          isEmergency: false,
+                          statusLabel: 'Published Awaiting Carer',
+                          responsibleAdmin: 'Jessica Smith',
+                          linkedRequestId: req.id,
+                        })
+                      }
                       className="px-2 py-1 bg-[#060D1E] text-white rounded text-[10px] hover:bg-slate-800"
                     >
                       Allocate Dates
